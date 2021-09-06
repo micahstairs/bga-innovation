@@ -2124,7 +2124,7 @@ class Innovation extends Table
         $splay_direction = self::getSplayDirectionInClear($splay_direction);
         
         if ($colors === null)  { // 5 colors
-            $message_for_player = self::format(clienttranslate('{You must} splay any one color of your cards {splay_direction}'), array('You must' => $you_must, 'splay_direction' => $splay_direction));
+            $message_for_player = self::format($clienttranslate('{You must} splay any one color of your cards {splay_direction}'), array('You must' => $you_must, 'splay_direction' => $splay_direction));
             $message_for_others = self::format($clienttranslate('{player must} splay any one color of his card cards {splay_direction}'), array('You must' => $you_must, 'splay_direction' => $splay_direction));
         }
         else {
@@ -3040,7 +3040,7 @@ class Innovation extends Table
         return self::getMinOrMaxAgeInLocation($player_id, 'score', 'MAX');
     }
     
-    /** Information about card ressources **/
+    /** Information about card resources **/
     function hasRessource($card, $icon) {
          return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon);
     }
@@ -4283,7 +4283,7 @@ class Innovation extends Table
         self::checkAction('dogma');
         $player_id = self::getActivePlayerId();
         
-        // Check if the player has this card really in his hand
+        // Check if the player has this card really on his board
         $card = self::getCardInfo($card_id);
         
         if ($card['owner'] != $player_id || $card['location'] != "board") {
@@ -4922,7 +4922,7 @@ class Innovation extends Table
                 break;
             
             default:
-                // This should not happens
+                // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
             }
             //[SS]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -6656,7 +6656,7 @@ class Innovation extends Table
             case "88D1":
                 $card = self::executeDraw($player_id, 10, 'revealed'); // "Draw a 10"
                 if ($card['color'] == 1 /* red */) { // "If it is red"
-                    self::notifyGeneralInfo('This card is red.');
+                    self::notifyGeneralInfo(clienttranslate('This card is red.'));
                     self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
                     self::notifyAll('removedHandsBoardsAndScores', clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'), array());
                     
@@ -6670,7 +6670,7 @@ class Innovation extends Table
                     self::setGameStateValue('current_effect_number', 1);
                 }
                 else {
-                    self::notifyGeneralInfo('This card is not red.');
+                    self::notifyGeneralInfo(clienttranslate('This card is not red.'));
                     // (Implicit) "Place it into your hand"
                     self::transferCardFromTo($card, $player_id, 'hand');
                 }
