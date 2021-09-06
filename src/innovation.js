@@ -29,7 +29,6 @@ function (dojo, declare) {
             // Global variables of your user interface
             this.zone = {};
             this.counter = {};
-            this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
             
             this.card_dimensions = { // Dimensions in the CSS + 2
                 "S recto" : {"width" : 33, "height" : 47},
@@ -95,10 +94,6 @@ function (dojo, declare) {
 
             this.arrows_for_expanded_mode = "&gt;&gt; &lt;&lt;"; // >> <<
             this.arrows_for_compact_mode = "&lt;&lt; &gt;&gt;"; // << >>
-            this.text_for_expanded_mode = _("Show compact");
-            this.text_for_compact_mode = _("Show expanded");
-            this.text_for_view_normal = _("Look at all cards in piles");
-            this.text_for_view_full = _("Resume normal view");
             this.number_of_splayed_piles = null;
             
             this.players = null;
@@ -169,6 +164,12 @@ function (dojo, declare) {
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
             }
             //******
+        
+            this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
+            this.text_for_expanded_mode = _("Show compact");
+            this.text_for_compact_mode = _("Show expanded");
+            this.text_for_view_normal = _("Look at all cards in piles");
+            this.text_for_view_full = _("Resume normal view");
             
             // GENERAL INFO
             this.players = gamedatas.players; 
@@ -181,7 +182,7 @@ function (dojo, declare) {
             // MAIN AREA
             var window_width = dojo.window.getBox().w;
             
-            // Positionning and sizing the main area, decks and achievements
+            // Positioning and sizing the main area, decks and achievements
             var main_area_width;
             var large_screen = window_width >= this.large_screen_width_limit;
             if (large_screen) {
