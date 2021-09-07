@@ -184,7 +184,8 @@ class Innovation extends Table
         /************ Start the game initialization *****/
 
         // Init global values with their initial values
-        $debug_mode = true; // [Z] SET THIS TO false IN PRODUCTION
+        global $g_config;
+        $debug_mode = $g_config ['debug_from_chat'];
         self::setGameStateValue('debug_mode', $debug_mode ? 1 : 0);
         
         // Number of achievements needed to win: 6 with 2 players, 5 with 3 players, 4 with 4 players and 6 for team game
