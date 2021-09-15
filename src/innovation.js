@@ -1651,8 +1651,6 @@ function (dojo, declare) {
             
             this.off(this.deactivated_cards, 'onclick');
             
-            this.erased_pagemaintitle_text = $('pagemaintitletext').innerHTML;
-            
             dojo.query('#generalactions > .action-button, #extra_text').addClass('hidden'); // Hide buttons
             $('pagemaintitletext').innerHTML = _("Move recorded. Waiting for update...");
 
@@ -1665,7 +1663,6 @@ function (dojo, declare) {
             this.restart(this.deactivated_cards, 'onclick');
             
             dojo.query('#generalactions > .action-button, #extra_text').removeClass('hidden'); // Show buttons again
-            $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
         },
         
         /*
