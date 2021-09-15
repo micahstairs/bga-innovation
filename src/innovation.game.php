@@ -4142,7 +4142,7 @@ class Innovation extends Table
         self::checkAction('initialMeld');
         $player_id = self::getCurrentPlayerId();
 
-        // Check if the player has this card really
+        // Check if the player really has this card
         $card = self::getCardInfo($card_id);
         
         if ($card['owner'] != $player_id || $card['location'] != "hand") {
@@ -4178,7 +4178,7 @@ class Innovation extends Table
         $this->gamestate->checkPossibleAction('updateInitialMeld');
         $this->gamestate->setPlayersMultiactive(array ($this->getCurrentPlayerId() ), 'error', false);
 
-        // Check if the player has this card really
+        // Check if the player really has this card
         $card = self::getCardInfo($card_id);
         $player_id = self::getCurrentPlayerId();
         if ($card['owner'] != $player_id || $card['location'] != "hand") {
@@ -4199,11 +4199,11 @@ class Innovation extends Table
         }
         
         // Notify
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a different card.'), array(
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array(
             'You' => 'You'            
         ));
             
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a different card.'), array(
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a card.'), array(
             'player_name' => self::getPlayerNameFromId($player_id)
         ));
         
