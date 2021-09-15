@@ -758,7 +758,16 @@ function (dojo, declare) {
             else {
                 // I am not supposed to play
                 switch(stateName)
-                {   
+                {
+                case 'turn0':
+                    // Reset tooltips for hand (or board: no card)
+                    this.destroyMyHandAndBoardTooltips();
+                    this.createMyHandAndBoardTooltipsWithActions();
+                    
+                    var cards_in_hand = this.selectCardsInHand();
+                    cards_in_hand.addClass("clickable");
+                    this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
+                    break;
                 case 'selectionMove':
                     // Add more information about the cards which can be selected
                     if (args.args.splay_direction !== null) {
@@ -2235,7 +2244,6 @@ function (dojo, declare) {
             if(!this.checkAction('initialMeld')){
                 return;
             }
-            this.deactivateClickEvents();
             
             // Reset tooltips for hand or board
             this.destroyMyHandAndBoardTooltips(true);
@@ -2244,6 +2252,10 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             dojo.addClass(HTML_id, "selected");
+
+            var cards_in_hand = this.selectCardsInHand();
+            this.off(cards_in_hand, 'onclick');
+            this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
             
             var self = this;
             this.ajaxcall("/innovation/innovation/initialMeld.html",
@@ -2251,7 +2263,27 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){}
+                        );
+        },
+    
+        action_clickForUpdatedInitialMeld : function(event) {
+            // Reset tooltips for hand or board
+            this.destroyMyHandAndBoardTooltips(true);
+            this.createMyHandAndBoardTooltipsWithoutActions(true);
+            
+            dojo.query(".selected").removeClass("selected");
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            dojo.addClass(HTML_id, "selected");
+            
+            var self = this;
+            this.ajaxcall("/innovation/innovation/updateInitialMeld.html",
+                            {
+                                lock: true,
+                                card_id: card_id
+                            },
+                             this, function(result){}, function(is_error){}
                         );
         },
         

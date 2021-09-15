@@ -69,7 +69,7 @@ $machinestates = array(
         "type" => "multipleactiveplayer",
         "action" => "stTurn0",
         "args" => "argTurn0",
-        "possibleactions" => array("initialMeld"),
+        "possibleactions" => array("initialMeld", "updateInitialMeld"),
         "transitions" => array("" => 3)
     ),
     

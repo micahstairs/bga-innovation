@@ -1076,6 +1076,21 @@ class Innovation extends Table
             array('player_id' => $player_id)
         ));
     }
+
+    function getCardsInHand($player_id) {
+        return self::attachTextualInfoToList(self::getObjectListFromDB(self::format("
+            SELECT
+                *
+            FROM
+                card
+            WHERE
+                location = 'hand' AND
+                owner = {player_id}
+                
+        ",
+            array('player_id' => $player_id)
+        )));
+    }
     
     /*function isSelected($card_id) {
         return self::getUniqueValueFromDB(self::format("
@@ -4152,6 +4167,43 @@ class Innovation extends Table
         ));
             
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a card.'), array(
+            'player_name' => self::getPlayerNameFromId($player_id)
+        ));
+        
+        // If that was the last player to choose his card, go on for the next state (whoBegins?), else, wait for remaining players
+        $this->gamestate->setPlayerNonMultiactive($player_id, '');
+    }
+
+    function updateInitialMeld($card_id) {
+        $this->gamestate->checkPossibleAction('updateInitialMeld');
+        $this->gamestate->setPlayersMultiactive(array ($this->getCurrentPlayerId() ), 'error', false);
+
+        // Check if the player has this card really
+        $card = self::getCardInfo($card_id);
+        $player_id = self::getCurrentPlayerId();
+        if ($card['owner'] != $player_id || $card['location'] != "hand") {
+            // The player is cheating...
+            throw new BgaUserException(self::_("You do not have this card in hand [Press F5 in case of troubles]"));
+        }
+        
+        // No cheating here
+        
+        // Mark it as selected
+        $cards = self::getCardsInHand($player_id);
+        foreach($cards as $card_in_hand) {
+            if ($card_in_hand['id'] == $card_id) {
+                self::markAsSelected($card_in_hand['id'], $player_id);
+            } else {
+                self::unmarkAsSelected($card_in_hand['id'], $player_id);
+            }
+        }
+        
+        // Notify
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a different card.'), array(
+            'You' => 'You'            
+        ));
+            
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a different card.'), array(
             'player_name' => self::getPlayerNameFromId($player_id)
         ));
         

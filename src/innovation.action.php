@@ -65,6 +65,18 @@
         
         self::ajaxResponse();
     }
+
+    public function updateInitialMeld() {
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        
+        $card_id = self::getArg("card_id", AT_posint, true);
+        // Call updateInitialMeld from game logic
+        $this->game->updateInitialMeld($card_id);
+        
+        self::ajaxResponse();
+    }
     
     public function achieve() {
         self::setAjaxMode();
