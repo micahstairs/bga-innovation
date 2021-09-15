@@ -4188,7 +4188,7 @@ class Innovation extends Table
         
         // No cheating here
         
-        // Mark it as selected
+        // Update card selection
         $cards = self::getCardsInHand($player_id);
         foreach($cards as $card_in_hand) {
             if ($card_in_hand['id'] == $card_id) {

@@ -2244,6 +2244,7 @@ function (dojo, declare) {
             if(!this.checkAction('initialMeld')){
                 return;
             }
+            this.deactivateClickEvents();
             
             // Reset tooltips for hand or board
             this.destroyMyHandAndBoardTooltips(true);
@@ -2263,11 +2264,13 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){}
+                             this, function(result){}, function(is_error){this.resurrectClickEvents();}
                         );
         },
     
         action_clickForUpdatedInitialMeld : function(event) {
+            this.deactivateClickEvents();
+
             // Reset tooltips for hand or board
             this.destroyMyHandAndBoardTooltips(true);
             this.createMyHandAndBoardTooltipsWithoutActions(true);
@@ -2283,7 +2286,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){}
+                             this, function(result){}, function(is_error){this.resurrectClickEvents();}
                         );
         },
         
