@@ -1650,19 +1650,24 @@ function (dojo, declare) {
             this.deactivated_cards_important.removeClass("clickable_important");
             
             this.off(this.deactivated_cards, 'onclick');
+
+            this.erased_pagemaintitle_text = $('pagemaintitletext').innerHTML;
             
             dojo.query('#generalactions > .action-button, #extra_text').addClass('hidden'); // Hide buttons
             $('pagemaintitletext').innerHTML = _("Move recorded. Waiting for update...");
 
         },
         
-        resurrectClickEvents : function() {
+        resurrectClickEvents : function(revert_text) {
             this.deactivated_cards.addClass("clickable");
             this.deactivated_cards_important.addClass("clickable_important");
             
             this.restart(this.deactivated_cards, 'onclick');
             
             dojo.query('#generalactions > .action-button, #extra_text').removeClass('hidden'); // Show buttons again
+            if (revert_text) {
+                $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
+            }
         },
         
         /*
@@ -2261,7 +2266,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){this.resurrectClickEvents();}
+                             this, function(result){}, function(is_error){this.resurrectClickEvents(is_error);}
                         );
         },
     
@@ -2283,7 +2288,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){this.resurrectClickEvents();}
+                             this, function(result){}, function(is_error){this.resurrectClickEvents(is_error);}
                         );
         },
         
@@ -2307,7 +2312,7 @@ function (dojo, declare) {
                                 lock: true,
                                 age: age
                             },
-                            this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                            this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
            );
         },
         
@@ -2322,7 +2327,7 @@ function (dojo, declare) {
                             {
                                 lock: true,
                             },
-                            this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                            this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
            );
         },
         
@@ -2341,7 +2346,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );
         },
         
@@ -2370,7 +2375,7 @@ function (dojo, declare) {
                         player_id: self.player_id,
                         card_id: card_id
                     },
-                     self, function(result){/*self.deactivateClickEvents()*/}, function(is_error){if(is_error)selfie.resurrectClickEvents()}
+                     self, function(result){/*self.deactivateClickEvents()*/}, function(is_error){if(is_error)selfie.resurrectClickEvents(false)}
                 );
             }
             
@@ -2421,7 +2426,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: card_id
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );
         },
         
@@ -2454,7 +2459,7 @@ function (dojo, declare) {
                                 age: age,
                                 position: position
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );
         },
         
@@ -2487,7 +2492,7 @@ function (dojo, declare) {
                                 lock: true,
                                 choice: choice
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );
         },
         
@@ -2519,7 +2524,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: -1
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );            
         },
         
@@ -2537,7 +2542,7 @@ function (dojo, declare) {
                                 lock: true,
                                 card_id: this.getCardIdFromHTMLId(this.zone.board[this.player_id][color].items[0].id) // A choose for splay is equivalent as selecting a board card of the right color, by design
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );   
         },
         
@@ -2576,7 +2581,7 @@ function (dojo, declare) {
                                 color: permuted_color,
                                 permutations_done: permutations_done
                             },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents()}
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );   
         },
         
