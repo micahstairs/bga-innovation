@@ -5880,7 +5880,12 @@ class Innovation extends Table
                 
             // id 21, age 2: Canal building         
             case "21N1":
-                $step_max = 1; // --> 1 interaction: see B
+                if (self::countCardsInLocation($player_id, 'score') == 0 && self::countCardsInLocation($player_id, 'hand') == 0) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand or score pile to exchange.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand or score pile to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                } else {
+                    $step_max = 1; // --> 1 interaction: see B
+                }
                 break;
                 
             // id 22, age 2: Fermenting        
@@ -10109,7 +10114,7 @@ class Innovation extends Table
                     }
                     foreach($ids_of_highest_cards_in_hand as $id) {
                         $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $player_id, 'score'); // Nota: this has no score keyword 
+                        self::transferCardFromTo($card, $player_id, 'score'); // Note: this has no score keyword 
                     }
                 }
                 break;
