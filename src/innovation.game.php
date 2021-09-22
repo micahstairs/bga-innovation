@@ -4961,7 +4961,7 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
                 
-            // id 3, age 8: Empiricism
+            // id 83, age 8: Empiricism
             case "83N1A":
                 $message_for_player = clienttranslate('${You} must choose two colors');
                 $message_for_others = clienttranslate('${player_name} must choose two colors');
@@ -7046,7 +7046,12 @@ class Innovation extends Table
                 
             // id 102, age 10: Stem cells
             case "102N1":
-                $step_max = 1; // --> 1 interaction: see B
+                if (self::countCardsInLocation($player_id, 'hand') == 0) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand to score.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand to score.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                } else {
+                    $step_max = 1; // --> 1 interaction: see B
+                }
                 break;
             
         
