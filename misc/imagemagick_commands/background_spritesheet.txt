@@ -1,1 +1,0 @@
-magick montage {blue,red,green,yellow,purple,special_achievement,action_1,action_2}.png -tile 8x1 -resize 560x408 -geometry +5+5 -background 'white' ../square_icons/square_icon_spritesheet.jpg
