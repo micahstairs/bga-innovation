@@ -1423,6 +1423,30 @@
     box-shadow: 1px 1px grey;
 }
 
+.L.recto {
+    width: 316px;
+    height: 456px;
+    border-radius: 16px;
+    box-shadow: 5px 5px grey;
+}
+
+/* Front of cards */
+
+.card {
+    display: inline-block;
+    background-image: url('img/images.jpg');
+    position: relative;
+    border: solid 1px #ffffff;
+}
+
+/* Cards of size S, flipped */
+.S.card {
+    width: 45px;
+    height: 31px;
+    background-size: 735px 350px;
+    box-shadow: 1px 1px grey;
+}
+
 /* Cards of size M */
 .M.card {
     width: 180px;
