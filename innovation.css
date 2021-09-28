@@ -169,27 +169,6 @@
     min-height: 126px;
 }
 
-/*colors*/
-.color_0 {
-    background-color: #89aad7;
-}
-
-.color_1 {
-    background-color: #da7887;
-}
-
-.color_2 {
-    background-color: #72b964;
-}
-
-.color_3 {
-    background-color: #e2e57a;
-}
-
-.color_4 {
-    background-color: #9b58ba;
-}
-
 /*progress*/
 .progress {
     /*text-align: center;*/
@@ -473,27 +452,6 @@
     top: 299px;
 }
 
-.icon_4_ages {
-    width: 55px;
-    height: 18px;
-    left: 218px;
-    top: 284px;
-}
-
-.icon_5_ages {
-    width:55px;
-    height: 18px;
-    left: 218px;
-    top: 306px;
-}
-
-.icon_6_ages {
-    width: 55px;
-    height: 18px;
-    left: 218px;
-    top: 328px;
-}
-
 .icon_1_ages {
     width: 55px;
     height: 18px;
@@ -512,6 +470,27 @@
     width: 55px;
     height: 18px;
     left: 290px;
+    top: 328px;
+}
+
+.icon_4_ages {
+    width: 55px;
+    height: 18px;
+    left: 218px;
+    top: 284px;
+}
+
+.icon_5_ages {
+    width: 55px;
+    height: 18px;
+    left: 218px;
+    top: 306px;
+}
+
+.icon_6_ages {
+    width: 55px;
+    height: 18px;
+    left: 218px;
     top: 328px;
 }
 
@@ -714,27 +693,27 @@
 }
 
 .ressource_1 { /* crown */
-    background-color:#9c7729;
+    background-color:#e7ab22;
 }
 
 .ressource_2 { /* leaf */
-    background-color:#29573d;
+    background-color:#153a1c;
 }
 
 .ressource_3 { /* bulb */
-    background-color:#67204a;
+    background-color:#913c97;
 }
 
 .ressource_4 { /* tower */
-    background-color:#393d40;
+    background-color:#404446;
 }
 
 .ressource_5 { /* factory */
-    background-color:#6d1d1c;
+    background-color:#850e04;
 }
 
 .ressource_6 { /* clock */
-    background-color:#214f8a;
+    background-color:#14247f;
 }
 
 .equal {
@@ -752,26 +731,39 @@
     font-weight: bold;
 }
 
-/* Whithin dogma, indicators of the current effect */ 
+/* Within dogma, indicators of the current effect */ 
+
 .current_effect {
     /*border: solid red 1px;*/
     background-color: rgba(255,0,0,.8);
     border-radius: 5px;
 }
 
+/* Number on the card indicating the age */
 
-/* Title of the card (tooltip or not) */
-.card_title {
-    border-style: solid;
-    border-color: white;
-    background-color: black;
+.card_age {
     color: white;
     text-align: center;
-    font-family: Times New Roman;
+    font-family: Tahoma, Arial, sans-serif;
+    position: absolute;
+}
+
+.card_age.M {
+    left: 160px;
+    top: 5px;
+}
+
+/* Title of the card */
+
+.card_title {
+    color: white;
+    text-align: center;
+    font-family: Tahoma, Arial, sans-serif;
     position: absolute;
 }
     
 /* Elements for rewriting card texts */
+
 .i_demand, .immediately {
     font-weight: bold;
 }
@@ -781,24 +773,31 @@
 }
 
 .effect_text {
-    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+.effect_text.light {
+    color: black;
+}
+
+.effect_text.dark {
+    color: white;
 }
 
 /* Elements inside the card in play */
+
 .card_title.M {
-    left: 50px;
-    top: 2px;
-    width: 88px;
-    height: 12px;
-    line-height: 12px; /* Ensure that the text is centered horizontally */
-    border-width: 1px;
+    left: 53px;
+    top: 12px;
+    width: 95px;
+    height: 15px;
 }
 
 .card_effects.M {
-    left: 50px;
-    top: 17px;
-    width: 128px;
-    height: 56px;
+    left: 43px;
+    top: 29px;
+    width: 133px;
+    height: 52px;
 }
 
 .effect.M:nth-of-type(n+2) {
@@ -809,9 +808,67 @@
     padding-left: 8px;
     text-indent: -8px;
     line-height : 9px;
+    border-width: 1px;
+    border-style: solid;
 }
 
-/* Elements inside the card in tooltip */
+/* Blue */
+.effect.color_0, .card_icon.color_0 {
+    border-color: #0e2a50;
+}
+.effect.color_0.light {
+    background-color: #8bd2f1;
+}
+.effect.color_0.dark {
+    background-color: #0e2a50;
+}
+
+/* Red */
+.effect.color_1, .card_icon.color_1 {
+    border-color: #5a090c;
+}
+.effect.color_1.light {
+    background-color: #f7c3d2;
+}
+.effect.color_1.dark {
+    background-color: #5a090c;
+}
+
+/* Green */
+.effect.color_2, .card_icon.color_2 {
+    border-color: #122c18;
+}
+.effect.color_2.light {
+    background-color: #9dd19b;
+}
+.effect.color_2.dark {
+    background-color: #122c18;
+}
+
+/* Yellow */
+.effect.color_3, .card_icon.color_3 {
+    border-color: #8b6a28;
+}
+.effect.color_3.light {
+    background-color: #f4f4be;
+}
+.effect.color_3.dark {
+    background-color: #8b6a28;
+}
+
+/* Purple */
+.effect.color_4, .card_icon.color_4 {
+    border-color: #220e40;
+}
+.effect.color_4.light {
+    background-color: #b4bcd8;
+}
+.effect.color_4.dark {
+    background-color: #220e40;
+}
+
+/* Elements inside the card in the tooltip */
+
 .card_title.L {
     left: 128px;
     top: 7px;
@@ -1338,23 +1395,15 @@
     margin-right: 10px;
 }
 
-/* Card, rectos */
-.card, .recto {
+/* Back of cards */
+
+.recto {
     display: inline-block;
     background-image: url('img/Innovation_cards.jpg');
     position: relative;
     border: solid 1px #ffffff;
 }
 
-/* Cards of size S, flipped*/
-.S.card {
-    width: 45px;
-    height: 31px;
-    background-size: 735px 350px;
-    box-shadow: 1px 1px grey;
-}
-
-/* Rectos of size S */
 .S.recto {
     width: 31px;
     height: 45px;
@@ -1363,11 +1412,35 @@
     box-shadow: 1px 1px grey;
 }
 
+.L.recto {
+    width: 316px;
+    height: 456px;
+    border-radius: 16px;
+    box-shadow: 5px 5px grey;
+}
+
+/* Front of cards */
+
+.card {
+    display: inline-block;
+    background-image: url('img/images.jpg');
+    position: relative;
+    border: solid 1px #ffffff;
+}
+
+/* Cards of size S, flipped */
+.S.card {
+    width: 45px;
+    height: 31px;
+    background-size: 735px 350px;
+    box-shadow: 1px 1px grey;
+}
+
 /* Cards of size M */
 .M.card {
     width: 180px;
     height: 124px;
-    background-size: 2940px 1400px;
+    background-size: 1645px 141px;
     border-radius: 6px;
     box-shadow: 3px 3px grey;
 }
@@ -1380,12 +1453,70 @@
     box-shadow: 5px 5px grey;
 }
 
-/* Rectos of size L */
-.L.recto {
-    width: 316px;
-    height: 456px;
-    border-radius: 16px;
-    box-shadow: 5px 5px grey;
+/* Card icons */
+
+.card_icon {
+    background-image: url('img/images2.jpg');
+    background-size: 180px 30px;
+    position: absolute;
+    border-width: 2px;
+    border-style: solid;
+}
+
+/* TODO: Add support for L cards */
+
+.M.card_icon {
+    width: 30px;
+    height: 30px;
+}
+
+.M.top_left_icon {
+    top: 10px;
+    left: 10px;
+}
+
+.M.bottom_left_icon.M {
+    top: 85px;
+    left: 10px;
+}
+
+.M.bottom_center_icon.M {
+    top: 85px;
+    left: 77px;
+}
+
+.M.bottom_right_icon.M {
+    top: 85px;
+    left: 140px;
+}
+
+/* TODO(micahstairs): Remove this! */
+.icon_null.M.card_icon  {
+    opacity: 0;
+}
+
+.icon_1.M.card_icon  {
+    background-position: -0px -0px;
+}
+
+.icon_2.M.card_icon  {
+    background-position: -30px -0px;
+}
+
+.icon_3.M.card_icon  {
+    background-position: -60px -0px;
+}
+
+.icon_4.M.card_icon  {
+    background-position: -90px -0px;
+}
+
+.icon_5.M.card_icon  {
+    background-position: -120px -0px;
+}
+
+.icon_6.M.card_icon  {
+    background-position: -150px -0px;
 }
 
 /* Auto-generated by css_generator_for_sprites.py (Python script) */
@@ -1470,424 +1601,29 @@
         background-position: -702px -303px;
     }
 
-.item_0.M.card {
-    background-position: -8px -8px;
+/* Blue card */
+.color_0.M.card {
+    background-position: -12px -5px;
 }
 
-.item_1.M.card {
-    background-position: -204px -8px;
+/* Red card */
+.color_1.M.card {
+    background-position: -218px -5px;
 }
 
-.item_2.M.card {
-    background-position: -400px -8px;
+/* Green card */
+.color_2.M.card {
+    background-position: -424px -5px;
 }
 
-.item_3.M.card {
-    background-position: -596px -8px;
+/* Yellow card */
+.color_3.M.card {
+    background-position: -630px -5px;
 }
 
-.item_4.M.card {
-    background-position: -792px -8px;
-}
-
-.item_5.M.card {
-    background-position: -988px -8px;
-}
-
-.item_6.M.card {
-    background-position: -1184px -8px;
-}
-
-.item_7.M.card {
-    background-position: -1380px -8px;
-}
-
-.item_8.M.card {
-    background-position: -1576px -8px;
-}
-
-.item_9.M.card {
-    background-position: -1772px -8px;
-}
-
-.item_10.M.card {
-    background-position: -1968px -8px;
-}
-
-.item_11.M.card {
-    background-position: -2164px -8px;
-}
-
-.item_12.M.card {
-    background-position: -2360px -8px;
-}
-
-.item_13.M.card {
-    background-position: -2556px -8px;
-}
-
-.item_14.M.card {
-    background-position: -2752px -8px;
-}
-
-.item_15.M.card {
-    background-position: -8px -148px;
-}
-
-.item_16.M.card {
-    background-position: -204px -148px;
-}
-
-.item_17.M.card {
-    background-position: -400px -148px;
-}
-
-.item_18.M.card {
-    background-position: -596px -148px;
-}
-
-.item_19.M.card {
-    background-position: -792px -148px;
-}
-
-.item_20.M.card {
-    background-position: -988px -148px;
-}
-
-.item_21.M.card {
-    background-position: -1184px -148px;
-}
-
-.item_22.M.card {
-    background-position: -1380px -148px;
-}
-
-.item_23.M.card {
-    background-position: -1576px -148px;
-}
-
-.item_24.M.card {
-    background-position: -1772px -148px;
-}
-
-.item_25.M.card {
-    background-position: -8px -288px;
-}
-
-.item_26.M.card {
-    background-position: -204px -288px;
-}
-
-.item_27.M.card {
-    background-position: -400px -288px;
-}
-
-.item_28.M.card {
-    background-position: -596px -288px;
-}
-
-.item_29.M.card {
-    background-position: -792px -288px;
-}
-
-.item_30.M.card {
-    background-position: -988px -288px;
-}
-
-.item_31.M.card {
-    background-position: -1184px -288px;
-}
-
-.item_32.M.card {
-    background-position: -1380px -288px;
-}
-
-.item_33.M.card {
-    background-position: -1576px -288px;
-}
-
-.item_34.M.card {
-    background-position: -1772px -288px;
-}
-
-.item_35.M.card {
-    background-position: -8px -428px;
-}
-
-.item_36.M.card {
-    background-position: -204px -428px;
-}
-
-.item_37.M.card {
-    background-position: -400px -428px;
-}
-
-.item_38.M.card {
-    background-position: -596px -428px;
-}
-
-.item_39.M.card {
-    background-position: -792px -428px;
-}
-
-.item_40.M.card {
-    background-position: -988px -428px;
-}
-
-.item_41.M.card {
-    background-position: -1184px -428px;
-}
-
-.item_42.M.card {
-    background-position: -1380px -428px;
-}
-
-.item_43.M.card {
-    background-position: -1576px -428px;
-}
-
-.item_44.M.card {
-    background-position: -1772px -428px;
-}
-
-.item_45.M.card {
-    background-position: -8px -568px;
-}
-
-.item_46.M.card {
-    background-position: -204px -568px;
-}
-
-.item_47.M.card {
-    background-position: -400px -568px;
-}
-
-.item_48.M.card {
-    background-position: -596px -568px;
-}
-
-.item_49.M.card {
-    background-position: -792px -568px;
-}
-
-.item_50.M.card {
-    background-position: -988px -568px;
-}
-
-.item_51.M.card {
-    background-position: -1184px -568px;
-}
-
-.item_52.M.card {
-    background-position: -1380px -568px;
-}
-
-.item_53.M.card {
-    background-position: -1576px -568px;
-}
-
-.item_54.M.card {
-    background-position: -1772px -568px;
-}
-
-.item_55.M.card {
-    background-position: -8px -708px;
-}
-
-.item_56.M.card {
-    background-position: -204px -708px;
-}
-
-.item_57.M.card {
-    background-position: -400px -708px;
-}
-
-.item_58.M.card {
-    background-position: -596px -708px;
-}
-
-.item_59.M.card {
-    background-position: -792px -708px;
-}
-
-.item_60.M.card {
-    background-position: -988px -708px;
-}
-
-.item_61.M.card {
-    background-position: -1184px -708px;
-}
-
-.item_62.M.card {
-    background-position: -1380px -708px;
-}
-
-.item_63.M.card {
-    background-position: -1576px -708px;
-}
-
-.item_64.M.card {
-    background-position: -1772px -708px;
-}
-
-.item_65.M.card {
-    background-position: -8px -848px;
-}
-
-.item_66.M.card {
-    background-position: -204px -848px;
-}
-
-.item_67.M.card {
-    background-position: -400px -848px;
-}
-
-.item_68.M.card {
-    background-position: -596px -848px;
-}
-
-.item_69.M.card {
-    background-position: -792px -848px;
-}
-
-.item_70.M.card {
-    background-position: -988px -848px;
-}
-
-.item_71.M.card {
-    background-position: -1184px -848px;
-}
-
-.item_72.M.card {
-    background-position: -1380px -848px;
-}
-
-.item_73.M.card {
-    background-position: -1576px -848px;
-}
-
-.item_74.M.card {
-    background-position: -1772px -848px;
-}
-
-.item_75.M.card {
-    background-position: -8px -988px;
-}
-
-.item_76.M.card {
-    background-position: -204px -988px;
-}
-
-.item_77.M.card {
-    background-position: -400px -988px;
-}
-
-.item_78.M.card {
-    background-position: -596px -988px;
-}
-
-.item_79.M.card {
-    background-position: -792px -988px;
-}
-
-.item_80.M.card {
-    background-position: -988px -988px;
-}
-
-.item_81.M.card {
-    background-position: -1184px -988px;
-}
-
-.item_82.M.card {
-    background-position: -1380px -988px;
-}
-
-.item_83.M.card {
-    background-position: -1576px -988px;
-}
-
-.item_84.M.card {
-    background-position: -1772px -988px;
-}
-
-.item_85.M.card {
-    background-position: -8px -1128px;
-}
-
-.item_86.M.card {
-    background-position: -204px -1128px;
-}
-
-.item_87.M.card {
-    background-position: -400px -1128px;
-}
-
-.item_88.M.card {
-    background-position: -596px -1128px;
-}
-
-.item_89.M.card {
-    background-position: -792px -1128px;
-}
-
-.item_90.M.card {
-    background-position: -988px -1128px;
-}
-
-.item_91.M.card {
-    background-position: -1184px -1128px;
-}
-
-.item_92.M.card {
-    background-position: -1380px -1128px;
-}
-
-.item_93.M.card {
-    background-position: -1576px -1128px;
-}
-
-.item_94.M.card {
-    background-position: -1772px -1128px;
-}
-
-.item_95.M.card {
-    background-position: -8px -1268px;
-}
-
-.item_96.M.card {
-    background-position: -204px -1268px;
-}
-
-.item_97.M.card {
-    background-position: -400px -1268px;
-}
-
-.item_98.M.card {
-    background-position: -596px -1268px;
-}
-
-.item_99.M.card {
-    background-position: -792px -1268px;
-}
-
-.item_100.M.card {
-    background-position: -988px -1268px;
-}
-
-.item_101.M.card {
-    background-position: -1184px -1268px;
-}
-
-.item_102.M.card {
-    background-position: -1380px -1268px;
-}
-
-.item_103.M.card {
-    background-position: -1576px -1268px;
-}
-
-.item_104.M.card {
-    background-position: -1772px -1268px;
+/* Purple card */
+.color_4.M.card {
+    background-position: -836px -5px;
 }
 
 .item_0.L.card {
