@@ -11,3 +11,6 @@ magick montage $folder_path/{065..074}.png -tile 10x1 -geometry +5+5 -background
 magick montage $folder_path/{075..084}.png -tile 10x1 -geometry +5+5 -background 'white' $folder_path/base_hexagon_spritesheet_age_8.png
 magick montage $folder_path/{085..094}.png -tile 10x1 -geometry +5+5 -background 'white' $folder_path/base_hexagon_spritesheet_age_9.png
 magick montage $folder_path/{095..104}.png -tile 10x1 -geometry +5+5 -background 'white' $folder_path/base_hexagon_spritesheet_age_10.png
+
+magick montage $folder_path/base_hexagon_spritesheet_age_{1..10}.png -tile 1x10 -geometry +5+5 -background 'white' $folder_path/base_hexagon_spritesheet.png
+rm $folder_path/base_hexagon_spritesheet_age_{1..10}.png
