@@ -15,7 +15,7 @@
  *
  */
 
-define([
+ define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
@@ -150,7 +150,8 @@ function (dojo, declare) {
             
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
-            setup: function (gamedatas) {
+        setup: function(gamedatas)
+        {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
@@ -318,9 +319,7 @@ function (dojo, declare) {
                     continue;
                 }
                 this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, null, dojo.body(), null);
-                if (!this.isSpectator) {
-                    this.addTooltipForStandardAchievement(achievement);
-                }
+                this.addTooltipForRecto(achievement, !this.isSpectator);
             }
             
             // AVAILABLE SPECIAL ACHIEVEMENTS
@@ -341,7 +340,8 @@ function (dojo, declare) {
             
             // PLAYERS' HANDS
             this.zone.hand = {};
-                for (var player_id in this.players) {
+            for(var player_id in this.players)
+            {
                 // Creation of the zone
                 var zone = this.createZone('hand', player_id, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
@@ -374,7 +374,8 @@ function (dojo, declare) {
             
             // PLAYERS' SCORE
             this.zone.score = {};
-                for (var player_id in this.players) {
+            for(var player_id in this.players)
+            {
                 // Creation of the zone
                 this.zone.score[player_id] = this.createZone('score', player_id, null, grouped_by_age=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
@@ -406,7 +407,8 @@ function (dojo, declare) {
             }
             
             // PLAYERS' ACHIEVEMENTS
-                for (var player_id in this.players) {
+            for(var player_id in this.players)
+            {
                 // Creation of the zone
                 this.zone.achievements[player_id] = this.createZone('achievements', player_id);
                 this.setPlacementRules(this.zone.achievements[player_id], left_to_right=true);
@@ -417,6 +419,7 @@ function (dojo, declare) {
                     var achievement = achievements[i];
                     if (achievement.age !== null) { // Normal achievement
                         this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, null, dojo.body(), null);
+                        this.addTooltipForRecto(achievement, false);
                     }
                     else {
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.id, dojo.body(), null);
@@ -447,7 +450,8 @@ function (dojo, declare) {
             // Piles
             this.zone.board = {};
             this.number_of_splayed_piles = 0;
-                for (var player_id in this.players) {
+            for(var player_id in this.players)
+            {
                 this.zone.board[player_id] = {};
                 var player_board = gamedatas.board[player_id];
                 var player_splay_directions = gamedatas.board_splay_directions[player_id];
@@ -490,7 +494,8 @@ function (dojo, declare) {
             
             // REVEALED ZONES
             this.zone.revealed = {};    
-                for (var player_id in this.players) {
+            for(var player_id in this.players)
+            {    
                 var zone = this.createZone('revealed', player_id, null, grouped_by_age=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
@@ -579,7 +584,8 @@ function (dojo, declare) {
         // onEnteringState: this method is called each time we are entering into a new game state.
         //                  You can use this method to perform some user interface changes at this moment.
         //
-            onEnteringState: function (stateName, args) {
+        onEnteringState: function(stateName, args)
+        {
             console.log('Entering state: '+stateName)
             console.log(args)
             
@@ -597,7 +603,8 @@ function (dojo, declare) {
             }
 
             // Things to do for all players
-                switch (stateName) {
+            switch(stateName)
+            {
             case 'turn0':
                 if (args.args.team_game) {
                     this.addToLog(args.args.messages[this.player_id]);
@@ -659,7 +666,8 @@ function (dojo, declare) {
             if (this.isCurrentPlayerActive()) {
                 // I am supposed to play
                 
-                    switch (stateName) {
+                switch(stateName)
+                {   
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -691,7 +699,6 @@ function (dojo, declare) {
                     // Cards in hand (meld action)
                     var cards_in_hand = this.selectCardsInHand();
                     cards_in_hand.addClass("clickable");
-                    this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clicForMeld');
                     
                     // Cards on board (dogma action)
@@ -750,7 +757,8 @@ function (dojo, declare) {
             }
             else {
                 // I am not supposed to play
-                    switch (stateName) {
+                switch(stateName)
+                {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -788,14 +796,16 @@ function (dojo, declare) {
         // onLeavingState: this method is called each time we are leaving a game state.
         //                 You can use this method to perform some user interface changes at this moment.
         //
-            onLeavingState: function (stateName) {
+        onLeavingState: function(stateName)
+        {
             this.deactivateClickEvents(); // If this was not done after a click event (game replay for instance)
             
             // Was it a state I was supposed to play?
             if (this.isCurrentPlayerActive()) {
                 // I was supposed to play
                 
-                    switch (stateName) {
+                switch(stateName)
+                {   
                 case 'playerTurn':
                     // Reset tooltips for hand or board
                     this.destroyMyHandAndBoardTooltips(true);
@@ -812,7 +822,8 @@ function (dojo, declare) {
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
-            onUpdateActionButtons: function (stateName, args) {
+        onUpdateActionButtons: function(stateName, args)
+        {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
                 case 'playerTurn':
@@ -1003,17 +1014,18 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLId(card.id, card.age, zone.HTML_class);
             var HTML_help = this.createCard(card.id, card.age, "L card", card);
             this.saved_cards[card.id] = card;
-            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
+            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in cas it needs to be rebuilt
             this.addCustomTooltip(HTML_id, HTML_help, "");
         },
         
-        addTooltipForStandardAchievement : function(card) {
+        addTooltipForRecto : function(card, display_condition_for_claiming) {
             var zone = this.getZone(card['location'], card.owner, card.age);
-            var id = this.getCardIdFromPosition(zone, card.position, card.age);
+            var id = this.getCardIdFromPosition(zone, card.position, card.age)
             var HTML_id = this.getCardHTMLId(id, card.age, zone.HTML_class);
+            var HTML_help = this.createCard(id, card.age, "L recto", null);
             
             condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), {'age': this.square('N', 'age', card.age), 'n': 5 * card.age});
-            this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
+            this.addCustomTooltip(HTML_id, HTML_help, display_condition_for_claiming ? "<div class='under L_recto'>" + condition_for_claiming + "</div>" : '');
         },
         
         addTooltipForMemo : function() {
@@ -1167,7 +1179,9 @@ function (dojo, declare) {
         },
         
         createDogmaEffectText : function(text, dogma_symbol, size, shade, other_classes) {
-                return "<div class='effect " + size + " " + shade + " " + other_classes + "'><span class='dogma_symbol " + size + " icon_" + dogma_symbol + "'></span><span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
+            text = this.parseForRichedText(text, size);
+            text = this.getSymbolIconInDogma(dogma_symbol) + " <strong>:</strong> " + text;
+            return "<div class='effect " + size + " " + shade + " " + other_classes + "'>" + this.square(size, 'icon', dogma_symbol, 'in_tooltip') + "<span class='effect_text " + shade + " " + size + "'>" + text + "<span></div>";
         },
         
         parseForRichedText : function(text, size) {
@@ -1181,6 +1195,14 @@ function (dojo, declare) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol, 'in_tooltip'));
             }
             return text;
+        },
+        
+        getAgeIconInDogma : function(age) {
+            return "<span class='icon_in_dogma icon_in_dogma_age_" + age + "' ></span>"
+        },
+        
+        getSymbolIconInDogma : function(symbol) {
+            return "<span class='icon_in_dogma icon_in_dogma_symbol_" + symbol + "' ></span>"
         },
         
         /*
@@ -1754,7 +1776,7 @@ function (dojo, declare) {
         
         getCardHTMLClass : function(id, age, card, zone_HTML_class) {
             if (card === null) {
-            return ["item_" + id, "age_" + age, zone_HTML_class].join(" ");
+                return ["item_" + id, "age_" + age, zone_HTML_class].join(" ");
             }
             return ["item_" + id, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
         },
@@ -1776,7 +1798,7 @@ function (dojo, declare) {
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
-                var HTML_inside = '';
+                var HTML_inside = size == 'L' ? this.writeOverRecto(age) : '';
             }
             else if (card.age === null) {
                 var HTML_inside =  this.writeOverSpecialAchievement(card, size, id == 106);
@@ -1789,12 +1811,12 @@ function (dojo, declare) {
         },
         
         writeOverCard : function(card, size) {
-                var icon1 = this.getIconDiv(card, card.icon_top_left, 'top_left_icon', size);
-                var icon2 = this.getIconDiv(card, card.icon_bottom_left, 'bottom_left_icon', size);
-                var icon3 = this.getIconDiv(card, card.icon_bottom_center, 'bottom_center_icon', size);
-                var icon4 = this.getIconDiv(card, card.icon_bottom_right, 'bottom_right_icon', size);
+            var icon1 = '<div class="card_icon ' + size + ' color_' + card.color + ' top_left_icon icon_' + card.icon_top_left + '"></div>';
+            var icon2 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_left_icon icon_' + card.icon_bottom_left + '"></div>';
+            var icon3 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_center_icon icon_' + card.icon_bottom_center + '"></div>';
+            var icon4 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_right_icon icon_' + card.icon_bottom_right + '"></div>';
 
-                var card_age = this.createAdjustedContent(card.age, 'card_age shape color_' + card.color, size, size == 'M' ? 10 : 30);
+            var card_age = '<div class="card_age ' + size + '">' + card.age + '</div>';
 
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
@@ -1810,12 +1832,9 @@ function (dojo, declare) {
             return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
         
-            getIconDiv: function (card, resource_icon_id, icon_location, size) {
-                if (resource_icon_id !== null) {
-                    return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
-                }
-                return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
-            },
+        writeOverRecto : function(age) {
+            return this.createAdjustedContent(this.normal_achievement_names[age].toUpperCase(), 'normal_achievement_title', '', 25);
+        },
         
         writeOverSpecialAchievement : function(card, size, is_monument) {
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
@@ -1956,7 +1975,8 @@ function (dojo, declare) {
             }
         },
         
-            addToZone: function (zone, id, position, age) {
+        addToZone: function(zone, id, position, age)
+        {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             dojo.style(HTML_id, 'position', 'absolute')
             
@@ -2022,7 +2042,8 @@ function (dojo, declare) {
             }
         },
         
-            removeFromZone: function (zone, id, destroy, age) {
+        removeFromZone: function(zone, id, destroy, age)
+        {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             
             // Update weights before removing
@@ -2370,11 +2391,8 @@ function (dojo, declare) {
             
             var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
             if (i_demand_effect_only) {
-                    // Get dogma icon
-                    var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
-                    var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
-                    var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class');
-                    var dogma_icon = dogma_symbol_classes.substr(-1);
+                // Get dogma icons
+                var dogma_icon = dojo.attr(dojo.query("#" + HTML_id + " .i_demand_effect_1 .icon_in_dogma")[0], 'class').substr(-1);
                 // Compare player counters
                 var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
                 var player_total_is_min_value = true;
@@ -2844,7 +2862,8 @@ function (dojo, declare) {
                   your innovation.game.php file.
         
         */
-            setupNotifications: function () {
+        setupNotifications: function()
+        {
             console.log('notifications subscriptions setup');
             
             // TODO: here, associate your game notifications with local methods
@@ -3000,6 +3019,7 @@ function (dojo, declare) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
+                this.addTooltipForRecto(card, false);
             }
         },
         
