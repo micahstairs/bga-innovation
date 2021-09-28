@@ -788,16 +788,16 @@
 
 .card_title.M {
     left: 53px;
-    top: 12px;
+    top: 7px;
     width: 95px;
     height: 15px;
 }
 
 .card_effects.M {
-    left: 43px;
-    top: 29px;
+    left: 44px;
+    top: 25px;
     width: 133px;
-    height: 52px;
+    height: 56px;
 }
 
 .effect.M:nth-of-type(n+2) {
@@ -1440,7 +1440,7 @@
 .M.card {
     width: 180px;
     height: 124px;
-    background-size: 1645px 141px;
+    background-size: 1465px 135px;
     border-radius: 6px;
     box-shadow: 3px 3px grey;
 }
@@ -1471,23 +1471,23 @@
 }
 
 .M.top_left_icon {
-    top: 10px;
-    left: 10px;
+    top: 7px;
+    left: 7px;
 }
 
 .M.bottom_left_icon.M {
     top: 85px;
-    left: 10px;
+    left: 7px;
 }
 
 .M.bottom_center_icon.M {
     top: 85px;
-    left: 77px;
+    left: 73px;
 }
 
 .M.bottom_right_icon.M {
     top: 85px;
-    left: 140px;
+    left: 138px;
 }
 
 /* TODO(micahstairs): Remove this! */
@@ -1603,27 +1603,27 @@
 
 /* Blue card */
 .color_0.M.card {
-    background-position: -12px -5px;
+    background-position: -2px -2px;
 }
 
 /* Red card */
 .color_1.M.card {
-    background-position: -218px -5px;
+    background-position: -186px -2px;
 }
 
 /* Green card */
 .color_2.M.card {
-    background-position: -424px -5px;
+    background-position: -369px -2px;
 }
 
 /* Yellow card */
 .color_3.M.card {
-    background-position: -630px -5px;
+    background-position: -553px -2px;
 }
 
 /* Purple card */
 .color_4.M.card {
-    background-position: -836px -5px;
+    background-position: -736px -2px;
 }
 
 .item_0.L.card {
