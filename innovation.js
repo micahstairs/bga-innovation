@@ -1179,14 +1179,14 @@ function (dojo, declare) {
             return "<div class='" + HTML_class + " " + size + "'><span class='font_size_" + font_size + "'>" + content + "</span></div>";            
         },
         
-        createDogmaEffectText : function(text, dogma_symbol, size, type_of_effect) {
+        createDogmaEffectText : function(text, dogma_symbol, size, shade, other_classes) {
             text = this.parseForRichedText(text, size);
             text = this.getSymbolIconInDogma(dogma_symbol) + " <strong>:</strong> " + text;
-            return "<div class='effect " + size + " " + type_of_effect + "'>" + this.square(size, 'icon', dogma_symbol, 'in_tooltip') + "<span class='effect_text " + size + "'>" + text + "<span></div>";
+            return "<div class='effect " + size + " " + shade + " " + other_classes + "'>" + this.square(size, 'icon', dogma_symbol, 'in_tooltip') + "<span class='effect_text " + shade + " " + size + "'>" + text + "<span></div>";
         },
         
         parseForRichedText : function(text, size) {
-            text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I demand") + "</strong>");
+            text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons(size, 'in_tooltip'));
             for (var age=1; age <= 10; age++) {
@@ -1775,8 +1775,11 @@ function (dojo, declare) {
             return ["item_" + id, "age_" + age, zone_HTML_class.replace(" ", "__")].join("__");
         },
         
-        getCardHTMLClass : function(id, age, zone_HTML_class) {
+        getCardHTMLClass : function(id, age, card, zone_HTML_class) {
+            if (card === null) {
             return ["item_" + id, "age_" + age, zone_HTML_class].join(" ");
+            }
+            return ["item_" + id, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
         },
         
         getCardIdFromHTMLId : function(HTML_id) {
@@ -1792,7 +1795,7 @@ function (dojo, declare) {
          */
         createCard : function(id, age, zone_HTML_class, card) {
             var HTML_id = this.getCardHTMLId(id, age, zone_HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, zone_HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, age, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
@@ -1809,18 +1812,25 @@ function (dojo, declare) {
         },
         
         writeOverCard : function(card, size) {
-            var title = _(card.name).toUpperCase();
-            var div_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
-            
-            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'i_demand_effect_1')  : "";
+            var icon1 = '<div class="card_icon ' + size + ' color_' + card.color + ' top_left_icon icon_' + card.icon_top_left + '"></div>';
+            var icon2 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_left_icon icon_' + card.icon_bottom_left + '"></div>';
+            var icon3 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_center_icon icon_' + card.icon_bottom_center + '"></div>';
+            var icon4 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_right_icon icon_' + card.icon_bottom_right + '"></div>';
 
-            var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, 'non_demand_effect_1')  : "";
-            var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, 'non_demand_effect_2')  : "";
-            var non_demand_effect_3 = card.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_3) , card.dogma_icon, size, 'non_demand_effect_3')  : "";
+            var card_age = '<div class="card_age ' + size + '">' + card.age + '</div>';
+
+            var title = _(card.name).toUpperCase();
+            var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
             
-            var div_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects color_" + card.color, size, size == 'M' ? 8 : 17);
+            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'dark', 'i_demand_effect_1 color_' + card.color)  : "";
+
+            var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
+            var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
+            var non_demand_effect_3 = card.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_3) , card.dogma_icon, size, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
-            return div_title + div_effects;            
+            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
+            
+            return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
         
         writeOverRecto : function(age) {
@@ -1946,7 +1956,7 @@ function (dojo, declare) {
                 }
             }
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, zone.HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, age, card, zone.HTML_class);
             
             // Create a new card and place it on start position
             var node = this.createCard(id, age, zone.HTML_class, visible_card ? card : null);
