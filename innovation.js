@@ -319,7 +319,9 @@ function (dojo, declare) {
                     continue;
                 }
                 this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, null, dojo.body(), null);
-                this.addTooltipForRecto(achievement, !this.isSpectator);
+                if (!this.isSpectator) {
+                    this.addTooltipForStandardAchievement(achievement);
+                }
             }
             
             // AVAILABLE SPECIAL ACHIEVEMENTS
@@ -419,7 +421,6 @@ function (dojo, declare) {
                     var achievement = achievements[i];
                     if (achievement.age !== null) { // Normal achievement
                         this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, null, dojo.body(), null);
-                        this.addTooltipForRecto(achievement, false);
                     }
                     else {
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.id, dojo.body(), null);
@@ -1015,18 +1016,17 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLId(card.id, card.age, zone.HTML_class);
             var HTML_help = this.createCard(card.id, card.age, "L card", card);
             this.saved_cards[card.id] = card;
-            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in cas it needs to be rebuilt
+            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
             this.addCustomTooltip(HTML_id, HTML_help, "");
         },
         
-        addTooltipForRecto : function(card, display_condition_for_claiming) {
+        addTooltipForStandardAchievement : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.age);
-            var id = this.getCardIdFromPosition(zone, card.position, card.age)
+            var id = this.getCardIdFromPosition(zone, card.position, card.age);
             var HTML_id = this.getCardHTMLId(id, card.age, zone.HTML_class);
-            var HTML_help = this.createCard(id, card.age, "L recto", null);
             
             condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), {'age': this.square('N', 'age', card.age), 'n': 5 * card.age});
-            this.addCustomTooltip(HTML_id, HTML_help, display_condition_for_claiming ? "<div class='under L_recto'>" + condition_for_claiming + "</div>" : '');
+            this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
         },
         
         addTooltipForMemo : function() {
@@ -1799,7 +1799,7 @@ function (dojo, declare) {
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
-                var HTML_inside = size == 'L' ? this.writeOverRecto(age) : '';
+                var HTML_inside = '';
             }
             else if (card.age === null) {
                 var HTML_inside =  this.writeOverSpecialAchievement(card, size, id == 106);
@@ -1831,10 +1831,6 @@ function (dojo, declare) {
             var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
             
             return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
-        },
-        
-        writeOverRecto : function(age) {
-            return this.createAdjustedContent(this.normal_achievement_names[age].toUpperCase(), 'normal_achievement_title', '', 25);
         },
         
         writeOverSpecialAchievement : function(card, size, is_monument) {
@@ -3020,7 +3016,6 @@ function (dojo, declare) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
-                this.addTooltipForRecto(card, false);
             }
         },
         
