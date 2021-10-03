@@ -690,6 +690,9 @@
     text-align: center;
     font-size: 13px;
     color: #eeeeee;
+}
+
+.ressource.with_border {
     text-shadow: 1px 1px #000000;
 }
 
