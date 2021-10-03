@@ -848,6 +848,7 @@
 
 .effect.M {
     padding-left: 8px;
+    padding-bottom: 1px;
     text-indent: -8px;
     line-height : 9px;
     border-width: 1px;
@@ -1533,7 +1534,7 @@
     background-image: url('img/images2.jpg');
     background-size: 180px 30px;
     position: absolute;
-        border-width: 2px;
+    border-width: 1px;
     border-style: solid;
 }
 
@@ -1645,7 +1646,7 @@
 
 /* Blue card */
 .color_0.M.card {
-    background-position: -2px -2px;
+    background-position: -3px -2px;
 }
 
 /* Red card */
