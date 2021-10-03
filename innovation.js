@@ -150,8 +150,7 @@ function (dojo, declare) {
             
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
-        setup: function(gamedatas)
-        {
+            setup: function (gamedatas) {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
@@ -342,8 +341,7 @@ function (dojo, declare) {
             
             // PLAYERS' HANDS
             this.zone.hand = {};
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 // Creation of the zone
                 var zone = this.createZone('hand', player_id, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
@@ -376,8 +374,7 @@ function (dojo, declare) {
             
             // PLAYERS' SCORE
             this.zone.score = {};
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.score[player_id] = this.createZone('score', player_id, null, grouped_by_age=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
@@ -409,8 +406,7 @@ function (dojo, declare) {
             }
             
             // PLAYERS' ACHIEVEMENTS
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.achievements[player_id] = this.createZone('achievements', player_id);
                 this.setPlacementRules(this.zone.achievements[player_id], left_to_right=true);
@@ -451,8 +447,7 @@ function (dojo, declare) {
             // Piles
             this.zone.board = {};
             this.number_of_splayed_piles = 0;
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 this.zone.board[player_id] = {};
                 var player_board = gamedatas.board[player_id];
                 var player_splay_directions = gamedatas.board_splay_directions[player_id];
@@ -495,8 +490,7 @@ function (dojo, declare) {
             
             // REVEALED ZONES
             this.zone.revealed = {};    
-            for(var player_id in this.players)
-            {    
+                for (var player_id in this.players) {
                 var zone = this.createZone('revealed', player_id, null, grouped_by_age=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
@@ -585,8 +579,7 @@ function (dojo, declare) {
         // onEnteringState: this method is called each time we are entering into a new game state.
         //                  You can use this method to perform some user interface changes at this moment.
         //
-        onEnteringState: function(stateName, args)
-        {
+            onEnteringState: function (stateName, args) {
             console.log('Entering state: '+stateName)
             console.log(args)
             
@@ -604,8 +597,7 @@ function (dojo, declare) {
             }
 
             // Things to do for all players
-            switch(stateName)
-            {
+                switch (stateName) {
             case 'turn0':
                 if (args.args.team_game) {
                     this.addToLog(args.args.messages[this.player_id]);
@@ -667,8 +659,7 @@ function (dojo, declare) {
             if (this.isCurrentPlayerActive()) {
                 // I am supposed to play
                 
-                switch(stateName)
-                {   
+                    switch (stateName) {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -759,8 +750,7 @@ function (dojo, declare) {
             }
             else {
                 // I am not supposed to play
-                switch(stateName)
-                {
+                    switch (stateName) {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -798,16 +788,14 @@ function (dojo, declare) {
         // onLeavingState: this method is called each time we are leaving a game state.
         //                 You can use this method to perform some user interface changes at this moment.
         //
-        onLeavingState: function(stateName)
-        {
+            onLeavingState: function (stateName) {
             this.deactivateClickEvents(); // If this was not done after a click event (game replay for instance)
             
             // Was it a state I was supposed to play?
             if (this.isCurrentPlayerActive()) {
                 // I was supposed to play
                 
-                switch(stateName)
-                {   
+                    switch (stateName) {
                 case 'playerTurn':
                     // Reset tooltips for hand or board
                     this.destroyMyHandAndBoardTooltips(true);
@@ -824,8 +812,7 @@ function (dojo, declare) {
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
-        onUpdateActionButtons: function(stateName, args)
-        {
+            onUpdateActionButtons: function (stateName, args) {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
                 case 'playerTurn':
@@ -1812,12 +1799,12 @@ function (dojo, declare) {
         },
         
         writeOverCard : function(card, size) {
-            var icon1 = '<div class="card_icon ' + size + ' color_' + card.color + ' top_left_icon icon_' + card.icon_top_left + '"></div>';
-            var icon2 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_left_icon icon_' + card.icon_bottom_left + '"></div>';
-            var icon3 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_center_icon icon_' + card.icon_bottom_center + '"></div>';
-            var icon4 = '<div class="card_icon ' + size + ' color_' + card.color + ' bottom_right_icon icon_' + card.icon_bottom_right + '"></div>';
+                var icon1 = this.getIconDiv(card, card.icon_top_left, 'top_left_icon', size);
+                var icon2 = this.getIconDiv(card, card.icon_bottom_left, 'bottom_left_icon', size);
+                var icon3 = this.getIconDiv(card, card.icon_bottom_center, 'bottom_center_icon', size);
+                var icon4 = this.getIconDiv(card, card.icon_bottom_right, 'bottom_right_icon', size);
 
-            var card_age = '<div class="card_age ' + size + '">' + card.age + '</div>';
+                var card_age = '<div class="shape color_' + card.color + ' ' + size + '"><div class="card_age ' + size + '">' + card.age + '</div></div>';
 
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
@@ -1832,6 +1819,13 @@ function (dojo, declare) {
             
             return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
+        
+            getIconDiv: function (card, resource_icon_id, icon_location, size) {
+                if (resource_icon_id !== null) {
+                    return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+                }
+                return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
+            },
         
         writeOverSpecialAchievement : function(card, size, is_monument) {
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
@@ -1972,8 +1966,7 @@ function (dojo, declare) {
             }
         },
         
-        addToZone: function(zone, id, position, age)
-        {
+            addToZone: function (zone, id, position, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             dojo.style(HTML_id, 'position', 'absolute')
             
@@ -2039,8 +2032,7 @@ function (dojo, declare) {
             }
         },
         
-        removeFromZone: function(zone, id, destroy, age)
-        {
+            removeFromZone: function (zone, id, destroy, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             
             // Update weights before removing
@@ -2859,8 +2851,7 @@ function (dojo, declare) {
                   your innovation.game.php file.
         
         */
-        setupNotifications: function()
-        {
+            setupNotifications: function () {
             console.log('notifications subscriptions setup');
             
             // TODO: here, associate your game notifications with local methods
