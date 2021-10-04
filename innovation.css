@@ -1284,44 +1284,53 @@
     background-position: -45px -64px;
 }
 
+.age_1.M.square, .age_2.M.square, .age_3.M.square, .age_4.M.square, .age_5.M.square, .age_6.M.square, .age_7.M.square, .age_8.M.square, .age_9.M.square, .age_10.M.square  {
+    width: 8px;
+    background-size: 80px, auto;
+}
+
 .age_1.M.square  {
-    background-position: -0px -73px;
+    background-position: -0px -92px;
 }
 
 .age_2.M.square  {
-    background-position: -9px -73px;
+    background-position: -8px -92px;
 }
 
 .age_3.M.square  {
-    background-position: -18px -73px;
+    background-position: -16px -92px;
+}
+
+.age_3.M.square  {
+    background-position: -18px -92px;
 }
 
 .age_4.M.square  {
-    background-position: -27px -73px;
+    background-position: -24px -92px;
 }
 
 .age_5.M.square  {
-    background-position: -36px -73px;
+    background-position: -32px -92px;
 }
 
 .age_6.M.square  {
-    background-position: -45px -73px;
+    background-position: -40px -92px;
 }
 
 .age_7.M.square  {
-    background-position: -54px -73px;
+    background-position: -48px -92px;
 }
 
 .age_8.M.square  {
-    background-position: -63px -73px;
+    background-position: -56px -92px;
 }
 
 .age_9.M.square  {
-    background-position: -72px -73px;
+    background-position: -64px -92px;
 }
 
 .age_10.M.square  {
-    background-position: -81px -73px;
+    background-position: -72px -92px;
 }
 
 /* L: for squares used with cards of size L */
