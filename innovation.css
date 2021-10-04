@@ -1508,24 +1508,46 @@
 
 /* Locations where the square and hexagon icons go on each card */
 
-.M.top_left_icon {
+.M.top_left_icon.square_card_icon {
+    top: 7px;
+    left: 8px;
+}
+
+.M.top_left_icon.hexagon_card_icon {
     top: 7px;
     left: 7px;
 }
 
-.M.bottom_left_icon {
+.M.bottom_left_icon.square_card_icon {
+    top: 86px;
+    left: 8px;
+}
+
+.M.bottom_left_icon.hexagon_card_icon {
     top: 85px;
     left: 7px;
 }
 
-.M.bottom_center_icon {
+.M.bottom_center_icon.square_card_icon {
+    top: 86px;
+    left: 73px;
+}
+
+.M.bottom_center_icon.hexagon_card_icon {
     top: 85px;
     left: 73px;
 }
 
-.M.bottom_right_icon {
-    top: 85px;
+.M.bottom_right_icon.square_card_icon {
+    top: 86px;
     left: 138px;
+
+}
+
+.M.bottom_right_icon.hexagon_card_icon {
+    top: 85px;
+    left: 137px;
+
 }
 
 /* Square card icons (most cards have 3 large resource icons on them) */
@@ -1646,7 +1668,7 @@
 
 /* Blue card */
 .color_0.M.card {
-    background-position: -3px -2px;
+    background-position: -2px -2px;
 }
 
 /* Red card */
