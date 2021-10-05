@@ -1260,28 +1260,35 @@
     height: 9px;
 }
 
+.icon_1.M.square, .icon_2.M.square, .icon_3.M.square, .icon_4.M.square, .icon_5.M.square, .icon_6.M.square {
+    width: 8px;
+    height: 8px;
+    background-image: url('img/images2.jpg');
+    background-size: 50px auto;
+}
+
 .icon_1.M.square  {
-    background-position: -0px -64px;
+    background-position: -0px -0px;
 }
 
 .icon_2.M.square  {
-    background-position: -9px -64px;
+    background-position: -8px -0px;
 }
 
 .icon_3.M.square  {
-    background-position: -18px -64px;
+    background-position: -17px -0px;
 }
 
 .icon_4.M.square  {
-    background-position: -27px -64px;
+    background-position: -25px -0px;
 }
 
 .icon_5.M.square  {
-    background-position: -36px -64px;
+    background-position: -34px -0px;
 }
 
 .icon_6.M.square  {
-    background-position: -45px -64px;
+    background-position: -42px -0px;
 }
 
 .age_1.M.square, .age_2.M.square, .age_3.M.square, .age_4.M.square, .age_5.M.square, .age_6.M.square, .age_7.M.square, .age_8.M.square, .age_9.M.square, .age_10.M.square  {
