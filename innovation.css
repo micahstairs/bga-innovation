@@ -836,20 +836,20 @@
 }
 
 .card_effects.M {
-    left: 44px;
-    top: 25px;
-    width: 133px;
+    left: 46px;
+    top: 27px;
+    width: 131px;
     height: 56px;
 }
 
 .effect.M:nth-of-type(n+2) {
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .effect.M {
-    padding-left: 8px;
+    position: relative;
+    padding-left: 12px;
     padding-bottom: 1px;
-    text-indent: -8px;
     line-height : 9px;
     border-width: 1px;
     border-style: solid;
@@ -1260,6 +1260,12 @@
     height: 9px;
 }
 
+.M.dogma_symbol {
+    position: absolute;
+    left: -4px;
+    top: -4px;
+}
+
 .icon_1.M.square, .icon_2.M.square, .icon_3.M.square, .icon_4.M.square, .icon_5.M.square, .icon_6.M.square {
     width: 8px;
     height: 8px;
@@ -1289,6 +1295,39 @@
 
 .icon_6.M.square  {
     background-position: -42px -0px;
+}
+
+.icon_1.M.dogma_symbol, .icon_2.M.dogma_symbol, .icon_3.M.dogma_symbol, .icon_4.M.dogma_symbol, .icon_5.M.dogma_symbol, .icon_6.M.dogma_symbol {
+    width: 10px;
+    height: 10px;
+    background-image: url('img/images2.jpg');
+    background-size: 60px auto;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.icon_1.M.dogma_symbol  {
+    background-position: -0px -0px;
+}
+
+.icon_2.M.dogma_symbol  {
+    background-position: -10px -0px;
+}
+
+.icon_3.M.dogma_symbol  {
+    background-position: -20px -0px;
+}
+
+.icon_4.M.dogma_symbol  {
+    background-position: -30px -0px;
+}
+
+.icon_5.M.dogma_symbol  {
+    background-position: -40px -0px;
+}
+
+.icon_6.M.dogma_symbol  {
+    background-position: -50px -0px;
 }
 
 .age_1.M.square, .age_2.M.square, .age_3.M.square, .age_4.M.square, .age_5.M.square, .age_6.M.square, .age_7.M.square, .age_8.M.square, .age_9.M.square, .age_10.M.square  {
