@@ -1167,9 +1167,7 @@ function (dojo, declare) {
         },
         
         createDogmaEffectText : function(text, dogma_symbol, size, shade, other_classes) {
-            text = this.parseForRichedText(text, size);
-            text = this.getSymbolIconInDogma(dogma_symbol) + " <strong>:</strong> " + text;
-            return "<div class='effect " + size + " " + shade + " " + other_classes + "'>" + this.square(size, 'icon', dogma_symbol, 'in_tooltip') + "<span class='effect_text " + shade + " " + size + "'>" + text + "<span></div>";
+                return "<div class='effect " + size + " " + shade + " " + other_classes + "'>" + this.square(size, 'icon', dogma_symbol, 'dogma_symbol') + "<span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
         },
         
         parseForRichedText : function(text, size) {
@@ -1183,14 +1181,6 @@ function (dojo, declare) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol, 'in_tooltip'));
             }
             return text;
-        },
-        
-        getAgeIconInDogma : function(age) {
-            return "<span class='icon_in_dogma icon_in_dogma_age_" + age + "' ></span>"
-        },
-        
-        getSymbolIconInDogma : function(symbol) {
-            return "<span class='icon_in_dogma icon_in_dogma_symbol_" + symbol + "' ></span>"
         },
         
         /*
