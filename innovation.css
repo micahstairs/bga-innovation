@@ -1566,7 +1566,7 @@
 
 .M.top_left_icon.square_card_icon {
     top: 7px;
-    left: 8px;
+    left: 9px;
 }
 
 .M.top_left_icon.hexagon_card_icon {
@@ -1576,7 +1576,7 @@
 
 .M.bottom_left_icon.square_card_icon {
     top: 86px;
-    left: 8px;
+    left: 9px;
 }
 
 .M.bottom_left_icon.hexagon_card_icon {
@@ -1586,7 +1586,7 @@
 
 .M.bottom_center_icon.square_card_icon {
     top: 86px;
-    left: 73px;
+    left: 75px;
 }
 
 .M.bottom_center_icon.hexagon_card_icon {
@@ -1596,7 +1596,7 @@
 
 .M.bottom_right_icon.square_card_icon {
     top: 86px;
-    left: 138px;
+    left: 139px;
 
 }
 
