@@ -1166,7 +1166,7 @@ define([
             },
 
             createDogmaEffectText: function (text, dogma_symbol, size, shade, other_classes) {
-                return "<div class='effect " + size + " " + shade + " " + other_classes + "'>" + this.square(size, 'icon', dogma_symbol, 'dogma_symbol') + "<span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
+                return "<div class='effect " + size + " " + shade + " " + other_classes + "'><span class='dogma_symbol " + size + " icon_" + dogma_symbol + "'></span><span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
             },
 
             parseForRichedText: function (text, size) {
@@ -2370,10 +2370,10 @@ define([
                 var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
                 if (i_demand_effect_only) {
                     // Get dogma icon
-                    var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0]
-                    var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0]
-                    var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class')
-                    var dogma_icon = dogma_symbol_classes.substr(dogma_symbol_classes.indexOf('icon_') + 5, 1)
+                    var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
+                    var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
+                    var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class');
+                    var dogma_icon = dogma_symbol_classes.substr(-1);
                     // Compare player counters
                     var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
                     var player_total_is_min_value = true;
