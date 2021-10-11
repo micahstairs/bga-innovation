@@ -2369,8 +2369,11 @@ define([
 
                 var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
                 if (i_demand_effect_only) {
-                    // Get dogma icons
-                    var dogma_icon = dojo.attr(dojo.query("#" + HTML_id + " .i_demand_effect_1 .icon_in_dogma")[0], 'class').substr(-1);
+                    // Get dogma icon
+                    var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0]
+                    var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0]
+                    var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class')
+                    var dogma_icon = dogma_symbol_classes.substr(dogma_symbol_classes.indexOf('icon_') + 5, 1)
                     // Compare player counters
                     var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
                     var player_total_is_min_value = true;
