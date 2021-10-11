@@ -735,14 +735,6 @@
     font-weight: bold;
 }
 
-/* Within dogma, indicators of the current effect */ 
-
-.current_effect {
-    /*border: solid red 1px;*/
-    background-color: rgba(255,0,0,.8);
-    border-radius: 5px;
-}
-
 /* Number on the card indicating the age */
 
 .card_age {
@@ -849,6 +841,7 @@
 .effect.M {
     position: relative;
     padding-left: 12px;
+    padding-right: 1px;
     padding-bottom: 1px;
     line-height : 9px;
     border-width: 1px;
@@ -937,6 +930,16 @@
     padding-left: 19px;
     text-indent: -19px;
     line-height : 22px;
+}
+
+/* Within dogma, indicators of the current effect */ 
+
+.current_effect.light {
+    background-color: rgb(255 255 255 / 80%) !important;
+}
+
+.current_effect.dark {
+    background-color: rgb(0 0 0 / 80%) !important;
 }
 
 /* Elements inside the special achievement in tooltip */
