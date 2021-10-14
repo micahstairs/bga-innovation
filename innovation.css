@@ -1702,6 +1702,36 @@
 
 /* Special achievements */
 
+.item_105.S.card {
+    background-image: url("img/images5.png");
+    background-position: -0px -0px;
+    background-size: 320px, 31px;
+}
+
+.item_106.S.card {
+    background-image: url("img/images5.png");
+    background-position: -46px -0px;
+    background-size: 320px, 31px;
+}
+
+.item_107.S.card {
+    background-image: url("img/images5.png");
+    background-position: -92px -0px;
+    background-size: 320px, 31px;
+}
+
+.item_108.S.card {
+    background-image: url("img/images5.png");
+    background-position: -138px -0px;
+    background-size: 320px, 31px;
+}
+
+.item_109.S.card {
+    background-image: url("img/images5.png");
+    background-position: -184px -0px;
+    background-size: 320px, 31px;
+}
+
 .item_105.S.recto {
     background-position: -702px -107px;
 }
