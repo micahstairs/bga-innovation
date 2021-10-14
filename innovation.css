@@ -741,15 +741,15 @@
     color: white;
     text-align: center;
     font-family: Tahoma, Arial, sans-serif;
-    font-size: 10px;
     font-weight: bold;
     position: absolute;
     top: 3px;
+    left: 3px;
 }
 
 .card_age.M {
-    width: 15px;
-    height: 15px;
+    width: 14px;
+    height: 14px;
 }
 
 .shape.M {
@@ -760,31 +760,32 @@
     top: 5px;
     width: 20px;
     height: 20px;
+    line-height: 16px;
 }
 
 /* Shape on blue card */
 .M.color_0.shape {
-    background-position: -237px -25px;
+    background-position: -238px -25px;
 }
 
 /* Shape on red card */
 .M.color_1.shape {
-    background-position: -261px -25px;
+    background-position: -260px -25px;
 }
 
 /* Shape on green card */
 .M.color_2.shape {
-    background-position: -284px -25px;
+    background-position: -283px -25px;
 }
 
 /* Shape on yellow card */
 .M.color_3.shape {
-    background-position: -308px -25px;
+    background-position: -306px -25px;
 }
 
 /* Shape on purple card */
 .M.color_4.shape {
-    background-position: -331px -25px;
+    background-position: -328px -25px;
 }
 
 /* Title of the card */
