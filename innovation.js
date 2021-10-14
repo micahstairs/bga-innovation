@@ -1794,7 +1794,7 @@ function (dojo, declare) {
                 var icon3 = this.getIconDiv(card, card.icon_bottom_center, 'bottom_center_icon', size);
                 var icon4 = this.getIconDiv(card, card.icon_bottom_right, 'bottom_right_icon', size);
 
-                var card_age = '<div class="shape color_' + card.color + ' ' + size + '"><div class="card_age ' + size + '">' + card.age + '</div></div>';
+                var card_age = this.createAdjustedContent(card.age, 'card_age shape color_' + card.color, size, size == 'M' ? 10 : 30);
 
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
