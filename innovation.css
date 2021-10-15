@@ -689,11 +689,11 @@
     width: 20px;
     text-align: center;
     font-size: 13px;
-    color: #eeeeee;
+    color: #ffffff;
 }
 
 .ressource.with_border {
-    text-shadow: 1px 1px #000000;
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .ressource_1 { /* crown */
