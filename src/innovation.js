@@ -699,6 +699,7 @@ function (dojo, declare) {
                     // Cards in hand (meld action)
                     var cards_in_hand = this.selectCardsInHand();
                     cards_in_hand.addClass("clickable");
+                    this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clicForMeld');
                     
                     // Cards on board (dogma action)
