@@ -15,7 +15,7 @@
  *
  */
 
- define([
+define([
     "dojo","dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
@@ -207,9 +207,9 @@ function (dojo, declare) {
             
             // Setting the width of the score and achievement zones and the number of cards they can host
             var required_width_achievements_in_line = (this.number_of_achievements_needed_to_win - 1) * this.delta.achievements.x +  this.card_dimensions['S recto'].width;
-            var memo_width = dojo.position('memo_' + any_player_id).w;
+            var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
             var progress_width = dojo.position('progress_' + any_player_id).w;
-            var score_width = progress_width - required_width_achievements_in_line - 10 - memo_width;
+            var score_width = progress_width - required_width_achievements_in_line - 10 - reference_card_width;
             if (score_width >= this.card_dimensions['S card'].width) { // There is enough space to host claimed achievements on a line
                 // Save the required space for achievements and adapt the score container
                 for(var player_id in this.players) {
@@ -221,7 +221,7 @@ function (dojo, declare) {
             }
             else { // There is not enough space
                 // Set the score container to one card in a row and adapt the achievement container
-                var achievements_width = progress_width - 10 - memo_width - this.card_dimensions['S card'].width;
+                var achievements_width = progress_width - 10 - reference_card_width - this.card_dimensions['S card'].width;
                 for(var player_id in this.players) {
                     dojo.style('achievement_container_' + player_id, 'width', achievements_width + "px");
                     dojo.style('score_container_' + player_id, 'width', this.card_dimensions['S card'].width + "px");
@@ -508,8 +508,8 @@ function (dojo, declare) {
                 }
             }
             
-            // MEMO
-            this.addTooltipForMemo();
+            // REFERENCE CARD
+            this.addTooltipForReferenceCard();
             
             // CURRENT DOGMA CARD EFFECT
             if (gamedatas.JSCardEffectQuery !== null) {
@@ -1018,119 +1018,114 @@ function (dojo, declare) {
             this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
         },
         
-        addTooltipForMemo : function() {
-            var bullet = "&bull;"
-            var big_bullet = "&#9679;"
-            
-            // Divs
-            var score_div = this.createAdjustedContent(bullet + _('Score').toUpperCase() + bullet, 'score_txt', '', 18);
-            var achievements_div = this.createAdjustedContent(bullet + _('Achievements').toUpperCase() + bullet, 'achievements_txt', '', 18);
+        addTooltipForReferenceCard : function() {
+            var score_div = this.createAdjustedContent(_('Score').toUpperCase(), 'score_txt', '', 18);
+            var achievements_div = this.createAdjustedContent(('Achievements').toUpperCase(), 'achievements_txt', '', 18);
             
             var actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
             actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions :").toUpperCase() + "</span>"})
-            var actions_div = this.createAdjustedContent(actions_text, 'actions_txt memo_block', '', 12);
+            var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
             
-            var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title memo_block', '', 30);
+            var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);
             var meld_parag_text = _("Play a card from your hand to your board, on stack on matching color. Continue any splay if present.");
-            var meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag memo_block', '', 12);
+            var meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag reference_card_block', '', 12);
             
-            var draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title memo_block', '', 30);
+            var draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title reference_card_block', '', 30);
             var draw_parag_text = _("Take a card of value equal to your highest top card from the supply piles. If empty, draw from the next available higher pile.");
-            var draw_parag = this.createAdjustedContent(draw_parag_text, 'draw_parag memo_block', '', 12);
+            var draw_parag = this.createAdjustedContent(draw_parag_text, 'draw_parag reference_card_block', '', 12);
             
-            var achieve_title = this.createAdjustedContent(_("Achieve").toUpperCase(), 'achieve_title memo_block', '', 30);
+            var achieve_title = this.createAdjustedContent(_("Achieve").toUpperCase(), 'achieve_title reference_card_block', '', 30);
             var achieve_parag_text = _("To claim, must have score of at least 5x the age number in points, and a top card of equal or higher value. Points are kept, not spent.");
-            var achieve_parag = this.createAdjustedContent(achieve_parag_text, 'achieve_parag memo_block', '', 12);
+            var achieve_parag = this.createAdjustedContent(achieve_parag_text, 'achieve_parag reference_card_block', '', 12);
             
-            var dogma_title = this.createAdjustedContent(_("Dogma").toUpperCase(), 'dogma_title memo_block', '', 30);
+            var dogma_title = this.createAdjustedContent(_("Dogma").toUpperCase(), 'dogma_title reference_card_block', '', 30);
+            var big_bullet = "&#9679;"
             var dogma_parag_text = _("Pick a top card on your board. Execute each effect on it, in order.") +
                                     "<ul><li>" + big_bullet + " " + _("I Demand effects are executed by each player with fewer of the featured icon than you, going clockwise. Read effects aloud to them.") + "</li>" +
                                     "<li>" + big_bullet + " " + _("Non-demand effects are executed by opponents before you, if they have at leadt as many or more of the featured icon, going clockwise.") + "</li>" +
                                     "<li>" + big_bullet + " " + _("If any opponent shared a non-demand effect, take a single free Draw action at the conclusion of your Dogma action.") + "</li></ul>";
-            var dogma_parag = this.createAdjustedContent(dogma_parag_text, 'dogma_parag memo_block', '', 12);
+            var dogma_parag = this.createAdjustedContent(dogma_parag_text, 'dogma_parag reference_card_block', '', 12);
             
-            var tuck_title = this.createAdjustedContent(_("Tuck").toUpperCase(), 'tuck_title memo_block', '', 30);
+            var tuck_title = this.createAdjustedContent(_("Tuck").toUpperCase(), 'tuck_title reference_card_block', '', 30);
             var tuck_parag_text = _("A tucked card goes to the bottom of the pile of its color. Tucking a card into an empty pile starts a new one.");
-            var tuck_parag = this.createAdjustedContent(tuck_parag_text, 'tuck_parag memo_block', '', 12);
+            var tuck_parag = this.createAdjustedContent(tuck_parag_text, 'tuck_parag reference_card_block', '', 12);
             
-            var return_title = this.createAdjustedContent(_("Return").toUpperCase(), 'return_title memo_block', '', 30);
+            var return_title = this.createAdjustedContent(_("Return").toUpperCase(), 'return_title reference_card_block', '', 30);
             var return_parag_text = _("To return a card, place it at the bottom of its matching supply pile. If you return many cards, you choose the order.");
-            var return_parag = this.createAdjustedContent(return_parag_text, 'return_parag memo_block', '', 12);
+            var return_parag = this.createAdjustedContent(return_parag_text, 'return_parag reference_card_block', '', 12);
             
-            var draw_and_x_title = this.createAdjustedContent(_("DRAW and X"), 'draw_and_x_title memo_block', '', 30);
+            var draw_and_x_title = this.createAdjustedContent(_("DRAW and X"), 'draw_and_x_title reference_card_block', '', 30);
             var draw_and_x_parag_text = _("If instructed to Draw and Meld, Score, or tuck, you must use the specific card drawn for the indicated action.");
-            var draw_and_x_parag = this.createAdjustedContent(draw_and_x_parag_text, 'draw_and_x_parag memo_block', '', 12);
+            var draw_and_x_parag = this.createAdjustedContent(draw_and_x_parag_text, 'draw_and_x_parag reference_card_block', '', 12);
             
-            var splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title memo_block', '', 30);
+            var splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title reference_card_block', '', 30);
             var splay_parag_text = _("To splay, fan out the color as shown below. A color is only ever splayed in one direction. New cards tucked or melded continue the splay.");
-            var splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag memo_block', '', 12);
+            var splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag reference_card_block', '', 12);
             
-            var erase_block = "<div class='erase_block memo_block'></div>"
+            var erase_block = "<div class='erase_block reference_card_block'></div>"
             
-            var splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example memo_block', '', 12);
-            var splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example memo_block', '', 12);
-            var splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example memo_block', '', 12);
+            var splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example reference_card_block', '', 12);
+            var splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example reference_card_block', '', 12);
+            var splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example reference_card_block', '', 12);
             
-            var empty_piles_title = this.createAdjustedContent(_("Empty piles").toUpperCase(), 'empty_piles_title memo_block', '', 30);
+            var empty_piles_title = this.createAdjustedContent(_("Empty piles").toUpperCase(), 'empty_piles_title reference_card_block', '', 30);
             var empty_piles_parag_text = _("When drawing from an empty pile for <b>any reason</b>, draw from the next higher pile.");
-            var empty_piles_parag = this.createAdjustedContent(empty_piles_parag_text, 'empty_piles_parag memo_block', '', 12);
+            var empty_piles_parag = this.createAdjustedContent(empty_piles_parag_text, 'empty_piles_parag reference_card_block', '', 12);
             
             var age_1_3 = _("Age 1-3");
             var age_4_10 = _("Age 4-10");
             var age_7_10 = _("Age 7-10");
             var age_1_10= _("Age 1-10");
             
-            var icon_4_ages = this.createAdjustedContent(age_1_3, 'icon_4_ages memo_block', '', 12);
-            var icon_5_ages = this.createAdjustedContent(age_4_10, 'icon_5_ages memo_block', '', 12);
-            var icon_6_ages = this.createAdjustedContent(age_7_10, 'icon_6_ages memo_block', '', 12);
+            var icon_4_ages = this.createAdjustedContent(age_1_3, 'icon_4_ages reference_card_block', '', 12);
+            var icon_5_ages = this.createAdjustedContent(age_4_10, 'icon_5_ages reference_card_block', '', 12);
+            var icon_6_ages = this.createAdjustedContent(age_7_10, 'icon_6_ages reference_card_block', '', 12);
             
-            var icon_1_ages = this.createAdjustedContent(age_1_10, 'icon_1_ages memo_block', '', 12);
-            var icon_2_ages = this.createAdjustedContent(age_1_10, 'icon_2_ages memo_block', '', 12);
-            var icon_3_ages = this.createAdjustedContent(age_1_10, 'icon_3_ages memo_block', '', 12);
+            var icon_1_ages = this.createAdjustedContent(age_1_10, 'icon_1_ages reference_card_block', '', 12);
+            var icon_2_ages = this.createAdjustedContent(age_1_10, 'icon_2_ages reference_card_block', '', 12);
+            var icon_3_ages = this.createAdjustedContent(age_1_10, 'icon_3_ages reference_card_block', '', 12);
             
-            var colors_title = this.createAdjustedContent(_("Colors:"), 'colors_title memo_block', '', 12);
-            var blue_icon = this.createAdjustedContent(_("Blue"), 'blue_icon memo_block', '', 12);
-            var yellow_icon = this.createAdjustedContent(_("Yellow"), 'yellow_icon memo_block', '', 12);
-            var red_icon = this.createAdjustedContent(_("Red"), 'red_icon memo_block', '', 12);
-            var green_icon = this.createAdjustedContent(_("Green"), 'green_icon memo_block', '', 12);
-            var purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon memo_block', '', 12);
+            var colors_title = this.createAdjustedContent(_("Colors:"), 'colors_title reference_card_block', '', 12);
+            var blue_icon = this.createAdjustedContent(_("Blue"), 'blue_icon reference_card_block', '', 12);
+            var yellow_icon = this.createAdjustedContent(_("Yellow"), 'yellow_icon reference_card_block', '', 12);
+            var red_icon = this.createAdjustedContent(_("Red"), 'red_icon reference_card_block', '', 12);
+            var green_icon = this.createAdjustedContent(_("Green"), 'green_icon reference_card_block', '', 12);
+            var purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon reference_card_block', '', 12);
             
-            // Recto
-            recto_content = "";
-            recto_content += score_div;
-            recto_content += achievements_div;
-            recto_content += actions_div;
+            side_1_content = "";
+            side_1_content += score_div;
+            side_1_content += achievements_div;
+            side_1_content += actions_div;
             
-            recto_content += meld_title + meld_parag;
-            recto_content += draw_title + draw_parag;
-            recto_content += achieve_title + achieve_parag;
+            side_1_content += meld_title + meld_parag;
+            side_1_content += draw_title + draw_parag;
+            side_1_content += achieve_title + achieve_parag;
             
-            recto_content += dogma_title + dogma_parag;
+            side_1_content += dogma_title + dogma_parag;
             
-            // Verso
-            verso_content = "";
-            verso_content += score_div;
-            verso_content += achievements_div;
+            side_2_content = "";
+            side_2_content += score_div;
+            side_2_content += achievements_div;
             
-            verso_content += tuck_title + tuck_parag;
-            verso_content += return_title + return_parag;
-            verso_content += draw_and_x_title + draw_and_x_parag;
+            side_2_content += tuck_title + tuck_parag;
+            side_2_content += return_title + return_parag;
+            side_2_content += draw_and_x_title + draw_and_x_parag;
             
-            verso_content += splay_title + splay_parag + erase_block;
-            verso_content += splayed_left_example + splayed_right_example + splayed_up_example;
+            side_2_content += splay_title + splay_parag + erase_block;
+            side_2_content += splayed_left_example + splayed_right_example + splayed_up_example;
             
-            verso_content += empty_piles_title + empty_piles_parag;
+            side_2_content += empty_piles_title + empty_piles_parag;
             
-            verso_content += icon_4_ages + icon_5_ages + icon_6_ages;
-            verso_content += icon_1_ages + icon_2_ages + icon_3_ages;
+            side_2_content += icon_4_ages + icon_5_ages + icon_6_ages;
+            side_2_content += icon_1_ages + icon_2_ages + icon_3_ages;
             
-            verso_content += colors_title + blue_icon + yellow_icon;
-            verso_content += red_icon + green_icon + purple_icon;
+            side_2_content += colors_title + blue_icon + yellow_icon;
+            side_2_content += red_icon + green_icon + purple_icon;
             
             // Assembling
-            var div_recto = "<div class='memo_recto M'>" + recto_content + "</div>"
-            var div_verso = "<div class='memo_verso M'>" + verso_content + "</div>"
-            this.addTooltipHtmlToClass('memo_recto', div_recto + div_verso);
+            var div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
+            var div_side_2 = "<div class='reference_card side_2 M'>" + side_2_content + "</div>"
+            this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
         },
         
         createAdjustedContent : function(content, HTML_class, size, font_max, width_margin, height_margin) {

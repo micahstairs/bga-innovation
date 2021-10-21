@@ -181,7 +181,7 @@
     position: relative;
 }
 
-.score, .memo_recto, .memo_verso, .achievements {
+.score, .reference_card, .achievements {
     display: inline-block;
 }
 
@@ -203,39 +203,36 @@
     cursor: pointer;
 }
 
-.memo_recto, .memo_verso {
-    background-image: url('img/Innovation_cards.jpg');    
+.reference_card {
+    background-image: url('img/reference_cards.jpg');
+    position: relative;
 }
 
-.memo_recto.S {
+.reference_card.S {
     width: 96px;
     height: 69px;
-    background-size: 500px 238px;
-    background-position: -333px -141px;
+    background-size: 100px auto;
+    background-position: -2px -145px;
 }
 
-.memo_recto.M {
+.reference_card.M {
     width: 560px;
     height: 408px;
-    background-size: 2940px 1400px;
-    background-position: -1960px -420px;
+    background-size: 570px auto;
 }
 
-.memo_verso.M { 
-    width: 560px;
-    height: 408px;
-    background-size: 2940px 1400px;
-    background-position: -1960px -828px;
+.reference_card.side_1.M {
+    background-position: -2px -2px;
 }
 
-/* Translatable elements in memo tooltip*/
-.memo_recto.M, .memo_verso {
-    position: relative
+.reference_card.side_2.M { 
+    background-position: -2px -408px;
 }
 
+/* Translatable elements in reference card tooltip */
 .score_txt, .achievements_txt {
+    color: #e1d5c3;
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
-    background-image: url('img/memo_background.jpg');
     background-size: 28px 28px;
     position: absolute;
     top: 26px;
@@ -259,10 +256,9 @@
     background-position: 16px 2px;
 }
 
-.memo_block {
+.reference_card_block {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
     position: absolute;
-    background-color: #e4dbcc;
 }
 
 .actions_header {
