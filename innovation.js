@@ -1798,10 +1798,10 @@ function (dojo, declare) {
         },
         
             getIconDiv: function (card, resource_icon_id, icon_location, size) {
-                if (resource_icon_id !== null) {
-                    return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+                if (resource_icon_id == 0) {
+                    return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
                 }
-                return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
+                return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
             },
         
         writeOverSpecialAchievement : function(card, size, is_monument) {
