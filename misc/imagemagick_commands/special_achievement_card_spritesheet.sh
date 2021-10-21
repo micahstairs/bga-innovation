@@ -19,11 +19,16 @@ magick convert "$folder_path/special_achievement_${monument_num}.png" -crop 450x
 magick convert "$folder_path/special_achievement_${wonder_num}.png" -crop 450x330${wonder_offset} +repage  "$folder_path/special_achievement_${wonder_num}_cropped.png"
 magick convert "$folder_path/special_achievement_${world_num}.png" -crop 450x330${world_offset} +repage  "$folder_path/special_achievement_${world_num}_cropped.png"
 magick convert "$folder_path/special_achievement_${universe_num}.png" -crop 450x330${universe_offset} +repage  "$folder_path/special_achievement_${universe_num}_cropped.png"
-magick montage $folder_path/special_achievement_{1..5}_cropped.png  -tile 5x1 -geometry +5+5 -background 'white' $folder_path/special_achievement_card_spritesheet.png
+magick convert "$folder_path/special_achievement_${universe_num}.png" -crop 450x330${universe_offset} +repage  "$folder_path/special_achievement_${universe_num}_cropped.png"
+magick convert "$folder_path/action_1_text_removed.png" -resize 450x330 "$folder_path/action_1_text_removed_resize.png"
+magick montage $folder_path/special_achievement_{1..5}_cropped.png $folder_path/action_1_text_removed_resize.png -tile 6x1 -geometry +5+5 -background 'white' $folder_path/special_achievement_card_spritesheet.png
 
 #rotate, make rotated spritesheet
 for i in {1..5}
 do 
     magick convert "$folder_path/special_achievement_${i}_cropped.png" -rotate 90 "$folder_path/special_achievement_${i}_cropped_rotated.png"
 done
-magick montage $folder_path/special_achievement_{1..5}_cropped_rotated.png  -tile 5x1 -geometry +5+5 -background 'white' $folder_path/special_achievement_card_rotated_spritesheet.png
+magick convert "$folder_path/action_1_text_removed_resize.png" -rotate 90 "$folder_path/action_1_text_removed_resize_rotated.png"
+
+magick montage $folder_path/special_achievement_{1..5}_cropped_rotated.png  $folder_path/action_1_text_removed_resize_rotated.png -tile 6x1 -geometry +5+5 -background 'white' $folder_path/special_achievement_card_rotated_spritesheet.png
+rm $folder_path/action_1_text_removed_resize.png $folder_path/action_1_text_removed_resize_rotated.png
