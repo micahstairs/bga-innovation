@@ -53,7 +53,7 @@
                     <p id="score_text_{PLAYER_ID}"{OPT_CLASS}>{SCORE_PILE}</p>
                     <div id="score_{PLAYER_ID}" class="score"></div>
                 </div>
-                <div id="memo_{PLAYER_ID}" class="memo_recto S"></div>
+                <div id="reference_card_{PLAYER_ID}" class="reference_card S"></div>
                 <div id="achievement_container_{PLAYER_ID}" class="achievement_container">
                     <p>{ACHIEVEMENTS}</p>
                     <div id="achievements_{PLAYER_ID}" class="achievements"></div>
