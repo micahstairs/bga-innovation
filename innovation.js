@@ -1019,9 +1019,6 @@ function (dojo, declare) {
         },
         
         addTooltipForReferenceCard : function() {
-            var score_div = this.createAdjustedContent(_('Score').toUpperCase(), 'score_txt', '', 18);
-            var achievements_div = this.createAdjustedContent(('Achievements').toUpperCase(), 'achievements_txt', '', 18);
-            
             var actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
             actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions :").toUpperCase() + "</span>"})
             var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
@@ -1092,22 +1089,14 @@ function (dojo, declare) {
             var green_icon = this.createAdjustedContent(_("Green"), 'green_icon reference_card_block', '', 12);
             var purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon reference_card_block', '', 12);
             
-            side_1_content = "";
-            side_1_content += score_div;
-            side_1_content += achievements_div;
-            side_1_content += actions_div;
+            side_1_content = actions_div;
             
             side_1_content += meld_title + meld_parag;
             side_1_content += draw_title + draw_parag;
             side_1_content += achieve_title + achieve_parag;
-            
             side_1_content += dogma_title + dogma_parag;
             
-            side_2_content = "";
-            side_2_content += score_div;
-            side_2_content += achievements_div;
-            
-            side_2_content += tuck_title + tuck_parag;
+            side_2_content = tuck_title + tuck_parag;
             side_2_content += return_title + return_parag;
             side_2_content += draw_and_x_title + draw_and_x_parag;
             

@@ -229,33 +229,6 @@
     background-position: -2px -408px;
 }
 
-/* Translatable elements in reference card tooltip */
-.score_txt, .achievements_txt {
-    color: #e1d5c3;
-    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
-    background-size: 28px 28px;
-    position: absolute;
-    top: 26px;
-    writing-mode: vertical-rl;
-    text-orientation: upright;
-    width: 26px;
-    line-height: 26px;
-    height: 354px;
-    font-weight: bold;
-    text-align: center;
-    letter-spacing: 3px;
-}
-
-.score_txt {
-    left: 25px;
-    background-position: 25px 2px;
-}
-
-.achievements_txt {
-    right: 25px;
-    background-position: 16px 2px;
-}
-
 .reference_card_block {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
     position: absolute;
