@@ -334,6 +334,10 @@ class Innovation extends Table
         $result['current_player_id'] = $current_player_id;
         
         // Public information
+
+        // Icon information for each card
+        $result['card_icons'] = self::getCollectionFromDb("SELECT id, spot_1, spot_2, spot_3, spot_4 FROM card");
+
         // Number of achievements needed to win
         $result['number_of_achievements_needed_to_win'] = self::getGameStateValue('number_of_achievements_needed_to_win');
         
