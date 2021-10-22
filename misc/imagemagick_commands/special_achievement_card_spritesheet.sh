@@ -28,7 +28,6 @@ for i in {1..5}
 do 
     magick convert "$folder_path/special_achievement_${i}_cropped.png" -rotate 90 "$folder_path/special_achievement_${i}_cropped_rotated.png"
 done
-magick convert "$folder_path/action_1_text_removed_resize.png" -rotate 90 "$folder_path/action_1_text_removed_resize_rotated.png"
 
-magick montage $folder_path/special_achievement_{1..5}_cropped_rotated.png  $folder_path/action_1_text_removed_resize_rotated.png -tile 6x1 -geometry +5+5 -background 'white' $folder_path/special_achievement_card_rotated_spritesheet.png
-rm $folder_path/action_1_text_removed_resize.png $folder_path/action_1_text_removed_resize_rotated.png
+magick montage $folder_path/special_achievement_{1..5}_cropped_rotated.png  -tile 5x1 -geometry +5+5 -background 'white' $folder_path/special_achievement_card_rotated_spritesheet.png
+rm $folder_path/action_1_text_removed_resize.png
