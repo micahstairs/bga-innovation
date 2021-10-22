@@ -1020,7 +1020,7 @@ function (dojo, declare) {
         
         addTooltipForReferenceCard : function() {
             var actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
-            actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions :").toUpperCase() + "</span>"})
+            actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions:").toUpperCase() + "</span>"})
             var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
             
             var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);

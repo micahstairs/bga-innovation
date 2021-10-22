@@ -287,7 +287,7 @@
     font-weight: bold;
 }
 
-.achieve_parag{
+.achieve_parag {
     width: 148px;
     height: 94px;
     left: 357px;
@@ -303,7 +303,7 @@
     font-weight: bold;
 }
 
-.dogma_parag{
+.dogma_parag {
     width: 450px;
     height: 121px;
     left: 55px;
@@ -314,7 +314,7 @@
     width: 145px;
     height: 23px;
     left: 55px;
-    top: 52px;
+    top: 40px;
     text-align: center;
     font-weight: bold;
 }
@@ -323,14 +323,14 @@
     width: 145px;
     height: 74px;
     left: 55px;
-    top: 75px;
+    top: 63px;
 }
 
 .return_title {
     width: 145px;
     height: 23px;
     left: 206px;
-    top: 52px;
+    top: 40px;
     text-align: center;
     font-weight: bold;
 }
@@ -339,14 +339,14 @@
     width: 145px;
     height: 74px;
     left: 206px;
-    top: 75px;
+    top: 63px;
 }
 
 .draw_and_x_title {
     width: 148px;
     height: 23px;
     left: 357px;
-    top: 52px;
+    top: 40px;
     text-align: center;
     font-weight: bold;
 }
@@ -355,23 +355,23 @@
     width: 148px;
     height: 74px;
     left: 357px;
-    top: 75px;
+    top: 63px;
 }
 
 .splay_title {
     width: 450px;
     height: 23px;
     left: 55px;
-    top: 150px;
+    top: 145px;
     text-align: center;
     font-weight: bold;
 }
 
-.splay_parag{
+.splay_parag {
     width: 341px;
     height: 32px;
     left: 55px;
-    top: 173px;
+    top: 168px;
 }
 
 .erase_block {
@@ -385,7 +385,7 @@
     width: 128px;
     height: 14px;
     left: 55px;
-    top: 261px;
+    top: 256px;
     text-align: center;
 }
 
@@ -393,7 +393,7 @@
     width: 140px;
     height: 14px;
     left: 210px;
-    top: 261px;
+    top: 256px;
     text-align: center;
 }
 
@@ -401,7 +401,7 @@
     width: 140px;
     height: 14px;
     left: 365px;
-    top: 261px;
+    top: 256px;
     text-align: center;
 }
 
@@ -409,7 +409,7 @@
     width: 145px;
     height: 23px;
     left: 55px;
-    top: 276px;
+    top: 286px;
     text-align: center;
     font-weight: bold;
 }
@@ -418,49 +418,49 @@
     width: 145px;
     height: 57px;
     left: 55px;
-    top: 299px;
+    top: 309px;
 }
 
 .icon_1_ages {
     width: 55px;
     height: 18px;
-    left: 290px;
-    top: 284px;
+    left: 320px;
+    top: 306px;
 }
 
 .icon_2_ages {
     width: 55px;
     height: 18px;
-    left: 290px;
-    top: 306px;
+    left: 320px;
+    top: 329px;
 }
 
 .icon_3_ages {
     width: 55px;
     height: 18px;
-    left: 290px;
-    top: 328px;
+    left: 320px;
+    top: 352px;
 }
 
 .icon_4_ages {
     width: 55px;
     height: 18px;
-    left: 218px;
-    top: 284px;
+    left: 245px;
+    top: 306px;
 }
 
 .icon_5_ages {
     width: 55px;
     height: 18px;
-    left: 218px;
-    top: 306px;
+    left: 245px;
+    top: 329px;
 }
 
 .icon_6_ages {
     width: 55px;
     height: 18px;
-    left: 218px;
-    top: 328px;
+    left: 245px;
+    top: 352px;
 }
 
 .colors_title {
