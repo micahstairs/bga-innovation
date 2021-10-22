@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Innovation implementation : © Jean Portemer <jportemer@gmail.com>
+ * Innovationnewgraphics implementation : © Jean Portemer <jportemer@gmail.com>
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -20,7 +20,9 @@
  */
 
 $this->textual_card_infos = array(
+
 /* Age 1 */
+
 0 => array('name' => clienttranslate('Pottery'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('You may return up to three cards from your hand. If you returned any cards, draw and score a card of value equal to the number of cards you returned.'),
@@ -157,8 +159,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 2 */
+
 15 => array('name' => clienttranslate('Calendar'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('If you have more cards in your score pile than in your hand, draw two ${age_3}.'),
@@ -250,8 +252,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 3 */
+
 25 => array('name' => clienttranslate('Alchemy'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_4} for every three ${icon_4} on your board. If any of the drawn cards are red, return the cards drawn and all cards in your hand. Otherwise, keep them.'),
@@ -343,8 +345,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 4 */
+
 35 => array('name' => clienttranslate('Experimentation'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_5}.'),
@@ -435,8 +437,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 5 */
+
 45 => array('name' => clienttranslate('Chemistry'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('You may splay your blue cards right.'),
@@ -530,8 +532,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 6 */
+
 55 => array('name' => clienttranslate('Atomic theory'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('You may splay your blue cards right.'),
@@ -623,8 +625,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 7 */
+
 65 => array('name' => clienttranslate('Evolution'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('You may choose to either draw and score a ${age_8} and then return a card from your score pile, or draw a card of value one higher than the highest card in your score pile.'),
@@ -717,8 +719,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 8 */
+
 75 => array('name' => clienttranslate('Quantum theory'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('You may return up to two cards from your hand. If you return two, draw a ${age_10} and then draw and score a ${age_10}.'),
@@ -809,8 +811,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 9 */
+
 85 => array('name' => clienttranslate('Computers'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('You may splay your red cards or your green cards up.'),
@@ -902,8 +904,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Age 10 */
+
 95 => array('name' => clienttranslate('Bioengineering'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('Transfer a top card with a ${icon_2} from any other player\'s board to your score pile.'),
@@ -994,8 +996,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-
 /* Special achievements */
+
 105 => array('name' => clienttranslate('Empire'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => null,

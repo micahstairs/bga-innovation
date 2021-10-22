@@ -169,27 +169,6 @@
     min-height: 126px;
 }
 
-/*colors*/
-.color_0 {
-    background-color: #89aad7;
-}
-
-.color_1 {
-    background-color: #da7887;
-}
-
-.color_2 {
-    background-color: #72b964;
-}
-
-.color_3 {
-    background-color: #e2e57a;
-}
-
-.color_4 {
-    background-color: #9b58ba;
-}
-
 /*progress*/
 .progress {
     /*text-align: center;*/
@@ -202,7 +181,7 @@
     position: relative;
 }
 
-.score, .memo_recto, .memo_verso, .achievements {
+.score, .reference_card, .achievements {
     display: inline-block;
 }
 
@@ -224,66 +203,35 @@
     cursor: pointer;
 }
 
-.memo_recto, .memo_verso {
-    background-image: url('img/Innovation_cards.jpg');    
+.reference_card {
+    background-image: url('img/reference_cards.jpg');
+    position: relative;
 }
 
-.memo_recto.S {
+.reference_card.S {
     width: 96px;
     height: 69px;
-    background-size: 500px 238px;
-    background-position: -333px -141px;
+    background-size: 100px auto;
+    background-position: -2px -145px;
 }
 
-.memo_recto.M {
+.reference_card.M {
     width: 560px;
     height: 408px;
-    background-size: 2940px 1400px;
-    background-position: -1960px -420px;
+    background-size: 570px auto;
 }
 
-.memo_verso.M { 
-    width: 560px;
-    height: 408px;
-    background-size: 2940px 1400px;
-    background-position: -1960px -828px;
+.reference_card.side_1.M {
+    background-position: -2px -2px;
 }
 
-/* Translatable elements in memo tooltip*/
-.memo_recto.M, .memo_verso {
-    position: relative
+.reference_card.side_2.M { 
+    background-position: -2px -408px;
 }
 
-.score_txt, .achievements_txt {
-    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
-    background-image: url('img/memo_background.jpg');
-    background-size: 28px 28px;
-    position: absolute;
-    top: 26px;
-    writing-mode: vertical-rl;
-    text-orientation: upright;
-    width: 26px;
-    line-height: 26px;
-    height: 354px;
-    font-weight: bold;
-    text-align: center;
-    letter-spacing: 3px;
-}
-
-.score_txt {
-    left: 25px;
-    background-position: 25px 2px;
-}
-
-.achievements_txt {
-    right: 25px;
-    background-position: 16px 2px;
-}
-
-.memo_block {
+.reference_card_block {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
     position: absolute;
-    background-color: #e4dbcc;
 }
 
 .actions_header {
@@ -473,27 +421,6 @@
     top: 299px;
 }
 
-.icon_4_ages {
-    width: 55px;
-    height: 18px;
-    left: 218px;
-    top: 284px;
-}
-
-.icon_5_ages {
-    width:55px;
-    height: 18px;
-    left: 218px;
-    top: 306px;
-}
-
-.icon_6_ages {
-    width: 55px;
-    height: 18px;
-    left: 218px;
-    top: 328px;
-}
-
 .icon_1_ages {
     width: 55px;
     height: 18px;
@@ -512,6 +439,27 @@
     width: 55px;
     height: 18px;
     left: 290px;
+    top: 328px;
+}
+
+.icon_4_ages {
+    width: 55px;
+    height: 18px;
+    left: 218px;
+    top: 284px;
+}
+
+.icon_5_ages {
+    width: 55px;
+    height: 18px;
+    left: 218px;
+    top: 306px;
+}
+
+.icon_6_ages {
+    width: 55px;
+    height: 18px;
+    left: 218px;
     top: 328px;
 }
 
@@ -706,35 +654,39 @@
 }
 
 .ressource {
-    border-radius: 6px;
+    border-radius: 4px;
     width: 20px;
     text-align: center;
     font-size: 13px;
-    color: #cccccc;
+    color: #ffffff;
+}
+
+.ressource.with_border {
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
 }
 
 .ressource_1 { /* crown */
-    background-color:#9c7729;
+    background-color:#e7ab22;
 }
 
 .ressource_2 { /* leaf */
-    background-color:#29573d;
+    background-color:#153a1c;
 }
 
 .ressource_3 { /* bulb */
-    background-color:#67204a;
+    background-color:#913c97;
 }
 
 .ressource_4 { /* tower */
-    background-color:#393d40;
+    background-color:#404446;
 }
 
 .ressource_5 { /* factory */
-    background-color:#6d1d1c;
+    background-color:#850e04;
 }
 
 .ressource_6 { /* clock */
-    background-color:#214f8a;
+    background-color:#14247f;
 }
 
 .equal {
@@ -752,26 +704,70 @@
     font-weight: bold;
 }
 
-/* Whithin dogma, indicators of the current effect */ 
-.current_effect {
-    /*border: solid red 1px;*/
-    background-color: rgba(255,0,0,.8);
-    border-radius: 5px;
-}
+/* Number on the card indicating the age */
 
-
-/* Title of the card (tooltip or not) */
-.card_title {
-    border-style: solid;
-    border-color: white;
-    background-color: black;
+.card_age {
     color: white;
     text-align: center;
-    font-family: Times New Roman;
+    font-family: Tahoma, Arial, sans-serif;
+    font-weight: bold;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+}
+
+.card_age.M {
+    width: 14px;
+    height: 14px;
+}
+
+.shape.M {
+    background-image: url("img/transparent.png");
+    background-size: 350px auto;
+    position: absolute;
+    left: 155px;
+    top: 5px;
+    width: 20px;
+    height: 20px;
+    line-height: 16px;
+}
+
+/* Shape on blue card */
+.M.color_0.shape {
+    background-position: -238px -25px;
+}
+
+/* Shape on red card */
+.M.color_1.shape {
+    background-position: -260px -25px;
+}
+
+/* Shape on green card */
+.M.color_2.shape {
+    background-position: -283px -25px;
+}
+
+/* Shape on yellow card */
+.M.color_3.shape {
+    background-position: -306px -25px;
+}
+
+/* Shape on purple card */
+.M.color_4.shape {
+    background-position: -328px -25px;
+}
+
+/* Title of the card */
+
+.card_title {
+    color: white;
+    text-align: center;
+    font-family: Tahoma, Arial, sans-serif;
     position: absolute;
 }
     
 /* Elements for rewriting card texts */
+
 .i_demand, .immediately {
     font-weight: bold;
 }
@@ -781,37 +777,104 @@
 }
 
 .effect_text {
-    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
+    font-family: Tahoma, Arial, sans-serif;
+}
+
+.effect_text.light {
+    color: black;
+}
+
+.effect_text.dark {
+    color: white;
 }
 
 /* Elements inside the card in play */
+
 .card_title.M {
-    left: 50px;
-    top: 2px;
-    width: 88px;
-    height: 12px;
-    line-height: 12px; /* Ensure that the text is centered horizontally */
-    border-width: 1px;
+    left: 53px;
+    top: 7px;
+    width: 95px;
+    height: 15px;
 }
 
 .card_effects.M {
-    left: 50px;
-    top: 17px;
-    width: 128px;
+    left: 46px;
+    top: 27px;
+    width: 131px;
     height: 56px;
 }
 
 .effect.M:nth-of-type(n+2) {
-    margin-top: 2px;
+    margin-top: 4px;
 }
 
 .effect.M {
-    padding-left: 8px;
-    text-indent: -8px;
+    position: relative;
+    padding-left: 12px;
+    padding-right: 1px;
+    padding-bottom: 1px;
     line-height : 9px;
+    border-width: 1px;
+    border-style: solid;
 }
 
-/* Elements inside the card in tooltip */
+/* Blue */
+.effect.color_0, .square_card_icon.color_0 {
+    border-color: #0e2a50;
+}
+.effect.color_0.light {
+    background-color: #8bd2f1;
+}
+.effect.color_0.dark {
+    background-color: #0e2a50;
+}
+
+/* Red */
+.effect.color_1, .square_card_icon.color_1 {
+    border-color: #5a090c;
+}
+.effect.color_1.light {
+    background-color: #f7c3d2;
+}
+.effect.color_1.dark {
+    background-color: #5a090c;
+}
+
+/* Green */
+.effect.color_2, .square_card_icon.color_2 {
+    border-color: #122c18;
+}
+.effect.color_2.light {
+    background-color: #9dd19b;
+}
+.effect.color_2.dark {
+    background-color: #122c18;
+}
+
+/* Yellow */
+.effect.color_3, .square_card_icon.color_3 {
+    border-color: #8b6a28;
+}
+.effect.color_3.light {
+    background-color: #f4f4be;
+}
+.effect.color_3.dark {
+    background-color: #8b6a28;
+}
+
+/* Purple */
+.effect.color_4, .square_card_icon.color_4 {
+    border-color: #220e40;
+}
+.effect.color_4.light {
+    background-color: #b4bcd8;
+}
+.effect.color_4.dark {
+    background-color: #220e40;
+}
+
+/* Elements inside the card in the tooltip */
+
 .card_title.L {
     left: 128px;
     top: 7px;
@@ -839,21 +902,19 @@
     line-height : 22px;
 }
 
-/* Elements inside the special achievement in tooltip */
+/* Within dogma, indicators of the current effect */ 
 
-.normal_achievement_title {
-    position: absolute;
-    left: 265px;
-    top: 130px;
-    writing-mode: vertical-rl;
-    text-orientation: sideways;
-    width: 36px;
-    height: 310px;
-    letter-spacing: 5px;
-    background-position: -40px 2px;
+.current_effect.light {
+    background-color: rgb(255 255 255 / 80%) !important;
 }
 
-.normal_achievement_title , .achievement_title, .condition_for_claiming, .alternative_condition_for_claiming {
+.current_effect.dark {
+    background-color: rgb(0 0 0 / 80%) !important;
+}
+
+/* Elements inside the special achievement in tooltip */
+
+.achievement_title, .condition_for_claiming, .alternative_condition_for_claiming {
     background-image: url('img/card_background.jpg');
     background-repeat: repeat;
 }
@@ -990,10 +1051,6 @@
 
 .recap_dogma li {
     list-style-type: disc;
-}
-
-.under.L_recto {
-    width: 316px;
 }
 
 #logs .square {
@@ -1142,30 +1199,32 @@
 .P.square {
     width: 20px;
     height: 20px;
+    background-image: url('img/images2.jpg');
+    background-size: 133px 22px;
 }
 
 .icon_1.P.square  {
-    background-position: -0px -44px;
+    background-position: -1px -1px;
 }
 
 .icon_2.P.square  {
-    background-position: -20px -44px;
+    background-position: -23px -1px;
 }
 
 .icon_3.P.square  {
-    background-position: -40px -44px;
+    background-position: -45px -1px;
 }
 
 .icon_4.P.square  {
-    background-position: -60px -44px;
+    background-position: -68px -1px;
 }
 
 .icon_5.P.square  {
-    background-position: -80px -44px;
+    background-position: -90px -1px;
 }
 
 .icon_6.P.square  {
-    background-position: -100px -44px;
+    background-position: -112px -1px;
 }
 
 /* M: for squares used with cards of size M */
@@ -1174,68 +1233,120 @@
     height: 9px;
 }
 
+.M.dogma_symbol {
+    position: absolute;
+    left: -4px;
+    top: -4px;
+}
+
+.icon_1.M.square, .icon_2.M.square, .icon_3.M.square, .icon_4.M.square, .icon_5.M.square, .icon_6.M.square {
+    width: 8px;
+    height: 8px;
+    background-image: url('img/images2.jpg');
+    background-size: 50px auto;
+}
+
 .icon_1.M.square  {
-    background-position: -0px -64px;
+    background-position: -0px -0px;
 }
 
 .icon_2.M.square  {
-    background-position: -9px -64px;
+    background-position: -8px -0px;
 }
 
 .icon_3.M.square  {
-    background-position: -18px -64px;
+    background-position: -17px -0px;
 }
 
 .icon_4.M.square  {
-    background-position: -27px -64px;
+    background-position: -25px -0px;
 }
 
 .icon_5.M.square  {
-    background-position: -36px -64px;
+    background-position: -34px -0px;
 }
 
 .icon_6.M.square  {
-    background-position: -45px -64px;
+    background-position: -42px -0px;
+}
+
+.icon_1.M.dogma_symbol, .icon_2.M.dogma_symbol, .icon_3.M.dogma_symbol, .icon_4.M.dogma_symbol, .icon_5.M.dogma_symbol, .icon_6.M.dogma_symbol {
+    width: 10px;
+    height: 10px;
+    background-image: url('img/images2.jpg');
+    background-size: 60px auto;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.icon_1.M.dogma_symbol  {
+    background-position: -0px -0px;
+}
+
+.icon_2.M.dogma_symbol  {
+    background-position: -10px -0px;
+}
+
+.icon_3.M.dogma_symbol  {
+    background-position: -20px -0px;
+}
+
+.icon_4.M.dogma_symbol  {
+    background-position: -30px -0px;
+}
+
+.icon_5.M.dogma_symbol  {
+    background-position: -40px -0px;
+}
+
+.icon_6.M.dogma_symbol  {
+    background-position: -50px -0px;
+}
+
+.age_1.M.square, .age_2.M.square, .age_3.M.square, .age_4.M.square, .age_5.M.square, .age_6.M.square, .age_7.M.square, .age_8.M.square, .age_9.M.square, .age_10.M.square  {
+    width: 8px;
+    height: 8px;
+    background-size: 80px, auto;
 }
 
 .age_1.M.square  {
-    background-position: -0px -73px;
+    background-position: -0px -93px;
 }
 
 .age_2.M.square  {
-    background-position: -9px -73px;
+    background-position: -8px -93px;
 }
 
 .age_3.M.square  {
-    background-position: -18px -73px;
+    background-position: -16px -93px;
 }
 
 .age_4.M.square  {
-    background-position: -27px -73px;
+    background-position: -24px -93px;
 }
 
 .age_5.M.square  {
-    background-position: -36px -73px;
+    background-position: -32px -93px;
 }
 
 .age_6.M.square  {
-    background-position: -45px -73px;
+    background-position: -40px -93px;
 }
 
 .age_7.M.square  {
-    background-position: -54px -73px;
+    background-position: -48px -93px;
 }
 
 .age_8.M.square  {
-    background-position: -63px -73px;
+    background-position: -56px -93px;
 }
 
 .age_9.M.square  {
-    background-position: -72px -73px;
+    background-position: -64px -93px;
 }
 
 .age_10.M.square  {
-    background-position: -81px -73px;
+    background-position: -72px -93px;
 }
 
 /* L: for squares used with cards of size L */
@@ -1338,15 +1449,64 @@
     margin-right: 10px;
 }
 
-/* Card, rectos */
-.card, .recto {
+/* Back of cards */
+
+.recto {
     display: inline-block;
-    background-image: url('img/Innovation_cards.jpg');
+    background-image: url('img/images4.jpg');
     position: relative;
     border: solid 1px #ffffff;
 }
 
-/* Cards of size S, flipped*/
+.S.recto {
+    width: 31px;
+    height: 45px;
+    background-size: 360px 49px;
+    border-radius: 3px;
+    box-shadow: -1px 1px grey;
+}
+
+.L.recto {
+    width: 316px;
+    height: 456px;
+    border-radius: 16px;
+    box-shadow: 5px 5px grey;
+}
+
+/* Front of cards */
+
+.card {
+    display: inline-block;
+    background-image: url('img/images.jpg');
+    position: relative;
+    border: solid 1px #ffffff;
+}
+
+/* Cards of size S, flipped */
+.S.card {
+    width: 45px;
+    height: 31px;
+    background-size: 430px 35px;
+    box-shadow: 1px 1px grey;
+}
+
+.L.recto {
+    width: 316px;
+    height: 456px;
+    border-radius: 16px;
+    box-shadow: 5px 5px grey;
+}
+
+/* Front of cards */
+
+.card {
+    display: inline-block;
+    background-image: url('img/images.jpg');
+    position: relative;
+    border: solid 1px #ffffff;
+}
+
+/* Cards of size S, flipped */
 .S.card {
     width: 45px;
     height: 31px;
@@ -1354,20 +1514,11 @@
     box-shadow: 1px 1px grey;
 }
 
-/* Rectos of size S */
-.S.recto {
-    width: 31px;
-    height: 45px;
-    background-size: 735px 350px;
-    border-radius: 3px;
-    box-shadow: 1px 1px grey;
-}
-
 /* Cards of size M */
 .M.card {
     width: 180px;
     height: 124px;
-    background-size: 2940px 1400px;
+    background-size: 1465px 135px;
     border-radius: 6px;
     box-shadow: 3px 3px grey;
 }
@@ -1380,1132 +1531,761 @@
     box-shadow: 5px 5px grey;
 }
 
-/* Rectos of size L */
-.L.recto {
-    width: 316px;
-    height: 456px;
-    border-radius: 16px;
-    box-shadow: 5px 5px grey;
+/* Locations where the square and hexagon icons go on each card */
+
+.M.top_left_icon.square_card_icon {
+    top: 7px;
+    left: 9px;
+}
+
+.M.top_left_icon.hexagon_card_icon {
+    top: 7px;
+    left: 7px;
+}
+
+.M.bottom_left_icon.square_card_icon {
+    top: 86px;
+    left: 9px;
+}
+
+.M.bottom_left_icon.hexagon_card_icon {
+    top: 85px;
+    left: 7px;
+}
+
+.M.bottom_center_icon.square_card_icon {
+    top: 86px;
+    left: 75px;
+}
+
+.M.bottom_center_icon.hexagon_card_icon {
+    top: 85px;
+    left: 73px;
+}
+
+.M.bottom_right_icon.square_card_icon {
+    top: 86px;
+    left: 139px;
+
+}
+
+.M.bottom_right_icon.hexagon_card_icon {
+    top: 85px;
+    left: 137px;
+
+}
+
+/* Square card icons (most cards have 3 large resource icons on them) */
+
+.square_card_icon {
+    background-image: url('img/images2.jpg');
+    background-size: 180px 30px;
+    position: absolute;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.M.square_card_icon {
+    width: 30px;
+    height: 30px;
+}
+
+.M.icon_1.square_card_icon  {
+    background-position: -0px -0px;
+}
+
+.M.icon_2.square_card_icon  {
+    background-position: -30px -0px;
+}
+
+.M.icon_3.square_card_icon  {
+    background-position: -60px -0px;
+}
+
+.M.icon_4.square_card_icon  {
+    background-position: -90px -0px;
+}
+
+.M.icon_5.square_card_icon  {
+    background-position: -120px -0px;
+}
+
+.M.icon_6.square_card_icon  {
+    background-position: -150px -0px;
+}
+
+.hexagon_card_icon {
+    background-image: url("img/transparent.png");
+    background-size: 600px, auto;
+    position: absolute;
+}
+
+.M.hexagon_card_icon {
+    width: 35px;
+    height: 35px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_0  {
+    background-position: 3px -3px;
+}
+
+.age_1.S.recto {
+    background-position: -1px -2px;
+}
+
+.age_2.S.recto {
+    background-position: -34px -2px;
+}
+
+.age_3.S.recto {
+    background-position: -67px -2px;
+}
+
+.age_4.S.recto {
+    background-position: -99px -2px;
+}
+
+.age_5.S.recto {
+    background-position: -132px -2px;
+}
+
+.age_6.S.recto {
+    background-position: -165px -2px;
+}
+
+.age_7.S.recto {
+    background-position: -197px -2px;
+}
+
+.age_8.S.recto {
+    background-position: -230px -2px;
+}
+
+.age_9.S.recto {
+    background-position: -263px -2px;
+}
+
+.age_10.S.recto {
+    background-position: -295px -2px;
+}
+
+/* Special achievements */
+
+.item_105.S.card {
+    background-image: url("img/images5.png");
+    background-position: -10px -15px;
+    background-size: 460px, auto;
+}
+
+.item_106.S.card {
+    background-image: url("img/images5.png");
+    background-position: -75px -15px;
+    background-size: 460px, auto;
+}
+
+.item_107.S.card {
+    background-image: url("img/images5.png");
+    background-position: -141px -12px;
+    background-size: 460px, auto;
+}
+
+.item_108.S.card {
+    background-image: url("img/images5.png");
+    background-position: -207px -12px;
+    background-size: 460px, auto;
+}
+
+.item_109.S.card {
+    background-image: url("img/images5.png");
+    background-position: -273px -14px;
+    background-size: 460px, auto;
+}
+
+.item_105.S.recto {
+    background-position: -702px -107px;
+}
+
+.item_106.S.recto {
+    background-position: -702px -156px;
+}
+
+.item_107.S.recto {
+    background-position: -702px -205px;
+}
+
+.item_108.S.recto {
+    background-position: -702px -254px;
+}
+
+.item_109.S.recto {
+    background-position: -702px -303px;
+}
+
+/* Blue card */
+.color_0.M.card {
+    background-position: -2px -2px;
+}
+
+/* Red card */
+.color_1.M.card {
+    background-position: -186px -2px;
+}
+
+/* Green card */
+.color_2.M.card {
+    background-position: -369px -2px;
+}
+
+/* Yellow card */
+.color_3.M.card {
+    background-position: -553px -2px;
+}
+
+/* Purple card */
+.color_4.M.card {
+    background-position: -736px -2px;
 }
 
 /* Auto-generated by css_generator_for_sprites.py (Python script) */
 
-.item_105.S.card {
-        background-position: -492px -37px;
-    }
-
-.item_106.S.card {
-        background-position: -541px -37px;
-    }
-
-.item_107.S.card {
-        background-position: -590px -37px;
-    }
-
-.item_108.S.card {
-        background-position: -639px -37px;
-    }
-
-.item_109.S.card {
-        background-position: -688px -37px;
-    }
-
-.age_1.S.recto {
-        background-position: -632px -107px;
-    }
-
-.age_2.S.recto {
-        background-position: -632px -156px;
-    }
-
-.age_3.S.recto {
-        background-position: -632px -205px;
-    }
-
-.age_4.S.recto {
-        background-position: -632px -254px;
-    }
-
-.age_5.S.recto {
-        background-position: -632px -303px;
-    }
-
-.age_6.S.recto {
-        background-position: -667px -107px;
-    }
-
-.age_7.S.recto {
-        background-position: -667px -156px;
-    }
-
-.age_8.S.recto {
-        background-position: -667px -205px;
-    }
-
-.age_9.S.recto {
-        background-position: -667px -254px;
-    }
-
-.age_10.S.recto {
-        background-position: -667px -303px;
-    }
-
-.item_105.S.recto {
-        background-position: -702px -107px;
-    }
-
-.item_106.S.recto {
-        background-position: -702px -156px;
-    }
-
-.item_107.S.recto {
-        background-position: -702px -205px;
-    }
-
-.item_108.S.recto {
-        background-position: -702px -254px;
-    }
-
-.item_109.S.recto {
-        background-position: -702px -303px;
-    }
-
-.item_0.M.card {
-    background-position: -8px -8px;
-}
-
-.item_1.M.card {
-    background-position: -204px -8px;
-}
-
-.item_2.M.card {
-    background-position: -400px -8px;
-}
-
-.item_3.M.card {
-    background-position: -596px -8px;
-}
-
-.item_4.M.card {
-    background-position: -792px -8px;
-}
-
-.item_5.M.card {
-    background-position: -988px -8px;
-}
-
-.item_6.M.card {
-    background-position: -1184px -8px;
-}
-
-.item_7.M.card {
-    background-position: -1380px -8px;
-}
-
-.item_8.M.card {
-    background-position: -1576px -8px;
-}
-
-.item_9.M.card {
-    background-position: -1772px -8px;
-}
-
-.item_10.M.card {
-    background-position: -1968px -8px;
-}
-
-.item_11.M.card {
-    background-position: -2164px -8px;
-}
-
-.item_12.M.card {
-    background-position: -2360px -8px;
-}
-
-.item_13.M.card {
-    background-position: -2556px -8px;
-}
-
-.item_14.M.card {
-    background-position: -2752px -8px;
-}
-
-.item_15.M.card {
-    background-position: -8px -148px;
-}
-
-.item_16.M.card {
-    background-position: -204px -148px;
-}
-
-.item_17.M.card {
-    background-position: -400px -148px;
-}
-
-.item_18.M.card {
-    background-position: -596px -148px;
-}
-
-.item_19.M.card {
-    background-position: -792px -148px;
-}
-
-.item_20.M.card {
-    background-position: -988px -148px;
-}
-
-.item_21.M.card {
-    background-position: -1184px -148px;
-}
-
-.item_22.M.card {
-    background-position: -1380px -148px;
-}
-
-.item_23.M.card {
-    background-position: -1576px -148px;
-}
-
-.item_24.M.card {
-    background-position: -1772px -148px;
-}
-
-.item_25.M.card {
-    background-position: -8px -288px;
-}
-
-.item_26.M.card {
-    background-position: -204px -288px;
-}
-
-.item_27.M.card {
-    background-position: -400px -288px;
-}
-
-.item_28.M.card {
-    background-position: -596px -288px;
-}
-
-.item_29.M.card {
-    background-position: -792px -288px;
-}
-
-.item_30.M.card {
-    background-position: -988px -288px;
-}
-
-.item_31.M.card {
-    background-position: -1184px -288px;
-}
-
-.item_32.M.card {
-    background-position: -1380px -288px;
-}
-
-.item_33.M.card {
-    background-position: -1576px -288px;
-}
-
-.item_34.M.card {
-    background-position: -1772px -288px;
-}
-
-.item_35.M.card {
-    background-position: -8px -428px;
-}
-
-.item_36.M.card {
-    background-position: -204px -428px;
-}
-
-.item_37.M.card {
-    background-position: -400px -428px;
-}
-
-.item_38.M.card {
-    background-position: -596px -428px;
-}
-
-.item_39.M.card {
-    background-position: -792px -428px;
-}
-
-.item_40.M.card {
-    background-position: -988px -428px;
-}
-
-.item_41.M.card {
-    background-position: -1184px -428px;
-}
-
-.item_42.M.card {
-    background-position: -1380px -428px;
-}
-
-.item_43.M.card {
-    background-position: -1576px -428px;
-}
-
-.item_44.M.card {
-    background-position: -1772px -428px;
-}
-
-.item_45.M.card {
-    background-position: -8px -568px;
-}
-
-.item_46.M.card {
-    background-position: -204px -568px;
-}
-
-.item_47.M.card {
-    background-position: -400px -568px;
-}
-
-.item_48.M.card {
-    background-position: -596px -568px;
-}
-
-.item_49.M.card {
-    background-position: -792px -568px;
-}
-
-.item_50.M.card {
-    background-position: -988px -568px;
-}
-
-.item_51.M.card {
-    background-position: -1184px -568px;
-}
-
-.item_52.M.card {
-    background-position: -1380px -568px;
-}
-
-.item_53.M.card {
-    background-position: -1576px -568px;
-}
-
-.item_54.M.card {
-    background-position: -1772px -568px;
-}
-
-.item_55.M.card {
-    background-position: -8px -708px;
-}
-
-.item_56.M.card {
-    background-position: -204px -708px;
-}
-
-.item_57.M.card {
-    background-position: -400px -708px;
-}
-
-.item_58.M.card {
-    background-position: -596px -708px;
-}
-
-.item_59.M.card {
-    background-position: -792px -708px;
-}
-
-.item_60.M.card {
-    background-position: -988px -708px;
-}
-
-.item_61.M.card {
-    background-position: -1184px -708px;
-}
-
-.item_62.M.card {
-    background-position: -1380px -708px;
-}
-
-.item_63.M.card {
-    background-position: -1576px -708px;
-}
-
-.item_64.M.card {
-    background-position: -1772px -708px;
-}
-
-.item_65.M.card {
-    background-position: -8px -848px;
-}
-
-.item_66.M.card {
-    background-position: -204px -848px;
-}
-
-.item_67.M.card {
-    background-position: -400px -848px;
-}
-
-.item_68.M.card {
-    background-position: -596px -848px;
-}
-
-.item_69.M.card {
-    background-position: -792px -848px;
-}
-
-.item_70.M.card {
-    background-position: -988px -848px;
-}
-
-.item_71.M.card {
-    background-position: -1184px -848px;
-}
-
-.item_72.M.card {
-    background-position: -1380px -848px;
-}
-
-.item_73.M.card {
-    background-position: -1576px -848px;
-}
-
-.item_74.M.card {
-    background-position: -1772px -848px;
-}
-
-.item_75.M.card {
-    background-position: -8px -988px;
-}
-
-.item_76.M.card {
-    background-position: -204px -988px;
-}
-
-.item_77.M.card {
-    background-position: -400px -988px;
-}
-
-.item_78.M.card {
-    background-position: -596px -988px;
-}
-
-.item_79.M.card {
-    background-position: -792px -988px;
-}
-
-.item_80.M.card {
-    background-position: -988px -988px;
-}
-
-.item_81.M.card {
-    background-position: -1184px -988px;
-}
-
-.item_82.M.card {
-    background-position: -1380px -988px;
-}
-
-.item_83.M.card {
-    background-position: -1576px -988px;
-}
-
-.item_84.M.card {
-    background-position: -1772px -988px;
-}
-
-.item_85.M.card {
-    background-position: -8px -1128px;
-}
-
-.item_86.M.card {
-    background-position: -204px -1128px;
-}
-
-.item_87.M.card {
-    background-position: -400px -1128px;
-}
-
-.item_88.M.card {
-    background-position: -596px -1128px;
-}
-
-.item_89.M.card {
-    background-position: -792px -1128px;
-}
-
-.item_90.M.card {
-    background-position: -988px -1128px;
-}
-
-.item_91.M.card {
-    background-position: -1184px -1128px;
-}
-
-.item_92.M.card {
-    background-position: -1380px -1128px;
-}
-
-.item_93.M.card {
-    background-position: -1576px -1128px;
-}
-
-.item_94.M.card {
-    background-position: -1772px -1128px;
-}
-
-.item_95.M.card {
-    background-position: -8px -1268px;
-}
-
-.item_96.M.card {
-    background-position: -204px -1268px;
-}
-
-.item_97.M.card {
-    background-position: -400px -1268px;
-}
-
-.item_98.M.card {
-    background-position: -596px -1268px;
-}
-
-.item_99.M.card {
-    background-position: -792px -1268px;
-}
-
-.item_100.M.card {
-    background-position: -988px -1268px;
-}
-
-.item_101.M.card {
-    background-position: -1184px -1268px;
-}
-
-.item_102.M.card {
-    background-position: -1380px -1268px;
-}
-
-.item_103.M.card {
-    background-position: -1576px -1268px;
-}
-
-.item_104.M.card {
-    background-position: -1772px -1268px;
-}
-
-.item_0.L.card {
-    background-position: -18px -18px;
-}
-
-.item_1.L.card {
-    background-position: -508px -18px;
-}
-
-.item_2.L.card {
-    background-position: -998px -18px;
-}
-
-.item_3.L.card {
-    background-position: -1488px -18px;
-}
-
-.item_4.L.card {
-    background-position: -1978px -18px;
-}
-
-.item_5.L.card {
-    background-position: -2468px -18px;
-}
-
-.item_6.L.card {
-    background-position: -2958px -18px;
-}
-
-.item_7.L.card {
-    background-position: -3448px -18px;
-}
-
-.item_8.L.card {
-    background-position: -3938px -18px;
-}
-
-.item_9.L.card {
-    background-position: -4428px -18px;
-}
-
-.item_10.L.card {
-    background-position: -4918px -18px;
-}
-
-.item_11.L.card {
-    background-position: -5408px -18px;
-}
-
-.item_12.L.card {
-    background-position: -5898px -18px;
-}
-
-.item_13.L.card {
-    background-position: -6388px -18px;
-}
-
-.item_14.L.card {
-    background-position: -6878px -18px;
-}
-
-.item_15.L.card {
-    background-position: -18px -368px;
-}
-
-.item_16.L.card {
-    background-position: -508px -368px;
-}
-
-.item_17.L.card {
-    background-position: -998px -368px;
-}
-
-.item_18.L.card {
-    background-position: -1488px -368px;
-}
-
-.item_19.L.card {
-    background-position: -1978px -368px;
-}
-
-.item_20.L.card {
-    background-position: -2468px -368px;
-}
-
-.item_21.L.card {
-    background-position: -2958px -368px;
-}
-
-.item_22.L.card {
-    background-position: -3448px -368px;
-}
-
-.item_23.L.card {
-    background-position: -3938px -368px;
-}
-
-.item_24.L.card {
-    background-position: -4428px -368px;
-}
-
-.item_25.L.card {
-    background-position: -18px -718px;
-}
-
-.item_26.L.card {
-    background-position: -508px -718px;
-}
-
-.item_27.L.card {
-    background-position: -998px -718px;
-}
-
-.item_28.L.card {
-    background-position: -1488px -718px;
-}
-
-.item_29.L.card {
-    background-position: -1978px -718px;
-}
-
-.item_30.L.card {
-    background-position: -2468px -718px;
-}
-
-.item_31.L.card {
-    background-position: -2958px -718px;
-}
-
-.item_32.L.card {
-    background-position: -3448px -718px;
-}
-
-.item_33.L.card {
-    background-position: -3938px -718px;
-}
-
-.item_34.L.card {
-    background-position: -4428px -718px;
-}
-
-.item_35.L.card {
-    background-position: -18px -1068px;
-}
-
-.item_36.L.card {
-    background-position: -508px -1068px;
-}
-
-.item_37.L.card {
-    background-position: -998px -1068px;
-}
-
-.item_38.L.card {
-    background-position: -1488px -1068px;
-}
-
-.item_39.L.card {
-    background-position: -1978px -1068px;
-}
-
-.item_40.L.card {
-    background-position: -2468px -1068px;
-}
-
-.item_41.L.card {
-    background-position: -2958px -1068px;
-}
-
-.item_42.L.card {
-    background-position: -3448px -1068px;
-}
-
-.item_43.L.card {
-    background-position: -3938px -1068px;
-}
-
-.item_44.L.card {
-    background-position: -4428px -1068px;
-}
-
-.item_45.L.card {
-    background-position: -18px -1418px;
-}
-
-.item_46.L.card {
-    background-position: -508px -1418px;
-}
-
-.item_47.L.card {
-    background-position: -998px -1418px;
-}
-
-.item_48.L.card {
-    background-position: -1488px -1418px;
-}
-
-.item_49.L.card {
-    background-position: -1978px -1418px;
-}
-
-.item_50.L.card {
-    background-position: -2468px -1418px;
-}
-
-.item_51.L.card {
-    background-position: -2958px -1418px;
-}
-
-.item_52.L.card {
-    background-position: -3448px -1418px;
-}
-
-.item_53.L.card {
-    background-position: -3938px -1418px;
-}
-
-.item_54.L.card {
-    background-position: -4428px -1418px;
-}
-
-.item_55.L.card {
-    background-position: -18px -1768px;
-}
-
-.item_56.L.card {
-    background-position: -508px -1768px;
-}
-
-.item_57.L.card {
-    background-position: -998px -1768px;
-}
-
-.item_58.L.card {
-    background-position: -1488px -1768px;
-}
-
-.item_59.L.card {
-    background-position: -1978px -1768px;
-}
-
-.item_60.L.card {
-    background-position: -2468px -1768px;
-}
-
-.item_61.L.card {
-    background-position: -2958px -1768px;
-}
-
-.item_62.L.card {
-    background-position: -3448px -1768px;
-}
-
-.item_63.L.card {
-    background-position: -3938px -1768px;
-}
-
-.item_64.L.card {
-    background-position: -4428px -1768px;
-}
-
-.item_65.L.card {
-    background-position: -18px -2118px;
-}
-
-.item_66.L.card {
-    background-position: -508px -2118px;
-}
-
-.item_67.L.card {
-    background-position: -998px -2118px;
-}
-
-.item_68.L.card {
-    background-position: -1488px -2118px;
-}
-
-.item_69.L.card {
-    background-position: -1978px -2118px;
-}
-
-.item_70.L.card {
-    background-position: -2468px -2118px;
-}
-
-.item_71.L.card {
-    background-position: -2958px -2118px;
-}
-
-.item_72.L.card {
-    background-position: -3448px -2118px;
-}
-
-.item_73.L.card {
-    background-position: -3938px -2118px;
-}
-
-.item_74.L.card {
-    background-position: -4428px -2118px;
-}
-
-.item_75.L.card {
-    background-position: -18px -2468px;
-}
-
-.item_76.L.card {
-    background-position: -508px -2468px;
-}
-
-.item_77.L.card {
-    background-position: -998px -2468px;
-}
-
-.item_78.L.card {
-    background-position: -1488px -2468px;
-}
-
-.item_79.L.card {
-    background-position: -1978px -2468px;
-}
-
-.item_80.L.card {
-    background-position: -2468px -2468px;
-}
-
-.item_81.L.card {
-    background-position: -2958px -2468px;
-}
-
-.item_82.L.card {
-    background-position: -3448px -2468px;
-}
-
-.item_83.L.card {
-    background-position: -3938px -2468px;
-}
-
-.item_84.L.card {
-    background-position: -4428px -2468px;
-}
-
-.item_85.L.card {
-    background-position: -18px -2818px;
-}
-
-.item_86.L.card {
-    background-position: -508px -2818px;
-}
-
-.item_87.L.card {
-    background-position: -998px -2818px;
-}
-
-.item_88.L.card {
-    background-position: -1488px -2818px;
-}
-
-.item_89.L.card {
-    background-position: -1978px -2818px;
-}
-
-.item_90.L.card {
-    background-position: -2468px -2818px;
-}
-
-.item_91.L.card {
-    background-position: -2958px -2818px;
-}
-
-.item_92.L.card {
-    background-position: -3448px -2818px;
-}
-
-.item_93.L.card {
-    background-position: -3938px -2818px;
-}
-
-.item_94.L.card {
-    background-position: -4428px -2818px;
-}
-
-.item_95.L.card {
-    background-position: -18px -3168px;
-}
-
-.item_96.L.card {
-    background-position: -508px -3168px;
-}
-
-.item_97.L.card {
-    background-position: -998px -3168px;
-}
-
-.item_98.L.card {
-    background-position: -1488px -3168px;
-}
-
-.item_99.L.card {
-    background-position: -1978px -3168px;
-}
-
-.item_100.L.card {
-    background-position: -2468px -3168px;
-}
-
-.item_101.L.card {
-    background-position: -2958px -3168px;
-}
-
-.item_102.L.card {
-    background-position: -3448px -3168px;
-}
-
-.item_103.L.card {
-    background-position: -3938px -3168px;
-}
-
-.item_104.L.card {
-    background-position: -4428px -3168px;
-}
-
-.item_105.L.card {
-        background-position: -4918px -368px;
-    }
-
-.item_106.L.card {
-        background-position: -5408px -368px;
-    }
-
-.item_107.L.card {
-        background-position: -5898px -368px;
-    }
-
-.item_108.L.card {
-        background-position: -6388px -368px;
-    }
-
-.item_109.L.card {
-        background-position: -6878px -368px;
-    }
-
-.age_1.L.recto {
-        background-position: -6318px -1068px;
-    }
-
-.age_2.L.recto {
-        background-position: -6318px -1558px;
-    }
-
-.age_3.L.recto {
-        background-position: -6318px -2048px;
-    }
-
-.age_4.L.recto {
-        background-position: -6318px -2538px;
-    }
-
-.age_5.L.recto {
-        background-position: -6318px -3028px;
-    }
-
-.age_6.L.recto {
-        background-position: -6668px -1068px;
-    }
-
-.age_7.L.recto {
-        background-position: -6668px -1558px;
-    }
-
-.age_8.L.recto {
-        background-position: -6668px -2048px;
-    }
-
-.age_9.L.recto {
-        background-position: -6668px -2538px;
-    }
-
-.age_10.L.recto {
-        background-position: -6668px -3028px;
-    }
-
-.item_105.L.recto {
-        background-position: -7018px -1068px;
-    }
-
-.item_106.L.recto {
-        background-position: -7018px -1558px;
-    }
-
-.item_107.L.recto {
-        background-position: -7018px -2048px;
-    }
-
-.item_108.L.recto {
-        background-position: -7018px -2538px;
-    }
-
-.item_109.L.recto {
-        background-position: -7018px -3028px;
-    }
+/* Auto-generated by css_generator_for_sprites.py (Python script) */
 
 .font_size_1 {
-    font-size: 1px;
+	font-size: 1px;
 }
 
 .font_size_2 {
-    font-size: 2px;
+	font-size: 2px;
 }
 
 .font_size_3 {
-    font-size: 3px;
+	font-size: 3px;
 }
 
 .font_size_4 {
-    font-size: 4px;
+	font-size: 4px;
 }
 
 .font_size_5 {
-    font-size: 5px;
+	font-size: 5px;
 }
 
 .font_size_6 {
-    font-size: 6px;
+	font-size: 6px;
 }
 
 .font_size_7 {
-    font-size: 7px;
+	font-size: 7px;
 }
 
 .font_size_8 {
-    font-size: 8px;
+	font-size: 8px;
 }
 
 .font_size_9 {
-    font-size: 9px;
+	font-size: 9px;
 }
 
 .font_size_10 {
-    font-size: 10px;
+	font-size: 10px;
 }
 
 .font_size_11 {
-    font-size: 11px;
+	font-size: 11px;
 }
 
 .font_size_12 {
-    font-size: 12px;
+	font-size: 12px;
 }
 
 .font_size_13 {
-    font-size: 13px;
+	font-size: 13px;
 }
 
 .font_size_14 {
-    font-size: 14px;
+	font-size: 14px;
 }
 
 .font_size_15 {
-    font-size: 15px;
+	font-size: 15px;
 }
 
 .font_size_16 {
-    font-size: 16px;
+	font-size: 16px;
 }
 
 .font_size_17 {
-    font-size: 17px;
+	font-size: 17px;
 }
 
 .font_size_18 {
-    font-size: 18px;
+	font-size: 18px;
 }
 
 .font_size_19 {
-    font-size: 19px;
+	font-size: 19px;
 }
 
 .font_size_20 {
-    font-size: 20px;
+	font-size: 20px;
 }
 
 .font_size_21 {
-    font-size: 21px;
+	font-size: 21px;
 }
 
 .font_size_22 {
-    font-size: 22px;
+	font-size: 22px;
 }
 
 .font_size_23 {
-    font-size: 23px;
+	font-size: 23px;
 }
 
 .font_size_24 {
-    font-size: 24px;
+	font-size: 24px;
 }
 
 .font_size_25 {
-    font-size: 25px;
+	font-size: 25px;
 }
 
 .font_size_26 {
-    font-size: 26px;
+	font-size: 26px;
 }
 
 .font_size_27 {
-    font-size: 27px;
+	font-size: 27px;
 }
 
 .font_size_28 {
-    font-size: 28px;
+	font-size: 28px;
 }
 
 .font_size_29 {
-    font-size: 29px;
+	font-size: 29px;
 }
 
 .font_size_30 {
-    font-size: 30px;
+	font-size: 30px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_0 {
+	background-position: -3px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_1 {
+	background-position: -43px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_2 {
+	background-position: -83px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_3 {
+	background-position: -123px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_4 {
+	background-position: -163px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_5 {
+	background-position: -203px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_6 {
+	background-position: -243px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_7 {
+	background-position: -283px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_8 {
+	background-position: -323px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_9 {
+	background-position: -363px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_10 {
+	background-position: -403px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_11 {
+	background-position: -443px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_12 {
+	background-position: -483px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_13 {
+	background-position: -523px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_14 {
+	background-position: -563px -3px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_15 {
+	background-position: -3px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_16 {
+	background-position: -43px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_17 {
+	background-position: -83px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_18 {
+	background-position: -123px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_19 {
+	background-position: -163px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_20 {
+	background-position: -203px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_21 {
+	background-position: -243px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_22 {
+	background-position: -283px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_23 {
+	background-position: -323px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_24 {
+	background-position: -363px -43px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_25 {
+	background-position: -3px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_26 {
+	background-position: -43px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_27 {
+	background-position: -83px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_28 {
+	background-position: -123px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_29 {
+	background-position: -163px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_30 {
+	background-position: -203px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_31 {
+	background-position: -243px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_32 {
+	background-position: -283px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_33 {
+	background-position: -323px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_34 {
+	background-position: -363px -83px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_35 {
+	background-position: -3px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_36 {
+	background-position: -43px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_37 {
+	background-position: -83px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_38 {
+	background-position: -123px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_39 {
+	background-position: -163px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_40 {
+	background-position: -203px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_41 {
+	background-position: -243px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_42 {
+	background-position: -283px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_43 {
+	background-position: -323px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_44 {
+	background-position: -363px -123px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_45 {
+	background-position: -3px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_46 {
+	background-position: -43px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_47 {
+	background-position: -83px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_48 {
+	background-position: -123px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_49 {
+	background-position: -163px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_50 {
+	background-position: -203px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_51 {
+	background-position: -243px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_52 {
+	background-position: -283px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_53 {
+	background-position: -323px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_54 {
+	background-position: -363px -163px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_55 {
+	background-position: -3px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_56 {
+	background-position: -43px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_57 {
+	background-position: -83px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_58 {
+	background-position: -123px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_59 {
+	background-position: -163px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_60 {
+	background-position: -203px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_61 {
+	background-position: -243px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_62 {
+	background-position: -283px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_63 {
+	background-position: -323px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_64 {
+	background-position: -363px -203px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_65 {
+	background-position: -3px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_66 {
+	background-position: -43px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_67 {
+	background-position: -83px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_68 {
+	background-position: -123px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_69 {
+	background-position: -163px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_70 {
+	background-position: -203px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_71 {
+	background-position: -243px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_72 {
+	background-position: -283px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_73 {
+	background-position: -323px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_74 {
+	background-position: -363px -243px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_75 {
+	background-position: -3px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_76 {
+	background-position: -43px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_77 {
+	background-position: -83px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_78 {
+	background-position: -123px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_79 {
+	background-position: -163px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_80 {
+	background-position: -203px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_81 {
+	background-position: -243px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_82 {
+	background-position: -283px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_83 {
+	background-position: -323px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_84 {
+	background-position: -363px -283px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_85 {
+	background-position: -3px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_86 {
+	background-position: -43px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_87 {
+	background-position: -83px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_88 {
+	background-position: -123px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_89 {
+	background-position: -163px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_90 {
+	background-position: -203px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_91 {
+	background-position: -243px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_92 {
+	background-position: -283px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_93 {
+	background-position: -323px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_94 {
+	background-position: -363px -323px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_95 {
+	background-position: -3px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_96 {
+	background-position: -43px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_97 {
+	background-position: -83px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_98 {
+	background-position: -123px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_99 {
+	background-position: -163px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_100 {
+	background-position: -203px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_101 {
+	background-position: -243px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_102 {
+	background-position: -283px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_103 {
+	background-position: -323px -363px;
+}
+
+.M.hexagon_card_icon.hexagon_icon_104 {
+	background-position: -363px -363px;
 }

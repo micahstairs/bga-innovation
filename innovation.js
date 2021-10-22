@@ -98,6 +98,7 @@ function (dojo, declare) {
             
             this.players = null;
             
+            this.card_icons = {};
             this.saved_cards = {};
             this.saved_HTML_cards = {};
             
@@ -150,8 +151,7 @@ function (dojo, declare) {
             
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
-        setup: function(gamedatas)
-        {
+            setup: function (gamedatas) {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
@@ -172,6 +172,7 @@ function (dojo, declare) {
             this.text_for_view_full = _("Resume normal view");
             
             // GENERAL INFO
+            this.card_icons = gamedatas.card_icons;
             this.players = gamedatas.players; 
             this.number_of_achievements_needed_to_win = gamedatas.number_of_achievements_needed_to_win;
             this.normal_achievement_names = gamedatas.normal_achievement_names;
@@ -206,9 +207,9 @@ function (dojo, declare) {
             
             // Setting the width of the score and achievement zones and the number of cards they can host
             var required_width_achievements_in_line = (this.number_of_achievements_needed_to_win - 1) * this.delta.achievements.x +  this.card_dimensions['S recto'].width;
-            var memo_width = dojo.position('memo_' + any_player_id).w;
+            var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
             var progress_width = dojo.position('progress_' + any_player_id).w;
-            var score_width = progress_width - required_width_achievements_in_line - 10 - memo_width;
+            var score_width = progress_width - required_width_achievements_in_line - 10 - reference_card_width;
             if (score_width >= this.card_dimensions['S card'].width) { // There is enough space to host claimed achievements on a line
                 // Save the required space for achievements and adapt the score container
                 for(var player_id in this.players) {
@@ -220,7 +221,7 @@ function (dojo, declare) {
             }
             else { // There is not enough space
                 // Set the score container to one card in a row and adapt the achievement container
-                var achievements_width = progress_width - 10 - memo_width - this.card_dimensions['S card'].width;
+                var achievements_width = progress_width - 10 - reference_card_width - this.card_dimensions['S card'].width;
                 for(var player_id in this.players) {
                     dojo.style('achievement_container_' + player_id, 'width', achievements_width + "px");
                     dojo.style('score_container_' + player_id, 'width', this.card_dimensions['S card'].width + "px");
@@ -319,7 +320,9 @@ function (dojo, declare) {
                     continue;
                 }
                 this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, null, dojo.body(), null);
-                this.addTooltipForRecto(achievement, !this.isSpectator);
+                if (!this.isSpectator) {
+                    this.addTooltipForStandardAchievement(achievement);
+                }
             }
             
             // AVAILABLE SPECIAL ACHIEVEMENTS
@@ -340,8 +343,7 @@ function (dojo, declare) {
             
             // PLAYERS' HANDS
             this.zone.hand = {};
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 // Creation of the zone
                 var zone = this.createZone('hand', player_id, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
@@ -374,8 +376,7 @@ function (dojo, declare) {
             
             // PLAYERS' SCORE
             this.zone.score = {};
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.score[player_id] = this.createZone('score', player_id, null, grouped_by_age=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
@@ -407,8 +408,7 @@ function (dojo, declare) {
             }
             
             // PLAYERS' ACHIEVEMENTS
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.achievements[player_id] = this.createZone('achievements', player_id);
                 this.setPlacementRules(this.zone.achievements[player_id], left_to_right=true);
@@ -419,7 +419,6 @@ function (dojo, declare) {
                     var achievement = achievements[i];
                     if (achievement.age !== null) { // Normal achievement
                         this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, null, dojo.body(), null);
-                        this.addTooltipForRecto(achievement, false);
                     }
                     else {
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.id, dojo.body(), null);
@@ -450,8 +449,7 @@ function (dojo, declare) {
             // Piles
             this.zone.board = {};
             this.number_of_splayed_piles = 0;
-            for(var player_id in this.players)
-            {
+                for (var player_id in this.players) {
                 this.zone.board[player_id] = {};
                 var player_board = gamedatas.board[player_id];
                 var player_splay_directions = gamedatas.board_splay_directions[player_id];
@@ -494,8 +492,7 @@ function (dojo, declare) {
             
             // REVEALED ZONES
             this.zone.revealed = {};    
-            for(var player_id in this.players)
-            {    
+                for (var player_id in this.players) {
                 var zone = this.createZone('revealed', player_id, null, grouped_by_age=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
@@ -511,8 +508,8 @@ function (dojo, declare) {
                 }
             }
             
-            // MEMO
-            this.addTooltipForMemo();
+            // REFERENCE CARD
+            this.addTooltipForReferenceCard();
             
             // CURRENT DOGMA CARD EFFECT
             if (gamedatas.JSCardEffectQuery !== null) {
@@ -584,8 +581,7 @@ function (dojo, declare) {
         // onEnteringState: this method is called each time we are entering into a new game state.
         //                  You can use this method to perform some user interface changes at this moment.
         //
-        onEnteringState: function(stateName, args)
-        {
+            onEnteringState: function (stateName, args) {
             console.log('Entering state: '+stateName)
             console.log(args)
             
@@ -603,8 +599,7 @@ function (dojo, declare) {
             }
 
             // Things to do for all players
-            switch(stateName)
-            {
+                switch (stateName) {
             case 'turn0':
                 if (args.args.team_game) {
                     this.addToLog(args.args.messages[this.player_id]);
@@ -666,8 +661,7 @@ function (dojo, declare) {
             if (this.isCurrentPlayerActive()) {
                 // I am supposed to play
                 
-                switch(stateName)
-                {   
+                    switch (stateName) {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -758,8 +752,7 @@ function (dojo, declare) {
             }
             else {
                 // I am not supposed to play
-                switch(stateName)
-                {
+                    switch (stateName) {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -797,16 +790,14 @@ function (dojo, declare) {
         // onLeavingState: this method is called each time we are leaving a game state.
         //                 You can use this method to perform some user interface changes at this moment.
         //
-        onLeavingState: function(stateName)
-        {
+            onLeavingState: function (stateName) {
             this.deactivateClickEvents(); // If this was not done after a click event (game replay for instance)
             
             // Was it a state I was supposed to play?
             if (this.isCurrentPlayerActive()) {
                 // I was supposed to play
                 
-                switch(stateName)
-                {   
+                    switch (stateName) {
                 case 'playerTurn':
                     // Reset tooltips for hand or board
                     this.destroyMyHandAndBoardTooltips(true);
@@ -823,8 +814,7 @@ function (dojo, declare) {
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
-        onUpdateActionButtons: function(stateName, args)
-        {
+            onUpdateActionButtons: function (stateName, args) {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
                 case 'playerTurn':
@@ -1015,133 +1005,116 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLId(card.id, card.age, zone.HTML_class);
             var HTML_help = this.createCard(card.id, card.age, "L card", card);
             this.saved_cards[card.id] = card;
-            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in cas it needs to be rebuilt
+            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
             this.addCustomTooltip(HTML_id, HTML_help, "");
         },
         
-        addTooltipForRecto : function(card, display_condition_for_claiming) {
+        addTooltipForStandardAchievement : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.age);
-            var id = this.getCardIdFromPosition(zone, card.position, card.age)
+            var id = this.getCardIdFromPosition(zone, card.position, card.age);
             var HTML_id = this.getCardHTMLId(id, card.age, zone.HTML_class);
-            var HTML_help = this.createCard(id, card.age, "L recto", null);
             
             condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), {'age': this.square('N', 'age', card.age), 'n': 5 * card.age});
-            this.addCustomTooltip(HTML_id, HTML_help, display_condition_for_claiming ? "<div class='under L_recto'>" + condition_for_claiming + "</div>" : '');
+            this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
         },
         
-        addTooltipForMemo : function() {
-            var bullet = "&bull;"
-            var big_bullet = "&#9679;"
-            
-            // Divs
-            var score_div = this.createAdjustedContent(bullet + _('Score').toUpperCase() + bullet, 'score_txt', '', 18);
-            var achievements_div = this.createAdjustedContent(bullet + _('Achievements').toUpperCase() + bullet, 'achievements_txt', '', 18);
-            
+        addTooltipForReferenceCard : function() {
             var actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
             actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions :").toUpperCase() + "</span>"})
-            var actions_div = this.createAdjustedContent(actions_text, 'actions_txt memo_block', '', 12);
+            var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
             
-            var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title memo_block', '', 30);
+            var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);
             var meld_parag_text = _("Play a card from your hand to your board, on stack on matching color. Continue any splay if present.");
-            var meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag memo_block', '', 12);
+            var meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag reference_card_block', '', 12);
             
-            var draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title memo_block', '', 30);
+            var draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title reference_card_block', '', 30);
             var draw_parag_text = _("Take a card of value equal to your highest top card from the supply piles. If empty, draw from the next available higher pile.");
-            var draw_parag = this.createAdjustedContent(draw_parag_text, 'draw_parag memo_block', '', 12);
+            var draw_parag = this.createAdjustedContent(draw_parag_text, 'draw_parag reference_card_block', '', 12);
             
-            var achieve_title = this.createAdjustedContent(_("Achieve").toUpperCase(), 'achieve_title memo_block', '', 30);
+            var achieve_title = this.createAdjustedContent(_("Achieve").toUpperCase(), 'achieve_title reference_card_block', '', 30);
             var achieve_parag_text = _("To claim, must have score of at least 5x the age number in points, and a top card of equal or higher value. Points are kept, not spent.");
-            var achieve_parag = this.createAdjustedContent(achieve_parag_text, 'achieve_parag memo_block', '', 12);
+            var achieve_parag = this.createAdjustedContent(achieve_parag_text, 'achieve_parag reference_card_block', '', 12);
             
-            var dogma_title = this.createAdjustedContent(_("Dogma").toUpperCase(), 'dogma_title memo_block', '', 30);
+            var dogma_title = this.createAdjustedContent(_("Dogma").toUpperCase(), 'dogma_title reference_card_block', '', 30);
+            var big_bullet = "&#9679;"
             var dogma_parag_text = _("Pick a top card on your board. Execute each effect on it, in order.") +
                                     "<ul><li>" + big_bullet + " " + _("I Demand effects are executed by each player with fewer of the featured icon than you, going clockwise. Read effects aloud to them.") + "</li>" +
                                     "<li>" + big_bullet + " " + _("Non-demand effects are executed by opponents before you, if they have at leadt as many or more of the featured icon, going clockwise.") + "</li>" +
                                     "<li>" + big_bullet + " " + _("If any opponent shared a non-demand effect, take a single free Draw action at the conclusion of your Dogma action.") + "</li></ul>";
-            var dogma_parag = this.createAdjustedContent(dogma_parag_text, 'dogma_parag memo_block', '', 12);
+            var dogma_parag = this.createAdjustedContent(dogma_parag_text, 'dogma_parag reference_card_block', '', 12);
             
-            var tuck_title = this.createAdjustedContent(_("Tuck").toUpperCase(), 'tuck_title memo_block', '', 30);
+            var tuck_title = this.createAdjustedContent(_("Tuck").toUpperCase(), 'tuck_title reference_card_block', '', 30);
             var tuck_parag_text = _("A tucked card goes to the bottom of the pile of its color. Tucking a card into an empty pile starts a new one.");
-            var tuck_parag = this.createAdjustedContent(tuck_parag_text, 'tuck_parag memo_block', '', 12);
+            var tuck_parag = this.createAdjustedContent(tuck_parag_text, 'tuck_parag reference_card_block', '', 12);
             
-            var return_title = this.createAdjustedContent(_("Return").toUpperCase(), 'return_title memo_block', '', 30);
+            var return_title = this.createAdjustedContent(_("Return").toUpperCase(), 'return_title reference_card_block', '', 30);
             var return_parag_text = _("To return a card, place it at the bottom of its matching supply pile. If you return many cards, you choose the order.");
-            var return_parag = this.createAdjustedContent(return_parag_text, 'return_parag memo_block', '', 12);
+            var return_parag = this.createAdjustedContent(return_parag_text, 'return_parag reference_card_block', '', 12);
             
-            var draw_and_x_title = this.createAdjustedContent(_("DRAW and X"), 'draw_and_x_title memo_block', '', 30);
+            var draw_and_x_title = this.createAdjustedContent(_("DRAW and X"), 'draw_and_x_title reference_card_block', '', 30);
             var draw_and_x_parag_text = _("If instructed to Draw and Meld, Score, or tuck, you must use the specific card drawn for the indicated action.");
-            var draw_and_x_parag = this.createAdjustedContent(draw_and_x_parag_text, 'draw_and_x_parag memo_block', '', 12);
+            var draw_and_x_parag = this.createAdjustedContent(draw_and_x_parag_text, 'draw_and_x_parag reference_card_block', '', 12);
             
-            var splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title memo_block', '', 30);
+            var splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title reference_card_block', '', 30);
             var splay_parag_text = _("To splay, fan out the color as shown below. A color is only ever splayed in one direction. New cards tucked or melded continue the splay.");
-            var splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag memo_block', '', 12);
+            var splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag reference_card_block', '', 12);
             
-            var erase_block = "<div class='erase_block memo_block'></div>"
+            var erase_block = "<div class='erase_block reference_card_block'></div>"
             
-            var splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example memo_block', '', 12);
-            var splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example memo_block', '', 12);
-            var splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example memo_block', '', 12);
+            var splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example reference_card_block', '', 12);
+            var splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example reference_card_block', '', 12);
+            var splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example reference_card_block', '', 12);
             
-            var empty_piles_title = this.createAdjustedContent(_("Empty piles").toUpperCase(), 'empty_piles_title memo_block', '', 30);
+            var empty_piles_title = this.createAdjustedContent(_("Empty piles").toUpperCase(), 'empty_piles_title reference_card_block', '', 30);
             var empty_piles_parag_text = _("When drawing from an empty pile for <b>any reason</b>, draw from the next higher pile.");
-            var empty_piles_parag = this.createAdjustedContent(empty_piles_parag_text, 'empty_piles_parag memo_block', '', 12);
+            var empty_piles_parag = this.createAdjustedContent(empty_piles_parag_text, 'empty_piles_parag reference_card_block', '', 12);
             
             var age_1_3 = _("Age 1-3");
             var age_4_10 = _("Age 4-10");
             var age_7_10 = _("Age 7-10");
             var age_1_10= _("Age 1-10");
             
-            var icon_4_ages = this.createAdjustedContent(age_1_3, 'icon_4_ages memo_block', '', 12);
-            var icon_5_ages = this.createAdjustedContent(age_4_10, 'icon_5_ages memo_block', '', 12);
-            var icon_6_ages = this.createAdjustedContent(age_7_10, 'icon_6_ages memo_block', '', 12);
+            var icon_4_ages = this.createAdjustedContent(age_1_3, 'icon_4_ages reference_card_block', '', 12);
+            var icon_5_ages = this.createAdjustedContent(age_4_10, 'icon_5_ages reference_card_block', '', 12);
+            var icon_6_ages = this.createAdjustedContent(age_7_10, 'icon_6_ages reference_card_block', '', 12);
             
-            var icon_1_ages = this.createAdjustedContent(age_1_10, 'icon_1_ages memo_block', '', 12);
-            var icon_2_ages = this.createAdjustedContent(age_1_10, 'icon_2_ages memo_block', '', 12);
-            var icon_3_ages = this.createAdjustedContent(age_1_10, 'icon_3_ages memo_block', '', 12);
+            var icon_1_ages = this.createAdjustedContent(age_1_10, 'icon_1_ages reference_card_block', '', 12);
+            var icon_2_ages = this.createAdjustedContent(age_1_10, 'icon_2_ages reference_card_block', '', 12);
+            var icon_3_ages = this.createAdjustedContent(age_1_10, 'icon_3_ages reference_card_block', '', 12);
             
-            var colors_title = this.createAdjustedContent(_("Colors:"), 'colors_title memo_block', '', 12);
-            var blue_icon = this.createAdjustedContent(_("Blue"), 'blue_icon memo_block', '', 12);
-            var yellow_icon = this.createAdjustedContent(_("Yellow"), 'yellow_icon memo_block', '', 12);
-            var red_icon = this.createAdjustedContent(_("Red"), 'red_icon memo_block', '', 12);
-            var green_icon = this.createAdjustedContent(_("Green"), 'green_icon memo_block', '', 12);
-            var purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon memo_block', '', 12);
+            var colors_title = this.createAdjustedContent(_("Colors:"), 'colors_title reference_card_block', '', 12);
+            var blue_icon = this.createAdjustedContent(_("Blue"), 'blue_icon reference_card_block', '', 12);
+            var yellow_icon = this.createAdjustedContent(_("Yellow"), 'yellow_icon reference_card_block', '', 12);
+            var red_icon = this.createAdjustedContent(_("Red"), 'red_icon reference_card_block', '', 12);
+            var green_icon = this.createAdjustedContent(_("Green"), 'green_icon reference_card_block', '', 12);
+            var purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon reference_card_block', '', 12);
             
-            // Recto
-            recto_content = "";
-            recto_content += score_div;
-            recto_content += achievements_div;
-            recto_content += actions_div;
+            side_1_content = actions_div;
             
-            recto_content += meld_title + meld_parag;
-            recto_content += draw_title + draw_parag;
-            recto_content += achieve_title + achieve_parag;
+            side_1_content += meld_title + meld_parag;
+            side_1_content += draw_title + draw_parag;
+            side_1_content += achieve_title + achieve_parag;
+            side_1_content += dogma_title + dogma_parag;
             
-            recto_content += dogma_title + dogma_parag;
+            side_2_content = tuck_title + tuck_parag;
+            side_2_content += return_title + return_parag;
+            side_2_content += draw_and_x_title + draw_and_x_parag;
             
-            // Verso
-            verso_content = "";
-            verso_content += score_div;
-            verso_content += achievements_div;
+            side_2_content += splay_title + splay_parag + erase_block;
+            side_2_content += splayed_left_example + splayed_right_example + splayed_up_example;
             
-            verso_content += tuck_title + tuck_parag;
-            verso_content += return_title + return_parag;
-            verso_content += draw_and_x_title + draw_and_x_parag;
+            side_2_content += empty_piles_title + empty_piles_parag;
             
-            verso_content += splay_title + splay_parag + erase_block;
-            verso_content += splayed_left_example + splayed_right_example + splayed_up_example;
+            side_2_content += icon_4_ages + icon_5_ages + icon_6_ages;
+            side_2_content += icon_1_ages + icon_2_ages + icon_3_ages;
             
-            verso_content += empty_piles_title + empty_piles_parag;
-            
-            verso_content += icon_4_ages + icon_5_ages + icon_6_ages;
-            verso_content += icon_1_ages + icon_2_ages + icon_3_ages;
-            
-            verso_content += colors_title + blue_icon + yellow_icon;
-            verso_content += red_icon + green_icon + purple_icon;
+            side_2_content += colors_title + blue_icon + yellow_icon;
+            side_2_content += red_icon + green_icon + purple_icon;
             
             // Assembling
-            var div_recto = "<div class='memo_recto M'>" + recto_content + "</div>"
-            var div_verso = "<div class='memo_verso M'>" + verso_content + "</div>"
-            this.addTooltipHtmlToClass('memo_recto', div_recto + div_verso);
+            var div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
+            var div_side_2 = "<div class='reference_card side_2 M'>" + side_2_content + "</div>"
+            this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
         },
         
         createAdjustedContent : function(content, HTML_class, size, font_max, width_margin, height_margin) {
@@ -1179,14 +1152,12 @@ function (dojo, declare) {
             return "<div class='" + HTML_class + " " + size + "'><span class='font_size_" + font_size + "'>" + content + "</span></div>";            
         },
         
-        createDogmaEffectText : function(text, dogma_symbol, size, type_of_effect) {
-            text = this.parseForRichedText(text, size);
-            text = this.getSymbolIconInDogma(dogma_symbol) + " <strong>:</strong> " + text;
-            return "<div class='effect " + size + " " + type_of_effect + "'>" + this.square(size, 'icon', dogma_symbol, 'in_tooltip') + "<span class='effect_text " + size + "'>" + text + "<span></div>";
+        createDogmaEffectText : function(text, dogma_symbol, size, shade, other_classes) {
+                return "<div class='effect " + size + " " + shade + " " + other_classes + "'><span class='dogma_symbol " + size + " icon_" + dogma_symbol + "'></span><span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
         },
         
         parseForRichedText : function(text, size) {
-            text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I demand") + "</strong>");
+            text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons(size, 'in_tooltip'));
             for (var age=1; age <= 10; age++) {
@@ -1196,14 +1167,6 @@ function (dojo, declare) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol, 'in_tooltip'));
             }
             return text;
-        },
-        
-        getAgeIconInDogma : function(age) {
-            return "<span class='icon_in_dogma icon_in_dogma_age_" + age + "' ></span>"
-        },
-        
-        getSymbolIconInDogma : function(symbol) {
-            return "<span class='icon_in_dogma icon_in_dogma_symbol_" + symbol + "' ></span>"
         },
         
         /*
@@ -1775,8 +1738,11 @@ function (dojo, declare) {
             return ["item_" + id, "age_" + age, zone_HTML_class.replace(" ", "__")].join("__");
         },
         
-        getCardHTMLClass : function(id, age, zone_HTML_class) {
+        getCardHTMLClass : function(id, age, card, zone_HTML_class) {
+            if (card === null) {
             return ["item_" + id, "age_" + age, zone_HTML_class].join(" ");
+            }
+            return ["item_" + id, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
         },
         
         getCardIdFromHTMLId : function(HTML_id) {
@@ -1792,11 +1758,11 @@ function (dojo, declare) {
          */
         createCard : function(id, age, zone_HTML_class, card) {
             var HTML_id = this.getCardHTMLId(id, age, zone_HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, zone_HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, age, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
-                var HTML_inside = size == 'L' ? this.writeOverRecto(age) : '';
+                var HTML_inside = '';
             }
             else if (card.age === null) {
                 var HTML_inside =  this.writeOverSpecialAchievement(card, size, id == 106);
@@ -1809,23 +1775,34 @@ function (dojo, declare) {
         },
         
         writeOverCard : function(card, size) {
-            var title = _(card.name).toUpperCase();
-            var div_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
-            
-            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'i_demand_effect_1')  : "";
+            var icon_data = this.card_icons[card.id];
+            var icon1 = this.getIconDiv(card, icon_data['spot_1'], 'top_left_icon', size);
+            var icon2 = this.getIconDiv(card, icon_data['spot_2'], 'bottom_left_icon', size);
+            var icon3 = this.getIconDiv(card, icon_data['spot_3'], 'bottom_center_icon', size);
+            var icon4 = this.getIconDiv(card, icon_data['spot_4'], 'bottom_right_icon', size);
 
-            var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, 'non_demand_effect_1')  : "";
-            var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, 'non_demand_effect_2')  : "";
-            var non_demand_effect_3 = card.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_3) , card.dogma_icon, size, 'non_demand_effect_3')  : "";
+            var card_age = this.createAdjustedContent(card.age, 'card_age shape color_' + card.color, size, size == 'M' ? 10 : 30);
+
+            var title = _(card.name).toUpperCase();
+            var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
             
-            var div_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects color_" + card.color, size, size == 'M' ? 8 : 17);
+            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'dark', 'i_demand_effect_1 color_' + card.color)  : "";
+
+            var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
+            var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
+            var non_demand_effect_3 = card.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_3) , card.dogma_icon, size, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
-            return div_title + div_effects;            
+            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
+            
+            return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
         
-        writeOverRecto : function(age) {
-            return this.createAdjustedContent(this.normal_achievement_names[age].toUpperCase(), 'normal_achievement_title', '', 25);
-        },
+            getIconDiv: function (card, resource_icon_id, icon_location, size) {
+                if (resource_icon_id == 0) {
+                    return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
+                }
+                return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+            },
         
         writeOverSpecialAchievement : function(card, size, is_monument) {
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
@@ -1946,7 +1923,7 @@ function (dojo, declare) {
                 }
             }
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, zone.HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, age, card, zone.HTML_class);
             
             // Create a new card and place it on start position
             var node = this.createCard(id, age, zone.HTML_class, visible_card ? card : null);
@@ -1966,8 +1943,7 @@ function (dojo, declare) {
             }
         },
         
-        addToZone: function(zone, id, position, age)
-        {
+            addToZone: function (zone, id, position, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             dojo.style(HTML_id, 'position', 'absolute')
             
@@ -2033,8 +2009,7 @@ function (dojo, declare) {
             }
         },
         
-        removeFromZone: function(zone, id, destroy, age)
-        {
+            removeFromZone: function (zone, id, destroy, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             
             // Update weights before removing
@@ -2382,8 +2357,11 @@ function (dojo, declare) {
             
             var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
             if (i_demand_effect_only) {
-                // Get dogma icons
-                var dogma_icon = dojo.attr(dojo.query("#" + HTML_id + " .i_demand_effect_1 .icon_in_dogma")[0], 'class').substr(-1);
+                    // Get dogma icon
+                    var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
+                    var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
+                    var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class');
+                    var dogma_icon = dogma_symbol_classes.substr(-1);
                 // Compare player counters
                 var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
                 var player_total_is_min_value = true;
@@ -2853,8 +2831,7 @@ function (dojo, declare) {
                   your innovation.game.php file.
         
         */
-        setupNotifications: function()
-        {
+            setupNotifications: function () {
             console.log('notifications subscriptions setup');
             
             // TODO: here, associate your game notifications with local methods
@@ -3010,7 +2987,6 @@ function (dojo, declare) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
-                this.addTooltipForRecto(card, false);
             }
         },
         
