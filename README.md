@@ -9,6 +9,7 @@ In order to test changes to the game, you need to be able to copy the code out o
 - Create your own BGA Studio project for Innovation at https://studio.boardgamearena.com/studio. Make sure to suffix the new project name with your username (e.g. `InnovationJohnSmith`).
 - Clone this repository onto your computer (`git clone https://github.com/micahstairs/bga-innovation.git innovation`). You'll make your life easier if the directory is named `innovation` instead of `bga-innovation`.
 - Clone https://github.com/elaskavaia/bga-sharedcode onto your computer (`git clone https://github.com/elaskavaia/bga-sharedcode.git`).
+- Install PHP (https://windows.php.net/download#php-7.3).
 
 #### Setting up your branch
 In order to submit changes to this repository you will need to eventually submit a pull request with your changes. This means you need to have your own local branch. Before running the following commands, make sure you are on the branch of this repository that you want to diverge from (e.g. `main`) and that you have called `git pull` so that you have the latest changes.
