@@ -471,42 +471,41 @@
     font-weight: bold;
 }
 
-.blue_icon {
-    width: 39px;
-    height: 18px;
-    left: 359px;
-    top: 306px;
-}
-
-.yellow_icon {
-    width: 39px;
-    height: 18px;
-    left: 359px;
-    top: 328px;
-}
-
 .red_icon {
     width: 47px;
     height: 18px;
-    left: 427px;
+    left: 414px;
     top: 284px;
-}
-
-.green_icon {
-    width: 47px;
-    height: 18px;
-    left: 427px;
-    top: 306px;
 }
 
 .purple_icon {
     width: 47px;
     height: 18px;
-    left: 427px;
+    left: 414px;
     top: 328px;
 }
 
-/* First and second action indicators */
+.blue_icon {
+    width: 39px;
+    height: 18px;
+    left: 414px;
+    top: 306px;
+}
+
+.green_icon {
+    width: 47px;
+    height: 18px;
+    left: 485px;
+    top: 308px;
+}
+
+.yellow_icon {
+    width: 39px;
+    height: 18px;
+    left: 485px;
+    top: 328px;
+}
+
 .player-board {
     position: relative;
 }
