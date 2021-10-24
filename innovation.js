@@ -1108,8 +1108,7 @@ function (dojo, declare) {
             side_2_content += icon_4_ages + icon_5_ages + icon_6_ages;
             side_2_content += icon_1_ages + icon_2_ages + icon_3_ages;
             
-            side_2_content += colors_title + blue_icon + yellow_icon;
-            side_2_content += red_icon + green_icon + purple_icon;
+            side_2_content += colors_title + red_icon + purple_icon + blue_icon + green_icon + yellow_icon;
             
             // Assembling
             var div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
