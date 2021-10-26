@@ -33,12 +33,6 @@ class Innovation extends Table
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();self::initGameStateLabels(array(
-            //    "my_first_global_variable" => 10,
-            //    "my_second_global_variable" => 11,
-            //      ...
-            //    "my_first_game_variant" => 100,
-            //    "my_second_game_variant" => 101,
-            //      ...
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
             'first_player_with_only_one_action' => 12,
@@ -96,7 +90,10 @@ class Innovation extends Table
             'nested_id_8' => 64,
             'nested_current_effect_number_8' => 65,
             'nested_id_9' => 66,
-            'nested_current_effect_number_9' => 67,            
+            'nested_current_effect_number_9' => 67,    
+            'card_id_1' => 69,
+            'card_id_2' => 70,
+            'card_id_3' => 71,
             
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
@@ -236,7 +233,10 @@ class Innovation extends Table
         self::setGameStateInitialValue('color_array', -1); // List of selectable colors encoded in a single value
         self::setGameStateInitialValue('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         self::setGameStateInitialValue('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
-        self::setGameStateInitialValue('not_id', -1); // id of not selectionnable card, else -2
+        self::setGameStateInitialValue('not_id', -1); // id of a card which cannot be selcected, else -2
+        self::setGameStateInitialValue('card_id_1', -1); // id of a card which is allowed to be selected, else -2
+        self::setGameStateInitialValue('card_id_2', -1); // id of a card which is allowed to be selected, else -2
+        self::setGameStateInitialValue('card_id_3', -1); // id of a card which is allowed to be selected, else -2
         self::setGameStateInitialValue('can_pass', -1); // 1 if the player can pass else 0
         self::setGameStateInitialValue('n', -1); // Actual number of cards having being selected yet
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
@@ -1346,11 +1346,8 @@ class Innovation extends Table
         $location_to = $transferInfo['location_to'];
         $bottom_to = $transferInfo['bottom_to'];
         $score_keyword = $transferInfo['score_keyword'];
-        
+
         switch($location_from . '->' . $location_to) {
-        case 'deck->deck':
-            // Impossible case
-            break;
         case 'deck->hand':
             $message_for_player = clienttranslate('${You} draw ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} draws a ${<}${age}${>}.');
@@ -1372,18 +1369,12 @@ class Innovation extends Table
         case 'deck->revealed':
             $message_for_player = clienttranslate('${You} draw and reveal ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} draws and reveals ${<}${age}${>} ${<<}${name}${>>}.');
-            break;            
-        case 'deck->achievements':
-            // Impossible case
             break;
         
         case 'hand->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
             break;
-        case 'hand->hand':
-            // Impossible case
-            break;        
         case 'hand->board':
             if ($bottom_to) {
                 $message_for_player = clienttranslate('${You} tuck ${<}${age}${>} ${<<}${name}${>>} from your hand.');
@@ -1407,9 +1398,6 @@ class Innovation extends Table
         case 'hand->revealed':
             $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his hand.');
-            break;
-        case 'hand->achievements':
-            // Impossible case
             break;
         
         case 'board->deck':
@@ -1435,12 +1423,6 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
-        case 'board->revealed':
-            // Impossible case
-            break;
-        case 'board->achievements':
-            // Impossible case
-            break;
         
         case 'score->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
@@ -1460,15 +1442,6 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his score pile.');
             }
             break;
-        case 'score->score':
-            // Impossible case
-            break;
-        case 'score->revealed':
-            // Impossible case
-            break;
-        case 'score->achievements':
-            // Impossible case
-            break;
         
         case 'revealed->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
@@ -1486,28 +1459,7 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>}.');
             break;
-        case 'revealed->revealed':
-            // Impossible case
-            break;
-        case 'revealed->achievements':
-            // Impossible case
-            break;
-        
-        case 'achievements->deck':
-            // Impossible case
-            break;
-        case 'achievements->hand':
-            // Impossible case
-            break;
-        case 'achievements->board':
-            // Impossible case
-            break;
-        case 'achievements->score':
-            // Impossible case
-            break;
-        case 'achievements->revealed':
-            // Impossible case
-            break;
+
         case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
             if ($card['age'] === null) { // Special achivement
                 $message_for_player = clienttranslate('${You} achieve ${<<<}${achievement_name}${>>>}.');
@@ -1517,6 +1469,11 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
                 $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
             }
+            break;
+                
+        default:
+            // This should not happen
+            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithOnePlayerInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
             break;
         }
         
@@ -1547,18 +1504,16 @@ class Innovation extends Table
                 break;
                 
             default:
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithOnePlayerInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
-        }
-        else {
+        } else {
             switch($location_from . '->' . $location_to) { 
             case 'hand->deck':
                 $message_for_player = clienttranslate('{You must} return {number} {card} from your hand');
                 $message_for_others = clienttranslate('{player must} return {number} {card} from his hand');
                 break;
-            case 'hand->hand':
-                // Impossible case
-                break;        
             case 'hand->board':
                 if ($bottom_to) {
                     $message_for_player = clienttranslate('{You must} tuck {number} {card} from your hand');
@@ -1577,9 +1532,6 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} reveal {number} {card} from your hand');
                 $message_for_others = clienttranslate('{player must} reveal {number} {card} from his hand');
                 break;
-            case 'hand->achievements':
-                // Impossible case
-                break;
             
             case 'board->deck':
                 $message_for_player = clienttranslate('{You must} return {number} top {card} from your board');
@@ -1589,18 +1541,9 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} take back {number} top {card} from your board to your hand');
                 $message_for_others = clienttranslate('{player must} take back {number} top {card} from his board to his hand');
                 break;
-            case 'board->board':
-                // Impossible case
-                break;
             case 'board->score':
                 $message_for_player = clienttranslate('{You must} score {number} top {card} from your board');
                 $message_for_others = clienttranslate('{player must} score {number} top {card} from his board');
-                break;
-            case 'board->revealed':
-                // Impossible case
-                break;
-            case 'board->achievements':
-                // Impossible case
                 break;
             
             case 'score->deck':
@@ -1621,53 +1564,10 @@ class Innovation extends Table
                     $message_for_others = clienttranslate('{player must} meld {number} {card} from his score pile');
                 }
                 break;
-            case 'score->score':
-                // Impossible case
-                break;
-            case 'score->revealed':
-                // Impossible case
-                break;
-            case 'score->achievements':
-                // Impossible case
-                break;
             
             case 'revealed->deck':
                 $message_for_player = clienttranslate('{You must} return {number} {card} you revealed');
                 $message_for_others = clienttranslate('{player must} return {number} {card} he revealed');
-                break;     
-            case 'revealed->hand':
-                // Impossible case
-                break;
-            case 'revealed->board':
-                // Impossible case
-                break;
-            case 'revealed->score':
-                // Impossible case
-                break;
-            case 'revealed->revealed':
-                // Impossible case
-                break;
-            case 'revealed->achievements':
-                // Impossible case
-                break;
-            
-            case 'achievements->deck':
-                // Impossible case
-                break;
-            case 'achievements->hand':
-                // Impossible case
-                break;
-            case 'achievements->board':
-                // Impossible case
-                break;
-            case 'achievements->score':
-                // Impossible case
-                break;
-            case 'achievements->revealed':
-                // Impossible case
-                break;
-            case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
-                // Impossible case
                 break;
                 
             case 'revealed,hand->deck': // Alchemy, Physics
@@ -1686,6 +1586,8 @@ class Innovation extends Table
                 break;
             
             default:
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithOnePlayerInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1721,10 +1623,10 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
                 $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
                 break;
-                
+
             default:
-                // This should not happens
-                throw new BgaVisibleSystemException(self::format(self::_("Unreferenced transfer in section [*1]: '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
         }        
@@ -1768,8 +1670,8 @@ class Innovation extends Table
                 
 
             default:
-                // This should not happens
-                throw new BgaVisibleSystemException(self::format(self::_("Unreferenced transfer in section [*2]: '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1806,8 +1708,8 @@ class Innovation extends Table
                 break;
                 
             default:
-                // This should not happens
-                throw new BgaVisibleSystemException(self::format(self::_("Unreferenced transfer in section [*3]: '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1816,7 +1718,7 @@ class Innovation extends Table
     }
         
     function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {
-        // [*] ATTENTION: when modifiing, modify notifyWithTwoPlayersInvolved at the same time
+        // [*] ATTENTION: when modifying, modify notifyWithTwoPlayersInvolved at the same time
         if ($player_id_is_owner_from) {
             switch($location_from . '->' . $location_to) {
             case 'hand->hand':
@@ -1848,7 +1750,10 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his score pile to {your} score pile');
                 $message_for_others = clienttranslate('{player must} transfer {number} {card} from his score pile to {opponent_name}\'s score pile');
                 break;
+
             default:
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1873,6 +1778,8 @@ class Innovation extends Table
                 break;
             
             default:
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -3729,6 +3636,15 @@ class Innovation extends Table
         if (!array_key_exists('not_id', $rewritten_options)) {
             $rewritten_options['not_id'] = -2;
         }
+        if (!array_key_exists('card_id_1', $rewritten_options)) {
+            $rewritten_options['card_id_1'] = -2;
+        }
+        if (!array_key_exists('card_id_2', $rewritten_options)) {
+            $rewritten_options['card_id_2'] = -2;
+        }
+        if (!array_key_exists('card_id_3', $rewritten_options)) {
+            $rewritten_options['card_id_3'] = -2;
+        }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
             $rewritten_options['bottom_to'] = false;
         }
@@ -3860,13 +3776,24 @@ class Innovation extends Table
             $condition_for_icon = "";
         }
         
-        // Condition for id
+        // Condition for requiring ID
+        $condition_for_requiring_id = "AND id IN (1, 3, 5, 7, 9, 11, 13, 15)";
+        $card_id_1 = self::getGameStateValue('card_id_1');
+        $card_id_2 = self::getGameStateValue('card_id_2');
+        $card_id_3 = self::getGameStateValue('card_id_3');
+        if ($card_id_3 != -2) {
+            $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2}, {card_id_3})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2, 'card_id_3' => $card_id_3));
+        } else if ($card_id_2 != -2) {
+            $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2));
+        } else if ($card_id_1 != -2) {
+            $condition_for_requiring_id = self::format("AND id IN ({card_id_1})", array('card_id_1' => $card_id_1));
+        }
+
+        // Condition for excluding ID
+        $condition_for_excluding_id = "";
         $not_id = self::getGameStateValue('not_id');
         if ($not_id != -2) { // Only used by Fission and Self service
-            $condition_for_id = self::format("AND id <> {not_id}", array('not_id' => $not_id));
-        }
-        else {
-            $condition_for_id = "";
+            $condition_for_excluding_id = self::format("AND id <> {not_id}", array('not_id' => $not_id));
         }
         
         if (self::getGameStateValue('splay_direction') == -1 && $location_from == 'board') {
@@ -3888,7 +3815,8 @@ class Innovation extends Table
                     position = position_of_active_card AND
                     {condition_for_color}
                     {condition_for_icon}
-                    {condition_for_id}
+                    {condition_for_requiring_id}
+                    {condition_for_excluding_id}
             ",
                 array(
                     'condition_for_owner' => $condition_for_owner,
@@ -3896,7 +3824,8 @@ class Innovation extends Table
                     'condition_for_age' => $condition_for_age,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
-                    'condition_for_id' => $condition_for_id
+                    'condition_for_requiring_id' => $condition_for_requiring_id,
+                    'condition_for_excluding_id' => $condition_for_excluding_id
                 )
             ));
         }
@@ -3912,7 +3841,8 @@ class Innovation extends Table
                     {condition_for_age} AND
                     {condition_for_color}
                     {condition_for_icon}
-                    {condition_for_id}
+                    {condition_for_requiring_id}
+                    {condition_for_excluding_id}
             ",
                 array(
                     'condition_for_owner' => $condition_for_owner,
@@ -3920,7 +3850,8 @@ class Innovation extends Table
                     'condition_for_age' => $condition_for_age,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
-                    'condition_for_id' => $condition_for_id
+                    'condition_for_requiring_id' => $condition_for_requiring_id,
+                    'condition_for_excluding_id' => $condition_for_excluding_id
                 )
             ));
         }
@@ -7241,7 +7172,10 @@ class Innovation extends Table
         $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
         $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
         $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
-        $step = self::getGameStateValue('step');    
+        $step = self::getGameStateValue('step');
+        $card_id_1 = self::getGameStateValue('card_id_1');
+        $card_id_2 = self::getGameStateValue('card_id_2');
+        $card_id_3 = self::getGameStateValue('card_id_3');
         
         $crown = self::getIconSquare(1);
         $leaf = self::getIconSquare(2);

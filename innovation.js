@@ -376,7 +376,7 @@ function (dojo, declare) {
             
             // PLAYERS' SCORE
             this.zone.score = {};
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.score[player_id] = this.createZone('score', player_id, null, grouped_by_age=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
@@ -408,7 +408,7 @@ function (dojo, declare) {
             }
             
             // PLAYERS' ACHIEVEMENTS
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.achievements[player_id] = this.createZone('achievements', player_id);
                 this.setPlacementRules(this.zone.achievements[player_id], left_to_right=true);
@@ -490,9 +490,9 @@ function (dojo, declare) {
                 this.enableButtonForSplayMode();
             }
             
-            // REVEALED ZONES
+            // REVEALED ZONE
             this.zone.revealed = {};    
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 var zone = this.createZone('revealed', player_id, null, grouped_by_age=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
@@ -1950,7 +1950,7 @@ function (dojo, declare) {
             if (zone['location'] == 'revealed' && zone.items.length == 0) {
                 dojo.style(zone.container_div, 'display', 'block');
             }
-       
+
             var grouped_by_age = zone['location'] != 'board' && zone['location'] != 'achievements';
             
             // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
@@ -2032,8 +2032,7 @@ function (dojo, declare) {
             // Remove the space occupied by the card if needed
             if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
                 this.updateZoneWidth(zone);
-            }
-            else if (zone['location'] == 'revealed' && zone.items.length == 0) {
+            } else if (zone['location'] == 'revealed' && zone.items.length == 0) {
                 zone = this.createZone('revealed', zone.owner, null, grouped_by_age=false); // Recreate the zone (Dunno why it does not work if I don't do that)
                 dojo.style(zone.container_div, 'display', 'none');
             }
