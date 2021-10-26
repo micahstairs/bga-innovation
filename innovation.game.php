@@ -7084,6 +7084,20 @@ class Innovation extends Table
                     self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
                 }
                 break;
+            
+            // id 115, Artifacts age 1: Pavlovian Tusk
+            case "115N1":
+                // "Draw three cards of value equal to your top green card"
+                $top_green_card = self::getTopCardOnBoard($player_id, 2 /* green */);
+                $top_green_card_age = 0;
+                if ($top_green_card !== null) {
+                    $top_green_card_age = $top_green_card["age"];
+                }
+                self::setGameStateValue('card_id_1', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
+                self::setGameStateValue('card_id_2', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
+                self::setGameStateValue('card_id_3', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
+                $step_max = 2; // --> 2 interactions: see B
+                break;
                 
             default:
                 // This should not happens
@@ -9203,6 +9217,45 @@ class Innovation extends Table
                 'color' => array(2) /* green */
             );
             break;
+        
+        // id 115, Artifacts age 1: Pavlovian Tusk
+        case "115N1A":
+            // "Return one of the drawn cards"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2,
+                'card_id_3' => $card_id_3
+            );
+            break;
+        
+            case "115N1B":
+                // "Score one of the drawn cards"
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'score',
+
+                    'card_id_1' => $card_id_1,
+                    'card_id_2' => $card_id_2,
+                    'card_id_3' => $card_id_3,
+
+                    'score_keyword' => true
+                );
+                break; 
         
         default:
             // This should not happens
