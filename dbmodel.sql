@@ -232,3 +232,6 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (107, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'achievements', 12, NULL, FALSE),
 (108, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'achievements', 13, NULL, FALSE),
 (109, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'achievements', 14, NULL, FALSE);
+
+/* Artifacts - Age 1 */
+(115, 1, 1, 1, 0, 1, 4, 1, 1, 0, 'deck', 0, NULL, FALSE);
