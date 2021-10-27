@@ -1160,6 +1160,7 @@ function (dojo, declare) {
         
         parseForRichedText : function(text, size) {
             text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
+            text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
             for (var age=1; age <= 10; age++) {
@@ -1365,16 +1366,18 @@ function (dojo, declare) {
                 }
             }
             
-            exists_i_demand_effect = card.i_demand_effect_1 !== null;
-            exists_non_demand_effect = card.non_demand_effect_1 != null;
-            exist_several_non_demand_effects = card.non_demand_effect_2 != null;
+            exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
+            exists_i_compel_effect = card.i_demand_effect_1_is_compel;
+            exists_non_demand_effect = card.non_demand_effect_1 !== null;
+            exist_several_non_demand_effects = card.non_demand_effect_2 !== null;
             
-            several_effects = (exists_i_demand_effect && exists_non_demand_effect) || exist_several_non_demand_effects;
+            several_effects = (card.i_demand_effect_1 !== null && exists_non_demand_effect) || exist_several_non_demand_effects;
             
             if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0) {
                 HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
-            }
-            else {
+            } else if (exists_i_compel_effect && !exists_non_demand_effect && weaker_players.length == 0) {
+                HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+            } else {
                 HTML_action = "<p class='possible_action'>" + (several_effects ? _("Click to execute the dogma effects of this card.") : _("Click to execute the dogma effect of this card.")) + "</p>";
                 HTML_action += "<p>" + _("If you do:") + "</p>"
                 HTML_action += "<ul class='recap_dogma'>"
@@ -1382,8 +1385,7 @@ function (dojo, declare) {
                 if (exists_i_demand_effect) {
                     if (weaker_players.length == 0) {
                         HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
-                    }
-                    else {
+                    } else {
                         var players = [];
                         for(var p=0; p<weaker_players.length; p++) {
                             var player_id = weaker_players[p];
@@ -1392,23 +1394,39 @@ function (dojo, declare) {
                         }
                         if (players.length == 1) {
                             HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I demand effect."), {'player': players[0]}) + "</li>"
-                        }
-                        else {
+                        } else {
                             HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': players.join(', ')}) + "</li>"
+                        }
+                    }
+                }
+
+                if (exists_i_compel_effect) {
+                    if (stronger_or_equal_players.length == 0) {
+                        HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
+                    } else {
+                        var players = [];
+                        for (var p=0; p<stronger_or_equal_players.length; p++) {
+                            var player_id = stronger_or_equal_players[p];
+                            var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                            players.push(player);
+                        }
+                        if (players.length == 1) {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I compel effect."), {'player': players[0]}) + "</li>"
+                        } else {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': players.join(', ')}) + "</li>"
                         }
                     }
                 }
                 
                 if (exists_non_demand_effect) {
                     if (stronger_or_equal_players.length == 0) {
-                        if (!exist_several_non_demand_effects) {
-                            HTML_action += "<li>" + _("You will execute the non-demand effect alone.") + "</li>"
-                        }
-                        else {
+                        if (exist_several_non_demand_effects) {
                             HTML_action += "<li>" + _("You will execute the non-demand effects alone.") + "</li>"
                         }
-                    }
-                    else {
+                        else {
+                            HTML_action += "<li>" + _("You will execute the non-demand effect alone.") + "</li>"
+                        }
+                    } else {
                         var players = [];
                         for(var p=0; p<stronger_or_equal_players.length; p++) {
                             var player_id = stronger_or_equal_players[p];
@@ -1416,19 +1434,16 @@ function (dojo, declare) {
                             players.push(player);
                         }
                         if (players.length == 1) {
-                            if (!exist_several_non_demand_effects) {
+                            if (exist_several_non_demand_effects) {
+                                HTML_action += "<li>" + dojo.string.substitute(_("${player} will share each non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
+                            } else {
                                 HTML_action += "<li>" + dojo.string.substitute(_("${player} will share the non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
                             }
-                            else {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${player} will share each non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
-                            }
-                        }
-                        else {
-                            if (!exist_several_non_demand_effects) {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${players} will share the non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
-                            }
-                            else {
+                        } else {
+                            if (exist_several_non_demand_effects) {
                                 HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
+                            } else {
+                                HTML_action += "<li>" + dojo.string.substitute(_("${players} will share the non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
                             }
                         }
                     }

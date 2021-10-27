@@ -1340,6 +1340,24 @@ class Innovation extends Table
         }
         return $delimiters;
     }
+
+    function getLetterForEffectType($effect_type) {
+        switch ($effect_type) {
+            case 0:
+                // I demand
+                return "D";
+            case 1:
+                // Non-demand
+                return "N";
+            case 2:
+                // I compel
+                return "C";
+            default:
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getLetterForEffectType(): '{code}'"), array('code' => $effect_type)));
+                break;
+        }
+    }
     
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo) {
         $location_from = $transferInfo['location_from'];
@@ -3370,34 +3388,55 @@ class Innovation extends Table
         $unique_non_demand_effect = $card['non_demand_effect_2'] === null;
         
         return $current_effect_type == 0 ? clienttranslate('I demand effect') :
+               ($current_effect_type == 2 ? clienttranslate('I compel effect') :
                ($unique_non_demand_effect ? clienttranslate('non-demand effect') :
                ($current_effect_number == 1 ? clienttranslate('1<sup>st</sup> non-demand effect') :
-               ($current_effect_number == 2 ? clienttranslate('2<sup>nd</sup> non-demand effect') : clienttranslate('3<sup>rd</sup> non-demand effect'))));
+               ($current_effect_number == 2 ? clienttranslate('2<sup>nd</sup> non-demand effect') : clienttranslate('3<sup>rd</sup> non-demand effect')))));
     }
                                   
-    function getFirstPlayerUnderEffect($dogma_effect_type) {
+    function getFirstPlayerUnderEffect($dogma_effect_type, $launcher_id) {
+        // I demand
+        if ($dogma_effect_type == 0) {
+            $player_query = "stronger_or_equal = FALSE";
+        // I compel
+        } else if ($dogma_effect_type == 2) {
+            $player_query = self::format("stronger_or_equal = TRUE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
+        // Non-demand
+        } else {
+            $player_query = "stronger_or_equal = TRUE";
+        }
         return self::getUniqueValueFromDB(self::format("
             SELECT
                 player_id
             FROM
                 player
             WHERE
-                stronger_or_equal = {dogma_effect_type} AND
-                player_no_under_effect = 1
+                {player_query}
+                AND player_no_under_effect = 1
         ",
-            array('dogma_effect_type' => $dogma_effect_type)
+            array('player_query' => $player_query)
        ));
     }
        
-    function getNextPlayerUnderEffect($dogma_effect_type, $player_id) { // null if no player is found
+    function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id) { // null if no player is found
+        // I demand
+        if ($dogma_effect_type == 0) {
+            $player_query = "stronger_or_equal = FALSE";
+        // I compel
+        } else if ($dogma_effect_type == 2) {
+            $player_query = self::format("stronger_or_equal = TRUE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
+        // Non-demand
+        } else {
+            $player_query = "stronger_or_equal = TRUE";
+        }       
         return self::getUniqueValueFromDB(self::format("
             SELECT
                 player_id
             FROM
                 player
             WHERE
-                stronger_or_equal = {dogma_effect_type} AND
-                player_no_under_effect = (
+                {player_query}
+                AND player_no_under_effect = (
                     SELECT
                         player_no_under_effect
                     FROM
@@ -3406,7 +3445,7 @@ class Innovation extends Table
                         player_id = {player_id}
                 ) + 1
         ",
-            array('dogma_effect_type' => $dogma_effect_type, 'player_id' => $player_id)
+            array('player_query' => $player_query, 'player_id' => $player_id)
         ));
     }
     
@@ -4024,7 +4063,7 @@ class Innovation extends Table
     }
     
     function getJSCardEffectQuery($card_id, $card_age, $effect_type, $effect_number) {
-        return self::getJSCardId($card_id, $card_age) . " ." . ($effect_type == 0 ? "i_demand" : "non_demand") . "_effect_" . $effect_number;
+        return self::getJSCardId($card_id, $card_age) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
     
     /** Nested dogma excution management system: FIFO stack **/
@@ -4323,7 +4362,8 @@ class Innovation extends Table
         $player_no_under_i_demand_effect = 0;
         $player_no_under_non_demand_effect = 0;
         
-        $card_with_i_demand_effect = $card['i_demand_effect_1'] !== null;
+        $card_with_i_demand_effect = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
+        $card_with_i_compel_effect = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
         $card_with_non_demand_effect = $card['non_demand_effect_1'] !== null;
         
         // Loop on players finishing with the one who triggered the dogma
@@ -4369,7 +4409,13 @@ class Innovation extends Table
         
         // Write info in global variables to prepare the first effect
         self::setGameStateValue('dogma_card_id', $card_id);
-        self::setGameStateValue('current_effect_type', $card_with_i_demand_effect ? 0 : 1);
+        if ($card_with_i_compel_effect) {
+            self::setGameStateValue('current_effect_type', 2);
+        } else if ($card_with_i_demand_effect) {
+            self::setGameStateValue('current_effect_type', 0);
+        } else {
+            self::setGameStateValue('current_effect_type', 1);
+        }
         self::setGameStateValue('current_effect_number', 1);
         self::setGameStateValue('sharing_bonus', 0);
         
@@ -4811,7 +4857,7 @@ class Innovation extends Table
             // The message to display is specific of the card
             $step = self::getGameStateValue('step');
             $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-            $code = $card_id.($current_effect_type == 0 ? "D" : "N" ).$current_effect_number.$letters[$step];
+            $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $letters[$step];
             
             $message_args_for_player = array('You' => 'You', 'you' => 'you');
             $message_args_for_others = array('player_name' => $player_name);
@@ -5378,7 +5424,8 @@ class Innovation extends Table
         $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, $card);
         
         // Search for the first player who will undergo/share the effects, if any
-        $first_player = self::getFirstPlayerUnderEffect($current_effect_type);
+        $launcher_id = self::getGameStateValue('active_player');
+        $first_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
         if ($first_player === null) {
             // There is no player affected by the effect
             self::notifyGeneralInfo("<span class='minor_information'>" . clienttranslate('Nobody is affected by the ${qualified_effect} of the card.') . "</span>", array(
@@ -5544,7 +5591,7 @@ class Innovation extends Table
         try {
             //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             // [A] SPECIFIC CODE: what are the automatic actions to make and/or is there interaction needed?
-            $code = $card_id.($current_effect_type == 0 ? "D" : "N" ).$current_effect_number;
+            $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number;
             self::trace('[A]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
             switch($code) {
             // The first number is the id of the card
@@ -7161,8 +7208,9 @@ class Innovation extends Table
         
         // A player has executed an effect of a dogma card (or passed). Is there another player on which the effect can apply?
         $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $launcher_id = self::getGameStateValue('active_player');
         $current_effect_type = self::getGameStateValue('current_effect_type');
-        $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id);
+        $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
         if ($next_player === null) {
             // There is no more player eligible for this effect
             // End of the dogma effect
@@ -7201,7 +7249,7 @@ class Innovation extends Table
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         // [B] SPECIFIC CODE: for effects where interaction is needed, what is the range of cards/colors/values among which the player has to make a choice? and what is to be done with that card?
         $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-        $code = $card_id.($current_effect_type == 0 ? "D" : "N" ).$current_effect_number.$letters[$step];
+        $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $letters[$step];
         self::trace('[B]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
         switch($code) {
         // The first number is the id of the card
@@ -9292,7 +9340,7 @@ class Innovation extends Table
                 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
                 // [D] SPECIFIC CODE: what to be done after the player finished his selection of cards/colors/values?
                 $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-                $code = $card_id.($current_effect_type == 0 ? "D" : "N" ).$current_effect_number.$letters[$step];
+                $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $letters[$step];
                 self::trace('[D]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
                 switch($code) {
                 // The first number is the id of the card
@@ -10049,7 +10097,7 @@ class Innovation extends Table
             //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             // [C] SPECIFIC CODE: what is to be done with the card/color/value the player chose?
             $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-            $code = $card_id.($current_effect_type == 0 ? "D" : "N" ).$current_effect_number.$letters[$step];
+            $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $letters[$step];
             self::trace('[C]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
             switch($code) {
             // The first number is the id of the card
