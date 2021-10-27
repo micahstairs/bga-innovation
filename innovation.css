@@ -901,7 +901,11 @@
     line-height : 22px;
 }
 
-/* Within dogma, indicators of the current effect */ 
+/* Within dogma, indicators of the current effect */
+
+.current_effect {
+    box-shadow: 0px 0px 6px 2px #fff;
+}
 
 .current_effect.light {
     background-color: rgb(255 255 255 / 80%) !important;
