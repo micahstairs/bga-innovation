@@ -7176,6 +7176,38 @@ class Innovation extends Table
                     self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
                 }
                 break;
+            //
+			// Artifacts
+			//
+			
+			// id 111, Artifacts age 1: Sibidu Needle
+            case "111N1":
+                
+				while(true) {
+                    $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
+					$topcard = self::getTopCardOnBoard($player_id, $card['color']);
+					if ($topcard !== null) 
+					{
+						if ($card['age'] == $topcard['age'] ) 
+						{ // "If it is the same age"
+							self::notifyGeneralInfo(clienttranslate('It has the same age.  Score the card.'));
+							self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score it"
+							continue; // "Repeat this dogma effect"
+						}
+						else
+						{
+							self::notifyGeneralInfo(clienttranslate('The age does match.  Card will not be scored.'));
+						}
+					}
+					else
+					{
+						self::notifyGeneralInfo(clienttranslate('No ${color} pile exists.  Card will not be scored.'), array('color' => self::getColorInClear($card['color'])));
+                    
+					}
+                    break; // "Otherwise"        
+                }
+                self::transferCardFromTo($card, $player_id, 'hand'); // "Keep it"
+                break;
             
             // id 113, Artifacts age 1: Holmegaard Bows
             case "113C1":
@@ -7186,7 +7218,7 @@ class Innovation extends Table
                 // "Draw a 2"
                 self::executeDraw($player_id, 2, 'hand');
                 break;
-            
+				
             // id 115, Artifacts age 1: Pavlovian Tusk
             case "115N1":
                 // "Draw three cards of value equal to your top green card"
