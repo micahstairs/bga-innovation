@@ -656,12 +656,12 @@
     border-radius: 4px;
     width: 20px;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
     color: #ffffff;
 }
 
 .ressource.with_border {
-    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    text-shadow: 1px 1px 2px black, 0 0 25px black, 0 0 5px black;
 }
 
 .ressource_1 { /* crown */
