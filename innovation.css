@@ -763,7 +763,7 @@
     
 /* Elements for rewriting card texts */
 
-.i_demand, .immediately {
+.i_demand, .i_compel, .immediately {
     font-weight: bold;
 }
 

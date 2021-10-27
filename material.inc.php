@@ -25,6 +25,7 @@ $this->textual_card_infos = array(
 
 0 => array('name' => clienttranslate('Pottery'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return up to three cards from your hand. If you returned any cards, draw and score a card of value equal to the number of cards you returned.'),
     'non_demand_effect_2' => clienttranslate('Draw a ${age_1}.'),
     'non_demand_effect_3' => null,
@@ -34,6 +35,7 @@ $this->textual_card_infos = array(
 
 1 => array('name' => clienttranslate('Tools'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return three cards from your hand. If you do, draw and meld a ${age_3}.'),
     'non_demand_effect_2' => clienttranslate('You may return a ${age_3} from your hand. If you do, draw three ${age_1}.'),
     'non_demand_effect_3' => null,
@@ -43,6 +45,7 @@ $this->textual_card_infos = array(
 
 2 => array('name' => clienttranslate('Writing'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw a ${age_2}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -52,6 +55,7 @@ $this->textual_card_infos = array(
 
 3 => array('name' => clienttranslate('Archery'),
     'i_demand_effect_1' => clienttranslate('${I demand} you draw a ${age_1}, then transfer the highest card in your hand to my hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -61,6 +65,7 @@ $this->textual_card_infos = array(
 
 4 => array('name' => clienttranslate('Metalworking'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If it has a ${icon_4}, score it and repeat this dogma effect. Otherwise, keep it.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -70,7 +75,9 @@ $this->textual_card_infos = array(
 
 5 => array('name' => clienttranslate('Oars'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_1} from your hand to my score pile! If you do, draw a ${age_1}, and repeat this dogma effect!'),
+    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer a card with a ${icon_1} from your hand to my score pile! If you do, draw a ${age_1}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If no cards were transferred due to this demand, draw a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -80,6 +87,7 @@ $this->textual_card_infos = array(
 
 6 => array('name' => clienttranslate('Clothing'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Meld a card from your hand of different color from any card on your board.'),
     'non_demand_effect_2' => clienttranslate('Draw and score a ${age_1} for each color present on your board not present on any other player\'s board.'),
     'non_demand_effect_3' => null,
@@ -89,6 +97,7 @@ $this->textual_card_infos = array(
 
 7 => array('name' => clienttranslate('Sailing'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -98,6 +107,7 @@ $this->textual_card_infos = array(
 
 8 => array('name' => clienttranslate('The wheel'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw two ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -107,6 +117,7 @@ $this->textual_card_infos = array(
 
 9 => array('name' => clienttranslate('Agriculture'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -116,6 +127,7 @@ $this->textual_card_infos = array(
 
 10 => array('name' => clienttranslate('Domestication'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Meld the lowest card in your hand. Draw a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -125,6 +137,7 @@ $this->textual_card_infos = array(
 
 11 => array('name' => clienttranslate('Masonry'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may meld any number of cards from your hand, each with a ${icon_4}. If you melded four or more cards in this way, claim the Monument achievement.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -134,6 +147,7 @@ $this->textual_card_infos = array(
 
 12 => array('name' => clienttranslate('City states'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card with a ${icon_4} from your board to my board if you have at least four ${icon_4} on your board! If you do, draw a ${age_1}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -143,6 +157,7 @@ $this->textual_card_infos = array(
 
 13 => array('name' => clienttranslate('Code of laws'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may tuck a card from your hand of the same color as any card on your board. If you do, you may splay that color of your cards left.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -152,6 +167,7 @@ $this->textual_card_infos = array(
 
 14 => array('name' => clienttranslate('Mysticism'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If it is the same color as any card on your board, meld it and draw a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -163,6 +179,7 @@ $this->textual_card_infos = array(
 
 15 => array('name' => clienttranslate('Calendar'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If you have more cards in your score pile than in your hand, draw two ${age_3}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -172,6 +189,7 @@ $this->textual_card_infos = array(
 
 16 => array('name' => clienttranslate('Mathematics'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, draw and meld a card of value one higher than the card your returned.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -181,6 +199,7 @@ $this->textual_card_infos = array(
 
 17 => array('name' => clienttranslate('Construction'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer two cards from your hand to my hand! Draw a ${age_2}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If you are the only player with five top cards, claim the Empire achievement.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -190,6 +209,7 @@ $this->textual_card_infos = array(
 
 18 => array('name' => clienttranslate('Road building'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Meld one or two cards from your hand. If you melded two, you may transfer your top red card to another player board. If you do, transfer that player\'s top green card to your board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -199,6 +219,7 @@ $this->textual_card_infos = array(
 
 19 => array('name' => clienttranslate('Currency'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return any number of cards from your hand. If you do, draw and score a ${age_2} for every different value of card you returned.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -208,6 +229,7 @@ $this->textual_card_infos = array(
 
 20 => array('name' => clienttranslate('Mapmaking'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a ${age_1} from your score pile, if it has any, to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If any card was transferred due to the demand, draw and score a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -217,6 +239,7 @@ $this->textual_card_infos = array(
 
 21 => array('name' => clienttranslate('Canal building'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may exchange all the highest cards in your hand with all the highest cards in your score pile.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -226,6 +249,7 @@ $this->textual_card_infos = array(
 
 22 => array('name' => clienttranslate('Fermenting'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw a ${age_2} for every color on your board with one or more ${icon_2}.'),
     'non_demand_effect_1_alt' => clienttranslate('Draw a ${age_2} for every two ${icon_2} on your board.'),
     'non_demand_effect_2' => null,
@@ -236,6 +260,7 @@ $this->textual_card_infos = array(
 
 23 => array('name' => clienttranslate('Monotheism'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card on your board of different color from any card on my board to my score pile! If you do, draw and tuck a ${age_1}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -245,6 +270,7 @@ $this->textual_card_infos = array(
 
 24 => array('name' => clienttranslate('Philosophy'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay left any one color of your cards.'),
     'non_demand_effect_2' => clienttranslate('You may score a card from your hand.'),
     'non_demand_effect_3' => null,
@@ -256,6 +282,7 @@ $this->textual_card_infos = array(
 
 25 => array('name' => clienttranslate('Alchemy'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_4} for every three ${icon_4} on your board. If any of the drawn cards are red, return the cards drawn and all cards in your hand. Otherwise, keep them.'),
     'non_demand_effect_2' => clienttranslate('Meld a card from your hand, then score a card from your hand.'),
     'non_demand_effect_3' => null,
@@ -265,6 +292,7 @@ $this->textual_card_infos = array(
 
 26 => array('name' => clienttranslate('Translation'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may meld all the cards in your score pile. If you meld one, you must meld them all.'),
     'non_demand_effect_2' => clienttranslate('If each top card on your board has a ${icon_1}, claim the World achievement.'),
     'non_demand_effect_3' => null,
@@ -274,6 +302,7 @@ $this->textual_card_infos = array(
 
 27 => array('name' => clienttranslate('Engineering'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer all top cards with a ${icon_4} from your board to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your red cards left.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -283,6 +312,7 @@ $this->textual_card_infos = array(
 
 28 => array('name' => clienttranslate('Optics'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw an meld a ${age_3}. If it has a ${icon_1}, draw and score a ${age_4}. Otherwise, transfer a card from your score pile to the score pile of an opponent with fewer points than you.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -292,6 +322,7 @@ $this->textual_card_infos = array(
 
 29 => array('name' => clienttranslate('Compass'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-green card with a ${icon_2} from your board to my board, and then you transfer a top card without a ${icon_2} from my board to your board!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -301,6 +332,7 @@ $this->textual_card_infos = array(
 
 30 => array('name' => clienttranslate('Paper'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your green or blue cards left.'),
     'non_demand_effect_2' => clienttranslate('Draw a ${age_4} for every color you have splayed left.'),
     'non_demand_effect_3' => null,
@@ -310,6 +342,7 @@ $this->textual_card_infos = array(
 
 31 => array('name' => clienttranslate('Machinery'),
     'i_demand_effect_1' => clienttranslate('${I demand} you exchange all the cards in your hand with all the highest cards in my hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Score a card from your hand with a ${icon_4}. You may splay your red cards left.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -319,6 +352,7 @@ $this->textual_card_infos = array(
 
 32 => array('name' => clienttranslate('Medicine'),
     'i_demand_effect_1' => clienttranslate('${I demand} you exchange the highest card in your score pile with the lowest card in my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -328,6 +362,7 @@ $this->textual_card_infos = array(
 
 33 => array('name' => clienttranslate('Education'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return the highest card from your score pile. If you do, draw a card of value two higher than the highest card remaining in your score pile.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -337,7 +372,9 @@ $this->textual_card_infos = array(
 
 34 => array('name' => clienttranslate('Feudalism'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_4} from your hand to my hand! If you do, unsplay that color of your cards!'),
+    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer a card with a ${icon_4} from your hand to my hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your yellow or purple cards left.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -349,6 +386,7 @@ $this->textual_card_infos = array(
 
 35 => array('name' => clienttranslate('Experimentation'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_5}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -358,6 +396,7 @@ $this->textual_card_infos = array(
 
 36 => array('name' => clienttranslate('Printing press'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your score pile. If you do, draw a card of value two higher than the top purple card on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your blue cards right.'),
     'non_demand_effect_3' => null,
@@ -367,6 +406,7 @@ $this->textual_card_infos = array(
 
 37 => array('name' => clienttranslate('Colonialism'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_3}. If it has a ${icon_1}, repeat this dogma effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -376,6 +416,7 @@ $this->textual_card_infos = array(
 
 38 => array('name' => clienttranslate('Gunpowder'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card with a ${icon_4} from your board to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If any card was transfered due to the demand, draw and score a ${age_2}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -385,6 +426,7 @@ $this->textual_card_infos = array(
 
 39 => array('name' => clienttranslate('Invention'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay right any one color of your card currently splayed left. If you do, draw and score a ${age_4}.'),
     'non_demand_effect_2' => clienttranslate('If you have five colors splayed, each in any direction, claim the Wonder achievement.'),
     'non_demand_effect_3' => null,
@@ -394,6 +436,7 @@ $this->textual_card_infos = array(
 
 40 => array('name' => clienttranslate('Navigation'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a ${age_2} or ${age_3} from your score pile, if it has any, to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -403,6 +446,7 @@ $this->textual_card_infos = array(
 
 41 => array('name' => clienttranslate('Anatomy'),
     'i_demand_effect_1' => clienttranslate('${I demand} you return a card from your score pile! If you do, return a top card of equal value from your board!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -412,6 +456,7 @@ $this->textual_card_infos = array(
 
 42 => array('name' => clienttranslate('Perspective'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, score a card from your hand for every two ${icon_3} on your board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -421,6 +466,7 @@ $this->textual_card_infos = array(
 
 43 => array('name' => clienttranslate('Enterprise'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-purple card with a ${icon_1} from your board to my board! If you do, draw and meld a ${age_4}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your green cards right.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -430,6 +476,7 @@ $this->textual_card_infos = array(
 
 44 => array('name' => clienttranslate('Reformation'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may tuck a card from your hand for every two ${icon_2} on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow or purple cards right.'),
     'non_demand_effect_3' => null,
@@ -441,6 +488,7 @@ $this->textual_card_infos = array(
 
 45 => array('name' => clienttranslate('Chemistry'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your blue cards right.'),
     'non_demand_effect_2' => clienttranslate('Draw and score a card of value one higher than the highest top card on your board and then return a card from your score pile.'),
     'non_demand_effect_3' => null,
@@ -450,6 +498,7 @@ $this->textual_card_infos = array(
 
 46 => array('name' => clienttranslate('Physics'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw three ${age_6} and reveal them. If two or more of the drawn cards are the same color, return the drawn cards and all cards in your hand. Otherwise, keep them.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -459,6 +508,7 @@ $this->textual_card_infos = array(
 
 47 => array('name' => clienttranslate('Coal'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_5}.'),
     'non_demand_effect_2' => clienttranslate('You may splay your red cards right.'),
     'non_demand_effect_3' => clienttranslate('You may score any one of your top cards. If you do, also score the card beneath it.'),
@@ -468,6 +518,7 @@ $this->textual_card_infos = array(
 
 48 => array('name' => clienttranslate('The pirate code'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer two cards of value ${age_4} or less from your score pile to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If any card was transferred due to the demand, score the lowest top card with a ${icon_1} from your board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -477,6 +528,7 @@ $this->textual_card_infos = array(
 
 49 => array('name' => clienttranslate('Banking'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-green card with a ${icon_5} from your board to my board. If you do, draw and score a ${age_5}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your green cards right.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -486,6 +538,7 @@ $this->textual_card_infos = array(
 
 50 => array('name' => clienttranslate('Measurement'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may reveal and return a card from your hand. If you do, splay that color of your cards right, and draw a card of value equal to the number of cards of that color on your board.'),
     'non_demand_effect_1_alt' => clienttranslate('You may return a card from your hand. If you do, choose a color. Splay that color of your cards right, and draw a card of value equal to the number of cards of that color on your board.'),
     'non_demand_effect_2' => null,
@@ -496,7 +549,9 @@ $this->textual_card_infos = array(
 
 51 => array('name' => clienttranslate('Statistics'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer all the highest cards in your score pile to your hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer the highest card in your score pile to your hand! If you do, and have only one card in your hand afterwards, repeat this demand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your yellow cards right.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -506,6 +561,7 @@ $this->textual_card_infos = array(
 
 52 => array('name' => clienttranslate('Steam engine'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and tuck two ${age_4}, then score your bottom yellow card.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -515,6 +571,7 @@ $this->textual_card_infos = array(
 
 53 => array('name' => clienttranslate('Astronomy'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_6}. If the card is green or blue, meld it and repeat this dogma effect.'),
     'non_demand_effect_2' => clienttranslate('If all non-purple top cards on your board are value ${age_6} or higher, claim the Universe achievement.'),
     'non_demand_effect_3' => null,
@@ -524,7 +581,9 @@ $this->textual_card_infos = array(
 
 54 => array('name' => clienttranslate('Societies'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_3} higher than my top card of the same color from your board to my board! If you do, draw an ${age_5}!'),
+    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer a top non-purple card with a ${icon_3} from your board to my board! If you do, draw an ${age_5}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -536,6 +595,7 @@ $this->textual_card_infos = array(
 
 55 => array('name' => clienttranslate('Atomic theory'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your blue cards right.'),
     'non_demand_effect_2' => clienttranslate('Draw and meld a ${age_7}.'),
     'non_demand_effect_3' => null,
@@ -545,6 +605,7 @@ $this->textual_card_infos = array(
 
 56 => array('name' => clienttranslate('Encyclopedia'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may meld all the highest cards in your score pile. If you meld one of the highest, you must meld all of the highest.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -554,6 +615,7 @@ $this->textual_card_infos = array(
 
 57 => array('name' => clienttranslate('Industrialization'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}.'),
     'non_demand_effect_1_alt' => clienttranslate('Draw and tuck a ${age_6} for every two ${icon_5} on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your red or purple cards right.'),
@@ -564,6 +626,7 @@ $this->textual_card_infos = array(
 
 58 => array('name' => clienttranslate('Machine tools'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and score a card of value equal to the highest card in your score pile.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -573,6 +636,7 @@ $this->textual_card_infos = array(
 
 59 => array('name' => clienttranslate('Classification'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Reveal the color of a card in your hand. Take into your hand all cards of that color from all other player\'s hands. Then meld all cards of that color from your hand.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -582,6 +646,7 @@ $this->textual_card_infos = array(
 
 60 => array('name' => clienttranslate('Metric system'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If your green cards are splayed right, you may splay any one color of your cards right.'),
     'non_demand_effect_2' => clienttranslate('You may splay your green cards right.'),
     'non_demand_effect_3' => null,
@@ -591,6 +656,7 @@ $this->textual_card_infos = array(
 
 61 => array('name' => clienttranslate('Canning'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may draw and tuck a ${age_6}. If you do, score all your top cards without a ${icon_5}.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow cards right.'),
     'non_demand_effect_3' => null,
@@ -600,6 +666,7 @@ $this->textual_card_infos = array(
 
 62 => array('name' => clienttranslate('Vaccination'),
     'i_demand_effect_1' => clienttranslate('${I demand} your return all the lowest cards in your score pile! If you returnd any, draw and meld a ${age_6}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If any card was returned as a result of the demand, draw and meld a ${age_7}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -609,6 +676,7 @@ $this->textual_card_infos = array(
 
 63 => array('name' => clienttranslate('Democracy'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return any number of cards from your hand. If you have returned more cards than any other player due to Democracy so far during this dogma action, draw and score a ${age_8}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -618,6 +686,7 @@ $this->textual_card_infos = array(
 
 64 => array('name' => clienttranslate('Emancipation'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card from your hand to my score pile! If you do, draw a ${age_6}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your red or purple cards right.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -629,6 +698,7 @@ $this->textual_card_infos = array(
 
 65 => array('name' => clienttranslate('Evolution'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may choose to either draw and score a ${age_8} and then return a card from your score pile, or draw a card of value one higher than the highest card in your score pile.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -638,6 +708,7 @@ $this->textual_card_infos = array(
 
 66 => array('name' => clienttranslate('Publications'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may rearrange the order of one color of cards on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow or blue cards up.'),
     'non_demand_effect_3' => null,
@@ -647,7 +718,9 @@ $this->textual_card_infos = array(
 
 67 => array('name' => clienttranslate('Combustion'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every four ${icon_1} on my board!'),
+    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer two cards from your score pile to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return your bottom red card.'),
     'non_demand_effect_1_alt' => null, /* No non-demand effect in the first edition*/
     'non_demand_effect_2' => null,
@@ -658,6 +731,7 @@ $this->textual_card_infos = array(
 
 68 => array('name' => clienttranslate('Explosives'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer the three highest cards from your hand to my hand! If you transferred any, and then have no card in hand, draw a ${age_7}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -667,6 +741,7 @@ $this->textual_card_infos = array(
 
 69 => array('name' => clienttranslate('Bicycle'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may exchange all the cards in your hand with all the cards in your score pile. If you exchange one, you must exchange them all.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -676,6 +751,7 @@ $this->textual_card_infos = array(
 
 70 => array('name' => clienttranslate('Electricity'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return all your top cards without a ${icon_5}, then draw an ${age_8} for each card you returned.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -685,6 +761,7 @@ $this->textual_card_infos = array(
 
 71 => array('name' => clienttranslate('Refrigeration'),
     'i_demand_effect_1' => clienttranslate('${I demand} you return half (rounded down) of the cards in your hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may score a card from your hand.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -694,6 +771,7 @@ $this->textual_card_infos = array(
 
 72 => array('name' => clienttranslate('Sanitation'),
     'i_demand_effect_1' => clienttranslate('${I demand} you exchange the two highest cards in your hand with the lowest card in my hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -703,6 +781,7 @@ $this->textual_card_infos = array(
 
 73 => array('name' => clienttranslate('Lighting'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may tuck up to three cards from your hand. If you do, draw and score a ${age_7} for every different value of card you tucked.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -712,6 +791,7 @@ $this->textual_card_infos = array(
 
 74 => array('name' => clienttranslate('Railroad'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return all cards from your hand, then draw three ${age_6}.'),
     'non_demand_effect_2' => clienttranslate('You may splay up any one color of your cards currently splayed right.'),
     'non_demand_effect_3' => null,
@@ -723,6 +803,7 @@ $this->textual_card_infos = array(
 
 75 => array('name' => clienttranslate('Quantum theory'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return up to two cards from your hand. If you return two, draw a ${age_10} and then draw and score a ${age_10}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -732,6 +813,7 @@ $this->textual_card_infos = array(
 
 76 => array('name' => clienttranslate('Rocketry'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return a card in any other player\'s score pile for every two ${icon_6} on your board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -741,6 +823,7 @@ $this->textual_card_infos = array(
 
 77 => array('name' => clienttranslate('Flight'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If your red cards are splayed up, you may splay any one color of your cards up.'),
     'non_demand_effect_2' => clienttranslate('You may splay your red cards up.'),
     'non_demand_effect_3' => null,
@@ -750,6 +833,7 @@ $this->textual_card_infos = array(
 
 78 => array('name' => clienttranslate('Mobility'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer the two highest non-red top cards without a ${icon_5} from your board to my score pile! If you transferred any cards, draw an ${age_8}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -759,6 +843,7 @@ $this->textual_card_infos = array(
 
 79 => array('name' => clienttranslate('Corporations'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-green card with a ${icon_5} from your board to my score pile! If you do, draw and meld a ${age_8}!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_8}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -768,6 +853,7 @@ $this->textual_card_infos = array(
 
 80 => array('name' => clienttranslate('Mass media'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, choose a value, and return all cards of that value from all score piles.'),
     'non_demand_effect_2' => clienttranslate('You may splay your purple cards up.'),
     'non_demand_effect_3' => null,
@@ -777,6 +863,7 @@ $this->textual_card_infos = array(
 
 81 => array('name' => clienttranslate('Antibiotics'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return up to three cards from your hand? For every different value of card that your returned, draw two ${age_8}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -786,6 +873,7 @@ $this->textual_card_infos = array(
 
 82 => array('name' => clienttranslate('Skyscrapers'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-yellow card with a ${icon_6} from your board to my board! If you do, score the card beneath it, and return all other cards from that pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -795,6 +883,7 @@ $this->textual_card_infos = array(
 
 83 => array('name' => clienttranslate('Empiricism'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is either of the colors you choose, meld it and you may splay your cards of that color up.'),
     'non_demand_effect_2' => clienttranslate('If you have twenty or more ${icon_3} on your board, you win.'),
     'non_demand_effect_3' => null,
@@ -804,6 +893,7 @@ $this->textual_card_infos = array(
 
 84 => array('name' => clienttranslate('Socialism'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may tuck all cards from your hand. If you tuck one, you must tuck them all. If you tucked at least one purple card, take all the lowest cards in each other player\'s hand into your hand.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -815,6 +905,7 @@ $this->textual_card_infos = array(
 
 85 => array('name' => clienttranslate('Computers'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your red cards or your green cards up.'),
     'non_demand_effect_2' => clienttranslate('Draw and meld a ${age_10}, then execute each of its non-demand effects. Do not share them.'),
     'non_demand_effect_3' => null,
@@ -824,6 +915,7 @@ $this->textual_card_infos = array(
 
 86 => array('name' => clienttranslate('Genetics'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_10}. Score all cards beneath it.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -833,6 +925,7 @@ $this->textual_card_infos = array(
 
 87 => array('name' => clienttranslate('Composites'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer all but one card from your hand to my hand! Also, transfer the highest card from your score pile to my score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -842,6 +935,7 @@ $this->textual_card_infos = array(
 
 88 => array('name' => clienttranslate('Fission'),
     'i_demand_effect_1' => clienttranslate('${I demand} you draw a ${age_10}! If it is red, remove all hands, boards, and score piles from the game! If this occurs, the dogma action is complete.'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return a top card other than Fission from any player board. Draw a ${age_10}.'),
     'non_demand_effect_1_alt' => clienttranslate('Return a top card other than Fission from any player board.'),
     'non_demand_effect_2' => null,
@@ -852,6 +946,7 @@ $this->textual_card_infos = array(
 
 89 => array('name' => clienttranslate('Collaboration'),
     'i_demand_effect_1' => clienttranslate('${I demand} you draw two ${age_9} and reveal them! Transfer the card of my choice to my board, and meld the other!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If you have ten or more green cards on your board, you win.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -861,6 +956,7 @@ $this->textual_card_infos = array(
 
 90 => array('name' => clienttranslate('Satellites'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return all cards from your hand, and draw three ${age_8}.'),
     'non_demand_effect_2' => clienttranslate('You may splay your purple cards up.'),
     'non_demand_effect_3' => clienttranslate('Meld a card from your hand and then execute each of its non-demand dogma effects. Do not share them.'),
@@ -870,6 +966,7 @@ $this->textual_card_infos = array(
 
 91 => array('name' => clienttranslate('Ecology'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, score a card from your hand and draw two ${age_10}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -879,6 +976,7 @@ $this->textual_card_infos = array(
 
 92 => array('name' => clienttranslate('Suburbia'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may tuck any number of cards from your hand. Draw and score a ${age_1} for each card you tucked.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -888,6 +986,7 @@ $this->textual_card_infos = array(
 
 93 => array('name' => clienttranslate('Services'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -897,6 +996,7 @@ $this->textual_card_infos = array(
 
 94 => array('name' => clienttranslate('Specialization'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Reveal a card from your hand. Take into your hand the top card of that color from all other player\'s boards.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow or blue cards up.'),
     'non_demand_effect_3' => null,
@@ -908,6 +1008,7 @@ $this->textual_card_infos = array(
 
 95 => array('name' => clienttranslate('Bioengineering'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Transfer a top card with a ${icon_2} from any other player\'s board to your score pile.'),
     'non_demand_effect_2' => clienttranslate('If any player has fewer than three ${icon_2} on their board, the single player with the most ${icon_2} on their board wins.'),
     'non_demand_effect_3' => null,
@@ -917,6 +1018,7 @@ $this->textual_card_infos = array(
 
 96 => array('name' => clienttranslate('Software'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and score a ${age_10}.'),
     'non_demand_effect_2' => clienttranslate('Draw and meld two ${age_10}, then execute each of the second card\'s non dogma effects. Do not share them.'),
     'non_demand_effect_3' => null,
@@ -926,6 +1028,7 @@ $this->textual_card_infos = array(
 
 97 => array('name' => clienttranslate('Miniaturization'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you returned a ${age_10}, draw a ${age_10} for every different value of card in your score pile.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -935,6 +1038,7 @@ $this->textual_card_infos = array(
 
 98 => array('name' => clienttranslate('Robotics'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Score your top green card. Draw and meld a ${age_10}, then execute each of its non-demand dogma effects. Do not share them.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -953,6 +1057,7 @@ $this->textual_card_infos = array(
 
 100 => array('name' => clienttranslate('Self service'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Execute each of the non-demand dogma effects of any other top card on your board. Do not share them.'),
     'non_demand_effect_2' => clienttranslate('If you have more achievements than each other player, you win.'),
     'non_demand_effect_3' => null,
@@ -971,6 +1076,7 @@ $this->textual_card_infos = array(
 
 102 => array('name' => clienttranslate('Stem cells'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may score all cards from your hand. If you score one, you must score them all.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -980,6 +1086,7 @@ $this->textual_card_infos = array(
 
 103 => array('name' => clienttranslate('A. I.'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and score a ${age_10}.'),
     'non_demand_effect_2' => clienttranslate('If Robotics and Software are top cards on any board, the single player with the lowest score wins.'),
     'non_demand_effect_3' => null,
@@ -989,6 +1096,7 @@ $this->textual_card_infos = array(
 
 104 => array('name' => clienttranslate('The internet'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
     'non_demand_effect_2' => clienttranslate('Draw and score a ${age_10}.'),
     'non_demand_effect_3' => clienttranslate('Draw and meld a ${age_10} for every two ${icon_6} on your board.'),
@@ -1000,6 +1108,7 @@ $this->textual_card_infos = array(
 
 105 => array('name' => clienttranslate('Empire'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1009,6 +1118,7 @@ $this->textual_card_infos = array(
 
 106 => array('name' => clienttranslate('Monument'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1018,6 +1128,7 @@ $this->textual_card_infos = array(
 
 107 => array('name' => clienttranslate('Wonder'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1027,6 +1138,7 @@ $this->textual_card_infos = array(
 
 108 => array('name' => clienttranslate('World'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1036,6 +1148,7 @@ $this->textual_card_infos = array(
 
 109 => array('name' => clienttranslate('Universe'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1047,6 +1160,7 @@ $this->textual_card_infos = array(
 
 110 => array('name' => clienttranslate('Treaty of Kadesh'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to return all top cards from your board with a demand effect!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('Score a top, non-blue card from your board with a demand effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1056,6 +1170,7 @@ $this->textual_card_infos = array(
 
 111 => array('name' => clienttranslate('Sibidu Needle'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If you have a top card of matching color and value to the drawn card, score the drawn card and repeat this effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1065,6 +1180,7 @@ $this->textual_card_infos = array(
 
 112 => array('name' => clienttranslate('Basur Hoyuk Tokens'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_4}. If you have a top card of the drawn card\'s color that comes before it in the alphabet, return the drawn card and all cards from your score pile.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1074,6 +1190,7 @@ $this->textual_card_infos = array(
 
 113 => array('name' => clienttranslate('Holmegaard Bows'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('Draw a ${age_2}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1083,6 +1200,7 @@ $this->textual_card_infos = array(
 
 114 => array('name' => clienttranslate('Papyrus of Ani'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non-demand dogma effects. Do not share them.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1092,6 +1210,7 @@ $this->textual_card_infos = array(
 
 115 => array('name' => clienttranslate('Pavlovian Tusk'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw three cards of value equal to your top green card. Return one of the drawn cards. Score one of the drawn cards.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1101,6 +1220,7 @@ $this->textual_card_infos = array(
 
 116 => array('name' => clienttranslate('Priest-King'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non-demand dogma effects. Do not share them.'),
     'non_demand_effect_2' => clienttranslate('Claim an achievement, if eligible.'),
     'non_demand_effect_3' => null,
@@ -1110,6 +1230,7 @@ $this->textual_card_infos = array(
 
 117 => array('name' => clienttranslate('Electrum Stater of Efesos'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and revel a ${age_3}. If you do not have a top card of the drawn card\'s color, meld it and repeat this effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1119,6 +1240,7 @@ $this->textual_card_infos = array(
 
 118 => array('name' => clienttranslate('Jiskairumoko Necklace'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to return a card from your score pile! If you do, transfer an achievement of the same value from your achievements to mine!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1128,6 +1250,7 @@ $this->textual_card_infos = array(
 
 119 => array('name' => clienttranslate('Dancing Girl'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer Dancing Girl to your board!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('If Dancing Girl has been on every board during this action, and it started on your board, you win.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1137,6 +1260,7 @@ $this->textual_card_infos = array(
 
 120 => array('name' => clienttranslate('Lurgan Canoe'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Meld a card from your hand. Score all other cards of the same color from your board. If you scored at least one card, repeat this effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1146,6 +1270,7 @@ $this->textual_card_infos = array(
 
 121 => array('name' => clienttranslate('Xianrendong Shards'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If the scored cards were the same color, draw three ${age_1}s.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1155,6 +1280,7 @@ $this->textual_card_infos = array(
 
 122 => array('name' => clienttranslate('Mask of Warka'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Choose a color. Each player reveals all cards of that color from their hand. If you are the only player to reveal cards, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1164,6 +1290,7 @@ $this->textual_card_infos = array(
 
 123 => array('name' => clienttranslate('Ark of the Covenant'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1173,6 +1300,7 @@ $this->textual_card_infos = array(
 
 124 => array('name' => clienttranslate('Tale of the Shipwrecked Sailor'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
