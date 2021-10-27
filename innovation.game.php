@@ -1673,6 +1673,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s board.');
                 break;
                 
+            case 'board->hand':
+                    $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s hand.');
+                    $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} hand.');
+                    $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s hand.');
+                    break;
+            
             case 'board->score':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} score pile.');
@@ -1760,6 +1766,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} transfer {number} top {card} from your board to {opponent_name}\'s board');
                 $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} board');
                 $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s board');
+                break;
+            
+            case 'board->hand':
+                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from your board to {opponent_name}\'s hand');
+                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} hand');
+                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s hand');
                 break;
                 
             case 'board->score':
@@ -2905,10 +2917,43 @@ class Innovation extends Table
             array('player_id' => $player_id, 'icon' => $icon)
         ));
     }
+
+    function getMaxAgeOnBoardTopCardsWithIcon($player_id, $icon) {
+        /**
+        Get the maximum age of the top cards with a particular icon
+        (0 if the player have no card on his board)
+        **/
+        
+        
+        // Get the max of the age matching the position defined in the sub-request
+        return self::getUniqueValueFromDB(self::format("
+            SELECT
+                COALESCE(MAX(a.age), 0)
+            FROM
+                card AS a
+            LEFT JOIN
+                (SELECT
+                    color, MAX(position) AS position
+                FROM
+                    card
+                WHERE
+                    owner = {player_id} AND
+                    location = 'board'
+                GROUP BY
+                    color) AS b ON a.color = b.color
+            WHERE
+                a.owner = {player_id} AND
+                a.location = 'board' AND
+                a.position = b.position AND
+                (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon})
+        ",
+            array('player_id' => $player_id, 'icon' => $icon)
+        ));
+    }
     
     function getMaxAgeOnBoardOfColorsWithoutIcon($player_id, $colors, $icon) {
         /**
-        Get the minimum age of the top cards without a particular icon
+        Get the maximum age of the top cards without a particular icon
         (0 if the player have no card on his board)
         **/
         
@@ -7137,6 +7182,16 @@ class Innovation extends Table
                 }
                 break;
             
+            // id 113, Artifacts age 1: Holmegaard Bows
+            case "113C1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+            
+            case "113N2":
+                // "Draw a 2"
+                self::executeDraw($player_id, 2, 'hand');
+                break;
+            
             // id 115, Artifacts age 1: Pavlovian Tusk
             case "115N1":
                 // "Draw three cards of value equal to your top green card"
@@ -9268,6 +9323,24 @@ class Innovation extends Table
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
+            );
+            break;
+
+        // id 113, Artifacts age 1: Holmegaard Bows
+        case "113C1A":
+            // "Transfer the highest top card with a tower on your board to my hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'hand',
+                
+                'with_icon' => 4, // tower
+                'age' => self::getMaxAgeOnBoardTopCardsWithIcon($player_id, 4 /* tower */),
             );
             break;
         
