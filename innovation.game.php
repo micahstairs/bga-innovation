@@ -625,7 +625,7 @@ class Innovation extends Table
     function rearrangePlayersForFixedTeams($player_array, $partnair_of_first) {
         // The goal of this function is to rearrange the player array so that the first player in the lobby plays with his partnair ($partnair_of_first) as decide in the options
         
-		// "Fix" the player table order so that it is in the range 1..nbr_players
+        // "Fix" the player table order so that it is in the range 1..nbr_players
         $unfixed_player_table_orders = array();
         foreach($player_array as $player_id => $player) {
             $unfixed_player_table_orders[] = $player["player_table_order"];
@@ -635,7 +635,7 @@ class Innovation extends Table
         foreach($unfixed_player_table_orders as $key => $val) {
             $fixed_player_table_orders[$val] = $key + 1;
         }
-		
+        
         // Locate who was the first player in the lobby
         $player_no = 0;
         foreach($player_array as $player_id => $player)
@@ -7181,35 +7181,18 @@ class Innovation extends Table
                     self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
                 }
                 break;
-            //
-			// Artifacts
-			//
-			
-			// id 111, Artifacts age 1: Sibidu Needle
+
+            // id 111, Artifacts age 1: Sibidu Needle
             case "111N1":
-                
-				while(true) {
+                while(true) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
-					$topcard = self::getTopCardOnBoard($player_id, $card['color']);
-					if ($topcard !== null) 
-					{
-						if ($card['age'] == $topcard['age'] ) 
-						{ // "If it is the same age"
-							self::notifyGeneralInfo(clienttranslate('It has the same age.  Score the card.'));
-							self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score it"
-							continue; // "Repeat this dogma effect"
-						}
-						else
-						{
-							self::notifyGeneralInfo(clienttranslate('The age does match.  Card will not be scored.'));
-						}
-					}
-					else
-					{
-						self::notifyGeneralInfo(clienttranslate('No ${color} pile exists.  Card will not be scored.'), array('color' => self::getColorInClear($card['color'])));
-                    
-					}
-                    break; // "Otherwise"        
+                    $top_card = self::getTopCardOnBoard($player_id, $card['color']);
+                    if ($top_card !== null && $card['age'] == $top_card['age']) { // "If you have a top card of matching color and value"
+                        self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score the drawn card"
+                        continue; // "Repeat this effect"
+                    }
+                    self::notifyGeneralInfo(clienttranslate('There was not a top card of matching color and value.'));
+                    break;        
                 }
                 self::transferCardFromTo($card, $player_id, 'hand'); // "Keep it"
                 break;
@@ -7223,7 +7206,7 @@ class Innovation extends Table
                 // "Draw a 2"
                 self::executeDraw($player_id, 2, 'hand');
                 break;
-				
+
             // id 115, Artifacts age 1: Pavlovian Tusk
             case "115N1":
                 // "Draw three cards of value equal to your top green card"
