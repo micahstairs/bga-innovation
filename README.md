@@ -57,7 +57,8 @@ Then navigate to https://github.com/elaskavaia/bga-sharedcode/pulls, click "New 
     "ignore": [
         ".vscode",
         ".git",
-        ".DS_Store"
+        ".DS_Store",
+        "misc/"
     ]
 }
 ```
