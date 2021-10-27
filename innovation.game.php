@@ -3782,7 +3782,7 @@ class Innovation extends Table
         }
         
         // Condition for requiring ID
-        $condition_for_requiring_id = "AND id IN (1, 3, 5, 7, 9, 11, 13, 15)";
+        $condition_for_requiring_id = "";
         $card_id_1 = self::getGameStateValue('card_id_1');
         $card_id_2 = self::getGameStateValue('card_id_2');
         $card_id_3 = self::getGameStateValue('card_id_3');
