@@ -5497,7 +5497,7 @@ class Innovation extends Table
         $current_effect_type = self::getGameStateValue('current_effect_type');
         
         // Indicate the potential new (non-demand) dogma to come
-        if ($current_effect_type == 0) { // I demand dogma : there is only one for this version of this game
+        if ($current_effect_type == 0 || $current_effect_type == 2) { // There is only ever one "I demand" or "I compel" effect per card
             $current_effect_number = 1; // Switch on the first non-demand dogma, if exists
         }
         else {
@@ -7197,7 +7197,7 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
-            case "113N2":
+            case "113N1":
                 // "Draw a 2"
                 self::executeDraw($player_id, 2, 'hand');
                 break;
