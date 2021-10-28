@@ -321,7 +321,7 @@
 
 .tuck_parag {
     width: 145px;
-    height: 74px;
+    height: 72px;
     left: 55px;
     top: 63px;
 }
@@ -337,7 +337,7 @@
 
 .return_parag {
     width: 145px;
-    height: 74px;
+    height: 72px;
     left: 206px;
     top: 63px;
 }
@@ -353,7 +353,7 @@
 
 .draw_and_x_parag{
     width: 148px;
-    height: 74px;
+    height: 72px;
     left: 357px;
     top: 63px;
 }
@@ -369,40 +369,36 @@
 
 .splay_parag {
     width: 341px;
-    height: 32px;
+    height: 28px;
     left: 55px;
     top: 168px;
 }
 
-.erase_block {
-    width: 109px;
-    height: 10px;
-    left: 396px;
-    top: 173px;
-}
-
 .splayed_left_example {
-    width: 128px;
+    width: 115px;
     height: 14px;
-    left: 55px;
-    top: 256px;
+    left: 75px;
+    top: 262px;
     text-align: center;
+    font-style: italic;
 }
 
 .splayed_right_example {
-    width: 140px;
+    width: 115px;
     height: 14px;
-    left: 210px;
-    top: 256px;
+    left: 245px;
+    top: 262px;
     text-align: center;
+    font-style: italic;
 }
 
 .splayed_up_example {
-    width: 140px;
+    width: 115px;
     height: 14px;
-    left: 365px;
-    top: 256px;
+    left: 402px;
+    top: 262px;
     text-align: center;
+    font-style: italic;
 }
 
 .empty_piles_title {
@@ -422,51 +418,51 @@
 }
 
 .icon_1_ages {
-    width: 55px;
+    width: 50px;
     height: 18px;
-    left: 320px;
-    top: 306px;
+    left: 316px;
+    top: 307px;
 }
 
 .icon_2_ages {
-    width: 55px;
+    width: 50px;
     height: 18px;
-    left: 320px;
-    top: 329px;
+    left: 316px;
+    top: 330px;
 }
 
 .icon_3_ages {
-    width: 55px;
+    width: 50px;
     height: 18px;
-    left: 320px;
+    left: 316px;
     top: 352px;
 }
 
 .icon_4_ages {
-    width: 55px;
+    width: 50px;
     height: 18px;
-    left: 245px;
-    top: 306px;
+    left: 240px;
+    top: 307px;
 }
 
 .icon_5_ages {
-    width: 55px;
+    width: 50px;
     height: 18px;
-    left: 245px;
-    top: 329px;
+    left: 240px;
+    top: 330px;
 }
 
 .icon_6_ages {
-    width: 55px;
+    width: 50px;
     height: 18px;
-    left: 245px;
+    left: 240px;
     top: 352px;
 }
 
 .colors_title {
     width: 67px;
     height: 18px;
-    left: 359px;
+    left: 395px;
     top: 284px;
     font-weight: bold;
 }
@@ -475,21 +471,21 @@
     width: 47px;
     height: 18px;
     left: 414px;
-    top: 284px;
+    top: 308px;
 }
 
 .purple_icon {
     width: 47px;
     height: 18px;
     left: 414px;
-    top: 328px;
+    top: 329px;
 }
 
 .blue_icon {
-    width: 39px;
+    width: 47px;
     height: 18px;
     left: 414px;
-    top: 306px;
+    top: 352px;
 }
 
 .green_icon {
@@ -503,7 +499,7 @@
     width: 39px;
     height: 18px;
     left: 485px;
-    top: 328px;
+    top: 329px;
 }
 
 .player-board {
