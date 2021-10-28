@@ -1058,9 +1058,7 @@ function (dojo, declare) {
             var splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title reference_card_block', '', 30);
             var splay_parag_text = _("To splay, fan out the color as shown below. A color is only ever splayed in one direction. New cards tucked or melded continue the splay.");
             var splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag reference_card_block', '', 12);
-            
-            var erase_block = "<div class='erase_block reference_card_block'></div>"
-            
+
             var splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example reference_card_block', '', 12);
             var splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example reference_card_block', '', 12);
             var splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example reference_card_block', '', 12);
@@ -1100,8 +1098,7 @@ function (dojo, declare) {
             side_2_content += return_title + return_parag;
             side_2_content += draw_and_x_title + draw_and_x_parag;
             
-            side_2_content += splay_title + splay_parag + erase_block;
-            side_2_content += splayed_left_example + splayed_right_example + splayed_up_example;
+            side_2_content += splay_title + splay_parag + splayed_left_example + splayed_right_example + splayed_up_example;
             
             side_2_content += empty_piles_title + empty_piles_parag;
             
