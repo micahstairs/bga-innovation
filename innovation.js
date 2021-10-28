@@ -1020,7 +1020,7 @@ function (dojo, declare) {
         
         addTooltipForReferenceCard : function() {
             var actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
-            actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions :").toUpperCase() + "</span>"})
+            actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions:").toUpperCase() + "</span>"})
             var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
             
             var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);
@@ -1108,8 +1108,7 @@ function (dojo, declare) {
             side_2_content += icon_4_ages + icon_5_ages + icon_6_ages;
             side_2_content += icon_1_ages + icon_2_ages + icon_3_ages;
             
-            side_2_content += colors_title + blue_icon + yellow_icon;
-            side_2_content += red_icon + green_icon + purple_icon;
+            side_2_content += colors_title + red_icon + purple_icon + blue_icon + green_icon + yellow_icon;
             
             // Assembling
             var div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
