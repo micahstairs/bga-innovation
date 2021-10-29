@@ -10221,25 +10221,36 @@ class Innovation extends Table
                     case "121N1A":
                         // Store IDs of revealed cards so that we are later able to see if the scored cards had the same color.
                         $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                        self::setGameStateValue('card_id_1', $revealed_cards[0]['id']);
-                        self::setGameStateValue('card_id_2', $revealed_cards[1]['id']);
-                        self::setGameStateValue('card_id_3', $revealed_cards[2]['id']);
+                        for ($i = 1; $i <= count($revealed_cards); $i++) {
+                            self::setGameStateValue('card_id_'.$i, $revealed_cards[$i-1]['id']);
+                        }
                         break;
 
                     case "121N1B":
-                        // "Tuck the other"
-                        $remaining_revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-                        self::transferCardFromTo($remaining_revealed_card, $player_id, 'board', /*bottom_to*/ true);
+                        $revealed_card_ids = array(self::getGameStateValue('card_id_1'), self::getGameStateValue('card_id_2'), self::getGameStateValue('card_id_3'));
 
-                        // "If the scored cards were the same color, draw three 1s"
+                        // "Tuck the other"
+                        $remaining_revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                        if (count($remaining_revealed_cards) == 1) {
+                            $remaining_card = $remaining_revealed_cards[0];
+                            self::transferCardFromTo($remaining_card, $player_id, 'board', /*bottom_to*/ true);
+                            for ($i = 0; $i < 3; $i++) {
+                                if ($revealed_card_ids[$i] == $remaining_card['id']) {
+                                    $revealed_card_ids[$i] = -1;
+                                }
+                            }
+                        }
+
+                        // Now revealed_card_ids contains only -1's and the IDs of the scored cards.
                         $first_color = null;
-                        for ($i=1; $i <= 3; $i++) {
-                            $current_card = self::getCardInfo(self::getGameStateValue('card_id_'.$i));
-                            if ($current_card['id'] == $remaining_revealed_card['id']) {
+                        foreach ($revealed_card_ids as $card_id) {
+                            if ($card_id < 0) {
                                 continue;
                             }
+                            $current_card = self::getCardInfo($card_id);
                             if ($first_color == null) {
                                 $first_color = $current_card['color'];
+                            // "If the scored cards were the same color, draw three 1s"
                             } else if ($first_color == $current_card['color']) {
                                 self::notifyGeneralInfo(clienttranslate('The scored cards were the same color.'), array());
                                 self::executeDraw($player_id, 1);
@@ -10251,7 +10262,7 @@ class Innovation extends Table
                                 break;
                             }
                         }
-            break;
+                        break;
                 }
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
