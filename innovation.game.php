@@ -7292,6 +7292,11 @@ class Innovation extends Table
                     throw new EndOfGame();
                 }
                 break;
+            
+            // id 120, Artifacts age 1: Lurgan Canoe
+            case "120N1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
                 
             default:
                 // This should not happens
@@ -9482,7 +9487,22 @@ class Innovation extends Table
 
                     'score_keyword' => true
                 );
-                break; 
+                break;
+        
+        // id 120, Artifacts age 1: Lurgan Canoe
+        case "120N1A":
+            // "Meld a card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
         
         default:
             // This should not happens
@@ -10135,6 +10155,21 @@ class Innovation extends Table
                         self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}'), array('age' => self::getAgeSquare(10)));
                     }
                     break;
+                
+                    // id 120, Artifacts age 1: Lurgan Canoe
+                    case "120N1A":
+                        $board = self::getCardsInLocation($player_id, 'board', false, true);
+                        $pile = $board[self::getGameStateValue('color_last_selected')];
+                        $scored = false;
+                        for($p=0; $p < count($pile)-1; $p++) { // "Score all other cards of the same color from your board"
+                            $card = self::getCardInfo($pile[$p]['id']);
+                            self::transferCardFromTo($card, $player_id, 'score', false, true);
+                            $scored = true;
+                        }
+                        if ($scored) { // "If you scored at least one card, repeat this effect"
+                            $step--; self::incGameStateValue('step', -1);
+                        }
+                        break;
                 
                 default:
                     break;
