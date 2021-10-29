@@ -234,16 +234,9 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (109, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 'achievements', 14, NULL, FALSE),
 
 /* Artifacts - Age 1 */
-<<<<<<< HEAD
 (110, 1, 1, 0, 1, 4, 0, 4, 4, 0, 'deck', 0, NULL, FALSE),
 (111, 1, 1, 0, 4, 4, 4, 0, 4, 0, 'deck', 0, NULL, FALSE),
 (112, 1, 1, 0, 1, 0, 2, 2, 2, 0, 'deck', 0, NULL, FALSE),
 (113, 1, 1, 1, 4, 2, 0, 2, 2, 0, 'deck', 0, NULL, FALSE),
-(115, 1, 1, 1, 0, 1, 4, 1, 1, 0, 'deck', 0, NULL, FALSE);
-=======
-(110, 1, 0, 1, 4, 0, 4, 4, 0, 'deck', 0, NULL, FALSE),
-(111, 1, 0, 4, 4, 4, 0, 4, 0, 'deck', 0, NULL, FALSE),
-(112, 1, 0, 1, 0, 2, 2, 2, 0, 'deck', 0, NULL, FALSE),
-(113, 1, 1, 4, 2, 0, 2, 2, 0, 'deck', 0, NULL, FALSE),
-(115, 1, 1, 0, 1, 4, 1, 1, 0, 'deck', 0, NULL, FALSE);
->>>>>>> 1e29dba (Implement 'Basur Hoyuk Tokens' artifacts card.)
+(115, 1, 1, 1, 0, 1, 4, 1, 1, 0, 'deck', 0, NULL, FALSE),
+(119, 1, 1, 3, 0, 3, 3, 3, 3, 0, 'deck', 0, NULL, FALSE);
