@@ -965,8 +965,8 @@ function (dojo, declare) {
             return "<span class='square " + size + " " + type + "_" + key + (context !== null ? " " + context : "") + "'></span>"
         },
         
-        all_icons : function(size, type) {
-            return "<span class='all_icons " + size + " " + type + "'></span>"
+        all_icons : function(type) {
+            return "<span class='all_icons " + type + "'></span>"
         },
          
         /*
@@ -1003,6 +1003,12 @@ function (dojo, declare) {
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.age, card.color);
             var HTML_id = this.getCardHTMLId(card.id, card.age, zone.HTML_class);
+
+            // Special achievement
+            if (card.age === null) {
+                this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
+                return;
+            }
             var HTML_help = this.createCard(card.id, card.age, "L card", card);
             this.saved_cards[card.id] = card;
             this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
@@ -1155,7 +1161,7 @@ function (dojo, declare) {
         parseForRichedText : function(text, size) {
             text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
-            text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons(size, 'in_tooltip'));
+            text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
             for (var age=1; age <= 10; age++) {
                 text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age, 'in_tooltip'));
             }
@@ -1759,11 +1765,7 @@ function (dojo, declare) {
             
             if (card === null ) {
                 var HTML_inside = '';
-            }
-            else if (card.age === null) {
-                var HTML_inside =  this.writeOverSpecialAchievement(card, size, id == 106);
-            }
-            else {
+            } else {
                 var HTML_inside = this.writeOverCard(card, size);
             }
             
@@ -1800,19 +1802,15 @@ function (dojo, declare) {
                 return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
             },
         
-        writeOverSpecialAchievement : function(card, size, is_monument) {
-            var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
-            
+        getSpecialAchievementText : function(card) {
             var achievement_name = _(card.achievement_name).toUpperCase();
-            var div_achievement_name = this.createAdjustedContent(achievement_name, 'achievement_title', '', 30);
+            var is_monument = card.id == 106;
+            var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
+            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card.condition_for_claiming)) + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
-            var condition_for_claiming = this.parseForRichedText(_(card.condition_for_claiming), size) + (is_monument ? "<div id='note_for_monument'>" + note_for_monument + "</div>" : '');
-            var div_condition_for_claiming = this.createAdjustedContent(condition_for_claiming, 'condition_for_claiming', '', 25);
+            var div_alternative_condition_for_claiming = "</br><div>" + _(card.alternative_condition_for_claiming) + "</div>";
             
-            var alternative_condition_for_claiming = _(card.alternative_condition_for_claiming);
-            var div_alternative_condition_for_claiming = this.createAdjustedContent(alternative_condition_for_claiming, 'alternative_condition_for_claiming', '', 20);
-            
-            return div_achievement_name + div_condition_for_claiming + div_alternative_condition_for_claiming;            
+            return div_condition_for_claiming + div_alternative_condition_for_claiming;            
         },
         
         /*
