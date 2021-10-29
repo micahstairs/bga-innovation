@@ -1354,7 +1354,7 @@ class Innovation extends Table
                 return "C";
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getLetterForEffectType(): '{code}'"), array('code' => $effect_type)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", code => $effect_type)));
                 break;
         }
     }
@@ -1491,7 +1491,7 @@ class Innovation extends Table
                 
         default:
             // This should not happen
-            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithOnePlayerInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
             break;
         }
         
@@ -1523,7 +1523,7 @@ class Innovation extends Table
                 
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithOnePlayerInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         } else {
@@ -1592,6 +1592,11 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} return {number} {card} you revealed and {number} {card} in your hand');
                 $message_for_others = clienttranslate('{player must} return {number} {card} he revealed and {number} {card} in his hand');
                 break;
+            
+            case 'revealed,score->deck':
+                $message_for_player = clienttranslate('{You must} return {number} {card} you revealed and {number} {card} from your score pile');
+                $message_for_others = clienttranslate('{player must} return {number} {card} he revealed and {number} {card} from his score pile');
+                break;
                 
             case 'hand->revealed,deck': // Measurement
                 $message_for_player = clienttranslate('{You must} reveal and return {number} {card} from your hand');
@@ -1605,7 +1610,7 @@ class Innovation extends Table
             
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithOnePlayerInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1644,7 +1649,7 @@ class Innovation extends Table
 
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         }        
@@ -1695,7 +1700,7 @@ class Innovation extends Table
 
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1733,7 +1738,7 @@ class Innovation extends Table
                 
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in notifyWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1783,7 +1788,7 @@ class Innovation extends Table
 
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -1809,7 +1814,7 @@ class Innovation extends Table
             
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in getTransferInfoWithTwoPlayersInvolved(): '{code}'"), array('code' => $location_from . '->' . $location_to)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
         }
@@ -2562,6 +2567,13 @@ class Innovation extends Table
             $card = self::attachTextualInfo($card);
         }
         return $card_list;
+    }
+
+    function comesAlphabeticallyBefore($card_1, $card_2) {
+        /**
+            Returns true if card_1 comes before card_2 in English alphabetical order.
+        **/
+        return strcasecmp($card_1['name'], $card_2['name']) < 0;
     }
     
     function getDeckTopCard($age) {
@@ -3830,11 +3842,11 @@ class Innovation extends Table
         $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
         if ($location_from == 'revealed,hand') {
             $condition_for_location = "location IN ('revealed', 'hand')";
-        }
-        else if ($location_from == 'pile') {
+        } else if ($location_from == 'revealed,score') {
+            $condition_for_location = "location IN ('revealed', 'score')";
+        } else if ($location_from == 'pile') {
             $condition_for_location = "location = 'board'";
-        }
-        else {
+        } else {
             $condition_for_location = self::format("location = '{location_from}'", array('location_from' => $location_from));
         }
         
@@ -3962,6 +3974,12 @@ class Innovation extends Table
             return 6;
         case 'pile':
             return 7;
+        case 'revealed,score':
+            return 8;
+        default:
+            // This should not happen
+            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
+            break;
         }
     }
     
@@ -3983,6 +4001,12 @@ class Innovation extends Table
             return 'revealed,deck';
         case 7:
             return 'pile';
+        case 8:
+            return 'revealed,score';
+        default:
+            // This should not happen
+            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
+            break;
         }
     }
     
@@ -5388,27 +5412,24 @@ class Innovation extends Table
         }
         
         // The first active player is the one who chose for meld the first card in (English) alphabetical order
-        // Determine who the first card in alphabetic order
-        $first_name_in_alphabetics = "zz";
+        $earliest_card = null;
         foreach($cards as $card) {
             $name = $card['name'];
-            if (strcasecmp($name, $first_name_in_alphabetics) > 0) {
-                continue;
+            if ($earliest_card === null || self::comesAlphabeticallyBefore($card, $earliest_card)) {
+                $earliest_card = $card;
             }
-            // The card is the first in alphabetic order, so far
-            $player_id = $card['owner'];
-            $first_name_in_alphabetics = $name;
         }
+        $player_id = $card['owner'];
         
         self::notifyPlayer($player_id, 'initialCardChosen', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
             'You' => 'You',
-            'english_name' => $first_name_in_alphabetics 
+            'english_name' => $earliest_card['name']
         ));
 
         
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded the first card in English alphabetical order (${english_name}): he plays first.'), array(
             'player_name' => self::getPlayerNameFromId($player_id),
-            'english_name' => $first_name_in_alphabetics 
+            'english_name' => $earliest_card['name']
         ));
         
         // Enter normal play loop
@@ -7189,7 +7210,28 @@ class Innovation extends Table
                     self::notifyGeneralInfo(clienttranslate('There was not a top card of matching color and value.'));
                     break;        
                 }
-                self::transferCardFromTo($card, $player_id, 'hand'); // "Keep it"
+                self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
+                break;
+            
+            // id 112, Artifacts age 1: Basur Hoyuk Tokens
+            case "112N1":
+                $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
+                $top_card = self::getTopCardOnBoard($player_id, $card['color']);
+                if ($top_card === null) {
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
+                } else if ($top_card !== null && self::comesAlphabeticallyBefore($top_card, $card)) { // "If you have a top card of the drawn card's color that comes before it in the alphabet"
+                    self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} comes before ${english_name_2}.'), array(
+                        'english_name_1' => $top_card['name'],
+                        'english_name_2' => $card['name']
+                    ));
+                    $step_max = 1; // --> 1 interaction: see B
+                } else {
+                    self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} does not come before ${english_name_2}.'), array(
+                        'english_name_1' => $top_card['name'],
+                        'english_name_2' => $card['name']
+                    ));
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
+                }
                 break;
             
             // id 113, Artifacts age 1: Holmegaard Bows
@@ -9333,6 +9375,20 @@ class Innovation extends Table
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
+            );
+            break;
+        
+        // id 112, Artifacts age 1: Basur Hoyuk Tokens
+        case "112N1A":
+            // "Return the drawn card and all cards from your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed,score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
             );
             break;
 
