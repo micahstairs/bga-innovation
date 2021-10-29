@@ -243,7 +243,7 @@
     width: 450px;
     height: 36px;
     left: 55px;
-    top: 52px;
+    top: 38px;
 }
 
 .meld_title {
@@ -911,51 +911,6 @@
     background-color: rgb(0 0 0 / 80%) !important;
 }
 
-/* Elements inside the special achievement in tooltip */
-
-.achievement_title, .condition_for_claiming, .alternative_condition_for_claiming {
-    background-image: url('img/card_background.jpg');
-    background-repeat: repeat;
-}
-
-.achievement_title {
-    margin: auto;
-    width: 420px;
-    letter-spacing: 4px;
-    font-weight: bold;
-    text-align: center;
-    background-position: -9px -6px;
-}
-
-.condition_for_claiming {
-    margin: auto;
-    width: 420px;
-    height: 175px;
-    text-align: justify;
-    text-justify: inter-word;
-    background-position: -9px -38px;
-}
-
-.alternative_condition_for_claiming {
-    margin-left: 120px;
-    margin-top: 15px;
-    width: 330px;
-    height: 70px;
-    letter-spacing: -1px;
-    text-align: justify;
-    text-justify: inter-word;
-    font-style: italic;
-    background-position: -17px -12px;
-}
-
-#note_for_monument {
-    margin-top: 5px;
-    font-size: 0.5em;
-    text-align: justify;
-    text-justify: inter-word;
-    font-style: italic;
-}
-
 .clickable {
    box-shadow: 0 0 6px 3px rgb(27, 5, 154) !important;
 }
@@ -1378,7 +1333,7 @@
     background-position: -95px -82px;
 }
 
-.all_icons.L {
+.all_icons {
     background-image: url('img/squares.png');
     display: inline-block;
     width: 114px;
