@@ -1587,6 +1587,11 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} return {number} {card} you revealed');
                 $message_for_others = clienttranslate('{player must} return {number} {card} he revealed');
                 break;
+            
+            case 'revealed->score':
+                $message_for_player = clienttranslate('{You must} score {number} {card} you revealed');
+                $message_for_others = clienttranslate('{player must} score {number} {card} he revealed');
+                break;
                 
             case 'revealed,hand->deck': // Alchemy, Physics
                 $message_for_player = clienttranslate('{You must} return {number} {card} you revealed and {number} {card} in your hand');
@@ -7292,6 +7297,11 @@ class Innovation extends Table
             case "120N1":
                 $step_max = 1; // --> 1 interaction: see B
                 break;
+            
+            // id 121, Artifacts age 1: Xianrendong Shards
+            case "121N1":
+                $step_max = 2; // --> 2 interactions: see B
+                break;
                 
             default:
                 // This should not happens
@@ -9499,6 +9509,42 @@ class Innovation extends Table
             );
             break;
         
+        // id 121, Artifacts age 1: Xianrendong Shards
+        case "121N1A":
+            // "Reveal three cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 3,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+            break;
+        
+        case "121N1B":
+            // "Score two"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+
+                // Propagate values required to detect whether the scored cards are the same color
+                'card_id_1' => self::getGameStateValue('card_id_1'),
+                'card_id_2' => self::getGameStateValue('card_id_2'),
+                'card_id_3' => self::getGameStateValue('card_id_3'),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'score_keyword' => true
+            );
+            break;
+        
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -10165,10 +10211,44 @@ class Innovation extends Table
                             $step--; self::incGameStateValue('step', -1);
                         }
                         break;
-                
-                default:
-                    break;
+                    
+                    // id 121, Artifacts age 1: Xianrendong Shards    
+                    case "121N1A":
+                        // Store IDs of revealed cards so that we are later able to see if the scored cards had the same color.
+                        $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                        self::setGameStateValue('card_id_1', $revealed_cards[0]['id']);
+                        self::setGameStateValue('card_id_2', $revealed_cards[1]['id']);
+                        self::setGameStateValue('card_id_3', $revealed_cards[2]['id']);
+                        break;
+
+                    case "121N1B":
+                        // "Tuck the other"
+                        $remaining_revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
+                        self::transferCardFromTo($remaining_revealed_card, $player_id, 'board', /*bottom_to*/ true);
+
+                        // "If the scored cards were the same color, draw three 1s"
+                        $first_color = null;
+                        for ($i=1; $i <= 3; $i++) {
+                            $current_card = self::getCardInfo(self::getGameStateValue('card_id_'.$i));
+                            if ($current_card['id'] == $remaining_revealed_card['id']) {
+                                continue;
+                            }
+                            if ($first_color == null) {
+                                $first_color = $current_card['color'];
+                            } else if ($first_color == $current_card['color']) {
+                                self::notifyGeneralInfo(clienttranslate('The scored cards were the same color.'), array());
+                                self::executeDraw($player_id, 1);
+                                self::executeDraw($player_id, 1);
+                                self::executeDraw($player_id, 1);
+                                break;
+                            } else {
+                                self::notifyGeneralInfo(clienttranslate('The scored cards were not the same color.'), array());
+                                break;
+                            }
+                        }
+            break;
                 }
+
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             }
             catch (EndOfGame $e) {
