@@ -3417,6 +3417,17 @@ class Innovation extends Table
             array('player_id' => $player_id)
         ));
     }
+
+    function countNonEliminatedPlayers() {
+        return self::getUniqueValueFromDB("
+            SELECT
+                COUNT(*)
+            FROM
+                player
+            WHERE
+                player_eliminated=0
+        ");
+    }
     
     function getPlayerTeammate($player_id) {
         /** Return the teammate in a team game or null if there is None **/
@@ -7256,6 +7267,25 @@ class Innovation extends Table
                 self::setGameStateValue('card_id_2', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
                 self::setGameStateValue('card_id_3', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
                 $step_max = 2; // --> 2 interactions: see B
+                break;
+            
+             // id 119, Artifacts age 1: Dancing Girl
+             case "119C1":
+                $card = self::getCardInfo(119); // Dancing Girl
+                self::transferCardFromTo($card, $player_id, 'board');
+                self::incGameStateValue('auxiliary_value', 1); // Keep track of Dancing Girl's movements
+                break;
+            
+            // id 119, Artifacts age 1: Dancing Girl
+            case "119N1":
+                $num_movements = self::getGameStateValue('auxiliary_value') + 1; // + 1 since it is initialized to -1, not 0
+                if ($player_id == $launcher_id && $num_movements == self::countNonEliminatedPlayers() - 1) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Dancing Girl');
+                    throw new EndOfGame();
+                }
                 break;
                 
             default:
