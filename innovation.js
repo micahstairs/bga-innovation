@@ -1687,25 +1687,6 @@ function (dojo, declare) {
             }
         },
         
-        getCardAgeFromId : function(id) {
-            id = parseInt(id);
-            if (id < 0) {
-                return null;
-            }
-            if (id < 105) {
-                // visible card
-                if (id < 15) {
-                    return 1;
-                }
-                return parseInt((id + 5) / 10);
-            }
-            if (id < this.system_offset) {
-                return null
-            }
-            // id >= this.system_offset => recto of the card
-            return id % 20;
-        },
-        
         getCardIdFromPosition : function(zone, position, age) {
             if (!zone.grouped_by_age) {
                 return this.getCardIdFromHTMLId(zone.items[position].id);
