@@ -1436,14 +1436,6 @@
     border: solid 1px #ffffff;
 }
 
-/* Cards of size S, flipped */
-.S.card {
-    width: 45px;
-    height: 31px;
-    background-size: 430px 35px;
-    box-shadow: 1px 1px grey;
-}
-
 .L.recto {
     width: 316px;
     height: 456px;
@@ -1458,14 +1450,6 @@
     background-image: url('img/images.jpg');
     position: relative;
     border: solid 1px #ffffff;
-}
-
-/* Cards of size S, flipped */
-.S.card {
-    width: 45px;
-    height: 31px;
-    background-size: 735px 350px;
-    box-shadow: 1px 1px grey;
 }
 
 /* Cards of size M */
@@ -1625,54 +1609,59 @@
 
 /* Special achievements */
 
+.S.card {
+    background-image: url("img/special_achievements_landscape.jpg");
+    width: 45px;
+    height: 31px;
+    background-size: 232px, auto;
+    box-shadow: 1px 1px grey;
+}
+
 .item_105.S.card {
-    background-image: url("img/images5.png");
-    background-position: -10px -15px;
-    background-size: 460px, auto;
+    background-position: -1px -1px;
 }
 
 .item_106.S.card {
-    background-image: url("img/images5.png");
-    background-position: -75px -15px;
-    background-size: 460px, auto;
+    background-position: -47px -1px;
 }
 
 .item_107.S.card {
-    background-image: url("img/images5.png");
-    background-position: -141px -12px;
-    background-size: 460px, auto;
+    background-position: -94px -1px;
 }
 
 .item_108.S.card {
-    background-image: url("img/images5.png");
-    background-position: -207px -12px;
-    background-size: 460px, auto;
+    background-position: -140px -1px;
 }
 
 .item_109.S.card {
-    background-image: url("img/images5.png");
-    background-position: -273px -14px;
-    background-size: 460px, auto;
+    background-position: -186px -1px;
+}
+
+.age_null.S.recto {
+    background-image: url("img/special_achievements_portrait.jpg");
+    width: 31px;
+    height: 45px;
+    background-size: 175px, auto;
 }
 
 .item_105.S.recto {
-    background-position: -702px -107px;
+    background-position: -1px -1px;
 }
 
 .item_106.S.recto {
-    background-position: -702px -156px;
+    background-position: -36px -1px;
 }
 
 .item_107.S.recto {
-    background-position: -702px -205px;
+    background-position: -71px -1px;
 }
 
 .item_108.S.recto {
-    background-position: -702px -254px;
+    background-position: -106px -1px;
 }
 
 .item_109.S.recto {
-    background-position: -702px -303px;
+    background-position: -141px -1px;
 }
 
 /* Blue card */
