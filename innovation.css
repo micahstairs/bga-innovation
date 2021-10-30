@@ -1403,46 +1403,6 @@
     margin-right: 10px;
 }
 
-/* Back of cards */
-
-.recto {
-    display: inline-block;
-    background-image: url('img/images4.jpg');
-    position: relative;
-    border: solid 1px #ffffff;
-}
-
-.S.recto {
-    width: 31px;
-    height: 45px;
-    background-size: 360px 49px;
-    border-radius: 3px;
-    box-shadow: -1px 1px grey;
-}
-
-.L.recto {
-    width: 316px;
-    height: 456px;
-    border-radius: 16px;
-    box-shadow: 5px 5px grey;
-}
-
-/* Front of cards */
-
-.card {
-    display: inline-block;
-    background-image: url('img/images.jpg');
-    position: relative;
-    border: solid 1px #ffffff;
-}
-
-.L.recto {
-    width: 316px;
-    height: 456px;
-    border-radius: 16px;
-    box-shadow: 5px 5px grey;
-}
-
 /* Front of cards */
 
 .card {
@@ -1567,54 +1527,69 @@
     background-position: 3px -3px;
 }
 
+.recto {
+    display: inline-block;
+    position: relative;
+    border: solid 1px #ffffff;
+    box-shadow: -1px 1px grey;
+    border-radius: 3px;
+}
+
+.S.recto {
+    width: 31px;
+    height: 45px;
+}
+
+.age_1.S.recto, .age_2.S.recto, .age_3.S.recto, .age_4.S.recto, .age_5.S.recto, .age_6.S.recto, .age_7.S.recto, .age_8.S.recto, .age_9.S.recto, .age_10.S.recto {
+    background-image: url("img/card_backs_portrait.jpg");
+    background-size: 380px 256px;
+}
+
 .age_1.S.recto {
-    background-position: -1px -2px;
+    background-position: -2px -3px;
 }
 
 .age_2.S.recto {
-    background-position: -34px -2px;
+    background-position: -36px -3px;
 }
 
 .age_3.S.recto {
-    background-position: -67px -2px;
+    background-position: -71px -3px;
 }
 
 .age_4.S.recto {
-    background-position: -99px -2px;
+    background-position: -105px -3px;
 }
 
 .age_5.S.recto {
-    background-position: -132px -2px;
+    background-position: -140px -3px;
 }
 
 .age_6.S.recto {
-    background-position: -165px -2px;
+    background-position: -174px -3px;
 }
 
 .age_7.S.recto {
-    background-position: -197px -2px;
+    background-position: -209px -3px;
 }
 
 .age_8.S.recto {
-    background-position: -230px -2px;
+    background-position: -243px -3px;
 }
 
 .age_9.S.recto {
-    background-position: -263px -2px;
+    background-position: -278px -3px;
 }
 
 .age_10.S.recto {
-    background-position: -295px -2px;
+    background-position: -312px -3px;
 }
 
 /* Special achievements */
 
-.S.card {
+.age_null.S.card {
     background-image: url("img/special_achievements_landscape.jpg");
-    width: 45px;
-    height: 31px;
     background-size: 232px, auto;
-    box-shadow: 1px 1px grey;
 }
 
 .item_105.S.card {
