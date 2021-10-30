@@ -5045,6 +5045,12 @@ class Innovation extends Table
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
             
+            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
+            case "124N1A":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+            
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -7307,6 +7313,11 @@ class Innovation extends Table
             case "121N1":
                 $step_max = 2; // --> 2 interactions: see B
                 break;
+
+            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
+            case "124N1":
+                $step_max = 2; // --> 2 interactions: see B
+                break;
                 
             default:
                 // This should not happens
@@ -9550,6 +9561,33 @@ class Innovation extends Table
             );
             break;
         
+        // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
+        case "124N1A":
+            // "Choose a color"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'choose_color' => true
+            );
+            break;
+        
+        case "124N1B":
+            // "Meld a card of the chosen color from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'color' => array(self::getGameStateValue('auxiliary_value'))
+            );
+            break;
+        
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -10263,7 +10301,24 @@ class Innovation extends Table
                             }
                         }
                         break;
-                }
+                    
+                    // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
+                    case "124N1A":
+                        // "Draw a 1"
+                        self::executeDraw($player_id, 1);
+                        break;
+
+                    case "124N1B":
+                        $color_melded = self::getGameStateValue('color_last_selected');
+                        if ($color_melded >= 0) { // "If you (melded a card)"
+                            $board = self::getCardsInLocation($player_id, 'board', false, true);
+                            $pile = $board[$color_melded];
+                            if (count($pile) >= 2) {
+                                self::splay($player_id, self::getGameStateValue('auxiliary_value'), 1); // "Splay that color left"
+                            }
+                        }
+                        break;
+                }   
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             }
@@ -10654,6 +10709,14 @@ class Innovation extends Table
                         self::transferCardFromTo($card, $player_id, 'score', false, true); // Nota: this has a score keyword 
                     }
                 }                
+                break;
+            
+            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
+            case "124N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                // Save the color choice for later (after a card is drawn).
+                self::setGameStateValue('auxiliary_value', $choice);
                 break;
                 
             default:
