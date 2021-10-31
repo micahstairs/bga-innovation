@@ -1375,7 +1375,7 @@ function (dojo, declare) {
             
             if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0) {
                 HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
-            } else if (exists_i_compel_effect && !exists_non_demand_effect && weaker_players.length == 0) {
+            } else if (exists_i_compel_effect && !exists_non_demand_effect && stronger_or_equal_players.length == 0) {
                 HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
             } else {
                 HTML_action = "<p class='possible_action'>" + (several_effects ? _("Click to execute the dogma effects of this card.") : _("Click to execute the dogma effect of this card.")) + "</p>";
