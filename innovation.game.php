@@ -1706,6 +1706,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score pile to ${your} score pile.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${opponent_name}\'s score pile.');
                 break;
+            
+            case 'achievements->achievements':
+                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} from your achievements to ${opponent_name}\'s achievements.');
+                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his achievements to ${your} achievements.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his achievements to ${opponent_name}\'s achievements.');
+                break;
                 
 
             default:
@@ -1794,6 +1800,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} transfer {number} {card} from your score pile to {opponent_name}\'s score pile');
                 $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his score pile to {your} score pile');
                 $message_for_others = clienttranslate('{player must} transfer {number} {card} from his score pile to {opponent_name}\'s score pile');
+                break;
+            
+            case 'achievements->achievements':
+                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your achievements to {opponent_name}\'s achievements');
+                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his achievements to {your} achievements');
+                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his achievements to {opponent_name}\'s achievements');
                 break;
 
             default:
@@ -3997,6 +4009,8 @@ class Innovation extends Table
             return 7;
         case 'revealed,score':
             return 8;
+        case 'achievements':
+            return 9;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -4024,6 +4038,8 @@ class Innovation extends Table
             return 'pile';
         case 8:
             return 'revealed,score';
+        case 9:
+            return 'achievements';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -7289,6 +7305,11 @@ class Innovation extends Table
                 self::setGameStateValue('card_id_3', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
                 $step_max = 2; // --> 2 interactions: see B
                 break;
+
+            // id 118, Artifacts age 1: Jiskairumoko Necklace
+            case "118C1":
+                $step_max = 2; // --> 2 interactions: see B
+                break;
             
              // id 119, Artifacts age 1: Dancing Girl
              case "119C1":
@@ -9532,6 +9553,38 @@ class Innovation extends Table
                     'score_keyword' => true
                 );
                 break;
+        
+        // id 118, Artifacts age 1: Jiskairumoko Necklace
+        case "118C1A":
+            // "Return a card from your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+        
+        case "118C1B":
+            // "If you do, transfer an achievement of the same value from your achievements to mine"
+            $returned_age = self::getGameStateValue('age_last_selected');
+            if ($returned_age >= 1) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'achievements',
+                    'owner_to' => $launcher_id,
+                    'location_to' => 'achievements'
+                );
+            }
+            break;
         
         // id 120, Artifacts age 1: Lurgan Canoe
         case "120N1A":
