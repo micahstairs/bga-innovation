@@ -7266,6 +7266,11 @@ class Innovation extends Table
                 self::executeDraw($player_id, 2, 'hand');
                 break;
 
+			// id 114, Artifacts age 1: Papyrus of Ani
+            case "114N1":
+				$step_max = 1; // --> 1 interactions: see B
+                break;
+
             // id 115, Artifacts age 1: Pavlovian Tusk
             case "115N1":
                 // "Draw three cards of value equal to your top green card"
@@ -9466,6 +9471,24 @@ class Innovation extends Table
             );
             break;
         
+		// id 114, Artifacts age 1: Papyrus of Ani
+        case "114N1A":
+            // "Return a purple card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array(4)
+            );
+            break;
+        
+		
         // id 115, Artifacts age 1: Pavlovian Tusk
         case "115N1A":
             // "Return one of the drawn cards"
@@ -10234,6 +10257,30 @@ class Innovation extends Table
                         self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}'), array('age' => self::getAgeSquare(10)));
                     }
                     break;
+                    
+				// id 114, Artifacts age 1: Papyrus of Ani
+				case "114N1A":
+					// "If you do, draw and reveal a card of of any type of value two higher.
+					if ($n > 0)
+					{
+						$age_to_draw_in = self::getGameStateValue('age_last_selected') + 2;
+						// TODO : Allow choice of other expansions e.g. "any type".  Right now, draw from base
+						$card = self::executeDraw($player_id, $age_to_draw_in, 'revealed');
+						if($card['color'] == 4) 
+						{
+							// If the drawn card is purple, meld it and execute each of its
+							// non-demand effects.  Do not share them.
+							self::transferCardFromTo($card, $player_id, 'board');
+							self::checkAndPushCardIntoNestedDogmaStack($card);
+						}
+						else 
+						{
+							// Non-purple card is placed in the hand
+							self::transferCardFromTo($card, $player_id, 'hand');
+						}
+					} 
+					
+					break; 
                 
                     // id 120, Artifacts age 1: Lurgan Canoe
                     case "120N1A":
