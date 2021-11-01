@@ -1676,10 +1676,9 @@ function (dojo, declare) {
                 case "score":
                 case "revealed":
                 case "achievements":
-                    if (owner == 0 && age === null) {
-                        return this.zone.special_achievements[0];
-                    }
-                    else {
+                    if (owner == 0) {
+                        return age === null ? this.zone.special_achievements[0] : this.zone.achievements[0];
+                    } else {
                         return root[owner];
                     }
                 case "board":
@@ -2413,6 +2412,9 @@ function (dojo, declare) {
             var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
             var location = zone_infos[0];
             var owner = zone_infos[1];
+            if (!owner) {
+                owner = 0;
+            }
             var zone = this.getZone(location, owner, age);
             
             // Search the position the card is
