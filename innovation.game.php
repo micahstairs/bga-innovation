@@ -1080,7 +1080,7 @@ class Innovation extends Table
             WHERE
                 selected IS TRUE AND
                 location != 'board' AND
-                (owner != {player_id} OR location = 'score')
+                (owner != {player_id} OR location = 'score' OR location = 'achievements')
         ", // The opposite of the cards the player can see except that we potentially select the cards in his score pile too (to enable direct selection if the player is lazy to see the card in his score pile for transfer)
             array('player_id' => $player_id)
         ));
