@@ -1308,6 +1308,8 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
+/* Artifacts - Age 2 */
+
 125 => array('name' => clienttranslate('Seikilos Epitaph'),
     'i_demand_effect_1' => null,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
