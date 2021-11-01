@@ -317,43 +317,29 @@ echo "Building spritesheet..."
 magick montage \
   temp/00{0..9}_base.png \
   temp/0{10..14}_base.png \
-  -trim -tile 15x1 -geometry 120x120+5+5 -background 'none' temp/base_hexagons_15x_1.png
+  -trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/base_hexagons_15x.png
 
-# Create second row of base hexagon icons separately since we need to tack on the colorblind indicator shapes at the end of the row.
+# Build remaining 9 rows of base hexagon icons.
 magick montage \
-  temp/0{15..24}_base.png \
-  -trim -tile 10x1 -geometry 120x120+5+5 -background 'none' temp/base_hexagons_15x_2.png
-
-# Place resized colorblind indicator shapes at the end of the second row of base hexagon icons.
-magick montage temp/base_hexagons_15x_2.png \
-  \( ../card_shapes/blue_shape.png -resize 100x120 \) \
-  \( ../card_shapes/red_shape.png -resize 130x130 \) \
-  \( ../card_shapes/green_shape.png -resize 120x120 \) \
-  \( ../card_shapes/yellow_shape.png -resize 120x120 \) \
-  \( ../card_shapes/purple_shape.png -resize 130x130 \) \
-  -trim -tile 6x1 -geometry +13+5 -background 'none' temp/base_hexagons_15x_2.png
-
-# Build remaining 8 rows of base hexagon icons.
-magick montage \
-  temp/0{25..99}_base.png \
+  temp/0{15..99}_base.png \
   temp/{100..104}_base.png \
-  -trim -tile 10x8 -geometry 120x120+5+5 -background 'none' temp/base_hexagons_10x.png
+  -trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/base_hexagons_10x.png
 
 # Create first row of Artifacts hexagon icons separately since it has 15 hexagon icons in it.
 magick montage \
   temp/00{0..9}_artifacts.png \
   temp/0{10..14}_artifacts.png \
-  -trim -tile 15x1 -geometry 120x120+5+5 -background 'none' temp/artifacts_hexagons_15x.png
+  -trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_15x.png
 
 # Build remaining 9 rows of Artifacts hexagon icons.
 magick montage \
   temp/0{25..99}_artifacts.png \
   temp/{100..104}_artifacts.png \
-  -trim -tile 10x9 -geometry 120x120+5+5 -background 'none' temp/artifacts_hexagons_10x.png
+  -trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_10x.png
 
 # Combine all images into a single spritesheet.
 magick montage \
-  temp/base_hexagons_15x_{1..2}.png \
+  temp/base_hexagons_15x.png \
   temp/base_hexagons_10x.png \
   temp/artifacts_hexagons_15x.png \
   temp/artifacts_hexagons_10x.png \
