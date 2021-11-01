@@ -1312,6 +1312,7 @@ $this->textual_card_infos = array(
 
 125 => array('name' => clienttranslate('Seikilos Epitaph'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1321,6 +1322,7 @@ $this->textual_card_infos = array(
 
 126 => array('name' => clienttranslate('Rosetta Stone'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Choose a card type. Draw two ${age_2} of that type. Meld one and transfer the other to an opponent\'s board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1330,6 +1332,7 @@ $this->textual_card_infos = array(
 
 127 => array('name' => clienttranslate('Chronicle of Zuo'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If you have the least ${icon_4}, draw a ${age_2}. If you have the least ${icon_1}, draw a ${age_3}. If you have the least ${icon_3}, draw a ${age_4}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1339,6 +1342,7 @@ $this->textual_card_infos = array(
 
 128 => array('name' => clienttranslate('Babylonian Chronicles'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer a top non-red card with a ${icon_4} from your board to my board!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('Draw and score a ${age_3}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1348,6 +1352,7 @@ $this->textual_card_infos = array(
 
 129 => array('name' => clienttranslate('Holy Lance'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer a top Artifact from your board to my board!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('If Holy Grail is a top card on your board, you win.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1357,6 +1362,7 @@ $this->textual_card_infos = array(
 
 130 => array('name' => clienttranslate('Baghdad Battery'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are of different type, draw and score five ${age_2}s.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1366,6 +1372,7 @@ $this->textual_card_infos = array(
 
 131 => array('name' => clienttranslate('Holy Grail'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return a card from your hand. Claim an achievement of matching value ignoring eligibility.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1375,6 +1382,7 @@ $this->textual_card_infos = array(
 
 132 => array('name' => clienttranslate('Terracotta Army'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to return a top card with no ${icon_4}!'),
+    'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('Score a card from your hand with no ${icon_4].'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1384,6 +1392,7 @@ $this->textual_card_infos = array(
 
 133 => array('name' => clienttranslate('Dead Sea Scrolls'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1393,6 +1402,7 @@ $this->textual_card_infos = array(
 
 134 => array('name' => clienttranslate('Cyrus Cylinder'),
     'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
