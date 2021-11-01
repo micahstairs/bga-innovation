@@ -18,10 +18,9 @@ with open ("hex_extract_stub.txt", "w") as f:
         # Get offset for read file
         offset_index = (i-16)%10 //2
         read_num = str(i+offset_list[offset_index]).zfill(3)
-        read_file = f'"Print_BaseCards_front-{read_num}.png"'
         write_num = str(i-1).zfill(3)
         color = color_list[(i-16) % 10 // 2]
         
         # Write to file
-        f.write("\t".join(["make_hexagon", read_file, '"$TOP_LEFT"',  f'"${color}_BORDER"', f'"{write_num}.png"']))
+        f.write("\t".join(["make_hexagon", f'"{read_num}"', '"$TOP_LEFT"',  f'"${color}_BORDER"', f'"{write_num}"']))
         f.write("\n")
