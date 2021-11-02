@@ -109,6 +109,13 @@ class Innovation extends Table
     {
         return "innovation";
     }
+
+    function upgradeTableDb($from_version) {
+        if ($from_version <= 2110162118) {        
+            $sql = "ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';";
+            self::applyDbUpgradeToAllDB($sql); 
+        }
+    }
     
     //****** CODE FOR DEBUG MODE
     function debug_draw($card_id) {
