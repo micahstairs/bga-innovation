@@ -7309,9 +7309,9 @@ class Innovation extends Table
                 self::executeDraw($player_id, 2, 'hand');
                 break;
 
-			// id 114, Artifacts age 1: Papyrus of Ani
+            // id 114, Artifacts age 1: Papyrus of Ani
             case "114N1":
-				$step_max = 1; // --> 1 interactions: see B
+                $step_max = 1; // --> 1 interactions: see B
                 break;
 
             // id 115, Artifacts age 1: Pavlovian Tusk
@@ -7343,7 +7343,7 @@ class Innovation extends Table
                     $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card == null) 
-					{ // "If you do not have a top card of the drawn card's color"
+                    { // "If you do not have a top card of the drawn card's color"
                         self::transferCardFromTo($card, $player_id, 'board'); // "meld it"
                         continue; // "Repeat this effect"
                     }
@@ -7392,46 +7392,26 @@ class Innovation extends Table
 
             // id 127, Artifacts age 2: Chronicle of Zuo
             case "127N1":
-                $players = self::loadPlayersBasicInfos();
-				$min_towers = 100;
-				$min_crowns = 100;
-				$min_bulbs = 100;
-				
-				$this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
-				foreach($players as $all_player_id => $player) 
-				{
-					if ($all_player_id == $player_id)
-					{
-						continue;
-					}
-                    $icon_counts = self::getPlayerRessourceCounts($all_player_id);
-                    
-					if ($min_towers > $icon_counts[4])
-					{
-                        $min_towers = $icon_counts[4];
-                    }
-					if ($min_crowns > $icon_counts[1])
-					{
-                        $min_crowns = $icon_counts[1];
-                    }
-					if ($min_bulbs > $icon_counts[3])
-					{
-                        $min_bulbs = $icon_counts[3];
-                    }
+                $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id}", array('player_id' => $player_id)));
+                $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id}", array('player_id' => $player_id)));
+                $min_bulbs = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_3) FROM player WHERE player_id != {player_id}",  array('player_id' => $player_id)));
+                
+                $this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
+                
+                // TODO: Is "least" a strict less than or are ties ok?
+                if ($this_player_icon_counts[4] < $min_towers)
+                {
+                    $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the fewest towers, draw a 2"
                 }
-				if ($this_player_icon_counts[4] < $min_towers)
-				{
-					$card = self::executeDraw($player_id, 2, 'hand'); // "If you have the fewest towers, draw a 2"
-				}
-				if ($this_player_icon_counts[1] < $min_crowns)
-				{
-					$card = self::executeDraw($player_id, 3, 'hand'); // "If you have the fewest crowns, draw a 3"
-				}
-				if ($this_player_icon_counts[3] < $min_bulbs)
-				{
-					$card = self::executeDraw($player_id, 4, 'hand'); // "If you have the fewest crowns, draw a 3"
-				}
-				break;
+                if ($this_player_icon_counts[1] < $min_crowns)
+                {
+                    $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the fewest crowns, draw a 3"
+                }
+                if ($this_player_icon_counts[3] < $min_bulbs)
+                {
+                    $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the fewest bulbs, draw a 4"
+                }
+                break;
                 
             default:
                 // This should not happens
@@ -9585,7 +9565,7 @@ class Innovation extends Table
             );
             break;
         
-		// id 114, Artifacts age 1: Papyrus of Ani
+        // id 114, Artifacts age 1: Papyrus of Ani
         case "114N1A":
             // "Return a purple card from your hand"
             $options = array(
@@ -9602,7 +9582,7 @@ class Innovation extends Table
             );
             break;
         
-		
+        
         // id 115, Artifacts age 1: Pavlovian Tusk
         case "115N1A":
             // "Return one of the drawn cards"
