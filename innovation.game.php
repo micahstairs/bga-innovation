@@ -7394,6 +7394,49 @@ class Innovation extends Table
             case "124N1":
                 $step_max = 2; // --> 2 interactions: see B
                 break;
+
+            // id 127, Artifacts age 2: Chronicle of Zuo
+            case "127N1":
+                $players = self::loadPlayersBasicInfos();
+				$min_towers = 100;
+				$min_crowns = 100;
+				$min_bulbs = 100;
+				
+				$this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
+				foreach($players as $all_player_id => $player) 
+				{
+					if ($all_player_id == $player_id)
+					{
+						continue;
+					}
+                    $icon_counts = self::getPlayerRessourceCounts($all_player_id);
+                    
+					if ($min_towers > $icon_counts[4])
+					{
+                        $min_towers = $icon_counts[4];
+                    }
+					if ($min_crowns > $icon_counts[1])
+					{
+                        $min_crowns = $icon_counts[1];
+                    }
+					if ($min_bulbs > $icon_counts[3])
+					{
+                        $min_bulbs = $icon_counts[3];
+                    }
+                }
+				if ($this_player_icon_counts[4] < $min_towers)
+				{
+					$card = self::executeDraw($player_id, 2, 'hand'); // "If you have the fewest towers, draw a 2"
+				}
+				if ($this_player_icon_counts[1] < $min_crowns)
+				{
+					$card = self::executeDraw($player_id, 3, 'hand'); // "If you have the fewest crowns, draw a 3"
+				}
+				if ($this_player_icon_counts[3] < $min_bulbs)
+				{
+					$card = self::executeDraw($player_id, 4, 'hand'); // "If you have the fewest crowns, draw a 3"
+				}
+				break;
                 
             default:
                 // This should not happens
