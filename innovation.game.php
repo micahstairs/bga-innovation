@@ -741,31 +741,16 @@ class Innovation extends Table
     
     function extractAgeAchievements() {
         /** Take the top card from each pile from age 1 to age 9, in the beginning of the game; these will be used as achievements **/
-        
-        // Top card is number 14 for deck 1, number 9 for other decks. Ignore age 10
         self::DbQuery("
         UPDATE
-            card
+            card as a
+            INNER JOIN (SELECT age, MAX(position) AS position FROM card GROUP BY age) as b ON a.age = b.age
         SET
-            location = 'achievements',
-            position = age-1
+            a.location = 'achievements',
+            a.position = a.age-1
         WHERE
-            age = 1 AND
-            position = 14 
-        OR
-            age BETWEEN 2 AND 9 AND
-            position = 9
-        ");
-        
-        $achievements = self::getObjectListFromDB("
-        SELECT
-            id, age
-        FROM
-            card
-        WHERE
-            location='achievements' AND age IS NOT NULL
-        ORDER BY
-            age
+            a.position = b.position AND
+            a.age BETWEEN 1 AND 9
         ");
     }
     
