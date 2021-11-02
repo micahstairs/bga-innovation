@@ -7309,14 +7309,13 @@ class Innovation extends Table
             // id 117, Artifacts age 1: Electrum Stater of Efesos
             case "117N1":
                 while(true) {
-                    $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 1"
+                    $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card == null) 
 					{ // "If you do not have a top card of the drawn card's color"
-                        self::transferCardFromTo($card, $player_id, 'board', false, true); // "meld it"
+                        self::transferCardFromTo($card, $player_id, 'board'); // "meld it"
                         continue; // "Repeat this effect"
                     }
-                    self::notifyGeneralInfo(clienttranslate('There was a top card of matching color.'));
                     break;
                 }
                 self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
