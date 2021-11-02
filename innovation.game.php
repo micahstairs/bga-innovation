@@ -2857,6 +2857,62 @@ class Innovation extends Table
             array('player_id' => $player_id, 'color' => $color)
         )));
     }
+
+    function getTopCardsOnBoard($player_id) {
+        /**
+        Get all of the top cards on a player board
+        (null if the player has no cards on his board)
+        **/
+        return self::attachTextualInfoToList(self::getCollectionFromDb(self::format("
+                SELECT
+                    *
+                FROM
+                    card
+                WHERE
+                    card.owner = {player_id} AND
+                    card.location = 'board' AND
+                    card.position = (
+                        SELECT
+                            MAX(position) AS position
+                        FROM
+                            card
+                        WHERE
+                            owner = {player_id} AND
+                            location = 'board' AND
+                            color = card.color
+                    )
+        ",
+            array('player_id' => $player_id)
+        )));
+    }
+    
+    function getIfTopCard($id) {
+        /**
+        Returns the card if card is a top card.
+        null if isn't present as a top card
+        **/
+        return self::attachTextualInfo(self::getObjectFromDB(self::format("
+            SELECT
+                *
+            FROM
+                card
+            WHERE
+                card.id = {id} AND
+                card.location = 'board' AND
+                card.position = (
+                    SELECT
+                        MAX(position) AS position
+                    FROM
+                        card
+                    WHERE
+                        owner = card.owner AND
+                        location = 'board' AND
+                        color = card.color
+                )
+            ",
+            array('id' => $id)
+        )));
+    }
     
     function getBottomCardOnBoard($player_id, $color) {
         /**
@@ -7379,7 +7435,7 @@ class Innovation extends Table
             case "123N1":
                 $step_max = 1; // --> 1 interactions: see B
                 break;
-				
+                
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1":
                 $step_max = 2; // --> 2 interactions: see B
@@ -7393,18 +7449,15 @@ class Innovation extends Table
                 
                 $this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
                 
-                // TODO: Is "least" a strict less than or are ties ok?
-                if ($this_player_icon_counts[4] < $min_towers)
-                {
-                    $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the fewest towers, draw a 2"
+                // TODO: Confirm that "least" means strictly less than other players.
+                if ($this_player_icon_counts[4] < $min_towers) {
+                    $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the least towers, draw a 2"
                 }
-                if ($this_player_icon_counts[1] < $min_crowns)
-                {
-                    $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the fewest crowns, draw a 3"
+                if ($this_player_icon_counts[1] < $min_crowns) {
+                    $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the least crowns, draw a 3"
                 }
-                if ($this_player_icon_counts[3] < $min_bulbs)
-                {
-                    $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the fewest bulbs, draw a 4"
+                if ($this_player_icon_counts[3] < $min_bulbs) {
+                    $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the least bulbs, draw a 4"
                 }
                 break;
                 
@@ -9732,7 +9785,7 @@ class Innovation extends Table
                 'score_keyword' => true
             );
             break;
-			
+            
         // id 123, Artifacts age 1: Ark of the Covenant
         case "123N1A":
             // "Return a card from your hand."
@@ -9746,7 +9799,7 @@ class Innovation extends Table
                 'location_to' => 'deck',
             );
             break;
-			
+            
         // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
         case "124N1A":
             // "Choose a color"
@@ -10518,58 +10571,52 @@ class Innovation extends Table
                     }
                     break;
                 
-				// id 123, Artifacts age 1: Ark of the covenant
+                // id 123, Artifacts age 1: Ark of the covenant
                 case "123N1A":
-					$players = self::loadPlayersBasicInfos();
-					
-					if ($n > 0)
-					{ // Unsaid rule: the player must have at least one card to show from his hand, else, the effect can't continue
-                        $color = self::getGameStateValue('color_last_selected');
+                    $players = self::loadPlayersBasicInfos();
+                    
+                    if ($n > 0)
+                    { // Unsaid rule: the player must have at least one card to show from his hand, else, the effect can't continue
+                        $returned_color = self::getGameStateValue('color_last_selected');
                             
                         foreach($players as $all_player_id => $player) 
-						{
-                            // TODO : is there a better way to get all top cards?
-							$top_blue_card = self::getTopCardOnBoard($all_player_id, 0);
-							$top_red_card = self::getTopCardOnBoard($all_player_id, 1);
-							$top_green_card = self::getTopCardOnBoard($all_player_id, 2);
-							$top_yellow_card = self::getTopCardOnBoard($all_player_id, 3);
-							$top_purple_card = self::getTopCardOnBoard($all_player_id, 4);
-							
-							// TODO : if there is an artifact card on top of any pile, then prevent the rest of the dogma.
-							if (($top_blue_card == null || $top_blue_card['id'] < 110) &&
-								($top_red_card == null || $top_red_card['id'] < 110) &&
-								($top_green_card == null || $top_green_card['id'] < 110) &&
-								($top_yellow_card == null || $top_yellow_card['id'] < 110) &&
-								($top_purple_card == null || $top_purple_card['id'] < 110))
-							{
-								// No artifacts as a top card, transfer all cards to the original player's
-								// scorepile
-								$top_card = self::getTopCardOnBoard($all_player_id, $color);
-								while ($top_card !== null)
-								{	
-									// "Transfer all cards of the same color from the boards of all players
-									// with no top artifacts to your score pile."
-									// This is a "transfer" so monument cannot be achieved with this dogma.
-									self::transferCardFromTo($top_card, $player_id, 'score');
-									
-									$top_card = self::getTopCardOnBoard($all_player_id, $color);
-								}
+                        {
+                            $top_cards = self::getTopCardsOnBoard($all_player_id);
+                            
+                            $artf_found = false;
+                            foreach($top_cards as &$card) {
+                                // TODO : detect existence of an artifact card
+                                if ($card['id'] >= 110) {
+                                    $artf_found = true;
+                                }
                             }
+                            
+                            if ($artf_found == false) {
+                                // No artifacts as a top card, transfer all cards to the original player's
+                                // scorepile
+                                $top_card = self::getTopCardOnBoard($all_player_id, $returned_color);
+                                while ($top_card !== null)
+                                {   
+                                    // "Transfer all cards of the same color from the boards of all players
+                                    // with no top artifacts to your score pile."
+                                    self::transferCardFromTo($top_card, $player_id, 'score');
+                                    
+                                    $top_card = self::getTopCardOnBoard($all_player_id, $returned_color);
+                                }
+                            }
+                            
                         }
                     }
-					// "If Ark of the Covenant is a top card on any board, transfer it to your hand."
-					// This happens even if the first part does not.
-					foreach($players as $all_player_id => $player) 
-					{
-						$top_purple_card = self::getTopCardOnBoard($all_player_id, 4);
-						if ($top_purple_card !== null && $top_purple_card['id'] == 123) // Ark found
-						{
-							self::transferCardFromTo($top_purple_card, $player_id, 'hand');
-						}
-					}
-					
+                    // "If Ark of the Covenant is a top card on any board, transfer it to your hand."
+                    // This happens even if the first part does not.
+                    $ark_card = self::getIfTopCard(123);
+                    if ($ark_card  !== null) // Ark found
+                    {
+                        self::transferCardFromTo($ark_card, $player_id, 'hand');
+                    }
+                    
                     break;
-				
+                
                 // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
                 case "124N1A":
                     // "Draw a 1"
