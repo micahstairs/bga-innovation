@@ -5524,12 +5524,11 @@ class Innovation extends Table
         // The first active player is the one who chose for meld the first card in (English) alphabetical order
         $earliest_card = null;
         foreach($cards as $card) {
-            $name = $card['name'];
             if ($earliest_card === null || self::comesAlphabeticallyBefore($card, $earliest_card)) {
                 $earliest_card = $card;
             }
         }
-        $player_id = $card['owner'];
+        $player_id = $earliest_card['owner'];
         
         self::notifyPlayer($player_id, 'initialCardChosen', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
             'You' => 'You',
