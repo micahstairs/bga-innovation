@@ -10570,37 +10570,28 @@ class Innovation extends Table
                     }
                     break;
                 
-                // id 123, Artifacts age 1: Ark of the covenant
+                // id 123, Artifacts age 1: Ark of the Covenant
                 case "123N1A":
                     $players = self::loadPlayersBasicInfos();
                     
-                    if ($n > 0)
-                    { // Unsaid rule: the player must have at least one card to show from his hand, else, the effect can't continue
+                    if ($n > 0) { // Unsaid rule: the player must have returned a card or else this part of the effect can't continue
                         $returned_color = self::getGameStateValue('color_last_selected');
                             
-                        foreach($players as $all_player_id => $player) 
-                        {
+                        foreach($players as $all_player_id => $player) {
                             $top_cards = self::getTopCardsOnBoard($all_player_id);
                             
-                            $artf_found = false;
+                            $artifact_found = false;
                             foreach($top_cards as &$card) {
-                                // TODO : detect existence of an artifact card
-                                if ($card['id'] >= 110) {
-                                    $artf_found = true;
+                                if ($card['type'] == 1) { // Artifact
+                                    $artifact_found = true;
+                                    break;
                                 }
                             }
                             
-                            if ($artf_found == false) {
-                                // No artifacts as a top card, transfer all cards to the original player's
-                                // scorepile
-                                $top_card = self::getTopCardOnBoard($all_player_id, $returned_color);
-                                while ($top_card !== null)
-                                {   
-                                    // "Transfer all cards of the same color from the boards of all players
-                                    // with no top artifacts to your score pile."
+                            if (!$artifact_found) {
+                                while (($top_card = self::getTopCardOnBoard($all_player_id, $returned_color)) !== null) {   
+                                    // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
                                     self::transferCardFromTo($top_card, $player_id, 'score');
-                                    
-                                    $top_card = self::getTopCardOnBoard($all_player_id, $returned_color);
                                 }
                             }
                             
@@ -10609,11 +10600,9 @@ class Innovation extends Table
                     // "If Ark of the Covenant is a top card on any board, transfer it to your hand."
                     // This happens even if the first part does not.
                     $ark_card = self::getIfTopCard(123);
-                    if ($ark_card  !== null) // Ark found
-                    {
+                    if ($ark_card !== null) {
                         self::transferCardFromTo($ark_card, $player_id, 'hand');
                     }
-                    
                     break;
                 
                 // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
