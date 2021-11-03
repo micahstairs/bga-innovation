@@ -130,6 +130,12 @@ class Innovation extends Table
         } finally {
             // Do nothing.
         }
+        if ($from_version <= 2111030321) {
+            $players = self::getCollectionFromDb("SELECT player_id FROM player");
+            foreach($players as $player_id => $player) {
+                self::updatePlayerRessourceCounts($player_id);
+            }
+        }
     }
     
     //****** CODE FOR DEBUG MODE
@@ -3281,9 +3287,9 @@ class Innovation extends Table
         ");
         
         self::DbQuery(self::format("
-            INSERT INTO card_with_top_card_indication
+            INSERT INTO card_with_top_card_indication (id, type, age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, owner, location, position, splay_direction, selected, is_top_card)
                 SELECT
-                    a.*,
+                    a.id, a.type, a.age, a.color, a.spot_1, a.spot_2, a.spot_3, a.spot_4, a.dogma_icon, a.owner, a.location, a.position, a.splay_direction, a.selected,
                     (a.position = b.position_of_top_card) AS is_top_card
                 FROM
                     card AS a
@@ -3297,7 +3303,7 @@ class Innovation extends Table
                             location = 'board'
                         GROUP BY
                             color
-                   ) AS b ON a.color = b.color
+                ) AS b ON a.color = b.color
                 WHERE
                     a.owner = {player_id} AND
                     a.location = 'board'
