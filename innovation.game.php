@@ -111,9 +111,24 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
-        if ($from_version <= 2110162118) {        
-            $sql = "ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';";
-            self::applyDbUpgradeToAllDB($sql); 
+        try {
+            if ($from_version <= 2111022217) {    
+                $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'type'");
+                if (is_null($result)) {
+                    $sql = "ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';";
+                    self::applyDbUpgradeToAllDB($sql);
+                    
+                }
+            }
+            if ($from_version <= 2111022324) {
+                $result = self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'type'");
+                if (is_null($result)) {
+                    $sql = "ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';";
+                    self::applyDbUpgradeToAllDB($sql);
+                }
+            }
+        } finally {
+            // Do nothing.
         }
     }
     
