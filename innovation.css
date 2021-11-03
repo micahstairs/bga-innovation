@@ -786,10 +786,13 @@
 /* Elements inside the card in play */
 
 .card_title.M {
-    left: 53px;
-    top: 7px;
-    width: 95px;
-    height: 15px;
+    left: 54px;
+    top: 6px;
+    width: 93px;
+    height: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .card_effects.M {
