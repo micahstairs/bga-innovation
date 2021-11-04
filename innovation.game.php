@@ -9856,6 +9856,7 @@ class Innovation extends Table
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'score',
+                'score_keyword' => true,
                 
                 'without_icon' => 4 // tower
             );
