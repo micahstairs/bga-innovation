@@ -107,6 +107,13 @@ class Innovation extends Table
     {
         return "innovation";
     }
+
+    function upgradeTableDb($from_version) {
+        if ($from_version <= 2110162118) {        
+            $sql = "ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';";
+            self::applyDbUpgradeToAllDB($sql); 
+        }
+    }
     
     //****** CODE FOR DEBUG MODE
     function debug_draw($card_id) {
@@ -182,9 +189,7 @@ class Innovation extends Table
         /************ Start the game initialization *****/
 
         // Init global values with their initial values
-        global $g_config;
-        $debug_mode = $g_config ['debug_from_chat'];
-        self::setGameStateValue('debug_mode', $debug_mode ? 1 : 0);
+        self::setGameStateValue('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
         
         // Number of achievements needed to win: 6 with 2 players, 5 with 3 players, 4 with 4 players and 6 for team game
         $number_of_achievements_needed_to_win = $individual_game ? 8 - count($players) : 6;
@@ -2852,6 +2857,62 @@ class Innovation extends Table
             array('player_id' => $player_id, 'color' => $color)
         )));
     }
+
+    function getTopCardsOnBoard($player_id) {
+        /**
+        Get all of the top cards on a player board
+        (null if the player has no cards on his board)
+        **/
+        return self::attachTextualInfoToList(self::getCollectionFromDb(self::format("
+                SELECT
+                    *
+                FROM
+                    card
+                WHERE
+                    card.owner = {player_id} AND
+                    card.location = 'board' AND
+                    card.position = (
+                        SELECT
+                            MAX(position) AS position
+                        FROM
+                            card
+                        WHERE
+                            owner = {player_id} AND
+                            location = 'board' AND
+                            color = card.color
+                    )
+        ",
+            array('player_id' => $player_id)
+        )));
+    }
+    
+    function getIfTopCard($id) {
+        /**
+        Returns the card if card is a top card.
+        null if isn't present as a top card
+        **/
+        return self::attachTextualInfo(self::getObjectFromDB(self::format("
+            SELECT
+                *
+            FROM
+                card
+            WHERE
+                card.id = {id} AND
+                card.location = 'board' AND
+                card.position = (
+                    SELECT
+                        MAX(position) AS position
+                    FROM
+                        card
+                    WHERE
+                        owner = card.owner AND
+                        location = 'board' AND
+                        color = card.color
+                )
+            ",
+            array('id' => $id)
+        )));
+    }
     
     function getBottomCardOnBoard($player_id, $color) {
         /**
@@ -5463,12 +5524,11 @@ class Innovation extends Table
         // The first active player is the one who chose for meld the first card in (English) alphabetical order
         $earliest_card = null;
         foreach($cards as $card) {
-            $name = $card['name'];
             if ($earliest_card === null || self::comesAlphabeticallyBefore($card, $earliest_card)) {
                 $earliest_card = $card;
             }
         }
-        $player_id = $card['owner'];
+        $player_id = $earliest_card['owner'];
         
         self::notifyPlayer($player_id, 'initialCardChosen', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
             'You' => 'You',
@@ -7371,6 +7431,11 @@ class Innovation extends Table
                 $step_max = 2; // --> 2 interactions: see B
                 break;
 
+            // id 123, Artifacts age 1: Ark of the Covenant
+            case "123N1":
+                $step_max = 1; // --> 1 interactions: see B
+                break;
+                
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1":
                 $step_max = 2; // --> 2 interactions: see B
@@ -7384,18 +7449,15 @@ class Innovation extends Table
                 
                 $this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
                 
-                // TODO: Is "least" a strict less than or are ties ok?
-                if ($this_player_icon_counts[4] < $min_towers)
-                {
-                    $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the fewest towers, draw a 2"
+                // TODO: Confirm that "least" means strictly less than other players.
+                if ($this_player_icon_counts[4] < $min_towers) {
+                    $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the least towers, draw a 2"
                 }
-                if ($this_player_icon_counts[1] < $min_crowns)
-                {
-                    $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the fewest crowns, draw a 3"
+                if ($this_player_icon_counts[1] < $min_crowns) {
+                    $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the least crowns, draw a 3"
                 }
-                if ($this_player_icon_counts[3] < $min_bulbs)
-                {
-                    $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the fewest bulbs, draw a 4"
+                if ($this_player_icon_counts[3] < $min_bulbs) {
+                    $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the least bulbs, draw a 4"
                 }
                 break;
                 
@@ -9748,7 +9810,21 @@ class Innovation extends Table
                 'score_keyword' => true
             );
             break;
-        
+            
+        // id 123, Artifacts age 1: Ark of the Covenant
+        case "123N1A":
+            // "Return a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+            
         // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
         case "124N1A":
             // "Choose a color"
@@ -10603,6 +10679,41 @@ class Innovation extends Table
                             self::notifyGeneralInfo(clienttranslate('The scored cards were not the same color.'), array());
                             break;
                         }
+                    }
+                    break;
+                
+                // id 123, Artifacts age 1: Ark of the Covenant
+                case "123N1A":
+                    $players = self::loadPlayersBasicInfos();
+                    
+                    if ($n > 0) { // Unsaid rule: the player must have returned a card or else this part of the effect can't continue
+                        $returned_color = self::getGameStateValue('color_last_selected');
+                            
+                        foreach($players as $all_player_id => $player) {
+                            $top_cards = self::getTopCardsOnBoard($all_player_id);
+                            
+                            $artifact_found = false;
+                            foreach($top_cards as &$card) {
+                                if ($card['type'] == 1) { // Artifact
+                                    $artifact_found = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!$artifact_found) {
+                                while (($top_card = self::getTopCardOnBoard($all_player_id, $returned_color)) !== null) {   
+                                    // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
+                                    self::transferCardFromTo($top_card, $player_id, 'score');
+                                }
+                            }
+                            
+                        }
+                    }
+                    // "If Ark of the Covenant is a top card on any board, transfer it to your hand."
+                    // This happens even if the first part does not.
+                    $ark_card = self::getIfTopCard(123);
+                    if ($ark_card !== null) {
+                        self::transferCardFromTo($ark_card, $player_id, 'hand');
                     }
                     break;
                 
