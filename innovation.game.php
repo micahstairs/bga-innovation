@@ -7335,7 +7335,8 @@ class Innovation extends Table
                     break;
                 }
                 self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
-
+                break;
+                
             // id 118, Artifacts age 1: Jiskairumoko Necklace
             case "118C1":
                 $step_max = 2; // --> 2 interactions: see B
@@ -7396,6 +7397,31 @@ class Innovation extends Table
                 {
                     $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the fewest bulbs, draw a 4"
                 }
+                break;
+                
+            // id 128, Artifacts age 2: Babylonian Chronicles
+            case "128C1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+            
+            case "128N1":
+                // "Draw and score a 3"
+                self::executeDraw($player_id, 3, 'score');
+                break;
+            
+            // id 131, Artifacts age 2: Holy Grail
+            case "131N1":
+                $step_max = 2; // --> 2 interactions: see B
+                break;
+
+            // id 132, Artifacts age 2: Terracotta Army
+            case "132C1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+            
+            case "132N1":
+                // "Score a card from your hand with no tower"
+                $step_max = 1; // --> 1 interaction: see B
                 break;
                 
             default:
@@ -9750,6 +9776,91 @@ class Innovation extends Table
             );
             break;
         
+        // id 128, Artifacts age 2: Babylonian Chronicles
+        case "128C1A":
+            // "Transfer a top non-red card with a tower from your board to my board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+                
+                'with_icon' => 4, // tower
+                'color' => array(0,2,3,4) // non-red
+            );
+            break;
+
+        // id 131, Artifacts age 2: Holy Grail
+        case "131N1A":
+            // "Return a card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+            
+        case "131N1B":
+            $age_selected = self::getGameStateValue('age_last_selected');
+            // "Claim an achievement of matching value, ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'age' => $age_selected,
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
+            break;
+
+
+        // id 132, Artifacts age 2: Terracotta Army
+        case "132C1A":
+            // "I compel you to return a top card with no tower"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'without_icon' => 4 // tower
+            );
+            break;
+
+        case "132N1A":
+            // "Score a card from your hand with no towers"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'without_icon' => 4 // tower
+            );
+            break;
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
