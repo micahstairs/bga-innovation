@@ -162,7 +162,7 @@ class Innovation extends Table
             }
             catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::achieve');
+                self::trace('EOG bubbled from self::debug_achieve');
                 $this->gamestate->nextState('justBeforeGameEnd');
                 return;
             }
@@ -1769,7 +1769,7 @@ class Innovation extends Table
             case 'board->achievements':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s achievements.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s achievements.');
+                $message_for_others = clienttranslate('${player_name} transfers a${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s achievements.');
                 break;
 
             case 'score->hand':
