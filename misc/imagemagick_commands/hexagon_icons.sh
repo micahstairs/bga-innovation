@@ -333,7 +333,7 @@ magick montage \
 
 # Build remaining 9 rows of Artifacts hexagon icons.
 magick montage \
-  temp/0{25..99}_artifacts.png \
+  temp/0{15..99}_artifacts.png \
   temp/{100..104}_artifacts.png \
   -trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_10x.png
 
