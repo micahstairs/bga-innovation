@@ -1,5 +1,4 @@
 #!/bin/bash
-folder_path="../card_backgrounds"
 mkdir temp
 
 mogrify -path temp -resize 110x150 \
