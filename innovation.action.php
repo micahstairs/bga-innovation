@@ -49,6 +49,25 @@
         $card_id = self::getArg("card_id", AT_posint, true);
         // Call debug_draw from game logic
         $this->game->debug_draw($card_id);
+        self::ajaxResponse();
+    }
+    public function debug_score() {            
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        $card_id = self::getArg("card_id", AT_posint, true);
+        // Call debug_score from game logic
+        $this->game->debug_score($card_id);
+        
+        self::ajaxResponse();
+    }
+    public function debug_achieve() {            
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        $card_id = self::getArg("card_id", AT_posint, true);
+        // Call debug_achieve from game logic
+        $this->game->debug_achieve($card_id);
         
         self::ajaxResponse();
     }
