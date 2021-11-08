@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
 CREATE TABLE IF NOT EXISTS `random` (
  `id` SMALLINT UNSIGNED NOT NULL,
+ `type` TINYINT UNSIGNED,
  `age` TINYINT UNSIGNED,
  `random_number` DOUBLE NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

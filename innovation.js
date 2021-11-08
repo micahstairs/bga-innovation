@@ -322,19 +322,23 @@ function (dojo, declare) {
             
             // DECKS
             this.zone.deck = {};
-            for (var age=1; age<=10; age++) {
-                // Creation of the zone
-                this.zone.deck[age] = this.createZone('deck', 0, age, grouped_by_age=false, counter_method="COUNT", counter_display_zero=false)
-                this.setPlacementRules(this.zone.deck[age], left_to_right=true)
-                
-                // Add cards to zone according to the current situation
-                var nb_cards_in_age = gamedatas.deck_counts[age];
-                for(var i=0; i<nb_cards_in_age; i++) {
-                    this.createAndAddToZone(this.zone.deck[age], i, age, null, dojo.body(), null);
+            // TODO: Hide the artifacts decks (#deck_set_2 and #deck_set_4) when they are not in use.
+            for (var type = 0; type <= 1; type++) {
+                this.zone.deck[type] = {};
+                for (var age = 1; age <= 10; age++) {
+                    // Creation of the zone
+                    this.zone.deck[type][age] = this.createZone('deck', 0, type, age, null, grouped_by_age=false, counter_method="COUNT", counter_display_zero=false)
+                    this.setPlacementRules(this.zone.deck[type][age], left_to_right=true)
+                    
+                    // Add cards to zone according to the current situation
+                    var num_cards = gamedatas.deck_counts[type][age];
+                    for(var i=0; i<num_cards; i++) {
+                        this.createAndAddToZone(this.zone.deck[type][age], i, type, age, null, dojo.body(), null);
+                    }
+                    
+                    // Current number of cards in the deck
+                    $(`deck_count_${type}_${age}`).innerHTML = num_cards;
                 }
-                
-                // Current number of cards in the deck
-                $('deck_count_' + age).innerHTML = nb_cards_in_age;
             }
             
             // AVAILABLE ACHIEVEMENTS
@@ -349,7 +353,7 @@ function (dojo, declare) {
                 if (achievement.age === null) {
                     continue;
                 }
-                this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, null, dojo.body(), null);
+                this.createAndAddToZone(this.zone.achievements["0"], i, achievement.type, achievement.age, null, dojo.body(), null);
                 if (!this.isSpectator) {
                     this.addTooltipForStandardAchievement(achievement);
                 }
@@ -367,7 +371,7 @@ function (dojo, declare) {
                 if (achievement.age !== null) {
                     continue;
                 }
-                this.createAndAddToZone(this.zone.special_achievements["0"], i, null, achievement.id, dojo.body(), null);
+                this.createAndAddToZone(this.zone.special_achievements["0"], i, achievement.type, null, achievement.id, dojo.body(), null);
                 this.addTooltipForCard(achievement);
             }
             
@@ -375,7 +379,7 @@ function (dojo, declare) {
             this.zone.hand = {};
                 for (var player_id in this.players) {
                 // Creation of the zone
-                var zone = this.createZone('hand', player_id, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
+                var zone = this.createZone('hand', player_id, null, null, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
                 this.setPlacementRules(zone, left_to_right=true);
                            
@@ -383,7 +387,7 @@ function (dojo, declare) {
                 if (player_id == this.player_id) {
                     for(var i=0; i<gamedatas.my_hand.length; i++) {
                         var card = gamedatas.my_hand[i];
-                        this.createAndAddToZone(zone, card.position, card.age, card.id, dojo.body(), card);
+                        this.createAndAddToZone(zone, card.position, card.type, card.age, card.id, dojo.body(), card);
                         
                         if(gamedatas.turn0 && card.selected == 1) {
                             //dojo.addClass(this.getCardHTMLId(card.id, card.age, zone.HTML_class) , 'selected')
@@ -394,11 +398,13 @@ function (dojo, declare) {
                     }
                 }
                 else {
-                    var hand_count = gamedatas.hand_counts[player_id];
-                    for(var age = 1; age <= 10; age++){
-                        var nb_cards_in_age = hand_count[age];
-                        for(var i=0; i<nb_cards_in_age; i++) {
-                            this.createAndAddToZone(zone, i, age, null, dojo.body(), null);
+                    for (var type = 0; type <= 1; type++) {
+                        var hand_count = gamedatas.hand_counts[player_id][type];
+                        for(var age = 1; age <= 10; age++){
+                            var num_cards = hand_count[age];
+                            for(var i = 0; i < num_cards; i++) {
+                                this.createAndAddToZone(zone, i, type, age, null, dojo.body(), null);
+                            }
                         }
                     }
                 }
@@ -408,15 +414,17 @@ function (dojo, declare) {
             this.zone.score = {};
             for (var player_id in this.players) {
                 // Creation of the zone
-                this.zone.score[player_id] = this.createZone('score', player_id, null, grouped_by_age=true);
+                this.zone.score[player_id] = this.createZone('score', player_id, null, null, null, grouped_by_age=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
                     
                 // Add cards to zone according to the current situation
-                var score_count = gamedatas.score_counts[player_id];
-                for(var age = 1; age <= 10; age++){
-                    var nb_cards_in_age = score_count[age];
-                    for(var i=0; i<nb_cards_in_age; i++) {
-                        this.createAndAddToZone(this.zone.score[player_id], i, age, null, dojo.body(), null);
+                for (var type = 0; type <= 1; type++) {
+                    var score_count = gamedatas.score_counts[player_id][type];
+                    for (var age = 1; age <= 10; age++) {
+                        var num_cards = score_count[age];
+                        for(var i = 0; i < num_cards; i++) {
+                            this.createAndAddToZone(this.zone.score[player_id], i, type, age, null, dojo.body(), null);
+                        }
                     }
                 }
             }
@@ -428,7 +436,7 @@ function (dojo, declare) {
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
                 for(var i=0; i<gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
-                    this.createAndAddToZone(this.zone.my_score_verso, card.position, card.age, card.id, dojo.body(), card);
+                    this.createAndAddToZone(this.zone.my_score_verso, card.position, card.type, card.age, card.id, dojo.body(), card);
                     // Add tooltip
                     this.addTooltipForCard(card);
                 }
@@ -448,10 +456,10 @@ function (dojo, declare) {
                 for(var i = 0; i < achievements.length; i++){
                     var achievement = achievements[i];
                     if (achievement.age !== null) { // Normal achievement
-                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, null, dojo.body(), null);
+                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.type, achievement.age, null, dojo.body(), null);
                     }
                     else {
-                        this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.id, dojo.body(), null);
+                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.type, null, achievement.id, dojo.body(), null);
                         this.addTooltipForCard(achievement);
                     }    
                 }
@@ -490,7 +498,7 @@ function (dojo, declare) {
                     var splay_direction_in_clear = player_splay_directions_in_clear[color];
                     
                     // Creation of the zone
-                    this.zone.board[player_id][color] = this.createZone('board', player_id, color, grouped_by_age=false)
+                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age=false)
                     this.setSplayMode(this.zone.board[player_id][color], splay_direction)
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
@@ -503,7 +511,7 @@ function (dojo, declare) {
                     var cards_in_pile = player_board[color];
                     for(var i = 0; i < cards_in_pile.length; i++){
                         var card = cards_in_pile[i];
-                        this.createAndAddToZone(this.zone.board[player_id][color], card.position, card.age, card.id, dojo.body(), card)
+                        this.createAndAddToZone(this.zone.board[player_id][color], card.position, card.type, card.age, card.id, dojo.body(), card)
                         
                         // Add tooltip
                         this.addTooltipForCard(card);
@@ -523,7 +531,7 @@ function (dojo, declare) {
             // REVEALED ZONE
             this.zone.revealed = {};    
             for (var player_id in this.players) {
-                var zone = this.createZone('revealed', player_id, null, grouped_by_age=false);
+                var zone = this.createZone('revealed', player_id, null, null, null, grouped_by_age=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
                 this.setPlacementRules(zone, left_to_right=true);
@@ -531,7 +539,7 @@ function (dojo, declare) {
                 var revealed_cards = gamedatas.revealed[player_id];
                 for(var i = 0; i < revealed_cards.length; i++){
                     var card = revealed_cards[i];
-                    this.createAndAddToZone(zone, card.position, card.age, card.id, dojo.body(), card)
+                    this.createAndAddToZone(zone, card.position, card.type, card.age, card.id, dojo.body(), card)
                         
                     // Add tooltip
                     this.addTooltipForCard(card);
@@ -1031,7 +1039,7 @@ function (dojo, declare) {
         },
         
         addTooltipForCard : function(card) {
-            var zone = this.getZone(card['location'], card.owner, card.age, card.color);
+            var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
             var HTML_id = this.getCardHTMLId(card.id, card.age, zone.HTML_class);
 
             // Special achievement
@@ -1039,14 +1047,14 @@ function (dojo, declare) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
                 return;
             }
-            var HTML_help = this.createCard(card.id, card.age, "L card", card);
+            var HTML_help = this.createCard(card.id, card.type, card.age, "L card", card);
             this.saved_cards[card.id] = card;
             this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
             this.addCustomTooltip(HTML_id, HTML_help, "");
         },
         
         addTooltipForStandardAchievement : function(card) {
-            var zone = this.getZone(card['location'], card.owner, card.age);
+            var zone = this.getZone(card['location'], card.owner, card.type, card.age);
             var id = this.getCardIdFromPosition(zone, card.position, card.age);
             var HTML_id = this.getCardHTMLId(id, card.age, zone.HTML_class);
             
@@ -1619,7 +1627,8 @@ function (dojo, declare) {
         },
         
         selectDrawableCard : function(age_to_draw) {
-            var deck_to_draw_in = this.zone.deck[age_to_draw].items;
+            // Assumes that the player can only draw from the base deck.
+            var deck_to_draw_in = this.zone.deck[0][age_to_draw].items;
             var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
             return dojo.query("#" + top_card.id);
         },
@@ -1643,7 +1652,7 @@ function (dojo, declare) {
             var identifiers = [];
             for (var i=0; i<recto_positional_infos_array.length; i++) {
                 var card = recto_positional_infos_array[i];
-                var zone = this.getZone(card['location'], card.owner, card.age);
+                var zone = this.getZone(card['location'], card.owner, card.type, card.age);
                 var id = this.getCardIdFromPosition(zone, card.position, card.age)
                 identifiers.push("#" + this.getCardHTMLId(id, card.age, zone.HTML_class));
             }
@@ -1680,10 +1689,7 @@ function (dojo, declare) {
                 $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
             }
         },
-        
-        /*
-         * Getters: no change on the interface
-         */
+
         getCardSizeInZone : function(zone_HTML_class) {
             return zone_HTML_class.split(' ')[0];
         },
@@ -1692,16 +1698,21 @@ function (dojo, declare) {
             return zone_HTML_class.split(' ')[1];
         },
         
-        getZone : function(location, owner, age, color) {
+        getZone : function(location, owner, type, age, color) {
             // Default values
             age = this.setDefault(age, null);
             color = this.setDefault(color, null);
             ///////
             
             var root = this.zone[location];
+            // TODO: remove these
+            console.log("LOCATION: " + location);
+            console.log("ROOT: " + root);
+            console.log("TYPE: " + type);
+            console.log("AGE: " + age);
             switch(location) {
                 case "deck":
-                    return root[age];
+                    return root[type][age];
                 case "hand":
                 case "score":
                 case "revealed":
@@ -1765,11 +1776,11 @@ function (dojo, declare) {
             return ["item_" + id, "age_" + age, zone_HTML_class.replace(" ", "__")].join("__");
         },
         
-        getCardHTMLClass : function(id, age, card, zone_HTML_class) {
+        getCardHTMLClass : function(id, type, age, card, zone_HTML_class) {
             if (card === null) {
-            return ["item_" + id, "age_" + age, zone_HTML_class].join(" ");
+                return ["item_" + id, "type_" + type, "age_" + age, zone_HTML_class].join(" ");
             }
-            return ["item_" + id, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
+            return ["item_" + id, "type_" + type, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
         },
         
         getCardIdFromHTMLId : function(HTML_id) {
@@ -1783,9 +1794,9 @@ function (dojo, declare) {
         /*
          * Card creation
          */
-        createCard : function(id, age, zone_HTML_class, card) {
+        createCard : function(id, type, age, zone_HTML_class, card) {
             var HTML_id = this.getCardHTMLId(id, age, zone_HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, card, zone_HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, type, age, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
@@ -1841,13 +1852,20 @@ function (dojo, declare) {
         /*
          * Zone management systemcard
          */
-        createZone : function(location, owner, age_or_color, grouped_by_age, counter_method, counter_display_zero) {
+        createZone : function(location, owner, type, age, color, grouped_by_age, counter_method, counter_display_zero) {
             // Default values
-            age_or_color = this.setDefault(age_or_color, null);
+            type = this.setDefault(type, null);
+            age = this.setDefault(age, null);
+            color = this.setDefault(color, null);
             grouped_by_age = this.setDefault(grouped_by_age, null);
             counter_method = this.setDefault(counter_method, null);
             counter_display_zero = this.setDefault(counter_display_zero, null);
             ///////
+
+            owner_string = owner != 0 ? '_' + owner : '';
+            type_string = type !== null ? '_' + type : '';
+            age_string = age !== null ? '_' + age : '';
+            color_string = color !== null ? '_' + color : '';
         
             // Dimension of a card in the zone
             var HTML_class;
@@ -1887,9 +1905,9 @@ function (dojo, declare) {
                 var div_id = location;
             }
             else {
-                var div_id = location + (owner != 0 ? '_' + owner : '') + (age_or_color !== null ? '_' + age_or_color : '');
+                var div_id = location + owner_string + type_string + age_string + color_string;
             }
-            
+
             // Creation of the zone
             dojo.style(div_id, 'width', zone_width + 'px');
             dojo.style(div_id, 'height', card_dimensions.height + 'px');
@@ -1904,7 +1922,7 @@ function (dojo, declare) {
             zone.grouped_by_age = grouped_by_age;
             
             if (counter_method != null) {
-                var counter_node = $(location + '_count'  + (owner != 0 ? '_' + owner : '') + (age_or_color !== null ? '_' + age_or_color : ''));
+                var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
                 zone.counter = new ebg.counter()
                 zone.counter.create(counter_node);
                 zone.counter.setValue(0);
@@ -1922,7 +1940,7 @@ function (dojo, declare) {
         },
         
 
-        createAndAddToZone: function(zone, position, age, id, start, card) {
+        createAndAddToZone : function(zone, position, type, age, id, start, card) {
             // id of the new item
             var visible_card
             if (id === null) {
@@ -1931,8 +1949,7 @@ function (dojo, declare) {
                 
                 // The id is to be created
                 id = this.uniqueIdForCard(age); // Create a new id based on the age of the card
-            }
-            else {
+            } else {
                 // verso
                 if (zone.owner != 0 && zone['location'] == 'achievements') {
                     visible_card = false;
@@ -1941,11 +1958,8 @@ function (dojo, declare) {
                     visible_card = true;
                 }
             }
-            var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, card, zone.HTML_class);
-            
             // Create a new card and place it on start position
-            var node = this.createCard(id, age, zone.HTML_class, visible_card ? card : null);
+            var node = this.createCard(id, type, age, zone.HTML_class, visible_card ? card : null);
             dojo.place(node, start);
             
             this.addToZone(zone, id, position, age);
@@ -1957,7 +1971,7 @@ function (dojo, declare) {
                 this.removeFromZone(zone_from, id_from, false, card.age);
             }
             else {
-                this.createAndAddToZone(zone_to, card.position_to, card.age, id_to, this.getCardHTMLId(id_from, card.age, zone_from.HTML_class), card);
+                this.createAndAddToZone(zone_to, card.position_to, card.type, card.age, id_to, this.getCardHTMLId(id_from, card.age, zone_from.HTML_class), card);
                 this.removeFromZone(zone_from, id_from, true, card.age);
             }
         },
@@ -2052,7 +2066,7 @@ function (dojo, declare) {
             if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
                 this.updateZoneWidth(zone);
             } else if (zone['location'] == 'revealed' && zone.items.length == 0) {
-                zone = this.createZone('revealed', zone.owner, null, grouped_by_age=false); // Recreate the zone (Dunno why it does not work if I don't do that)
+                zone = this.createZone('revealed', zone.owner, null, null, null, grouped_by_age=false); // Recreate the zone (Dunno why it does not work if I don't do that)
                 dojo.style(zone.container_div, 'display', 'none');
             }
             zone.updateDisplay();
@@ -2904,9 +2918,9 @@ function (dojo, declare) {
                 // Remove the card from my score personal window
                 this.removeFromZone(this.zone.my_score_verso, card.id, true, card.age);
             }
-            
-            var zone_from = card.age === null ? this.zone.special_achievements[0] : this.getZone(card.location_from, card.owner_from, card.age, card.color);
-            var zone_to = this.getZone(card.location_to, card.owner_to, card.age, card.color);
+
+            var zone_from = card.age === null ? this.zone.special_achievements[0] : this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
+            var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
             
             var visible_from = this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
             var visible_to = this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
@@ -2990,7 +3004,7 @@ function (dojo, declare) {
             // Special code for my score management
             if (card.location_to == "score" && card.owner_to == this.player_id) {
                 // Add the card to my score personal window
-                this.createAndAddToZone(this.zone.my_score_verso, card.position_to, card.age, card.id, dojo.body(), card);
+                this.createAndAddToZone(this.zone.my_score_verso, card.position_to, card.type, card.age, card.id, dojo.body(), card);
                 visible_to = true;
             }
             
