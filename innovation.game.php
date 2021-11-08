@@ -7588,6 +7588,16 @@ class Innovation extends Table
                 // "Score a card from your hand with no tower"
                 $step_max = 1; // --> 1 interaction: see B
                 break;
+
+            // id 143, Artifacts age 3: Necronomicon
+            case "143N1":
+                $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
+                if ($card['color'] == 0 /* blue */)  {
+                    self::notifyGeneralInfo(clienttranslate("This card is blue."));
+                    self::executeDraw($player_id, 9); // "Draw a 9"
+                    break; // "Otherwise"
+                };
+                break;
                 
             default:
                 // This should not happens
