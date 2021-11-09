@@ -1705,11 +1705,6 @@ function (dojo, declare) {
             ///////
             
             var root = this.zone[location];
-            // TODO: remove these
-            console.log("LOCATION: " + location);
-            console.log("ROOT: " + root);
-            console.log("TYPE: " + type);
-            console.log("AGE: " + age);
             switch(location) {
                 case "deck":
                     return root[type][age];

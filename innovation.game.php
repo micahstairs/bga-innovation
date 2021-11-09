@@ -331,8 +331,7 @@ class Innovation extends Table
         self::initStat('player', 'sharing_effects_number', 0);
         
         // Card shuffling in decks
-        // TODO: Re-enable shuffling once I get it working again.
-        // self::shuffle();
+        self::shuffle();
         
         // Isolate one base card of each age (except 10) to create the available age achievements
         self::extractAgeAchievements();
@@ -1745,6 +1744,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} score pile.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${opponent_name}\'s score pile.');
                 break;
+            
+            case 'hand->board':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s board.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} board.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${opponent_name}\'s board.');
+                break;
                 
             case 'hand->achievements':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s achievements.');
@@ -2722,7 +2727,7 @@ class Innovation extends Table
                 -owner, location and position
         **/
         
-        return self::attachTextualInfo(self::getNonEmptyObjectFromDB(self::format("
+        return self::attachTextualInfo(self::getObjectFromDB(self::format("
             SELECT
                 *
             FROM
@@ -2731,7 +2736,7 @@ class Innovation extends Table
                 location = 'deck' AND
                 type = {type} AND
                 age = {age} AND
-                position = (SELECT MAX(position) FROM card WHERE location = 'deck' AND age = {age})
+                position = (SELECT MAX(position) FROM card WHERE location = 'deck' AND type = {type} AND age = {age})
         ",
             array('type' => $type, 'age' => $age)
         )));
@@ -2746,7 +2751,6 @@ class Innovation extends Table
             $age_min = 1;
         }
     
-        // Only count base cards (even if drawing another age, an expansion should be skipped if the base pile is empty).
         $deck_count = self::countCardsInLocation(0, 'deck', /*type=*/ 0, true);
         $age_to_draw = $age_min;
         while($age_to_draw <= 10 && $deck_count[$age_to_draw] == 0) {
@@ -3812,6 +3816,15 @@ class Innovation extends Table
                 return clienttranslate('Postmodern');
         }
     }
+
+    function getPrintableStringForCardType($type) {
+        switch($type) {
+        case 0:
+            return clienttranslate('Base');
+        case 1:
+            return clienttranslate('Artifacts');
+        }
+    }
     
     function getColoredText($text, $player_id) {
         $color = self::getPlayerColorFromId($player_id);
@@ -3821,7 +3834,7 @@ class Innovation extends Table
     /** Execution of actions authorized by server **/    
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $type = null, $location_to = 'hand', $bottom_to=false) {
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to=false, $type = null) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
         if ($age_to_draw > 10) {
@@ -3890,7 +3903,7 @@ class Innovation extends Table
     }
     
     function setSelectionRange($options) {
-        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_rearrange', 'choose_yes_or_no');
+        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
@@ -4275,6 +4288,8 @@ class Innovation extends Table
             return 6;
         case 'choose_yes_or_no':
             return 7;
+        case 'choose_type':
+            return 8;
         }
     }
     
@@ -4294,6 +4309,8 @@ class Innovation extends Table
             return 'choose_rearrange';
         case 7:
             return 'choose_yes_or_no';
+        case 8:
+            return 'choose_type';
         }
     }
     
@@ -4954,6 +4971,13 @@ class Innovation extends Table
                     throw new BgaUserException(self::_("You have to choose between yes or no [Press F5 in case of troubles]"));
                 }
                 break;
+            case 'choose_type':
+                // Type choice
+                if (!ctype_digit($choice) || $choice < 0 || $choice > 1) {
+                    // The player is cheating...
+                    throw new BgaUserException(self::_("Your choice must be a type [Press F5 in case of troubles]"));
+                }
+                break;
             default:
                 break;
         }
@@ -5170,6 +5194,11 @@ class Innovation extends Table
             case 'choose_yes_or_no':
                 // See the card
                 break;
+            case 'choose_type':
+                for($type=0; $type<=1; $type++) {
+                    $options[] = array('value' => $type, 'text' => self::getPrintableStringForCardType($type));
+                }                
+                break;
             default:
                 break;
             }
@@ -5279,6 +5308,17 @@ class Innovation extends Table
             case "124N1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+            
+            // id 126, Artifacts age 2: Rosetta Stone
+            case "126N1A":
+                $message_for_player = clienttranslate('${You} must choose a type');
+                $message_for_others = clienttranslate('${player_name} must choose a type');
+                break;
+
+            case "126N1C":
+                $message_for_player = clienttranslate('${You} must choose an opponent');
+                $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
             
             default:
@@ -7580,6 +7620,11 @@ class Innovation extends Table
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1":
                 $step_max = 2; // --> 2 interactions: see B
+                break;
+            
+            // id 126, Artifacts age 2: Rosetta Stone
+            case "126N1":
+                $step_max = 3; // --> 3 interactions: see B
                 break;
 
             // id 127, Artifacts age 2: Chronicle of Zuo
@@ -9993,6 +10038,43 @@ class Innovation extends Table
             );
             break;
         
+        // id 126, Artifacts age 1: Rosetta Stone
+        case "126N1A":
+            // "Choose a type"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'choose_type' => true
+            );
+            break;
+
+        case "126N1B":
+            // "Meld one (of the drawn cards)"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'card_id_1' => self::getGameStateValue('card_id_1'),
+                'card_id_2' => self::getGameStateValue('card_id_2')
+            );
+            break;
+
+        case "126N1C":
+            // Choose an opponent to transfer the other card to
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'choose_opponent' => true
+            );
+            break;
+        
         // id 128, Artifacts age 2: Babylonian Chronicles
         case "128C1A":
             // "Transfer a top non-red card with a tower from your board to my board"
@@ -11272,6 +11354,21 @@ class Innovation extends Table
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 // Save the color choice for later (after a card is drawn).
                 self::setGameStateValue('auxiliary_value', $choice);
+                break;
+            
+            // id 126, Artifacts age 2: Rosetta Stone
+            case "126N1A":
+                // "Draw two 2s of that type"
+                self::setGameStateValue('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
+                self::setGameStateValue('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
+                break;
+
+            case "126N1C":
+                // "Transfer the other to an opponent's board"
+                $card_1 = self::getCardInfo(self::getGameStateValue('card_id_1'));
+                $card_2 = self::getCardInfo(self::getGameStateValue('card_id_2'));
+                $remaining_card = $card_1['location'] == 'hand' ? $card_1 : $card_2;
+                self::transferCardFromTo($remaining_card, $choice, 'board');
                 break;
                 
             default:
