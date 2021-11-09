@@ -163,8 +163,12 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['debug_achieve'] = true;
-        if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements') {
-            try{
+        if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
+            throw new BgaUserException(self::_("You already have this card as an achievement"));
+        } else if ($card['location'] == 'removed') {
+            throw new BgaUserException(self::_("This card is removed from the game"));
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements') {
+            try {
                 self::transferCardFromTo($card, $player_id, "achievements");
             }
             catch (EndOfGame $e) {
@@ -173,11 +177,7 @@ class Innovation extends Table
                 $this->gamestate->nextState('justBeforeGameEnd');
                 return;
             }
-        }
-        else if ($card['location'] == 'removed') {
-            throw new BgaUserException(self::_("This card is removed from the game"));
-        }
-        else {
+        } else {
             throw new BgaUserException(self::format(self::_("This card is in {player_name}'s {location}"), array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
        
