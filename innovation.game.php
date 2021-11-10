@@ -817,6 +817,12 @@ class Innovation extends Table
         
         Return the card transferred as a dictionary.
         **/
+
+        // Do not move the card at all.
+        if ($location_to == 'none') {
+            return;
+        }
+
         if ($location_to == 'deck') { // We always return card at the bottom of the deck
             $bottom_to = true;
         }
@@ -839,7 +845,7 @@ class Innovation extends Table
             $splay_direction_to = 'NULL';
         }
         
-        // Filters for cards of the same family: the cards of the decks are grouped by age, whereas the cards of the board are grouped by player and by color
+        // Filters for cards of the same family: the cards of the decks are grouped by age and type, whereas the cards of the board are grouped by player and by color
         // Filter from
         $filter_from = self::format("owner = {owner_from} AND location = '{location_from}'", array('owner_from' => $owner_from, 'location_from' => $location_from));
         switch ($location_from) {
@@ -1563,6 +1569,7 @@ class Innovation extends Table
     function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
+            // TODO: We can simplify Self Service to use "board->none", but we need to make this change carefully to avoid breaking any games.
             $message_for_player = clienttranslate('{You must} choose {number} other top {card} from your board');
             $message_for_others = clienttranslate('{player must} choose {number} other top {card} from his board');            
         } else if ($targetable_players !== null) { // Used when several players can be targeted
@@ -1571,17 +1578,19 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} return {number} {card} from the score pile of {targetable_players}');
                 $message_for_others = clienttranslate('{player must} return {number} {card} from the score pile of {targetable_players}');
                 break;
-                
             case 'board->deck':
                 $message_for_player = clienttranslate('{You must} return {number} top {card} from the board of {targetable_players}');
                 $message_for_others = clienttranslate('{player must} return {number} top {card} from the board of {targetable_players}');
                 break;
-
             case 'board->score':
                 $message_for_player = clienttranslate('{You must} transfer {number} top {card} from the board of {targetable_players} to your score pile');
                 $message_for_others = clienttranslate('{player must} transfer {number} top {card} from the board of {targetable_players} to his score pile');
                 break;
-                
+            // NOTE: We may discover a case where we don't want the word "other" in these messages. In that case we will need to add some complexity to handle this.
+            case 'board->none':
+                $message_for_player = clienttranslate('{You must} choose {number} other top {card} from the board of {targetable_players}');
+                $message_for_others = clienttranslate('{player must} choose {number} other top {card} from the board of {targetable_players}');
+                break;
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -4142,7 +4151,7 @@ class Innovation extends Table
         // Condition for excluding ID
         $condition_for_excluding_id = "";
         $not_id = self::getGameStateValue('not_id');
-        if ($not_id != -2) { // Only used by Fission and Self service
+        if ($not_id != -2) { // Used by cards like Fission and Self service
             $condition_for_excluding_id = self::format("AND id <> {not_id}", array('not_id' => $not_id));
         }
         
@@ -4236,6 +4245,8 @@ class Innovation extends Table
             return 8;
         case 'achievements':
             return 9;
+        case 'none':
+            return 10;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -4265,6 +4276,8 @@ class Innovation extends Table
             return 'revealed,score';
         case 9:
             return 'achievements';
+        case 10:
+            return 'none';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -5351,8 +5364,8 @@ class Innovation extends Table
         $n_min = self::getGameStateValue("n_min");
         $n_max = self::getGameStateValue("n_max");
         $n = self::getGameStateValue("n");
+        $owner_from = self::getGameStateValue("owner_from");
         if ($splay_direction == -1) {
-            $owner_from = self::getGameStateValue("owner_from");
             $location_from = self::decodeLocation(self::getGameStateValue("location_from"));
             $owner_to = self::getGameStateValue("owner_to");
             $location_to = self::decodeLocation(self::getGameStateValue("location_to"));
@@ -7668,8 +7681,12 @@ class Innovation extends Table
                 break;
             
             case "132N1":
-                // "Score a card from your hand with no tower"
                 $step_max = 1; // --> 1 interaction: see B
+                break;
+
+            // id 134, Artifacts age 2: Cyrus Cylinder
+            case "134N1":
+                $step_max = 2; // --> 2 interactions: see B
                 break;
                 
             default:
@@ -10158,6 +10175,37 @@ class Innovation extends Table
                 'score_keyword' => true,
                 
                 'without_icon' => 4 // tower
+            );
+            break;
+        
+        // id 134, Artifacts age 2: Cyrus Cylinder
+        case "134N1A":
+            // "Choose any other top purple card on any player's board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => 'any player',
+                'location_from' => 'board',
+                'location_to' => 'none',
+
+                'color' => array(4), // Purple
+                'not_id' => 134 // Cyrus Cylinder
+            );
+            break;
+
+        case "134N1B":
+            // "Splay left a color on any player's board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                // TODO: Implement support for splaying any player's pile.
+                'owner_from' => 'any player',
+
+                'splay_direction' => 1
             );
             break;
             
