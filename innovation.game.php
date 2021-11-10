@@ -7635,14 +7635,13 @@ class Innovation extends Table
                 
                 $this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
                 
-                // TODO: Confirm that "least" means strictly less than other players.
-                if ($this_player_icon_counts[4] < $min_towers) {
+                if ($this_player_icon_counts[4] <= $min_towers) {
                     $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the least towers, draw a 2"
                 }
-                if ($this_player_icon_counts[1] < $min_crowns) {
+                if ($this_player_icon_counts[1] <= $min_crowns) {
                     $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the least crowns, draw a 3"
                 }
-                if ($this_player_icon_counts[3] < $min_bulbs) {
+                if ($this_player_icon_counts[3] <= $min_bulbs) {
                     $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the least bulbs, draw a 4"
                 }
                 break;
