@@ -7700,6 +7700,69 @@ class Innovation extends Table
             case "134N1":
                 $step_max = 2; // --> 2 interactions: see B
                 break;
+
+            // id 135, Artifacts age 3: Dunhuang Star Chart
+            case "135N1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+                
+            // id 137, Artifacts age 2: Excalibur
+            case "137C1":
+                $colors = array();
+                // Determine colors which top cards of the player have a value higher than the tops cards of the launcher
+                for($color=0; $color<5; $color++) {
+                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
+                    if ($player_top_card === null) {
+                        continue;
+                    }
+                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
+                    if ($launcher_top_card === null /* => Value 0, so the color is selectable */ || $player_top_card['age'] > $launcher_top_card['age']) {
+                        $colors[] = $color; // This color is selectable
+                    }
+                }
+            
+                self::setGameStateValueFromArray('auxiliary_value', $colors);
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+            
+            // id 138, Artifacts age 3: Mjolnir Amulet
+            case "138C1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+
+            // id 140, Artifacts age 3: Beauvais Cathedral Clock
+            case "140N1":
+                // "Draw and reveal a 4"
+                $card = self::executeDraw($player_id, 4, 'revealed');
+                // "Splay right the color matching the drawn card."
+                self::splay($player_id, $card['color'], 2);
+                self::transferCardFromTo($card, $player_id, 'hand');
+                break;
+
+            // id 139, Artifacts age 3: Philosopher's Stone
+            case "139N1":
+                $step_max = 2; // --> 1 interactions: see B
+                break;
+            
+            // id 142, Artifacts age 3: Along the river during the Qingming Festival
+            case "142N1":
+                do {
+                    $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
+                    if ($card['color'] == 4) // if it is purple, score it.
+                    {
+                        self::transferCardFromTo($card, $player_id, 'score');
+                    }
+                    else if ($card['color'] == 3) // if it is yellow, tuck it.
+                    {
+                        self::transferCardFromTo($card, $player_id, 'board', true);
+                    }
+                    else
+                    {
+                        // otherwise, put it in hand
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2);
+                break;
                 
             default:
                 // This should not happens
@@ -10221,6 +10284,98 @@ class Innovation extends Table
             );
             break;
             
+       // id 135, Artifacts age 3: Dunhuang Star Chart
+        case "135N1A":
+            $handcount = self::countCardsInLocation($player_id, 'hand');
+            self::setGameStateValue('auxiliary_value', $handcount);
+            // "Return all cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'deck'
+            );
+            break;
+             
+        // id 137, Artifacts age 2: Excalibur
+        case "137C1A":
+            // "I compel you to transfer a top card of higher value than my
+            // top card of the same color from your board to my board!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+                
+                'color' => self::getGameStateValueAsArray('auxiliary_value')
+            );
+            break;
+            
+        // id 138, Artifacts age 3: Mjolnir Amulet
+        case "138C1A":    
+            // "I compel you to choose a top card on your board!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score'
+             );
+            break;
+            
+        case "138C1B":
+            // "Transfer all cards of that card's color from your board to my score pile!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score',
+                
+                'color' => array(self::getGameStateValue('auxiliary_value')) /* the color of the card chosen on the first step */
+             );
+            break;
+            
+        // id 139, Artifacts age 3: Philosopher's Stone
+        case "139N1A":
+            // Return a card from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "139N1B":
+            // Score a number of cards from your hand equal to the value of the card returned.
+            $age_selected = self::getGameStateValue('age_last_selected');
+            $options = array(
+                'player_id' => $player_id,
+                'n' => $age_selected,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score'
+            );
+            break;
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -11015,6 +11170,22 @@ class Innovation extends Table
                         }
                     }
                     break;
+                
+                // id 135, Artifacts age 3: Dunhuang Star Chart
+                case "135N1A":
+                    // Draw a card of value equal to the number of cards returned.
+                    self::executeDraw($player_id, self::getGameStateValue('auxiliary_value'));
+                	break;
+                	
+                // id 138, Artifacts age 3: Mjolnir Amulet
+                case "138C1A":
+                    if ($n > 0) { 
+                        $color = self::getGameStateValue('color_last_selected');
+                        self::setGameStateValue('auxiliary_value', $color);// Flag the chosen color for the next interaction
+                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                    }
+                    break;
+
                 }   
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -11430,6 +11601,12 @@ class Innovation extends Table
                 self::transferCardFromTo($remaining_card, $choice, 'board');
                 break;
                 
+            // id 135, Artifacts age 3: Dunhuang Star Chart
+            case "135N1A":
+                // "Draw a card of value equal to the number of cards returned."
+                self::executeDraw($player_id, $n);
+                break;
+
             default:
                 if ($splay_direction == -1) {
                     // Do the transfer as stated in B
