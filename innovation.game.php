@@ -7699,6 +7699,25 @@ class Innovation extends Table
             // id 134, Artifacts age 2: Cyrus Cylinder
             case "134N1":
                 $step_max = 2; // --> 2 interactions: see B
+            
+                // id 143, Artifacts age 3: Necronomicon
+            case "143N1":
+                $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
+                if ($card['color'] == 0 /* blue */)  {
+                    self::notifyGeneralInfo(clienttranslate("This card is blue."));
+                    self::executeDraw($player_id, 9); // "Draw a 9"
+                    self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
+                    break; // "Otherwise"
+                }
+                else if ($card['color'] == 3 || $card['color'] == 1 || $card['color'] == 2 /* yellow, red, or green */)  {
+                    self::setGameStateValue('auxiliary_value', $card['color']);// Flag the chosen color for the next interaction
+                    $step_max = 1; // --> 1 interactions: see B
+                    break;
+                }
+                else{
+                    self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
+                    break;
+                };
                 break;
                 
             default:
@@ -10220,6 +10239,48 @@ class Innovation extends Table
                 'splay_direction' => 1
             );
             break;
+
+        // id 143, Artifacts age 3: Necronomicon
+        case "143N1A":
+            // "If red, return all cards in your score pile"
+
+            if (self::getGameStateValue('auxiliary_value') == 1 /* red */) {
+                self::notifyGeneralInfo(clienttranslate("This card is red."));
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'score',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );     
+            }
+            // "If yellow, return all cards in your hand"
+            else if (self::getGameStateValue('auxiliary_value') == 3 /* yellow */) {
+                self::notifyGeneralInfo(clienttranslate("This card is yellow."));
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'revealed,hand',
+                    'owner_to' => 0,
+                    'location_to' => 'deck',
+                );
+            }
+            // "If green, unsplay all piles"
+            else if (self::getGameStateValue('auxiliary_value') == 2 /* green */) {
+                self::notifyGeneralInfo(clienttranslate("This card is green."));
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'splay_direction' => 0,
+                );
+            };
+            break;
+            
             
         default:
             // This should not happens
@@ -11015,6 +11076,17 @@ class Innovation extends Table
                         }
                     }
                     break;
+
+                // id 143, Artifacts age 3: Necronomicon
+                case "143N1A":
+                    if (self::getGameStateValue('auxiliary_value') != 3 /* not yellow */) {
+                        $revealed_card = self::getCardsInLocation($player_id, 'revealed'); // There is one card left revealed
+                        $revealed_card = $revealed_card[0];
+                        self::transferCardFromTo($revealed_card, $player_id, 'hand'); // "Put the card in your hand"
+                        break;
+                    };
+                    break;
+
                 }   
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
