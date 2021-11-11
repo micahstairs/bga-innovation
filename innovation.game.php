@@ -983,8 +983,17 @@ class Innovation extends Table
     
     /** Splay mechanism **/
     function splay($player_id, $color, $splay_direction, $force_unsplay=false) {
-        // This function must be called only if the splay is relevant
-        // ie : the new splay direction is different from the former one
+
+        // Return early if the pile is already splayed in the requested direction.
+        if (self::getCurrentSplayDirection($player_id, $color) == $splay_direction) {
+            return;
+        }
+
+        // Return early if a pile with less than 2 cards is attempting to be splayed.
+        if ($splay_direction >= 1 && self::countCardsInLocation($player_id, 'board', null, false, true)[$color] <= 1) {
+            return;
+        }
+
         self::DbQuery(self::format("
             UPDATE
                 card
@@ -7708,19 +7717,18 @@ class Innovation extends Table
                 
             // id 137, Artifacts age 2: Excalibur
             case "137C1":
+                // Determine colors where top card has a higher value than the launcher's top card of the same color
                 $colors = array();
-                // Determine colors which top cards of the player have a value higher than the tops cards of the launcher
-                for($color=0; $color<5; $color++) {
+                for ($color = 0; $color < 5; $color++) {
                     $player_top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($player_top_card === null) {
                         continue;
                     }
                     $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    if ($launcher_top_card === null /* => Value 0, so the color is selectable */ || $player_top_card['age'] > $launcher_top_card['age']) {
-                        $colors[] = $color; // This color is selectable
+                    if ($launcher_top_card === null || $player_top_card['age'] > $launcher_top_card['age']) {
+                        $colors[] = $color;
                     }
                 }
-            
                 self::setGameStateValueFromArray('auxiliary_value', $colors);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
@@ -7734,7 +7742,7 @@ class Innovation extends Table
             case "140N1":
                 // "Draw and reveal a 4"
                 $card = self::executeDraw($player_id, 4, 'revealed');
-                // "Splay right the color matching the drawn card."
+                // "Splay right the color matching the drawn card"
                 self::splay($player_id, $card['color'], 2);
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
@@ -7744,24 +7752,18 @@ class Innovation extends Table
                 $step_max = 2; // --> 1 interactions: see B
                 break;
             
-            // id 142, Artifacts age 3: Along the river during the Qingming Festival
+            // id 142, Artifacts age 3: Along the River during the Qingming Festival
             case "142N1":
                 do {
                     $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                    if ($card['color'] == 4) // if it is purple, score it.
-                    {
+                    if ($card['color'] == 4) { // "If it is purple, score it"
                         self::transferCardFromTo($card, $player_id, 'score');
-                    }
-                    else if ($card['color'] == 3) // if it is yellow, tuck it.
-                    {
+                    } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
                         self::transferCardFromTo($card, $player_id, 'board', true);
-                    }
-                    else
-                    {
-                        // otherwise, put it in hand
+                    } else { // Put it in hand
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
-                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2);
+                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
                 break;
                 
             default:
@@ -10286,12 +10288,13 @@ class Innovation extends Table
             
        // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
-            $handcount = self::countCardsInLocation($player_id, 'hand');
-            self::setGameStateValue('auxiliary_value', $handcount);
+            $hand_count = self::countCardsInLocation($player_id, 'hand');
+            self::setGameStateValue('auxiliary_value', $hand_count);
             // "Return all cards from your hand."
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
@@ -10593,10 +10596,7 @@ class Innovation extends Table
                 case "34D1A":
                     if (self::getGameStateValue('game_rules') == 1) { // Last edition => additional rule
                         if ($n > 0) { // "If you do"
-                            $color = self::getGameStateValue('color_last_selected');
-                            if (self::getCurrentSplayDirection($player_id, $color) > 0) {
-                                self::splay($player_id, $color, 0, true /* force_unsplay*/); // "Unsplay that color of your cards"
-                            }
+                            self::splay($player_id, self::getGameStateValue('color_last_selected'), 0, /*force_unsplay=*/ true); // "Unsplay that color of your cards"
                         }
                     }
                     break;
@@ -10674,16 +10674,12 @@ class Innovation extends Table
                     if ($n > 0) { // "If you do"
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition
                             $color = self::getGameStateValue('color_last_selected');
-                            $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true);
-                            $number_of_cards = $number_of_cards[$color];
-                            if (self::getCurrentSplayDirection($player_id, $color) != 2 /* right */ && $number_of_cards > 1) {
-                                self::splay($player_id, $color, 2 /* right */); // "Splay that color of your cards right"
-                            }
-                            if ($number_of_cards <= 1) {
+                            self::splay($player_id, $color, 2); // "Splay that color of your cards right"
+                            $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$color];
+                            if ($number_of_cards == 1) {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
                                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
-                            }
-                            else { // $number_of_cards > 1
+                            } else {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($color)));
                                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($color)));
                             }
@@ -11161,19 +11157,15 @@ class Innovation extends Table
                     break;
 
                 case "124N1B":
-                    $color_melded = self::getGameStateValue('color_last_selected');
-                    if ($color_melded >= 0) { // "If you (melded a card)"
-                        $board = self::getCardsInLocation($player_id, 'board', null, false, true);
-                        $pile = $board[$color_melded];
-                        if (count($pile) >= 2) {
-                            self::splay($player_id, self::getGameStateValue('auxiliary_value'), 1); // "Splay that color left"
-                        }
+                    $melded_color = self::getGameStateValue('color_last_selected');
+                    if ($melded_color >= 0) { // "If you (melded a card)"
+                        self::splay($player_id, $melded_color, 1); // "Splay that color left"
                     }
                     break;
                 
                 // id 135, Artifacts age 3: Dunhuang Star Chart
                 case "135N1A":
-                    // Draw a card of value equal to the number of cards returned.
+                    // "Draw a card of value equal to the number of cards returned"
                     self::executeDraw($player_id, self::getGameStateValue('auxiliary_value'));
                 	break;
                 	
@@ -11405,16 +11397,12 @@ class Innovation extends Table
                 // $choice is a color
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true);
-                $number_of_cards = $number_of_cards[$choice];
-                if (self::getCurrentSplayDirection($player_id, $choice) != 2 /* right */ && $number_of_cards > 1) {
-                    self::splay($player_id, $choice, 2 /* right */); // "Splay that color of your cards right"
-                }
-                if ($number_of_cards <= 1) {
+                self::splay($player_id, $choice, 2); // "Splay that color of your cards right"
+                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$choice];
+                if ($number_of_cards == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
-                }
-                else { // $number_of_cards > 1
+                } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($choice)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($choice)));
                 }
@@ -11582,7 +11570,6 @@ class Innovation extends Table
             case "124N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                // Save the color choice for later (after a card is drawn).
                 self::setGameStateValue('auxiliary_value', $choice);
                 break;
             
@@ -11603,8 +11590,8 @@ class Innovation extends Table
                 
             // id 135, Artifacts age 3: Dunhuang Star Chart
             case "135N1A":
-                // "Draw a card of value equal to the number of cards returned."
-                self::executeDraw($player_id, $n);
+                // "Draw a card of value equal to the number of cards returned"
+                self::executeDraw($player_id, self::getGameStateValue('n'));
                 break;
 
             default:
