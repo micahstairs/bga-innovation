@@ -66,15 +66,25 @@
 <div id="decks_and_available_achievements">
     <div id="decks">
         <p class="text_left"><!-- BEGIN decks -->{DECKS}<!-- END decks --></p>
-        <div class="deck_set">
-            <!-- BEGIN deck_1_5 -->
-                <div id="deck_pile_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{AGE}"></div><div class="deck" id="deck_{AGE}"></div></div>
-            <!-- END deck_1_5 -->
+        <div id="deck_set_1" class="deck_set">
+            <!-- BEGIN decks_group_1 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_1 -->
         </div>
-        <div class="deck_set">
-            <!-- BEGIN deck_6_10 -->
-                <div id="deck_pile_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{AGE}"></div><div class="deck" id="deck_{AGE}"></div></div>
-            <!-- END deck_6_10 -->
+        <div id="deck_set_2" class="deck_set">
+            <!-- BEGIN decks_group_2 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_2 -->
+        </div>
+        <div id="deck_set_3" class="deck_set">
+            <!-- BEGIN decks_group_3 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_3 -->
+        </div>
+        <div id="deck_set_4" class="deck_set">
+            <!-- BEGIN decks_group_4 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_4 -->
         </div>
     </div>
     <div id="available_achievements_container">

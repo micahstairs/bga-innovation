@@ -1545,44 +1545,52 @@
     background-size: 380px 256px;
 }
 
+.type_0.S.recto {
+    background-position-y: -3px;
+}
+
+.type_1.S.recto {
+    background-position-y: -208px;
+}
+
 .age_1.S.recto {
-    background-position: -2px -3px;
+    background-position-x: -2px;
 }
 
 .age_2.S.recto {
-    background-position: -36px -3px;
+    background-position-x: -36px;
 }
 
 .age_3.S.recto {
-    background-position: -71px -3px;
+    background-position-x: -71px;
 }
 
 .age_4.S.recto {
-    background-position: -105px -3px;
+    background-position-x: -105px;
 }
 
 .age_5.S.recto {
-    background-position: -140px -3px;
+    background-position-x: -140px;
 }
 
 .age_6.S.recto {
-    background-position: -174px -3px;
+    background-position-x: -174px;
 }
 
 .age_7.S.recto {
-    background-position: -209px -3px;
+    background-position-x: -209px;
 }
 
 .age_8.S.recto {
-    background-position: -243px -3px;
+    background-position-x: -243px;
 }
 
 .age_9.S.recto {
-    background-position: -278px -3px;
+    background-position-x: -278px;
 }
 
 .age_10.S.recto {
-    background-position: -312px -3px;
+    background-position-x: -312px;
 }
 
 /* Special achievements */

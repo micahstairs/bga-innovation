@@ -72,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
 CREATE TABLE IF NOT EXISTS `random` (
  `id` SMALLINT UNSIGNED NOT NULL,
+ `type` TINYINT UNSIGNED,
  `age` TINYINT UNSIGNED,
  `random_number` DOUBLE NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -247,8 +248,12 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (120, 1, 1, 3, 0, 1, 1, 1, 1, 0, 'deck', 0, NULL, FALSE),
 (121, 1, 1, 3, 0, 2, 2, 2, 2, 0, 'deck', 0, NULL, FALSE),
 (124, 1, 1, 4, 0, 4, 3, 3, 3, 0, 'deck', 0, NULL, FALSE),
+
+/* Artifacts - Age 2 */
+(125, 1, 2, 0, 2, 2, 2, 0, 2, 0, 'deck', 0, NULL, FALSE),
+(126, 1, 2, 0, 4, 4, 4, 0, 4, 0, 'deck', 0, NULL, FALSE),
 (127, 1, 2, 1, 1, 0, 3, 3, 3, 0, 'deck', 0, NULL, FALSE),
 (128, 1, 2, 1, 0, 4, 4, 4, 4, 0, 'deck', 0, NULL, FALSE),
 (131, 1, 2, 3, 2, 0, 1, 2, 2, 0, 'deck', 0, NULL, FALSE),
-(132, 1, 2, 3, 1, 1, 1, 0, 1, 0, 'deck', 0, NULL, FALSE);
-(143, 1, 3, 4, 0, 2, 2, 2, 2, 0, 'deck', 0, NULL, FALSE);
+(132, 1, 2, 3, 1, 1, 1, 0, 1, 0, 'deck', 0, NULL, FALSE),
+(134, 1, 2, 4, 0, 3, 3, 4, 3, 0, 'deck', 0, NULL, FALSE);
