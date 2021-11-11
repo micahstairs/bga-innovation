@@ -9278,7 +9278,7 @@ class Innovation extends Table
                     $splayed_right_colors[] = $color;
                 }
             }
-            // "You may splay right any one color of your cards currently splayed right"
+            // "You may splay up any one color of your cards currently splayed right"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -10272,11 +10272,19 @@ class Innovation extends Table
             // "If green, unsplay all piles"
             else if (self::getGameStateValue('auxiliary_value') == 2 /* green */) {
                 self::notifyGeneralInfo(clienttranslate("This card is green."));
+                $splayed_dcolors = array();
+                for($color=0; $color<5; $color++) {
+                    if (self::getCurrentSplayDirection($player_id, $color)!==0 /* splayed */) {
+                        $splayed_colors[] = $color;
+                    }
+                }
                 $options = array(
                     'player_id' => $player_id,
+                    'n' => sizeof($splayed_colors),
                     'can_pass' => false,
                     
-                    'splay_direction' => 0,
+                    'splay_direction' => 0 /* unsplay */,
+                    'color' => $splayed_colors
                 );
             };
             break;
