@@ -7635,6 +7635,19 @@ class Innovation extends Table
                 $step_max = 2; // --> 2 interactions: see B
                 break;
             
+             // id 125, Artifacts age 2: Seikilos Epitaph
+             case "125N1":
+                // "Draw and meld a 3"
+                $melded_card = self::executeDraw($player_id, 3, 'board');
+                
+                // "Meld your bottom card of the drawn card's color"
+                $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
+                self::transferCardFromTo($bottom_card, $player_id, 'board');
+
+                // "Execute its non-demand dogma effects. Do not share them."
+                self::checkAndPushCardIntoNestedDogmaStack($bottom_card);
+                break;
+            
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1":
                 $step_max = 3; // --> 3 interactions: see B
@@ -10769,8 +10782,7 @@ class Innovation extends Table
                 
                 // id 89, age 9: Collaboration
                 case "89D1A":
-                    $remaining_revealed_card = self::getCardsInLocation($player_id, 'revealed'); // There is one card left revealed
-                    $remaining_revealed_card = $remaining_revealed_card[0];
+                    $remaining_revealed_card = self::getCardsInLocation($player_id, 'revealed')[0]; // There is one card left revealed
                     self::transferCardFromTo($remaining_revealed_card, $player_id, 'board'); // "Meld the other one"
                     break;
                     
