@@ -11563,13 +11563,6 @@ class Innovation extends Table
             break;
         }
         
-        $achievements = self::attachTextualInfoToList(self::getObjectListFromDB("SELECT * FROM card WHERE location = 'achievements' AND age IS NOT NULL ORDER BY age"));
-        foreach($achievements as $card) {
-            self::notifyGeneralInfo(clienttranslate('The achievement ${<<<}${achievement_name}${>>>} was ${<}${age}${>} ${<<}${name}${>>}.'), array(
-                'i18n' => array('achievement_name', 'name'), 
-                'age' => $card['age'],
-                'achievement_name' => self::getNormalAchievementName($card['age']), 'name' => $card['name']));
-        }
         self::trace('justBeforeGameEnd->gameEnd');
         $this->gamestate->nextState(); // End the game
     }
