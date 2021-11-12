@@ -49,6 +49,7 @@
 
 //    !! It is not a good idea to modify this file when a game is running !!
 
+// Game State Diagram: https://docs.google.com/drawings/d/1oKv79jHr1t2C8VjWJCkfSAN8FoGzT8rkM9hVooFV4S0
 $machinestates = array(
 
     // The initial state. Please do not modify.
