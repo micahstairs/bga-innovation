@@ -11068,7 +11068,6 @@ class Innovation extends Table
                     if (self::getGameStateValue('auxiliary_value') == 1) { // Red
                         $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Keep revealed card
-                        break;
                     };
                     break;
 
