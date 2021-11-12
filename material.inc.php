@@ -1363,7 +1363,7 @@ $this->textual_card_infos = array(
 130 => array('name' => clienttranslate('Baghdad Battery'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are of different type, draw and score five ${age_2}s.'),
+    'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are of different types, draw and score five ${age_2}s.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
