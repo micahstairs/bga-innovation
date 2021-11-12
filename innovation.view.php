@@ -50,9 +50,8 @@
     
       function build_page( $viewArgs )
       {        
-          // Get players & players number
+          // Get players
         $players = $this->game->loadPlayersBasicInfos();
-        $players_nbr = count( $players );
         
         // Get my id
         global $g_user;
@@ -62,8 +61,10 @@
 
         $this->page->begin_block( "innovation_innovation", "pile" );
         $this->page->begin_block( "innovation_innovation", "player" );
-        $this->page->begin_block( "innovation_innovation", "deck_1_5" );
-        $this->page->begin_block( "innovation_innovation", "deck_6_10" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_1" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_2" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_3" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_4" );
         $this->page->begin_block( "innovation_innovation", "decks" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
         $this->page->begin_block( "innovation_innovation", "special_achievements" );
@@ -115,7 +116,7 @@
             }
         }
         
-        // Now the order is good and it's the same than in player panel on right
+        // Now the order is good and it's the same as in the player panel
         foreach( $players as $player_id => $player )
         {
             if ($player_id == $my_id) {
@@ -148,18 +149,21 @@
                                          ) );
         }
         
-        for($age=1;$age<=5;$age++)
-        {
-            $this->page->insert_block( "deck_1_5", array("AGE" => $age) );
+        for ($age = 1; $age <= 5; $age++) {
+            $this->page->insert_block("decks_group_1", array("TYPE" => 0, "AGE" => $age));
         }
-        for($age=6;$age<=10;$age++)
-        {
-            $this->page->insert_block( "deck_6_10", array("AGE" => $age) );
+        for ($age = 1; $age <= 5; $age++) {
+            $this->page->insert_block("decks_group_2", array("TYPE" => 1, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_3", array("TYPE" => 0, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_4", array("TYPE" => 1, "AGE" => $age));
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
         $this->page->insert_block( "available_achievements", array("AVAILABLE_ACHIEVEMENTS" => self::_("Available achievements")) );
         $this->page->insert_block( "special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")) );
-        /*********** Do not change anything below this line  ************/
       }
   }
   

@@ -22,24 +22,18 @@
  */
   
   
-  class action_innovation extends APP_GameAction
-  { 
+  class action_innovation extends APP_GameAction {
+
     // Constructor: please do not modify
-       public function __default()
-      {
-          if( self::isArg( 'notifwindow') )
-          {
+    public function __default() {
+        if(self::isArg('notifwindow')) {
             $this->view = "common_notifwindow";
-              $this->viewArgs['table'] = self::getArg("table", AT_posint, true);
-          }
-          else
-          {
+            $this->viewArgs['table'] = self::getArg("table", AT_posint, true);
+        } else {
             $this->view = "innovation_innovation";
             self::trace( "Complete reinitialization of board game" );
-      }
-      } 
-      
-      // TODO: defines your action entry points there
+        }
+    } 
 
     //****** DEBUG MODE: PLEASE REMOVE THIS BEFORE RELEASE
     public function debug_draw() {            
@@ -49,6 +43,25 @@
         $card_id = self::getArg("card_id", AT_posint, true);
         // Call debug_draw from game logic
         $this->game->debug_draw($card_id);
+        self::ajaxResponse();
+    }
+    public function debug_score() {            
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        $card_id = self::getArg("card_id", AT_posint, true);
+        // Call debug_score from game logic
+        $this->game->debug_score($card_id);
+        
+        self::ajaxResponse();
+    }
+    public function debug_achieve() {            
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        $card_id = self::getArg("card_id", AT_posint, true);
+        // Call debug_achieve from game logic
+        $this->game->debug_achieve($card_id);
         
         self::ajaxResponse();
     }

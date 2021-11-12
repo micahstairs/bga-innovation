@@ -130,13 +130,36 @@ function (dojo, declare) {
             var debug_card_list = document.getElementById("debug_card_list");
             self = this;
             this.ajaxcall("/innovation/innovation/debug_draw.html",
-                            {
-                                lock: true,
-                                card_id: debug_card_list.selectedIndex
-                            },
-                             this, function(result){}, function(is_error){}
-                        );      
-        },
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
+                },
+                    this, function(result){}, function(is_error){},
+                    );
+                },
+        
+        debug_score: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_score.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
+                },
+                    this, function (result) { }, function (is_error) {}
+                    );
+            },  
+        debug_achieve: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_achieve.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
+                },
+                    this, function (result) { }, function (is_error) {}
+                    );      
+                },
         //******
                 
         /*
@@ -157,11 +180,18 @@ function (dojo, declare) {
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_card_list) {
                 var main_area = $('main_area');
+                main_area.innerHTML = "<button id='debug_return'>RETURN THIS CARD</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_achieve'>ACHIEVE THIS CARD</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_score'>SCORE THIS CARD</button>" + main_area.innerHTML
                 main_area.innerHTML = "<select id='debug_card_list'></select><button id='debug_draw'>DRAW THIS CARD</button>" + main_area.innerHTML
-                for(var id=0; id<gamedatas.debug_card_list.length; id++) {
+
+                for (var id = 0; id < gamedatas.debug_card_list.length; id++) {
                     $('debug_card_list').innerHTML += "<option value='card_'" + id + ">" + id + " - " + gamedatas.debug_card_list[id] + "</option>"
                 }
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
+                dojo.connect($('debug_score'), 'onclick', this, 'debug_score');
+                dojo.connect($('debug_achieve'), 'onclick', this, 'debug_achieve');
+
             }
             //******
         
@@ -292,19 +322,23 @@ function (dojo, declare) {
             
             // DECKS
             this.zone.deck = {};
-            for (var age=1; age<=10; age++) {
-                // Creation of the zone
-                this.zone.deck[age] = this.createZone('deck', 0, age, grouped_by_age=false, counter_method="COUNT", counter_display_zero=false)
-                this.setPlacementRules(this.zone.deck[age], left_to_right=true)
-                
-                // Add cards to zone according to the current situation
-                var nb_cards_in_age = gamedatas.deck_counts[age];
-                for(var i=0; i<nb_cards_in_age; i++) {
-                    this.createAndAddToZone(this.zone.deck[age], i, age, null, dojo.body(), null);
+            // TODO: Hide the artifacts decks (#deck_set_2 and #deck_set_4) when they are not in use.
+            for (var type = 0; type <= 1; type++) {
+                this.zone.deck[type] = {};
+                for (var age = 1; age <= 10; age++) {
+                    // Creation of the zone
+                    this.zone.deck[type][age] = this.createZone('deck', 0, type, age, null, grouped_by_age=false, counter_method="COUNT", counter_display_zero=false)
+                    this.setPlacementRules(this.zone.deck[type][age], left_to_right=true)
+                    
+                    // Add cards to zone according to the current situation
+                    var num_cards = gamedatas.deck_counts[type][age];
+                    for(var i=0; i<num_cards; i++) {
+                        this.createAndAddToZone(this.zone.deck[type][age], i, type, age, null, dojo.body(), null);
+                    }
+                    
+                    // Current number of cards in the deck
+                    $(`deck_count_${type}_${age}`).innerHTML = num_cards;
                 }
-                
-                // Current number of cards in the deck
-                $('deck_count_' + age).innerHTML = nb_cards_in_age;
             }
             
             // AVAILABLE ACHIEVEMENTS
@@ -319,7 +353,7 @@ function (dojo, declare) {
                 if (achievement.age === null) {
                     continue;
                 }
-                this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, null, dojo.body(), null);
+                this.createAndAddToZone(this.zone.achievements["0"], i, achievement.type, achievement.age, null, dojo.body(), null);
                 if (!this.isSpectator) {
                     this.addTooltipForStandardAchievement(achievement);
                 }
@@ -337,7 +371,7 @@ function (dojo, declare) {
                 if (achievement.age !== null) {
                     continue;
                 }
-                this.createAndAddToZone(this.zone.special_achievements["0"], i, null, achievement.id, dojo.body(), null);
+                this.createAndAddToZone(this.zone.special_achievements["0"], i, achievement.type, null, achievement.id, dojo.body(), null);
                 this.addTooltipForCard(achievement);
             }
             
@@ -345,7 +379,7 @@ function (dojo, declare) {
             this.zone.hand = {};
                 for (var player_id in this.players) {
                 // Creation of the zone
-                var zone = this.createZone('hand', player_id, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
+                var zone = this.createZone('hand', player_id, null, null, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
                 this.setPlacementRules(zone, left_to_right=true);
                            
@@ -353,7 +387,7 @@ function (dojo, declare) {
                 if (player_id == this.player_id) {
                     for(var i=0; i<gamedatas.my_hand.length; i++) {
                         var card = gamedatas.my_hand[i];
-                        this.createAndAddToZone(zone, card.position, card.age, card.id, dojo.body(), card);
+                        this.createAndAddToZone(zone, card.position, card.type, card.age, card.id, dojo.body(), card);
                         
                         if(gamedatas.turn0 && card.selected == 1) {
                             //dojo.addClass(this.getCardHTMLId(card.id, card.age, zone.HTML_class) , 'selected')
@@ -364,11 +398,13 @@ function (dojo, declare) {
                     }
                 }
                 else {
-                    var hand_count = gamedatas.hand_counts[player_id];
-                    for(var age = 1; age <= 10; age++){
-                        var nb_cards_in_age = hand_count[age];
-                        for(var i=0; i<nb_cards_in_age; i++) {
-                            this.createAndAddToZone(zone, i, age, null, dojo.body(), null);
+                    for (var type = 0; type <= 1; type++) {
+                        var hand_count = gamedatas.hand_counts[player_id][type];
+                        for(var age = 1; age <= 10; age++){
+                            var num_cards = hand_count[age];
+                            for(var i = 0; i < num_cards; i++) {
+                                this.createAndAddToZone(zone, i, type, age, null, dojo.body(), null);
+                            }
                         }
                     }
                 }
@@ -376,17 +412,19 @@ function (dojo, declare) {
             
             // PLAYERS' SCORE
             this.zone.score = {};
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 // Creation of the zone
-                this.zone.score[player_id] = this.createZone('score', player_id, null, grouped_by_age=true);
+                this.zone.score[player_id] = this.createZone('score', player_id, null, null, null, grouped_by_age=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
                     
                 // Add cards to zone according to the current situation
-                var score_count = gamedatas.score_counts[player_id];
-                for(var age = 1; age <= 10; age++){
-                    var nb_cards_in_age = score_count[age];
-                    for(var i=0; i<nb_cards_in_age; i++) {
-                        this.createAndAddToZone(this.zone.score[player_id], i, age, null, dojo.body(), null);
+                for (var type = 0; type <= 1; type++) {
+                    var score_count = gamedatas.score_counts[player_id][type];
+                    for (var age = 1; age <= 10; age++) {
+                        var num_cards = score_count[age];
+                        for(var i = 0; i < num_cards; i++) {
+                            this.createAndAddToZone(this.zone.score[player_id], i, type, age, null, dojo.body(), null);
+                        }
                     }
                 }
             }
@@ -398,7 +436,7 @@ function (dojo, declare) {
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
                 for(var i=0; i<gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
-                    this.createAndAddToZone(this.zone.my_score_verso, card.position, card.age, card.id, dojo.body(), card);
+                    this.createAndAddToZone(this.zone.my_score_verso, card.position, card.type, card.age, card.id, dojo.body(), card);
                     // Add tooltip
                     this.addTooltipForCard(card);
                 }
@@ -408,7 +446,7 @@ function (dojo, declare) {
             }
             
             // PLAYERS' ACHIEVEMENTS
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 // Creation of the zone
                 this.zone.achievements[player_id] = this.createZone('achievements', player_id);
                 this.setPlacementRules(this.zone.achievements[player_id], left_to_right=true);
@@ -418,10 +456,10 @@ function (dojo, declare) {
                 for(var i = 0; i < achievements.length; i++){
                     var achievement = achievements[i];
                     if (achievement.age !== null) { // Normal achievement
-                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, null, dojo.body(), null);
+                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.type, achievement.age, null, dojo.body(), null);
                     }
                     else {
-                        this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.id, dojo.body(), null);
+                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.type, null, achievement.id, dojo.body(), null);
                         this.addTooltipForCard(achievement);
                     }    
                 }
@@ -460,7 +498,7 @@ function (dojo, declare) {
                     var splay_direction_in_clear = player_splay_directions_in_clear[color];
                     
                     // Creation of the zone
-                    this.zone.board[player_id][color] = this.createZone('board', player_id, color, grouped_by_age=false)
+                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age=false)
                     this.setSplayMode(this.zone.board[player_id][color], splay_direction)
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
@@ -473,7 +511,7 @@ function (dojo, declare) {
                     var cards_in_pile = player_board[color];
                     for(var i = 0; i < cards_in_pile.length; i++){
                         var card = cards_in_pile[i];
-                        this.createAndAddToZone(this.zone.board[player_id][color], card.position, card.age, card.id, dojo.body(), card)
+                        this.createAndAddToZone(this.zone.board[player_id][color], card.position, card.type, card.age, card.id, dojo.body(), card)
                         
                         // Add tooltip
                         this.addTooltipForCard(card);
@@ -490,10 +528,10 @@ function (dojo, declare) {
                 this.enableButtonForSplayMode();
             }
             
-            // REVEALED ZONES
+            // REVEALED ZONE
             this.zone.revealed = {};    
-                for (var player_id in this.players) {
-                var zone = this.createZone('revealed', player_id, null, grouped_by_age=false);
+            for (var player_id in this.players) {
+                var zone = this.createZone('revealed', player_id, null, null, null, grouped_by_age=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
                 this.setPlacementRules(zone, left_to_right=true);
@@ -501,7 +539,7 @@ function (dojo, declare) {
                 var revealed_cards = gamedatas.revealed[player_id];
                 for(var i = 0; i < revealed_cards.length; i++){
                     var card = revealed_cards[i];
-                    this.createAndAddToZone(zone, card.position, card.age, card.id, dojo.body(), card)
+                    this.createAndAddToZone(zone, card.position, card.type, card.age, card.id, dojo.body(), card)
                         
                     // Add tooltip
                     this.addTooltipForCard(card);
@@ -1001,7 +1039,7 @@ function (dojo, declare) {
         },
         
         addTooltipForCard : function(card) {
-            var zone = this.getZone(card['location'], card.owner, card.age, card.color);
+            var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
             var HTML_id = this.getCardHTMLId(card.id, card.age, zone.HTML_class);
 
             // Special achievement
@@ -1009,14 +1047,14 @@ function (dojo, declare) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
                 return;
             }
-            var HTML_help = this.createCard(card.id, card.age, "L card", card);
+            var HTML_help = this.createCard(card.id, card.type, card.age, "L card", card);
             this.saved_cards[card.id] = card;
             this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
             this.addCustomTooltip(HTML_id, HTML_help, "");
         },
         
         addTooltipForStandardAchievement : function(card) {
-            var zone = this.getZone(card['location'], card.owner, card.age);
+            var zone = this.getZone(card['location'], card.owner, card.type, card.age);
             var id = this.getCardIdFromPosition(zone, card.position, card.age);
             var HTML_id = this.getCardHTMLId(id, card.age, zone.HTML_class);
             
@@ -1160,6 +1198,7 @@ function (dojo, declare) {
         
         parseForRichedText : function(text, size) {
             text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
+            text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
             for (var age=1; age <= 10; age++) {
@@ -1365,16 +1404,18 @@ function (dojo, declare) {
                 }
             }
             
-            exists_i_demand_effect = card.i_demand_effect_1 !== null;
-            exists_non_demand_effect = card.non_demand_effect_1 != null;
-            exist_several_non_demand_effects = card.non_demand_effect_2 != null;
+            exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
+            exists_i_compel_effect = card.i_demand_effect_1_is_compel;
+            exists_non_demand_effect = card.non_demand_effect_1 !== null;
+            exist_several_non_demand_effects = card.non_demand_effect_2 !== null;
             
-            several_effects = (exists_i_demand_effect && exists_non_demand_effect) || exist_several_non_demand_effects;
+            several_effects = (card.i_demand_effect_1 !== null && exists_non_demand_effect) || exist_several_non_demand_effects;
             
             if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0) {
                 HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
-            }
-            else {
+            } else if (exists_i_compel_effect && !exists_non_demand_effect && stronger_or_equal_players.length == 0) {
+                HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+            } else {
                 HTML_action = "<p class='possible_action'>" + (several_effects ? _("Click to execute the dogma effects of this card.") : _("Click to execute the dogma effect of this card.")) + "</p>";
                 HTML_action += "<p>" + _("If you do:") + "</p>"
                 HTML_action += "<ul class='recap_dogma'>"
@@ -1382,8 +1423,7 @@ function (dojo, declare) {
                 if (exists_i_demand_effect) {
                     if (weaker_players.length == 0) {
                         HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
-                    }
-                    else {
+                    } else {
                         var players = [];
                         for(var p=0; p<weaker_players.length; p++) {
                             var player_id = weaker_players[p];
@@ -1392,23 +1432,39 @@ function (dojo, declare) {
                         }
                         if (players.length == 1) {
                             HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I demand effect."), {'player': players[0]}) + "</li>"
-                        }
-                        else {
+                        } else {
                             HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': players.join(', ')}) + "</li>"
+                        }
+                    }
+                }
+
+                if (exists_i_compel_effect) {
+                    if (stronger_or_equal_players.length == 0) {
+                        HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
+                    } else {
+                        var players = [];
+                        for (var p=0; p<stronger_or_equal_players.length; p++) {
+                            var player_id = stronger_or_equal_players[p];
+                            var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                            players.push(player);
+                        }
+                        if (players.length == 1) {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I compel effect."), {'player': players[0]}) + "</li>"
+                        } else {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': players.join(', ')}) + "</li>"
                         }
                     }
                 }
                 
                 if (exists_non_demand_effect) {
                     if (stronger_or_equal_players.length == 0) {
-                        if (!exist_several_non_demand_effects) {
-                            HTML_action += "<li>" + _("You will execute the non-demand effect alone.") + "</li>"
-                        }
-                        else {
+                        if (exist_several_non_demand_effects) {
                             HTML_action += "<li>" + _("You will execute the non-demand effects alone.") + "</li>"
                         }
-                    }
-                    else {
+                        else {
+                            HTML_action += "<li>" + _("You will execute the non-demand effect alone.") + "</li>"
+                        }
+                    } else {
                         var players = [];
                         for(var p=0; p<stronger_or_equal_players.length; p++) {
                             var player_id = stronger_or_equal_players[p];
@@ -1416,19 +1472,16 @@ function (dojo, declare) {
                             players.push(player);
                         }
                         if (players.length == 1) {
-                            if (!exist_several_non_demand_effects) {
+                            if (exist_several_non_demand_effects) {
+                                HTML_action += "<li>" + dojo.string.substitute(_("${player} will share each non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
+                            } else {
                                 HTML_action += "<li>" + dojo.string.substitute(_("${player} will share the non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
                             }
-                            else {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${player} will share each non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
-                            }
-                        }
-                        else {
-                            if (!exist_several_non_demand_effects) {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${players} will share the non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
-                            }
-                            else {
+                        } else {
+                            if (exist_several_non_demand_effects) {
                                 HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
+                            } else {
+                                HTML_action += "<li>" + dojo.string.substitute(_("${players} will share the non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
                             }
                         }
                     }
@@ -1574,7 +1627,8 @@ function (dojo, declare) {
         },
         
         selectDrawableCard : function(age_to_draw) {
-            var deck_to_draw_in = this.zone.deck[age_to_draw].items;
+            // Assumes that the player can only draw from the base deck.
+            var deck_to_draw_in = this.zone.deck[0][age_to_draw].items;
             var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
             return dojo.query("#" + top_card.id);
         },
@@ -1598,7 +1652,7 @@ function (dojo, declare) {
             var identifiers = [];
             for (var i=0; i<recto_positional_infos_array.length; i++) {
                 var card = recto_positional_infos_array[i];
-                var zone = this.getZone(card['location'], card.owner, card.age);
+                var zone = this.getZone(card['location'], card.owner, card.type, card.age);
                 var id = this.getCardIdFromPosition(zone, card.position, card.age)
                 identifiers.push("#" + this.getCardHTMLId(id, card.age, zone.HTML_class));
             }
@@ -1635,10 +1689,7 @@ function (dojo, declare) {
                 $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
             }
         },
-        
-        /*
-         * Getters: no change on the interface
-         */
+
         getCardSizeInZone : function(zone_HTML_class) {
             return zone_HTML_class.split(' ')[0];
         },
@@ -1647,7 +1698,7 @@ function (dojo, declare) {
             return zone_HTML_class.split(' ')[1];
         },
         
-        getZone : function(location, owner, age, color) {
+        getZone : function(location, owner, type, age, color) {
             // Default values
             age = this.setDefault(age, null);
             color = this.setDefault(color, null);
@@ -1656,39 +1707,19 @@ function (dojo, declare) {
             var root = this.zone[location];
             switch(location) {
                 case "deck":
-                    return root[age];
+                    return root[type][age];
                 case "hand":
                 case "score":
                 case "revealed":
                 case "achievements":
-                    if (owner == 0 && age === null) {
-                        return this.zone.special_achievements[0];
-                    }
-                    else {
+                    if (owner == 0) {
+                        return age === null ? this.zone.special_achievements[0] : this.zone.achievements[0];
+                    } else {
                         return root[owner];
                     }
                 case "board":
                     return root[owner][color];
             }
-        },
-        
-        getCardAgeFromId : function(id) {
-            id = parseInt(id);
-            if (id < 0) {
-                return null;
-            }
-            if (id < 105) {
-                // visible card
-                if (id < 15) {
-                    return 1;
-                }
-                return parseInt((id + 5) / 10);
-            }
-            if (id < this.system_offset) {
-                return null
-            }
-            // id >= this.system_offset => recto of the card
-            return id % 20;
         },
         
         getCardIdFromPosition : function(zone, position, age) {
@@ -1740,11 +1771,11 @@ function (dojo, declare) {
             return ["item_" + id, "age_" + age, zone_HTML_class.replace(" ", "__")].join("__");
         },
         
-        getCardHTMLClass : function(id, age, card, zone_HTML_class) {
+        getCardHTMLClass : function(id, type, age, card, zone_HTML_class) {
             if (card === null) {
-            return ["item_" + id, "age_" + age, zone_HTML_class].join(" ");
+                return ["item_" + id, "type_" + type, "age_" + age, zone_HTML_class].join(" ");
             }
-            return ["item_" + id, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
+            return ["item_" + id, "type_" + type, "age_" + age, "color_" + card.color, zone_HTML_class].join(" ");
         },
         
         getCardIdFromHTMLId : function(HTML_id) {
@@ -1758,9 +1789,9 @@ function (dojo, declare) {
         /*
          * Card creation
          */
-        createCard : function(id, age, zone_HTML_class, card) {
+        createCard : function(id, type, age, zone_HTML_class, card) {
             var HTML_id = this.getCardHTMLId(id, age, zone_HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, card, zone_HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, type, age, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
@@ -1816,13 +1847,20 @@ function (dojo, declare) {
         /*
          * Zone management systemcard
          */
-        createZone : function(location, owner, age_or_color, grouped_by_age, counter_method, counter_display_zero) {
+        createZone : function(location, owner, type, age, color, grouped_by_age, counter_method, counter_display_zero) {
             // Default values
-            age_or_color = this.setDefault(age_or_color, null);
+            type = this.setDefault(type, null);
+            age = this.setDefault(age, null);
+            color = this.setDefault(color, null);
             grouped_by_age = this.setDefault(grouped_by_age, null);
             counter_method = this.setDefault(counter_method, null);
             counter_display_zero = this.setDefault(counter_display_zero, null);
             ///////
+
+            owner_string = owner != 0 ? '_' + owner : '';
+            type_string = type !== null ? '_' + type : '';
+            age_string = age !== null ? '_' + age : '';
+            color_string = color !== null ? '_' + color : '';
         
             // Dimension of a card in the zone
             var HTML_class;
@@ -1862,9 +1900,9 @@ function (dojo, declare) {
                 var div_id = location;
             }
             else {
-                var div_id = location + (owner != 0 ? '_' + owner : '') + (age_or_color !== null ? '_' + age_or_color : '');
+                var div_id = location + owner_string + type_string + age_string + color_string;
             }
-            
+
             // Creation of the zone
             dojo.style(div_id, 'width', zone_width + 'px');
             dojo.style(div_id, 'height', card_dimensions.height + 'px');
@@ -1879,7 +1917,7 @@ function (dojo, declare) {
             zone.grouped_by_age = grouped_by_age;
             
             if (counter_method != null) {
-                var counter_node = $(location + '_count'  + (owner != 0 ? '_' + owner : '') + (age_or_color !== null ? '_' + age_or_color : ''));
+                var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
                 zone.counter = new ebg.counter()
                 zone.counter.create(counter_node);
                 zone.counter.setValue(0);
@@ -1897,7 +1935,7 @@ function (dojo, declare) {
         },
         
 
-        createAndAddToZone: function(zone, position, age, id, start, card) {
+        createAndAddToZone : function(zone, position, type, age, id, start, card) {
             // id of the new item
             var visible_card
             if (id === null) {
@@ -1906,8 +1944,7 @@ function (dojo, declare) {
                 
                 // The id is to be created
                 id = this.uniqueIdForCard(age); // Create a new id based on the age of the card
-            }
-            else {
+            } else {
                 // verso
                 if (zone.owner != 0 && zone['location'] == 'achievements') {
                     visible_card = false;
@@ -1916,11 +1953,8 @@ function (dojo, declare) {
                     visible_card = true;
                 }
             }
-            var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, card, zone.HTML_class);
-            
             // Create a new card and place it on start position
-            var node = this.createCard(id, age, zone.HTML_class, visible_card ? card : null);
+            var node = this.createCard(id, type, age, zone.HTML_class, visible_card ? card : null);
             dojo.place(node, start);
             
             this.addToZone(zone, id, position, age);
@@ -1932,7 +1966,7 @@ function (dojo, declare) {
                 this.removeFromZone(zone_from, id_from, false, card.age);
             }
             else {
-                this.createAndAddToZone(zone_to, card.position_to, card.age, id_to, this.getCardHTMLId(id_from, card.age, zone_from.HTML_class), card);
+                this.createAndAddToZone(zone_to, card.position_to, card.type, card.age, id_to, this.getCardHTMLId(id_from, card.age, zone_from.HTML_class), card);
                 this.removeFromZone(zone_from, id_from, true, card.age);
             }
         },
@@ -1944,7 +1978,7 @@ function (dojo, declare) {
             if (zone['location'] == 'revealed' && zone.items.length == 0) {
                 dojo.style(zone.container_div, 'display', 'block');
             }
-       
+
             var grouped_by_age = zone['location'] != 'board' && zone['location'] != 'achievements';
             
             // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
@@ -2026,9 +2060,8 @@ function (dojo, declare) {
             // Remove the space occupied by the card if needed
             if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
                 this.updateZoneWidth(zone);
-            }
-            else if (zone['location'] == 'revealed' && zone.items.length == 0) {
-                zone = this.createZone('revealed', zone.owner, null, grouped_by_age=false); // Recreate the zone (Dunno why it does not work if I don't do that)
+            } else if (zone['location'] == 'revealed' && zone.items.length == 0) {
+                zone = this.createZone('revealed', zone.owner, null, null, null, grouped_by_age=false); // Recreate the zone (Dunno why it does not work if I don't do that)
                 dojo.style(zone.container_div, 'display', 'none');
             }
             zone.updateDisplay();
@@ -2418,6 +2451,9 @@ function (dojo, declare) {
             var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
             var location = zone_infos[0];
             var owner = zone_infos[1];
+            if (!owner) {
+                owner = 0;
+            }
             var zone = this.getZone(location, owner, age);
             
             // Search the position the card is
@@ -2877,9 +2913,9 @@ function (dojo, declare) {
                 // Remove the card from my score personal window
                 this.removeFromZone(this.zone.my_score_verso, card.id, true, card.age);
             }
-            
-            var zone_from = card.age === null ? this.zone.special_achievements[0] : this.getZone(card.location_from, card.owner_from, card.age, card.color);
-            var zone_to = this.getZone(card.location_to, card.owner_to, card.age, card.color);
+
+            var zone_from = card.age === null ? this.zone.special_achievements[0] : this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
+            var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
             
             var visible_from = this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
             var visible_to = this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
@@ -2963,7 +2999,7 @@ function (dojo, declare) {
             // Special code for my score management
             if (card.location_to == "score" && card.owner_to == this.player_id) {
                 // Add the card to my score personal window
-                this.createAndAddToZone(this.zone.my_score_verso, card.position_to, card.age, card.id, dojo.body(), card);
+                this.createAndAddToZone(this.zone.my_score_verso, card.position_to, card.type, card.age, card.id, dojo.body(), card);
                 visible_to = true;
             }
             
