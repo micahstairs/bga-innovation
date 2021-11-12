@@ -7700,32 +7700,23 @@ class Innovation extends Table
             case "134N1":
                 $step_max = 2; // --> 2 interactions: see B
             
-                // id 143, Artifacts age 3: Necronomicon
+            // id 143, Artifacts age 3: Necronomicon
             case "143N1":
                 $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
-                if ($card['color'] == 0 /* blue */)  {
-                    self::notifyGeneralInfo(clienttranslate("This card is blue."));
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
+                if ($card['color'] == 0)  { // Blue
                     self::executeDraw($player_id, 9); // "Draw a 9"
-                    self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
-                    break; // "Otherwise"
-                }
-                else if ($card['color'] == 2 /* green */) {
-                    self::notifyGeneralInfo(clienttranslate("This card is green."));
-                    for($color=0; $color<5; $color++) {
-                        if (self::getCurrentSplayDirection($player_id, $color)>0 /* this card is splayed */) {
-                            self::splay($player_id, $color, 0, true /* force_unsplay*/);
-                        }
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
+                } else if ($card['color'] == 2) { // Green
+                    for ($color = 0; $color < 5; $color++) {
+                        self::splay($player_id, $color, 0, /*force_unsplay=*/ true);
                     }
-                    self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
-                }
-                else if ($card['color'] == 3 || $card['color'] == 1 /* yellow, or red */)  {
-                    self::setGameStateValue('auxiliary_value', $card['color']);// Flag the chosen color for the next interaction
-                    $step_max = 1; // --> 1 interactions: see B
-                    break;
-                }
-                else{
-                    self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
-                    break;
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
+                } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
+                    self::setGameStateValue('auxiliary_value', $card['color']);
+                    $step_max = 1; // --> 1 interaction: see B
+                } else {
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 };
                 break;
                 
@@ -10252,8 +10243,7 @@ class Innovation extends Table
         // id 143, Artifacts age 3: Necronomicon
         case "143N1A":
             // "If red, return all cards in your score pile"
-            if (self::getGameStateValue('auxiliary_value') == 1 /* red */) {
-                self::notifyGeneralInfo(clienttranslate("This card is red."));
+            if (self::getGameStateValue('auxiliary_value') == 1) { // Red
                 $options = array(
                     'player_id' => $player_id,
                     'can_pass' => false,
@@ -10263,10 +10253,8 @@ class Innovation extends Table
                     'owner_to' => 0,
                     'location_to' => 'deck'
                 );     
-            }
             // "If yellow, return all cards in your hand"
-            else if (self::getGameStateValue('auxiliary_value') == 3 /* yellow */) {
-                self::notifyGeneralInfo(clienttranslate("This card is yellow."));
+            } else if (self::getGameStateValue('auxiliary_value') == 3) { // Yellow
                 $options = array(
                     'player_id' => $player_id,
                     'can_pass' => false,
@@ -11077,10 +11065,9 @@ class Innovation extends Table
 
                 // id 143, Artifacts age 3: Necronomicon
                 case "143N1A":
-                    if (self::getGameStateValue('auxiliary_value') == 1 /* red */) {
-                        $revealed_card = self::getCardsInLocation($player_id, 'revealed'); // There is one card left revealed 
-                        $revealed_card = $revealed_card[0];
-                        self::transferCardFromTo($revealed_card, $player_id, 'hand'); // "Put the card in your hand"
+                    if (self::getGameStateValue('auxiliary_value') == 1) { // Red
+                        $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
+                        self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Keep revealed card
                         break;
                     };
                     break;
