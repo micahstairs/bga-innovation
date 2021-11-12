@@ -7709,7 +7709,16 @@ class Innovation extends Table
                     self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
                     break; // "Otherwise"
                 }
-                else if ($card['color'] == 3 || $card['color'] == 1 || $card['color'] == 2 /* yellow, red, or green */)  {
+                else if ($card['color'] == 2 /* green */) {
+                    self::notifyGeneralInfo(clienttranslate("This card is green."));
+                    for($color=0; $color<5; $color++) {
+                        if (self::getCurrentSplayDirection($player_id, $color)>0 /* this card is splayed */) {
+                            self::splay($player_id, $color, 0, true /* force_unsplay*/);
+                        }
+                    }
+                    self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep revealed card")
+                }
+                else if ($card['color'] == 3 || $card['color'] == 1 /* yellow, or red */)  {
                     self::setGameStateValue('auxiliary_value', $card['color']);// Flag the chosen color for the next interaction
                     $step_max = 1; // --> 1 interactions: see B
                     break;
@@ -10243,7 +10252,6 @@ class Innovation extends Table
         // id 143, Artifacts age 3: Necronomicon
         case "143N1A":
             // "If red, return all cards in your score pile"
-
             if (self::getGameStateValue('auxiliary_value') == 1 /* red */) {
                 self::notifyGeneralInfo(clienttranslate("This card is red."));
                 $options = array(
@@ -10267,24 +10275,6 @@ class Innovation extends Table
                     'location_from' => 'revealed,hand',
                     'owner_to' => 0,
                     'location_to' => 'deck',
-                );
-            }
-            // "If green, unsplay all piles"
-            else if (self::getGameStateValue('auxiliary_value') == 2 /* green */) {
-                self::notifyGeneralInfo(clienttranslate("This card is green."));
-                $splayed_dcolors = array();
-                for($color=0; $color<5; $color++) {
-                    if (self::getCurrentSplayDirection($player_id, $color)!==0 /* splayed */) {
-                        $splayed_colors[] = $color;
-                    }
-                }
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => sizeof($splayed_colors),
-                    'can_pass' => false,
-                    
-                    'splay_direction' => 0 /* unsplay */,
-                    'color' => $splayed_colors
                 );
             };
             break;
@@ -11087,8 +11077,8 @@ class Innovation extends Table
 
                 // id 143, Artifacts age 3: Necronomicon
                 case "143N1A":
-                    if (self::getGameStateValue('auxiliary_value') != 3 /* not yellow */) {
-                        $revealed_card = self::getCardsInLocation($player_id, 'revealed'); // There is one card left revealed
+                    if (self::getGameStateValue('auxiliary_value') == 1 /* red */) {
+                        $revealed_card = self::getCardsInLocation($player_id, 'revealed'); // There is one card left revealed 
                         $revealed_card = $revealed_card[0];
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // "Put the card in your hand"
                         break;
