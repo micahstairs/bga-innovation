@@ -10344,7 +10344,7 @@ class Innovation extends Table
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => $player_id,
+                'owner_to' => 0,
                 'location_to' => 'deck'
             );
             break;
@@ -11642,12 +11642,6 @@ class Innovation extends Table
                 self::transferCardFromTo($remaining_card, $choice, 'board');
                 break;
                 
-            // id 135, Artifacts age 3: Dunhuang Star Chart
-            case "135N1A":
-                // "Draw a card of value equal to the number of cards returned"
-                self::executeDraw($player_id, $n);
-                break;
-
             default:
                 if ($splay_direction == -1) {
                     // Do the transfer as stated in B
