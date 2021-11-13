@@ -10332,7 +10332,6 @@ class Innovation extends Table
             };
             break;
             
-            
        // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
             $hand_count = self::countCardsInLocation($player_id, 'hand');
