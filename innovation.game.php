@@ -1218,7 +1218,7 @@ class Innovation extends Table
     function updateGameSituation($card, $transferInfo) {
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
-        
+
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
         
@@ -1250,7 +1250,8 @@ class Innovation extends Table
             //******
             else {
                 $launcher_id = self::getActivePlayerId(); // The player from whom this action is originated, most of the case, the same as player_id except for few dogma effects
-                $one_player_involved = $player_id == $launcher_id;
+                // TODO: Figure out if commenting this out breaks anything. We want this commented out for Mask of Warka.
+                // $one_player_involved = $player_id == $launcher_id;
             }
         }
               
@@ -5325,6 +5326,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} may score all the cards from his hand');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
+
+            // id 122, Artifacts age 1: Mask of Warka
+            case "122N1A":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1A":
@@ -7634,9 +7641,15 @@ class Innovation extends Table
                 $step_max = 2; // --> 2 interactions: see B
                 break;
 
+            // id 122, Artifacts age 1: Mask of Warka
+            case "122N1":
+                self::setGameStateValueFromArray('auxiliary_value', array());
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+
             // id 123, Artifacts age 1: Ark of the Covenant
             case "123N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1; // --> 1 interaction: see B
                 break;
                 
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
@@ -10165,14 +10178,39 @@ class Innovation extends Table
                 'score_keyword' => true
             );
             break;
-            
-        // id 123, Artifacts age 1: Ark of the Covenant
-        case "123N1A":
-            // "Return a card from your hand."
+        
+        // id 122, Artifacts age 1: Mask of Warka
+        case "122N1A":
+            // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
+                
+                'choose_color' => true
+            );
+            break;
+
+        case "122N1B":
+            // Return revealed cards
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+            
+        // id 123, Artifacts age 1: Ark of the Covenant
+        case "123N1A":
+            // "Return a card from your hand"
+            $options = array(
+                'player_id' => $player_id,
                 'n' => 1,
+                'can_pass' => false,
+                
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => 0,
@@ -10213,6 +10251,7 @@ class Innovation extends Table
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
+
                 'choose_type' => true
             );
             break;
@@ -10240,6 +10279,7 @@ class Innovation extends Table
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
+
                 'choose_opponent' => true
             );
             break;
@@ -11309,6 +11349,18 @@ class Innovation extends Table
                         }
                     }
                     break;
+
+                // id 122, Artifacts age 1: Mask of Warka
+                case "122N1B":
+                    // "Claim all achievements of value matching those [returned] cards, ignoring eligibility"
+                    $achievements_by_age = self::getCardsInLocation(0, "achievements", /*type=*/ null, /*ordered_by_age=*/ true);
+                    $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                    foreach ($different_values_selected_so_far as $returned_age) {
+                        foreach ($achievements_by_age[$returned_age] as $achievement) {
+                            self::transferCardFromTo($achievement, $player_id, 'achievements');
+                        }
+                    }
+                    break;
                 
                 // id 123, Artifacts age 1: Ark of the Covenant
                 case "123N1A":
@@ -11763,9 +11815,58 @@ class Innovation extends Table
                     // Make the transfers
                     foreach($ids_of_cards_in_hand as $id) {
                         $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $player_id, 'score', false, true); // Nota: this has a score keyword 
+                        self::transferCardFromTo($card, $player_id, 'score', false, true); // Note: this has a score keyword 
                     }
                 }                
+                break;
+            
+            // id 122, Artifacts age 1: Mask of Warka
+            case "122N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                // "Each player reveals all cards of that color from their hand"
+                // TODO: Consider iterating over the players in turn order beginning with the current player.
+                $only_player_to_reveal = true;
+                $players = self::loadPlayersBasicInfos();
+                foreach($players as $any_player_id => $player) {
+                    $cards = self::getCardsInLocation($any_player_id, 'hand');
+                    foreach($cards as $card) {
+                        if ($card['color'] == $choice) {
+                            self::transferCardFromTo($card, $any_player_id, 'revealed');
+                            if ($any_player_id != $player_id) {
+                                $only_player_to_reveal = false;
+                            }
+                        }
+                    }
+                }
+
+                // "If you are the only player to reveal cards, return them"
+                if ($only_player_to_reveal) {
+
+                    // Store array of revealed values
+                    $revealed_values = array();
+
+                    self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                
+                // Return revealed cards to players' hands.
+                } else {
+                    foreach($players as $any_player_id => $player) {
+                        $cards = self::getCardsInLocation($any_player_id, 'revealed');
+                        foreach($cards as $card) {
+                            self::transferCardFromTo($card, $any_player_id, 'hand');
+                        }
+                    }
+                }
+                break;
+
+            case "122N1B":
+                $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                if (!in_array($card['age'], $different_values_selected_so_far)) { // The player choose to return a card of a new value
+                    $different_values_selected_so_far[] = $card['age'];
+                    self::setGameStateValueFromArray('auxiliary_value', $different_values_selected_so_far);
+                }
+                // Do the transfer as stated in B (return)
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                 break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
