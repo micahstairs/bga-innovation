@@ -1703,7 +1703,7 @@ function (dojo, declare) {
             age = this.setDefault(age, null);
             color = this.setDefault(color, null);
             ///////
-            
+
             var root = this.zone[location];
             switch(location) {
                 case "deck":
@@ -2454,7 +2454,7 @@ function (dojo, declare) {
             if (!owner) {
                 owner = 0;
             }
-            var zone = this.getZone(location, owner, age);
+            var zone = this.getZone(location, owner, null, age);
             
             // Search the position the card is
             var position = this.getCardPositionFromId(zone, card_id, age);
