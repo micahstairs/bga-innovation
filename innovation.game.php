@@ -5327,6 +5327,12 @@ class Innovation extends Table
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
+            // id 114, Artifacts age 1: Papyrus of Ani
+            case "114N1B":
+                $message_for_player = clienttranslate('${You} must choose a type');
+                $message_for_others = clienttranslate('${player_name} must choose a type');
+                break;
+
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -10022,6 +10028,16 @@ class Innovation extends Table
                 'color' => array(4)
             );
             break;
+
+        case "114N1B":
+            // Choose any type
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'choose_type' => true
+            );
+            break;
         
         
         // id 115, Artifacts age 1: Pavlovian Tusk
@@ -11262,17 +11278,8 @@ class Innovation extends Table
                 case "114N1A":
                     // "If you do"
                     if ($n > 0) {
-                        $age_to_draw_in = self::getGameStateValue('age_last_selected') + 2; // "Reveal a card of of any type of value two higher"
-                        // TODO: Allow choice of other expansions e.g. "any type".  For now we simply draw from the base set.
-                        $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed');
-                        if ($card['color'] == 4) { // "If the drawn card is purple"
-                            self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
-                            self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each of its non-demand effects. Do not share them."
-                        } else  {
-                            // Non-purple card is placed in the hand
-                            self::transferCardFromTo($card, $player_id, 'hand');
-                        }
-                    } 
+                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                    }
                     break;
                 
                 // id 116, Artifacts age 1: Priest-King
@@ -11818,6 +11825,20 @@ class Innovation extends Table
                         self::transferCardFromTo($card, $player_id, 'score', false, true); // Note: this has a score keyword 
                     }
                 }                
+                break;
+
+            // id 114, Artifacts age 1: Papyrus of Ani
+            case "114N1B":
+                // "Reveal a card of of any type of value two higher"
+                $age_to_draw_in = self::getGameStateValue('age_last_selected') + 2;
+                $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed', /*bottom_to=*/ false, /*type=*/ $choice);
+                if ($card['color'] == 4) { // "If the drawn card is purple"
+                    self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
+                    self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each of its non-demand effects. Do not share them."
+                } else  {
+                    // Non-purple card is placed in the hand
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                }
                 break;
             
             // id 122, Artifacts age 1: Mask of Warka
