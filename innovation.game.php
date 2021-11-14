@@ -11515,26 +11515,24 @@ class Innovation extends Table
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1A":
                 if (self::getGameStateValue('auxiliary_value') == -1) {
-                    // Log the color and type of the first card that is melded
-                    $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
-                    self::setGameStateValueFromArray('auxiliary_value', array($card['type'], $card['color']));
-                    self::transferCardFromTo($card, $player_id, 'board');
+                    // Log the card that is melded first
+                    $card_id = self::getGameStateValue('id_last_selected');
+                    self::setGameStateValue('auxiliary_value', $card_id);
+                    self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'board');
                 }
                 else {
                     // If you melded two of the same color and they are of different types
-                    $stored_values = self::getGameStateValueAsArray('auxiliary_value');
+                    $first_card = self::getCardInfo(self::getGameStateValue('auxiliary_value'));
                     
                     $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                     self::transferCardFromTo($second_card, $player_id, 'board');
-                    if ($stored_values[0] !== $second_card['type'] &&
-                        $stored_values[1] == $second_card['color'])
+                    if ($first_card['type'] !== $second_card['type'] &&
+                        $first_card['color'] == $second_card['color'])
                     {
                         // "draw and score five 2s."
-                        self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
-                        self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
-                        self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
-                        self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
-                        self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
+                        for($i=1; $i<=5; $i++) {
+                            self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
+                        }
                     }
                     self::setGameStateValue('auxiliary_value', -1);
                 }
