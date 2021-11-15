@@ -1610,7 +1610,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => null,
     'condition_for_claiming' => null,
-    'alternative_condition_for_claiming' => null)
+    'alternative_condition_for_claiming' => null),
 
 );
 

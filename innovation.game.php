@@ -7898,6 +7898,31 @@ class Innovation extends Table
                     }
                 } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
                 break;
+
+            // id 145, Artifacts age 4: Petition of Right
+            case "145C1":
+                $number = 0;
+                for($color=0; $color<5; $color++) {
+                    if (self::boardPileHasRessource($player_id, $color, 4 /* tower */)) { // There is at least one visible tower in that color
+                        $number++;
+                    }
+                }
+                if ($number == 0){ // $no cards are transferred
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${towers}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${towers}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    break;
+                }
+                else if ($number == 1) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color with one or more visible ${towers}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${towers}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                }
+                else { // $number > 1
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${towers}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${towers}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                }
+                self::setGameStateValue('auxiliary_value', $number);
+                $step_max = 1; // --> 1 interaction: see B
+                break;
                 
             default:
                 // This should not happens
@@ -10651,6 +10676,21 @@ class Innovation extends Table
                 'location_to' => 'achievements',
 
                 'require_achievement_eligibility' => false
+            );
+            break;
+
+        // id 145, Artifacts age 4: Petition of Right
+        case "145C1A":    
+            // "I compel you to transfer a card from your score pile to my score pile for each top card with a tower on your board!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => self::getGameStateValue('auxiliary_value'),
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score'
             );
             break;
             
