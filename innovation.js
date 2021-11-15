@@ -1703,7 +1703,7 @@ function (dojo, declare) {
             age = this.setDefault(age, null);
             color = this.setDefault(color, null);
             ///////
-            
+
             var root = this.zone[location];
             switch(location) {
                 case "deck":
@@ -1815,7 +1815,7 @@ function (dojo, declare) {
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
             
-            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'dark', 'i_demand_effect_1 color_' + card.color)  : "";
+            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'dark', (card.i_demand_effect_1_is_compel ? 'i_compel ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
             var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
             var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
@@ -2383,31 +2383,35 @@ function (dojo, declare) {
             }
             
             var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
+            var i_compel = dojo.query("#" + HTML_id + " .i_demand_effect_1.i_compel").length == 1;
             if (i_demand_effect_only) {
-                    // Get dogma icon
-                    var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
-                    var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
-                    var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class');
-                    var dogma_icon = dogma_symbol_classes.substr(-1);
+                // Get dogma icon
+                var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
+                var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
+                var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class');
+                var dogma_icon = dogma_symbol_classes.substr(-1);
                 // Compare player counters
                 var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
                 var player_total_is_min_value = true;
+                var player_total_is_max_value = true;
                 for(var player_id in this.players) {
                     if (this.counter.ressource_count[player_id][dogma_icon].getValue() < player_total) {
                         player_total_is_min_value = false;
                     }
+                    if (this.counter.ressource_count[player_id][dogma_icon].getValue() > player_total) {
+                        player_total_is_max_value = false;
+                    }
                 }
-                if (player_total_is_min_value) { // Targetting this dogma would have no effect
-                    // Leave an opportunity for the player to cancel his action (hence the AJAX call)
-                    this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"),
-                                            dojo.hitch(this, ajax_call));
-                }
-                else {
+                // Leave an opportunity for the player to cancel a demand or compel that can't target any players
+                if (!i_compel && player_total_is_min_value) {
+                    this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"), dojo.hitch(this, ajax_call));
+                } else if (i_compel && player_total_is_max_value) {
+                    this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"), dojo.hitch(this, ajax_call));
+                } else {
                     // Just make the AJAX call
                     ajax_call();
                 }
-            }
-            else {
+            } else {
                 // Just make the AJAX call
                 ajax_call();
             }
@@ -2454,7 +2458,7 @@ function (dojo, declare) {
             if (!owner) {
                 owner = 0;
             }
-            var zone = this.getZone(location, owner, age);
+            var zone = this.getZone(location, owner, null, age);
             
             // Search the position the card is
             var position = this.getCardPositionFromId(zone, card_id, age);

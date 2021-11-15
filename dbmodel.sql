@@ -256,8 +256,10 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (126, 1, 2, 0, 4, 4, 4, 0, 4, 0, 'deck', 0, NULL, FALSE),
 (127, 1, 2, 1, 1, 0, 3, 3, 3, 0, 'deck', 0, NULL, FALSE),
 (128, 1, 2, 1, 0, 4, 4, 4, 4, 0, 'deck', 0, NULL, FALSE),
+(130, 1, 2, 2, 1, 3, 0, 1, 1, 0, 'deck', 0, NULL, FALSE),
 (131, 1, 2, 3, 2, 0, 1, 2, 2, 0, 'deck', 0, NULL, FALSE),
 (132, 1, 2, 3, 1, 1, 1, 0, 1, 0, 'deck', 0, NULL, FALSE),
+(133, 1, 2, 4, 0, 4, 3, 4, 4, 0, 'deck', 0, NULL, FALSE),
 (134, 1, 2, 4, 0, 3, 3, 4, 3, 0, 'deck', 0, NULL, FALSE),
 
 /* Artifacts - Age 3 */
@@ -267,4 +269,5 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (139, 1, 3, 2, 1, 1, 1, 0, 1, 0, 'deck', 0, NULL, FALSE),
 (140, 1, 3, 2, 1, 1, 0, 1, 1, 0, 'deck', 0, NULL, FALSE),
 (142, 1, 3, 3, 1, 1, 1, 0, 1, 0, 'deck', 0, NULL, FALSE),
-(143, 1, 3, 4, 0, 2, 2, 2, 2, 0, 'deck', 0, NULL, FALSE);
+(143, 1, 3, 4, 0, 2, 2, 2, 2, 0, 'deck', 0, NULL, FALSE),
+(144, 1, 3, 4, 2, 0, 2, 2, 2, 0, 'deck', 0, NULL, FALSE);

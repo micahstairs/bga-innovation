@@ -85,6 +85,15 @@ $game_options = array(
             1 => array('name' => totranslate('Last edition')),
             2 => array('name' => totranslate('First edition'), 'tmdisplay' => totranslate('First edition')),
         ),
+    ),
+
+    102 => array(
+        'name' => totranslate('Artifacts expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable without Relics'), 'no_beginner' => true),
+            3 => array('name' => totranslate('Enable with Relics'), 'no_beginner' => true)
+        )
     )
 );
 

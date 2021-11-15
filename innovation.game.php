@@ -7709,6 +7709,12 @@ class Innovation extends Table
                 // "Draw and score a 3"
                 self::executeDraw($player_id, 3, 'score');
                 break;
+                
+            // id 130, Artifacts age 1: Baghdad Battery
+            case "130N1":
+                self::setGameStateValue('auxiliary_value', -1);
+                $step_max = 1; // --> 1 interaction: see B
+                break;
             
             // id 131, Artifacts age 2: Holy Grail
             case "131N1":
@@ -7722,6 +7728,11 @@ class Innovation extends Table
             
             case "132N1":
                 $step_max = 1; // --> 1 interaction: see B
+                break;
+
+            case "133N1":
+                // "Draw an Artifact of value equal to the value of your highest top card."
+                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', false, 1);
                 break;
 
             // id 134, Artifacts age 2: Cyrus Cylinder
@@ -7746,6 +7757,11 @@ class Innovation extends Table
                 } else {
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 };
+                break;
+
+            // id 144, Artifacts age 3: Shroud of Turin
+            case "144N1":
+                $step_max = 1; // --> 1 interaction: see B
                 break;
 
             // id 135, Artifacts age 3: Dunhuang Star Chart
@@ -10318,6 +10334,21 @@ class Innovation extends Table
             );
             break;
 
+        // id 130, Artifacts age 1: Baghdad Battery
+        case "130N1A":
+            // "Meld two cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
+
         // id 131, Artifacts age 2: Holy Grail
         case "131N1A":
             // "Return a card from your hand"
@@ -10442,6 +10473,67 @@ class Innovation extends Table
                     'location_to' => 'deck',
                 );
             };
+            break;
+
+        // id 144, Artifacts age 3: Shroud of Turin
+        case "144N1A":
+            // "Return a card from hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "144N1B":
+            // "Return a top card from your board"
+            $color = self::getGameStateValue('auxiliary_value');
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'color' => array($color),
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "144N1C":
+            // "Return a card from score pile of the same color."
+            $color = self::getGameStateValue('auxiliary_value');
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'color' => array($color),
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "144N1D":
+            // "if you did all three, claim an achievement ignoring eligibility."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
             break;
             
        // id 135, Artifacts age 3: Dunhuang Star Chart
@@ -11437,8 +11529,25 @@ class Innovation extends Table
                     if (self::getGameStateValue('auxiliary_value') == 1) { // Red
                         $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Keep revealed card
-                    };
-
+                    }
+                    break;
+                   
+                // id 144, Artifacts age 3: Shroud of Turin
+                case "144N1A":
+                    if ($n > 0) { 
+                        $color = self::getGameStateValue('color_last_selected');
+                        self::setGameStateValue('auxiliary_value', $color);// Flag the chosen color for the next interaction
+                        self::incGameStateValue('step_max', 2); // --> 2 more interaction: see B&C
+                    }
+                    break;
+                    
+                // id 144, Artifacts age 3: Shroud of Turin
+                case "144N1C":
+                    if ($n > 0) { 
+                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see D
+                    }
+                    break;
+                    
                 }   
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -11910,6 +12019,33 @@ class Innovation extends Table
                 $card_2 = self::getCardInfo(self::getGameStateValue('card_id_2'));
                 $remaining_card = $card_1['location'] == 'hand' ? $card_1 : $card_2;
                 self::transferCardFromTo($remaining_card, $choice, 'board');
+                break;
+
+            // id 130, Artifacts age 1: Baghdad Battery
+            case "130N1A":
+                if (self::getGameStateValue('auxiliary_value') == -1) {
+                    // Log the card that is melded first
+                    $card_id = self::getGameStateValue('id_last_selected');
+                    self::setGameStateValue('auxiliary_value', $card_id);
+                    self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'board');
+                }
+                else {
+                    // If you melded two of the same color and they are of different types
+                    $first_card = self::getCardInfo(self::getGameStateValue('auxiliary_value'));
+                    
+                    $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                    self::transferCardFromTo($second_card, $player_id, 'board');
+                    if ($first_card['type'] !== $second_card['type'] &&
+                        $first_card['color'] == $second_card['color'])
+                    {
+                        // "draw and score five 2s."
+                        for($i=1; $i<=5; $i++) {
+                            self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
+                        }
+                    }
+                    self::setGameStateValue('auxiliary_value', -1);
+                }
+                    
                 break;
                 
             default:
