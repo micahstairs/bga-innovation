@@ -10499,35 +10499,8 @@ class Innovation extends Table
                 'splay_direction' => 1
             );
             break;
-
-        // id 143, Artifacts age 3: Necronomicon
-        case "143N1A":
-            // "If red, return all cards in your score pile"
-            if (self::getGameStateValue('auxiliary_value') == 1) { // Red
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-                    
-                    'owner_from' => $player_id,
-                    'location_from' => 'score',
-                    'owner_to' => 0,
-                    'location_to' => 'deck'
-                );     
-            // "If yellow, return all cards in your hand"
-            } else if (self::getGameStateValue('auxiliary_value') == 3) { // Yellow
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-                    
-                    'owner_from' => $player_id,
-                    'location_from' => 'revealed,hand',
-                    'owner_to' => 0,
-                    'location_to' => 'deck',
-                );
-            };
-            break;
             
-       // id 135, Artifacts age 3: Dunhuang Star Chart
+        // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
             $hand_count = self::countCardsInLocation($player_id, 'hand');
             self::setGameStateValue('auxiliary_value', $hand_count);
@@ -10619,99 +10592,32 @@ class Innovation extends Table
                 'location_to' => 'score'
             );
             break;
-            
-       // id 135, Artifacts age 3: Dunhuang Star Chart
-        case "135N1A":
-            $hand_count = self::countCardsInLocation($player_id, 'hand');
-            self::setGameStateValue('auxiliary_value', $hand_count);
-            // "Return all cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
 
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-             
-        // id 137, Artifacts age 2: Excalibur
-        case "137C1A":
-            // "I compel you to transfer a top card of higher value than my
-            // top card of the same color from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'color' => self::getGameStateValueAsArray('auxiliary_value')
-            );
-            break;
-            
-        // id 138, Artifacts age 3: Mjolnir Amulet
-        case "138C1A":    
-            // "I compel you to choose a top card on your board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score'
-             );
-            break;
-            
-        case "138C1B":
-            // "Transfer all cards of that card's color from your board to my score pile!"
-            // TODO: Instead of making the player click on the cards, we should transfer them automatically.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-                
-                'color' => array(self::getGameStateValue('auxiliary_value')) /* the color of the card chosen on the first step */
-             );
-            break;
-            
-        // id 139, Artifacts age 3: Philosopher's Stone
-        case "139N1A":
-            // Return a card from your hand.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                'n' => 1,
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-
-        case "139N1B":
-            // Score a number of cards from your hand equal to the value of the card returned.
-            $age_selected = self::getGameStateValue('age_last_selected');
-            $options = array(
-                'player_id' => $player_id,
-                'n' => $age_selected,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score'
-            );
+        // id 143, Artifacts age 3: Necronomicon
+        case "143N1A":
+            // "If red, return all cards in your score pile"
+            if (self::getGameStateValue('auxiliary_value') == 1) { // Red
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'score',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );     
+            // "If yellow, return all cards in your hand"
+            } else if (self::getGameStateValue('auxiliary_value') == 3) { // Yellow
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'revealed,hand',
+                    'owner_to' => 0,
+                    'location_to' => 'deck',
+                );
+            };
             break;
         
         // id 144, Artifacts age 3: Shroud of Turin
