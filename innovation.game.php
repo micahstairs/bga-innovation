@@ -99,7 +99,8 @@ class Innovation extends Table
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
             'game_type' => 100, // 1 for normal game, 2 for team game
-            'game_rules' => 101 // 1 for last edition, 2 for first edition
+            'game_rules' => 101, // 1 for last edition, 2 for first edition
+            'artifacts_mode' => 102 // 1 for Disabled, 2 for enabled without relics, 3 for enabled with relics
         ));
     }
     
@@ -4646,6 +4647,7 @@ class Innovation extends Table
         self::incStat(1, 'actions_number', $player_id);
         self::incStat(1, 'meld_actions_number', $player_id);
         
+        $last_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
         try {
             self::transferCardFromTo($card, $card['owner'], 'board');
@@ -4657,6 +4659,55 @@ class Innovation extends Table
             $this->gamestate->nextState('justBeforeGameEnd');
             return;
         }
+        
+        // After a meld occurs, the following actions occur in this order
+        // 1) Execute a City icon's effect.
+        // 2) Draw a City.
+        // 3) Dig an artifact, and place it "on display".
+        if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
+            // If artifacts is present, continue.
+            
+            // TODO : When cities is developed, this expression will need to be expanded to include the extra spots.
+                    
+            if ($last_top_card !== null && // Unspoken rule: A pile must exist before a dig event can occur
+                // 1) Cover up a card with a lower (or equal) card.
+                ($last_top_card['age'] >= $card['age'] || 
+                (
+                    // 2) Cover up a card with another card, and both cards have their hexagonal card image in the same location
+                    ($last_top_card['spot_1'] == 0 && $card['spot_1'] == 0 ) || 
+                    ($last_top_card['spot_2'] == 0 && $card['spot_2'] == 0 ) || 
+                    ($last_top_card['spot_3'] == 0 && $card['spot_3'] == 0 ) ||
+                    ($last_top_card['spot_4'] == 0 && $card['spot_4'] == 0 )
+                )
+                ))
+            {
+                $top_artifact_card = self::getDeckTopCard($last_top_card['age'], 1);
+
+                if ($top_artifact_card == null) {
+                    // If there are no artifacts of the appropriate age, then ignore the dig event.
+                    self::notifyPlayer($card['owner'], "log", clienttranslate('No Artifact cards in the ${age} deck.  Dig event will be ignored.'), array(
+                            'age' => $last_top_card['age']));
+                }
+                else if(self::getDeckTopCard($last_top_card['age'], 0) == null) {
+                    // If there are no base cards of the appropriate age, then ignore the dig event.
+                    self::notifyPlayer($card['owner'], "log", clienttranslate('No Base cards in the ${age} deck.  Dig event will be ignored.'), array(
+                            'age' => $last_top_card['age']));
+                }
+                else {
+                    // TODO : Once there is a display to move to, this will move to the display.
+                    // TODO: enforce that only a single card can be in the display
+                    // For now, put the top artifact card of the appropriate age in the melder's hand.
+                     self::transferCardFromTo($top_artifact_card, $card['owner'], 'hand');
+                     
+                     // TODO: Seizing a relic
+                     // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn.
+                     // You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
+                }
+            }
+        }
+        // 4) Promote a foreshadowed card.
+        // 5) Execute a figure's "when" karma effect.
+
         
         // End of player action
         self::trace('playerTurn->interPlayerTurn (meld)');
