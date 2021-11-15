@@ -241,6 +241,11 @@ class Innovation extends Table
         // Number of achievements needed to win: 6 with 2 players, 5 with 3 players, 4 with 4 players and 6 for team game
         $number_of_achievements_needed_to_win = $individual_game ? 8 - count($players) : 6;
         self::setGameStateInitialValue('number_of_achievements_needed_to_win', $number_of_achievements_needed_to_win);
+
+        // Add one required achievement for each expansion
+        if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
+            self::incGameStateValue('number_of_achievements_needed_to_win', 1);
+        }
         
         // Flag used to know if we are still on turn0 (1) or not (0)
         self::setGameStateInitialValue('turn0', 1);
@@ -2345,66 +2350,35 @@ class Innovation extends Table
         
         foreach($players as $player_id => $player) {
             if ($player['player_score'] == $number_of_achievements_winner) {
-                $winners[] = $player_id; // Far most frequent case: $winners has only one element, but who knows... (extremely unlikely but still possible)
-            }
-            else if ($player['player_score'] > $number_of_achievements_winner) { // One player got more achievements than necessary... (extremely unlikely but still possible)
+                $winners[] = $player_id;
+            } else if ($player['player_score'] > $number_of_achievements_winner) {
                 $number_of_achievements_winner = $player['player_score'];
                 $winners = array($player_id);
             }
         }
         
         foreach ($winners as $player_id) {
-            if ($number_of_achievements_winner == $number_of_achievements_needed_to_win) { // Far most frequent case
-                if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
-                    self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${player_name} has got ${n} achievements. He wins!'), array(
-                        'n' => $number_of_achievements_winner,
-                        'player_name' => self::getPlayerNameFromId($player_id)
-                    ));
-                    
-                    self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${You} have got ${n} achievements. You win!'), array(
-                        'n' => $number_of_achievements_winner,
-                        'You' => 'You'
-                    ));
-                }
-                else { // Team game
-                    $teammate_id = self::getPlayerTeammate($player_id);
-                    $winning_team = array($player_id, $teammate_id);
-                    self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: The other team has got ${n} achievements. They win!'), array(
+            if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
+                self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${player_name} has got ${n} achievements. He wins!'), array(
+                    'n' => $number_of_achievements_winner,
+                    'player_name' => self::getPlayerNameFromId($player_id)
+                ));
+                
+                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${You} have got ${n} achievements. You win!'), array(
+                    'n' => $number_of_achievements_winner,
+                    'You' => 'You'
+                ));
+            } else { // Team game
+                $teammate_id = self::getPlayerTeammate($player_id);
+                $winning_team = array($player_id, $teammate_id);
+                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: The other team has got ${n} achievements. They win!'), array(
+                    'n' => $number_of_achievements_winner
+                ));
+                
+                foreach($winning_team as $player_id) {
+                    self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: Your team has got ${n} achievements. You win!'), array(
                         'n' => $number_of_achievements_winner
                     ));
-                    
-                    foreach($winning_team as $player_id) {
-                        self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: Your team has got ${n} achievements. You win!'), array(
-                            'n' => $number_of_achievements_winner
-                        ));
-                    }
-                }
-            }
-            else { // Extremely unlikely
-                if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
-                    self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${player_name} has got ${n} achievements (more than necessary!!!). He wins!'), 
-                    array(
-                        'n' => $number_of_achievements_winner,
-                        'player_name' => self::getPlayerNameFromId($player_id)
-                    ));
-                    
-                    self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: ${You} have got ${n} achievements (more than necessary!!!). You win!'), array(
-                        'n' => $number_of_achievements_winner,
-                        'You' => 'You'
-                    ));
-                }
-                else { // Team game
-                    $teammate_id = self::getPlayerTeammate($player_id);
-                    $winning_team = array($player_id, $teammate_id);
-                    self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: The other team has got ${n} achievements (more than necessary!!!). They win!'), array(
-                        'n' => $number_of_achievements_winner
-                    ));
-                    
-                    foreach($winning_team as $player_id) {
-                        self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY ACHIEVEMENTS: Your team has got ${n} achievements (more than necessary!!!). You win!'), array(
-                            'n' => $number_of_achievements_winner
-                        ));
-                    }
                 }
             }
         }
@@ -2423,8 +2397,7 @@ class Innovation extends Table
                 'You' => 'You',
                 'age_10' => $age_10
             ));
-        }
-        else { // Team play
+        } else { // Team play
             self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'player_name' => self::getPlayerNameFromId($player_id),
                 'age_10' => $age_10
@@ -2447,8 +2420,7 @@ class Innovation extends Table
             self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${You} meet the victory condition. You win!'), array(
                 'You' => 'You'
             ));
-        }
-        else { // Team play
+        } else { // Team play
             $teammate_id = self::getPlayerTeammate($player_id);
             $winning_team = array($player_id, $teammate_id);
             $dogma_card_id = self::getGameStateValue('dogma_card_id');
@@ -2459,8 +2431,7 @@ class Innovation extends Table
                 self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: Your team meets the victory condition. You win!'), array());
                 
                 self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: Your team meets the victory condition. You win!'), array());
-            }
-            else {
+            } else {
                 self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. The other team wins!'), array(
                     'player_name' => self::getPlayerNameFromId($player_id)
                 ));
@@ -3326,7 +3297,7 @@ class Innovation extends Table
         }
         
         // Was it the last achievement needed for the player for winning?      
-        if ($player['player_score'] == self::getGameStateValue('number_of_achievements_needed_to_win')) {
+        if ($player['player_score'] >= self::getGameStateValue('number_of_achievements_needed_to_win')) {
             self::setGameStateValue('game_end_type', 0);
             self::trace('EOG bubbled from self::incrementBGAScore');
             throw new EndOfGame();
