@@ -7781,8 +7781,9 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
+            // id 133, Artifacts age 2: Dead Sea Scrolls
             case "133N1":
-                // "Draw an Artifact of value equal to the value of your highest top card."
+                // "Draw an Artifact of value equal to the value of your highest top card"
                 self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', false, 1);
                 break;
 
@@ -7808,6 +7809,11 @@ class Innovation extends Table
                 } else {
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 };
+                break;
+            
+            // id 144, Artifacts age 3: Shroud of Turin
+            case "144N1":
+                $step_max = 1; // --> 1 interaction
                 break;
 
             // id 135, Artifacts age 3: Dunhuang Star Chart
@@ -10706,6 +10712,69 @@ class Innovation extends Table
                 'location_to' => 'score'
             );
             break;
+        
+        // id 144, Artifacts age 3: Shroud of Turin
+        case "144N1A":
+            // "Return a card from hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "144N1B":
+            // "Return a top card from your board of the returned card's color"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array(self::getGameStateValue('color_last_selected'))
+            );
+            break;
+
+        case "144N1C":
+            // "Return a card from score pile of the returned card's color"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array(self::getGameStateValue('color_last_selected'))
+            );
+            break;
+
+        case "144N1D":
+            // "Claim an achievement ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
+            break;
             
         default:
             // This should not happens
@@ -11505,7 +11574,7 @@ class Innovation extends Table
                     if ($n > 0) { 
                         $color = self::getGameStateValue('color_last_selected');
                         self::setGameStateValue('auxiliary_value', $color);// Flag the chosen color for the next interaction
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incGameStateValue('step_max', 1); // --> 1 more interaction
                     }
                     break;
 
@@ -11514,9 +11583,33 @@ class Innovation extends Table
                     if (self::getGameStateValue('auxiliary_value') == 1) { // Red
                         $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Keep revealed card
-                    };
+                    }
+                    break;
 
-                }   
+                // id 144, Artifacts age 3: Shroud of Turin
+                case "144N1A":
+                    if ($n > 0) {
+                        self::setGameStateValue('auxiliary_value', 1);
+                        self::incGameStateValue('step_max', 2); // --> 2 more interactions
+                    }
+                    break;
+                
+                case "144N1B":
+                    if ($n > 0) {
+                        self::incGameStateValue('auxiliary_value', 1);
+                    }
+                    break;
+                
+                case "144N1C":
+                    if ($n > 0) {
+                        // "If you did all three"
+                        if (self::getGameStateValue('auxiliary_value') + 1 === 3) {
+                            self::incGameStateValue('step_max', 1); // --> 1 more interaction
+                        }
+                    }
+                    break;
+
+                }
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             } catch (EndOfGame $e) {
