@@ -1815,7 +1815,7 @@ function (dojo, declare) {
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
             
-            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'dark', (card.i_demand_effect_1_is_compel ? 'i_compel ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
+            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
             var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
             var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
@@ -2383,7 +2383,7 @@ function (dojo, declare) {
             }
             
             var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
-            var i_compel = dojo.query("#" + HTML_id + " .i_demand_effect_1.i_compel").length == 1;
+            var is_compel_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1.is_compel_effect").length == 1;
             if (i_demand_effect_only) {
                 // Get dogma icon
                 var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
@@ -2398,14 +2398,14 @@ function (dojo, declare) {
                     if (this.counter.ressource_count[player_id][dogma_icon].getValue() < player_total) {
                         player_total_is_min_value = false;
                     }
-                    if (this.counter.ressource_count[player_id][dogma_icon].getValue() > player_total) {
+                    if (this.counter.ressource_count[player_id][dogma_icon].getValue() >= player_total) {
                         player_total_is_max_value = false;
                     }
                 }
                 // Leave an opportunity for the player to cancel a demand or compel that can't target any players
-                if (!i_compel && player_total_is_min_value) {
+                if (!is_compel_effect && player_total_is_min_value) {
                     this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"), dojo.hitch(this, ajax_call));
-                } else if (i_compel && player_total_is_max_value) {
+                } else if (is_compel_effect && player_total_is_max_value) {
                     this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"), dojo.hitch(this, ajax_call));
                 } else {
                     // Just make the AJAX call

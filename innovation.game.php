@@ -10587,7 +10587,7 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'score',
                 
-                'color' => array(self::getGameStateValue('auxiliary_value')) /* the color of the card chosen on the first step */
+                'color' => array(self::getGameStateValue('color_last_selected'))
              );
             break;
             
@@ -10671,6 +10671,7 @@ class Innovation extends Table
             
         case "138C1B":
             // "Transfer all cards of that card's color from your board to my score pile!"
+            // TODO: Instead of making the player click on the cards, we should transfer them automatically.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -11571,9 +11572,7 @@ class Innovation extends Table
                 	
                 // id 138, Artifacts age 3: Mjolnir Amulet
                 case "138C1A":
-                    if ($n > 0) { 
-                        $color = self::getGameStateValue('color_last_selected');
-                        self::setGameStateValue('auxiliary_value', $color);// Flag the chosen color for the next interaction
+                    if ($n > 0) {
                         self::incGameStateValue('step_max', 1); // --> 1 more interaction
                     }
                     break;
