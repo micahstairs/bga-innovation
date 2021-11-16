@@ -2982,6 +2982,8 @@ class Innovation extends Table
         )));
     }
 
+
+    // TODO: There is a bug in this function where it does not return the top card on each pile if the stacks are of different sizes.
     function getTopCardsOnBoard($player_id) {
         /**
         Get all of the top cards on a player board
@@ -7924,12 +7926,12 @@ class Innovation extends Table
             
             // id 149, Artifacts age 4: Molasses Reef Caravel
             case "149N1":
-                $step_max = 4; // --> 4 interactions: see B
+                $step_max = 4; // --> 4 interactions
                 break;
 
             // id 150, Artifacts age 4: Hunt-Lenox Globe
             case "150N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1; // --> 1 interaction
                 break;
             
             // id 151, Artifacts age 4: Moses
@@ -7955,20 +7957,19 @@ class Innovation extends Table
 
             // id 154, Artifacts age 4: Abell Gallery Harpsichord
             case "154N1":
-                // For each value of top card on your board appearing exactly once
-                // TODO: getTopCardsOnBoard does not return the top card on each pile if the 
-                // stacks are of different depths.
-                $topcards = self::getTopCardsOnBoard($player_id);
-                $score_bins = array(0,0,0,0,0,0,0,0,0,0);  // create a bin for each age
-                foreach ($topcards as $checking_card) {
-                    $score_bins[$checking_card['age'] - 1]++;
+                // "For each value of top card on your board appearing exactly once draw and score a card of that value in ascending order"
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                $top_values = array();
+                foreach ($top_cards as $top_card) {
+                    // TODO: Handle 'Battleship Yamato' case.
+                    $top_values[] = $top_card['age'];
                 }
-                $i = 1;
-                foreach ($score_bins as $bin) {
-                    if ($bin === 1) {
-                        $score_card = self::executeDraw($player_id, $i, 'score');
+                asort($top_values);
+                foreach (array_count_values($top_values) as $value => $count) {
+                    // Appears exactly once
+                    if ($count == 1) {
+                        self::executeDraw($player_id, $value, 'score');
                     }
-                    $i++;
                 }
                 break;
                 
@@ -10744,10 +10745,11 @@ class Innovation extends Table
             
         // id 149, Artifacts age 4: Molasses Reef Caravel
         case "149N1A":
-            // Return all cards from your hand.
+            // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => 0,
@@ -10756,39 +10758,44 @@ class Innovation extends Table
             break;
             
         case "149N1B":
-            // Meld a blue card from your hand.
+            // "Meld a blue card from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
-                'color' => array(0), // blue
+                'can_pass' => false,
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'color' => array(0) // blue
             );
             break;
 
         case "149N1C":
-            // Score a card from your hand.
+            // "Score a card from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
+                'can_pass' => false,
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'score',
+
                 'score_keyword' => true
             );
             break;
 
         case "149N1D":
-            // Return a card from your score pile.
+            // "Return a card from your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
+                'can_pass' => false,
+
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => 0,
@@ -10798,46 +10805,53 @@ class Innovation extends Table
             
         // id 150, Artifacts age 4: Hunt-Lenox Globe
         case "150N1A":
-            $hand_count = self::countCardsInLocation($player_id, 'hand');
-            if ($hand_count < 4) {
-                // Return all non-green top cards from your board.
+            // "If you have fewer than four cards in your hand"
+            if ($self::countCardsInLocation($player_id, 'hand') < 4) {
+                // "Return all non-green top cards from your board"
                 $options = array(
                     'player_id' => $player_id,
                     'can_pass' => false,
-                    'color' => array(0,1,3,4),
-                    'auxiliary_value' => 1,
+
                     'owner_from' => $player_id,
                     'location_from' => 'board',
                     'owner_to' => 0,
-                    'location_to' => 'deck'
+                    'location_to' => 'deck',
+
+                    'color' => array(0,1,3,4),
+                    'auxiliary_value' => 1 // Indicate that player had fewer than four cards in hands
                 );
                 self::incGameStateValue('step_max', 1);
-            }
-            else {// If first condition isn't met, still meld a card.
+
+            // "Meld a card from your hand"
+            } else {
                 $options = array(
                     'player_id' => $player_id,
-                    'can_pass' => false,
                     'n' => 1,
-                    'auxiliary_value' => 0,
+                    'can_pass' => false,
+
                     'owner_from' => $player_id,
                     'location_from' => 'hand',
                     'owner_to' => $player_id,
-                    'location_to' => 'board'
+                    'location_to' => 'board',
+
+                    'auxiliary_value' => 0 // // Indicate that player had at least four cards in hands
                 );
             }
             break;
             
         case "150N1B":
-           // Meld a card from your hand.
+           // "Meld a card from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
-                'auxiliary_value' => 0,
+                'can_pass' => false,
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'auxiliary_value' => 0
             );
             break;
 
@@ -11691,7 +11705,7 @@ class Innovation extends Table
                     
                 // id 149, Artifacts age 4: Molasses Reef Caravel
                 case "149N1A":
-                    // Draw three 4's.
+                    // "Draw three 4's"
                     self::executeDraw($player_id, 4);
                     self::executeDraw($player_id, 4);
                     self::executeDraw($player_id, 4);
@@ -11700,8 +11714,8 @@ class Innovation extends Table
                 // id 150, Artifacts age 4: Hunt-Lenox Globe
                 case "150N1A":
                     if (self::getGameStateValue('auxiliary_value') == 1) {
-                        // Draw a 5 for each card returned.
-                        for($i=1; $i<=$n; $i++) {
+                        // "Draw a 5 for each card returned"
+                        for ($i = 1; $i <= $n; $i++) {
                             self::executeDraw($player_id, 5);
                         }
                     }
