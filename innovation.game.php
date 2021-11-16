@@ -7892,7 +7892,7 @@ class Innovation extends Table
                 do {
                     $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
                     if ($card['color'] == 4) { // "If it is purple, score it"
-                        self::transferCardFromTo($card, $player_id, 'score');
+                        self::transferCardFromTo($card, $player_id, 'score', false, true);
                     } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
                         self::transferCardFromTo($card, $player_id, 'board', true);
                     } else { // Put it in hand
@@ -7922,6 +7922,16 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
             
+            // id 149, Artifacts age 4: Molasses Reef Caravel
+            case "149N1":
+                $step_max = 4; // --> 4 interactions: see B
+                break;
+
+            // id 150, Artifacts age 4: Hunt-Lenox Globe
+            case "150N1":
+                $step_max = 1; // --> 1 interactions: see B
+                break;
+            
             // id 151, Artifacts age 4: Moses
             case "151C1":    
                 // "I demand you transfer all top cards with a crown from your board to my score pile"
@@ -7942,8 +7952,26 @@ class Innovation extends Table
             case "151N1":
                 $step_max = 1; // --> 1 interaction
                 break;
-                
 
+            // id 154, Artifacts age 4: Abell Gallery Harpsichord
+            case "154N1":
+                // For each value of top card on your board appearing exactly once
+                // TODO: getTopCardsOnBoard does not return the top card on each pile if the 
+                // stacks are of different depths.
+                $topcards = self::getTopCardsOnBoard($player_id);
+                $score_bins = array(0,0,0,0,0,0,0,0,0,0);  // create a bin for each age
+                foreach ($topcards as $checking_card) {
+                    $score_bins[$checking_card['age'] - 1]++;
+                }
+                $i = 1;
+                foreach ($score_bins as $bin) {
+                    if ($bin === 1) {
+                        $score_card = self::executeDraw($player_id, $i, 'score');
+                    }
+                    $i++;
+                }
+                break;
+                
             default:
                 // This should not happens
                 //throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section A: '{code}'"), array('code' => $code)));
@@ -10713,6 +10741,105 @@ class Innovation extends Table
                 'location_to' => 'score'
             );
             break;
+            
+        // id 149, Artifacts age 4: Molasses Reef Caravel
+        case "149N1A":
+            // Return all cards from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+            
+        case "149N1B":
+            // Meld a blue card from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'color' => array(0), // blue
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
+
+        case "149N1C":
+            // Score a card from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                'score_keyword' => true
+            );
+            break;
+
+        case "149N1D":
+            // Return a card from your score pile.
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+            
+        // id 150, Artifacts age 4: Hunt-Lenox Globe
+        case "150N1A":
+            $hand_count = self::countCardsInLocation($player_id, 'hand');
+            if ($hand_count < 4) {
+                // Return all non-green top cards from your board.
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    'color' => array(0,1,3,4),
+                    'auxiliary_value' => 1,
+                    'owner_from' => $player_id,
+                    'location_from' => 'board',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );
+                self::incGameStateValue('step_max', 1);
+            }
+            else {// If first condition isn't met, still meld a card.
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    'n' => 1,
+                    'auxiliary_value' => 0,
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'board'
+                );
+            }
+            break;
+            
+        case "150N1B":
+           // Meld a card from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                'n' => 1,
+                'auxiliary_value' => 0,
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
 
         // id 151, Artifacts age 4: Moses
         case "151N1A":    
@@ -10730,7 +10857,7 @@ class Innovation extends Table
                 'with_icon' => 1 /* tower */
             );
             break;
-           
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -11561,7 +11688,24 @@ class Innovation extends Table
                         }
                     }
                     break;
-
+                    
+                // id 149, Artifacts age 4: Molasses Reef Caravel
+                case "149N1A":
+                    // Draw three 4's.
+                    self::executeDraw($player_id, 4);
+                    self::executeDraw($player_id, 4);
+                    self::executeDraw($player_id, 4);
+                    break;
+                    
+                // id 150, Artifacts age 4: Hunt-Lenox Globe
+                case "150N1A":
+                    if (self::getGameStateValue('auxiliary_value') == 1) {
+                        // Draw a 5 for each card returned.
+                        for($i=1; $i<=$n; $i++) {
+                            self::executeDraw($player_id, 5);
+                        }
+                    }
+                    break;
                 }
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
