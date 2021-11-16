@@ -7902,28 +7902,53 @@ class Innovation extends Table
             // id 145, Artifacts age 4: Petition of Right
             case "145C1":
                 $number = 0;
-                for($color=0; $color<5; $color++) {
-                    if (self::boardPileHasRessource($player_id, $color, 4 /* tower */)) { // There is at least one visible tower in that color
+
+                $no_top_card_with_tower = true;
+                for($color = 0; $color < 5 ; $color++) {
+                    $top_card = self::getTopCardOnBoard($player_id, $color);
+                    if ($top_card !== null && self::hasRessource($top_card, 4)) { // This top card is present, with a tower on it
                         $number++;
                     }
                 }
                 if ($number == 0){ // $no cards are transferred
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${towers}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${towers}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top card with a ${tower} on your board.'), array('You' => 'You', 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${tower} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
                     break;
                 }
                 else if ($number == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color with one or more visible ${towers}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${towers}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top card with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                 }
                 else { // $number > 1
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${towers}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${towers}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'towers' => $tower));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top cards with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top cards with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                 }
                 self::setGameStateValue('auxiliary_value', $number);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
+            
+            // id 151, Artifacts age 4: Moses
+            case "151C1":    
+                // "I demand you transfer all top cards with a crown from your board to my score pile"
+                $no_top_card_with_crown = true;
+                for($color = 0; $color < 5 ; $color++) {
+                    $top_card = self::getTopCardOnBoard($player_id, $color);
+                    if ($top_card !== null && self::hasRessource($top_card, 1)) { // This top card is present, with a crown on it
+                        $no_top_card_with_crown = false;
+                        self::transferCardFromTo($top_card, $launcher_id, 'score');
+                    }
+                }
+                if ($no_top_card_with_crown) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top card with a ${crown} on your board.'), array('You' => 'You', 'crown' => $crown));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${crown} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'crown' => $crown));
+                }
+                break;
+
+            case "151N1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
                 
+
             default:
                 // This should not happens
                 //throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section A: '{code}'"), array('code' => $code)));
@@ -10693,7 +10718,24 @@ class Innovation extends Table
                 'location_to' => 'score'
             );
             break;
-            
+
+        // id 151, Artifacts age 4: Moses
+        case "151N1A":    
+            // "Score a top card with a crown"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'with_icon' => 1 /* tower */
+            );
+            break;
+           
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
