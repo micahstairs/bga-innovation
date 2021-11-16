@@ -7902,36 +7902,29 @@ class Innovation extends Table
             // id 145, Artifacts age 4: Petition of Right
             case "145C1":
                 $number = 0;
-
                 $no_top_card_with_tower = true;
-                for($color = 0; $color < 5 ; $color++) {
+                for ($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null && self::hasRessource($top_card, 4)) { // This top card is present, with a tower on it
                         $number++;
                     }
                 }
-                if ($number == 0){ // $no cards are transferred
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top card with a ${tower} on your board.'), array('You' => 'You', 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${tower} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
-                    break;
-                }
-                else if ($number == 1) {
+                if ($number == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top card with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
-                }
-                else { // $number > 1
+                } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top cards with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top cards with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                 }
                 self::setGameStateValue('auxiliary_value', $number);
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1; // --> 1 interaction
                 break;
             
             // id 151, Artifacts age 4: Moses
             case "151C1":    
                 // "I demand you transfer all top cards with a crown from your board to my score pile"
                 $no_top_card_with_crown = true;
-                for($color = 0; $color < 5 ; $color++) {
+                for ($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null && self::hasRessource($top_card, 1)) { // This top card is present, with a crown on it
                         $no_top_card_with_crown = false;
@@ -7939,13 +7932,13 @@ class Innovation extends Table
                     }
                 }
                 if ($no_top_card_with_crown) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top card with a ${crown} on your board.'), array('You' => 'You', 'crown' => $crown));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${crown} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'crown' => $crown));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top cards with a ${crown} on your board.'), array('You' => 'You', 'crown' => $crown));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top cards with a ${crown} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'crown' => $crown));
                 }
                 break;
 
             case "151N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1; // --> 1 interaction
                 break;
                 
 
