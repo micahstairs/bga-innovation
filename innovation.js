@@ -340,6 +340,10 @@ function (dojo, declare) {
                     $(`deck_count_${type}_${age}`).innerHTML = num_cards;
                 }
             }
+            if (!gamedatas.artifacts_expansion_enabled) {
+                dojo.byId('deck_set_2').style.display = 'none';
+                dojo.byId('deck_set_4').style.display = 'none';
+            }
             
             // AVAILABLE ACHIEVEMENTS
             // Creation of the zone

@@ -378,6 +378,8 @@ class Innovation extends Table
             $result['debug_card_list'] = $name_list;
         }
         //******
+
+        $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') != 1;
     
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         
