@@ -2997,58 +2997,56 @@ class Innovation extends Table
     }
 
 
-    // TODO: There is a bug in this function where it does not return the top card on each pile if the stacks are of different sizes.
     function getTopCardsOnBoard($player_id) {
         /**
-        Get all of the top cards on a player board
-        (null if the player has no cards on his board)
+        Get all of the top cards on a player board, or null if the player has no cards on his board
         **/
         return self::attachTextualInfoToList(self::getCollectionFromDb(self::format("
                 SELECT
                     *
                 FROM
-                    card
+                    card AS a
+                LEFT JOIN
+                    (SELECT
+                        color, MAX(position) AS position
+                    FROM
+                        card
+                    WHERE
+                        owner = {player_id} AND
+                        location = 'board'
+                    GROUP BY
+                        color) AS b ON a.color = b.color
                 WHERE
-                    card.owner = {player_id} AND
-                    card.location = 'board' AND
-                    card.position = (
-                        SELECT
-                            MAX(position) AS position
-                        FROM
-                            card
-                        WHERE
-                            owner = {player_id} AND
-                            location = 'board' AND
-                            color = card.color
-                    )
+                    a.owner = {player_id} AND
+                    a.location = 'board' AND
+                    a.position = b.position
         ",
             array('player_id' => $player_id)
         )));
     }
     
-    function getIfTopCard($id) {
+    function getIfTopCardOnBoard($id) {
         /**
-        Returns the card if card is a top card.
-        null if isn't present as a top card
+        Returns the card if card is a top card on a board, or null if it isn't present as a top card
         **/
         return self::attachTextualInfo(self::getObjectFromDB(self::format("
             SELECT
                 *
             FROM
-                card
+                card AS a
+            LEFT JOIN
+                (SELECT
+                    owner, color, MAX(position) AS position
+                FROM
+                    card
+                WHERE
+                    location = 'board'
+                GROUP BY
+                    owner, color) AS b ON a.owner = b.owner AND a.color = b.color
             WHERE
-                card.id = {id} AND
-                card.location = 'board' AND
-                card.position = (
-                    SELECT
-                        MAX(position) AS position
-                    FROM
-                        card
-                    WHERE
-                        owner = card.owner AND
-                        location = 'board' AND
-                        color = card.color
-                )
+                a.id = {id} AND
+                a.location = 'board' AND
+                a.position = b.position
             ",
             array('id' => $id)
         )));
@@ -8364,6 +8362,7 @@ class Innovation extends Table
                 'player_id' => $player_id,
                 'can_pass' => true,
                 
+                // TODO: This is technically a bug in 2v2 games where "choose an opponent" isn't the same as "choose another player".
                 'choose_opponent' => true
             );
             break;
@@ -11689,7 +11688,7 @@ class Innovation extends Table
                     }
                     // "If Ark of the Covenant is a top card on any board, transfer it to your hand."
                     // This happens even if the first part does not.
-                    $ark_card = self::getIfTopCard(123);
+                    $ark_card = self::getIfTopCardOnBoard(123);
                     if ($ark_card !== null) {
                         self::transferCardFromTo($ark_card, $player_id, 'hand');
                     }
