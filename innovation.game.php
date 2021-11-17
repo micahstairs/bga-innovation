@@ -2266,39 +2266,6 @@ class Innovation extends Table
         ));
     }
     
-    /** Notification system for splay **/
-    function getSplayDirectionInfo($you_must, $player_must, $selectable_colors, $colors, $splay_direction, $can_pass, $can_stop) {
-        $splay_direction = self::getSplayDirectionInClear($splay_direction);
-        
-        if ($colors === null)  { // 5 colors
-            $message_for_player = self::format($clienttranslate('{You must} splay any one color of your cards {splay_direction}'), array('You must' => $you_must, 'splay_direction' => $splay_direction));
-            $message_for_others = self::format($clienttranslate('{player must} splay any one color of his card cards {splay_direction}'), array('You must' => $you_must, 'splay_direction' => $splay_direction));
-        }
-        else {
-            $message_for_player = self::format($clienttranslate('{You must} splay your {color} cards {splay_direction}'), array('You must' => $you_must, 'color' => $colors, 'splay_direction' => $splay_direction));
-            $message_for_others = self::format($clienttranslate('{player must} splay his {color} cards {splay_direction}'), array('You must' => $you_must, 'color' => $colors, 'splay_direction' => $splay_direction));
-        }
-        
-        if ($can_pass) {
-            $can_pass = " " . clienttranslate("or pass");
-            $message_for_player .= $can_pass;
-            $message_for_others .= $can_pass;
-        }
-        else if ($can_stop) {
-            $can_stop = " " . clienttranslate("or stop");
-            $message_for_player .= $can_stop;
-            $message_for_others .= $can_stop;
-        }
-        $message_for_player .= clienttranslate(":");
-        $message_for_others .= clienttranslate(":");
-        
-        return array(
-            'selectable_colors' => $selectable_colors,
-            'message_for_player' => $message_for_player,
-            'message_for_others' => $message_for_others
-        );
-    }
-    
     function notifyForSplay($player_id, $color, $splay_direction, $force_unsplay) {        
         if ($splay_direction == 0 && !$force_unsplay) { // Unsplay event
             $color_in_clear = self::getColorInClear($color);
