@@ -1612,7 +1612,7 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-    155 => array('name' => clienttranslate('Boerhavve Silver Microscope'),
+155 => array('name' => clienttranslate('Boerhavve Silver Microscope'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
