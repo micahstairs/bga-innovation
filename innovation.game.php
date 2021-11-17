@@ -4645,7 +4645,7 @@ class Innovation extends Table
         self::incStat(1, 'actions_number', $player_id);
         self::incStat(1, 'meld_actions_number', $player_id);
         
-        $last_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
+        $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
         try {
             self::transferCardFromTo($card, $card['owner'], 'board');
@@ -4658,38 +4658,22 @@ class Innovation extends Table
             return;
         }
         
-        // After a meld occurs, the following actions occur in this order
+        // After a meld occurs, the following actions occur in this order:
         // 1) Execute a City icon's effect.
         // 2) Draw a City.
         // 3) Dig an artifact, and place it "on display".
         if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
-            // If artifacts is present, continue.
-            
-            // TODO : When cities is developed, this expression will need to be expanded to include the extra spots.
-                    
-            if ($last_top_card !== null && // Unspoken rule: A pile must exist before a dig event can occur
-                // 1) Cover up a card with a lower (or equal) card.
-                ($last_top_card['age'] >= $card['age'] || 
-                (
-                    // 2) Cover up a card with another card, and both cards have their hexagonal card image in the same location
-                    ($last_top_card['spot_1'] == 0 && $card['spot_1'] == 0 ) || 
-                    ($last_top_card['spot_2'] == 0 && $card['spot_2'] == 0 ) || 
-                    ($last_top_card['spot_3'] == 0 && $card['spot_3'] == 0 ) ||
-                    ($last_top_card['spot_4'] == 0 && $card['spot_4'] == 0 )
-                )
-                ))
-            {
-                // You first draw up through any empty ages (base cards)
-                // before looking at the relevant artifact pile
-                $age_draw = self::getAgeToDrawIn($player_id, $last_top_card['age']);
+                
+            // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location
+            if ($previous_top_card !== null && ($previous_top_card['age'] >= $card['age'] || self::haveOverlappingHexagonIcons($previous_top_card, $card))) {
+                
+                // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
+                $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['age']);
                 $top_artifact_card = self::getDeckTopCard($age_draw, 1);
                 
                 if ($top_artifact_card == null) {
-                    // If there are no artifacts of the appropriate age, then ignore the dig event.
-                    self::notifyPlayer($card['owner'], "log", clienttranslate('No Artifact cards in the ${age} deck.  Dig event will be ignored.'), array(
-                            'age' => $age_draw));
-                }
-                else {
+                    self::notifyPlayer($card['owner'], "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
+                } else {
                     // TODO : Once there is a display to move to, this will move to the display.
                     // TODO: enforce that only a single card can be in the display
                     // For now, put the top artifact card of the appropriate age in the melder's hand.
@@ -4708,6 +4692,15 @@ class Innovation extends Table
         // End of player action
         self::trace('playerTurn->interPlayerTurn (meld)');
         $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function haveOverlappingHexagonIcons($card_1, $card_2) {
+        // TODO: When Cities expansion is added, this expression will need to be expanded to include the extra 2 spots.
+        return
+            ($card_1['spot_1'] == 0 && $card_2['spot_1'] == 0) || 
+            ($card_1['spot_2'] == 0 && $card_2['spot_2'] == 0) || 
+            ($card_1['spot_3'] == 0 && $card_2['spot_3'] == 0) ||
+            ($card_1['spot_4'] == 0 && $card_2['spot_4'] == 0);
     }
     
     function dogma($card_id) {
