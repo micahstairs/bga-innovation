@@ -4679,17 +4679,15 @@ class Innovation extends Table
                 )
                 ))
             {
-                $top_artifact_card = self::getDeckTopCard($last_top_card['age'], 1);
-
+                // You first draw up through any empty ages (base cards)
+                // before looking at the relevant artifact pile
+                $age_draw = self::getAgeToDrawIn($player_id, $last_top_card['age']);
+                $top_artifact_card = self::getDeckTopCard($age_draw, 1);
+                
                 if ($top_artifact_card == null) {
                     // If there are no artifacts of the appropriate age, then ignore the dig event.
                     self::notifyPlayer($card['owner'], "log", clienttranslate('No Artifact cards in the ${age} deck.  Dig event will be ignored.'), array(
-                            'age' => $last_top_card['age']));
-                }
-                else if(self::getDeckTopCard($last_top_card['age'], 0) == null) {
-                    // If there are no base cards of the appropriate age, then ignore the dig event.
-                    self::notifyPlayer($card['owner'], "log", clienttranslate('No Base cards in the ${age} deck.  Dig event will be ignored.'), array(
-                            'age' => $last_top_card['age']));
+                            'age' => $age_draw));
                 }
                 else {
                     // TODO : Once there is a display to move to, this will move to the display.
