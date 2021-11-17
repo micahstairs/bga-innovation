@@ -348,8 +348,15 @@ class Innovation extends Table
                 self::executeDraw($player_id, 1);
             }
         }
-        
-        // Activate first player (which is in general a good idea :))
+
+        // Add information to the database about which cards have a demand.
+        foreach ($this->textual_card_infos as $id => $card_info) {
+            if ($card_info['i_demand_effect_1'] !== null) {
+                self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
+            }
+        }
+
+        // Activate first player
         $this->activeNextPlayer();
 
         /************ End of the game initialization *****/
