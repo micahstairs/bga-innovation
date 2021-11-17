@@ -292,7 +292,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('color_array', -1); // List of selectable colors encoded in a single value
         self::setGameStateInitialValue('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         self::setGameStateInitialValue('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
-        self::setGameStateInitialValue('not_id', -1); // id of a card which cannot be selcected, else -2
+        self::setGameStateInitialValue('not_id', -1); // id of a card which cannot be selected, else -2
         self::setGameStateInitialValue('card_id_1', -1); // id of a card which is allowed to be selected, else -2
         self::setGameStateInitialValue('card_id_2', -1); // id of a card which is allowed to be selected, else -2
         self::setGameStateInitialValue('card_id_3', -1); // id of a card which is allowed to be selected, else -2
@@ -338,6 +338,11 @@ class Innovation extends Table
         self::initStat('player', 'i_demand_effects_number', 0);
         self::initStat('player', 'sharing_effects_number', 0);
         
+        // Remove cards from expansions that are not in use.
+        if (self::getGameStateValue('artifacts_mode') == 1) {
+            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE id > 109");
+        }
+
         // Card shuffling in decks
         self::shuffle();
         
@@ -756,7 +761,7 @@ class Innovation extends Table
     function shuffle() {
         /** Shuffle all cards in their piles grouped by type and age, at the beginning of the game **/
         
-        // Generate a random number for each non-achievement card
+        // Generate a random number for each card in the deck
         self::DbQuery("
         INSERT INTO random
             SELECT
@@ -767,7 +772,7 @@ class Innovation extends Table
             FROM
                 card 
             WHERE
-                age IS NOT NULL
+                location = 'deck'
         ");
         
         // Give the new position based on the random number of the card, in the type and age pile it belongs to
