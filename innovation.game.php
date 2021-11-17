@@ -95,6 +95,7 @@ class Innovation extends Table
             'card_id_2' => 70,
             'card_id_3' => 71,
             'require_achievement_eligibility' => 72,
+            'require_demand_effect' => 73,
             
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
@@ -301,7 +302,8 @@ class Innovation extends Table
         self::setGameStateInitialValue('age_last_selected', -1); // Age of the last selected card
         self::setGameStateInitialValue('color_last_selected', -1); // Color of the last selected card
         self::setGameStateInitialValue('score_keyword', -1); // 1 if the action with the chosen card will be scoring, else 0
-        self::setGameStateValue('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
+        self::setGameStateInitialValue('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
+        self::setGameStateInitialValue('require_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
@@ -3990,6 +3992,9 @@ class Innovation extends Table
         if (!array_key_exists('require_achievement_eligibility', $rewritten_options)) {
             $rewritten_options['require_achievement_eligibility'] = false;
         }
+        if (!array_key_exists('require_demand_effect', $rewritten_options)) {
+            $rewritten_options['require_demand_effect'] = false;
+        }
         if (!array_key_exists('splay_direction', $rewritten_options)) {
              $rewritten_options['splay_direction'] = -1;
         }
@@ -4025,6 +4030,7 @@ class Innovation extends Table
             case 'score_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
+            case 'require_demand_effect':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
@@ -4110,6 +4116,12 @@ class Innovation extends Table
             }
         }
         $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", array('claimable_ages' => join($claimable_ages, ',')));
+
+        // Condition for whether it has a demand effect
+        $condition_for_demand_effect = "TRUE";
+        if (self::getGameStateValue('require_demand_effect') == 1) {
+            $condition_for_demand_effect = "has_demand = TRUE";
+        }
         
         // Condition for color
         $color_array = self::getGameStateValueAsArray('color_array');
@@ -4165,6 +4177,7 @@ class Innovation extends Table
                     {condition_for_location} AND
                     {condition_for_age} AND
                     {condition_for_claimable_ages} AND
+                    {condition_for_demand_effect} AND
                     position = position_of_active_card AND
                     {condition_for_color}
                     {condition_for_icon}
@@ -4176,6 +4189,7 @@ class Innovation extends Table
                     'condition_for_location' => $condition_for_location,
                     'condition_for_age' => $condition_for_age,
                     'condition_for_claimable_ages' => $condition_for_claimable_ages,
+                    'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
@@ -4194,6 +4208,7 @@ class Innovation extends Table
                     {condition_for_location} AND
                     {condition_for_age} AND
                     {condition_for_claimable_ages} AND
+                    {condition_for_demand_effect} AND
                     {condition_for_color}
                     {condition_for_icon}
                     {condition_for_requiring_id}
@@ -4204,6 +4219,7 @@ class Innovation extends Table
                     'condition_for_location' => $condition_for_location,
                     'condition_for_age' => $condition_for_age,
                     'condition_for_claimable_ages' => $condition_for_claimable_ages,
+                    'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
@@ -5429,6 +5445,7 @@ class Innovation extends Table
             $age_max = self::getGameStateValue("age_max");
             $with_icon = self::getGameStateValue("with_icon");
             $without_icon = self::getGameStateValue("without_icon");
+            $with_demand_effect = self::getGameStateValue("require_demand_effect");
         }
         
         // Number of cards
@@ -5561,99 +5578,83 @@ class Innovation extends Table
                 break;
             }
             
-            // Age of the cards
             if ($age_min == 1 && $age_max == 10) {
                 if (count($selectable_colors) < 5) {
                     if ($with_icon > 0) {
                         if ($n_max == 1) {
                             $cards = self::format(clienttranslate("{color} card with a {icon}"), array('color' => $colors, 'icon' => '{[}'.$with_icon.'{]}'));
-                        }
-                        else {
+                        } else {
                             $cards = self::format(clienttranslate("{color} cards with a {icon}"), array('color' => $colors, 'icon' => '{[}'.$with_icon.'{]}'));
                         }
-                    }
-                    else if ($without_icon > 0) {
+                    } else if ($without_icon > 0) {
                         if ($n_max == 1) {
                             $cards = self::format(clienttranslate("{color} card without a {icon}"), array('color' => $colors, 'icon' => '{[}'.$without_icon.'{]}'));
-                        }
-                        else {
+                        } else {
                             $cards = self::format(clienttranslate("{color} cards without a {icon}"), array('color' => $colors, 'icon' => '{[}'.$without_icon.'{]}'));
                         }
-                    }
-                    else {
+                    } else {
                         if ($n_max == 1) {
                             $cards = self::format(clienttranslate("{color} card"), array('color' => $colors));
-                        }
-                        else {
+                        } else {
                             $cards = self::format(clienttranslate("{color} cards"), array('color' => $colors));
                         }
                     }
-                }
-                else {
+                } else {
                     if ($with_icon > 0) {
                         if ($n_max == 1) {
                             $cards = self::format(clienttranslate("card with a {icon}"), array('icon' => '{[}'.$with_icon.'{]}'));
-                        }
-                        else {
+                        } else {
                             $cards = self::format(clienttranslate("cards with a {icon}"), array('icon' => '{[}'.$with_icon.'{]}'));
                         }
-                    }
-                    else if ($without_icon > 0) {
+                    } else if ($without_icon > 0) {
                         if ($n_max == 1) {
                             $cards = self::format(clienttranslate("card without a {icon}"), array('icon' => '{[}'.$without_icon.'{]}'));
-                        }
-                        else {
+                        } else {
                             $cards = self::format(clienttranslate("cards without a {icon}"), array('icon' => '{[}'.$without_icon.'{]}'));
                         }
-                    }
-                    else {
+                    } else {
                         if ($n_max == 1) {
                             $cards = clienttranslate("card");
-                        }
-                        else {
+                        } else {
                             $cards = clienttranslate("cards");
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 if (count($selectable_colors) < 5) {
                     $cards = self::format(clienttranslate("{color}") . " ", array('color' => $colors));
-                }
-                else {
+                } else {
                     $cards = '';
                 }
                 
                 if ($age_min == $age_max) {
                     $cards .= "{<}" . $age_min . "{>}";
-                }
-                else if ($age_min + 1 == $age_max) {
+                } else if ($age_min + 1 == $age_max) {
                     if ($n_max == 1) {
                         $cards .= "card of value {<}" . $age_min . "{>} " . clienttranslate("or") . " {<}" . $age_max . "{>}";
-                    }
-                    else {
+                    } else {
                         $cards .= "cards of value {<}" . $age_min . "{>} " . clienttranslate("or") . " {<}" . $age_max . "{>}";
                     }
-                }
-                else {
+                } else {
                     if ($n_max == 1) {
                         $cards .= "card of value {<}" . $age_min . "{>} " . clienttranslate("to") . " {<}" . $age_max . "{>}";
-                    }
-                    else {
+                    } else {
                         $cards .= "cards of value {<}" . $age_min . "{>} " . clienttranslate("to") . " {<}" . $age_max . "{>}";
                     }
                 }
                 
                 if ($with_icon > 0) {
                     $cards .= " " . self::format(clienttranslate("with a {icon}"), array('icon' => '{[}'.$with_icon.'{]}'));
-                }
-                else if ($without_icon > 0) {
+                } else if ($without_icon > 0) {
                     $cards .= " " . self::format(clienttranslate("without a {icon}"), array('icon' => '{[}'.$without_icon.'{]}'));
                 }
             }
+
+            if ($with_demand_effect === 1) {
+                $cards .= clienttranslate(" with a demand effect");
+            }
             $cards = self::format($cards, self::getDelimiterMeanings($cards, false));
-        }
-        else { // splay_direction <> -1
+        } else { // splay_direction <> -1
             $splayable_colors = self::getGameStateValueAsArray('color_array');
             $splayable_colors_in_clear = array();
             foreach ($splayable_colors as $color) {
@@ -5972,6 +5973,7 @@ class Innovation extends Table
             self::setGameStateValue('score_keyword', -1);
             self::setGameStateValue('auxiliary_value', -1);
             self::setGameStateValue('require_achievement_eligibility', -1);
+            self::setGameStateValue('require_demand_effect', -1);
             for($i=1; $i<=9; $i++) {
                 self::setGameStateInitialValue('nested_id_'.$i, -1);
                 self::setGameStateInitialValue('nested_current_effect_number_'.$i, -1);
@@ -7555,6 +7557,15 @@ class Innovation extends Table
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
                 }
+                break;
+
+            // id 110, Artifacts age 1: Treaty of Kadesh
+            case "110C1":
+                $step_max = 1; // --> 1 interaction
+                break;
+
+            case "110N1":
+                $step_max = 1; // --> 1 interaction
                 break;
 
             // id 111, Artifacts age 1: Sibidu Needle
@@ -10097,6 +10108,41 @@ class Innovation extends Table
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
+            );
+            break;
+
+         // id 110, Artifacts age 1: Treaty of Kadesh
+         case "110C1A":
+            // "Return all top cards from your board with a demand effect"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'require_demand_effect' => true
+            );
+            break;
+        
+        case "110N1A":
+            // "Score a top, non-blue card from your board with a demand effect"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'color' => array(1,2,3,4), // non-blue
+                'require_demand_effect' => true,
+
+                'score_keyword' => true
             );
             break;
         
