@@ -3971,6 +3971,7 @@ class Innovation extends Table
         else { // This is a choice for splay
             $rewritten_options['owner_from'] = $player_id;
             $rewritten_options['location_from'] = 'board'; // Splaying is equivalent as selecting a board card, by design
+            $rewritten_options['location_to'] = 'board';
             $number_of_cards_on_board = self::countCardsInLocation($player_id, 'board', null, false, true);
             $splay_direction = $rewritten_options['splay_direction'];
             $colors = array();
