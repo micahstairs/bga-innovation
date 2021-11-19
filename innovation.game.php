@@ -96,6 +96,8 @@ class Innovation extends Table
             'card_id_3' => 71,
             'require_achievement_eligibility' => 72,
             'require_demand_effect' => 73,
+            'require_splayability' => 74,
+            'owner_last_selected' => 75,
             
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
@@ -301,9 +303,11 @@ class Innovation extends Table
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
         self::setGameStateInitialValue('age_last_selected', -1); // Age of the last selected card
         self::setGameStateInitialValue('color_last_selected', -1); // Color of the last selected card
+        self::setGameStateInitialValue('owner_last_selected', -1); // Owner of the last selected card
         self::setGameStateInitialValue('score_keyword', -1); // 1 if the action with the chosen card will be scoring, else 0
         self::setGameStateInitialValue('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         self::setGameStateInitialValue('require_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
+        self::setGameStateInitialValue('require_splayability', -1); // Only selectable if the card can be splayed in that direction (1=left, 2=right, 3=up), else -2
         
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
@@ -995,7 +999,7 @@ class Innovation extends Table
                     ));
                     
                     if ($number_of_cards_in_pile <= 1) {
-                        self::splay($owner_from, $color, 0); // Unsplay
+                        self::splay($owner_from, $owner_from, $color, 0); // Unsplay
                     }
                 }
             }
@@ -1004,15 +1008,15 @@ class Innovation extends Table
     }
     
     /** Splay mechanism **/
-    function splay($player_id, $color, $splay_direction, $force_unsplay=false) {
+    function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
 
         // Return early if the pile is already splayed in the requested direction.
-        if (self::getCurrentSplayDirection($player_id, $color) == $splay_direction) {
+        if (self::getCurrentSplayDirection($target_player_id, $color) == $splay_direction) {
             return;
         }
 
         // Return early if a pile with less than 2 cards is attempting to be splayed.
-        if ($splay_direction >= 1 && self::countCardsInLocation($player_id, 'board', null, false, true)[$color] <= 1) {
+        if ($splay_direction >= 1 && self::countCardsInLocation($target_player_id, 'board', null, false, true)[$color] <= 1) {
             return;
         }
 
@@ -1026,14 +1030,14 @@ class Innovation extends Table
                 location = 'board' AND
                 color = {color}
          ",
-            array('owner' => $player_id, 'color' => $color, 'splay_direction' => $splay_direction)
+            array('owner' => $target_player_id, 'color' => $color, 'splay_direction' => $splay_direction)
         ));
         
-        self::notifyForSplay($player_id, $color, $splay_direction, $force_unsplay);
+        self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
         
         // Check for all achievements
         try {
-            self::checkForSpecialAchievements($player_id, true); // All including Wonder
+            self::checkForSpecialAchievements($target_player_id, true); // All including Wonder
         }
         catch(EndOfGame $e) {
             self::trace('EOG bubbled from self::splay');
@@ -1443,7 +1447,7 @@ class Innovation extends Table
                 return "C";
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", code => $effect_type)));
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
                 break;
         }
     }
@@ -1598,7 +1602,7 @@ class Innovation extends Table
         self::sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo);
     }
     
-    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players) {
+    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $require_splayability) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
             // TODO: We can simplify Self Service to use "board->none", but we need to make this change carefully to avoid breaking any games.
@@ -1618,10 +1622,14 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} transfer {number} top {card} from the board of {targetable_players} to your score pile');
                 $message_for_others = clienttranslate('{player must} transfer {number} top {card} from the board of {targetable_players} to his score pile');
                 break;
-            // NOTE: We may discover a case where we don't want the word "other" in these messages. In that case we will need to add some complexity to handle this.
             case 'board->none':
-                $message_for_player = clienttranslate('{You must} choose {number} other top {card} from the board of {targetable_players}');
-                $message_for_others = clienttranslate('{player must} choose {number} other top {card} from the board of {targetable_players}');
+                if ($require_splayability) { // Cyrus Cylinder
+                    $message_for_player = clienttranslate('{You must} choose {number} pile from the board of {targetable_players} to splay left');
+                    $message_for_others = clienttranslate('{player must} choose {number} pile from the board of {targetable_players} to splay left');
+                } else {
+                    $message_for_player = clienttranslate('{You must} choose {number} other top {card} from the board of {targetable_players}');
+                    $message_for_others = clienttranslate('{player must} choose {number} other top {card} from the board of {targetable_players}');
+                }
                 break;
             default:
                 // This should not happen
@@ -2266,10 +2274,14 @@ class Innovation extends Table
         ));
     }
     
-    function notifyForSplay($player_id, $color, $splay_direction, $force_unsplay) {        
+    function notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay) {
         if ($splay_direction == 0 && !$force_unsplay) { // Unsplay event
             $color_in_clear = self::getColorInClear($color);
-            
+
+            if ($player_id != $target_player_id) {
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
+            }
+
             self::notifyPlayer($player_id, 'splayedPile', clienttranslate('${Your} ${colored} pile is reduced to one card: it looses its splay.'), array(
                 'i18n' => array('colored'),
                 'Your' => 'Your',
@@ -2295,31 +2307,75 @@ class Innovation extends Table
         $colored_cards = self::getColorInClearWithCards($color);
         
         // Update player ressources
-        $new_ressource_counts = self::updatePlayerRessourceCounts($player_id);
+        $new_ressource_counts = self::updatePlayerRessourceCounts($target_player_id);
         
-        self::notifyPlayer($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${You} unsplay your ${colored_cards}.') : clienttranslate('${You} splay your ${colored_cards} ${splay_direction_in_clear}.'), array(
-            'i18n' => array('colored_cards', 'splay_direction_in_clear'),
-            'player_id' => $player_id,
-            'You' => 'You',
-            'color' => $color,
-            'colored_cards' => $colored_cards,
-            'splay_direction' => $splay_direction,
-            'splay_direction_in_clear' => $splay_direction_in_clear,
-            'new_ressource_counts' => $new_ressource_counts,
-            'forced_unsplay' => $force_unsplay
-        ));
-        
-        self::notifyAllPlayersBut($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays his ${colored_cards}.') : clienttranslate('${player_name} splays his ${colored_cards} ${splay_direction_in_clear}.'), array(
-            'i18n' => array('colored_cards', 'splay_direction_in_clear'),
-            'player_id' => $player_id,
-            'player_name' => self::getPlayerNameFromId($player_id),
-            'color' => $color,
-            'colored_cards' => $colored_cards,
-            'splay_direction' => $splay_direction,
-            'splay_direction_in_clear' => $splay_direction_in_clear,
-            'new_ressource_counts' => $new_ressource_counts,
-            'forced_unsplay' => $force_unsplay
-        ));
+        if ($player_id == $target_player_id) {
+
+            self::notifyPlayer($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${You} unsplay your ${colored_cards}.') : clienttranslate('${You} splay your ${colored_cards} ${splay_direction_in_clear}.'), array(
+                'i18n' => array('colored_cards', 'splay_direction_in_clear'),
+                'player_id' => $player_id,
+                'You' => 'You',
+                'color' => $color,
+                'colored_cards' => $colored_cards,
+                'splay_direction' => $splay_direction,
+                'splay_direction_in_clear' => $splay_direction_in_clear,
+                'new_ressource_counts' => $new_ressource_counts,
+                'forced_unsplay' => $force_unsplay
+            ));
+            
+            self::notifyAllPlayersBut($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays his ${colored_cards}.') : clienttranslate('${player_name} splays his ${colored_cards} ${splay_direction_in_clear}.'), array(
+                'i18n' => array('colored_cards', 'splay_direction_in_clear'),
+                'player_id' => $player_id,
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'color' => $color,
+                'colored_cards' => $colored_cards,
+                'splay_direction' => $splay_direction,
+                'splay_direction_in_clear' => $splay_direction_in_clear,
+                'new_ressource_counts' => $new_ressource_counts,
+                'forced_unsplay' => $force_unsplay
+            ));
+
+        } else {
+
+            self::notifyPlayer($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${You} unsplay ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${You} splay ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'), array(
+                'i18n' => array('colored_cards', 'splay_direction_in_clear'),
+                'player_id' => $target_player_id,
+                'You' => 'You',
+                'target_player_name' => self::getPlayerNameFromId($target_player_id),
+                'color' => $color,
+                'colored_cards' => $colored_cards,
+                'splay_direction' => $splay_direction,
+                'splay_direction_in_clear' => $splay_direction_in_clear,
+                'new_ressource_counts' => $new_ressource_counts,
+                'forced_unsplay' => $force_unsplay
+            ));
+
+            self::notifyPlayer($target_player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays your ${colored_cards}.') : clienttranslate('${player_name} splays your ${colored_cards} ${splay_direction_in_clear}.'), array(
+                'i18n' => array('colored_cards', 'splay_direction_in_clear'),
+                'player_id' => $target_player_id,
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'color' => $color,
+                'colored_cards' => $colored_cards,
+                'splay_direction' => $splay_direction,
+                'splay_direction_in_clear' => $splay_direction_in_clear,
+                'new_ressource_counts' => $new_ressource_counts,
+                'forced_unsplay' => $force_unsplay
+            ));
+            
+            self::notifyAllPlayersBut(array($player_id, $target_player_id), 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${player_name} splays ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'), array(
+                'i18n' => array('colored_cards', 'splay_direction_in_clear'),
+                'player_id' => $target_player_id,
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'target_player_name' => self::getPlayerNameFromId($target_player_id),
+                'color' => $color,
+                'colored_cards' => $colored_cards,
+                'splay_direction' => $splay_direction,
+                'splay_direction_in_clear' => $splay_direction_in_clear,
+                'new_ressource_counts' => $new_ressource_counts,
+                'forced_unsplay' => $force_unsplay
+            ));
+
+        }
     }
     
     /** Notify end of game **/
@@ -3965,6 +4021,9 @@ class Innovation extends Table
         if (!array_key_exists('require_demand_effect', $rewritten_options)) {
             $rewritten_options['require_demand_effect'] = false;
         }
+        if (!array_key_exists('require_splayability', $rewritten_options)) {
+            $rewritten_options['require_splayability'] = -2;
+        }
         if (!array_key_exists('splay_direction', $rewritten_options)) {
              $rewritten_options['splay_direction'] = -1;
         }
@@ -4111,6 +4170,14 @@ class Innovation extends Table
             $condition_for_icon = "";
         }
 
+        // Condition for whether the pile can be splayed
+        $require_splayability = self::getGameStateValue('require_splayability');
+        if ($require_splayability >= 1) {
+            $condition_for_left_splayability = self::format("AND splay_direction != {direction} AND position > 0 AND location = 'board'", array("direction" => $require_splayability));
+        } else {
+            $condition_for_left_splayability = "";
+        }
+
         // Condition for requiring ID
         $condition_for_requiring_id = "";
         $card_id_1 = self::getGameStateValue('card_id_1');
@@ -4152,6 +4219,7 @@ class Innovation extends Table
                     position = position_of_active_card AND
                     {condition_for_color}
                     {condition_for_icon}
+                    {condition_for_left_splayability}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
             ",
@@ -4163,6 +4231,7 @@ class Innovation extends Table
                     'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
+                    'condition_for_left_splayability' => $condition_for_left_splayability,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
                 )
@@ -4182,6 +4251,7 @@ class Innovation extends Table
                     {condition_for_demand_effect} AND
                     {condition_for_color}
                     {condition_for_icon}
+                    {condition_for_left_splayability}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
             ",
@@ -4193,6 +4263,7 @@ class Innovation extends Table
                     'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
+                    'condition_for_left_splayability' => $condition_for_left_splayability,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
                 )
@@ -5376,7 +5447,7 @@ class Innovation extends Table
             $card_names = self::getDogmaCardNames();
             
             $args = array_merge(array(
-            // Public info
+                // Public info
                 'card_name' => 'card_name',
                 'special_type_of_choice' => $special_type_of_choice,
                 'options' => $options,
@@ -5408,6 +5479,7 @@ class Innovation extends Table
             $with_icon = self::getGameStateValue("with_icon");
             $without_icon = self::getGameStateValue("without_icon");
             $with_demand_effect = self::getGameStateValue("require_demand_effect");
+            $require_splayability = self::getGameStateValue("require_splayability");
         }
         
         // Number of cards
@@ -5627,7 +5699,7 @@ class Innovation extends Table
         // Creation of the message
         if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3) {
             if ($splay_direction == -1) {
-                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name);
+                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $require_splayability);
                 $splay_direction = null;
                 $splay_direction_in_clear = null;
             }
@@ -5932,6 +6004,7 @@ class Innovation extends Table
             self::setGameStateValue('id_last_selected', -1);
             self::setGameStateValue('age_last_selected', -1);
             self::setGameStateValue('color_last_selected', -1);
+            self::setGameStateValue('owner_last_selected', -1);
             self::setGameStateValue('score_keyword', -1);
             self::setGameStateValue('auxiliary_value', -1);
             self::setGameStateValue('require_achievement_eligibility', -1);
@@ -7745,6 +7818,7 @@ class Innovation extends Table
             // id 134, Artifacts age 2: Cyrus Cylinder
             case "134N1":
                 $step_max = 2; // --> 2 interactions: see B
+                break;
             
             // id 143, Artifacts age 3: Necronomicon
             case "143N1":
@@ -7755,7 +7829,7 @@ class Innovation extends Table
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 } else if ($card['color'] == 2) { // Green
                     for ($color = 0; $color < 5; $color++) {
-                        self::splay($player_id, $color, 0, /*force_unsplay=*/ true);
+                        self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true);
                     }
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
@@ -7804,7 +7878,7 @@ class Innovation extends Table
                 // "Draw and reveal a 4"
                 $card = self::executeDraw($player_id, 4, 'revealed');
                 // "Splay right the color matching the drawn card"
-                self::splay($player_id, $card['color'], 2);
+                self::splay($player_id, $player_id, $card['color'], 2);
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
 
@@ -7860,7 +7934,7 @@ class Innovation extends Table
                 // "Draw and reveal a 4"
                 $card = self::executeDraw($player_id, 4, 'revealed');
                 // "Splay right the color matching the drawn card"
-                self::splay($player_id, $card['color'], 2);
+                self::splay($player_id, $player_id, $card['color'], 2);
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
 
@@ -10548,16 +10622,17 @@ class Innovation extends Table
             break;
 
         case "134N1B":
-            // "Splay left a color on any player's board"
+            // Prompt player to pick a pile which can be splayed left.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                // TODO: Implement support for splaying any player's pile.
                 'owner_from' => 'any player',
+                'location_from' => 'board',
+                'location_to' => 'none',
 
-                'splay_direction' => 1
+                'require_splayability' => 1 // Must be able to be splayed left
             );
             break;
             
@@ -11105,7 +11180,7 @@ class Innovation extends Table
                 case "34D1A":
                     if (self::getGameStateValue('game_rules') == 1) { // Last edition => additional rule
                         if ($n > 0) { // "If you do"
-                            self::splay($player_id, self::getGameStateValue('color_last_selected'), 0, /*force_unsplay=*/ true); // "Unsplay that color of your cards"
+                            self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 0, /*force_unsplay=*/ true); // "Unsplay that color of your cards"
                         }
                     }
                     break;
@@ -11183,7 +11258,7 @@ class Innovation extends Table
                     if ($n > 0) { // "If you do"
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition
                             $color = self::getGameStateValue('color_last_selected');
-                            self::splay($player_id, $color, 2); // "Splay that color of your cards right"
+                            self::splay($player_id, $player_id, $color, 2); // "Splay that color of your cards right"
                             $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$color];
                             if ($number_of_cards == 1) {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
@@ -11671,7 +11746,17 @@ class Innovation extends Table
                 case "124N1B":
                     $melded_color = self::getGameStateValue('color_last_selected');
                     if ($melded_color >= 0) { // "If you (melded a card)"
-                        self::splay($player_id, $melded_color, 1); // "Splay that color left"
+                        self::splay($player_id, $player_id, $melded_color, 1); // "Splay that color left"
+                    }
+                    break;
+                
+                // id 134, Artifacts age 2: Cyrus Cylinder
+                case "134N1B":
+                    // "Splay left a color on any player's board"
+                    if ($n > 0) {
+                        $color = self::getGameStateValue('color_last_selected');
+                        $target_player_id = self::getGameStateValue('owner_last_selected');
+                        self::splay($player_id, $target_player_id, $color, 1);
                     }
                     break;
                 
@@ -11955,7 +12040,7 @@ class Innovation extends Table
                 // $choice is a color
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::splay($player_id, $choice, 2); // "Splay that color of your cards right"
+                self::splay($player_id, $player_id, $choice, 2); // "Splay that color of your cards right"
                 $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$choice];
                 if ($number_of_cards == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
@@ -12250,7 +12335,7 @@ class Innovation extends Table
                 }
                 else {
                     // Do the splay as stated in B
-                    self::splay($player_id, $card['color'], $splay_direction);
+                    self::splay($player_id, $card['owner'], $card['color'], $splay_direction);
                 }
                 break;
             }
@@ -12273,6 +12358,7 @@ class Innovation extends Table
             // Mark extra information about this chosen card
             self::setGameStateValue("age_last_selected", $card['age']);
             self::setGameStateValue("color_last_selected", $card['color']);
+            self::setGameStateValue("owner_last_selected", $card['owner']);
         }
         // Check if another selection is to be done
         if ($special_type_of_choice != 0 || self::getGameStateValue('n_max') == 0) { // No more choice can be made
