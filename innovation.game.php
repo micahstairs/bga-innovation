@@ -4173,9 +4173,9 @@ class Innovation extends Table
         // Condition for whether the pile can be splayed
         $require_splayability = self::getGameStateValue('require_splayability');
         if ($require_splayability >= 1) {
-            $condition_for_left_splayability = self::format("AND splay_direction != {direction} AND position > 0 AND location = 'board'", array("direction" => $require_splayability));
+            $condition_for_splayability = self::format("AND splay_direction != {direction} AND position > 0 AND location = 'board'", array("direction" => $require_splayability));
         } else {
-            $condition_for_left_splayability = "";
+            $condition_for_splayability = "";
         }
 
         // Condition for requiring ID
@@ -4219,7 +4219,7 @@ class Innovation extends Table
                     position = position_of_active_card AND
                     {condition_for_color}
                     {condition_for_icon}
-                    {condition_for_left_splayability}
+                    {condition_for_splayability}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
             ",
@@ -4231,7 +4231,7 @@ class Innovation extends Table
                     'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
-                    'condition_for_left_splayability' => $condition_for_left_splayability,
+                    'condition_for_splayability' => $condition_for_splayability,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
                 )
@@ -4251,7 +4251,7 @@ class Innovation extends Table
                     {condition_for_demand_effect} AND
                     {condition_for_color}
                     {condition_for_icon}
-                    {condition_for_left_splayability}
+                    {condition_for_splayability}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
             ",
@@ -4263,7 +4263,7 @@ class Innovation extends Table
                     'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
                     'condition_for_icon' => $condition_for_icon,
-                    'condition_for_left_splayability' => $condition_for_left_splayability,
+                    'condition_for_splayability' => $condition_for_splayability,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
                 )
