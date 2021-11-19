@@ -31,7 +31,7 @@
 178 => array('name' => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility'),
+    'non_demand_effect_1' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
@@ -59,7 +59,7 @@
     'alternative_condition_for_claiming' => null),
 
 181 => array('name' => clienttranslate('Colt Paterson Revolver'),
-    'i_demand_effect_1' => clienttranslate('${I compel} you to reveal your hand! Draw a ${age_7}! If the color of the drawn card matches the color of any other card in your hand, return all cards in your hand and all cards in your score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I compel} you to reveal your hand! Draw a ${age_7}! If the color of the drawn card matches the color of any other cards in your hand, return all cards in your hand and all cards in your score pile!'),
     'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
