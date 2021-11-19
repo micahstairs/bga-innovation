@@ -7952,6 +7952,24 @@ class Innovation extends Table
                     }
                 }
                 break;
+
+            // id 169, Artifacts age 6: The Wealth of Nations
+            case "169N1":
+                // "Draw and score a 1"
+                self::executeDraw($player_id, 1, 'score');
+                // Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.
+                $age_to_score = round(self::getPlayerScore($player_id) / 5);
+                self::executeDraw($player_id, $age_to_score, 'score');
+                break;
+
+            // id 174, Artifacts age 6: Marcha Real
+            case "174N1":
+                // Don't try to reveal cards if hand is empty.
+                if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                    self::setGameStateValue('auxiliary_value', -1);
+                    $step_max = 1;
+                }
+                break;
                 
             default:
                 // This should not happens
@@ -10887,6 +10905,38 @@ class Innovation extends Table
                 'with_icon' => 1 /* tower */
             );
             break;
+
+        // id 174, Artifacts age 6: Marcha Real
+        case "174N1A":
+            // Reveal and return two cards from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+
+            break;
+
+        case "174N1B":
+            // "Claim an achievement ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
+            break;
             
         default:
             // This should not happens
@@ -11736,6 +11786,34 @@ class Innovation extends Table
                         }
                     }
                     break;
+                    
+                 // id 174, Artifacts age 6: Marcha Real
+                case "174N1A":
+                    if ($n > 0) {
+                        $first_card = self::getCardInfo(self::getGameStateValue('auxiliary_value'));  
+                        $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        
+                        self::transferCardFromTo($first_card, 0, 'deck');
+                        
+                        if ($first_card !== $second_card) {
+                            self::transferCardFromTo($second_card, 0, 'deck');
+                            
+                            if ($first_card['age'] == $second_card['age'])
+                            {
+                                // If they have the same value, draw a card of value one higher.
+                                self::executeDraw($player_id, $first_card['age'] + 1);
+                            }
+                            if ($first_card['color'] == $second_card['color'])
+                            {
+                                // If they have the same color, claim an achievement, ignoring eligibility.
+                                self::incGameStateValue('step_max', 1);
+                            }
+                        }
+                        self::setGameStateValue('auxiliary_value', -1);
+                    }
+                    break;                
+   
+                    
                 }
 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -12235,6 +12313,17 @@ class Innovation extends Table
                 }
                     
                 break;
+
+            // id 174, Artifacts age 6: Marcha Real
+            case "174N1A":
+                $card_id = self::getGameStateValue('id_last_selected');
+                if (self::getGameStateValue('auxiliary_value') == -1) {
+                    // Log the card that is revealed first
+                    self::setGameStateValue('auxiliary_value', $card_id);
+                }
+                self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'revealed');
+                break;
+                
                 
             default:
                 if ($splay_direction == -1) {
