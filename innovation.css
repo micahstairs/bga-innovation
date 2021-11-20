@@ -1597,8 +1597,8 @@
 
 .age_null.S.card {
     background-image: url("img/special_achievements_landscape.jpg");
-    width: 31px;
-    height: 45px;
+    width: 45px;
+    height: 31px;
     background-size: 232px, auto;
 }
 
@@ -1624,8 +1624,6 @@
 
 .age_null.S.recto {
     background-image: url("img/special_achievements_portrait.jpg");
-    width: 45px;
-    height: 31px;
     background-size: 175px, auto;
 }
 
