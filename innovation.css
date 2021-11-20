@@ -506,22 +506,15 @@
     position: relative;
 }
 
-.action_1, .action_2 {
+.action_card {
     display: inline-block;
     margin-left: 7px;
     width: 57px;
     height: 41px;
-    background-size: 1103px 525px;
-    background-image: url('img/Innovation_cards.jpg');
+    background-image: url('img/action_card.jpg');
+    background-size: 57px 41px;
+    background-position: -0px -0px;
     position: relative;
-}
-
-.action_1 {
-    background-position: -736px -483px;
-}
-
-.action_2 {
-    background-position: -792px -483px;
 }
 
 .action_text {
@@ -532,7 +525,6 @@
     top: 5px;
     width: 47px;
     height: 30px;
-    background-color: #bbaf85;
     font-weight: bold;
 }
 

@@ -2219,7 +2219,7 @@ function (dojo, declare) {
          * Player panel management
          */
         givePlayerActionCard : function(player_id, action_number) {
-            dojo.addClass('action_indicator_' + player_id, 'action_' + action_number);
+            dojo.addClass('action_indicator_' + player_id, 'action_card');
             var action_text = action_number == 1 ? _('First action') : _('Second action');
             var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 15, 2);
             $('action_indicator_' + player_id).innerHTML = div_action_text;
@@ -2230,9 +2230,7 @@ function (dojo, declare) {
             action_indicators.forEach(function(node) {
                 node.innerHTML = "";
             });
-            for(var i=1; i<=2; i++) {
-                action_indicators.removeClass('action_' + i);
-            }
+            action_indicators.removeClass('action_card');
         },
         
         ///////////////////////////////////////////////////
