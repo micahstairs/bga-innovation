@@ -75,7 +75,6 @@ $this->textual_card_infos = array(
 
 5 => array('name' => clienttranslate('Oars'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_1} from your hand to my score pile! If you do, draw a ${age_1}, and repeat this dogma effect!'),
-    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer a card with a ${icon_1} from your hand to my score pile! If you do, draw a ${age_1}!'),
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('If no cards were transferred due to this demand, draw a ${age_1}.'),
@@ -372,7 +371,6 @@ $this->textual_card_infos = array(
 
 34 => array('name' => clienttranslate('Feudalism'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_4} from your hand to my hand! If you do, unsplay that color of your cards!'),
-    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer a card with a ${icon_4} from your hand to my hand!'),
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your yellow or purple cards left.'),
@@ -549,7 +547,6 @@ $this->textual_card_infos = array(
 
 51 => array('name' => clienttranslate('Statistics'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer all the highest cards in your score pile to your hand!'),
-    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer the highest card in your score pile to your hand! If you do, and have only one card in your hand afterwards, repeat this demand!'),
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('You may splay your yellow cards right.'),
@@ -581,7 +578,6 @@ $this->textual_card_infos = array(
 
 54 => array('name' => clienttranslate('Societies'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_3} higher than my top card of the same color from your board to my board! If you do, draw an ${age_5}!'),
-    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer a top non-purple card with a ${icon_3} from your board to my board! If you do, draw an ${age_5}!'),
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
@@ -718,7 +714,6 @@ $this->textual_card_infos = array(
 
 67 => array('name' => clienttranslate('Combustion'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer one card from your score pile to my score pile for every four ${icon_1} on my board!'),
-    'i_demand_effect_1_is_compel' => false,
     'i_demand_effect_1_alt' => clienttranslate('${I demand} you transfer two cards from your score pile to my score pile!'),
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Return your bottom red card.'),
@@ -1048,6 +1043,7 @@ $this->textual_card_infos = array(
 
 99 => array('name' => clienttranslate('Databases'),
     'i_demand_effect_1' => clienttranslate('${I demand} you return half (rounded up) of the cards in your score pile!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -1067,6 +1063,7 @@ $this->textual_card_infos = array(
 
 101 => array('name' => clienttranslate('Globalization'),
     'i_demand_effect_1' => clienttranslate('${I demand} you return a top card with a ${icon_2} on your board!'),
+    'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and score a ${age_6}. If no player has more ${icon_2} than ${icon_5} on their board, the single player with the most points wins.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
