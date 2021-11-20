@@ -24,6 +24,7 @@ def write_hexagon_icons(f):
 	y = 3
 	offset = 40
 	
+	# Base cards
 	for id in range(0,105):
 		f.write(""".M.hexagon_card_icon.hexagon_icon_{id} <
 \tbackground-position: -{x}px -{y}px;
@@ -35,6 +36,17 @@ def write_hexagon_icons(f):
 		else: # Same line, next card 
 			x += offset
 
+	# Artifact cards
+	for id in range(110,215):
+		f.write(""".M.hexagon_card_icon.hexagon_icon_{id} <
+\tbackground-position: -{x}px -{y}px;
+>\n\n""".format(id=id, x=x, y=y).replace('<', '{').replace('>', '}'))
+		
+		if id >= 124 and (id - 124) % 10 == 0: # New line on sprite
+			x = 3
+			y += offset
+		else: # Same line, next card 
+			x += offset
 
 if __name__ == "__main__":
 	with open(dest_file, "w") as f:
