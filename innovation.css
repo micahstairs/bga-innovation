@@ -1389,8 +1389,8 @@
 /* Locations where the square and hexagon icons go on each card */
 
 .M.top_left_icon.square_card_icon {
-    top: 7px;
-    left: 9px;
+    top: 8px;
+    left: 10px;
 }
 
 .M.top_left_icon.hexagon_card_icon {
@@ -1399,8 +1399,8 @@
 }
 
 .M.bottom_left_icon.square_card_icon {
-    top: 86px;
-    left: 9px;
+    top: 87px;
+    left: 10px;
 }
 
 .M.bottom_left_icon.hexagon_card_icon {
@@ -1409,8 +1409,8 @@
 }
 
 .M.bottom_center_icon.square_card_icon {
-    top: 86px;
-    left: 75px;
+    top: 87px;
+    left: 76px;
 }
 
 .M.bottom_center_icon.hexagon_card_icon {
@@ -1419,8 +1419,8 @@
 }
 
 .M.bottom_right_icon.square_card_icon {
-    top: 86px;
-    left: 139px;
+    top: 87px;
+    left: 140px;
 
 }
 
@@ -1439,52 +1439,52 @@
 }
 
 .M.square_card_icon {
-    width: 30px;
-    height: 30px;
+    width: 28px;
+    height: 28px;
 }
 
 .M.icon_1.square_card_icon  {
-    background-position-x: -0px;
+    background-position-x: -1px;
 }
 
 .M.icon_2.square_card_icon  {
-    background-position-x: -30px;
+    background-position-x: -31px;
 }
 
 .M.icon_3.square_card_icon  {
-    background-position-x: -60px;
+    background-position-x: -61px;
 }
 
 .M.icon_4.square_card_icon  {
-    background-position-x: -90px;
+    background-position-x: -91px;
 }
 
 .M.icon_5.square_card_icon  {
-    background-position-x: -120px;
+    background-position-x: -121px;
 }
 
 .M.icon_6.square_card_icon  {
-    background-position-x: -150px;
+    background-position-x: -151px;
 }
 
 .M.color_0.square_card_icon  {
-    background-position-y: -0px;
+    background-position-y: -1px;
 }
 
 .M.color_1.square_card_icon  {
-    background-position-y: -30px;
+    background-position-y: -31px;
 }
 
 .M.color_2.square_card_icon  {
-    background-position-y: -60px;
+    background-position-y: -61px;
 }
 
 .M.color_3.square_card_icon  {
-    background-position-y: -90px;
+    background-position-y: -91px;
 }
 
 .M.color_4.square_card_icon  {
-    background-position-y: -120px;
+    background-position-y: -121px;
 }
 
 .hexagon_card_icon {
