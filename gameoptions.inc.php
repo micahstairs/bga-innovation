@@ -94,6 +94,14 @@ $game_options = array(
             2 => array('name' => totranslate('Enable without Relics'), 'no_beginner' => true),
             3 => array('name' => totranslate('Enable with Relics'), 'no_beginner' => true)
         )
+    ),
+
+    103 => array(
+        'name' => totranslate('Extra achievement to win'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true)
+        )
     )
 );
 

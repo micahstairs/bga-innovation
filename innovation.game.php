@@ -103,7 +103,8 @@ class Innovation extends Table
             
             'game_type' => 100, // 1 for normal game, 2 for team game
             'game_rules' => 101, // 1 for last edition, 2 for first edition
-            'artifacts_mode' => 102 // 1 for Disabled, 2 for enabled without relics, 3 for enabled with relics
+            'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
+            'extra_achievement_to_win' => 103 // 1 for "Disabled", 2 for "Enabled"
         ));
     }
     
@@ -247,6 +248,11 @@ class Innovation extends Table
 
         // Add one required achievement for each expansion
         if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
+            self::incGameStateValue('number_of_achievements_needed_to_win', 1);
+        }
+
+        // Add extra achievement to win
+        if (self::getGameStateValue('extra_achievement_to_win') == 2) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
         
