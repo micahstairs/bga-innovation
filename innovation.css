@@ -771,7 +771,7 @@
 }
 
 /* Blue */
-.effect.color_0, .square_card_icon.color_0 {
+.effect.color_0 {
     border-color: #0e2a50;
 }
 .effect.color_0.light {
@@ -782,7 +782,7 @@
 }
 
 /* Red */
-.effect.color_1, .square_card_icon.color_1 {
+.effect.color_1 {
     border-color: #5a090c;
 }
 .effect.color_1.light {
@@ -793,7 +793,7 @@
 }
 
 /* Green */
-.effect.color_2, .square_card_icon.color_2 {
+.effect.color_2 {
     border-color: #122c18;
 }
 .effect.color_2.light {
@@ -804,7 +804,7 @@
 }
 
 /* Yellow */
-.effect.color_3, .square_card_icon.color_3 {
+.effect.color_3 {
     border-color: #8b6a28;
 }
 .effect.color_3.light {
@@ -815,7 +815,7 @@
 }
 
 /* Purple */
-.effect.color_4, .square_card_icon.color_4 {
+.effect.color_4 {
     border-color: #220e40;
 }
 .effect.color_4.light {
@@ -1110,32 +1110,32 @@
 .P.square {
     width: 20px;
     height: 20px;
-    background-image: url('img/images2.jpg');
-    background-size: 133px 22px;
+    background-image: url('img/resource_icons.jpg');
+    background-size: 133px auto;
 }
 
 .icon_1.P.square  {
-    background-position: -1px -1px;
+    background-position: -1px -112px;
 }
 
 .icon_2.P.square  {
-    background-position: -23px -1px;
+    background-position: -23px -112px;
 }
 
 .icon_3.P.square  {
-    background-position: -45px -1px;
+    background-position: -45px -112px;
 }
 
 .icon_4.P.square  {
-    background-position: -68px -1px;
+    background-position: -68px -112px;
 }
 
 .icon_5.P.square  {
-    background-position: -90px -1px;
+    background-position: -90px -112px;
 }
 
 .icon_6.P.square  {
-    background-position: -112px -1px;
+    background-position: -112px -112px;
 }
 
 /* M: for squares used with cards of size M */
@@ -1433,11 +1433,9 @@
 /* Square card icons (most cards have 3 large resource icons on them) */
 
 .square_card_icon {
-    background-image: url('img/images2.jpg');
-    background-size: 180px 30px;
+    background-image: url('img/resource_icons.jpg');
+    background-size: 180px auto;
     position: absolute;
-    border-width: 1px;
-    border-style: solid;
 }
 
 .M.square_card_icon {
@@ -1446,27 +1444,47 @@
 }
 
 .M.icon_1.square_card_icon  {
-    background-position: -0px -0px;
+    background-position-x: -0px;
 }
 
 .M.icon_2.square_card_icon  {
-    background-position: -30px -0px;
+    background-position-x: -30px;
 }
 
 .M.icon_3.square_card_icon  {
-    background-position: -60px -0px;
+    background-position-x: -60px;
 }
 
 .M.icon_4.square_card_icon  {
-    background-position: -90px -0px;
+    background-position-x: -90px;
 }
 
 .M.icon_5.square_card_icon  {
-    background-position: -120px -0px;
+    background-position-x: -120px;
 }
 
 .M.icon_6.square_card_icon  {
-    background-position: -150px -0px;
+    background-position-x: -150px;
+}
+
+.M.color_0.square_card_icon  {
+    background-position-y: -0px;
+}
+
+.M.color_1.square_card_icon  {
+    background-position-y: -30px;
+}
+
+.M.color_2.square_card_icon  {
+    background-position-y: -60px;
+}
+
+.M.color_3.square_card_icon  {
+    background-position-y: -90px;
+}
+
+.M.color_4.square_card_icon  {
+    background-position-y: -120px;
 }
 
 .hexagon_card_icon {
