@@ -1814,7 +1814,8 @@ function (dojo, declare) {
             var icon3 = this.getIconDiv(card, icon_data['spot_3'], 'bottom_center_icon', size);
             var icon4 = this.getIconDiv(card, icon_data['spot_4'], 'bottom_right_icon', size);
 
-            var card_age = this.createAdjustedContent(card.age, 'card_age shape color_' + card.color, size, size == 'M' ? 10 : 30);
+            // TODO: Make sure "Battleship Yamato" uses font size 7 for its age text.
+            var card_age = this.createAdjustedContent(card.age, 'card_age', size, size == 'M' ? (card.age == 10 ? 7 : 9) : 30);
 
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
