@@ -658,6 +658,36 @@ class Innovation extends Table
         return $array;
     }
     
+    // This function encodes multiple integers into a single array
+    // which can be decoded by getGameStateBase16Array.
+    // Note that due to the maximum data value of 0x8000000 that only
+    // 5 elements can be encoded in this manner.
+    // This function is ideal for encoding multiple age values into an array.
+    function setGameStateBase16Array($key, $array) {
+        if (count($array) > 5) {
+            // Too many elements to encode.  Throw an error.
+        }
+        $encoded_value = 0;
+        foreach($array as $value) {
+            $encoded_value = $encoded_value * 16 + $value;
+        }
+        $encoded_value = $encoded_value * 6 + count($array);
+        self::setGameStateValue($key, $encoded_value);
+    }
+    
+    // This is the decoding partner of setGameStateBase16Array
+    function getGameStateBase16Array($key) {
+        $return_array = array();
+        $encoded_value = self::getGameStateValue($key);
+        $count = ($encoded_value % 6); // count is first
+        $encoded_value /= 6;
+        for ($i = 0; $i < $count; $i++) {
+            $return_array[] = $encoded_value % 16;
+            $encoded_value /= 16;
+        }
+        return $return_array;
+    }
+    
     /** integer division **/
     function intDivision($a, $b) {
         return (int)($a/$b);
@@ -8048,7 +8078,7 @@ class Innovation extends Table
                 do {
                     $card = self::executeDraw($player_id, 5, 'board'); // "Draw and meld a 5"
                     // If the drawn card is not green, repeat this effect.
-                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 3 || $card['color'] == 4);
+                } while($card['color'] != 2);
                 break;
 
             // id 160, Artifacts age 5: Hudson's Bay Company Archives
@@ -11065,8 +11095,8 @@ class Innovation extends Table
                     $ages_on_top[] = $topcard['age']; // Record all non-blue ages
                 }
             }
-
             self::setGameStateBase16Array('auxiliary_value', $ages_on_top);
+
             // "Return all non-blue top cards from your board."
             $options = array(
                 'player_id' => $player_id,
@@ -11076,8 +11106,9 @@ class Innovation extends Table
                 'location_from' => 'board',
                 'owner_to' => 0,
                 'location_to' => 'deck',
+
                 'color' => array(1,2,3,4)
-                );
+            );
             break;
 
         // id 160, Artifacts age 5: Hudson's Bay Company Archives
@@ -11092,7 +11123,7 @@ class Innovation extends Table
                 'location_from' => 'score',
                 'owner_to' => $player_id,
                 'location_to' => 'board'
-                );
+            );
             break;
             
         // id 174, Artifacts age 6: Marcha Real
@@ -12022,7 +12053,7 @@ class Innovation extends Table
                     
                 // id 156, Artifacts age 5: Principia
                 case "156N1A":
-                    $ages_on_top = self::getGameStateValueAsArray('auxiliary_value');
+                    $ages_on_top = self::getGameStateBase16Array('auxiliary_value');
                     sort($ages_on_top);
                     // For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.
                     foreach($ages_on_top as $card_age) {
@@ -12035,9 +12066,8 @@ class Innovation extends Table
                     $color = self::getGameStateValue('color_last_selected');
                     $board = self::getCardsInLocation($player_id, 'board', null, false, true);
                     $pile = $board[$color];
-                    if (count($pile) > 1) {
-                        self::splay($player_id, $color, 2); // Splay right the color of the melded card.
-                    }
+                    self::splay($player_id, $color, 2); // Splay right the color of the melded card.
+                    
                     break;
                                     
                 }
