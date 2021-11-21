@@ -6,7 +6,7 @@ function generate_border() {
     local border_color=${1}  # e.g. blue
     local border_hexcolor=${2}  # e.g. '#0e2a50'
     local result_img="temp/${border_color}_square_icon_border.png"
-    magick convert -size '155x155' 'canvas:white' -fill 'white' -stroke $border_hexcolor -strokewidth 8 -draw 'rectangle 2,2 152,152' $result_img
+    magick convert -size '155x155' 'canvas:white' -fill 'white' -stroke $border_hexcolor -strokewidth 10 -draw 'rectangle 2,2 152,152' $result_img
 }
 generate_border 'blue' '#0e2a50'
 generate_border 'red' '#5a090c'
