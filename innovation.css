@@ -1184,34 +1184,52 @@
 .icon_1.M.dogma_symbol, .icon_2.M.dogma_symbol, .icon_3.M.dogma_symbol, .icon_4.M.dogma_symbol, .icon_5.M.dogma_symbol, .icon_6.M.dogma_symbol {
     width: 10px;
     height: 10px;
-    background-image: url('img/images2.jpg');
+    background-image: url('img/resource_icons.jpg');
     background-size: 60px auto;
-    border-style: solid;
-    border-width: 1px;
 }
 
 .icon_1.M.dogma_symbol  {
-    background-position: -0px -0px;
+    background-position-x: -0px;
 }
 
 .icon_2.M.dogma_symbol  {
-    background-position: -10px -0px;
+    background-position-x: -10px;
 }
 
 .icon_3.M.dogma_symbol  {
-    background-position: -20px -0px;
+    background-position-x: -20px;
 }
 
 .icon_4.M.dogma_symbol  {
-    background-position: -30px -0px;
+    background-position-x: -30px;
 }
 
 .icon_5.M.dogma_symbol  {
-    background-position: -40px -0px;
+    background-position-x: -40px;
 }
 
 .icon_6.M.dogma_symbol  {
-    background-position: -50px -0px;
+    background-position-x: -50px;
+}
+
+.color_0.M.dogma_symbol {
+    background-position-y: -0px;
+}
+
+.color_1.M.dogma_symbol {
+    background-position-y: -10px;
+}
+
+.color_2.M.dogma_symbol {
+    background-position-y: -20px;
+}
+
+.color_3.M.dogma_symbol {
+    background-position-y: -30px;
+}
+
+.color_4.M.dogma_symbol {
+    background-position-y: -40px;
 }
 
 .age_1.M.square, .age_2.M.square, .age_3.M.square, .age_4.M.square, .age_5.M.square, .age_6.M.square, .age_7.M.square, .age_8.M.square, .age_9.M.square, .age_10.M.square  {
