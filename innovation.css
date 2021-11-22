@@ -1153,32 +1153,33 @@
 .icon_1.M.square, .icon_2.M.square, .icon_3.M.square, .icon_4.M.square, .icon_5.M.square, .icon_6.M.square {
     width: 8px;
     height: 8px;
-    background-image: url('img/images2.jpg');
+    background-image: url('img/resource_icons.jpg');
     background-size: 50px auto;
+    background-position-y: -42px;
 }
 
 .icon_1.M.square  {
-    background-position: -0px -0px;
+    background-position-x: -0px;
 }
 
 .icon_2.M.square  {
-    background-position: -8px -0px;
+    background-position-x: -8px;
 }
 
 .icon_3.M.square  {
-    background-position: -17px -0px;
+    background-position-x: -17px;
 }
 
 .icon_4.M.square  {
-    background-position: -25px -0px;
+    background-position-x: -25px;
 }
 
 .icon_5.M.square  {
-    background-position: -34px -0px;
+    background-position-x: -34px;
 }
 
 .icon_6.M.square  {
-    background-position: -42px -0px;
+    background-position-x: -42px;
 }
 
 .icon_1.M.dogma_symbol, .icon_2.M.dogma_symbol, .icon_3.M.dogma_symbol, .icon_4.M.dogma_symbol, .icon_5.M.dogma_symbol, .icon_6.M.dogma_symbol {
