@@ -7957,18 +7957,15 @@ class Innovation extends Table
             case "169N1":
                 // "Draw and score a 1"
                 self::executeDraw($player_id, 1, 'score');
-                // Add up the values of all the cards in your score pile, divide by five, and round up. Draw and score a card of value equal to the result.
-                $age_to_score = round(self::getPlayerScore($player_id) / 5);
+                // "Add up the values of all the cards in your score pile, divide by five, and round up"
+                $age_to_score = ceil(self::getPlayerScore($player_id) / 5);
+                // "Draw and score a card of value equal to the result"
                 self::executeDraw($player_id, $age_to_score, 'score');
                 break;
 
             // id 174, Artifacts age 6: Marcha Real
             case "174N1":
-                // Don't try to reveal cards if hand is empty.
-                if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                    self::setGameStateValue('auxiliary_value', -1);
-                    $step_max = 1;
-                }
+                $step_max = 1;
                 break;
                 
             default:
@@ -10908,7 +10905,7 @@ class Innovation extends Table
 
         // id 174, Artifacts age 6: Marcha Real
         case "174N1A":
-            // Reveal and return two cards from your hand.
+            // Reveal two cards from your hand
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
@@ -10919,7 +10916,6 @@ class Innovation extends Table
                 'owner_to' => $player_id,
                 'location_to' => 'revealed'
             );
-
             break;
 
         case "174N1B":
@@ -11789,30 +11785,29 @@ class Innovation extends Table
                     
                  // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
-                    if ($n > 0) {
-                        $first_card = self::getCardInfo(self::getGameStateValue('auxiliary_value'));  
-                        $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
-                        
-                        self::transferCardFromTo($first_card, 0, 'deck');
-                        
-                        if ($first_card !== $second_card) {
-                            self::transferCardFromTo($second_card, 0, 'deck');
-                            
-                            if ($first_card['age'] == $second_card['age'])
-                            {
-                                // If they have the same value, draw a card of value one higher.
-                                self::executeDraw($player_id, $first_card['age'] + 1);
-                            }
-                            if ($first_card['color'] == $second_card['color'])
-                            {
-                                // If they have the same color, claim an achievement, ignoring eligibility.
-                                self::incGameStateValue('step_max', 1);
-                            }
+                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
+                    $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
+
+                    // Return revealed cars from your hand
+                    if ($card_1 != null) {
+                        self::transferCardFromTo($card_1, 0, 'deck');
+                    }
+                    if ($card_2 != null) {
+                        self::transferCardFromTo($card_2, 0, 'deck');
+                    }
+
+                    if ($card_1 != null && $card_2 != null) {
+                        // "If they have the same value, draw a card of value one higher"
+                        if ($card_1['age'] == $card_2['age']) {
+                            self::executeDraw($player_id, $card_1['age'] + 1);
                         }
-                        self::setGameStateValue('auxiliary_value', -1);
+                        // "If they have the same color, claim an achievement, ignoring eligibility"
+                        if ($card_1['color'] == $card_2['color']) {
+                            self::incGameStateValue('step_max', 1);
+                        }
                     }
                     break;                
-   
                     
                 }
 
@@ -12311,19 +12306,7 @@ class Innovation extends Table
                     }
                     self::setGameStateValue('auxiliary_value', -1);
                 }
-                    
                 break;
-
-            // id 174, Artifacts age 6: Marcha Real
-            case "174N1A":
-                $card_id = self::getGameStateValue('id_last_selected');
-                if (self::getGameStateValue('auxiliary_value') == -1) {
-                    // Log the card that is revealed first
-                    self::setGameStateValue('auxiliary_value', $card_id);
-                }
-                self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'revealed');
-                break;
-                
                 
             default:
                 if ($splay_direction == -1) {
