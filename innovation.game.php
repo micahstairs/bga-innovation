@@ -3347,8 +3347,7 @@ class Innovation extends Table
             return 0;
         }
         $top_card = $pile[$pile_size - 1];
-        $splay_direction = $top_card['splay_direction'];
-        if ($splay_direction == 0) { // Unsplayed
+        if ($top_card['splay_direction'] == 0) { // Unsplayed
             return 1;
         }
         return $pile_size; // All other splays result in the current pile count
@@ -8117,28 +8116,26 @@ class Innovation extends Table
 
             // id 176, Artifacts age 7: Corvette Challenger
             case "176N1":
-                // Draw and tuck an 8. Splay up the color of the tucked card.
-                $card = self::executeDraw($player_id, 8, 'board', true);
-                
+                // "Draw and tuck an 8"
+                $card = self::executeDraw($player_id, 8, 'board', /*bottom_to=*/ true);
+                // "Splay up the color of the tucked card"
                 self::splay($player_id, $player_id, $card['color'], 3);
-                //  Draw and score a card of value equal to the number of cards of that color visible on your board.
+                //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
                 self::executeDraw($player_id, self::countVisibleCards($player_id, $card['color']), 'score');
                 break;
 
             // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
             case "178N1":
-                // Draw and score an 8. Draw and meld an 8. 
+                // "Draw and score an 8"
                 $card = self::executeDraw($player_id, 8, 'score');
+                // "Draw and meld an 8"
                 $card = self::executeDraw($player_id, 8, 'board');
                 $step_max = 1;
-                
                 break;
 
             // id 182, Artifacts age 7: Singer Model 27
             case "182N1":
-                // Tuck a card from your hand. If you do, splay up its color, and then tuck all cards from your score pile of that color. 
                 $step_max = 1;
-                
                 break;
                 
             default:
@@ -11195,17 +11192,18 @@ class Innovation extends Table
             break;
 
         case "178N1A":
-            // "Claim an achievement of value 8 if it is available, ignoring eligibility."
+            // "Claim an achievement of value 8 if it is available, ignoring eligibility"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
 
-                'age' => 8,
                 'owner_from' => 0,
                 'location_from' => 'achievements',
                 'owner_to' => $player_id,
                 'location_to' => 'achievements',
+
+                'age' => 8,
 
                 'require_achievement_eligibility' => false
             );
@@ -11213,34 +11211,33 @@ class Innovation extends Table
 
         // id 182, Artifacts age 7: Singer Model 27
         case "182N1A":
-            // Tuck a card from your hand.
+            // "Tuck a card from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
-
-                'bottom_to' => true,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+                'bottom_to' => true
             );
             break;            
 
         case "182N1B":
-            // and then tuck all cards from your score pile of that color.
+            // "Tuck all cards from your score pile of that color"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
-
-                'bottom_to' => true,
-                'color' => array(self::getGameStateValue('color_last_selected')),
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+                'bottom_to' => true,
+
+                'color' => array(self::getGameStateValue('color_last_selected'))
             );
             break;            
 
@@ -12158,10 +12155,9 @@ class Innovation extends Table
                 // id 182, Artifacts age 7: Singer Model 27
                 case "182N1A":
                     if ($n > 0) { // "If you do"
-                        // splay up its color,
-                        $color = self::getGameStateValue('color_last_selected');
-                        self::splay($player_id, $player_id, $color, 3);
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        // "Splay up its color"
+                        self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 3);
+                        self::incGameStateValue('step_max', 1);
                     }
                     break;
 
