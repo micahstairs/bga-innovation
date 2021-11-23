@@ -658,13 +658,40 @@ class Innovation extends Table
         return $array;
     }
     
+    /* Encodes multiple integers into a single integer */
+    function setGameStateBase16Array($key, $array) {
+        // Due to the maximum data value of 0x8000000, only 5 elements can be encoded using this function.
+        if (count($array) > 5) {
+            throw new BgaVisibleSystemException("setGameStateBase16Array() cannot encode more than 5 integers at once");
+        }
+        $encoded_value = 0;
+        foreach($array as $value) {
+            // This encoding assumes that each integer is in the range [0, 15].
+            if ($value < 0 || $value > 15) {
+                throw new BgaVisibleSystemException("setGameStateBase16Array() cannot encode integers smaller than 0 or larger than 15");
+            }
+            $encoded_value = $encoded_value * 16 + $value;
+        }
+        $encoded_value = $encoded_value * 6 + count($array);
+        self::setGameStateValue($key, $encoded_value);
+    }
+    
+    /* Decodes an integer representing multiple integers */
+    function getGameStateBase16Array($key) {
+        $encoded_value = self::getGameStateValue($key);
+        $count = $encoded_value % 6;
+        $encoded_value /= 6;
+        $return_array = array();
+        for ($i = 0; $i < $count; $i++) {
+            $return_array[] = $encoded_value % 16;
+            $encoded_value /= 16;
+        }
+        return $return_array;
+    }
+    
     /** integer division **/
     function intDivision($a, $b) {
         return (int)($a/$b);
-    }
-    
-    function intDivisionRoundedUp($a, $b) {
-        return self::intDivision($a, $b) + ($a % $b > 0);
     }
     
     /** log for debugging **/
@@ -8033,6 +8060,35 @@ class Innovation extends Table
                 }
                 break;
 
+            // id 155, Artifacts age 5: Boerhavve Silver Microscope
+            case "155N1":
+                $step_max = 2;
+                break;
+
+            // id 156, Artifacts age 5: Principia
+            case "156N1":
+                $step_max = 1;
+                break;
+            
+            // id 159, Artifacts age 5: Barque-Longue La Belle
+            case "159N1":
+                do {
+                    $card = self::executeDraw($player_id, 5, 'board'); // "Draw and meld a 5"
+                } while($card['color'] != 2); // // "If the drawn card is not green, repeat this effect"
+                break;
+
+            // id 160, Artifacts age 5: Hudson's Bay Company Archives
+            case "160N1":
+                // "Score the bottom card of every color on your board"
+                for($color = 0; $color< 5; $color++) {
+                    $card = self::getBottomCardOnBoard($player_id, $color);
+                    if ($card !== null) {
+                        self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
+                    }
+                }
+                $step_max = 1;
+                break;
+
             // id 169, Artifacts age 6: The Wealth of Nations
             case "169N1":
                 // "Draw and score a 1"
@@ -10101,7 +10157,7 @@ class Innovation extends Table
             // "Return half (rounded up) of the cards in your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'n' => self::intDivisionRoundedUp(self::countCardsInLocation($player_id, 'score'), 2),
+                'n' => ceil(self::countCardsInLocation($player_id, 'score') / 2),
                 'can_pass' => false,
                 
                 'owner_from' => $player_id,
@@ -10984,6 +11040,92 @@ class Innovation extends Table
             );
             break;
 
+        // id 155, Artifacts age 5: Boerhavve Silver Microscope
+        case "155N1A":
+            // "Return the lowest card in your hand"
+            $min_hand_age = self::getMinAgeInHand($player_id);
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'age' => $min_hand_age,
+                'auxiliary_value' => $min_hand_age
+            );
+
+            break;
+
+        case "155N1B":
+            // "and the lowest top card on your board"
+            $all_cards = self::getTopCardsOnBoard($player_id);
+            $ages = array();
+            foreach($all_cards as $card) {
+                $ages[] = $card['age'];
+            }
+            if (empty($ages)) {
+                $ages[] = 0;
+            }
+
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'age' => min($ages)
+            );
+            break;
+
+        // id 156, Artifacts age 5: Principia
+        case "156N1A":
+            // Record the values of all non-blue top cards.
+            $ages_on_top = array();
+            for($color = 1; $color < 5; $color++) { // non-blue
+                $top_card = self::getTopCardOnBoard($player_id, $color);
+                if ($top_card !== null) {
+                    $ages_on_top[] = $top_card['age'];
+                }
+            }
+            self::setGameStateBase16Array('auxiliary_value', $ages_on_top);
+
+            // "Return all non-blue top cards from your board"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array(1,2,3,4) // non-blue
+            );
+            break;
+
+        // id 160, Artifacts age 5: Hudson's Bay Company Archives
+        case "160N1A":    
+            // "Meld a card from your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
+            
         // id 174, Artifacts age 6: Marcha Real
         case "174N1A":
             // Reveal two cards from your hand
@@ -10991,14 +11133,14 @@ class Innovation extends Table
                 'player_id' => $player_id,
                 'n' => 2,
                 'can_pass' => false,
-                
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'revealed'
             );
             break;
-
+    
         case "174N1B":
             // "Claim an achievement ignoring eligibility"
             $options = array(
@@ -11014,7 +11156,7 @@ class Innovation extends Table
                 'require_achievement_eligibility' => false
             );
             break;
-            
+ 
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -11873,8 +12015,8 @@ class Innovation extends Table
                         }
                     }
                     break;
-                    
-                 // id 174, Artifacts age 6: Marcha Real
+    
+                // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
                     $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
@@ -11899,9 +12041,35 @@ class Innovation extends Table
                         }
                     }
                     break;                
-                    
-                }
 
+                // id 155, Artifacts age 5: Boerhavve Silver Microscope
+                case "155N1B":
+                    // "Draw and score a card of value equal to the sum of the values of the cards returned"
+                    $first_age = self::getGameStateValue('auxiliary_value');
+                    $second_age = self::getGameStateValue('age_last_selected');
+                    self::executeDraw($player_id, $first_age + $second_age, 'score');
+                    break;
+                    
+                // id 156, Artifacts age 5: Principia
+                case "156N1A":
+                    $ages_on_top = self::getGameStateBase16Array('auxiliary_value');
+                    sort($ages_on_top);
+                    // "For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order"
+                    foreach($ages_on_top as $card_age) {
+                        self::executeDraw($player_id, $card_age + 1, 'board');
+                    }
+                    break;
+
+                // id 160, Artifacts age 5: Hudson's Bay Company Archives
+                case "160N1A":
+                    if ($n > 0) {
+                        // "Splay right the color of the melded card"
+                        self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 2);
+                    }
+                    break;
+                                    
+                }
+                
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             } catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
