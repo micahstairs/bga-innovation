@@ -3338,6 +3338,21 @@ class Innovation extends Table
         return false;
     }
     
+    /** Counts the number of visible cards based on the splay **/
+    function countVisibleCards($player_id, $color) {
+        $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $pile = $board[$color];
+        $pile_size = count($pile);
+        if ($pile_size == 0) { // No card of that color
+            return 0;
+        }
+        $top_card = $pile[$pile_size - 1];
+        if ($top_card['splay_direction'] == 0) { // Unsplayed
+            return 1;
+        }
+        return $pile_size; // All other splays result in the current pile count
+    }
+    
     /** Get and update game situation **/
     function incrementBGAScore($player_id, $is_special_achievement) { // Increment the BGA score of the team (single player or to player in 2 vs 2 game) (number of achievements) then check if he got enough to win
         $player = self::getObjectFromDB(self::format(
@@ -8099,8 +8114,27 @@ class Innovation extends Table
                 self::executeDraw($player_id, $age_to_score, 'score');
                 break;
 
-            // id 174, Artifacts age 6: Marcha Real
-            case "174N1":
+            // id 176, Artifacts age 7: Corvette Challenger
+            case "176N1":
+                // "Draw and tuck an 8"
+                $card = self::executeDraw($player_id, 8, 'board', /*bottom_to=*/ true);
+                // "Splay up the color of the tucked card"
+                self::splay($player_id, $player_id, $card['color'], 3);
+                //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
+                self::executeDraw($player_id, self::countVisibleCards($player_id, $card['color']), 'score');
+                break;
+
+            // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
+            case "178N1":
+                // "Draw and score an 8"
+                $card = self::executeDraw($player_id, 8, 'score');
+                // "Draw and meld an 8"
+                $card = self::executeDraw($player_id, 8, 'board');
+                $step_max = 1;
+                break;
+
+            // id 182, Artifacts age 7: Singer Model 27
+            case "182N1":
                 $step_max = 1;
                 break;
                 
@@ -11156,7 +11190,57 @@ class Innovation extends Table
                 'require_achievement_eligibility' => false
             );
             break;
- 
+
+        case "178N1A":
+            // "Claim an achievement of value 8 if it is available, ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'age' => 8,
+
+                'require_achievement_eligibility' => false
+            );
+            break;            
+
+        // id 182, Artifacts age 7: Singer Model 27
+        case "182N1A":
+            // "Tuck a card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                'bottom_to' => true
+            );
+            break;            
+
+        case "182N1B":
+            // "Tuck all cards from your score pile of that color"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                'bottom_to' => true,
+
+                'color' => array(self::getGameStateValue('color_last_selected'))
+            );
+            break;            
+
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -12040,7 +12124,7 @@ class Innovation extends Table
                             self::incGameStateValue('step_max', 1);
                         }
                     }
-                    break;                
+                    break;
 
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
@@ -12068,6 +12152,15 @@ class Innovation extends Table
                     }
                     break;
                                     
+                // id 182, Artifacts age 7: Singer Model 27
+                case "182N1A":
+                    if ($n > 0) { // "If you do"
+                        // "Splay up its color"
+                        self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 3);
+                        self::incGameStateValue('step_max', 1);
+                    }
+                    break;
+
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
