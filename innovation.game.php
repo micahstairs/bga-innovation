@@ -12044,6 +12044,7 @@ class Innovation extends Table
 
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
+                    // "Draw and score a card of value equal to the sum of the values of the cards returned"
                     $first_age = self::getGameStateValue('auxiliary_value');
                     $second_age = self::getGameStateValue('age_last_selected');
                     self::executeDraw($player_id, $first_age + $second_age, 'score');
