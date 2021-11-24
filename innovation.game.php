@@ -2011,6 +2011,11 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s achievements');
                 break;
     
+            case 'board->none':
+                $message_for_player = clienttranslate('{You must} select a pile from {your} board');
+                $message_for_opponent = clienttranslate('{player must} select a pile from {your} board');
+                $message_for_others = clienttranslate('{player must} select a pile from his board');
+                break;
                 
             case 'score->score':
                 $message_for_player = clienttranslate('{You must} transfer {number} {card} from your score pile to {opponent_name}\'s score pile');
@@ -8243,6 +8248,12 @@ class Innovation extends Table
                 }
                 break;
             
+            // id 157, Artifacts age 5: Bill of Rights
+            case "157C1":
+                $step_max = 1; // --> 1 interaction
+                break;
+
+ 
             // id 159, Artifacts age 5: Barque-Longue La Belle
             case "159N1":
                 do {
@@ -8262,6 +8273,21 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 163, Artifacts age 5: Sandham Room Cricket Bat
+            case "163N1":
+                // Draw and reveal a 6. 
+                $card = self::executeDraw($player_id, 6, 'revealed');
+                if ($card['color'] == 1) { // If it is red,
+                    $step_max = 1;
+                }
+                self::transferCardFromTo($card, $player_id, 'hand'); // put in hand
+                break;
+ 
+            // id 164, Artifacts age 5: Almira, Queen of the Castle
+            case "164N1":
+                $step_max = 1;
+                break;
+
             // id 169, Artifacts age 6: The Wealth of Nations
             case "169N1":
                 // "Draw and score a 1"
@@ -8270,6 +8296,11 @@ class Innovation extends Table
                 $age_to_score = ceil(self::getPlayerScore($player_id) / 5);
                 // "Draw and score a card of value equal to the result"
                 self::executeDraw($player_id, $age_to_score, 'score');
+                break;
+
+            // id 174, Artifacts age 6: Marcha Real
+            case "174N1":
+                $step_max = 1;
                 break;
 
             // id 176, Artifacts age 7: Corvette Challenger
@@ -11361,6 +11392,29 @@ class Innovation extends Table
             );            
             break;
 
+        // id 157, Artifacts age 5: Bill of Rights
+        case "157C1A":
+            $more_vis_cards = array();
+            for($color = 0; $color < 5; $color++){
+                if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color))
+                {
+                    $more_vis_cards[] = $color;
+                }
+            }
+        
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'color' => $more_vis_cards,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'none'
+            );            
+            break;
+            
         // id 160, Artifacts age 5: Hudson's Bay Company Archives
         case "160N1A":    
             // "Meld a card from your score pile"
@@ -11373,6 +11427,55 @@ class Innovation extends Table
                 'location_from' => 'score',
                 'owner_to' => $player_id,
                 'location_to' => 'board'
+            );
+            break;
+        
+        // id 163, Artifacts age 5: Sandham Room Cricket Bat
+        case "163N1A":
+            // "Claim an achievement ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
+            break;
+
+        // id 164, Artifacts age 5: Almira, Queen of the Castle
+        case "164N1A":
+            // "Meld a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
+
+        case "164N1B":
+            // "Claim an achievement of matching value, ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'age' => self::getGameStateValue('age_last_selected'),
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
             );
             break;
             
@@ -12315,6 +12418,18 @@ class Innovation extends Table
                         }
                     }
                     break;
+
+                // id 157, Artifacts age 5: Bill of Rights
+                case "157C1A":
+                    $color = self::getGameStateValue('color_last_selected');
+                    do {
+                        // Transfer all cards of that color from your board to my board, from the bottom up!
+                        $card = self::getBottomCardOnBoard($player_id, $color);
+                        if ($card != null) {
+                            self::transferCardFromTo($card, $launcher_id, 'board');
+                        }
+                    }while($card != null);
+                    break;
     
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
@@ -12365,6 +12480,13 @@ class Innovation extends Table
                     if ($n > 0) {
                         // "Splay right the color of the melded card"
                         self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 2);
+                    }
+                    break;
+
+                // id 164, Artifacts age 5: Almira, Queen of the Castle
+                case "164N1A":
+                    if ($n > 0) { // if no card is melded, then the value cannot match an achievement
+                        self::incGameStateValue('step_max', 1);
                     }
                     break;
                                     
