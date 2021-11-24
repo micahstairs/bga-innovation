@@ -7855,12 +7855,30 @@ class Innovation extends Table
                 // "Draw and score a 3"
                 self::executeDraw($player_id, 3, 'score');
                 break;
+
+            // id 129, Artifacts age 2: Holy Lance
+            case "129C1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+
+            case "129N1":
+                // If Holy Grail is a top card on your board, you win.
+                $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
+                if ($top_yellow_card !== null && $top_yellow_card['id'] == 131) { // Holy grail
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Holy Grail as a top card.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn HolyLance');
+                    throw new EndOfGame();
+                }
+                break;
                 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1":
                 self::setGameStateValue('auxiliary_value', -1);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
+
             
             // id 131, Artifacts age 2: Holy Grail
             case "131N1":
@@ -10648,6 +10666,32 @@ class Innovation extends Table
                 
                 'with_icon' => 4, // tower
                 'color' => array(0,2,3,4) // non-red
+            );
+            break;
+
+        // id 129, Artifacts age 2: Holy Lance
+        case "129C1A":
+            // Find colors with top artifacts
+            $artf_colors = array();
+            for ($color = 0; $color < 5; $color++)
+            {
+                $top_card = self::getTopCardOnBoard($player_id, $color);
+                if ($top_card !== null && $top_card['type'] == 1) {
+                    $artf_colors[] = $color;
+                }
+            }
+            // "transfer a top Artifact from your board to my board!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+                 
+                'color' => $artf_colors // artifacts
             );
             break;
 
