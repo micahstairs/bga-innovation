@@ -102,6 +102,17 @@
     margin-bottom: 0;
 }
 
+/* Artifacts on display */
+.display_container {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+}
+
+.display_container > div {
+    background-color: #ebd5bd;
+    padding: 5px;
+}
+
 /* hand */
 .hand_container {
     background-color: #FFFFFF;
@@ -584,7 +595,7 @@
     /* color is defined in the template */
 }
 
-.hand_container > div > p, .board > p, .text_left, .text_center {
+.display_container > div > p, .hand_container > div > p, .board > p, .text_left, .text_center {
     font-style: italic;
     margin: 0;
 }

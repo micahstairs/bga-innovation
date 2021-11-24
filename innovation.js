@@ -52,6 +52,7 @@ function (dojo, declare) {
 
             this.HTML_class.my_hand = "M card";
             this.HTML_class.opponent_hand = "S recto";
+            this.HTML_class.display = "M card";
             this.HTML_class.deck = "S recto";
             this.HTML_class.board = "M card";
             this.HTML_class.score = "S recto";
@@ -64,6 +65,7 @@ function (dojo, declare) {
             
             this.nb_cards_in_row.my_hand = null; // Will be computed dynamically
             this.nb_cards_in_row.opponent_hand = null;
+            this.nb_cards_in_row.display = 1;
             this.nb_cards_in_row.deck = 15;
             this.nb_cards_in_row.score = null;
             this.nb_cards_in_row.my_score_verso = null;
@@ -76,6 +78,7 @@ function (dojo, declare) {
             
             this.delta.my_hand = {"x": 189, "y": 133}; // +7
             this.delta.opponent_hand = {"x": 35, "y": 49}; // + 2
+            this.delta.display = {"x": 189, "y": 133}; // +7
             this.delta.deck = {"x": 3, "y": 3}; // overlap
             this.delta.score = {"x": 35, "y": 49}; // + 2
             this.delta.my_score_verso = {"x": 189, "y": 133}; // +7
@@ -322,7 +325,6 @@ function (dojo, declare) {
             
             // DECKS
             this.zone.deck = {};
-            // TODO: Hide the artifacts decks (#deck_set_2 and #deck_set_4) when they are not in use.
             for (var type = 0; type <= 1; type++) {
                 this.zone.deck[type] = {};
                 for (var age = 1; age <= 10; age++) {
@@ -381,7 +383,7 @@ function (dojo, declare) {
             
             // PLAYERS' HANDS
             this.zone.hand = {};
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 // Creation of the zone
                 var zone = this.createZone('hand', player_id, null, null, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
@@ -411,6 +413,23 @@ function (dojo, declare) {
                             }
                         }
                     }
+                }
+            }
+
+            // PLAYERS' ARTIFACTS ON DISPLAY
+            // TODO: Remove this zone from the UI when the Artifacts expansion is not in use.
+            this.zone.display = {};
+            for (var player_id in this.players) {
+                // Creation of the zone
+                var zone = this.createZone('display', player_id, null, null, null, grouped_by_age=false);
+                this.zone.display[player_id] = zone;
+                this.setPlacementRules(zone, left_to_right=true);
+                           
+                // Add card to zone if it exists
+                var card = gamedatas.artifacts_on_display[player_id];
+                if (card != null) {
+                    this.createAndAddToZone(zone, card.position, card.type, card.age, card.id, dojo.body(), card);
+                    this.addTooltipForCard(card);
                 }
             }
             
@@ -1713,6 +1732,7 @@ function (dojo, declare) {
                 case "deck":
                     return root[type][age];
                 case "hand":
+                case "display":
                 case "score":
                 case "revealed":
                 case "achievements":

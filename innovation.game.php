@@ -436,6 +436,9 @@ class Innovation extends Table
                 $result['board_splay_directions_in_clear'][$player_id][] = self::getSplayDirectionInClear($direction);
             }
         }
+
+        // Artifacts on display
+        $result['artifacts_on_display'] = self::getArtifactsOnDisplay($players);
         
         // Backs of the cards in hands (number of cards each player have in each age/type in their hands)
         $result['hand_counts'] = array();
@@ -1492,6 +1495,10 @@ class Innovation extends Table
         $score_keyword = $transferInfo['score_keyword'];
 
         switch($location_from . '->' . $location_to) {
+        case 'deck->display':
+            $message_for_player = clienttranslate('${You} dig ${<}${age}${>} ${<<}${name}${>>} and put it on display.');
+            $message_for_others = clienttranslate('${player_name} digs ${<}${age}${>} ${<<}${name}${>>} and puts it on display.');
+            break;
         case 'deck->hand':
             $message_for_player = clienttranslate('${You} draw ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} draws a ${<}${age}${>}.');
@@ -2957,6 +2964,20 @@ class Innovation extends Table
             ",
                 array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'owner' => $owner, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
            ));
+        }
+        return $result;
+    }
+
+    function getArtifactsOnDisplay($players) {
+        $result = array();
+        foreach($players as $player_id => $player) {
+            $cards = self::getCardsInLocation($player_id, 'display', null, false, false);
+            if (empty($cards)) {
+                $result[$player_id] = null;
+            } else {
+                // There's never more than one Artifact on display per player.
+                $result[$player_id] = $cards[0];
+            }
         }
         return $result;
     }
@@ -4764,10 +4785,8 @@ class Innovation extends Table
                 if ($top_artifact_card == null) {
                     self::notifyPlayer($card['owner'], "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
                 } else {
-                    // TODO : Once there is a display to move to, this will move to the display.
-                    // TODO: enforce that only a single card can be in the display
-                    // For now, put the top artifact card of the appropriate age in the melder's hand.
-                     self::transferCardFromTo($top_artifact_card, $card['owner'], 'hand');
+                    // TODO: Enforce that only a single card can be in the display.
+                     self::transferCardFromTo($top_artifact_card, $card['owner'], 'display');
                      
                      // TODO: Seizing a relic
                      // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn.
