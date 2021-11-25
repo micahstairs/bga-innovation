@@ -417,14 +417,18 @@ function (dojo, declare) {
             }
 
             // PLAYERS' ARTIFACTS ON DISPLAY
-            // TODO: Remove this zone from the UI when the Artifacts expansion is not in use.
             this.zone.display = {};
             for (var player_id in this.players) {
+                if (!gamedatas.artifacts_expansion_enabled) {
+                    dojo.byId('display_container_' + player_id).style.display = 'none';
+                    continue;
+                }
+
                 // Creation of the zone
                 var zone = this.createZone('display', player_id, null, null, null, grouped_by_age=false);
                 this.zone.display[player_id] = zone;
                 this.setPlacementRules(zone, left_to_right=true);
-                           
+                        
                 // Add card to zone if it exists
                 var card = gamedatas.artifacts_on_display[player_id];
                 if (card != null) {
