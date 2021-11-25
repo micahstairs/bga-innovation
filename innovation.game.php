@@ -4800,27 +4800,7 @@ class Innovation extends Table
         // 1) Execute a City icon's effect.
         // 2) Draw a City.
         // 3) Dig an artifact, and place it "on display".
-        if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
-                
-            // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location
-            if ($previous_top_card !== null && ($previous_top_card['age'] >= $card['age'] || self::haveOverlappingHexagonIcons($previous_top_card, $card))) {
-                
-                // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
-                $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['age']);
-                $top_artifact_card = self::getDeckTopCard($age_draw, 1);
-                
-                if ($top_artifact_card == null) {
-                    self::notifyPlayer($card['owner'], "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
-                } else {
-                    // TODO: Enforce that only a single card can be in the display.
-                     self::transferCardFromTo($top_artifact_card, $card['owner'], 'display');
-                     
-                     // TODO: Seizing a relic
-                     // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn.
-                     // You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
-                }
-            }
-        }
+        self::digArtifactIfEligible($player_id, $previous_top_card, $card);
         // 4) Promote a foreshadowed card.
         // 5) Execute a figure's "when" karma effect.
 
@@ -4828,6 +4808,39 @@ class Innovation extends Table
         // End of player action
         self::trace('playerTurn->interPlayerTurn (meld)');
         $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function digArtifactIfEligible($player_id, $previous_top_card, $melded_card) {
+        // The Artifacts expansion is not enabled.
+        if (self::getGameStateValue('artifacts_mode') == 1) {
+            return;
+        }
+
+        // An Artifact is already on display.
+        if (count(self::getCardsInLocation($player_id, 'display')) > 0) {
+            return;
+        }
+                
+        // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
+        $covered_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['age'] >= $melded_card['age'];
+        $overlapping_icons = $previous_top_card !== null && self::haveOverlappingHexagonIcons($previous_top_card, $melded_card);
+        if ($covered_card_has_lower_or_equal_value || $overlapping_icons) {
+            
+            // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
+            $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['age']);
+            $top_artifact_card = self::getDeckTopCard($age_draw, 1);
+            
+            if ($top_artifact_card == null) {
+                self::notifyPlayer($melded_card['owner'], "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
+            } else {
+                // TODO: Enforce that only a single card can be in the display.
+                self::transferCardFromTo($top_artifact_card, $melded_card['owner'], 'display');
+                
+                // TODO: Seizing a relic
+                // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn.
+                // You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
+            }
+        }
     }
 
     function haveOverlappingHexagonIcons($card_1, $card_2) {
