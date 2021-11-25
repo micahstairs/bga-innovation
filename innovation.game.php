@@ -5534,6 +5534,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} must choose an opponent');
                 $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
+
+            // id 158, Artifacts age 5: Ship of the Line Sussex
+            case "158N1B":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
             
             default:
                 // This should not happen
@@ -8149,6 +8155,19 @@ class Innovation extends Table
             // id 156, Artifacts age 5: Principia
             case "156N1":
                 $step_max = 1;
+                break;
+
+            // id 158, Artifacts age 5: Ship of the Line Sussex
+            case "158N1":
+                $number_of_cards_in_score_pile = self::countCardsInLocation($player_id, 'score');
+                if ($number_of_cards_in_score_pile == 0) {
+                    // Only do interactions B and C
+                    $step = 2;
+                    $step_max = 3;
+                } else {
+                    // Only do interaction A
+                    $step_max = 1;
+                }
                 break;
             
             // id 159, Artifacts age 5: Barque-Longue La Belle
@@ -11227,6 +11246,47 @@ class Innovation extends Table
                 'color' => array(1,2,3,4) // non-blue
             );
             break;
+        
+        // id 158, Artifacts age 5: Ship of the Line Sussex
+        case "158N1A":
+            // "Return all cards from your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+        
+        case "158N1B":
+            // "Choose a color"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'choose_color' => true
+            );
+            break;
+            
+        case "158N1C":
+            // "And score all cards of that color from your board"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'score_keyword' => true,
+
+                'color' => array(self::getGameStateValue('auxiliary_value'))
+            );            
+            break;
 
         // id 160, Artifacts age 5: Hudson's Bay Company Archives
         case "160N1A":    
@@ -12741,6 +12801,13 @@ class Innovation extends Table
                     }
                     self::setGameStateValue('auxiliary_value', -1);
                 }
+                break;
+            
+            // id 158, Artifacts age 5: Ship of the Line Sussex
+            case "158N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setGameStateValue('auxiliary_value', $choice);
                 break;
                 
             default:
