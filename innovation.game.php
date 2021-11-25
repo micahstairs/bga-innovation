@@ -98,6 +98,7 @@ class Innovation extends Table
             'require_demand_effect' => 73,
             'require_splayability' => 74,
             'owner_last_selected' => 75,
+            'type_array' => 76,
             
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
@@ -298,6 +299,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('age_min', -1); // Age min of the card to be chosen
         self::setGameStateInitialValue('age_max', -1); // Age max of the card to be chosen
         self::setGameStateInitialValue('color_array', -1); // List of selectable colors encoded in a single value
+        self::setGameStateInitialValue('type_array', -1); // List of selectable types encoded in a single value
         self::setGameStateInitialValue('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         self::setGameStateInitialValue('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
         self::setGameStateInitialValue('not_id', -1); // id of a card which cannot be selected, else -2
@@ -4060,6 +4062,10 @@ class Innovation extends Table
         if (!array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array(0, 1, 2, 3, 4);
         }
+        if (!array_key_exists('type', $rewritten_options)) {
+            // TODO: Add values to this array when expansions are added.
+            $rewritten_options['type'] = array(0, 1);
+        }
         if (!array_key_exists('with_icon', $rewritten_options)) {
             $rewritten_options['with_icon'] = 0;
         }
@@ -4139,8 +4145,11 @@ class Innovation extends Table
             case 'color':
                 self::setGameStateValueFromArray('color_array', $value);
                 break;
+            case 'type':
+                self::setGameStateValueFromArray('type_array', $value);
+                break;
             }
-            if ($key <> 'color') {
+            if ($key <> 'color' && $key <> 'type') {
                 self::setGameStateValue($key, $value);
             }
         }
@@ -4225,6 +4234,10 @@ class Innovation extends Table
         // Condition for color
         $color_array = self::getGameStateValueAsArray('color_array');
         $condition_for_color = count($color_array) == 0 ? "FALSE" : "color IN (".join($color_array, ',').")";
+
+        // Condition for type
+        $type_array = self::getGameStateValueAsArray('type_array');
+        $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join($type_array, ',').")";
         
         // Condition for icon
         $with_icon = self::getGameStateValue('with_icon');
@@ -4287,6 +4300,7 @@ class Innovation extends Table
                     {condition_for_demand_effect} AND
                     position = position_of_active_card AND
                     {condition_for_color}
+                    {condition_for_type}
                     {condition_for_icon}
                     {condition_for_splayability}
                     {condition_for_requiring_id}
@@ -4299,6 +4313,7 @@ class Innovation extends Table
                     'condition_for_claimable_ages' => $condition_for_claimable_ages,
                     'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
+                    'condition_for_type' => $condition_for_type,
                     'condition_for_icon' => $condition_for_icon,
                     'condition_for_splayability' => $condition_for_splayability,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
@@ -4319,6 +4334,7 @@ class Innovation extends Table
                     {condition_for_claimable_ages} AND
                     {condition_for_demand_effect} AND
                     {condition_for_color}
+                    {condition_for_type}
                     {condition_for_icon}
                     {condition_for_splayability}
                     {condition_for_requiring_id}
@@ -4331,6 +4347,7 @@ class Innovation extends Table
                     'condition_for_claimable_ages' => $condition_for_claimable_ages,
                     'condition_for_demand_effect' => $condition_for_demand_effect,
                     'condition_for_color' => $condition_for_color,
+                    'condition_for_type' => $condition_for_type,
                     'condition_for_icon' => $condition_for_icon,
                     'condition_for_splayability' => $condition_for_splayability,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
@@ -7858,16 +7875,16 @@ class Innovation extends Table
 
             // id 129, Artifacts age 2: Holy Lance
             case "129C1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "129N1":
-                // If Holy Grail is a top card on your board, you win.
-                $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                if ($top_yellow_card !== null && $top_yellow_card['id'] == 131) { // Holy grail
+                // "If Holy Grail is a top card on your board, you win"
+                $card = self::getIfTopCardOnBoard(131);
+                if ($card !== null) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Holy Grail as a top card.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                    self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                    self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn HolyLance');
                     throw new EndOfGame();
                 }
@@ -7878,7 +7895,6 @@ class Innovation extends Table
                 self::setGameStateValue('auxiliary_value', -1);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
-
             
             // id 131, Artifacts age 2: Holy Grail
             case "131N1":
@@ -10671,16 +10687,7 @@ class Innovation extends Table
 
         // id 129, Artifacts age 2: Holy Lance
         case "129C1A":
-            // Find colors with top artifacts
-            $artf_colors = array();
-            for ($color = 0; $color < 5; $color++)
-            {
-                $top_card = self::getTopCardOnBoard($player_id, $color);
-                if ($top_card !== null && $top_card['type'] == 1) {
-                    $artf_colors[] = $color;
-                }
-            }
-            // "transfer a top Artifact from your board to my board!"
+            // "Transfer a top Artifact from your board to my board!"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -10691,7 +10698,7 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
                  
-                'color' => $artf_colors // artifacts
+                'type' => array(1) // Artifact cards
             );
             break;
 
