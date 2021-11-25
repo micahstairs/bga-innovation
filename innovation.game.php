@@ -1527,6 +1527,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} draw and achieve a ${<}${age}${>}.');
             $message_for_others = clienttranslate('${player_name} draws and achieves a ${<}${age}${>}.');
             break;
+        case 'display->board':
+            $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your display.');
+            $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his display.');
+            break;
         case 'hand->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
@@ -4764,10 +4768,9 @@ class Innovation extends Table
         self::checkAction('meld');
         $player_id = self::getActivePlayerId();
 
-        // Check if the player has this card really in his hand
+        // Check if the player really has this card in their hand or on display
         $card = self::getCardInfo($card_id);
-        
-        if ($card['owner'] != $player_id || $card['location'] != "hand") {
+        if ($card['owner'] != $player_id || ($card['location'] != "hand" && $card['location'] != "display")) {
             // The player is cheating...
             throw new BgaUserException(self::_("You do not have this card in hand [Press F5 in case of troubles]"));
         }

@@ -760,6 +760,11 @@ function (dojo, declare) {
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clicForMeld');
+
+                    // Artifact on display (meld action)
+                    var artifact_on_display = this.selectArtifactOnDisplay();
+                    artifact_on_display.addClass("clickable");
+                    this.on(artifact_on_display, 'onclick', 'action_clicForMeld');
                     
                     // Cards on board (dogma action)
                     var cards_on_board = this.selectActiveCardsOnBoard();
@@ -1298,7 +1303,6 @@ function (dojo, declare) {
             all_cards_on_board = this.setDefault(all_cards_on_board, false);
             ///////
             
-            var selectors = [this.selectCardsInHand, this.selectActiveCardsOnBoard]
             for(var i=0; i<2; i++) {
                 var card_nodes = i == 0 ? this.selectCardsInHand() : (all_cards_on_board ? this.selectAllCardsOnBoard() : this.selectActiveCardsOnBoard());
                 var self = this;
@@ -1615,6 +1619,10 @@ function (dojo, declare) {
         
         selectCardsInHand : function() {
             return dojo.query("#hand_" + this.player_id + " > .card");
+        },
+
+        selectArtifactOnDisplay : function() {
+            return dojo.query("#display_" + this.player_id + " > .card");
         },
         
         selectAllCardsOnBoard : function() {
