@@ -4009,6 +4009,16 @@ class Innovation extends Table
             if (array_key_exists($special_type_of_choice, $options)) {
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
                 self::setGameStateValue('can_pass', $options['can_pass'] ? 1 : 0); 
+
+                // Only used by certain special options (e.g. choose_color)
+                if (array_key_exists('color', $options)) {
+                    // NOTE: It is the responsibility of the card implementation to ensure that $options['color'] has enough
+                    // colors in it. For example, for 'choose_color', the array must have at least one element in it.
+                    self::setGameStateValueFromArray('color_array', $options['color']);
+                } else {
+                    self::setGameStateValueFromArray('color_array', array(0, 1, 2, 3, 4));
+                }
+
                 return;
             }
         }
@@ -5075,7 +5085,7 @@ class Innovation extends Table
                 break;
             case 'choose_color':
                 // Color choice
-                if (!ctype_digit($choice) || $choice < 0 || $choice > 4) {
+                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
                     // The player is cheating...
                     throw new BgaUserException(self::_("Your choice must be a color [Press F5 in case of troubles]"));
                 }
@@ -5087,7 +5097,7 @@ class Innovation extends Table
                     throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
                 }
                 $colors = self::getValueAsArray($choice);
-                if (count($colors) <> 2 || $colors[0] == $colors[1] || $colors[0] < 0 || $colors[0] > 4 || $colors[1] < 0 || $colors[1] > 4) {
+                if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
                     // The player is cheating... 
                     throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
                 }
@@ -5372,7 +5382,8 @@ class Innovation extends Table
                 break;
             case 'choose_color':
             case 'choose_two_colors':
-                for($color=0; $color<5; $color++) {
+                $options = array();
+                foreach (self::getGameStateValueAsArray('color_array') as $color) {
                     $options[] = array('value' => $color, 'text' => self::getColorInClear($color));
                 }                
                 break;
@@ -5384,6 +5395,8 @@ class Innovation extends Table
                 // See the card
                 break;
             case 'choose_type':
+                $options = array();
+                // TODO: Update this loop when new expansions are added.
                 for($type=0; $type<=1; $type++) {
                     $options[] = array('value' => $type, 'text' => self::getPrintableStringForCardType($type));
                 }                
