@@ -5599,10 +5599,14 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
 
-            // id 158, Artifacts age 5: Ship of the Line Sussex
-            case "158N1B":
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+
+            // id 158, Artifacts age 5: Ship of the Line Sussex
+            case "158N1B":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
@@ -8230,19 +8234,6 @@ class Innovation extends Table
             case "156N1":
                 $step_max = 1;
                 break;
-
-            // id 158, Artifacts age 5: Ship of the Line Sussex
-            case "158N1":
-                $number_of_cards_in_score_pile = self::countCardsInLocation($player_id, 'score');
-                if ($number_of_cards_in_score_pile == 0) {
-                    // Only do interactions B and C
-                    $step = 2;
-                    $step_max = 3;
-                } else {
-                    // Only do interaction A
-                    $step_max = 1;
-                }
-                break;
             
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1":
@@ -8255,6 +8246,19 @@ class Innovation extends Table
                     }
                 }
                 self::setGameStateValueFromArray('color_array', $colors_with_more_visible_cards);
+                break;
+
+            // id 158, Artifacts age 5: Ship of the Line Sussex
+            case "158N1":
+                $number_of_cards_in_score_pile = self::countCardsInLocation($player_id, 'score');
+                if ($number_of_cards_in_score_pile == 0) {
+                    // Only do interactions B and C
+                    $step = 2;
+                    $step_max = 3;
+                } else {
+                    // Only do interaction A
+                    $step_max = 1;
+                }
                 break;
  
             // id 159, Artifacts age 5: Barque-Longue La Belle
@@ -11353,6 +11357,17 @@ class Innovation extends Table
                 'color' => array(1,2,3,4) // non-blue
             );
             break;
+
+        // id 157, Artifacts age 5: Bill of Rights
+        case "157C1A":
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'choose_color' => true,
+                'color' => self::getGameStateValueAsArray('color_array')
+            );            
+            break;
         
         // id 158, Artifacts age 5: Ship of the Line Sussex
         case "158N1A":
@@ -11380,6 +11395,7 @@ class Innovation extends Table
             
         case "158N1C":
             // "And score all cards of that color from your board"
+            // TODO: This shouldn't be an interaction. It should be an automated step that happens during 158N1B after the color is chosen.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -11392,17 +11408,6 @@ class Innovation extends Table
                 'score_keyword' => true,
 
                 'color' => array(self::getGameStateValue('auxiliary_value'))
-            );            
-            break;
-
-        // id 157, Artifacts age 5: Bill of Rights
-        case "157C1A":
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                'color' => self::getGameStateValueAsArray('color_array'),
-                
-                'choose_color' => true
             );            
             break;
             
@@ -12988,15 +12993,16 @@ class Innovation extends Table
                     self::setGameStateValue('auxiliary_value', -1);
                 }
                 break;
-            
-            // id 158, Artifacts age 5: Ship of the Line Sussex
-            case "158N1B":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
 
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setGameStateValue('auxiliary_value', $choice);
+                break;
+            
+            // id 158, Artifacts age 5: Ship of the Line Sussex
+            case "158N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setGameStateValue('auxiliary_value', $choice);
