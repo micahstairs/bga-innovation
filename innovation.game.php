@@ -5584,6 +5584,8 @@ class Innovation extends Table
 
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1A":
+            // id 157, Artifacts age 5: Bill of Rights
+            case "157C1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
@@ -8250,9 +8252,17 @@ class Innovation extends Table
             
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1":
-                $step_max = 1; // --> 1 interaction
+                $more_vis_cards = array();
+                for($color = 0; $color < 5; $color++){
+                    if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color))
+                    {
+                        $more_vis_cards[] = $color;
+                        // if a pile has more visible cards, proceed to next interaction
+                        $step_max = 1; // --> 1 interaction
+                    }
+                }
+                self::setGameStateValueFromArray('color_array', $more_vis_cards);
                 break;
-
  
             // id 159, Artifacts age 5: Barque-Longue La Belle
             case "159N1":
@@ -11394,24 +11404,12 @@ class Innovation extends Table
 
         // id 157, Artifacts age 5: Bill of Rights
         case "157C1A":
-            $more_vis_cards = array();
-            for($color = 0; $color < 5; $color++){
-                if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color))
-                {
-                    $more_vis_cards[] = $color;
-                }
-            }
-        
             $options = array(
                 'player_id' => $player_id,
-                'n' => 1,
                 'can_pass' => false,
-                'color' => $more_vis_cards,
+                'color' => self::getGameStateValueAsArray('color_array'),
                 
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'none'
+                'choose_color' => true
             );            
             break;
             
@@ -12421,7 +12419,7 @@ class Innovation extends Table
 
                 // id 157, Artifacts age 5: Bill of Rights
                 case "157C1A":
-                    $color = self::getGameStateValue('color_last_selected');
+                    $color = self::getGameStateValue('auxiliary_value');
                     do {
                         // Transfer all cards of that color from your board to my board, from the bottom up!
                         $card = self::getBottomCardOnBoard($player_id, $color);
@@ -13003,6 +13001,12 @@ class Innovation extends Table
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setGameStateValue('auxiliary_value', $choice);
+
+            // id 157, Artifacts age 5: Bill of Rights
+            case "157C1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setGameStateValue('auxiliary_value', $choice); // log the choice for later.
                 break;
                 
             default:
