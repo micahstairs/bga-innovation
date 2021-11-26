@@ -676,6 +676,7 @@ function (dojo, declare) {
                 break;
             case 'artifactPlayerTurn':
                 this.destroyActionCard();
+                this.givePlayerActionCard(this.getActivePlayerId(), 0);
                 break;
             case 'playerTurn':
                 this.destroyActionCard();
@@ -2272,11 +2273,11 @@ function (dojo, declare) {
          */
         givePlayerActionCard : function(player_id, action_number) {
             dojo.addClass('action_indicator_' + player_id, 'action_card');
-            var action_text = action_number == 1 ? _('First action') : _('Second action');
+            var action_text = action_number == 0 ? _('Free Action') : 1 ? _('First Action') : _('Second Action');
             var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 15, 2);
             $('action_indicator_' + player_id).innerHTML = div_action_text;
         },
-        
+
         destroyActionCard : function() {
             var action_indicators = dojo.query('.action_indicator');
             action_indicators.forEach(function(node) {
