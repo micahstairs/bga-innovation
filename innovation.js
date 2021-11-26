@@ -646,7 +646,7 @@ function (dojo, declare) {
         // onEnteringState: this method is called each time we are entering into a new game state.
         //                  You can use this method to perform some user interface changes at this moment.
         //
-            onEnteringState: function (stateName, args) {
+        onEnteringState: function (stateName, args) {
             console.log('Entering state: '+stateName)
             console.log(args)
             
@@ -664,7 +664,7 @@ function (dojo, declare) {
             }
 
             // Things to do for all players
-                switch (stateName) {
+            switch (stateName) {
             case 'turn0':
                 if (args.args.team_game) {
                     this.addToLog(args.args.messages[this.player_id]);
@@ -673,6 +673,9 @@ function (dojo, declare) {
                 if (this.selected_card !== null) {
                     dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.HTML_class.my_hand), 'selected')
                 }
+                break;
+            case 'artifactPlayerTurn':
+                this.destroyActionCard();
                 break;
             case 'playerTurn':
                 this.destroyActionCard();
@@ -726,7 +729,7 @@ function (dojo, declare) {
             if (this.isCurrentPlayerActive()) {
                 // I am supposed to play
                 
-                    switch (stateName) {
+                switch (stateName) {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -735,6 +738,12 @@ function (dojo, declare) {
                     var cards_in_hand = this.selectCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.on(cards_in_hand, 'onclick', 'action_clicForInitialMeld');
+                    break;
+                case 'artifactPlayerTurn':
+                    // TODO: Reset toolips, as appropriate.
+                    var card_in_display = this.selectArtifactOnDisplay();
+                    card_in_display.addClass("clickable");
+                    this.on(card_in_display, 'onclick', 'action_clicForDogmaArtifact');
                     break;
                 case 'playerTurn':
                     // Reset tooltips for hand or board
@@ -822,7 +831,7 @@ function (dojo, declare) {
             }
             else {
                 // I am not supposed to play
-                    switch (stateName) {
+                switch (stateName) {
                 case 'turn0':
                     // Reset tooltips for hand (or board: no card)
                     this.destroyMyHandAndBoardTooltips();
@@ -860,14 +869,17 @@ function (dojo, declare) {
         // onLeavingState: this method is called each time we are leaving a game state.
         //                 You can use this method to perform some user interface changes at this moment.
         //
-            onLeavingState: function (stateName) {
+        onLeavingState: function (stateName) {
             this.deactivateClickEvents(); // If this was not done after a click event (game replay for instance)
             
             // Was it a state I was supposed to play?
             if (this.isCurrentPlayerActive()) {
                 // I was supposed to play
                 
-                    switch (stateName) {
+                switch (stateName) {
+                case 'artifactPlayerTurn':
+                    // TODO: Reset toolips, as appropriate.
+                    break;
                 case 'playerTurn':
                     // Reset tooltips for hand or board
                     this.destroyMyHandAndBoardTooltips(true);
@@ -884,9 +896,16 @@ function (dojo, declare) {
         // onUpdateActionButtons: in this method you can manage "action buttons" that are displayed in the
         //                        action status bar (ie: the HTML links in the status bar).
         //        
-            onUpdateActionButtons: function (stateName, args) {
+        onUpdateActionButtons: function (stateName, args) {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
+                case 'artifactPlayerTurn':
+                    this.addActionButton("dogma_artifact", _("Dogma"), "action_clicForDogmaArtifact");
+                    dojo.place("<span class='extra_text'> , </span>", "dogma_artifact", "after");
+                    this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
+                    dojo.place("<span class='extra_text'> , " + _("or") + "</span>", "return_artifact", "after");
+                    this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
+                    break;
                 case 'playerTurn':
                     // Red buttons for claimable_achievements
                     for (var i=0; i<args.claimable_ages.length; i++) {
@@ -904,7 +923,7 @@ function (dojo, declare) {
                     else {
                         this.addActionButton("take_draw_action", _("Finish the game (attempt to draw above ${age_10})").replace('${age_10}', this.square('N', 'age', 10)), "action_clicForDraw")
                     }
-                    dojo.place("<span id='extra_text'> , " + _("meld or dogma") + "</span>", "take_draw_action", "after")
+                    dojo.place("<span class='extra_text'> , " + _("meld or dogma") + "</span>", "take_draw_action", "after")
                     break;
                 case 'selectionMove':
                     var special_type_of_choice_with_buttons = args.special_type_of_choice != 0 && args.special_type_of_choice != 6 /* rearrange */;
@@ -921,7 +940,7 @@ function (dojo, declare) {
                         // Add button for splaying choices
                         for (var i=0; i<args.splayable_colors.length; i++) {
                             if (i > 0) {
-                                dojo.place("<span id='extra_text'> ,</span>", "splay_" + args.splayable_colors[i-1], "after")
+                                dojo.place("<span class='extra_text'> ,</span>", "splay_" + args.splayable_colors[i-1], "after")
                             }
                             this.addActionButton("splay_" + args.splayable_colors[i], dojo.string.substitute(_("Splay your ${cards} ${direction}"), {'cards': args.splayable_colors_in_clear[i], 'direction': args.splay_direction_in_clear}), "action_clicForSplay")
                         }
@@ -931,7 +950,7 @@ function (dojo, declare) {
                     // Add a button if I can pass or stop
                     if (args.can_pass || args.can_stop) {
                         if (special_type_of_choice_with_buttons || splay_choice) {
-                            dojo.place("<span id='extra_text'> " + _("or") + "</span>", last_button, "after")
+                            dojo.place("<span class='extra_text'> " + _("or") + "</span>", last_button, "after")
                         }
                         if (args.can_pass) {
                             var action = "pass";
@@ -1708,7 +1727,7 @@ function (dojo, declare) {
 
             this.erased_pagemaintitle_text = $('pagemaintitletext').innerHTML;
             
-            dojo.query('#generalactions > .action-button, #extra_text').addClass('hidden'); // Hide buttons
+            dojo.query('#generalactions > .action-button, .extra_text').addClass('hidden'); // Hide buttons
             $('pagemaintitletext').innerHTML = _("Move recorded. Waiting for update...");
 
         },
@@ -1719,7 +1738,7 @@ function (dojo, declare) {
             
             this.restart(this.deactivated_cards, 'onclick');
             
-            dojo.query('#generalactions > .action-button, #extra_text').removeClass('hidden'); // Show buttons again
+            dojo.query('#generalactions > .action-button, .extra_text').removeClass('hidden'); // Show buttons again
             if (revert_text) {
                 $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
             }
@@ -2329,6 +2348,48 @@ function (dojo, declare) {
                              this, function(result){}, function(is_error){this.resurrectClickEvents(is_error);}
                         );
         },
+
+        action_clicForDogmaArtifact : function() {
+            if (!this.checkAction('dogmaArtifactOnDisplay')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/dogmaArtifactOnDisplay.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clicForReturnArtifact : function() {
+            if (!this.checkAction('returnArtifactOnDisplay')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/returnArtifactOnDisplay.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clicForPassArtifact : function() {
+            if (!this.checkAction('passArtifactOnDisplay')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/passArtifactOnDisplay.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
         
         action_clicForAchieve : function(event) {
             if(!this.checkAction('achieve')){
@@ -2393,10 +2454,6 @@ function (dojo, declare) {
                 return;
             }
             
-            //
-            //
-            //
-            //TODO: Confimation dialog: 
             //
             //Get the dogma icon from the square on the card and compare players counters
             //
@@ -2902,18 +2959,6 @@ function (dojo, declare) {
         */
             setupNotifications: function () {
             console.log('notifications subscriptions setup');
-            
-            // TODO: here, associate your game notifications with local methods
-            
-            // Example 1: standard notification handling
-            // dojo.subscribe('cardPlayed', this, "notif_cardPlayed");
-            
-            // Example 2: standard notification handling + tell the user interface to wait
-            //            during 3 seconds after calling the method in order to let the players
-            //            see what is happening in the game.
-            // dojo.subscribe('cardPlayed', this, "notif_cardPlayed");
-            // this.notifqueue.setSynchronous('cardPlayed', 3000);
-            // 
             
             var reasonnable_delay = 1000;
             

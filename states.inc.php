@@ -82,7 +82,7 @@ $machinestates = array(
         "updateGameProgression" => true,
         "transitions" => array("" => 4)
     ),
-    
+
     4 => array(
         "name" => "playerTurn",
         "description" => clienttranslate('${actplayer} must take ${qualified_action}'),
@@ -99,7 +99,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stInterPlayerTurn",
         "updateGameProgression" => true,
-        "transitions" => array("" => 4)
+        "transitions" => array("playerTurn" => 4, "artifactPlayerTurn" => 15)
     ),
 
     6 => array(
@@ -195,6 +195,15 @@ $machinestates = array(
         "action" => "stJustBeforeGameEnd",
         "updateGameProgression" => true,
         "transitions" => array("" => 99)
+    ),
+
+    15 => array(
+        "name" => "artifactPlayerTurn",
+        "description" => clienttranslate('${actplayer} must choose what to do with his Artifact on display'),
+        "descriptionmyturn" => clienttranslate('${You} must choose what to do with your Artifact on display:'),
+        "type" => "activeplayer",
+        "possibleactions" => array("dogmaArtifactOnDisplay", "returnArtifactOnDisplay", "passArtifactOnDisplay"),
+        "transitions" => array("playerTurn" => 4, "dogmaEffect" => 6, "justBeforeGameEnd" => 98)
     ),
    
     // Final state.

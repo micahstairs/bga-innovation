@@ -90,6 +90,33 @@
         
         self::ajaxResponse();
     }
+
+    public function dogmaArtifactOnDisplay() {
+        self::setAjaxMode();
+        
+        // Call dogmaArtifactOnDisplay from game logic
+        $this->game->dogmaArtifactOnDisplay();
+        
+        self::ajaxResponse();
+    }
+
+    public function returnArtifactOnDisplay() {
+        self::setAjaxMode();
+        
+        // Call returnArtifactOnDisplay from game logic
+        $this->game->returnArtifactOnDisplay();
+        
+        self::ajaxResponse();
+    }
+
+    public function passArtifactOnDisplay() {
+        self::setAjaxMode();
+        
+        // Call passArtifactOnDisplay from game logic
+        $this->game->passArtifactOnDisplay();
+        
+        self::ajaxResponse();
+    }
     
     public function achieve() {
         self::setAjaxMode();

@@ -1531,6 +1531,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his display.');
             break;
+        case 'display->deck':
+            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your display.');
+            $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his display.');
+            break;
         case 'hand->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
@@ -4683,6 +4687,46 @@ class Innovation extends Table
         // If that was the last player to choose his card, go on for the next state (whoBegins?), else, wait for remaining players
         $this->gamestate->setPlayerNonMultiactive($player_id, '');
     }
+
+    function dogmaArtifactOnDisplay() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('dogmaArtifactOnDisplay');
+
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardsInLocation($player_id, 'display')[0];
+
+        // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
+
+        // TODO: Update statistics.
+        // TODO: Take icons on Artifact into account.
+        self::executeDogma($player_id, $card);
+    }
+
+    function returnArtifactOnDisplay() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('returnArtifactOnDisplay');
+
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardsInLocation($player_id, 'display')[0];
+        self::transferCardFromTo($card, 0, 'deck');
+
+        // Return to the resolution of the effect
+        self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
+        $this->gamestate->nextState('playerTurn');
+    }
+
+    function passArtifactOnDisplay() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('passArtifactOnDisplay');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to return or dogma your Artifact on display.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return or dogma his Artifact on display.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        // Return to the resolution of the effect
+        self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
+        $this->gamestate->nextState('playerTurn');
+    }
     
     function achieve($age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
@@ -4882,7 +4926,12 @@ class Innovation extends Table
         self::incStat(1, 'actions_number');
         self::incStat(1, 'actions_number', $player_id);
         self::incStat(1, 'dogma_actions_number', $player_id);
-        
+
+        self::executeDogma($player_id, $card);
+    }
+    
+    function executeDogma($player_id, $card) {
+
         self::notifyDogma($card);
         
         $dogma_icon = $card['dogma_icon'];
@@ -4958,7 +5007,7 @@ class Innovation extends Table
         } while($player_no != $dogma_player_no);
         
         // Write info in global variables to prepare the first effect
-        self::setGameStateValue('dogma_card_id', $card_id);
+        self::setGameStateValue('dogma_card_id', $card['id']);
         if ($card_with_i_compel_effect) {
             self::setGameStateValue('current_effect_type', 2);
         } else if ($card_with_i_demand_effect) {
@@ -4969,8 +5018,8 @@ class Innovation extends Table
         self::setGameStateValue('current_effect_number', 1);
         self::setGameStateValue('sharing_bonus', 0);
         
-        // Resolve the first dogma effet of the card
-        self::trace('playerTurn->dogmaEffect (dogma)');
+        // Resolve the first dogma effect of the card
+        self::trace('playerTurn/artifactPlayerTurn->dogmaEffect (dogma/dogmaArtifactOnDisplay)');
         $this->gamestate->nextState('dogmaEffect');
     }
 
@@ -5256,7 +5305,7 @@ class Innovation extends Table
         }
         return array('team_game' => false);
     }
-    
+
     function argPlayerTurn() {
         $player_id = self::getGameStateValue('active_player');
         return array(
@@ -5987,10 +6036,18 @@ class Innovation extends Table
             $this->activeNextPlayer();
             $player_id = self::getActivePlayerId();
             self::setGameStateValue('active_player', $player_id);
+
+            // Get next player to decide what to do with their Artifact
+            if (count(self::getCardsInLocation($player_id, 'display')) > 0) {
+                self::notifyGeneralInfo('<!--empty-->');
+                self::trace('interPlayerTurn->artifactPlayerTurn');
+                $this->gamestate->nextState('artifactPlayerTurn');
+                return;
+            }
         }
         self::notifyGeneralInfo('<!--empty-->');
         self::trace('interPlayerTurn->playerTurn');
-        $this->gamestate->nextState();
+        $this->gamestate->nextState('playerTurn');
     }
     
     function stDogmaEffect() {
