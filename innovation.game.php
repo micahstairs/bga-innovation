@@ -12999,7 +12999,7 @@ class Innovation extends Table
             case "157C1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setGameStateValue('auxiliary_value', $choice); // log the choice for later.
+                self::setGameStateValue('auxiliary_value', $choice);
                 break;
                 
             default:
