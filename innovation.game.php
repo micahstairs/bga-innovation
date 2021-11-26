@@ -2010,12 +2010,6 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} achievements');
                 $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s achievements');
                 break;
-    
-            case 'board->none':
-                $message_for_player = clienttranslate('{You must} select a pile from {your} board');
-                $message_for_opponent = clienttranslate('{player must} select a pile from {your} board');
-                $message_for_others = clienttranslate('{player must} select a pile from his board');
-                break;
                 
             case 'score->score':
                 $message_for_player = clienttranslate('{You must} transfer {number} {card} from your score pile to {opponent_name}\'s score pile');
@@ -5584,12 +5578,10 @@ class Innovation extends Table
 
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1A":
-            // id 157, Artifacts age 5: Bill of Rights
-            case "157C1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
-            
+
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -5609,6 +5601,8 @@ class Innovation extends Table
 
             // id 158, Artifacts age 5: Ship of the Line Sussex
             case "158N1B":
+            // id 157, Artifacts age 5: Bill of Rights
+            case "157C1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
@@ -8252,16 +8246,15 @@ class Innovation extends Table
             
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1":
-                $more_vis_cards = array();
-                for($color = 0; $color < 5; $color++){
-                    if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color))
-                    {
-                        $more_vis_cards[] = $color;
-                        // if a pile has more visible cards, proceed to next interaction
-                        $step_max = 1; // --> 1 interaction
+                // "A color where you have more visible cards than I do"
+                $colors_with_more_visible_cards = array();
+                for ($color = 0; $color < 5; $color++){
+                    if (self::countVisibleCards($player_id, $color) > self::countVisibleCards($launcher_id, $color)) {
+                        $colors_with_more_visible_cards[] = $color;
+                        $step_max = 1;
                     }
                 }
-                self::setGameStateValueFromArray('color_array', $more_vis_cards);
+                self::setGameStateValueFromArray('color_array', $colors_with_more_visible_cards);
                 break;
  
             // id 159, Artifacts age 5: Barque-Longue La Belle
@@ -8285,12 +8278,12 @@ class Innovation extends Table
 
             // id 163, Artifacts age 5: Sandham Room Cricket Bat
             case "163N1":
-                // Draw and reveal a 6. 
+                // "Draw and reveal a 6"
                 $card = self::executeDraw($player_id, 6, 'revealed');
-                if ($card['color'] == 1) { // If it is red,
+                if ($card['color'] == 1) { // "If it is red"
                     $step_max = 1;
                 }
-                self::transferCardFromTo($card, $player_id, 'hand'); // put in hand
+                self::transferCardFromTo($card, $player_id, 'hand');
                 break;
  
             // id 164, Artifacts age 5: Almira, Queen of the Castle
@@ -11447,7 +11440,7 @@ class Innovation extends Table
 
         // id 164, Artifacts age 5: Almira, Queen of the Castle
         case "164N1A":
-            // "Meld a card from your hand."
+            // "Meld a card from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -11466,13 +11459,13 @@ class Innovation extends Table
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
-                'age' => self::getGameStateValue('age_last_selected'),
                 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
                 'owner_to' => $player_id,
                 'location_to' => 'achievements',
 
+                'age' => self::getGameStateValue('age_last_selected'),
                 'require_achievement_eligibility' => false
             );
             break;
@@ -12421,12 +12414,12 @@ class Innovation extends Table
                 case "157C1A":
                     $color = self::getGameStateValue('auxiliary_value');
                     do {
-                        // Transfer all cards of that color from your board to my board, from the bottom up!
+                        // "Transfer all cards of that color from your board to my board, from the bottom up!"
                         $card = self::getBottomCardOnBoard($player_id, $color);
                         if ($card != null) {
                             self::transferCardFromTo($card, $launcher_id, 'board');
                         }
-                    }while($card != null);
+                    } while ($card != null);
                     break;
     
                 // id 174, Artifacts age 6: Marcha Real
@@ -12483,7 +12476,7 @@ class Innovation extends Table
 
                 // id 164, Artifacts age 5: Almira, Queen of the Castle
                 case "164N1A":
-                    if ($n > 0) { // if no card is melded, then the value cannot match an achievement
+                    if ($n > 0) { // If no card is melded, then the value cannot match an achievement
                         self::incGameStateValue('step_max', 1);
                     }
                     break;
