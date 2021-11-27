@@ -11562,6 +11562,7 @@ class Innovation extends Table
 
         // id 179, Artifacts age 7: International Prototype Metre Bar
         case "179N1A":
+            // "Choose a value"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -11572,7 +11573,7 @@ class Innovation extends Table
 
         // id 180, Artifacts age 7: Hansen Writing Ball
         case "180C1A":
-            // Meld a blue card 
+            // "Meld a blue card"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -11589,7 +11590,7 @@ class Innovation extends Table
             break;
 
         case "180C1B":
-            // transfer all cards in your hand to my hand!
+            // "Transfer all cards in your hand to my hand!"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
