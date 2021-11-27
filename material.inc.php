@@ -1534,7 +1534,7 @@ $this->textual_card_infos = array(
 147 => array('name' => clienttranslate('East India Company Charter'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw an score a ${age_5}.'),
+    'non_demand_effect_1' => clienttranslate('Choose a value other than ${age_5}. Return all cards of that value from all score piles. For each player that returned cards, draw and score a ${age_5}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
