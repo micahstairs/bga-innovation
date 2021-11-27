@@ -8330,29 +8330,20 @@ class Innovation extends Table
 
             // id 172, Artifacts age 6: Pride and Prejudice
             case "172N1":
-
+                // TODO: Prevent this from throwing an error ("generated notifications are larger than 128k") when it draws out the remaining cards in the game.
                 do {
-                    // "Draw and meld a 6."
+                    // "Draw and meld a 6"
                     $card = self::executeDraw($player_id, 6, 'board');
-                    // If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board, 
-                    $card_color_vis_cards = self::countVisibleCards($player_id, $card['color']);
-                    $is_min = true;
-                    for($color = 0; $color < 5; $color++) {
-                        $curr_vis_count = self::countVisibleCards($player_id, $color);
-                        if ($card_color_vis_cards > $curr_vis_count) {
-                            $is_min = false; // not the minimum
-                            break;
+                    // "If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board"
+                    $num_visible_cards_of_drawn_color = self::countVisibleCards($player_id, $card['color']);
+                    for ($color = 0; $color < 5; $color++) {
+                        if ($num_visible_cards_of_drawn_color > self::countVisibleCards($player_id, $color)) {
+                            break 2; // Exit do-while loop
                         }
                     }
-                    if ($is_min) {
-                        // score the melded card, 
-                        self::transferCardFromTo($card, $player_id, 'score', false, true);
-                    }
-                    else {
-                        break;
-                    }
-                } while(true); // and repeat this effect.
-                
+                    // "Score the melded card"
+                    self::transferCardFromTo($card, $player_id, 'score', false, true);
+                } while (true); // "Repeat this effect"
                 break;
 
             // id 174, Artifacts age 6: Marcha Real
