@@ -8328,6 +8328,33 @@ class Innovation extends Table
                 self::executeDraw($player_id, $age_to_score, 'score');
                 break;
 
+            // id 172, Artifacts age 6: Pride and Prejudice
+            case "172N1":
+
+                do {
+                    // "Draw and meld a 6."
+                    $card = self::executeDraw($player_id, 6, 'board');
+                    // If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board, 
+                    $card_color_vis_cards = self::countVisibleCards($player_id, $card['color']);
+                    $is_min = true;
+                    for($color = 0; $color < 5; $color++) {
+                        $curr_vis_count = self::countVisibleCards($player_id, $color);
+                        if ($card_color_vis_cards > $curr_vis_count) {
+                            $is_min = false; // not the minimum
+                            break;
+                        }
+                    }
+                    if ($is_min) {
+                        // score the melded card, 
+                        self::transferCardFromTo($card, $player_id, 'score', false, true);
+                    }
+                    else {
+                        break;
+                    }
+                } while(true); // and repeat this effect.
+                
+                break;
+
             // id 174, Artifacts age 6: Marcha Real
             case "174N1":
                 $step_max = 1;
