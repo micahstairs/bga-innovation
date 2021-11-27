@@ -99,6 +99,7 @@ class Innovation extends Table
             'require_splayability' => 74,
             'owner_last_selected' => 75,
             'type_array' => 76,
+            'age_array' => 77,
             
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
@@ -298,6 +299,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('location_to', -1); // Location where the chosen card will be transfered (0 for deck, 1 for hand, 2 for board, 3 for score)
         self::setGameStateInitialValue('age_min', -1); // Age min of the card to be chosen
         self::setGameStateInitialValue('age_max', -1); // Age max of the card to be chosen
+        self::setGameStateInitialValue('age_array', -1); // List of selectable ages encoded in a single value
         self::setGameStateInitialValue('color_array', -1); // List of selectable colors encoded in a single value
         self::setGameStateInitialValue('type_array', -1); // List of selectable types encoded in a single value
         self::setGameStateInitialValue('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
@@ -4017,7 +4019,16 @@ class Innovation extends Table
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
                 self::setGameStateValue('can_pass', $options['can_pass'] ? 1 : 0); 
 
-                // Only used by certain special options (e.g. choose_color)
+                // Only used by 'choose_value'.
+                if (array_key_exists('age', $options)) {
+                    // NOTE: It is the responsibility of the card implementation to ensure that $options['age'] has
+                    // at least one element in it.
+                    self::setGameStateValueFromArray('age_array', $options['age']);
+                } else {
+                    self::setGameStateValueFromArray('age_array', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+                }
+
+                // Only used by 'choose_color' and 'choose_two_colors'.
                 if (array_key_exists('color', $options)) {
                     // NOTE: It is the responsibility of the card implementation to ensure that $options['color'] has enough
                     // colors in it. For example, for 'choose_color', the array must have at least one element in it.
@@ -4076,6 +4087,7 @@ class Innovation extends Table
         if (!array_key_exists('age_max', $rewritten_options)) {
             $rewritten_options['age_max'] = 10;
         }
+        // TODO: Rewrite 'age' if we end up needing this. Right now we only use 'age' for 'choose_value'.
         if (!array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array(0, 1, 2, 3, 4);
         }
@@ -4159,6 +4171,9 @@ class Innovation extends Table
             case 'location_to':
                 $value = self::encodeLocation($value);
                 break;
+            case 'age':
+                self::setGameStateValueFromArray('age_array', $value);
+                break;
             case 'color':
                 self::setGameStateValueFromArray('color_array', $value);
                 break;
@@ -4230,6 +4245,7 @@ class Innovation extends Table
         $age_min = self::getGameStateValue('age_min');
         $age_max = self::getGameStateValue('age_max');
         $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
+        // TODO: Take 'age_array' into account if there are any cards which need to rely on this mechanism.
 
         // Condition for age because of achievement eligibility
         $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -5142,16 +5158,16 @@ class Innovation extends Table
                 break;
             case 'choose_value':
                 // Values choice
-                if (!ctype_digit($choice) || $choice < 1 || $choice > 10) {
+                if (!ctype_digit($choice)  || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
                     // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice must be a value from 1 to 10 [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 break;
             case 'choose_color':
                 // Color choice
                 if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
                     // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice must be a color [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 break;
             case 'choose_two_colors':
@@ -5440,7 +5456,7 @@ class Innovation extends Table
                 break;
             case 'choose_value':
                 $options = array();
-                for($age=1; $age<=10; $age++) {
+                foreach (self::getGameStateValueAsArray('age_array') as $age) {
                     $options[] = array('value' => $age, 'text' => self::getAgeSquare($age));
                 }
                 break;
@@ -6182,6 +6198,7 @@ class Innovation extends Table
             self::setGameStateValue('bottom_to', -1);
             self::setGameStateValue('age_min', -1);
             self::setGameStateValue('age_max', -1);
+            self::setGameStateValue('age_array', -1);
             self::setGameStateValue('color_array', -1);
             self::setGameStateValue('with_icon', -1);
             self::setGameStateValue('without_icon', -1);
