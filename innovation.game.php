@@ -100,7 +100,9 @@ class Innovation extends Table
             'owner_last_selected' => 75,
             'type_array' => 76,
             'age_array' => 77,
+            'dogma_card_location' => 78,
             
+            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
             'game_type' => 100, // 1 for normal game, 2 for team game
@@ -241,6 +243,9 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
+        // Indicate that this production game was created after the Artifacts expansion was released
+        self::setGameStateInitialValue('release_version', 1);
+
         // Init global values with their initial values
         self::setGameStateValue('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
         
@@ -276,6 +281,7 @@ class Innovation extends Table
         // Flags used in dogma to remember player roles and which card it is, which effect (yet -1 as default value since there are not currently in use)
         self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
         self::setGameStateInitialValue('dogma_card_id', -1);
+        self::setGameStateInitialValue('dogma_card_location', -1); // Used to determine whether the dogma was triggered by an Artifact on display
         self::setGameStateInitialValue('current_effect_type', -1); // 0 for I demand dogma, 1 for non-demand dogma
         self::setGameStateInitialValue('current_effect_number', -1); // 1, 2 or 3
         self::setGameStateInitialValue('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
@@ -1949,6 +1955,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his score pile.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his score pile.');
+                break;
+
+            case 'display->board':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s display to your board.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} display to his board.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s display to his board.');
                 break;
                 
             case 'revealed->board': // Collaboration
@@ -4417,6 +4429,8 @@ class Innovation extends Table
             return 9;
         case 'none':
             return 10;
+        case 'display':
+            return 11;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -4448,6 +4462,8 @@ class Innovation extends Table
             return 'achievements';
         case 10:
             return 'none';
+        case 11:
+            return 'display';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -4714,7 +4730,11 @@ class Innovation extends Table
 
         // TODO: Update statistics.
         // TODO: Take icons on Artifact into account.
-        self::executeDogma($player_id, $card);
+        self::setUpDogma($player_id, $card);
+
+        // Resolve the first dogma effect of the card
+        self::trace('artifactPlayerTurn->dogmaEffect (dogmaArtifactOnDisplay)');
+        $this->gamestate->nextState('dogmaEffect');
     }
 
     function returnArtifactOnDisplay() {
@@ -4895,7 +4915,6 @@ class Innovation extends Table
             if ($top_artifact_card == null) {
                 self::notifyPlayer($melded_card['owner'], "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
             } else {
-                // TODO: Enforce that only a single card can be in the display.
                 self::transferCardFromTo($top_artifact_card, $melded_card['owner'], 'display');
                 
                 // TODO: Seizing a relic
@@ -4942,10 +4961,14 @@ class Innovation extends Table
         self::incStat(1, 'actions_number', $player_id);
         self::incStat(1, 'dogma_actions_number', $player_id);
 
-        self::executeDogma($player_id, $card);
+        self::setUpDogma($player_id, $card);
+
+        // Resolve the first dogma effect of the card
+        self::trace('playerTurn->dogmaEffect (dogma)');
+        $this->gamestate->nextState('dogmaEffect');
     }
     
-    function executeDogma($player_id, $card) {
+    function setUpDogma($player_id, $card) {
 
         self::notifyDogma($card);
         
@@ -5023,6 +5046,7 @@ class Innovation extends Table
         
         // Write info in global variables to prepare the first effect
         self::setGameStateValue('dogma_card_id', $card['id']);
+        self::setGameStateValue('dogma_card_location', self::encodeLocation($card['location']));
         if ($card_with_i_compel_effect) {
             self::setGameStateValue('current_effect_type', 2);
         } else if ($card_with_i_demand_effect) {
@@ -5032,10 +5056,6 @@ class Innovation extends Table
         }
         self::setGameStateValue('current_effect_number', 1);
         self::setGameStateValue('sharing_bonus', 0);
-        
-        // Resolve the first dogma effect of the card
-        self::trace('playerTurn/artifactPlayerTurn->dogmaEffect (dogma/dogmaArtifactOnDisplay)');
-        $this->gamestate->nextState('dogmaEffect');
     }
 
     function choose($card_id) {
@@ -6124,10 +6144,20 @@ class Innovation extends Table
         $card_id = self::getGameStateValue('dogma_card_id');
         $card = self::getCardInfo($card_id);
         
-        // Check whether this new dogma exists actually or not
+        // If there isn't another dogma effect on the card
         if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
-            // No card has more than 3 non-demand dogma => there is no more effect
-            // or the next non-demand-dogma effect is not defined
+
+            // Only execute this if the game was created after the Artifacts expansion was launched,
+            // otherwise 'dogma_card_location' will be empty and will not be able to be decoded
+            if (self::getGameStateValue('release_version') >= 1) {
+                // Return the Artifact on display if the free dogma action was used.
+                if (self::decodeLocation(self::getGameStateValue('dogma_card_location')) == 'display') {
+                    // Confirm that it's still in the display.
+                    if ($card['location'] == 'display') {
+                        self::transferCardFromTo($card, 0, 'deck');
+                    }
+                }
+            }
             
             $sharing_bonus = self::getGameStateValue('sharing_bonus');
             $launcher_id = self::getGameStateValue('active_player');
@@ -7910,8 +7940,9 @@ class Innovation extends Table
             
             // id 119, Artifacts age 1: Dancing Girl
             case "119N1":
-                $num_movements = self::getGameStateValue('auxiliary_value') + 1; // + 1 since it is initialized to -1, not 0
-                if ($player_id == $launcher_id && $num_movements == self::countNonEliminatedPlayers() - 1) {
+                $num_movements = self::getGameStateValue('auxiliary_value') + 1; // + 1 since the variable is initialized to -1, not 0
+                $initial_location = self::decodeLocation(self::getGameStateValue('dogma_card_location'));
+                if ($player_id == $launcher_id && $num_movements == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
                     self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
