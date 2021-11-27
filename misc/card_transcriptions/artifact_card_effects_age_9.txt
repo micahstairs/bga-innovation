@@ -1,7 +1,7 @@
 195 => array('name' => clienttranslate('Yeager\'s Bell X-1A'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has ${icon_6}, repeat this effect.'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has a ${icon_6}, repeat this effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
