@@ -5552,7 +5552,6 @@ class Innovation extends Table
                 break;
             
             // id 80, age 8: Mass media
-            case "179N1A":
             case "80N1B":
                 $message_for_player = clienttranslate('Choose a value');
                 $message_for_others = clienttranslate('${player_name} must choose a value');
@@ -5610,6 +5609,12 @@ class Innovation extends Table
             case "158N1B":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+            
+            // id 179, Artifacts age 7: International Prototype Metre Bar
+            case "179N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
             
             default:
@@ -8337,7 +8342,7 @@ class Innovation extends Table
 
             // id 180, Artifacts age 7: Hansen Writing Ball
             case "180C1":
-                // I compel you to draw four 7's!
+                // "I compel you to draw four 7's!"
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
@@ -8347,18 +8352,17 @@ class Innovation extends Table
                 break;
 
             case "180N1":
-                $stop = false;
                 do {
-                    $card = self::executeDraw($player_id, 7, 'revealed'); // "Draw and reveal a 7. 
-                    if ($card['spot_1'] == 6 || $card['spot_2'] == 6 || $card['spot_3'] == 6 || $card['spot_4'] == 6) {
+                    // "Draw and reveal a 7"
+                    $card = self::executeDraw($player_id, 7, 'revealed');
+                    if (self::hasRessource($card, 6)) {
                         self::transferCardFromTo($card, $player_id, 'hand');
-                        $stop = true;
-                    }
-                    else {
-                        // If it has no clocks, tuck it"
+                        break;
+                    } else {
+                        // "If it has no clocks, tuck it"
                         self::transferCardFromTo($card, $player_id, 'board', true);
                     }
-                }while($stop == false); // repeat this effect.
+                } while (true); // "Repeat this effect"
                 break;
                 
             // id 182, Artifacts age 7: Singer Model 27
@@ -11562,7 +11566,7 @@ class Innovation extends Table
                 'player_id' => $player_id,
                 'can_pass' => false,
 
-                'choose_value' => true,
+                'choose_value' => true
             );
             break;
 
@@ -11578,6 +11582,7 @@ class Innovation extends Table
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
                 'color' => array(0)
             );
 
@@ -12563,20 +12568,23 @@ class Innovation extends Table
                 case "179N1A":
                     $age_value = self::getGameStateValue('auxiliary_value');
                     
-                    // "Draw and meld a card of that value."
+                    // "Draw and meld a card of that value"
                     $card = self::executeDraw($player_id, $age_value, 'board');
-                    // "Splay up the color of the melded card. "
+
+                    // "Splay up the color of the melded card"
                     self::splay($player_id, $player_id, $card['color'], 3);
                     
+                    // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
                     if ($age_value == self::countVisibleCards($player_id, $card['color'])) {
-                        // If the number of cards of that color visible on your board is exactly equal to the card\'s value, you win.
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} selected a value that is the equal to the number of visible cards in the ${color} pile.'), array('You' => 'You', 'color'=> self::getColorInClear($card['color'])));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} selected a value that is the equal to the number of visible cards in the ${color} pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color'=> self::getColorInClear($card['color'])));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} selected a value that is the equal to the number of visible cards in your ${color} pile.'), array('You' => 'You', 'color'=> self::getColorInClear($card['color'])));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} selected a value that is the equal to the number of visible cards in his ${color} pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color'=> self::getColorInClear($card['color'])));
                         self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn International Prototype Metre Bar');
+                        self::trace('EOG bubbled from self::stInterInteractionStep International Prototype Metre Bar');
                         throw new EndOfGame();
+                    
+                    // "Otherwise, return the melded card"
                     } else {
-                        self::transferCardFromTo($card, 0, 'deck'); // Otherwise, return the melded card.
+                        self::transferCardFromTo($card, 0, 'deck');
                     }
                     break;
                              
