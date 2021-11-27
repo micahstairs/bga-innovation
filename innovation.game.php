@@ -8328,6 +8328,24 @@ class Innovation extends Table
                 self::executeDraw($player_id, $age_to_score, 'score');
                 break;
 
+            // id 172, Artifacts age 6: Pride and Prejudice
+            case "172N1":
+                // TODO: Prevent this from throwing an error ("generated notifications are larger than 128k") when it draws out the remaining cards in the game.
+                do {
+                    // "Draw and meld a 6"
+                    $card = self::executeDraw($player_id, 6, 'board');
+                    // "If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board"
+                    $num_visible_cards_of_drawn_color = self::countVisibleCards($player_id, $card['color']);
+                    for ($color = 0; $color < 5; $color++) {
+                        if ($num_visible_cards_of_drawn_color > self::countVisibleCards($player_id, $color)) {
+                            break 2; // Exit do-while loop
+                        }
+                    }
+                    // "Score the melded card"
+                    self::transferCardFromTo($card, $player_id, 'score', false, true);
+                } while (true); // "Repeat this effect"
+                break;
+
             // id 174, Artifacts age 6: Marcha Real
             case "174N1":
                 $step_max = 1;
