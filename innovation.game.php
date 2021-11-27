@@ -5611,6 +5611,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
             
+            // id 179, Artifacts age 7: International Prototype Metre Bar
+            case "179N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
+            
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -8329,6 +8335,36 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 179, Artifacts age 7: International Prototype Metre Bar
+            case "179N1":
+                $step_max = 1;
+                break;
+
+            // id 180, Artifacts age 7: Hansen Writing Ball
+            case "180C1":
+                // "I compel you to draw four 7's!"
+                self::executeDraw($player_id, 7);
+                self::executeDraw($player_id, 7);
+                self::executeDraw($player_id, 7);
+                self::executeDraw($player_id, 7);
+                
+                $step_max = 2;
+                break;
+
+            case "180N1":
+                do {
+                    // "Draw and reveal a 7"
+                    $card = self::executeDraw($player_id, 7, 'revealed');
+                    if (self::hasRessource($card, 6)) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                        break;
+                    } else {
+                        // "If it has no clocks, tuck it"
+                        self::transferCardFromTo($card, $player_id, 'board', true);
+                    }
+                } while (true); // "Repeat this effect"
+                break;
+                
             // id 182, Artifacts age 7: Singer Model 27
             case "182N1":
                 $step_max = 1;
@@ -11524,6 +11560,49 @@ class Innovation extends Table
             );
             break;            
 
+        // id 179, Artifacts age 7: International Prototype Metre Bar
+        case "179N1A":
+            // "Choose a value"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'choose_value' => true
+            );
+            break;
+
+        // id 180, Artifacts age 7: Hansen Writing Ball
+        case "180C1A":
+            // "Meld a blue card"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'color' => array(0)
+            );
+
+            break;
+
+        case "180C1B":
+            // "Transfer all cards in your hand to my hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $launcher_id,
+                'location_to' => 'hand'
+            );
+
+            break;
+
         // id 182, Artifacts age 7: Singer Model 27
         case "182N1A":
             // "Tuck a card from your hand"
@@ -12485,7 +12564,31 @@ class Innovation extends Table
                         self::incGameStateValue('step_max', 1);
                     }
                     break;
-                                    
+                             
+                // id 179, Artifacts age 7: International Prototype Metre Bar   
+                case "179N1A":
+                    $age_value = self::getGameStateValue('auxiliary_value');
+                    
+                    // "Draw and meld a card of that value"
+                    $card = self::executeDraw($player_id, $age_value, 'board');
+
+                    // "Splay up the color of the melded card"
+                    self::splay($player_id, $player_id, $card['color'], 3);
+                    
+                    // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
+                    if ($age_value == self::countVisibleCards($player_id, $card['color'])) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} selected a value that is the equal to the number of visible cards in your ${color} pile.'), array('You' => 'You', 'color'=> self::getColorInClear($card['color'])));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} selected a value that is the equal to the number of visible cards in his ${color} pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color'=> self::getColorInClear($card['color'])));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep International Prototype Metre Bar');
+                        throw new EndOfGame();
+                    
+                    // "Otherwise, return the melded card"
+                    } else {
+                        self::transferCardFromTo($card, 0, 'deck');
+                    }
+                    break;
+                             
                 // id 182, Artifacts age 7: Singer Model 27
                 case "182N1A":
                     if ($n > 0) { // "If you do"
@@ -13005,6 +13108,13 @@ class Innovation extends Table
             case "158N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setGameStateValue('auxiliary_value', $choice);
+                break;
+                
+            // id 179, Artifacts age 7: International Prototype Metre Bar
+            case "179N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
                 self::setGameStateValue('auxiliary_value', $choice);
                 break;
                 
