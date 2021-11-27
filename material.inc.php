@@ -1917,7 +1917,9 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-    185 => array('name' => clienttranslate('Parnell Pitch Drop'),
+/* Artifacts - Age 8 */
+
+185 => array('name' => clienttranslate('Parnell Pitch Drop'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a card of value one higher than the highest top card on your board. If the melded card has three ${icon_6}, you win.'),
@@ -2017,7 +2019,9 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-    195 => array('name' => clienttranslate('Yeager\'s Bell X-1A'),
+/* Artifacts - Age 9 */
+
+195 => array('name' => clienttranslate('Yeager\'s Bell X-1A'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has a ${icon_6}, repeat this effect.'),
@@ -2116,6 +2120,8 @@ $this->textual_card_infos = array(
     'achievement_name' => null,
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null)
+
+/* Artifacts - Age 10 */
 
 );
 
