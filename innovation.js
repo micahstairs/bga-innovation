@@ -901,7 +901,7 @@ function (dojo, declare) {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
                 case 'artifactPlayerTurn':
-                    this.addActionButton("dogma_artifact", _("Dogma"), "action_clicForDogmaArtifact");
+                    this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
                     dojo.place("<span class='extra_text'> , </span>", "dogma_artifact", "after");
                     this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
                     dojo.place("<span class='extra_text'> , " + _("or") + "</span>", "return_artifact", "after");
