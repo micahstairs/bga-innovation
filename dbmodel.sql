@@ -73,9 +73,9 @@ CREATE TABLE IF NOT EXISTS `card` (
 /* Table used to manage the execution of nested effects */
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
- `card_id` SMALLINT UNSIGNED,
+ `card_id` SMALLINT COMMENT '-1 means no card',
  `current_effect_type` TINYINT COMMENT '-1=none, 0=demand, 1=non-demand, 2=compel',
- `current_effect_number` TINYINT UNSIGNED COMMENT '0 (effect has not started), 1, 2, or 3 (no cards have more than 3 effects on them)',
+ `current_effect_number` TINYINT COMMENT '-1 (effect has not started), 1, 2, or 3 (no cards have more than 3 effects on them)',
   PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
