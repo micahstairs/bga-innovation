@@ -1922,7 +1922,7 @@ $this->textual_card_infos = array(
 185 => array('name' => clienttranslate('Parnell Pitch Drop'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => clienttranslate('Draw and meld a card of value one higher than the highest top card on your board. If the melded card has three ${icon_6}, you win.'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a card of value one higher than the highest top card on your board.  If the melded card has 3 ${icon_6}, you win.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
