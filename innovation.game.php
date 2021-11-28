@@ -4737,11 +4737,9 @@ class Innovation extends Table
             $nesting_index = self::getGameStateValue('current_nesting_index');
             for ($i = 0; $i <= $nesting_index; $i++) {
                 $card = self::getCardInfo(self::getNestedCardId($i));
-                
-                $one_based_index = $i + 1;
-                $card_names['card_'.$one_based_index] = $card['name'];
-                $card_names['ref_player_'.$one_based_index] = $player_id;
-                $i18n[] = 'card_'.$one_based_index;
+                $card_names['card_'.$i] = $card['name'];
+                $card_names['ref_player_'.$i] = $player_id;
+                $i18n[] = 'card_'.$i;
             }
         } else {
             $dogma_card_id = self::getGameStateValue('dogma_card_id');
