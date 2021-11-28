@@ -70,6 +70,15 @@ CREATE TABLE IF NOT EXISTS `card` (
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Table used to manage the execution of nested effects */
+CREATE TABLE IF NOT EXISTS `nested_card_execution` (
+ `index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
+ `card_id` SMALLINT UNSIGNED,
+ `current_effect_type` TINYINT COMMENT '-1=none, 0=demand, 1=non-demand, 2=compel',
+ `current_effect_number` TINYINT UNSIGNED COMMENT '1, 2, or 3 (no cards have more than 3 effects on them)',
+  PRIMARY KEY(`index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
 CREATE TABLE IF NOT EXISTS `random` (
  `id` SMALLINT UNSIGNED NOT NULL,
