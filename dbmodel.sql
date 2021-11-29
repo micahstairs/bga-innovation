@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `card` (
   `dogma_icon` TINYINT UNSIGNED COMMENT 'Feature icon for dogma, 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
   `has_demand` BOOLEAN NOT NULL COMMENT 'Whether or not the card has at least one demand effect (will be populated using data in material.inc.php file)',
   `owner` INT(10) UNSIGNED NOT NULL COMMENT 'Id of the player who owns the card or 0 if no owner',
-  `location` VARCHAR(12) NOT NULL COMMENT 'Hand, board, score, achievements, deck or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
+  `location` VARCHAR(12) NOT NULL COMMENT 'Hand, board, score, achievements, deck, display or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
   `position` TINYINT UNSIGNED COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the color piles, 0 for the bottom card, maximum for active card.',
   `splay_direction` TINYINT UNSIGNED COMMENT 'Direction of the splay, 0 (no-splay), 1 (left), 2 (right), 3 (up) OR NULL if this card is not on board',
   `selected` BOOLEAN NOT NULL COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
  `card_id` SMALLINT COMMENT '-1 means no card',
+ `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `current_effect_type` TINYINT COMMENT '-1=none, 0=demand, 1=non-demand, 2=compel',
  `current_effect_number` TINYINT COMMENT '-1 (effect has not started), 1, 2, or 3 (no cards have more than 3 effects on them)',
   PRIMARY KEY(`nesting_index`)
