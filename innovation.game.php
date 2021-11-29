@@ -42,10 +42,10 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
-            'current_player_under_dogma_effect' => 19, // TODO(nesting): Consider adding column to nested_card_execution table instead, and deprecate this.
-            'dogma_card_id' => 20,         // Deprecated.
-            'current_effect_type' => 21,   // Deprecated
-            'current_effect_number' => 22, // Deprecated
+            'current_player_under_dogma_effect' => 19, // Deprecated
+            'dogma_card_id' => 20,                     // Deprecated
+            'current_effect_type' => 21,               // Deprecated
+            'current_effect_number' => 22,             // Deprecated
             'sharing_bonus' => 23,
             'step' => 24,
             'step_max' => 25,
@@ -101,7 +101,7 @@ class Innovation extends Table
             'type_array' => 76,
             'age_array' => 77,
             
-            'current_nesting_index' => 97, // 0 means the original card, 1 means a card exexcuted by that first card, etc.
+            'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
             'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
             
@@ -279,12 +279,12 @@ class Innovation extends Table
         self::setGameStateInitialValue('active_player', -1);
         
         // Flags used in dogma to remember player roles and which card it is, which effect (yet -1 as default value since there are not currently in use)
-        self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
         self::setGameStateInitialValue('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
         if (self::getGameStateValue('release_version') >= 1) {
             self::setGameStateInitialValue('current_nesting_index', -1);
-            self::DbQuery("INSERT INTO nested_card_execution (nesting_index, card_id, card_location, current_effect_type, current_effect_number) VALUES (0, -1, 'none', -1, -1)");
+            self::DbQuery("INSERT INTO nested_card_execution (nesting_index, card_id, current_player, current_effect_type, current_effect_number) VALUES (0, -1, -1, -1, -1)");
         } else {
+            self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
             self::setGameStateInitialValue('dogma_card_id', -1);
             self::setGameStateInitialValue('current_effect_type', -1); // 0 for I demand dogma, 1 for non-demand dogma
             self::setGameStateInitialValue('current_effect_number', -1); // 1, 2 or 3
@@ -2611,16 +2611,17 @@ class Innovation extends Table
                 return;
             }
             $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_player_under_dogma_effect = $nested_card_state['current_player'];
         } else {
             $current_effect_type = self::getGameStateValue('current_effect_type');
             if ($current_effect_type == -1) { // Not in dogma
                 // Nothing to be done
                 return;
             }
+            $current_player_under_dogma_effect = self::getGameStateValue('current_player_under_dogma_effect');
         }
         
         // Mark that the player under effect made a change in the game
-        $current_player_under_dogma_effect = self::getGameStateValue('current_player_under_dogma_effect');
         self::markExecutingPlayer($current_player_under_dogma_effect);
         
         if (self::getGameStateValue('sharing_bonus') != 0) { // The sharing bonus is already on
@@ -4721,7 +4722,7 @@ class Innovation extends Table
     }
     
     function getArgForPlayerUnderDogmaEffect() {
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         return array_merge(
             self::getArgForDogmaEffect(),
             array(
@@ -4735,7 +4736,7 @@ class Innovation extends Table
     
     function getDogmaCardNames() { // Returns the name of the current dogma card or all the names where there are nested dogma effects
         $launcher_id = self::getGameStateValue('active_player');
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         
         $card_names = array();
         
@@ -4786,7 +4787,7 @@ class Innovation extends Table
     /** Nested dogma excution management system: FIFO stack **/
     function checkAndPushCardIntoNestedDogmaStack($card) {
         // TODO: Add parameter to indicate whether demand effects should also be executed.
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         if ($card['non_demand_effect_1'] === null) { // There is no non-demand effect
             self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
             // No exclusive execution: do nothing
@@ -4806,15 +4807,16 @@ class Innovation extends Table
     function pushCardIntoNestedDogmaStack($card) {
         self::trace('nesting++');
         if (self::getGameStateValue('release_version') >= 1) {
+            $player_id = self::getCurrentPlayerUnderDogmaEffect();
             self::incGameStateValue('current_nesting_index', 1);
             $nesting_index = self::getGameStateValue('current_nesting_index');
             // TODO: Stop assuming that the first effect are executing is a non-demand effect.
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
-                    (nesting_index, card_id, current_effect_type, current_effect_number)
+                    (nesting_index, card_id, current_player, current_effect_type, current_effect_number)
                 VALUES
-                    ({nesting_index}, {card_id}, 1, 0)
-            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'])));
+                    ({nesting_index}, {card_id}, {player_id}, 1, 0)
+            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'player_id' => $player_id)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -4849,6 +4851,18 @@ class Innovation extends Table
 
     function getCurrentNestedCardState() {
         return self::getNestedCardState(self::getGameStateValue('current_nesting_index'));
+    }
+
+    function getCurrentPlayerUnderDogmaEffect() {
+        if (self::getGameStateValue('release_version') >= 1) {
+            // TODO(nesting): remove this
+            if (self::getCurrentNestedCardState() == null) {
+                debug_print_backtrace();
+            }
+            return self::getCurrentNestedCardState()['current_player'];
+        } else {
+            return self::getGameStateValue('current_player_under_dogma_effect');
+        }
     }
     
 //////////// Player actions
@@ -6393,7 +6407,8 @@ class Innovation extends Table
     function stDogmaEffect() {
         // An effect of a dogma has to be resolved
         if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getNestedCardState(0);
+            // TODO(nesting): Do I need to change this back to getting the 0th nested card?
+            $nested_card_state = self::getCurrentNestedCardState();
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
@@ -6421,7 +6436,20 @@ class Innovation extends Table
             return;
         }
         
-        self::setGameStateValue('current_player_under_dogma_effect', $first_player);
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery(
+                self::format("
+                    UPDATE
+                        nested_card_execution
+                    SET
+                        current_player = {player_id}
+                    WHERE
+                        nesting_index = {nesting_index}",
+                    array('player_id' => $first_player, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
+            );
+        } else {
+            self::setGameStateValue('current_player_under_dogma_effect', $first_player);
+        }
         $this->gamestate->changeActivePlayer($first_player);
         
         // Begin the loop with this player
@@ -6522,12 +6550,14 @@ class Innovation extends Table
                         nested_card_execution
                     SET
                         card_id = -1,
+                        current_player = -1,
                         current_effect_type = -1,
                         current_effect_number = -1
                     WHERE
                         nesting_index = 0"
                 );
             } else {
+                self::setGameStateValue('current_player_under_dogma_effect', -1);
                 self::setGameStateValue('dogma_card_id', -1);
                 self::setGameStateValue('current_effect_type', -1);
                 self::setGameStateValue('current_effect_number', -1);
@@ -6537,7 +6567,6 @@ class Innovation extends Table
                 }
             }
             self::setGameStateValue('sharing_bonus', -1);
-            self::setGameStateValue('current_player_under_dogma_effect', -1);
             self::setGameStateValue('step', -1);
             self::setGameStateValue('step_max', -1);
             self::setGameStateValue('special_type_of_choice', -1);
@@ -6601,7 +6630,7 @@ class Innovation extends Table
     
     function stPlayerInvolvedTurn() {
         // A player must or can undergo/share an effect of a dogma card
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getGameStateValue('active_player');
 
         if (self::getGameStateValue('release_version') >= 1) {
@@ -7745,20 +7774,21 @@ class Innovation extends Table
                     
                     // "If this occurs, the dogma action is complete"
                     // (Set the flags as if the launcher had completed the non-demand dogma effect)
-                    self::setGameStateValue('current_player_under_dogma_effect', $launcher_id);
                     if (self::getGameStateValue('release_version') >= 1) {
                         self::DbQuery(
                             self::format("
                                 UPDATE
                                     nested_card_execution
                                 SET
+                                    current_player = {player_id}
                                     current_effect_type = 1,
                                     current_effect_number = 1
                                 WHERE
                                     nesting_index = {nesting_index}",
-                                array('nesting_index' => self::getGameStateValue('nesting_current_index')))
+                                array('player_id' => $launcher_id, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
                         );
                     } else {
+                        self::setGameStateValue('current_player_under_dogma_effect', $launcher_id);
                         self::setGameStateValue('current_effect_type', 1);
                         self::setGameStateValue('current_effect_number', 1);
                     }
@@ -9096,7 +9126,7 @@ class Innovation extends Table
         // Code executed when there is no exclusive execution to handle, or when it's over
         
         // A player has executed an effect of a dogma card (or passed). Is there another player on which the effect can apply?
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getGameStateValue('active_player');
         if (self::getGameStateValue('release_version') >= 1) {
             $nesting_index = self::getGameStateValue('current_nesting_index');
@@ -9113,7 +9143,20 @@ class Innovation extends Table
             return;
         }
         // There is another player on which the effect can apply
-        self::setGameStateValue('current_player_under_dogma_effect', $next_player);
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery(
+                self::format("
+                    UPDATE
+                        nested_card_execution
+                    SET
+                        current_player = {player_id}
+                    WHERE
+                        nesting_index = {nesting_index}",
+                    array('player_id' => $next_player, 'nesting_index' => $nesting_index))
+            );
+        } else {
+            self::setGameStateValue('current_player_under_dogma_effect', $next_player);
+        }
         $this->gamestate->changeActivePlayer($next_player);
         
         // Jump to this player
@@ -9122,7 +9165,7 @@ class Innovation extends Table
     }
     
     function stInteractionStep() {
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getGameStateValue('active_player');
 
         if (self::getGameStateValue('release_version') >= 1) {
@@ -12942,7 +12985,7 @@ class Innovation extends Table
     }
     
     function stInterInteractionStep() {
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getGameStateValue('active_player');
 
         if (self::getGameStateValue('release_version') >= 1) {
@@ -14233,7 +14276,7 @@ class Innovation extends Table
     }
     
     function stInterSelectionMove() {
-        $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         if ($special_type_of_choice == 0) { // The player had to choose a card
             $selected_card_id = self::getGameStateValue('id_last_selected');
