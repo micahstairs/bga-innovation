@@ -5678,12 +5678,6 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
-            // id 199, Artifacts age 9: Philips Compact Cassette
-            case "199N1A":
-                $message_for_player = clienttranslate('${You} must choose two colors');
-                $message_for_others = clienttranslate('${player_name} must choose two colors');
-                break;
-            
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -8500,7 +8494,7 @@ class Innovation extends Table
             // id 199, Artifacts age 9: Philips Compact Cassette
             case "199C1":
                 for($color = 0; $color < 5; $color++) {
-                    self::splay($player_id, $player_id, $color, 0); // Unsplay
+                    self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true); // Unsplay
                 }
                 break;
 
@@ -8519,7 +8513,7 @@ class Innovation extends Table
                         }
                     }
                 }
-                self::setGameStateValueFromArray('color_array', $valid_colors);
+                
                 if ($color_count >= 3) {
                     $step_max = 1; // decision to be made
                 }
@@ -11850,9 +11844,10 @@ class Innovation extends Table
             // "Splay up two colors on your board."
             $options = array(
                 'player_id' => $player_id,
+                'n' => 2,
                 'can_pass' => false,
-                'color' => self::getGameStateValueAsArray('color_array'),
-                'choose_two_colors' => true
+                
+                'splay_direction' => 3 /* up */
             );
             break;
             
@@ -12915,16 +12910,6 @@ class Innovation extends Table
                     self::executeDraw($player_id, $n, 'score');
                     break;
 
-                // id 199, Artifacts age 9: Philips Compact Cassette
-                case "199N1A":
-                    $colors = self::getValueAsArray(self::getGameStateValue('auxiliary_value'));
-                
-                    foreach ($colors as $color) {
-                        // "Splay up two colors on your board."
-                        self::splay($player_id, $player_id, $color, 3);
-                    }
-                    break;
-
                 // id 200, Artifacts age 9: Syncom 3
                 case "200N1A":
                     // "Draw and reveal five 9."
@@ -12945,7 +12930,7 @@ class Innovation extends Table
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed all 5 colors.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed all 5 colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Syncom 3');
+                        self::trace('EOG bubbled from self::stInterInteractionStep Syncom 3');
                         throw new EndOfGame();
                     }
 
@@ -12958,10 +12943,10 @@ class Innovation extends Table
                 case "204N1B":
                     // "If you have exactly 25 points, you win."
                     if (self::getPlayerScore($player_id) == 25) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 25 points exactly.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 25 points exactly.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly 25 points.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly 25 points.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Marilyn Diptych');
+                        self::trace('EOG bubbled from self::stInterInteractionStep Marilyn Diptych');
                         throw new EndOfGame();
                     }
                     break;                    
@@ -13490,15 +13475,6 @@ class Innovation extends Table
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
                 self::setGameStateValue('auxiliary_value', $choice);
-                break;
-                
-           // id 199, Artifacts age 9: Philips Compact Cassette
-            case "199N1A":
-                // $choice was two colors
-                $colors = self::getValueAsArray($choice);
-                self::setGameStateValue('auxiliary_value', $choice);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));                
                 break;
                 
             default:
