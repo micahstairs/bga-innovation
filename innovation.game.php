@@ -3346,6 +3346,25 @@ class Innovation extends Table
          return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon);
     }
     
+    /* Count the number of a particular icon on the specified card */
+    function countResources($card, $icon) {
+        // TODO : Cities will require an update here.
+        $icon_count = 0;
+        if($card['spot_1'] == 6){
+            $icon_count++;
+        }
+        if($card['spot_2'] == 6){
+            $icon_count++;
+        }
+        if($card['spot_3'] == 6){
+            $icon_count++;
+        }
+        if($card['spot_4'] == 6){
+            $icon_count++;
+        }
+        return $icon_count;
+    }
+
     function boardPileHasRessource($player_id, $color, $icon) {
         $board = self::getCardsInLocation($player_id, 'board', null, false, true);
         $pile = $board[$color];
@@ -8397,20 +8416,7 @@ class Innovation extends Table
             case "185N1":
                 // "Draw and meld a card of value one higher than the highest top card on your board."
                 $card = self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1, 'board');
-                $count_clocks = 0;
-                if($card['spot_1'] == 6){
-                    $count_clocks++;
-                }
-                if($card['spot_2'] == 6){
-                    $count_clocks++;
-                }
-                if($card['spot_3'] == 6){
-                    $count_clocks++;
-                }
-                if($card['spot_4'] == 6){
-                    $count_clocks++;
-                }                
-                if ($count_clocks == 3) {
+                if (self::countResources($card, 6) == 3) {
                     // If the melded card has three clocks, you win.
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 clocks.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 clocks.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
@@ -8426,7 +8432,7 @@ class Innovation extends Table
                     $card = self::getBottomCardOnBoard($player_id, $color);
                     if($card != null) {
                         // Score all bottom cards from your board.
-                        $card = self::transferCardFromTo($card, $player_id, 'score', false, true);
+                        $card = self::transferCardFromTo($card, $player_id, 'score', false, /* score_keyword */ true);
                     }
                 }
                 break;
@@ -11711,8 +11717,8 @@ class Innovation extends Table
             // Return a card from your hand.
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
+                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
