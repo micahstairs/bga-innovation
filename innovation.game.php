@@ -47,8 +47,8 @@ class Innovation extends Table
             'current_effect_type' => 21,               // Deprecated
             'current_effect_number' => 22,             // Deprecated
             'sharing_bonus' => 23,
-            'step' => 24,
-            'step_max' => 25,
+            'step' => 24,     // TODO(nesting): Deprecate this!
+            'step_max' => 25, // TODO(nesting): Deprecate this!
             'special_type_of_choice' => 26,
             'choice' => 27,
             'can_pass' => 28,
@@ -286,7 +286,7 @@ class Innovation extends Table
         } else {
             self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
             self::setGameStateInitialValue('dogma_card_id', -1);
-            self::setGameStateInitialValue('current_effect_type', -1); // 0 for I demand dogma, 1 for non-demand dogma
+            self::setGameStateInitialValue('current_effect_type', -1); // 0 for I demand dogma, 1 for non-demand dogma, 2 for I compel dogma
             self::setGameStateInitialValue('current_effect_number', -1); // 1, 2 or 3
             for($i=1; $i<=9; $i++) {
                 self::setGameStateInitialValue('nested_id_'.$i, -1); // The card being executed through exclusive execution
@@ -4785,8 +4785,7 @@ class Innovation extends Table
     }
     
     /** Nested dogma excution management system: FIFO stack **/
-    function checkAndPushCardIntoNestedDogmaStack($card) {
-        // TODO: Add parameter to indicate whether demand effects should also be executed.
+    function executeNonDemandEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         if ($card['non_demand_effect_1'] === null) { // There is no non-demand effect
             self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
@@ -4801,22 +4800,32 @@ class Innovation extends Table
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effect of this card.'), array('You' => 'You'));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effect of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
         }
-        self::pushCardIntoNestedDogmaStack($card);
+        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
+    }
+
+    function executeAllEffects($card) {
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute all effects of this card.'), array('You' => 'You'));
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes all effects of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
     
-    function pushCardIntoNestedDogmaStack($card) {
+    function pushCardIntoNestedDogmaStack($card, $execute_demand_effects) {
         self::trace('nesting++');
         if (self::getGameStateValue('release_version') >= 1) {
-            $player_id = self::getCurrentPlayerUnderDogmaEffect();
             self::incGameStateValue('current_nesting_index', 1);
+            $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
             $nesting_index = self::getGameStateValue('current_nesting_index');
-            // TODO: Stop assuming that the first effect are executing is a non-demand effect.
+            $has_i_demand = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
+            $has_i_compel = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
+            $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
+            $player_id = $effect_type == 1 ? $current_player_id : self::getFirstPlayerUnderEffect($effect_type, $current_player_id);
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
                     (nesting_index, card_id, current_player, current_effect_type, current_effect_number)
                 VALUES
-                    ({nesting_index}, {card_id}, {player_id}, 1, 0)
-            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'player_id' => $player_id)));
+                    ({nesting_index}, {card_id}, {player_id}, {effect_type}, 0)
+            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'player_id' => $player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -4855,10 +4864,6 @@ class Innovation extends Table
 
     function getCurrentPlayerUnderDogmaEffect() {
         if (self::getGameStateValue('release_version') >= 1) {
-            // TODO(nesting): remove this
-            if (self::getCurrentNestedCardState() == null) {
-                debug_print_backtrace();
-            }
             return self::getCurrentNestedCardState()['current_player'];
         } else {
             return self::getGameStateValue('current_player_under_dogma_effect');
@@ -6407,7 +6412,6 @@ class Innovation extends Table
     function stDogmaEffect() {
         // An effect of a dogma has to be resolved
         if (self::getGameStateValue('release_version') >= 1) {
-            // TODO(nesting): Do I need to change this back to getting the 0th nested card?
             $nested_card_state = self::getCurrentNestedCardState();
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
@@ -6485,9 +6489,22 @@ class Innovation extends Table
         if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
 
             if (self::getGameStateValue('release_version') >= 1) {
-                // Return the Artifact on display if the free dogma action was used.
-                if (self::getNestedCardState(0)['card_location'] == 'display') {
-                    // Confirm that it's still in the display.
+                $nesting_index = self::getGameStateValue('current_nesting_index');
+
+                // Finish executing the card which triggered this one
+                if ($nesting_index >= 1) {
+                    self::notifyGeneralInfo(clienttranslate("Card execution within dogma completed."));
+                    self::popCardFromNestedDogmaStack();
+
+                    $this->gamestate->changeActivePlayer(self::getNestedCardState(['current_player']));
+                    self::trace('interDogmaEffect->playerInvolvedTurn');
+                    $this->gamestate->nextState('playerInvolvedTurn');
+                    return;
+                }
+
+                // Return the Artifact on display if the free dogma action was used
+                if ($nesting_index == 0 && self::getNestedCardState(0)['card_location'] == 'display') {
+                    // Confirm that it's still in the display
                     if ($card['location'] == 'display') {
                         self::transferCardFromTo($card, 0, 'deck');
                     }
@@ -7739,7 +7756,7 @@ class Innovation extends Table
                 
             case "85N2":
                 $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
-                self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each of its non-demand dogma effects"
+                self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
                 break;
             
             // id 86, age 9: Genetics     
@@ -7919,7 +7936,7 @@ class Innovation extends Table
             case "96N2":
                 self::executeDraw($player_id, 10, 'board'); // "Draw and meld two 10"
                 $card = self::executeDraw($player_id, 10, 'board'); //
-                self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each of the second card's non-demand dogma effects"
+                self::executeNonDemandEffects($card); // "Execute each of the second card's non-demand dogma effects"
                 break;
                 
             // id 97, age 10: Miniaturization
@@ -7934,7 +7951,7 @@ class Innovation extends Table
                     self::transferCardFromTo($top_green_card, $player_id, 'score', false, true /* score keyword*/); // "Score your top green card"
                 }
                 $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10
-                self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each its non-demand dogma effects"
+                self::executeNonDemandEffects($card); // "Execute each its non-demand dogma effects"
                 break;
             
             // id 99, age 10: Databases
@@ -8374,7 +8391,7 @@ class Innovation extends Table
                 self::transferCardFromTo($bottom_card, $player_id, 'board');
 
                 // "Execute its non-demand dogma effects. Do not share them."
-                self::checkAndPushCardIntoNestedDogmaStack($bottom_card);
+                self::executeNonDemandEffects($bottom_card);
                 break;
             
             // id 126, Artifacts age 2: Rosetta Stone
@@ -9062,40 +9079,7 @@ class Innovation extends Table
         while (true) {
 
             if (self::getGameStateValue('release_version') >= 1) {
-                $nesting_index = self::getGameStateValue('current_nesting_index');
-                if ($nesting_index == 0) {
-                    self::trace('Out of nesting');
-                    break;
-                }
-
-                $nested_card_state = self::getNestedCardState($nesting_index);
-                $card_id = $nested_card_state['card_id'];
-                $card = self::getCardInfo($card_id);
-                $current_effect_type = $nested_card_state['current_effect_type'];
-                $current_effect_number = $nested_card_state['current_effect_number'] + 1; // Next effect
-
-                // No more effects left on the card to perform
-                if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
-                    self::notifyGeneralInfo(clienttranslate("Card execution within dogma completed."));
-                    self::popCardFromNestedDogmaStack();
-
-                // There is at least one more effect the player can perform
-                } else {
-                    self::DbQuery(
-                        self::format("
-                            UPDATE
-                                nested_card_execution
-                            SET
-                                current_effect_number = {effect_number}
-                            WHERE
-                                nesting_index = {nesting_index}",
-                            array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number))
-                    );
-                    self::trace('interPlayerInvolvedTurn->playerInvolvedTurn');
-                    $this->gamestate->nextState('playerInvolvedTurn');
-                    return;
-                }
-
+                break;
             } else {
                 $nested_id_1 = self::getGameStateValue('nested_id_1');
                 if ($nested_id_1 == -1) { // No or no more card in the execution stack
@@ -9134,16 +9118,19 @@ class Innovation extends Table
         } else {
             $current_effect_type = self::getGameStateValue('current_effect_type');
         }
-        $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
-        if ($next_player === null) {
-            // There is no more player eligible for this effect
-            // End of the dogma effect
-            self::trace('interPlayerInvolvedTurn->interDogmaEffect');
-            $this->gamestate->nextState('interDogmaEffect');
-            return;
-        }
-        // There is another player on which the effect can apply
         if (self::getGameStateValue('release_version') >= 1) {
+
+            // If this is a nested card, don't allow other players to share the non-demand effect
+            $nesting_index = self::getGameStateValue('current_nesting_index');
+            $nested_card_state = self::getNestedCardState($nesting_index);
+            $next_player = $nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1 ? null : self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+
+            // There are no more players which are eligible to share this effect
+            if ($next_player === null) {
+                self::trace('interPlayerInvolvedTurn->interDogmaEffect');
+                $this->gamestate->nextState('interDogmaEffect');
+                return;
+            }
             self::DbQuery(
                 self::format("
                     UPDATE
@@ -9155,6 +9142,14 @@ class Innovation extends Table
                     array('player_id' => $next_player, 'nesting_index' => $nesting_index))
             );
         } else {
+            $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+            if ($next_player === null) {
+                // There is no more player eligible for this effect
+                // End of the dogma effect
+                self::trace('interPlayerInvolvedTurn->interDogmaEffect');
+                $this->gamestate->nextState('interDogmaEffect');
+                return;
+            }
             self::setGameStateValue('current_player_under_dogma_effect', $next_player);
         }
         $this->gamestate->changeActivePlayer($next_player);
@@ -13547,7 +13542,7 @@ class Innovation extends Table
                     
                 case "90N3A":
                     $card = self::getCardInfo(self::getGameStateValue('id_last_selected')); // The card the player melded from his hand
-                    self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each of its non-demand dogma effects"
+                    self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
                     break;
                     
                 // id 91, age 9: Ecology
@@ -13639,7 +13634,7 @@ class Innovation extends Table
                         $color_scored = self::getGameStateValue('color_last_selected');
                         $top_card = self::getTopCardOnBoard($player_id, $color_scored);
                         if ($top_card !== null) { // "If you have a top card matching its color"
-                            self::checkAndPushCardIntoNestedDogmaStack($top_card); // "Execute each of the top card's non-demand dogma effects. Do not share them."
+                            self::executeNonDemandEffects($top_card); // "Execute each of the top card's non-demand dogma effects. Do not share them."
                         }
                     }
                     break;
@@ -14564,7 +14559,7 @@ class Innovation extends Table
             
             // id 100, age 10: Self service
             case "100N1A":
-                self::checkAndPushCardIntoNestedDogmaStack($card); // The player chose this card for execution
+                self::executeNonDemandEffects($card); // The player chose this card for execution
                 break;
             
             // id 102, age 10: Stem cells 
@@ -14596,7 +14591,7 @@ class Innovation extends Table
                 $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed', /*bottom_to=*/ false, /*type=*/ $choice);
                 if ($card['color'] == 4) { // "If the drawn card is purple"
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
-                    self::checkAndPushCardIntoNestedDogmaStack($card); // "Execute each of its non-demand effects. Do not share them."
+                    self::executeNonDemandEffects($card); // "Execute each of its non-demand effects. Do not share them."
                 } else  {
                     // Non-purple card is placed in the hand
                     self::transferCardFromTo($card, $player_id, 'hand');
