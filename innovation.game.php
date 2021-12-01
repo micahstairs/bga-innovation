@@ -3518,6 +3518,58 @@ class Innovation extends Table
         return self::getPlayerScore($player_id);
     }
     
+    // Return the icon count for a particular color on a player's board.
+    // This will count the hexes if 0 is provided as input.
+    function getPlayerSingleRessourceCountByColor($player_id, $color, $icon) {
+        $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $pile = $board[$color];
+        $pile_size = count($pile);
+        if ($pile_size == 0) { // No card of that color
+            return 0;
+        }
+        $top_card = $pile[$pile_size - 1];
+        $count = self::countResourceIcons($top_card, $icon);
+        $splay = $top_card['splay_direction'];
+        if ($splay == 0) { // Unsplayed
+            return $count;
+        }
+        
+        // There is a splay so do some extra counting.  Ignore the top card (that is done above)
+        // TODO : Cities requires an update here.  Left splays have an empty hex
+        if ($splay == 1) { // left splay
+            for ($card_ctr = 0; $card_ctr < $pile_size - 1; $card_ctr++) {
+                $card = $pile[$card_ctr];
+                if ($card['spot_4'] == $icon) {
+                    $count++;
+                }
+            }
+        } else if ($splay == 2) { // right splay
+            for ($card_ctr = 0; $card_ctr < $pile_size - 1; $card_ctr++) {
+                $card = $pile[$card_ctr];
+                if ($card['spot_1'] == $icon) {
+                    $count++;
+                }
+                if ($card['spot_2'] == $icon) {
+                    $count++;
+                }
+            }
+       } else if ($splay == 3) { // up splay
+            for ($card_ctr = 0; $card_ctr < $pile_size - 1; $card_ctr++) {
+                $card = $pile[$card_ctr];
+                if ($card['spot_2'] == $icon) {
+                    $count++;
+                }
+                if ($card['spot_3'] == $icon) {
+                    $count++;
+                }
+                if ($card['spot_4'] == $icon) {
+                    $count++;
+                }
+            }
+        }
+        return $count; // All other splays result in the current pile count
+    }
+    
     function getPlayerSingleRessourceCount($player_id, $icon) {
         return self::getUniqueValueFromDB(self::format("
             SELECT
@@ -8394,6 +8446,21 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 165, Artifacts age 6: Kilogram of the Archives
+            case "165N1":
+                $step_max = 2;
+                break;
+
+            // id 166, Artifacts age 6: Puffing Billy
+            case "166N1":
+                $step_max = 1;
+                break;
+
+            // id 168, Artifacts age 6: U.S. Declaration of Independence
+            case "168C1":
+                $step_max = 3;
+                break;
+
             // id 169, Artifacts age 6: The Wealth of Nations
             case "169N1":
                 // "Draw and score a 1"
@@ -8402,6 +8469,15 @@ class Innovation extends Table
                 $age_to_score = ceil(self::getPlayerScore($player_id) / 5);
                 // "Draw and score a card of value equal to the result"
                 self::executeDraw($player_id, $age_to_score, 'score');
+                break;
+
+            // id 171, Artifacts age 6: Stamp Act
+            case "171C1":
+                $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
+                if ($top_yellow_card != null) { // make sure there is a yellow card
+                    self::setGameStateValue('age_last_selected', $top_yellow_card['age']);
+                    $step_max = 1;
+                }
                 break;
 
             // id 172, Artifacts age 6: Pride and Prejudice
@@ -11693,7 +11769,128 @@ class Innovation extends Table
                 'require_achievement_eligibility' => false
             );
             break;
+
+        // id 165, Artifacts age 6: Kilogram of the Archives
+        case "165N1A":
+            // Return a card from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "165N1B":
+            // Return a top card from your board. 
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        // id 166, Artifacts age 6: Puffing Billy
+        case "166N1A":
+            // Return a card from your hand.
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        // id 168, Artifacts age 6: U.S. Declaration of Independence
+        case "168C1A":
+            // transfer the highest card in your hand to my hand
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'age' => self::getMaxAgeInHand($player_id), 
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $launcher_id,
+                'location_to' => 'hand'
+            );
+            break;
+
+        case "168C1B":
+            // the highest card in your score pile to my score pile
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'age' => self::getMaxAgeInScore($player_id), 
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score'
+            );
+            break;
             
+        case "168C1C":
+            // and the highest top card with a factory from your board to my board!
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'age' => self::getMaxAgeOnBoardTopCardsWithIcon($player_id, 5), // factory
+                'with_icon' => 5,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board'
+            );
+            break;
+
+        // id 171, Artifacts age 6: Stamp Act
+        case "171C1A":
+            // transfer a card of value equal to the top yellow card on your board from your score pile to mine!
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'age' => self::getGameStateValue('age_last_selected'),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score'
+            );
+            break;
+
+        case "171C1B":
+            // // return a card from your score pile of value equal to the top green card on your board!
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'age' => self::getGameStateValue('age_last_selected'),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
         // id 174, Artifacts age 6: Marcha Real
         case "174N1A":
             // Reveal two cards from your hand
@@ -12811,7 +13008,18 @@ class Innovation extends Table
                         }
                     } while ($card != null);
                     break;
-    
+
+                // id 171, Artifacts age 6: Stamp Act
+                case "171C1A":
+                    if ($n > 0) { // if you do,
+                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
+                        if ($top_green_card != null) {
+                            self::setGameStateValue('age_last_selected', $top_green_card['age']);
+                            self::incGameStateValue('step_max', 1);
+                        }
+                    }
+                    break;
+            
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
@@ -12868,6 +13076,48 @@ class Innovation extends Table
                 case "164N1A":
                     if ($n > 0) { // If no card is melded, then the value cannot match an achievement
                         self::incGameStateValue('step_max', 1);
+                    }
+                    break;
+
+                // id 165, Artifacts age 6: Kilogram of the Archives
+                case "165N1A":
+                    if ($n > 0) {
+                        self::setGameStateValue('auxiliary_value', self::getGameStateValue('age_last_selected')); // log first card's value
+                    }
+                    else {
+                        self::setGameStateValue('auxiliary_value', 0); // no hand card returned
+                    }
+                    
+                    break;
+
+                case "165N1B":
+                    $total = self::getGameStateValue('auxiliary_value');
+                    // If you returned two cards 
+                    if ($total > 0 && $n > 0) {
+                        $total = $total + self::getGameStateValue('age_last_selected');
+                        
+                        if ($total == 10) {
+                            // and their values sum to ten, draw and score a 10.
+                            self::executeDraw($player_id, 10, 'score');
+                        }
+                    }
+                    break;
+
+                // id 166, Artifacts age 6: Puffing Billy
+                case "166N1A":
+                    if ($n > 0) {
+                        // Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board.
+                        $color = self::getGameStateValue('color_last_selected');
+                        $max_symbols = 0;
+                        for ($icon = 1; $icon < 7; $icon++) {
+                            $icon_count = self::getPlayerSingleRessourceCountByColor($player_id, $color, $icon);
+                            if ($max_symbols < $icon_count){
+                                $max_symbols = $icon_count;
+                            }
+                        }
+                        self::executeDraw($player_id, $max_symbols, 'hand');
+                        // Splay right that color.
+                        self::splay($player_id, $player_id, $color, 2);
                     }
                     break;
                              
