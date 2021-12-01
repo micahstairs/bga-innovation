@@ -3347,19 +3347,19 @@ class Innovation extends Table
     }
     
     /* Count the number of a particular icon on the specified card */
-    function countResources($card, $icon) {
-        // TODO : Cities will require an update here.
+    function countResourceIcons($card, $icon) {
+        // TODO: This logic needs to be updated when Cities is implemented.
         $icon_count = 0;
-        if($card['spot_1'] == 6){
+        if ($card['spot_1'] == $icon) {
             $icon_count++;
         }
-        if($card['spot_2'] == 6){
+        if ($card['spot_2'] == $icon) {
             $icon_count++;
         }
-        if($card['spot_3'] == 6){
+        if ($card['spot_3'] == $icon) {
             $icon_count++;
         }
-        if($card['spot_4'] == 6){
+        if ($card['spot_4'] == $icon) {
             $icon_count++;
         }
         return $icon_count;
@@ -8414,10 +8414,10 @@ class Innovation extends Table
 
             // id 185, Artifacts age 8: Parnell Pitch Drop
             case "185N1":
-                // "Draw and meld a card of value one higher than the highest top card on your board."
+                // "Draw and meld a card of value one higher than the highest top card on your board"
                 $card = self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1, 'board');
-                if (self::countResources($card, 6) == 3) {
-                    // If the melded card has three clocks, you win.
+                if (self::countResourceIcons($card, 6) == 3) {
+                    // "If the melded card has three clocks, you win"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 clocks.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 clocks.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
@@ -8428,11 +8428,11 @@ class Innovation extends Table
 
             // id 189, Artifacts age 8: Ocean Liner Titanic
             case "189N1":
-                for($color = 0; $color < 5; $color++) {
+                // "Score all bottom cards from your board"
+                for ($color = 0; $color < 5; $color++) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
-                    if($card != null) {
-                        // Score all bottom cards from your board.
-                        $card = self::transferCardFromTo($card, $player_id, 'score', false, /* score_keyword */ true);
+                    if ($card != null) {
+                        $card = self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
                     }
                 }
                 break;
@@ -11714,7 +11714,7 @@ class Innovation extends Table
 
         // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
         case "190N1A":
-            // Return a card from your hand.
+            // "Return a card from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -11729,7 +11729,7 @@ class Innovation extends Table
 
         // id 191, Artifacts age 8: Plush Beweglich Rod Bear
         case "191N1A":
-            // Choose a value.
+            // "Choose a value"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -12718,7 +12718,7 @@ class Innovation extends Table
 
                 // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
                 case "190N1A":
-                    // Draw and score three cards of the returned card's value.
+                    // "Draw and score three cards of the returned card's value"
                     $age_to_score = self::getGameStateValue('age_last_selected');
                     self::executeDraw($player_id, $age_to_score, 'score');
                     self::executeDraw($player_id, $age_to_score, 'score');
@@ -12727,16 +12727,14 @@ class Innovation extends Table
 
                 // id 191, Artifacts age 8: Plush Beweglich Rod Bear
                 case "191N1A":
+                    // "Splay up each color with a top card of the chosen value"
                     $age_value = self::getGameStateValue('auxiliary_value');
-                    
                     $top_cards = self::getTopCardsOnBoard($player_id);
                     foreach ($top_cards as $top_card) {
                         if ($top_card['age'] == $age_value) {
-                            // Splay up each color with a top card of the chosen value.
                             self::splay($player_id, $player_id, $top_card['color'], 3);
                         }
                     }
-                    
                     break;
 
                 }
