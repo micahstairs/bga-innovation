@@ -5677,7 +5677,7 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('Choose a value');
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
-            
+
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -8486,6 +8486,45 @@ class Innovation extends Table
                 }
                 break;
 
+            // id 196, Artifacts age 9: Luna 3
+            case "196N1":
+                $step_max = 1;
+                break;            
+
+            // id 199, Artifacts age 9: Philips Compact Cassette
+            case "199C1":
+                for($color = 0; $color < 5; $color++) {
+                    self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true); // Unsplay
+                }
+                break;
+
+            case "199N1":
+                $valid_colors = array();
+                $color_count = 0;
+                for ($color = 0; $color < 5; $color++) {
+                    $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+                    $pile = $board[$color];
+                    $pile_size = count($pile);
+                    if ($pile_size > 0) {
+                        $top_card = $pile[$pile_size - 1];
+                        if ($pile_size > 1 && $top_card['splay_direction'] != 3) {
+                            $valid_colors[] = $color;
+                            $color_count++;
+                        }
+                    }
+                }
+                
+                if ($color_count >= 3) {
+                    $step_max = 1; // decision to be made
+                }
+                else if ($color_count < 3) {
+                    // Only one or two piles that can splay so just splay
+                    foreach ($valid_colors as $col){
+                        self::splay($player_id, $player_id, $col, 3); // splay up
+                    }
+                }
+                break;
+
             // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
             case "190N1":
                 $step_max = 1;
@@ -8495,6 +8534,16 @@ class Innovation extends Table
             case "191N1":
                 $step_max = 2;
                 break;
+
+            // id 200, Artifacts age 9: Syncom 3
+            case "200N1":
+                $step_max = 1;
+                break;
+
+            // id 204, Artifacts age 9: Marilyn Diptych
+            case "204N1":
+                $step_max = 2;
+                break;            
                 
             default:
                 // This should not happens
@@ -11383,7 +11432,7 @@ class Innovation extends Table
         // id 150, Artifacts age 4: Hunt-Lenox Globe
         case "150N1A":
             // "If you have fewer than four cards in your hand"
-            if ($self::countCardsInLocation($player_id, 'hand') < 4) {
+            if (self::countCardsInLocation($player_id, 'hand') < 4) {
                 // "Return all non-green top cards from your board"
                 $options = array(
                     'player_id' => $player_id,
@@ -11768,7 +11817,47 @@ class Innovation extends Table
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
 
+        // id 196, Artifacts age 9: Luna 3
+        case "196N1A":
+            // "Return all cards from your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
+
+        // id 199, Artifacts age 9: Philips Compact Cassette
+        case "199N1A":
+            // "Splay up two colors on your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+                
+                'splay_direction' => 3 /* up */
+            );
+            break;
+            
+        // id 196, Artifacts age 9: Syncom 3
+        case "200N1A":
+            // "Return all cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => 0,
@@ -11802,6 +11891,35 @@ class Innovation extends Table
             );
             break;
 
+        // id 204, Artifacts age 9: Marilyn Diptych
+        case "204N1A":
+            // "You may score a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score'
+            );
+            break;
+
+        case "204N1B":
+            // "You may transfer any card from your score pile to your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $player_id,
+                'location_to' => 'hand'
+            );
+            break;
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -12786,6 +12904,52 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 196, Artifacts age 9: Luna 3
+                case "196N1A":
+                    // Draw and score a card of value equal to the number of cards returned.
+                    self::executeDraw($player_id, $n, 'score');
+                    break;
+
+                // id 200, Artifacts age 9: Syncom 3
+                case "200N1A":
+                    // "Draw and reveal five 9."
+                    $color_detect = array(0,0,0,0,0);
+                    $card_array = array();
+                    $repeat_colors = false;
+                    for($card_idx = 0; $card_idx < 5; $card_idx++) {
+                        $card = self::executeDraw($player_id, 9, 'revealed');
+                        if ($color_detect[$card['color']] == 1) { 
+                            $repeat_colors = true; // if the flag is 1, the color already has been revealed
+                        }
+                        $color_detect[$card['color']] = 1; // flag the color
+                        $card_array[] = $card;
+                    }
+                    
+                    // If you revealed all five colors, you win.
+                    if ($repeat_colors == false) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed all 5 colors.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed all 5 colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep Syncom 3');
+                        throw new EndOfGame();
+                    }
+
+                    for($card_idx = 0; $card_idx < 5; $card_idx++) { // Put the revealed cards in hand
+                        self::transferCardFromTo($card_array[$card_idx], $player_id, 'hand');
+                    }
+                   
+                    break;                    
+                    
+                case "204N1B":
+                    // "If you have exactly 25 points, you win."
+                    if (self::getPlayerScore($player_id) == 25) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly 25 points.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly 25 points.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep Marilyn Diptych');
+                        throw new EndOfGame();
+                    }
+                    break;                    
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
