@@ -115,9 +115,11 @@ function (dojo, declare) {
             // Special flag used when a selection has to be made within a color pile
             this.color_pile = null;
             
-            // Special flags to indicate that two colors must be chosen
+            // Special flags to indicate that multiple colors must be chosen
             this.choose_two_colors = null;
+            this.choose_three_colors = null;
             this.first_chosen_color = null;
+            this.second_chosen_color = null;
             
             // Name of the normal achievements
             this.normal_achievement_names = null;
@@ -783,6 +785,7 @@ function (dojo, declare) {
                     break;
                 case 'selectionMove':
                     this.choose_two_colors = args.args.special_type_of_choice == 5 /* choose_two_colors */;
+                    this.choose_three_colors = args.args.special_type_of_choice == 9 /* choose_three_colors */;
                     if (args.args.special_type_of_choice == 0) {
                         // Allowed selected cards by the server
                         var visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
@@ -2589,7 +2592,29 @@ function (dojo, declare) {
                 choice = Math.pow(2,this.first_chosen_color) + Math.pow(2,choice); // Set choice as encoded value for the array of the two chosen colors
                 this.first_chosen_color = null;
             }
-            
+
+           if (this.choose_three_colors) {
+                if (this.first_chosen_color === null) {
+                    this.first_chosen_color = choice;
+                    dojo.destroy(event.target); // Destroy the button
+                    var query = dojo.query('#pagemaintitletext > span[style]');
+                    var You = query[query.length - 1].outerHTML;
+                    $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose one color"), {'You':You});
+                    return;
+                }
+                if (this.second_chosen_color === null) {
+                    this.second_chosen_color = choice;
+                    dojo.destroy(event.target); // Destroy the button
+                    var query = dojo.query('#pagemaintitletext > span[style]');
+                    var You = query[query.length - 1].outerHTML;
+                    $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose one color"), {'You':You});
+                    return;
+                }
+                choice = Math.pow(2,this.second_chosen_color) + Math.pow(2,this.first_chosen_color) + Math.pow(2,choice); // Set choice as encoded value for the array of the two chosen colors
+                this.first_chosen_color = null;
+                this.second_chosen_color = null;
+            }
+           
             this.deactivateClickEvents();
             
             var self = this;
