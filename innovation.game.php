@@ -3096,7 +3096,6 @@ class Innovation extends Table
         )));
     }
 
-
     function getTopCardsOnBoard($player_id) {
         /**
         Get all of the top cards on a player board, or null if the player has no cards on his board
@@ -3170,6 +3169,27 @@ class Innovation extends Table
         ",
             array('player_id' => $player_id, 'color' => $color)
         )));
+    }
+
+    function getSplayableColorsOnBoard($player_id, $splay_direction) {
+        /**
+        Returns the splayable colors in the specified direction on a player's board, in ascending order
+        **/
+        return self::getObjectListFromDB(self::format("
+            SELECT
+                color
+            FROM
+                card
+            WHERE
+                owner = {player_id} AND
+                location = 'board' AND
+                position = 1 AND
+                splay_direction != {splay_direction}
+            ORDER BY
+                color
+            ",
+            array('player_id' => $player_id, 'splay_direction' => $splay_direction)
+        ), true);
     }
     
     function getMaxAgeOnBoardTopCards($player_id) {
@@ -8486,45 +8506,6 @@ class Innovation extends Table
                 }
                 break;
 
-            // id 196, Artifacts age 9: Luna 3
-            case "196N1":
-                $step_max = 1;
-                break;            
-
-            // id 199, Artifacts age 9: Philips Compact Cassette
-            case "199C1":
-                for($color = 0; $color < 5; $color++) {
-                    self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true); // Unsplay
-                }
-                break;
-
-            case "199N1":
-                $valid_colors = array();
-                $color_count = 0;
-                for ($color = 0; $color < 5; $color++) {
-                    $board = self::getCardsInLocation($player_id, 'board', null, false, true);
-                    $pile = $board[$color];
-                    $pile_size = count($pile);
-                    if ($pile_size > 0) {
-                        $top_card = $pile[$pile_size - 1];
-                        if ($pile_size > 1 && $top_card['splay_direction'] != 3) {
-                            $valid_colors[] = $color;
-                            $color_count++;
-                        }
-                    }
-                }
-                
-                if ($color_count >= 3) {
-                    $step_max = 1; // decision to be made
-                }
-                else if ($color_count < 3) {
-                    // Only one or two piles that can splay so just splay
-                    foreach ($valid_colors as $col){
-                        self::splay($player_id, $player_id, $col, 3); // splay up
-                    }
-                }
-                break;
-
             // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
             case "190N1":
                 $step_max = 1;
@@ -8533,6 +8514,33 @@ class Innovation extends Table
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1":
                 $step_max = 2;
+                break;
+
+            // id 196, Artifacts age 9: Luna 3
+            case "196N1":
+                $step_max = 1;
+                break;            
+
+            // id 199, Artifacts age 9: Philips Compact Cassette
+            case "199C1":
+                // "I compel you to unsplay all splayed colors on your board!"
+                for ($color = 0; $color < 5; $color++) {
+                    self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true);
+                }
+                break;
+
+            case "199N1":
+                // If there are only one or two splayable piles then we can splay up automatically
+                $splayable_colors = self::getSplayableColorsOnBoard($player_id, /*splay_direction=*/ 3);
+                if (count($splayable_colors) <= 2) {
+                    foreach ($splayable_colors as $color) {
+                        self::splay($player_id, $player_id, $color, 3);
+                    }
+                
+                // Otherwise we need to prompt the player to choose which 2 colors to splay up
+                } else {
+                    $step_max = 2;
+                }
                 break;
 
             // id 200, Artifacts age 9: Syncom 3
@@ -11825,46 +11833,6 @@ class Innovation extends Table
             );
             break;
 
-        // id 196, Artifacts age 9: Luna 3
-        case "196N1A":
-            // "Return all cards from your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;            
-
-        // id 199, Artifacts age 9: Philips Compact Cassette
-        case "199N1A":
-            // "Splay up two colors on your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-                'can_pass' => false,
-                
-                'splay_direction' => 3 /* up */
-            );
-            break;
-            
-        // id 196, Artifacts age 9: Syncom 3
-        case "200N1A":
-            // "Return all cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-
         // id 191, Artifacts age 8: Plush Beweglich Rod Bear
         case "191N1A":
             // "Choose a value"
@@ -11891,27 +11859,80 @@ class Innovation extends Table
             );
             break;
 
-        // id 204, Artifacts age 9: Marilyn Diptych
-        case "204N1A":
-            // "You may score a card from your hand."
+        // id 196, Artifacts age 9: Luna 3
+        case "196N1A":
+            // "Return all cards from your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => true,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
+
+        // id 199, Artifacts age 9: Philips Compact Cassette
+        case "199N1A":
+            // Splay up a color on your board
+            $options = array(
+                'player_id' => $player_id,
                 'n' => 1,
+                'can_pass' => false,
+                
+                'splay_direction' => 3
+            );
+            break;
+        
+        case "199N1B":
+            // Splay up another color on your board
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'splay_direction' => 3
+            );
+            break;
+            
+        // id 200, Artifacts age 9: Syncom 3
+        case "200N1A":
+            // "Return all cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        // id 204, Artifacts age 9: Marilyn Diptych
+        case "204N1A":
+            // "You may score a card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'score'
+                'location_to' => 'score',
+
+                'score_keyword' => true
             );
             break;
 
         case "204N1B":
-            // "You may transfer any card from your score pile to your hand."
+            // "You may transfer any card from your score pile to your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => true,
                 'n' => 1,
+                'can_pass' => true,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -12906,27 +12927,23 @@ class Innovation extends Table
 
                 // id 196, Artifacts age 9: Luna 3
                 case "196N1A":
-                    // Draw and score a card of value equal to the number of cards returned.
+                    // "Draw and score a card of value equal to the number of cards returned"
                     self::executeDraw($player_id, $n, 'score');
                     break;
 
                 // id 200, Artifacts age 9: Syncom 3
                 case "200N1A":
-                    // "Draw and reveal five 9."
-                    $color_detect = array(0,0,0,0,0);
-                    $card_array = array();
-                    $repeat_colors = false;
-                    for($card_idx = 0; $card_idx < 5; $card_idx++) {
+                    // "Draw and reveal five 9s"
+                    $revealed_cards = array();
+                    $revealed_colors = array();
+                    for ($i = 0; $i < 5; $i++) {
                         $card = self::executeDraw($player_id, 9, 'revealed');
-                        if ($color_detect[$card['color']] == 1) { 
-                            $repeat_colors = true; // if the flag is 1, the color already has been revealed
-                        }
-                        $color_detect[$card['color']] = 1; // flag the color
-                        $card_array[] = $card;
+                        $revealed_cards[] = $card;
+                        $revealed_colors[] = $card['color'];
                     }
                     
-                    // If you revealed all five colors, you win.
-                    if ($repeat_colors == false) {
+                    // "If you revealed all five colors, you win"
+                    if (count(array_count_values($revealed_colors)) == 5) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed all 5 colors.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed all 5 colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
@@ -12934,14 +12951,14 @@ class Innovation extends Table
                         throw new EndOfGame();
                     }
 
-                    for($card_idx = 0; $card_idx < 5; $card_idx++) { // Put the revealed cards in hand
-                        self::transferCardFromTo($card_array[$card_idx], $player_id, 'hand');
+                    // Put the revealed cards in hand
+                    foreach ($revealed_cards as $card) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
                     }
-                   
                     break;                    
                     
                 case "204N1B":
-                    // "If you have exactly 25 points, you win."
+                    // "If you have exactly 25 points, you win"
                     if (self::getPlayerScore($player_id) == 25) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly 25 points.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly 25 points.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
