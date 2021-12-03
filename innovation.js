@@ -2599,7 +2599,7 @@ function (dojo, declare) {
                     dojo.destroy(event.target); // Destroy the button
                     var query = dojo.query('#pagemaintitletext > span[style]');
                     var You = query[query.length - 1].outerHTML;
-                    $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose one color"), {'You':You});
+                    $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose two colors"), {'You':You});
                     return;
                 }
                 if (this.second_chosen_color === null) {
@@ -2610,7 +2610,7 @@ function (dojo, declare) {
                     $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose one color"), {'You':You});
                     return;
                 }
-                choice = Math.pow(2,this.second_chosen_color) + Math.pow(2,this.first_chosen_color) + Math.pow(2,choice); // Set choice as encoded value for the array of the two chosen colors
+                choice = Math.pow(2,this.second_chosen_color) + Math.pow(2,this.first_chosen_color) + Math.pow(2,choice); // Set choice as encoded value for the array of the three chosen colors
                 this.first_chosen_color = null;
                 this.second_chosen_color = null;
             }

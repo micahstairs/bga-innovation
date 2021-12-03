@@ -5283,24 +5283,25 @@ class Innovation extends Table
                 // Two color choice
                 if (!ctype_digit($choice) || $choice < 0) {
                     // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 $colors = self::getValueAsArray($choice);
                 if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
                     // The player is cheating... 
-                    throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 break;
             case 'choose_three_colors':
                 // Three color choice
                 if (!ctype_digit($choice) || $choice < 0) {
                     // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice must be three colors [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 $colors = self::getValueAsArray($choice);
-                if (count($colors) <> 3 || $colors[0] == $colors[1] || $colors[0] == $colors[2] || $colors[1] == $colors[2] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array')) || !in_array($colors[2], self::getGameStateValueAsArray('color_array'))) {
+                $allowed_color_choices = self::getGameStateValueAsArray('color_array');
+                if (count($colors) <> 3 || count(array_unique($colors)) <> 3 || !in_array($colors[0], $allowed_color_choices) || !in_array($colors[1], $allowed_color_choices) || !in_array($colors[2], $allowed_color_choices)) {
                     // The player is cheating... 
-                    throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 break;
             case 'choose_rearrange':
@@ -11871,7 +11872,7 @@ class Innovation extends Table
 
         // id 170, Artifacts age 6: Buttonwood Agreement
         case "170N1A":
-            // "Choose three colors."
+            // "Choose three colors"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -11881,17 +11882,17 @@ class Innovation extends Table
             break;
 
         case "170N1B":
-            // "return all cards of the drawn card's color from your score pile"
+            // "Return all cards of the drawn card's color from your score pile"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
                 
-                'color' => array(self::getGameStateValue('auxiliary_value')),
-                
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => 0,
-                'location_to' => 'deck'
+                'location_to' => 'deck',
+
+                'color' => array(self::getGameStateValue('auxiliary_value'))
             );
             break;
             
@@ -13176,8 +13177,8 @@ class Innovation extends Table
                     
                 // id 170, Artifacts age 6: Buttonwood Agreement
                 case "170N1B":
-                    // unsplay that color
-                    self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /* forced unsplay */ true);
+                    // "Unsplay that color"
+                    self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /*forced unsplay=*/ true);
                     break;
                              
                 // id 179, Artifacts age 7: International Prototype Metre Bar   
@@ -13791,23 +13792,24 @@ class Innovation extends Table
 
             // id 170, Artifacts age 6: Buttonwood Agreement
             case "170N1A":
-                // $choice was three colors
                 $colors = self::getValueAsArray($choice);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1}, ${color_2}, and ${color_3}.'), array('i18n' => array('color_1', 'color_2', 'color_3'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1]), 'color_3' => self::getColorInClear($colors[2])));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array('i18n' => array('color_1', 'color_2', 'color_3'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1]), 'color_3' => self::getColorInClear($colors[2])));
                 
-                $card = self::executeDraw($player_id, 8, 'revealed'); // "Draw and reveal a 8"
-                if ($card['color'] <> $colors[0] && $card['color'] <> $colors[1] && $card['color'] <> $colors[2]) {
-                    self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
-                    // Otherwise,
-                    self::setGameStateValue('auxiliary_value', $card['color']); // Flag the unsucessful color
-                    self::incGameStateValue('step_max', 1);  // --> 1 more interaction: see B
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                }
-                else { // "If the drawn card is one of the chosen colors"
+                // "Draw and reveal a 8"
+                $card = self::executeDraw($player_id, 8, 'revealed');
+                // "If the drawn card is one of the chosen colors, score it and splay up that color"
+                if ($card['color'] == $colors[0] || $card['color'] == $colors[1] || $card['color'] == $colors[2]) {
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
-                    self::transferCardFromTo($card, $player_id, 'score', false, /* score_keyword */ true); // score it
-                    self::splay($player_id, $player_id, $card['color'], 3); // splay up that color
+                    self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
+                    self::splay($player_id, $player_id, $card['color'], 3);
+
+                // "Otherwise"
+                } else {
+                    self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                    self::setGameStateValue('auxiliary_value', $card['color']);
+                    self::incGameStateValue('step_max', 1);
                 }
                 break;
                 
