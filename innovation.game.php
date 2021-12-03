@@ -8488,6 +8488,11 @@ class Innovation extends Table
                 // "Draw and score a card of value equal to the result"
                 self::executeDraw($player_id, $age_to_score, 'score');
                 break;
+                
+            // id 170, Artifacts age 6: Buttonwood Agreement
+            case "170N1":
+                $step_max = 1;
+                break;
 
             // id 171, Artifacts age 6: Stamp Act
             case "171C1":
@@ -8496,11 +8501,6 @@ class Innovation extends Table
                     self::setGameStateValue('auxiliary_value', $top_yellow_card['age']);
                     $step_max = 1;
                 }
-                break;
-                
-            // id 170, Artifacts age 6: Buttonwood Agreement
-            case "170N1":
-                $step_max = 1;
                 break;
 
             // id 172, Artifacts age 6: Pride and Prejudice
