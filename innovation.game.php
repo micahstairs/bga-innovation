@@ -47,8 +47,8 @@ class Innovation extends Table
             'current_effect_type' => 21,               // Deprecated
             'current_effect_number' => 22,             // Deprecated
             'sharing_bonus' => 23,
-            'step' => 24,     // TODO(nesting): Deprecate this!
-            'step_max' => 25, // TODO(nesting): Deprecate this!
+            'step' => 24,     // Deprecated
+            'step_max' => 25, // Deprecated
             'special_type_of_choice' => 26,
             'choice' => 27,
             'can_pass' => 28,
@@ -282,7 +282,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
         if (self::getGameStateValue('release_version') >= 1) {
             self::setGameStateInitialValue('current_nesting_index', -1);
-            self::DbQuery("INSERT INTO nested_card_execution (nesting_index, card_id, current_player, current_effect_type, current_effect_number) VALUES (0, -1, -1, -1, -1)");
+            self::DbQuery("INSERT INTO nested_card_execution (nesting_index, card_id, current_player, current_effect_type, current_effect_number, step, step_max) VALUES (0, -1, -1, -1, -1, -1, -1)");
         } else {
             self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
             self::setGameStateInitialValue('dogma_card_id', -1);
@@ -292,11 +292,9 @@ class Innovation extends Table
                 self::setGameStateInitialValue('nested_id_'.$i, -1); // The card being executed through exclusive execution
                 self::setGameStateInitialValue('nested_current_effect_number_'.$i, -1); // The non-demand effect number currently executed
             }
+            self::setGameStateInitialValue('step', -1);
+            self::setGameStateInitialValue('step_max', -1);
         }
-        
-        // Flags used for player interaction in dogma to remember where we are in the process (yet -1 as default value since there are not currently in use)
-        self::setGameStateInitialValue('step', -1);
-        self::setGameStateInitialValue('step_max', -1);
         
         // Flag used for player interaction in dogma to remember what splay is proposed (-1 as default and if the choice does not involve splaying)
         self::setGameStateInitialValue('splay_direction', -1);
@@ -4783,6 +4781,56 @@ class Innovation extends Table
     function getJSCardEffectQuery($card_id, $card_age, $effect_type, $effect_number) {
         return self::getJSCardId($card_id, $card_age) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
+
+    function setStep($step) {
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery(
+                self::format("
+                    UPDATE
+                        nested_card_execution
+                    SET
+                        step = {step}
+                    WHERE
+                        nesting_index = {nesting_index}",
+                    array('step' => $step, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
+            );
+        } else {
+            self::setGameStateValue('step', $step);
+        }
+    }
+
+    function getStep() {
+        if (self::getGameStateValue('release_version') >= 1) {
+            return self::getCurrentNestedCardState()['step'];
+        } else {
+            return self::getGameStateValue('step');
+        }
+    }
+
+    function setStepMax($step_max) {
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery(
+                self::format("
+                    UPDATE
+                        nested_card_execution
+                    SET
+                        step_max = {step_max}
+                    WHERE
+                        nesting_index = {nesting_index}",
+                    array('step_max' => $step_max, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
+            );
+        } else {
+            self::setGameStateValue('step_max', $step_max);
+        }
+    }
+
+    function getStepMax() {
+        if (self::getGameStateValue('release_version') >= 1) {
+            return self::getCurrentNestedCardState()['step_max'];
+        } else {
+            return self::getGameStateValue('step_max');
+        }
+    }
     
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
@@ -4822,9 +4870,9 @@ class Innovation extends Table
             $player_id = $effect_type == 1 ? $current_player_id : self::getFirstPlayerUnderEffect($effect_type, $current_player_id);
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
-                    (nesting_index, card_id, current_player, current_effect_type, current_effect_number)
+                    (nesting_index, card_id, current_player, current_effect_type, current_effect_number, step, step_max)
                 VALUES
-                    ({nesting_index}, {card_id}, {player_id}, {effect_type}, 0)
+                    ({nesting_index}, {card_id}, {player_id}, {effect_type}, 0, -1, -1)
             ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'player_id' => $player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
@@ -5778,7 +5826,7 @@ class Innovation extends Table
             }
             
             // The message to display is specific of the card
-            $step = self::getGameStateValue('step');
+            $step = self::getStep();
             $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
             $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $letters[$step];
             
@@ -6584,8 +6632,8 @@ class Innovation extends Table
                 }
             }
             self::setGameStateValue('sharing_bonus', -1);
-            self::setGameStateValue('step', -1);
-            self::setGameStateValue('step_max', -1);
+            self::setStep(-1);
+            self::setStepMax(-1);
             self::setGameStateValue('special_type_of_choice', -1);
             self::setGameStateValue('choice', -1);
             self::setGameStateValue('splay_direction', -1);
@@ -9066,10 +9114,10 @@ class Innovation extends Table
             return;
         }
         // There is an interaction needed
-        self::setGameStateValue('step_max', $step_max);
+        self::setStepMax($step_max);
 
         // Prepare the first step
-        self::setGameStateValue('step', $step === null ? 1 : $step);
+        self::setStep($step === null ? 1 : $step);
         self::trace('playerInvolvedTurn->interactionStep');
         $this->gamestate->nextState('interactionStep');
     }
@@ -9175,7 +9223,7 @@ class Innovation extends Table
             $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
         }
 
-        $step = self::getGameStateValue('step');
+        $step = self::getStep();
         $card_id_1 = self::getGameStateValue('card_id_1');
         $card_id_2 = self::getGameStateValue('card_id_2');
         $card_id_3 = self::getGameStateValue('card_id_3');
@@ -12995,7 +13043,7 @@ class Innovation extends Table
             $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
         }
 
-        $step = self::getGameStateValue('step');
+        $step = self::getStep();
         $n = self::getGameStateValue('n');
         
         $crown = self::getIconSquare(1);
@@ -14201,7 +14249,7 @@ class Innovation extends Table
             }
         }
         
-        $step_max = self::getGameStateValue('step_max');
+        $step_max = self::getStepMax();
         if ($step == $step_max) { // The last step has been completed
             // End of the turn for the player involved
             self::trace('interInteractionStep->interPlayerInvolvedTurn');
@@ -14321,7 +14369,7 @@ class Innovation extends Table
             $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
             $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
         }
-        $step = self::getGameStateValue('step');
+        $step = self::getStep();
         
         $crown = self::getIconSquare(1);
         $leaf = self::getIconSquare(2);

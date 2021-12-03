@@ -78,6 +78,8 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `current_player` INT(10) NOT NULL COMMENT 'ID of the player currently executing the card',
  `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
  `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
+ `step` TINYINT COMMENT 'The interaction that the card is on',
+ `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
   PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
