@@ -5738,6 +5738,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
 
+            // id 147, Artifacts age 4: East India Company Charter
+            case "147N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
+ 
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -8343,6 +8349,21 @@ class Innovation extends Table
                 }
                 self::setGameStateValue('auxiliary_value', $number);
                 $step_max = 1; // --> 1 interaction
+                break;
+
+            // id 146, Artifacts age 4: Delft Pocket Telescope
+            case "146N1":
+                $step_max = 1;
+                break;
+
+            // id 147, Artifacts age 4: East India Company Charter
+            case "147N1":
+                $step_max = 2;
+                break;
+
+            // id 148, Artifacts age 4: Tortugas Galleon
+            case "148C1":
+                $step_max = 1;
                 break;
             
             // id 149, Artifacts age 4: Molasses Reef Caravel
@@ -11538,6 +11559,89 @@ class Innovation extends Table
             );
             break;
 
+        // id 146, Artifacts age 4: Delft Pocket Telescope
+        case "146N1A":
+            $step_max = 1;
+            break;
+
+        // id 147, Artifacts age 4: East India Company Charter
+        case "147N1A":
+            // Choose a value other than 5.
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'age' => array(1,2,3,4,6,7,8,9,10),
+                
+                'choose_value' => true
+            );
+            break;
+
+        // id 147, Artifacts age 4: East India Company Charter
+        case "147N1B":
+            // Return all cards of that value from all score piles.
+            $value_to_return = self::getGameStateValue('auxiliary_value');
+            // Count the players that will return a card
+            $player_return_count = 0;
+            $players = self::loadPlayersBasicInfos();
+            foreach($players as $curr_player_id => $player) {
+                $score_pile = self::getCardsInLocation($curr_player_id, 'score');
+                foreach ($score_pile as $card) {
+                    if ($card['age'] == $value_to_return) {
+                        $player_return_count++;
+                        break;
+                    }
+                }
+            }
+            self::setGameStateValue('auxiliary_value', $player_return_count);
+            
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => 'any player',
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'age' => $value_to_return
+            );
+            break;
+
+        // id 148, Artifacts age 4: Tortugas Galleon
+        case "148C1A":
+            // transfer all the highest cards from your score pile to my score pile!
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'age' => self::getMaxAgeInScore($player_id),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score'
+            );
+            break;
+
+        // id 148, Artifacts age 4: Tortugas Galleon
+        case "148C1B":
+            // transfer a top card on your board of that value to my board!
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'age' => self::getGameStateValue('age_last_selected'),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board'
+            );
+            break;
+            
         case "149N1D":
             // "Return a card from your score pile"
             $options = array(
@@ -13049,6 +13153,22 @@ class Innovation extends Table
                         }
                     }
                     break;
+
+                // id 147, Artifacts age 4: East India Company Charter
+                case "147N1B":
+                    // For each player that returned cards, draw and score a 5.
+                    $max_player_count = self::getGameStateValue('auxiliary_value');
+                    for ($player_count = 1; $player_count <= $max_player_count; $player_count++) {
+                        self::executeDraw($player_id, 5, 'score');
+                    }
+                    break;
+
+                // id 148, Artifacts age 4: Tortugas Galleon
+                case "148C1A":
+                    if ($n > 0) { // If you transfered any,
+                        self::incGameStateValue('step_max', 1);
+                    }
+                    break;
                     
                 // id 149, Artifacts age 4: Molasses Reef Caravel
                 case "149N1A":
@@ -13790,6 +13910,13 @@ class Innovation extends Table
                     }
                     self::setGameStateValue('auxiliary_value', -1);
                 }
+                break;
+
+            // id 147, Artifacts age 4: East India Company Charter
+            case "147N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setGameStateValue('auxiliary_value', $choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
