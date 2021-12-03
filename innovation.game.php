@@ -4110,7 +4110,7 @@ class Innovation extends Table
     }
     
     function setSelectionRange($options) {
-        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
+        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_three_colors', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
@@ -4125,7 +4125,7 @@ class Innovation extends Table
                     self::setGameStateValueFromArray('age_array', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
                 }
 
-                // Only used by 'choose_color' and 'choose_two_colors'.
+                // Only used by 'choose_color','choose_two_colors', and 'choose_three_colors'.
                 if (array_key_exists('color', $options)) {
                     // NOTE: It is the responsibility of the card implementation to ensure that $options['color'] has enough
                     // colors in it. For example, for 'choose_color', the array must have at least one element in it.
@@ -4574,6 +4574,8 @@ class Innovation extends Table
             return 7;
         case 'choose_type':
             return 8;
+       case 'choose_three_colors':
+            return 9;
         }
     }
     
@@ -4595,6 +4597,8 @@ class Innovation extends Table
             return 'choose_yes_or_no';
         case 8:
             return 'choose_type';
+        case 9:
+            return 'choose_three_colors';
         }
     }
     
@@ -5279,12 +5283,25 @@ class Innovation extends Table
                 // Two color choice
                 if (!ctype_digit($choice) || $choice < 0) {
                     // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 $colors = self::getValueAsArray($choice);
                 if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
                     // The player is cheating... 
-                    throw new BgaUserException(self::_("Your choice must be two colors [Press F5 in case of troubles]"));
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                }
+                break;
+            case 'choose_three_colors':
+                // Three color choice
+                if (!ctype_digit($choice) || $choice < 0) {
+                    // The player is cheating...
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                }
+                $colors = self::getValueAsArray($choice);
+                $allowed_color_choices = self::getGameStateValueAsArray('color_array');
+                if (count($colors) <> 3 || count(array_unique($colors)) <> 3 || !in_array($colors[0], $allowed_color_choices) || !in_array($colors[1], $allowed_color_choices) || !in_array($colors[2], $allowed_color_choices)) {
+                    // The player is cheating... 
+                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
                 }
                 break;
             case 'choose_rearrange':
@@ -5567,6 +5584,7 @@ class Innovation extends Table
                 break;
             case 'choose_color':
             case 'choose_two_colors':
+            case 'choose_three_colors':
                 $options = array();
                 foreach (self::getGameStateValueAsArray('color_array') as $color) {
                     $options[] = array('value' => $color, 'text' => self::getColorInClear($color));
@@ -5730,6 +5748,12 @@ class Innovation extends Table
             case "158N1B":
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+
+            // id 170, Artifacts age 6: Buttonwood Agreement
+            case "170N1A":
+                $message_for_player = clienttranslate('${You} must choose three colors');
+                $message_for_others = clienttranslate('${player_name} must choose three colors');
                 break;
             
             // id 179, Artifacts age 7: International Prototype Metre Bar
@@ -8463,6 +8487,11 @@ class Innovation extends Table
                 $age_to_score = ceil(self::getPlayerScore($player_id) / 5);
                 // "Draw and score a card of value equal to the result"
                 self::executeDraw($player_id, $age_to_score, 'score');
+                break;
+                
+            // id 170, Artifacts age 6: Buttonwood Agreement
+            case "170N1":
+                $step_max = 1;
                 break;
 
             // id 171, Artifacts age 6: Stamp Act
@@ -11821,7 +11850,7 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'hand',
 
-                'age' => self::getMaxAgeInHand($player_id),
+                'age' => self::getMaxAgeInHand($player_id)
             );
             break;
 
@@ -11837,7 +11866,33 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'score',
 
-                'age' => self::getMaxAgeInScore($player_id),
+                'age' => self::getMaxAgeInScore($player_id)
+            );
+            break;
+
+        // id 170, Artifacts age 6: Buttonwood Agreement
+        case "170N1A":
+            // "Choose three colors"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'choose_three_colors' => true
+            );
+            break;
+
+        case "170N1B":
+            // "Return all cards of the drawn card's color from your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array(self::getGameStateValue('auxiliary_value'))
             );
             break;
             
@@ -13119,6 +13174,12 @@ class Innovation extends Table
                         self::splay($player_id, $player_id, $color, 2);
                     }
                     break;
+                    
+                // id 170, Artifacts age 6: Buttonwood Agreement
+                case "170N1B":
+                    // "Unsplay that color"
+                    self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /*forced unsplay=*/ true);
+                    break;
                              
                 // id 179, Artifacts age 7: International Prototype Metre Bar   
                 case "179N1A":
@@ -13727,6 +13788,29 @@ class Innovation extends Table
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setGameStateValue('auxiliary_value', $choice);
+                break;
+
+            // id 170, Artifacts age 6: Buttonwood Agreement
+            case "170N1A":
+                $colors = self::getValueAsArray($choice);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1}, ${color_2}, and ${color_3}.'), array('i18n' => array('color_1', 'color_2', 'color_3'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1]), 'color_3' => self::getColorInClear($colors[2])));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array('i18n' => array('color_1', 'color_2', 'color_3'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1]), 'color_3' => self::getColorInClear($colors[2])));
+                
+                // "Draw and reveal a 8"
+                $card = self::executeDraw($player_id, 8, 'revealed');
+                // "If the drawn card is one of the chosen colors, score it and splay up that color"
+                if ($card['color'] == $colors[0] || $card['color'] == $colors[1] || $card['color'] == $colors[2]) {
+                    self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
+                    self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
+                    self::splay($player_id, $player_id, $card['color'], 3);
+
+                // "Otherwise"
+                } else {
+                    self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                    self::setGameStateValue('auxiliary_value', $card['color']);
+                    self::incGameStateValue('step_max', 1);
+                }
                 break;
                 
             // id 179, Artifacts age 7: International Prototype Metre Bar
