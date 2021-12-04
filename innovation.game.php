@@ -8344,6 +8344,11 @@ class Innovation extends Table
                 self::setGameStateValue('auxiliary_value', $number);
                 $step_max = 1; // --> 1 interaction
                 break;
+
+            // id 146, Artifacts age 4: Delft Pocket Telescope
+            case "146N1":
+                $step_max = 1; // --> 1 interactions
+                break;
             
             // id 149, Artifacts age 4: Molasses Reef Caravel
             case "149N1":
@@ -11475,7 +11480,84 @@ class Innovation extends Table
                 'location_to' => 'score'
             );
             break;
+
+        // id 146, Artifacts age 4: Delft Pocket Telescope
+        case "146N1A":
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
             
+        case "146N1B":
+            $mode = self::getGameStateValue('auxiliary_value');
+            // "reveal one of the drawn cards that has a symbol in common with the returned card."   
+            if ($mode == 1) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
+
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'revealed',
+
+                    'card_id_1' => self::getGameStateValue('card_id_1'),
+                );
+            }
+            else if ($mode == 2) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
+
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'revealed',
+
+                    'card_id_1' => self::getGameStateValue('card_id_2'),
+                );
+            }
+            else if ($mode == 3) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
+
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'revealed',
+
+                    'card_id_1' => self::getGameStateValue('card_id_1'),
+                    'card_id_2' => self::getGameStateValue('card_id_2')
+                );
+            }
+            else if ($mode == 0) {
+                // return the drawn cards 
+                 $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => 0,
+                    'location_to' => 'deck',
+
+                    'card_id_1' => self::getGameStateValue('card_id_1'),
+                    'card_id_2' => self::getGameStateValue('card_id_2')
+                );            
+            }
+            break;
+ 
         // id 149, Artifacts age 4: Molasses Reef Caravel
         case "149N1A":
             // "Return all cards from your hand"
@@ -13031,6 +13113,60 @@ class Innovation extends Table
                         if (self::getGameStateValue('auxiliary_value') + 1 === 3) {
                             self::incGameStateValue('step_max', 1); // --> 1 more interaction
                         }
+                    }
+                    break;
+
+                // id 146, Artifacts age 4: Delft Pocket Telescope
+                case "146N1A":
+                    if ($n > 0) { // If you do
+                        // draw a 5 and a 6
+                        $card1 = self::executeDraw($player_id, 5);
+                        $card2 = self::executeDraw($player_id, 6);
+                        
+                        self::setGameStateValue('card_id_1', $card1['id']);
+                        self::setGameStateValue('card_id_2', $card2['id']);
+                        
+                        $ret_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        $card1_flg = false;
+                        $card2_flg = false;
+                        // Check if any icons on the returned card match one of the drawn cards
+                        for ($icon = 1; $icon < 7; $icon++) { 
+                            $has_icon = self::hasRessource($ret_card, $icon);
+                            if ($has_icon && self::hasRessource($card1, $icon)) {
+                                // the icon matches this card!
+                                $card1_flg = true;
+                            }
+                            if ($has_icon && self::hasRessource($card2, $icon)) {
+                                // the icon matches this card!
+                                $card2_flg = true;
+                            }
+                        }
+                        
+                        if ($card1_flg == false && $card2_flg == false) {
+                            // If you cannot,
+                            self::setGameStateValue('auxiliary_value', 0);
+                        }
+                        else if ($card1_flg == true && $card2_flg == false ) {
+                            self::setGameStateValue('auxiliary_value', 1);
+                        }
+                        else if ($card2_flg == true && $card1_flg == false ) {
+                            self::setGameStateValue('auxiliary_value', 2);
+                        }
+                        else {
+                            self::setGameStateValue('auxiliary_value', 3);
+                        }
+                        self::setGameStateValue('step_max', 2); // don't increment because this can happen more than once
+                    }
+                    break;
+
+                case "146N1B":
+                    $mode = self::getGameStateValue('auxiliary_value');
+                    if ($mode == 0) {
+                        $step = $step - 2;
+                        self::incGameStateValue('step', -2); // and repeat this effect.
+                    }
+                    else {
+                        self::transferCardFromTo(self::getCardInfo(self::getGameStateValue('id_last_selected')), $player_id, 'hand');
                     }
                     break;
                     
