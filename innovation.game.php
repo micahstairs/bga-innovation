@@ -72,7 +72,7 @@ class Innovation extends Table
             'age_last_selected' => 46,
             'color_last_selected' => 47,
             'score_keyword' => 48,
-            'auxiliary_value' => 49,
+            'auxiliary_value' => 49,                // Deprecated
             'nested_id_1' => 50,                    // Deprecated
             'nested_current_effect_number_1' => 51, // Deprecated
             'nested_id_2' => 52,                    // Deprecated
@@ -282,7 +282,17 @@ class Innovation extends Table
         self::setGameStateInitialValue('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
         if (self::getGameStateValue('release_version') >= 1) {
             self::setGameStateInitialValue('current_nesting_index', -1);
-            self::DbQuery("INSERT INTO nested_card_execution (nesting_index, card_id, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max) VALUES (0, -1, -1, -1, -1, -1, -1, -1)");
+            self::DbQuery("
+                INSERT INTO nested_card_execution (
+                    nesting_index,
+                    card_id,
+                    launcher_id,
+                    current_player_id,
+                    current_effect_type,
+                    current_effect_number,
+                    step,
+                    step_max
+                ) VALUES (0, -1, -1, -1, -1, -1, -1, -1)");
         } else {
             self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
             self::setGameStateInitialValue('dogma_card_id', -1);
@@ -657,11 +667,15 @@ class Innovation extends Table
     
     /** Utilities for storing arrays of unique unsorted little positive integer values in a single game state value **/
     function setGameStateValueFromArray($key, $array) {
+        self::setGameStateValue($key, self::getArrayAsValue($array));
+    }
+
+    function getArrayAsValue($array) {
         $encoded_value = 0;
-        foreach($array as $value) {
+        foreach ($array as $value) {
             $encoded_value += pow(2, $value);
         }
-        self::setGameStateValue($key, $encoded_value);
+        return $encoded_value;
     }
     
     function getGameStateValueAsArray($key) {
@@ -683,7 +697,7 @@ class Innovation extends Table
     }
     
     /* Encodes multiple integers into a single integer */
-    function setGameStateBase16Array($key, $array) {
+    function getValueFromBase16Array($array) {
         // Due to the maximum data value of 0x8000000, only 5 elements can be encoded using this function.
         if (count($array) > 5) {
             throw new BgaVisibleSystemException("setGameStateBase16Array() cannot encode more than 5 integers at once");
@@ -696,13 +710,11 @@ class Innovation extends Table
             }
             $encoded_value = $encoded_value * 16 + $value;
         }
-        $encoded_value = $encoded_value * 6 + count($array);
-        self::setGameStateValue($key, $encoded_value);
+        return $encoded_value * 6 + count($array);
     }
     
     /* Decodes an integer representing multiple integers */
-    function getGameStateBase16Array($key) {
-        $encoded_value = self::getGameStateValue($key);
+    function getBase16ArrayFromValue($encoded_value) {
         $count = $encoded_value % 6;
         $encoded_value /= 6;
         $return_array = array();
@@ -4853,6 +4865,39 @@ class Innovation extends Table
             return self::getGameStateValue('step_max');
         }
     }
+
+    function setAuxiliaryValue($auxiliary_value) {
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery(
+                self::format("
+                    UPDATE
+                        nested_card_execution
+                    SET
+                        auxiliary_value = {auxiliary_value}
+                    WHERE
+                        nesting_index = {nesting_index}",
+                    array('auxiliary_value' => $auxiliary_value, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
+            );
+        } else {
+            self::setGameStateValue('auxiliary_value', $auxiliary_value);
+        }
+    }
+
+    function setAuxiliaryValueFromArray($array) {
+        self::setAuxiliaryValue(self::getArrayAsValue($array));
+    }
+
+    function getAuxiliaryValue() {
+        if (self::getGameStateValue('release_version') >= 1) {
+            return self::getCurrentNestedCardState()['auxiliary_value'];
+        } else {
+            return self::getGameStateValue('auxiliary_value');
+        }
+    }
+
+    function getAuxiliaryValueAsArray() {
+        return self::getValueAsArray(self::getAuxiliaryValue());
+    }
     
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
@@ -4928,6 +4973,7 @@ class Innovation extends Table
         ));
     }
 
+    // TODO: Create a setCurrentNestedCardState equivalent to help refactor some of our code.
     function getCurrentNestedCardState() {
         return self::getNestedCardState(self::getGameStateValue('current_nesting_index'));
     }
@@ -6642,7 +6688,8 @@ class Innovation extends Table
                         launcher_id = -1,
                         current_player_id = -1,
                         current_effect_type = -1,
-                        current_effect_number = -1
+                        current_effect_number = -1,
+                        auxiliary_value = -1
                     WHERE
                         nesting_index = 0"
                 );
@@ -6655,6 +6702,7 @@ class Innovation extends Table
                     self::setGameStateInitialValue('nested_id_'.$i, -1);
                     self::setGameStateInitialValue('nested_current_effect_number_'.$i, -1);
                 }
+                self::setAuxiliaryValue(-1);
             }
             self::setGameStateValue('sharing_bonus', -1);
             self::setStep(-1);
@@ -6684,7 +6732,6 @@ class Innovation extends Table
             self::setGameStateValue('color_last_selected', -1);
             self::setGameStateValue('owner_last_selected', -1);
             self::setGameStateValue('score_keyword', -1);
-            self::setGameStateValue('auxiliary_value', -1);
             self::setGameStateValue('require_achievement_eligibility', -1);
             self::setGameStateValue('require_demand_effect', -1);
             
@@ -6805,14 +6852,14 @@ class Innovation extends Table
             
             // id 5, age 1: Oars
             case "5D1":
-                if (self::getGameStateValue('auxiliary_value') == -1) { // If this variable has not been set before
-                    self::setGameStateValue('auxiliary_value', 0);
+                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                    self::setAuxiliaryValue(0);
                 }
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
             case "5N1":
-                if (self::getGameStateValue('auxiliary_value') <= 0) { // "If no cards were transfered due to this demand"
+                if (self::getAuxiliaryValue() <= 0) { // "If no cards were transfered due to this demand"
                     self::executeDraw($player_id, 1); // "Draw a 1"
                 }
                 break;
@@ -7001,20 +7048,20 @@ class Innovation extends Table
                 
             // id 19, age 2: Currency
             case "19N1":
-                self::setGameStateValueFromArray('auxiliary_value', array());
+                self::setAuxiliaryValueFromArray(array());
                 $step_max = 1; // --> 1 interaction: see B
                 break;
                 
             // id 20, age 2: Mapmaking
             case "20D1":
-                if (self::getGameStateValue('auxiliary_value') == -1) { // If this variable has not been set before
-                    self::setGameStateValue('auxiliary_value', 0);
+                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                    self::setAuxiliaryValue(0);
                 }
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
             case "20N1":
-                if (self::getGameStateValue('auxiliary_value') == 1) { // "If any card was transfered due to the demand"
+                if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
                     self::executeDraw($player_id, 1, 'score'); // "Draw and score a 1"
                 }
                 break;
@@ -7302,14 +7349,14 @@ class Innovation extends Table
             
             // id 38, age 4: Gunpowder
             case "38D1":
-                if (self::getGameStateValue('auxiliary_value') == -1) { // If this variable has not been set before
-                    self::setGameStateValue('auxiliary_value', 0);
+                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                    self::setAuxiliaryValue(0);
                 }
                 $step_max = 1; // --> 1 interaction: see B
                 break;
                 
             case "38N1":
-                if (self::getGameStateValue('auxiliary_value') == 1) { // "If any card was transfered due to the demand"
+                if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
                     self::executeDraw($player_id, 2, 'score'); // "Draw and score a 2"
                 }
                 break;
@@ -7429,14 +7476,14 @@ class Innovation extends Table
                 
             // id 48, age 5: The pirate code
             case "48D1":
-                if (self::getGameStateValue('auxiliary_value') == -1) { // If this variable has not been set before
-                    self::setGameStateValue('auxiliary_value', 0);
+                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                    self::setAuxiliaryValue(0);
                 }
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
             case "48N1":
-                if (self::getGameStateValue('auxiliary_value') == 1) { // "If any card was transfered due to the demand"
+                if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
                     $step_max = 1; // --> 1 interaction: see B
                 }
                 break;
@@ -7542,7 +7589,7 @@ class Innovation extends Table
                 else { // First edition
                    $colors = array(0,1,2,3); // All but purple
                 }
-                self::setGameStateValueFromArray('auxiliary_value', $colors);
+                self::setAuxiliaryValueFromArray($colors);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
@@ -7627,22 +7674,22 @@ class Innovation extends Table
             
             // id 62, age 6: Vaccination
             case "62D1":
-                if (self::getGameStateValue('auxiliary_value') == -1) { // If this variable has not been set before
-                    self::setGameStateValue('auxiliary_value', 0);
+                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                    self::setAuxiliaryValue(0);
                 }
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
             case "62N1":
-                if (self::getGameStateValue('auxiliary_value') == 1) { // "If any card was returned as a result of the demand"
+                if (self::getAuxiliaryValue() == 1) { // "If any card was returned as a result of the demand"
                     self::executeDraw($player_id, 7, 'board'); // "Draw and meld a 7"
                 }
                 break;
             
             // id 63, age 6: Democracy          
             case "63N1":
-                if (self::getGameStateValue('auxiliary_value') == -1) { // If this variable has not been set before
-                    self::setGameStateValue('auxiliary_value', 0);
+                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                    self::setAuxiliaryValue(0);
                 }
                 $step_max = 1; // --> 1 interaction: see B
                 break;
@@ -7685,7 +7732,7 @@ class Innovation extends Table
                 else { // First edition
                     $number = 2;
                 }
-                self::setGameStateValue('auxiliary_value', $number);
+                self::setAuxiliaryValue($number);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
                 
@@ -7700,7 +7747,7 @@ class Innovation extends Table
             
             // id 68, age 7: Explosives
             case "68D1":
-                self::setGameStateValue('auxiliary_value', 0); // Flag to indicate if the player has transfered a card or not
+                self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
                 $step_max = 3; // --> 3 interactions: see B
                 break;
             
@@ -7732,7 +7779,7 @@ class Innovation extends Table
                 
             // id 73, age 7: Lighting        
             case "73N1":
-                self::setGameStateValueFromArray('auxiliary_value', array()); // Flag to indicate what ages have been tucked
+                self::setAuxiliaryValueFromArray(array()); // Flag to indicate what ages have been tucked
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
@@ -7768,7 +7815,7 @@ class Innovation extends Table
                 
             // id 78, age 8: Mobility        
             case "78D1":
-                self::setGameStateValueFromArray('auxiliary_value', array(0,2,3,4)); // Flag to indicate the colors the player can still choose (not red at the start)
+                self::setAuxiliaryValueFromArray(array(0,2,3,4)); // Flag to indicate the colors the player can still choose (not red at the start)
                 $step_max = 2; // --> 2 interactions: see B
                 break;
                 
@@ -7792,7 +7839,7 @@ class Innovation extends Table
 
             // id 81, age 8: Antibiotics
             case "81N1":
-                self::setGameStateValueFromArray('auxiliary_value', array()); // Flag to indicate what ages have been tucked
+                self::setAuxiliaryValueFromArray(array()); // Flag to indicate what ages have been tucked
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
@@ -7818,7 +7865,7 @@ class Innovation extends Table
             
             // id 84, age 8: Socialism     
             case "84N1":
-                self::setGameStateValue('auxiliary_value', 0); // Flag to indicate if one purple card has been tuckeds or not
+                self::setAuxiliaryValue(0); // Flag to indicate if one purple card has been tuckeds or not
                 $step_max = 1; // --> 1 interaction: see B
                 break;
                 
@@ -8412,12 +8459,12 @@ class Innovation extends Table
              case "119C1":
                 $card = self::getCardInfo(119); // Dancing Girl
                 self::transferCardFromTo($card, $player_id, 'board');
-                self::incGameStateValue('auxiliary_value', 1); // Keep track of Dancing Girl's movements
+                self::setAuxiliaryValue(self::getAuxiliaryValue() + 1); // Keep track of Dancing Girl's movements
                 break;
             
             // id 119, Artifacts age 1: Dancing Girl
             case "119N1":
-                $num_movements = self::getGameStateValue('auxiliary_value') + 1; // + 1 since the variable is initialized to -1, not 0
+                $num_movements = self::getAuxiliaryValue() + 1; // + 1 since the variable is initialized to -1, not 0
                 $initial_location = self::getCurrentNestedCardState()['card_location'];
                 if ($player_id == $launcher_id && $num_movements == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
                     self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
@@ -8440,7 +8487,7 @@ class Innovation extends Table
 
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1":
-                self::setGameStateValueFromArray('auxiliary_value', array());
+                self::setAuxiliaryValueFromArray(array());
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
@@ -8520,7 +8567,7 @@ class Innovation extends Table
                 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1":
-                self::setGameStateValue('auxiliary_value', -1);
+                self::setAuxiliaryValue(-1);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
@@ -8562,7 +8609,7 @@ class Innovation extends Table
                     }
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
-                    self::setGameStateValue('auxiliary_value', $card['color']);
+                    self::setAuxiliaryValue($card['color']);
                     $step_max = 1; // --> 1 interaction: see B
                 } else {
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
@@ -8593,7 +8640,7 @@ class Innovation extends Table
                         $colors[] = $color;
                     }
                 }
-                self::setGameStateValueFromArray('auxiliary_value', $colors);
+                self::setAuxiliaryValueFromArray($colors);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
@@ -8649,7 +8696,7 @@ class Innovation extends Table
                         $colors[] = $color;
                     }
                 }
-                self::setGameStateValueFromArray('auxiliary_value', $colors);
+                self::setAuxiliaryValueFromArray($colors);
                 $step_max = 1; // --> 1 interaction: see B
                 break;
             
@@ -8703,7 +8750,7 @@ class Innovation extends Table
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top cards with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top cards with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
                 }
-                self::setGameStateValue('auxiliary_value', $number);
+                self::setAuxiliaryValue($number);
                 $step_max = 1; // --> 1 interaction
                 break;
 
@@ -8870,7 +8917,7 @@ class Innovation extends Table
             case "171C1":
                 $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
                 if ($top_yellow_card != null) {
-                    self::setGameStateValue('auxiliary_value', $top_yellow_card['age']);
+                    self::setAuxiliaryValue($top_yellow_card['age']);
                     $step_max = 1;
                 }
                 break;
@@ -9013,6 +9060,17 @@ class Innovation extends Table
             case "192C1":
                 $step_max = 1;
                 break;
+            
+            // id 195, Artifacts age 9: Yeager's Bell X-1A
+            case "195N1":
+                // "Draw and meld a 9"
+                $card = self::executeDraw($player_id, 9, 'board');
+
+                // "Execute the effects of the melded card as if they were on this card, without sharing"
+                self::executeAllEffects($card);
+
+                // TODO: "If that card has a clock, repeat this effect"
+                break; 
 
             // id 196, Artifacts age 9: Luna 3
             case "196N1":
@@ -10005,7 +10063,7 @@ class Innovation extends Table
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'age' => self::getGameStateValue('auxiliary_value')
+                'age' => self::getAuxiliaryValue()
             );
             break;
             
@@ -10324,7 +10382,7 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
                 
-                'color' => self::getGameStateValueAsArray('auxiliary_value'),
+                'color' => self::getAuxiliaryValueAsArray(),
                 'with_icon' => 3 /* with a lightbulb */
             );
             break;
@@ -10397,7 +10455,7 @@ class Innovation extends Table
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'color' => array(self::getGameStateValue('auxiliary_value')) /* The color the player has revealed */
+                'color' => array(self::getAuxiliaryValue()) /* The color the player has revealed */
             );
             break;
         
@@ -10561,7 +10619,7 @@ class Innovation extends Table
             // Cf A
             $options = array(
                 'player_id' => $player_id,
-                'n' => self::getGameStateValue('auxiliary_value'),
+                'n' => self::getAuxiliaryValue(),
                 'can_pass' => false,
                 
                 'owner_from' => $player_id,
@@ -10794,7 +10852,7 @@ class Innovation extends Table
         case "78D1A":
         case "78D1B":
             // "Transfer your highest non-red top cards without a factory from your board to my score pile" (twice)
-            $selectable_colors = self::getGameStateValueAsArray('auxiliary_value'); /* not red, and for the second card, not the same color as the first */
+            $selectable_colors = self::getAuxiliaryValueAsArray(); /* not red, and for the second card, not the same color as the first */
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -10865,7 +10923,7 @@ class Innovation extends Table
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'age' => self::getGameStateValue('auxiliary_value')
+                'age' => self::getAuxiliaryValue()
             );
             break;
             
@@ -10926,7 +10984,7 @@ class Innovation extends Table
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'color' => array(self::getGameStateValue('auxiliary_value')), /* the color of the card chosen on the first step */
+                'color' => array(self::getAuxiliaryValue()), /* the color of the card chosen on the first step */
              );
             break;
         
@@ -10950,7 +11008,7 @@ class Innovation extends Table
                 'can_pass' => true,
                 
                 'splay_direction' => 3, /* up */
-                'color' => array(self::getGameStateValue('auxiliary_value'))
+                'color' => array(self::getAuxiliaryValue())
             );            
             break;
         
@@ -11595,7 +11653,7 @@ class Innovation extends Table
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'color' => array(self::getGameStateValue('auxiliary_value'))
+                'color' => array(self::getAuxiliaryValue())
             );
             break;
         
@@ -11791,7 +11849,7 @@ class Innovation extends Table
         // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
             $hand_count = self::countCardsInLocation($player_id, 'hand');
-            self::setGameStateValue('auxiliary_value', $hand_count);
+            self::setAuxiliaryValue($hand_count);
             // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
@@ -11818,7 +11876,7 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
                 
-                'color' => self::getGameStateValueAsArray('auxiliary_value')
+                'color' => self::getAuxiliaryValueAsArray()
             );
             break;
             
@@ -11884,7 +11942,7 @@ class Innovation extends Table
         // id 143, Artifacts age 3: Necronomicon
         case "143N1A":
             // "If red, return all cards in your score pile"
-            if (self::getGameStateValue('auxiliary_value') == 1) { // Red
+            if (self::getAuxiliaryValue() == 1) { // Red
                 $options = array(
                     'player_id' => $player_id,
                     'can_pass' => false,
@@ -11895,7 +11953,7 @@ class Innovation extends Table
                     'location_to' => 'deck'
                 );     
             // "If yellow, return all cards in your hand"
-            } else if (self::getGameStateValue('auxiliary_value') == 3) { // Yellow
+            } else if (self::getAuxiliaryValue() == 3) { // Yellow
                 $options = array(
                     'player_id' => $player_id,
                     'can_pass' => false,
@@ -11976,7 +12034,7 @@ class Innovation extends Table
             // "I compel you to transfer a card from your score pile to my score pile for each top card with a tower on your board!"
             $options = array(
                 'player_id' => $player_id,
-                'n' => self::getGameStateValue('auxiliary_value'),
+                'n' => self::getAuxiliaryValue(),
                 'can_pass' => false,
                 
                 'owner_from' => $player_id,
@@ -12247,7 +12305,7 @@ class Innovation extends Table
                     $ages_on_top[] = $top_card['age'];
                 }
             }
-            self::setGameStateBase16Array('auxiliary_value', $ages_on_top);
+            self::setAuxiliaryValue(self::getValueFromBase16Array($ages_on_top));
 
             // "Return all non-blue top cards from your board"
             $options = array(
@@ -12312,7 +12370,7 @@ class Innovation extends Table
 
                 'score_keyword' => true,
 
-                'color' => array(self::getGameStateValue('auxiliary_value'))
+                'color' => array(self::getAuxiliaryValue())
             );            
             break;
             
@@ -12496,7 +12554,7 @@ class Innovation extends Table
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'color' => array(self::getGameStateValue('auxiliary_value'))
+                'color' => array(self::getAuxiliaryValue())
             );
             break;
 
@@ -12513,7 +12571,7 @@ class Innovation extends Table
                 'owner_to' => $launcher_id,
                 'location_to' => 'score',
 
-                'age' => self::getGameStateValue('auxiliary_value')
+                'age' => self::getAuxiliaryValue()
             );
             break;
 
@@ -12529,7 +12587,7 @@ class Innovation extends Table
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => self::getGameStateValue('auxiliary_value')
+                'age' => self::getAuxiliaryValue()
             );
             break;
 
@@ -12778,7 +12836,7 @@ class Innovation extends Table
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'age' => self::getGameStateValue('auxiliary_value')
+                'age' => self::getAuxiliaryValue()
             );
             break;
 
@@ -13132,7 +13190,7 @@ class Innovation extends Table
                 case "5D1A":
                     if ($n > 0) { // "If you do"
                         self::executeDraw($player_id, 1); // "Draw a 1"
-                        self::setGameStateValue('auxiliary_value', 1); // A transfer has been made, flag it
+                        self::setAuxiliaryValue(1); // A transfer has been made, flag it
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition => additionnal rule
                             $step--; self::incGameStateValue('step', -1); // "Repeat that dogma effect"
                         }
@@ -13208,7 +13266,7 @@ class Innovation extends Table
                 // id 19, age 2: Currency
                 case "19N1A":
                     if ($n > 0) { // "If you do"
-                        $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                        $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                         $number_of_cards_to_score = count($different_values_selected_so_far);
                         
                         if ($number_of_cards_to_score == 1) {
@@ -13231,7 +13289,7 @@ class Innovation extends Table
                 // id 20, age 2: Mapmaking
                 case "20D1A":
                     if ($n > 0) {
-                        self::setGameStateValue('auxiliary_value', 1); // A transfer has been made, flag it
+                        self::setAuxiliaryValue(1); // A transfer has been made, flag it
                     }
                     break;
                 
@@ -13246,11 +13304,11 @@ class Innovation extends Table
                 case "32D1B":
                     // Finish the exchange
                     $this->gamestate->changeActivePlayer($launcher_id); // This exchange was initiated by $launcher_id
-                    $id = self::getGameStateValue('auxiliary_value');
+                    $id = self::getAuxiliaryValue();
                     if ($id != -1) { // The attacking player could indeed choose a card
                         $card = self::getCardInfo($id);
                         self::transferCardFromTo($card, $player_id, 'score'); // $launcher_id -> $player_id
-                        self::setGameStateValue('auxiliary_value', -1);
+                        self::setAuxiliaryValue(-1);
                     }
                     break;
                 
@@ -13281,7 +13339,7 @@ class Innovation extends Table
                 // id 38, age 4: Gunpowder
                 case "38D1A":
                     if ($n > 0) {
-                        self::setGameStateValue('auxiliary_value', 1); // A transfer has been made, flag it
+                        self::setAuxiliaryValue(1); // A transfer has been made, flag it
                     }
                     break;
                     
@@ -13295,7 +13353,7 @@ class Innovation extends Table
                 // id 41, age 4: Anatomy
                 case "41D1A":
                     if ($n > 0) { // "If you do"
-                        self::setGameStateValue('auxiliary_value', self::getGameStateValue('age_last_selected')); // Save the age of the returned card
+                        self::setAuxiliaryValue(self::getGameStateValue('age_last_selected')); // Save the age of the returned card
                         self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
                     }
                     break;
@@ -13327,7 +13385,7 @@ class Innovation extends Table
                 // id 48, age 5: The pirate code
                 case "48D1A":
                     if ($n > 0) {
-                        self::setGameStateValue('auxiliary_value', 1); // A transfer has been made, flag it
+                        self::setAuxiliaryValue(1); // A transfer has been made, flag it
                     }
                     break;
 
@@ -13381,7 +13439,7 @@ class Innovation extends Table
                 case "59N1A":
                     if ($n > 0) { // Unsaid rule: the player must have at least one card to show from his hand, else, the effect can't continue
                         $color = self::getGameStateValue('color_last_selected');
-                        self::setGameStateValue('auxiliary_value', $color); // Save the color of the revealed card
+                        self::setAuxiliaryValue($color); // Save the color of the revealed card
                         $revealed_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         
                         $players = self::loadPlayersBasicInfos();
@@ -13413,15 +13471,15 @@ class Innovation extends Table
                 case "62D1A":
                     if ($n > 0) { // "If you returned any"
                         self::executeDraw($player_id, 6, 'board'); // "Draw and meld a 6"
-                        self::setGameStateValue('auxiliary_value', 1); // Flag that a card has been returned
+                        self::setAuxiliaryValue(1); // Flag that a card has been returned
                     }
                     break;
                     
                 // id 63, age 6: Democracy
                 case "63N1A":
-                    if ($n > self::getGameStateValue('auxiliary_value')) { // "If you returned more than any other player due to Democracy so far during this dogma action"
+                    if ($n > self::getAuxiliaryValue()) { // "If you returned more than any other player due to Democracy so far during this dogma action"
                         self::executeDraw($player_id, 8, 'score'); // "Draw and score a 8"
-                        self::setGameStateValue('auxiliary_value', $n); // Set the new maximum
+                        self::setAuxiliaryValue($n); // Set the new maximum
                     }
                     break;
                     
@@ -13435,12 +13493,12 @@ class Innovation extends Table
                 // id 68, age 7: Explosives
                 case "68D1A":
                     if ($n > 0) {
-                        self::setGameStateValue('auxiliary_value', 1);  // Flag that at least one card has been transfered
+                        self::setAuxiliaryValue(1);  // Flag that at least one card has been transfered
                     }
                     break;
                     
                 case "68D1C":
-                    if (self::getGameStateValue('auxiliary_value') == 1 && self::countCardsInLocation($player_id, 'hand') == 0) { // "If you transferred any, and then have no cards in hand"
+                    if (self::getAuxiliaryValue() == 1 && self::countCardsInLocation($player_id, 'hand') == 0) { // "If you transferred any, and then have no cards in hand"
                         self::executeDraw($player_id, 7); // "Draw a 7"
                     }
                     break;
@@ -13456,18 +13514,18 @@ class Innovation extends Table
                 case "72D1C":
                     // Finish the exchange
                     $this->gamestate->changeActivePlayer($launcher_id); // This exchange was initiated by $launcher_id
-                    $id = self::getGameStateValue('auxiliary_value');
+                    $id = self::getAuxiliaryValue();
                     if ($id != -1) { // The attacking player could indeed choose a card
                         $card = self::getCardInfo($id);
                         self::transferCardFromTo($card, $player_id, 'hand'); // $launcher_id -> $player_id
-                        self::setGameStateValue('auxiliary_value', -1);
+                        self::setAuxiliaryValue(-1);
                     }
                     break;
                     
                 // id 73, age 7: Lighting
                 case "73N1A":
                     if ($n > 0) { // "If you do"
-                        $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                        $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                         $number_of_cards_to_score = count($different_values_selected_so_far);
                         
                         if ($number_of_cards_to_score == 1) {
@@ -13506,14 +13564,14 @@ class Innovation extends Table
                 case "78D1A":
                     if ($n > 0) {
                         $color = self::getGameStateValue('color_last_selected');
-                        $selectable_colors = self::getGameStateValueAsArray('auxiliary_value');
+                        $selectable_colors = self::getAuxiliaryValueAsArray();
                         $selectable_colors = array_diff($selectable_colors, array($color)); // Remove the color of the card the player has chosen: he could not choose the same for his next card
-                        self::setGameStateValueFromArray('auxiliary_value', $selectable_colors);
+                        self::setGameStateValueFromArray($selectable_colors);
                     }
                     break;
                     
                 case "78D1B":
-                    if (self::getGameStateValueAsArray('auxiliary_value') <> array(0,2,3,4)) { // "If you transferred any cards" (ie: a color has been removed from the initial array)
+                    if (self::getAuxiliaryValueAsArray() <> array(0,2,3,4)) { // "If you transferred any cards" (ie: a color has been removed from the initial array)
                         self::executeDraw($player_id, 8); // "Draw a 8"
                     }
                     break;
@@ -13535,7 +13593,7 @@ class Innovation extends Table
                 // id 81, age 8: Antibiotics
                 case "81N1A":
                     if ($n > 0) { // If you do (implicit)
-                        $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                        $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                         $number_of_cards_to_draw = count($different_values_selected_so_far);
                         
                         if ($number_of_cards_to_draw == 1) {
@@ -13564,7 +13622,7 @@ class Innovation extends Table
                         if ($card !== null) {
                             self::transferCardFromTo($card, $player_id, 'score', null, true); // "Score the card beneath it"
                         }
-                        self::setGameStateValue('auxiliary_value', $color);// Flag the chosen color for the next interaction
+                        self::setAuxiliaryValue($color);// Flag the chosen color for the next interaction
                         self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
                     }
                     break;
@@ -13572,7 +13630,7 @@ class Innovation extends Table
                 // id 84, age 8: Socialism     
                 case "84N1A":
                     if ($n > 0) {
-                        if (self::getGameStateValue('auxiliary_value', 1)) { // "If you tucked at least one purple card"
+                        if (self::getAuxiliaryValue() == 1) { // "If you tucked at least one purple card"
                             self::notifyGeneralInfo(clienttranslate('At least one purple card has been tucked.'));
                             
                             $players = self::loadPlayersBasicInfos();
@@ -13779,7 +13837,7 @@ class Innovation extends Table
                 case "122N1B":
                     // "Claim all achievements of value matching those [returned] cards, ignoring eligibility"
                     $achievements_by_age = self::getCardsInLocation(0, "achievements", /*type=*/ null, /*ordered_by_age=*/ true);
-                    $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                    $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                     foreach ($different_values_selected_so_far as $returned_age) {
                         foreach ($achievements_by_age[$returned_age] as $achievement) {
                             self::transferCardFromTo($achievement, $player_id, 'achievements');
@@ -13848,7 +13906,7 @@ class Innovation extends Table
                 // id 135, Artifacts age 3: Dunhuang Star Chart
                 case "135N1A":
                     // "Draw a card of value equal to the number of cards returned"
-                    self::executeDraw($player_id, self::getGameStateValue('auxiliary_value'));
+                    self::executeDraw($player_id, self::getAuxiliaryValue());
                 	break;
                 	
                 // id 138, Artifacts age 3: Mjolnir Amulet
@@ -13860,7 +13918,7 @@ class Innovation extends Table
 
                 // id 143, Artifacts age 3: Necronomicon
                 case "143N1A":
-                    if (self::getGameStateValue('auxiliary_value') == 1) { // Red
+                    if (self::getAuxiliaryValue() == 1) { // Red
                         $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Keep revealed card
                     }
@@ -13869,21 +13927,21 @@ class Innovation extends Table
                 // id 144, Artifacts age 3: Shroud of Turin
                 case "144N1A":
                     if ($n > 0) {
-                        self::setGameStateValue('auxiliary_value', 1);
+                        self::setAuxiliaryValue(1);
                         self::incGameStateValue('step_max', 2); // --> 2 more interactions
                     }
                     break;
                 
                 case "144N1B":
                     if ($n > 0) {
-                        self::incGameStateValue('auxiliary_value', 1);
+                        self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
                     }
                     break;
                 
                 case "144N1C":
                     if ($n > 0) {
                         // "If you did all three"
-                        if (self::getGameStateValue('auxiliary_value') + 1 === 3) {
+                        if (self::getAuxiliaryValue() + 1 === 3) {
                             self::incGameStateValue('step_max', 1); // --> 1 more interaction
                         }
                     }
@@ -13914,7 +13972,7 @@ class Innovation extends Table
                     
                 // id 150, Artifacts age 4: Hunt-Lenox Globe
                 case "150N1A":
-                    if (self::getGameStateValue('auxiliary_value') == 1) {
+                    if (self::getAuxiliaryValue() == 1) {
                         // "Draw a 5 for each card returned"
                         for ($i = 1; $i <= $n; $i++) {
                             self::executeDraw($player_id, 5);
@@ -13924,7 +13982,7 @@ class Innovation extends Table
 
                 // id 157, Artifacts age 5: Bill of Rights
                 case "157C1A":
-                    $color = self::getGameStateValue('auxiliary_value');
+                    $color = self::getAuxiliaryValue();
                     do {
                         // "Transfer all cards of that color from your board to my board, from the bottom up!"
                         $card = self::getBottomCardOnBoard($player_id, $color);
@@ -13934,17 +13992,54 @@ class Innovation extends Table
                     } while ($card != null);
                     break;
 
+                // id 171, Artifacts age 6: Stamp Act
+                case "171C1A":
+                    if ($n > 0) { // "If you do"
+                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
+                        if ($top_green_card != null) {
+                            self::setAuxiliaryValue($top_green_card['age']);
+                            self::incGameStateValue('step_max', 1);
+                        }
+                    }
+                    break;
+            
+                // id 174, Artifacts age 6: Marcha Real
+                case "174N1A":
+                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
+                    $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
+
+                    // Return revealed cars from your hand
+                    if ($card_1 != null) {
+                        self::transferCardFromTo($card_1, 0, 'deck');
+                    }
+                    if ($card_2 != null) {
+                        self::transferCardFromTo($card_2, 0, 'deck');
+                    }
+
+                    if ($card_1 != null && $card_2 != null) {
+                        // "If they have the same value, draw a card of value one higher"
+                        if ($card_1['age'] == $card_2['age']) {
+                            self::executeDraw($player_id, $card_1['age'] + 1);
+                        }
+                        // "If they have the same color, claim an achievement, ignoring eligibility"
+                        if ($card_1['color'] == $card_2['color']) {
+                            self::incGameStateValue('step_max', 1);
+                        }
+                    }
+                    break;
+
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
-                    $first_age = self::getGameStateValue('auxiliary_value');
+                    $first_age = self::getAuxiliaryValue();
                     $second_age = self::getGameStateValue('age_last_selected');
                     self::executeDraw($player_id, $first_age + $second_age, 'score');
                     break;
                     
                 // id 156, Artifacts age 5: Principia
                 case "156N1A":
-                    $ages_on_top = self::getGameStateBase16Array('auxiliary_value');
+                    $ages_on_top = self::getBase16ArrayFromValue(self::getAuxiliaryValue());
                     sort($ages_on_top);
                     // "For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order"
                     foreach($ages_on_top as $card_age) {
@@ -13971,17 +14066,17 @@ class Innovation extends Table
                 case "165N1A":
                     if ($n > 0) {
                         // Log the value of the first returned card
-                        self::setGameStateValue('auxiliary_value', self::getGameStateValue('age_last_selected'));
+                        self::setAuxiliaryValue(self::getGameStateValue('age_last_selected'));
                     } else {
                         // No card was returned
-                        self::setGameStateValue('auxiliary_value', 0);
+                        self::setAuxiliaryValue(0);
                     }
                     
                     break;
 
                 case "165N1B":
                     // "If you returned two cards and their values sum to ten, draw and score a 10"
-                    $first_value = self::getGameStateValue('auxiliary_value');
+                    $first_value = self::getAuxiliaryValue();
                     if ($first_value > 0 && $n > 0) {
                         if ($first_value + self::getGameStateValue('age_last_selected') == 10) {
                             self::executeDraw($player_id, 10, 'score');
@@ -14011,7 +14106,7 @@ class Innovation extends Table
                 // id 170, Artifacts age 6: Buttonwood Agreement
                 case "170N1B":
                     // "Unsplay that color"
-                    self::unsplay($player_id, $player_id, self::getGameStateValue('auxiliary_value'));
+                    self::unsplay($player_id, $player_id, self::getAuxiliaryValue());
                     break;
 
                 // id 171, Artifacts age 6: Stamp Act
@@ -14080,7 +14175,7 @@ class Innovation extends Table
 
                 // id 179, Artifacts age 7: International Prototype Metre Bar   
                 case "179N1A":
-                    $age_value = self::getGameStateValue('auxiliary_value');
+                    $age_value = self::getAuxiliaryValue();
                     
                     // "Draw and meld a card of that value"
                     $card = self::executeDraw($player_id, $age_value, 'board');
@@ -14152,7 +14247,7 @@ class Innovation extends Table
                 // id 191, Artifacts age 8: Plush Beweglich Rod Bear
                 case "191N1A":
                     // "Splay up each color with a top card of the chosen value"
-                    $age_value = self::getGameStateValue('auxiliary_value');
+                    $age_value = self::getAuxiliaryValue();
                     $top_cards = self::getTopCardsOnBoard($player_id);
                     foreach ($top_cards as $top_card) {
                         if ($top_card['age'] == $age_value) {
@@ -14437,10 +14532,10 @@ class Innovation extends Table
                 
             // id 19, age 2: Currency
             case "19N1A":
-                $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                 if (!in_array($card['age'], $different_values_selected_so_far)) { // The player choose to return a card of a new value
                     $different_values_selected_so_far[] = $card['age'];
-                    self::setGameStateValueFromArray('auxiliary_value', $different_values_selected_so_far);
+                    self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (return)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
@@ -14480,7 +14575,7 @@ class Innovation extends Table
             // id 32, age 3: Medicine
             case "32D1A":
                 // Delay the transfer: this way the launcher can not choose the card he would just receive
-                self::setGameStateValue('auxiliary_value', $card['id']);
+                self::setAuxiliaryValue($card['id']);
                 break;
             
             // id 50, age 5: Measurement
@@ -14569,15 +14664,15 @@ class Innovation extends Table
             // id 72, age 7: Sanitation
             case "72D1A":
                 // Delay the transfer: this way the player can not choose the card he would just receive
-                self::setGameStateValue('auxiliary_value', $card['id']);
+                self::setAuxiliaryValue($card['id']);
                 break;
             
             // id 73, age 7: Lighting
             case "73N1A":
-                $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                 if (!in_array($card['age'], $different_values_selected_so_far)) { // The player choose to tuck a card of a new value
                     $different_values_selected_so_far[] = $card['age'];
-                    self::setGameStateValueFromArray('auxiliary_value', $different_values_selected_so_far);
+                    self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (tuck)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
@@ -14587,15 +14682,15 @@ class Innovation extends Table
             case "80N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
                 
             // id 81, age 8: Antibiotics
             case "81N1A":
-                $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                 if (!in_array($card['age'], $different_values_selected_so_far)) { // The player choose to return a card of a new value
                     $different_values_selected_so_far[] = $card['age'];
-                    self::setGameStateValueFromArray('auxiliary_value', $different_values_selected_so_far);
+                    self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (tuck)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
@@ -14616,7 +14711,7 @@ class Innovation extends Table
                 else { // "If it is either of the colors you chose"
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
-                    self::setGameStateValue('auxiliary_value', $card['color']); // Flag the sucessful colors
+                    self::setAuxiliaryValue($card['color']); // Flag the sucessful colors
                     self::incGameStateValue('step_max', 1);  // --> 1 more interaction: see B
                 }
                 break;
@@ -14624,7 +14719,7 @@ class Innovation extends Table
             // id 84, age 8: Socialism     
             case "84N1A":
                 if ($card['color'] == 4 /* purple*/) { // A purple card has been tucked
-                    self::setGameStateValue('auxiliary_value', 1); // Flag that
+                    self::setAuxiliaryValue(1); // Flag that
                 }
                 // Do the transfer as stated in B (tuck)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
@@ -14711,10 +14806,10 @@ class Innovation extends Table
                 break;
 
             case "122N1B":
-                $different_values_selected_so_far = self::getGameStateValueAsArray('auxiliary_value');
+                $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                 if (!in_array($card['age'], $different_values_selected_so_far)) { // The player choose to return a card of a new value
                     $different_values_selected_so_far[] = $card['age'];
-                    self::setGameStateValueFromArray('auxiliary_value', $different_values_selected_so_far);
+                    self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (return)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
@@ -14724,7 +14819,7 @@ class Innovation extends Table
             case "124N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
             
             // id 126, Artifacts age 2: Rosetta Stone
@@ -14744,15 +14839,15 @@ class Innovation extends Table
 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1A":
-                if (self::getGameStateValue('auxiliary_value') == -1) {
+                if (self::getAuxiliaryValue() == -1) {
                     // Log the card that is melded first
                     $card_id = self::getGameStateValue('id_last_selected');
-                    self::setGameStateValue('auxiliary_value', $card_id);
+                    self::setAuxiliaryValue($card_id);
                     self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'board');
                 }
                 else {
                     // If you melded two of the same color and they are of different types
-                    $first_card = self::getCardInfo(self::getGameStateValue('auxiliary_value'));
+                    $first_card = self::getCardInfo(self::getAuxiliaryValue());
                     
                     $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                     self::transferCardFromTo($second_card, $player_id, 'board');
@@ -14763,7 +14858,7 @@ class Innovation extends Table
                             self::executeDraw($player_id, 2, 'score');
                         }
                     }
-                    self::setGameStateValue('auxiliary_value', -1);
+                    self::setAuxiliaryValue(-1);
                 }
                 break;
 
@@ -14778,14 +14873,14 @@ class Innovation extends Table
             case "157C1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
             
             // id 158, Artifacts age 5: Ship of the Line Sussex
             case "158N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
 
             // id 170, Artifacts age 6: Buttonwood Agreement
@@ -14806,7 +14901,7 @@ class Innovation extends Table
                 } else {
                     self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
                     self::transferCardFromTo($card, $player_id, 'hand');
-                    self::setGameStateValue('auxiliary_value', $card['color']);
+                    self::setAuxiliaryValue($card['color']);
                     self::incGameStateValue('step_max', 1);
                 }
                 break;
@@ -14815,14 +14910,14 @@ class Innovation extends Table
             case "179N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
 
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
-                self::setGameStateValue('auxiliary_value', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
 
             // id 211, Artifacts age 10: Dolly the Sheep

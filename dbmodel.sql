@@ -51,6 +51,7 @@ ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Wish fo
 ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Indicate if the player has changed the situation (TRUE) or not (FALSE) in the game when it was his turn to play within a dogma effect';
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
+/* TODO: Consider adding defaults for some of these columns. */
 CREATE TABLE IF NOT EXISTS `card` (
   `id` SMALLINT UNSIGNED NOT NULL COMMENT '0 to 104 for normal cards, 105 to 109 for special achievements',
   `type` TINYINT UNSIGNED NOT NULL COMMENT '0 for base, 1 for artifacts',
@@ -71,6 +72,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Table used to manage the execution of nested effects */
+/* TODO: Add defaults for some of these columns. */
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
  `card_id` SMALLINT COMMENT '-1 means no card',
@@ -81,6 +83,7 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
  `step` TINYINT COMMENT 'The interaction that the card is on',
  `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
+ `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
   PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -335,6 +338,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (192, 1, 8, 3, 0, 6, 6, 3, 6, FALSE, 0, 'deck', 0, NULL, FALSE),
 
 /* Artifacts - Age 9 */
+(195, 1, 9, 0, 6, 6, 5, 0, 6, FALSE, 0, 'deck', 0, NULL, FALSE),
 (196, 1, 9, 0, 5, 0, 5, 5, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
 (197, 1, 9, 1, 0, 2, 6, 2, 2, FALSE, 0, 'deck', 0, NULL, FALSE),
 (198, 1, 9, 1, 5, 5, 6, 0, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
