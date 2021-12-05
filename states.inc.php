@@ -118,7 +118,7 @@ $machinestates = array(
         "action" => "stInterDogmaEffect",
         "args" => "argInterDogmaEffect",
         "updateGameProgression" => true,
-        "transitions" => array("dogmaEffect" => 6, "interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
+        "transitions" => array("dogmaEffect" => 6, "interPlayerTurn" => 5, "playerInvolvedTurn" => 8, "justBeforeGameEnd" => 98)
     ),
     
     8 => array(
@@ -185,7 +185,8 @@ $machinestates = array(
         "action" => "stInterSelectionMove",
         "args" => "argInterSelectionMove",
         "updateGameProgression" => true,
-        "transitions" => array("preSelectionMove" => 12, "interInteractionStep" => 11, "justBeforeGameEnd" => 98)
+        // TODO(nesting): Figure out if 'dogmaEffect' is really needed here.
+        "transitions" => array("dogmaEffect" => 6, "preSelectionMove" => 12, "interInteractionStep" => 11, "justBeforeGameEnd" => 98)
     ),
     
     98 => array(
