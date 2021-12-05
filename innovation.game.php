@@ -8651,6 +8651,20 @@ class Innovation extends Table
             case "204N1":
                 $step_max = 2;
                 break;            
+            
+            // id 202, Artifacts age 9: Magnavox Odyssey
+            case "202N1":
+                // "Draw and meld two 10. If they are the same color, you win.
+                $card2 = self::executeDraw($player_id, 10, 'board'); // "Draw and meld two 10"
+                $card = self::executeDraw($player_id, 10, 'board'); //
+                if ($card['color'] == $card2['color']) { // "If They are the same color,"
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} Melded two cards of the same color'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} Has Melded two cards of the same color'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
+                    throw new EndOfGame();                
+                    }
+                break;
                 
             default:
                 // This should not happens
