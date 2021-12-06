@@ -1751,6 +1751,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} score {number} top {card} from your board');
                 $message_for_others = clienttranslate('{player must} score {number} top {card} from his board');
                 break;
+            case 'board->none':
+                $message_for_player = clienttranslate('{You must} select a {card} on your board');
+                $message_for_others = clienttranslate('{player must} select a {card} on his board');
+                break;
             case 'board->achievements':
                 $message_for_player = clienttranslate('{You must} achieve {number} top {card} from your board');
                 $message_for_others = clienttranslate('{player must} achieve {number} top {card} from his board');
@@ -2821,6 +2825,27 @@ class Innovation extends Table
         return strcasecmp($card_1['name'], $card_2['name']) < 0;
     }
     
+    function getColorsWithRepeatAges($player_id) {
+        $colors = array();
+        $top_cards = self::getTopCardsOnBoard($player_id);
+            
+        foreach($top_cards as $card) {
+            $top_age = $card['age'];
+            $found = false;
+            foreach($top_cards as $card2) {
+                if ($card['id'] != $card2['id'] && $card2['age'] == $top_age) {
+                    $found = true;
+                    break; // found a repeat
+                }
+            }
+            if ($found) {
+                $colors[] = $card['color'];
+            }
+        }
+        
+        return $colors;
+    }
+
     function getDeckTopCard($age, $type) {
         /**
             Get all information of the card to be drawn from the deck of the type and age indicated, which includes:
@@ -8550,6 +8575,17 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 175, Artifacts age 7: Periodic Table
+            case "175N1":
+                // Determine repeated top card age values
+                $colors_to_select = self::getColorsWithRepeatAges($player_id);
+                
+                if (count($colors_to_select) >= 1) {
+                    self::setGameStateValueFromArray('color_array', $colors_to_select);
+                    $step_max = 2; // --> 2 interactions
+                }
+                break;
+
             // id 176, Artifacts age 7: Corvette Challenger
             case "176N1":
                 // "Draw and tuck an 8"
@@ -12094,6 +12130,39 @@ class Innovation extends Table
             );
             break;
 
+        // id 175, Artifacts age 7: Periodic Table
+        case "175N1A":
+            // "Choose two top cards on your board of the same value."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'color' => self::getGameStateValueAsArray('color_array'),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'location_to' => 'none'
+            );
+
+            break;
+
+        case "175N1B":
+            // "Choose two top cards on your board of the same value."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'age' => self::getGameStateValue('age_last_selected'), // this card
+                'not_id' => self::getGameStateValue('id_last_selected'), // first card
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'location_to' => 'none'
+            );
+            break;
+
         case "178N1A":
             // "Claim an achievement of value 8 if it is available, ignoring eligibility"
             $options = array(
@@ -13312,7 +13381,36 @@ class Innovation extends Table
                     // "Unsplay that color"
                     self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /*forced unsplay=*/ true);
                     break;
-                             
+
+                // id 175, Artifacts age 7: Periodic Table
+                case "175N1A":
+                    // Log the first pile selected.
+                    self::setGameStateValue('auxiliary_value', self::getGameStateValue('color_last_selected'));
+                    break;
+
+                case "175N1B":
+                    $first_color_selected = self::getGameStateValue('auxiliary_value');
+                    $second_color_selected = self::getGameStateValue('color_last_selected');
+
+                    // "draw a card of value one higher and meld it."
+                    $age_selected = self::getGameStateValue('age_last_selected');
+                    $card = self::executeDraw($player_id, $age_selected + 1, 'board');
+                    
+                    // If it melded over one of the chosen cards, 
+                    if ($card['color'] == $first_color_selected || $card['color'] == $second_color_selected) {
+                        // Determine repeated top card age values
+                        $colors_to_select = self::getColorsWithRepeatAges($player_id);
+                        
+                        if (count($colors_to_select) >= 1) {
+                            self::setGameStateValueFromArray('color_array', $colors_to_select);
+                            $step = $step - 2;
+                            self::incGameStateValue('step', -2); // repeat this effect.
+                        }
+
+                    }
+                    
+                    break;
+
                 // id 179, Artifacts age 7: International Prototype Metre Bar   
                 case "179N1A":
                     $age_value = self::getGameStateValue('auxiliary_value');
