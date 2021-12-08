@@ -8741,6 +8741,33 @@ class Innovation extends Table
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
                     throw new EndOfGame();                
+                break;
+
+            // id 208, Artifacts age 10: Maldives
+            case "208C1":
+                $score_cards = count(self::getCardsInLocation($player_id, 'score'));
+                $hand_cards = count(self::getCardsInLocation($player_id, 'hand'));
+                if ($score_cards > 2) {
+                    $step_max = 2;
+                }
+                else if ($hand_cards > 2) {
+                    $step_max = 1; // second half isn't necessary
+                }
+                
+                if ($hand_cards > 2) {
+                    self::setGameStateValue('auxiliary_value', $hand_cards);
+                }
+                else if ($score_cards > 2) {
+                    self::setGameStateValue('auxiliary_value', $score_cards);
+                    $step++; self::incGameStateValue('step', 1); // skip first interaction
+                }
+                break;
+
+            case "208N1":
+                $score_cards = self::getCardsInLocation($player_id, 'score');
+                self::setGameStateValue('auxiliary_value', count($score_cards));
+                if (count($score_cards) > 4) {
+                    $step_max = 1;
                 }
                 break;
                 
@@ -12464,6 +12491,52 @@ class Innovation extends Table
                 'location_to' => 'hand'
             );
             break;
+
+        // id 208, Artifacts age 10: Maldives
+        case "208C1A":
+            // "I compel you to return all cards in your hand but two!"
+            $num_cards = self::getGameStateValue('auxiliary_value');
+            $options = array(
+                'player_id' => $player_id,
+                'n' => $num_cards  - 2,
+                'can_pass' => false,
+                    
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "208C1B":
+            // "Return all cards in your score pile but two!"
+            $num_cards = self::getGameStateValue('auxiliary_value');
+            $options = array(
+                'player_id' => $player_id,
+                'n' => $num_cards  - 2,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "208N1A":
+            // "Return all cards in your score pile but four."
+            $num_cards = self::getGameStateValue('auxiliary_value');
+            $options = array(
+                'player_id' => $player_id,
+                'n' => $num_cards - 4,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
             
         default:
             // This should not happens
@@ -13628,7 +13701,14 @@ class Innovation extends Table
                         self::trace('EOG bubbled from self::stInterInteractionStep Marilyn Diptych');
                         throw new EndOfGame();
                     }
-                    break;                    
+                    break;      
+
+                // id 208, Artifacts age 10: Maldives
+                case "208C1A":
+                    $score_cards = self::getCardsInLocation($player_id, 'score');
+                    self::setGameStateValue('auxiliary_value', count($score_cards));
+                    break;
+                    
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
