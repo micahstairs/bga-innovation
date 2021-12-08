@@ -8351,11 +8351,6 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
 
-            // id 146, Artifacts age 4: Delft Pocket Telescope
-            case "146N1":
-                $step_max = 1;
-                break;
-
             // id 147, Artifacts age 4: East India Company Charter
             case "147N1":
                 $step_max = 2;
@@ -11557,11 +11552,6 @@ class Innovation extends Table
 
                 'score_keyword' => true
             );
-            break;
-
-        // id 146, Artifacts age 4: Delft Pocket Telescope
-        case "146N1A":
-            $step_max = 1;
             break;
 
         // id 147, Artifacts age 4: East India Company Charter
