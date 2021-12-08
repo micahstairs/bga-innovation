@@ -8654,16 +8654,18 @@ class Innovation extends Table
             
             // id 202, Artifacts age 9: Magnavox Odyssey
             case "202N1":
-                // "Draw and meld two 10. If they are the same color, you win.
-                $card2 = self::executeDraw($player_id, 10, 'board'); // "Draw and meld two 10"
-                $card = self::executeDraw($player_id, 10, 'board'); //
-                if ($card['color'] == $card2['color']) { // "If They are the same color,"
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} Melded two cards of the same color'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} Has Melded two cards of the same color'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                    self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                // "Draw and meld two 10s"
+                $card_1 = self::executeDraw($player_id, 10, 'board');
+                $card_2 = self::executeDraw($player_id, 10, 'board');
+                
+                // "If they are the same color, you win"
+                if ($card_1['color'] == $card_2['color']) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded two cards of the same color'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded two cards of the same color'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
                     throw new EndOfGame();                
-                    }
+                }
                 break;
                 
             default:
