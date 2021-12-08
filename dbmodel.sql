@@ -318,5 +318,5 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (196, 1, 9, 0, 5, 0, 5, 5, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
 (199, 1, 9, 2, 0, 2, 2, 2, 2, FALSE, 0, 'deck', 0, NULL, FALSE),
 (200, 1, 9, 2, 0, 6, 6, 6, 6, FALSE, 0, 'deck', 0, NULL, FALSE),
+(202, 1, 9, 3, 3, 2, 0, 3, 3, FALSE, 0, 'deck', 0, NULL, FALSE),
 (204, 1, 9, 4, 1, 1, 1, 0, 1, FALSE, 0, 'deck', 0, NULL, FALSE);
-
