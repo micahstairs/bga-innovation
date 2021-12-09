@@ -8745,22 +8745,13 @@ class Innovation extends Table
 
             // id 208, Artifacts age 10: Maldives
             case "208C1":
-                $score_cards = count(self::getCardsInLocation($player_id, 'score'));
                 $hand_cards = count(self::getCardsInLocation($player_id, 'hand'));
-                if ($score_cards > 2) {
-                    $step_max = 2;
-                }
-                else if ($hand_cards > 2) {
-                    $step_max = 1; // second half isn't necessary
+                $score_cards = count(self::getCardsInLocation($player_id, 'score'));
+                
+                if ($score_cards > 2 || $hand_cards > 2) { // at least one interaction will happen
+                    $step_max = 1;
                 }
                 
-                if ($hand_cards > 2) {
-                    self::setGameStateValue('auxiliary_value', $hand_cards);
-                }
-                else if ($score_cards > 2) {
-                    self::setGameStateValue('auxiliary_value', $score_cards);
-                    $step++; self::incGameStateValue('step', 1); // skip first interaction
-                }
                 break;
 
             case "208N1":
@@ -12495,25 +12486,42 @@ class Innovation extends Table
         // id 208, Artifacts age 10: Maldives
         case "208C1A":
             // "I compel you to return all cards in your hand but two!"
-            $num_cards = self::getGameStateValue('auxiliary_value');
-            $options = array(
-                'player_id' => $player_id,
-                'n' => $num_cards  - 2,
-                'can_pass' => false,
+            $hand_cards = count(self::getCardsInLocation($player_id, 'hand'));
+
+            if($hand_cards > 2) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => $hand_cards  - 2,
+                    'can_pass' => false,
+                        
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );
+            }
+            else {
+                // "Return all cards in your score pile but two!"
+                $score_card_cnt = count(self::getCardsInLocation($player_id, 'score'));
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => $score_card_cnt  - 2,
+                    'can_pass' => false,
                     
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
+                    'owner_from' => $player_id,
+                    'location_from' => 'score',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );
+            }
             break;
 
         case "208C1B":
             // "Return all cards in your score pile but two!"
-            $num_cards = self::getGameStateValue('auxiliary_value');
+            $score_card_cnt = count(self::getCardsInLocation($player_id, 'score'));
             $options = array(
                 'player_id' => $player_id,
-                'n' => $num_cards  - 2,
+                'n' => $score_card_cnt - 2,
                 'can_pass' => false,
                 
                 'owner_from' => $player_id,
@@ -13705,8 +13713,10 @@ class Innovation extends Table
 
                 // id 208, Artifacts age 10: Maldives
                 case "208C1A":
-                    $score_cards = self::getCardsInLocation($player_id, 'score');
-                    self::setGameStateValue('auxiliary_value', count($score_cards));
+                    $score_cards_cnt = count(self::getCardsInLocation($player_id, 'score'));
+                    if ($score_cards_cnt > 2) {
+                        self::incGameStateValue('step_max', 1);
+                    }
                     break;
                     
                 }
