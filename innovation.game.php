@@ -11483,6 +11483,7 @@ class Innovation extends Table
 
         // id 146, Artifacts age 4: Delft Pocket Telescope
         case "146N1A":
+            // Return a card from your score pile.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -11510,41 +11511,14 @@ class Innovation extends Table
                     'location_to' => 'revealed',
 
                     'card_id_1' => self::getGameStateValue('card_id_1'),
-                );
-            }
-            else if ($mode == 2) {
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => false,
-
-                    'owner_from' => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to' => $player_id,
-                    'location_to' => 'revealed',
-
-                    'card_id_1' => self::getGameStateValue('card_id_2'),
-                );
-            }
-            else if ($mode == 3) {
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => false,
-
-                    'owner_from' => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to' => $player_id,
-                    'location_to' => 'revealed',
-
-                    'card_id_1' => self::getGameStateValue('card_id_1'),
                     'card_id_2' => self::getGameStateValue('card_id_2')
                 );
             }
-            else if ($mode == 0) {
+            else {
                 // return the drawn cards 
                  $options = array(
                     'player_id' => $player_id,
+                    'n' => 2,
                     'can_pass' => false,
 
                     'owner_from' => $player_id,
@@ -13135,10 +13109,12 @@ class Innovation extends Table
                             if ($has_icon && self::hasRessource($card1, $icon)) {
                                 // the icon matches this card!
                                 $card1_flg = true;
+                                self::setGameStateValue('auxiliary_value', 1);
                             }
                             if ($has_icon && self::hasRessource($card2, $icon)) {
                                 // the icon matches this card!
                                 $card2_flg = true;
+                                self::setGameStateValue('auxiliary_value', 1);
                             }
                         }
                         
@@ -13147,14 +13123,12 @@ class Innovation extends Table
                             self::setGameStateValue('auxiliary_value', 0);
                         }
                         else if ($card1_flg == true && $card2_flg == false ) {
-                            self::setGameStateValue('auxiliary_value', 1);
+                            self::setGameStateValue('card_id_2', -1); // remove 2nd card as an option
                         }
                         else if ($card2_flg == true && $card1_flg == false ) {
-                            self::setGameStateValue('auxiliary_value', 2);
+                            self::setGameStateValue('card_id_1', -1); // remove 1st card as an option
                         }
-                        else {
-                            self::setGameStateValue('auxiliary_value', 3);
-                        }
+                        
                         self::setGameStateValue('step_max', 2); // don't increment because this can happen more than once
                     }
                     break;
