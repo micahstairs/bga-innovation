@@ -12142,25 +12142,6 @@ class Innovation extends Table
             );
             break;
 
-        // id 192, Artifacts age 8: Time
-        case "192C1A":
-            // "transfer a non-yellow top card with a ${icon_6} from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'with_icon' => 6,
-                'color' => array(0,1,2,4) // non-yellow
-            );
-
-            break;
-
         case "191N1B":
             // "Return all cards of that value from all score piles"
             $options = array(
@@ -12173,6 +12154,24 @@ class Innovation extends Table
                 'location_to' => 'deck',
                 
                 'age' => self::getGameStateValue('auxiliary_value')
+            );
+            break;
+
+        // id 192, Artifacts age 8: Time
+        case "192C1A":
+            // "Transfer a non-yellow top card with a clock from your board to my board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+                
+                'with_icon' => 6,
+                'color' => array(0, 1, 2, 4)
             );
             break;
 
@@ -13331,7 +13330,8 @@ class Innovation extends Table
 
                 // id 192, Artifacts age 8: Time
                 case "192C1A":
-                    if ($n > 0) { // If you do, repeat this effect!
+                    // "If you do, repeat this effect"
+                    if ($n > 0) {
                         $step--;
                         self::incGameStateValue('step', -1);
                     }
