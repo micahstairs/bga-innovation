@@ -8596,8 +8596,8 @@ class Innovation extends Table
 
             // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
             case "186N1":
+                self::setGameStateValue('auxiliary_value', 0);
                 self::setGameStateValue('age_last_selected', 9);
-                self::setGameStateValue('auxiliary_value', 0); // set counter to 0
                 $step_max = 1;
                 break;
 
@@ -12084,23 +12084,23 @@ class Innovation extends Table
 
         // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
         case "186N1A":
-            // "For each value below nine, return a top card of that value from your board, in descending order."               
+            // "For each value below nine, return a top card of that value from your board, in descending order"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                'age' => self::getGameStateValue('age_last_selected') - 1,
-                
                 'owner_from' => $player_id,
                 'location_from' => 'board',
                 'owner_to' => 0,
-                'location_to' => 'deck'
+                'location_to' => 'deck',
+
+                'age' => self::getGameStateValue('age_last_selected') - 1
             );
             break;
 
         case "186N1B":
-            // "Otherwise, claim an achievement, ignoring eligibility."                
+            // "Otherwise, claim an achievement, ignoring eligibility"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13282,29 +13282,29 @@ class Innovation extends Table
                 // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
                 case "186N1A":
                     if ($n > 0) {
-                        self::setGameStateValue('auxiliary_value', self::getGameStateValue('auxiliary_value') + 1);
+                        self::incGameStateValue('auxiliary_value', 1);
+                    } else {
+                        self::incGameStateValue('age_last_selected', -1);
                     }
-                    else {
-                        // Decrement the age selected even if no age was selected (i.e no card was present with that age)
-                        self::setGameStateValue('age_last_selected', self::getGameStateValue('age_last_selected') - 1);
-                    }
-                    $next_age = self::getGameStateValue('age_last_selected');
-                    if ($next_age == 0) {
-                        // We are done.
-                        //First check if the game is over
+
+                    // There are no more values to return
+                    if (self::getGameStateValue('age_last_selected') == 0) {
+                        // "If you return eight cards, you win"
                         if (self::getGameStateValue('auxiliary_value') == 8) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have returned 8 cards.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has returned 8 cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned 8 cards.'), array('You' => 'You'));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned 8 cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stInterSelectionMove Earharts Lockheed Electra 10E');
+                            self::trace('EOG bubbled from self::stInterInteractionStep Earharts Lockheed Electra 10E');
                             throw new EndOfGame();
+
+                        // "Otherwise"
+                        } else {
+                            self::incGameStateValue('step_max', 1);
                         }
-                        else {
-                            self::incGameStateValue('step_max', 1); // next interaction
-                        }
-                    }
-                    else {
-                        $step--;self::incGameStateValue('step', -1); // repeat
+                    
+                    // Repeat interaction with a lower value than last time
+                    } else {
+                        $step--; self::incGameStateValue('step', -1);
                     }
                     break;
                     
