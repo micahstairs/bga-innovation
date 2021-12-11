@@ -1620,6 +1620,10 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his score pile.');
             }
             break;
+        case 'score->revealed':
+            $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
+            $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his score pile.');
+            break;
         case 'score->achievements':
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his score pile.');
