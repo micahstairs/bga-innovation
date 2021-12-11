@@ -8653,6 +8653,13 @@ class Innovation extends Table
                 }
                 break;
 
+            // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
+            case "186N1":
+                self::setGameStateValue('auxiliary_value', 0);
+                self::setGameStateValue('age_last_selected', 9);
+                $step_max = 1;
+                break;
+
             // id 189, Artifacts age 8: Ocean Liner Titanic
             case "189N1":
                 // "Score all bottom cards from your board"
@@ -8672,6 +8679,11 @@ class Innovation extends Table
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1":
                 $step_max = 2;
+                break;
+
+           // id 192, Artifacts age 8: Time
+            case "192C1":
+                $step_max = 1;
                 break;
 
             // id 196, Artifacts age 9: Luna 3
@@ -12254,6 +12266,40 @@ class Innovation extends Table
             );
             break;            
 
+        // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
+        case "186N1A":
+            // "For each value below nine, return a top card of that value from your board, in descending order"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'age' => self::getGameStateValue('age_last_selected') - 1
+            );
+            break;
+
+        case "186N1B":
+            // "Otherwise, claim an achievement, ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
+ 
+            break;
+            
         // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
         case "190N1A":
             // "Return a card from your hand"
@@ -12292,6 +12338,24 @@ class Innovation extends Table
                 'location_to' => 'deck',
                 
                 'age' => self::getGameStateValue('auxiliary_value')
+            );
+            break;
+
+        // id 192, Artifacts age 8: Time
+        case "192C1A":
+            // "Transfer a non-yellow top card with a clock from your board to my board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+                
+                'with_icon' => 6,
+                'color' => array(0, 1, 2, 4)
             );
             break;
 
@@ -13440,6 +13504,35 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
+                case "186N1A":
+                    if ($n > 0) {
+                        self::incGameStateValue('auxiliary_value', 1);
+                    } else {
+                        self::incGameStateValue('age_last_selected', -1);
+                    }
+
+                    // There are no more values to return
+                    if (self::getGameStateValue('age_last_selected') == 0) {
+                        // "If you return eight cards, you win"
+                        if (self::getGameStateValue('auxiliary_value') == 8) {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned 8 cards.'), array('You' => 'You'));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned 8 cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::setGameStateValue('winner_by_dogma', $player_id);
+                            self::trace('EOG bubbled from self::stInterInteractionStep Earharts Lockheed Electra 10E');
+                            throw new EndOfGame();
+
+                        // "Otherwise"
+                        } else {
+                            self::incGameStateValue('step_max', 1);
+                        }
+                    
+                    // Repeat interaction with a lower value than last time
+                    } else {
+                        $step--; self::incGameStateValue('step', -1);
+                    }
+                    break;
+                    
                 // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
                 case "190N1A":
                     // "Draw and score three cards of the returned card's value"
@@ -13458,6 +13551,15 @@ class Innovation extends Table
                         if ($top_card['age'] == $age_value) {
                             self::splay($player_id, $player_id, $top_card['color'], 3);
                         }
+                    }
+                    break;
+
+                // id 192, Artifacts age 8: Time
+                case "192C1A":
+                    // "If you do, repeat this effect"
+                    if ($n > 0) {
+                        $step--;
+                        self::incGameStateValue('step', -1);
                     }
                     break;
 
