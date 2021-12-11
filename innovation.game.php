@@ -1640,6 +1640,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>}.');
             break;
+        case 'revealed->achievements':
+            $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<}${name}${>>}.');
+            break;
         case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
             if ($card['age'] === null) { // Special achivement
                 $message_for_player = clienttranslate('${You} achieve ${<<<}${achievement_name}${>>>}.');
