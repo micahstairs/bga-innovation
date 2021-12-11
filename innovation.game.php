@@ -1751,6 +1751,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} score {number} top {card} from your board');
                 $message_for_others = clienttranslate('{player must} score {number} top {card} from his board');
                 break;
+            case 'board->none':
+                $message_for_player = clienttranslate('{You must} choose {number} top {card} from your board');
+                $message_for_others = clienttranslate('{player must} choose {number} top {card} from his board');
+                break;
             case 'board->achievements':
                 $message_for_player = clienttranslate('{You must} achieve {number} top {card} from your board');
                 $message_for_others = clienttranslate('{player must} achieve {number} top {card} from his board');
@@ -2821,6 +2825,27 @@ class Innovation extends Table
         return strcasecmp($card_1['name'], $card_2['name']) < 0;
     }
     
+    function getColorsOfRepeatedValueOfTopCardsOnBoard($player_id) {
+        /**
+            Returns an array of all colors whose top card's value matches the value of another top card on that player's board .
+        **/
+
+        $colors = array();
+        $top_cards = self::getTopCardsOnBoard($player_id);
+            
+        foreach ($top_cards as $card_1) {
+            $top_age = $card_1['age'];
+            foreach ($top_cards as $card_2) {
+                if ($card_1['id'] != $card_2['id'] && $card_2['age'] == $top_age) {
+                    $colors[] = $card_1['color'];
+                    continue 2;
+                }
+            }
+        }
+        
+        return $colors;
+    }
+
     function getDeckTopCard($age, $type) {
         /**
             Get all information of the card to be drawn from the deck of the type and age indicated, which includes:
@@ -8550,6 +8575,16 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 175, Artifacts age 7: Periodic Table
+            case "175N1":
+                // Determine if there are any top cards which have the same value as another top card on their board
+                $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
+                if (count($colors) >= 1) {
+                    self::setGameStateValueFromArray('auxiliary_value', $colors);
+                    $step_max = 2;
+                }
+                break;
+
             // id 176, Artifacts age 7: Corvette Challenger
             case "176N1":
                 // "Draw and tuck an 8"
@@ -12094,6 +12129,39 @@ class Innovation extends Table
             );
             break;
 
+        // id 175, Artifacts age 7: Periodic Table
+        case "175N1A":
+            // "Choose two top cards on your board of the same value"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'location_to' => 'none',
+
+                'color' => self::getGameStateValueAsArray('auxiliary_value')
+            );
+
+            break;
+
+        case "175N1B":
+            // "Choose two top cards on your board of the same value"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'location_to' => 'none',
+
+                'not_id' => self::getGameStateValue('id_last_selected'),
+                'age' => self::getGameStateValue('age_last_selected')
+            );
+            break;
+
         case "178N1A":
             // "Claim an achievement of value 8 if it is available, ignoring eligibility"
             $options = array(
@@ -12107,7 +12175,6 @@ class Innovation extends Table
                 'location_to' => 'achievements',
 
                 'age' => 8,
-
                 'require_achievement_eligibility' => false
             );
             break;            
@@ -13312,7 +13379,34 @@ class Innovation extends Table
                     // "Unsplay that color"
                     self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /*forced unsplay=*/ true);
                     break;
-                             
+
+                // id 175, Artifacts age 7: Periodic Table
+                case "175N1A":
+                    self::setGameStateValue('auxiliary_value', self::getGameStateValue('color_last_selected'));
+                    break;
+
+                case "175N1B":
+                    $color_1 = self::getGameStateValue('auxiliary_value');
+                    $color_2 = self::getGameStateValue('color_last_selected');
+
+                    // "Draw a card of value one higher and meld it"
+                    $age_selected = self::getGameStateValue('age_last_selected');
+                    $card = self::executeDraw($player_id, $age_selected + 1, 'board');
+                    
+                    // "If it melded over one of the chosen cards, repeat this effect"
+                    if ($card['color'] == $color_1 || $card['color'] == $color_2) {
+                        // Determine if there are still any top cards which have the same value as another top card on their board
+                        $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
+                        if (count($colors) >= 1) {
+                            self::setGameStateValueFromArray('auxiliary_value', $colors);
+                            $step = $step - 2;
+                            self::incGameStateValue('step', -2);
+                        }
+
+                    }
+                    
+                    break;
+
                 // id 179, Artifacts age 7: International Prototype Metre Bar   
                 case "179N1A":
                     $age_value = self::getGameStateValue('auxiliary_value');
