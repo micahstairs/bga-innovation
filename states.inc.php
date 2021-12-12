@@ -146,7 +146,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stInteractionStep",
         "args" => "argInteractionStep",
-        "transitions" => array("preSelectionMove" => 12, "justBeforeGameEnd" => 98)
+        "transitions" => array("preSelectionMove" => 12, "interPlayerInvolvedTurn" => 9, "interactionStep" => 10, "justBeforeGameEnd" => 98)
     ),
     
     11 => array(

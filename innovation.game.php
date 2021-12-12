@@ -8740,24 +8740,13 @@ class Innovation extends Table
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded two cards of the same color'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
-                    throw new EndOfGame();                
+                    throw new EndOfGame();
+                }
                 break;
 
             // id 208, Artifacts age 10: Maldives
             case "208C1":
-                $hand_cards = count(self::getCardsInLocation($player_id, 'hand'));
-                $score_cards = count(self::getCardsInLocation($player_id, 'score'));
-                
-                if ($hand_cards > 2 && $score_cards > 2) { // at least one interaction will happen
-                    $step_max = 2;
-                }
-                else if ($hand_cards <= 2 && $score_cards > 2) {
-                    $step = 2;
-                    $step_max = 2;
-                }
-                else if ($hand_cards > 2 && $score_cards <= 2) {
-                    $step_max = 1;
-                }
+                $step_max = 2;
                 break;
 
             case "208N1":
@@ -8873,6 +8862,8 @@ class Innovation extends Table
         $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
         $code = $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $letters[$step];
         self::trace('[B]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
+
+        $options = null;
         switch($code) {
         // The first number is the id of the card
         // D1 means the first (and single) I demand effect
@@ -12491,37 +12482,41 @@ class Innovation extends Table
 
         // id 208, Artifacts age 10: Maldives
         case "208C1A":
-            // "I compel you to return all cards in your hand but two!"
-            $hand_cards = count(self::getCardsInLocation($player_id, 'hand'));
-            $options = array(
-                'player_id' => $player_id,
-                'n' => $hand_cards  - 2,
-                'can_pass' => false,
-                    
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
+            // "I compel you to return all cards in your hand but two"
+            $num_cards_in_hand = count(self::getCardsInLocation($player_id, 'hand'));
+            if ($num_cards_in_hand > 2) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => $num_cards_in_hand - 2,
+                    'can_pass' => false,
+                        
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );
+            }
             break;
 
         case "208C1B":
-            // "Return all cards in your score pile but two!"
-            $score_card_cnt = count(self::getCardsInLocation($player_id, 'score'));
-            $options = array(
-                'player_id' => $player_id,
-                'n' => $score_card_cnt - 2,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
+            // "Return all cards in your score pile but two"
+            $num_cards_in_score_pile = count(self::getCardsInLocation($player_id, 'score'));
+            if ($num_cards_in_score_pile > 2) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => $num_cards_in_score_pile - 2,
+                    'can_pass' => false,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'score',
+                    'owner_to' => 0,
+                    'location_to' => 'deck'
+                );
+            }
             break;
 
         case "208N1A":
-            // "Return all cards in your score pile but four."
+            // "Return all cards in your score pile but four"
             $num_cards = self::getGameStateValue('auxiliary_value');
             $options = array(
                 'player_id' => $player_id,
@@ -12541,6 +12536,22 @@ class Innovation extends Table
             break;
         }
         //[BB]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+        
+        // There wasn't an interaction needed in this step after all
+        if ($options == null) {
+            // The last step has been completed, so it's the end of the turn for the player involved
+            if ($step == self::getGameStateValue('step_max')) {
+                self::trace('interactionStep->interPlayerInvolvedTurn');
+                $this->gamestate->nextState('interPlayerInvolvedTurn');
+                return;
+            }
+            // There's at least one more interaction step to attempt
+            self::incGameStateValue('step', 1);
+            self::trace('interactionStep->interactionStep');
+            $this->gamestate->nextState('interactionStep');
+            return;
+        }
+
         self::setSelectionRange($options);
         
         self::trace('interactionStep->preSelectionMove');

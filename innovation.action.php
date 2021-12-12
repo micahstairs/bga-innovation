@@ -22,7 +22,7 @@
  */
   
   
-  class action_innovationkahlia extends APP_GameAction {
+  class action_innovation extends APP_GameAction {
 
     // Constructor: please do not modify
     public function __default() {
