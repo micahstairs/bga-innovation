@@ -8660,6 +8660,11 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 187, Artifacts age 8: Battleship Bismarck
+            case "187C1":
+                $step_max = 1;
+                break;
+
             // id 189, Artifacts age 8: Ocean Liner Titanic
             case "189N1":
                 // "Score all bottom cards from your board"
@@ -12264,7 +12269,26 @@ class Innovation extends Table
 
                 'color' => array(self::getGameStateValue('color_last_selected'))
             );
-            break;            
+            break;
+        
+        case "187C1A":
+            // "Draw and reveal an 8"
+            $card = self::executeDraw($player_id, 8, 'revealed');
+            self::transferCardFromTo($card, $player_id, 'hand');
+
+            // "Return all cards of the drawn color from your board"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'pile',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'color' => array($card['color'])
+             );
+             break;
 
         // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
         case "186N1A":
