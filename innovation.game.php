@@ -8779,12 +8779,7 @@ class Innovation extends Table
                         self::executeDraw($player_id, 9, 'score');
                     }
                 }
-                break;            
-
-            // id 204, Artifacts age 9: Marilyn Diptych
-            case "204N1":
-                $step_max = 2;
-                break;            
+                break;        
             
             // id 202, Artifacts age 9: Magnavox Odyssey
             case "202N1":
@@ -8800,6 +8795,11 @@ class Innovation extends Table
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
                     throw new EndOfGame();
                 }
+                break;            
+
+            // id 204, Artifacts age 9: Marilyn Diptych
+            case "204N1":
+                $step_max = 2;
                 break;
 
             // id 208, Artifacts age 10: Maldives
@@ -11645,52 +11645,6 @@ class Innovation extends Table
                 'location_to' => 'score'
             );
             break;
-            
-        // id 149, Artifacts age 4: Molasses Reef Caravel
-        case "149N1A":
-            // "Return all cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-            
-        case "149N1B":
-            // "Meld a blue card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'color' => array(0) // blue
-            );
-            break;
-
-        case "149N1C":
-            // "Score a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true
-            );
-            break;
 
         // id 147, Artifacts age 4: East India Company Charter
         case "147N1A":
@@ -11766,6 +11720,52 @@ class Innovation extends Table
                 'location_to' => 'board',
 
                 'age' => self::getGameStateValue('age_last_selected')
+            );
+            break;
+            
+        // id 149, Artifacts age 4: Molasses Reef Caravel
+        case "149N1A":
+            // "Return all cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+            
+        case "149N1B":
+            // "Meld a blue card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'color' => array(0) // blue
+            );
+            break;
+
+        case "149N1C":
+            // "Score a card from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'score_keyword' => true
             );
             break;
             
@@ -12116,6 +12116,23 @@ class Innovation extends Table
                 'age' => self::getMaxAgeInScore($player_id)
             );
             break;
+            
+        case "168C1C":
+            // "Transfer the highest top card with a factory from your board to my board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+
+                'age' => self::getMaxAgeOnBoardTopCardsWithIcon($player_id, 5),
+                'with_icon' => 5
+            );
+            break;
 
         // id 170, Artifacts age 6: Buttonwood Agreement
         case "170N1A":
@@ -12140,23 +12157,6 @@ class Innovation extends Table
                 'location_to' => 'deck',
 
                 'color' => array(self::getGameStateValue('auxiliary_value'))
-            );
-            break;
-            
-        case "168C1C":
-            // "Transfer the highest top card with a factory from your board to my board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-
-                'age' => self::getMaxAgeOnBoardTopCardsWithIcon($player_id, 5), // factory
-                'with_icon' => 5
             );
             break;
 
@@ -12348,25 +12348,6 @@ class Innovation extends Table
                 'color' => array(self::getGameStateValue('color_last_selected'))
             );
             break;
-        
-        case "187C1A":
-            // "Draw and reveal an 8"
-            $card = self::executeDraw($player_id, 8, 'revealed');
-            self::transferCardFromTo($card, $player_id, 'hand');
-
-            // "Return all cards of the drawn color from your board"
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'pile',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'color' => array($card['color'])
-             );
-             break;
 
         // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
         case "186N1A":
@@ -12399,8 +12380,26 @@ class Innovation extends Table
 
                 'require_achievement_eligibility' => false
             );
- 
             break;
+        
+        case "187C1A":
+            // "Draw and reveal an 8"
+            $card = self::executeDraw($player_id, 8, 'revealed');
+            self::transferCardFromTo($card, $player_id, 'hand');
+
+            // "Return all cards of the drawn color from your board"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'pile',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'color' => array($card['color'])
+                );
+                break;
             
         // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
         case "190N1A":
@@ -13587,43 +13586,6 @@ class Innovation extends Table
                     } while ($card != null);
                     break;
 
-                // id 171, Artifacts age 6: Stamp Act
-                case "171C1A":
-                    if ($n > 0) { // "If you do"
-                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card != null) {
-                            self::setGameStateValue('auxiliary_value', $top_green_card['age']);
-                            self::incGameStateValue('step_max', 1);
-                        }
-                    }
-                    break;
-            
-                // id 174, Artifacts age 6: Marcha Real
-                case "174N1A":
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
-                    $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
-
-                    // Return revealed cars from your hand
-                    if ($card_1 != null) {
-                        self::transferCardFromTo($card_1, 0, 'deck');
-                    }
-                    if ($card_2 != null) {
-                        self::transferCardFromTo($card_2, 0, 'deck');
-                    }
-
-                    if ($card_1 != null && $card_2 != null) {
-                        // "If they have the same value, draw a card of value one higher"
-                        if ($card_1['age'] == $card_2['age']) {
-                            self::executeDraw($player_id, $card_1['age'] + 1);
-                        }
-                        // "If they have the same color, claim an achievement, ignoring eligibility"
-                        if ($card_1['color'] == $card_2['color']) {
-                            self::incGameStateValue('step_max', 1);
-                        }
-                    }
-                    break;
-
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
@@ -13702,6 +13664,43 @@ class Innovation extends Table
                 case "170N1B":
                     // "Unsplay that color"
                     self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /*forced unsplay=*/ true);
+                    break;
+
+                // id 171, Artifacts age 6: Stamp Act
+                case "171C1A":
+                    if ($n > 0) { // "If you do"
+                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
+                        if ($top_green_card != null) {
+                            self::setGameStateValue('auxiliary_value', $top_green_card['age']);
+                            self::incGameStateValue('step_max', 1);
+                        }
+                    }
+                    break;
+            
+                // id 174, Artifacts age 6: Marcha Real
+                case "174N1A":
+                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
+                    $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
+
+                    // Return revealed cars from your hand
+                    if ($card_1 != null) {
+                        self::transferCardFromTo($card_1, 0, 'deck');
+                    }
+                    if ($card_2 != null) {
+                        self::transferCardFromTo($card_2, 0, 'deck');
+                    }
+
+                    if ($card_1 != null && $card_2 != null) {
+                        // "If they have the same value, draw a card of value one higher"
+                        if ($card_1['age'] == $card_2['age']) {
+                            self::executeDraw($player_id, $card_1['age'] + 1);
+                        }
+                        // "If they have the same color, claim an achievement, ignoring eligibility"
+                        if ($card_1['color'] == $card_2['color']) {
+                            self::incGameStateValue('step_max', 1);
+                        }
+                    }
                     break;
 
                 // id 175, Artifacts age 7: Periodic Table
