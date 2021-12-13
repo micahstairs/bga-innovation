@@ -6788,7 +6788,7 @@ class Innovation extends Table
                 break;
             
             case "23N1":
-                self::executeDraw($player_id, 1, 'board', true); // "Draw and tuck a 1"
+                self::executeDrawAndTuck($player_id, 1); // "Draw and tuck a 1"
                 break;
                 
             // id 24, age 2: Philosophy        
@@ -7018,7 +7018,7 @@ class Innovation extends Table
             // id 37, age 4: Colonialism
             case "37N1":
                 do {
-                    $card = self::executeDraw($player_id, 3, 'board', true); // "Draw and tuck a 3"
+                    $card = self::executeDrawAndTuck($player_id, 3); // "Draw and tuck a 3"
                 } while(self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this dogma effect"
                 break;
             
@@ -7138,7 +7138,7 @@ class Innovation extends Table
             
             // id 47, age 5: Coal
             case "47N1":
-                self::executeDraw($player_id, 5, 'board', true); // "Draw and tuck a 5"
+                self::executeDrawAndTuck($player_id, 5); // "Draw and tuck a 5"
                 break;
 
             case "47N2":
@@ -7200,8 +7200,8 @@ class Innovation extends Table
             
             // id 52, age 5: Steam engine
             case "52N1":
-                self::executeDraw($player_id, 4, 'board', true); // "Draw and tuck two 1"
-                self::executeDraw($player_id, 4, 'board', true); //
+                self::executeDrawAndTuck($player_id, 4); // "Draw and tuck two 4s"
+                self::executeDrawAndTuck($player_id, 4); //
                 $card = self::getBottomCardOnBoard($player_id, 3 /* yellow */);
                 if ($card !== null) {
                     self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score your bottom yellow card"
@@ -7309,7 +7309,7 @@ class Innovation extends Table
                 }
                 
                 for($i=0; $i<$number; $i++) {
-                    self::executeDraw($player_id, 6, 'board', true); // "Draw and tuck a 6"
+                    self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
                 }
                 break;
                 
@@ -7711,7 +7711,7 @@ class Innovation extends Table
 
             // id 96, age 10: Software
             case "96N1":
-                self::executeDraw($player_id, 10, 'score', false, true /* score keyword*/); // "Draw and score a 10"
+                self::executeDraw($player_id, 10, 'score'); // "Draw and score a 10"
                 break;
                 
             case "96N2":
@@ -7791,7 +7791,7 @@ class Innovation extends Table
                 break;
 
             case "101N1":
-                self::executeDraw($player_id, 6, 'score', false, true); // "Draw and score a 6"
+                self::executeDraw($player_id, 6, 'score'); // "Draw and score a 6"
                 
                 $players = self::loadPlayersBasicInfos();
                 $nobody_more_leaves_than_factories = true;
@@ -8065,7 +8065,7 @@ class Innovation extends Table
             
             case "113N1":
                 // "Draw a 2"
-                self::executeDraw($player_id, 2, 'hand');
+                self::executeDraw($player_id, 2);
                 break;
 
             // id 114, Artifacts age 1: Papyrus of Ani
@@ -8081,9 +8081,9 @@ class Innovation extends Table
                 if ($top_green_card !== null) {
                     $top_green_card_age = $top_green_card["age"];
                 }
-                self::setGameStateValue('card_id_1', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
-                self::setGameStateValue('card_id_2', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
-                self::setGameStateValue('card_id_3', self::executeDraw($player_id, $top_green_card_age, 'hand')['id']);
+                self::setGameStateValue('card_id_1', self::executeDraw($player_id, $top_green_card_age)['id']);
+                self::setGameStateValue('card_id_2', self::executeDraw($player_id, $top_green_card_age)['id']);
+                self::setGameStateValue('card_id_3', self::executeDraw($player_id, $top_green_card_age)['id']);
                 $step_max = 2; // --> 2 interactions: see B
                 break;
             
@@ -8189,13 +8189,13 @@ class Innovation extends Table
                 $this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
                 
                 if ($this_player_icon_counts[4] <= $min_towers) {
-                    $card = self::executeDraw($player_id, 2, 'hand'); // "If you have the least towers, draw a 2"
+                    $card = self::executeDraw($player_id, 2); // "If you have the least towers, draw a 2"
                 }
                 if ($this_player_icon_counts[1] <= $min_crowns) {
-                    $card = self::executeDraw($player_id, 3, 'hand'); // "If you have the least crowns, draw a 3"
+                    $card = self::executeDraw($player_id, 3); // "If you have the least crowns, draw a 3"
                 }
                 if ($this_player_icon_counts[3] <= $min_bulbs) {
-                    $card = self::executeDraw($player_id, 4, 'hand'); // "If you have the least bulbs, draw a 4"
+                    $card = self::executeDraw($player_id, 4); // "If you have the least bulbs, draw a 4"
                 }
                 break;
                 
@@ -8619,7 +8619,7 @@ class Innovation extends Table
             // id 176, Artifacts age 7: Corvette Challenger
             case "176N1":
                 // "Draw and tuck an 8"
-                $card = self::executeDraw($player_id, 8, 'board', /*bottom_to=*/ true);
+                $card = self::executeDrawAndTuck($player_id, 8);
                 // "Splay up the color of the tucked card"
                 self::splay($player_id, $player_id, $card['color'], 3);
                 //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
@@ -12895,7 +12895,7 @@ class Innovation extends Table
                 // id 23, age 2: Monotheism        
                 case "23D1A":
                     if ($n > 0) { // "If you do"
-                        self::executeDraw($player_id, 1, 'board', true); // "Draw an tuck a 1"
+                        self::executeDrawAndTuck($player_id, 1); // "Draw an tuck a 1"
                     }
                     break;
                             
@@ -13658,7 +13658,7 @@ class Innovation extends Table
                                 $max_symbols = $icon_count;
                             }
                         }
-                        self::executeDraw($player_id, $max_symbols, 'hand');
+                        self::executeDraw($player_id, $max_symbols);
 
                         // "Splay right that color"
                         self::splay($player_id, $player_id, $color, 2);
@@ -14161,7 +14161,7 @@ class Innovation extends Table
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     
-                    self::executeDraw($player_id, 6, 'board', true); // "Draw and tuck a 6"
+                    self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
                     
                     // Make the transfers
                     for($color=0; $color<5; $color++) {
@@ -14407,11 +14407,10 @@ class Innovation extends Table
                     $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                     self::transferCardFromTo($second_card, $player_id, 'board');
                     if ($first_card['type'] !== $second_card['type'] &&
-                        $first_card['color'] == $second_card['color'])
-                    {
-                        // "draw and score five 2s."
-                        for($i=1; $i<=5; $i++) {
-                            self::transferCardFromTo(self::executeDraw($player_id, 2), $player_id, 'score', false, true);
+                        $first_card['color'] == $second_card['color']) {
+                        // "Draw and score five 2s"
+                        for ($i = 1; $i <= 5; $i++) {
+                            self::executeDraw($player_id, 2, 'score');
                         }
                     }
                     self::setGameStateValue('auxiliary_value', -1);
