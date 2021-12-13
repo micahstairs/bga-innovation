@@ -1059,6 +1059,18 @@ class Innovation extends Table
         splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true)
     }
 
+    function splayLeft($player_id, $target_player_id, $color) {
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 1)
+    }
+
+    function splayRight($player_id, $target_player_id, $color) {
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 2)
+    }
+
+    function splayUp($player_id, $target_player_id, $color) {
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3)
+    }
+
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
 
         // Return early if the pile is already splayed in the requested direction.
@@ -8315,7 +8327,7 @@ class Innovation extends Table
                 // "Draw and reveal a 4"
                 $card = self::executeDraw($player_id, 4, 'revealed');
                 // "Splay right the color matching the drawn card"
-                self::splay($player_id, $player_id, $card['color'], 2);
+                self::splayRight($player_id, $player_id, $card['color']);
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
 
@@ -8371,7 +8383,7 @@ class Innovation extends Table
                 // "Draw and reveal a 4"
                 $card = self::executeDraw($player_id, 4, 'revealed');
                 // "Splay right the color matching the drawn card"
-                self::splay($player_id, $player_id, $card['color'], 2);
+                self::splayRight($player_id, $player_id, $card['color']);
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
 
@@ -8621,7 +8633,7 @@ class Innovation extends Table
                 // "Draw and tuck an 8"
                 $card = self::executeDrawAndTuck($player_id, 8);
                 // "Splay up the color of the tucked card"
-                self::splay($player_id, $player_id, $card['color'], 3);
+                self::splayUp($player_id, $player_id, $card['color']);
                 //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
                 self::executeDraw($player_id, self::countVisibleCards($player_id, $card['color']), 'score');
                 break;
@@ -8761,7 +8773,7 @@ class Innovation extends Table
                 $splayable_colors = self::getSplayableColorsOnBoard($player_id, /*splay_direction=*/ 3);
                 if (count($splayable_colors) <= 2) {
                     foreach ($splayable_colors as $color) {
-                        self::splay($player_id, $player_id, $color, 3);
+                        self::splayUp($player_id, $player_id, $color);
                     }
                 
                 // Otherwise we need to prompt the player to choose which 2 colors to splay up
@@ -13000,7 +13012,7 @@ class Innovation extends Table
                     if ($n > 0) { // "If you do"
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition
                             $color = self::getGameStateValue('color_last_selected');
-                            self::splay($player_id, $player_id, $color, 2); // "Splay that color of your cards right"
+                            self::splayRight($player_id, $player_id, $color); // "Splay that color of your cards right"
                             $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$color];
                             if ($number_of_cards == 1) {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
@@ -13488,7 +13500,7 @@ class Innovation extends Table
                 case "124N1B":
                     $melded_color = self::getGameStateValue('color_last_selected');
                     if ($melded_color >= 0) { // "If you (melded a card)"
-                        self::splay($player_id, $player_id, $melded_color, 1); // "Splay that color left"
+                        self::splayLeft($player_id, $player_id, $melded_color); // "Splay that color left"
                     }
                     break;
                 
@@ -13498,7 +13510,7 @@ class Innovation extends Table
                     if ($n > 0) {
                         $color = self::getGameStateValue('color_last_selected');
                         $target_player_id = self::getGameStateValue('owner_last_selected');
-                        self::splay($player_id, $target_player_id, $color, 1);
+                        self::splayLeft($player_id, $target_player_id, $color);
                     }
                     break;
                 
@@ -13613,7 +13625,7 @@ class Innovation extends Table
                 case "160N1A":
                     if ($n > 0) {
                         // "Splay right the color of the melded card"
-                        self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 2);
+                        self::splayRight($player_id, $player_id, self::getGameStateValue('color_last_selected'));
                     }
                     break;
 
@@ -13661,7 +13673,7 @@ class Innovation extends Table
                         self::executeDraw($player_id, $max_symbols);
 
                         // "Splay right that color"
-                        self::splay($player_id, $player_id, $color, 2);
+                        self::splayRight($player_id, $player_id, $color);
                     }
                     break;
                     
@@ -13743,7 +13755,7 @@ class Innovation extends Table
                     $card = self::executeDraw($player_id, $age_value, 'board');
 
                     // "Splay up the color of the melded card"
-                    self::splay($player_id, $player_id, $card['color'], 3);
+                    self::splayUp($player_id, $player_id, $card['color']);
                     
                     // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
                     if ($age_value == self::countVisibleCards($player_id, $card['color'])) {
@@ -13763,7 +13775,7 @@ class Innovation extends Table
                 case "182N1A":
                     if ($n > 0) { // "If you do"
                         // "Splay up its color"
-                        self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 3);
+                        self::splayUp($player_id, $player_id, self::getGameStateValue('color_last_selected'));
                         self::incGameStateValue('step_max', 1);
                     }
                     break;
@@ -13813,7 +13825,7 @@ class Innovation extends Table
                     $top_cards = self::getTopCardsOnBoard($player_id);
                     foreach ($top_cards as $top_card) {
                         if ($top_card['age'] == $age_value) {
-                            self::splay($player_id, $player_id, $top_card['color'], 3);
+                            self::splayUp($player_id, $player_id, $top_card['color']);
                         }
                     }
                     break;
@@ -14138,7 +14150,7 @@ class Innovation extends Table
                 // $choice is a color
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::splay($player_id, $player_id, $choice, 2); // "Splay that color of your cards right"
+                self::splayRight($player_id, $player_id, $choice); // "Splay that color of your cards right"
                 $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$choice];
                 if ($number_of_cards == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
@@ -14450,7 +14462,7 @@ class Innovation extends Table
                 if ($card['color'] == $colors[0] || $card['color'] == $colors[1] || $card['color'] == $colors[2]) {
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                     self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
-                    self::splay($player_id, $player_id, $card['color'], 3);
+                    self::splayUp($player_id, $player_id, $card['color']);
 
                 // "Otherwise"
                 } else {
