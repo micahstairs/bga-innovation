@@ -8728,11 +8728,11 @@ class Innovation extends Table
                 break;            
 
             case "197N1":
-                // If you have a top card on your board with a demand effect, draw a 10.                $cards = self::getTopCardsOnBoard($player_id);
+                // "If you have a top card on your board with a demand effect, draw a 10"
                 $top_cards = self::getTopCardsOnBoard($player_id);
                 foreach($top_cards as $card){
                     if ($card['has_demand'] == true) {
-                        self::executeDraw($player_id, 10, 'hand');
+                        self::executeDraw($player_id, 10);
                         break;
                     }
                 }
@@ -8772,9 +8772,9 @@ class Innovation extends Table
 
             // id 201, Artifacts age 9: Rock Around the Clock
             case "201N1":
-                //For each top card on your board with a clock, draw and score a 9.
+                // "For each top card on your board with a clock, draw and score a 9"
                 $top_cards = self::getTopCardsOnBoard($player_id);
-                foreach($top_cards as $card){
+                foreach ($top_cards as $card){
                     if (self::hasRessource($card, 6)) {
                         self::executeDraw($player_id, 9, 'score');
                     }
@@ -12477,7 +12477,7 @@ class Innovation extends Table
 
          // id 197, Artifacts age 9: United Nations Charter
          case "197C1A":
-            // "transfer all top cards on your board with a demand effect to my score pile!"
+            // "Transfer all top cards on your board with a demand effect to my score pile"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -12493,34 +12493,34 @@ class Innovation extends Table
 
          // id 198, Artifacts age 9: Velcro Shoes
          case "198C1A":
-            // "transfer a 9 from your hand to my hand!"
+            // "Transfer a 9 from your hand to my hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
-                
-                'age' => 9,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $launcher_id,
-                'location_to' => 'hand'
+                'location_to' => 'hand',
+
+                'age' => 9
             );
             break;
 
          case "198C1B":
-            // "transfer a 9 from your score pile to my score pile!"
+            // "Transfer a 9 from your score pile to my score pile"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                'age' => 9,
-                
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => $launcher_id,
-                'location_to' => 'score'
+                'location_to' => 'score',
+
+                'age' => 9
             );
 
             break;
@@ -13831,15 +13831,16 @@ class Innovation extends Table
 
                 // id 198, Artifacts age 9: Velcro Shoes
                 case "198C1A":
-                    if($n == 0){ // If you do not, 
+                    // "If you do not"
+                    if ($n == 0) {
                         self::incGameStateValue('step_max', 1);
                     }
                     break;
 
                 case "198C1B":
-                    if($n == 0){ // If you do neither, I win!
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not receive a 9 in hand and a 9 in score.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not receive a 9 in hand and a 9 in score.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    // "If you do neither, I win"
+                    if ($n == 0){
+                        self::notifyGeneralInfo(clienttranslate('Neither transfer took place.'));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Velcro Shoes');
                         throw new EndOfGame();
