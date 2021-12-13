@@ -1056,19 +1056,19 @@ class Innovation extends Table
     /** Splay mechanism **/
 
     function unsplay($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true)
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true);
     }
 
     function splayLeft($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 1)
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 1);
     }
 
     function splayRight($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 2)
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 2);
     }
 
     function splayUp($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3)
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3);
     }
 
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
