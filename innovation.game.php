@@ -1054,6 +1054,11 @@ class Innovation extends Table
     }
     
     /** Splay mechanism **/
+
+    function unsplay($player_id, $target_player_id, $color) {
+        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true)
+    }
+
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
 
         // Return early if the pile is already splayed in the requested direction.
@@ -8261,7 +8266,7 @@ class Innovation extends Table
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 } else if ($card['color'] == 2) { // Green
                     for ($color = 0; $color < 5; $color++) {
-                        self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true);
+                        self::unsplay($player_id, $player_id, $color);
                     }
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
@@ -8747,7 +8752,7 @@ class Innovation extends Table
             case "199C1":
                 // "I compel you to unsplay all splayed colors on your board!"
                 for ($color = 0; $color < 5; $color++) {
-                    self::splay($player_id, $player_id, $color, 0, /*force_unsplay=*/ true);
+                    self::unsplay($player_id, $player_id, $color);
                 }
                 break;
 
@@ -12917,7 +12922,7 @@ class Innovation extends Table
                 case "34D1A":
                     if (self::getGameStateValue('game_rules') == 1) { // Last edition => additional rule
                         if ($n > 0) { // "If you do"
-                            self::splay($player_id, $player_id, self::getGameStateValue('color_last_selected'), 0, /*force_unsplay=*/ true); // "Unsplay that color of your cards"
+                            self::unsplay($player_id, $player_id, self::getGameStateValue('color_last_selected')); // "Unsplay that color of your cards"
                         }
                     }
                     break;
@@ -13663,7 +13668,7 @@ class Innovation extends Table
                 // id 170, Artifacts age 6: Buttonwood Agreement
                 case "170N1B":
                     // "Unsplay that color"
-                    self::splay($player_id, $player_id, self::getGameStateValue('auxiliary_value'), 0, /*forced unsplay=*/ true);
+                    self::unsplay($player_id, $player_id, self::getGameStateValue('auxiliary_value'));
                     break;
 
                 // id 171, Artifacts age 6: Stamp Act
