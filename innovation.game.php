@@ -8269,6 +8269,62 @@ class Innovation extends Table
                 $step_max = 2; // --> 2 interactions: see B
                 break;
             
+            // id 135, Artifacts age 3: Dunhuang Star Chart
+            case "135N1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+                
+            // id 137, Artifacts age 2: Excalibur
+            case "137C1":
+                // Determine colors where top card has a higher value than the launcher's top card of the same color
+                $colors = array();
+                for ($color = 0; $color < 5; $color++) {
+                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
+                    if ($player_top_card === null) {
+                        continue;
+                    }
+                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
+                    if ($launcher_top_card === null || $player_top_card['age'] > $launcher_top_card['age']) {
+                        $colors[] = $color;
+                    }
+                }
+                self::setGameStateValueFromArray('auxiliary_value', $colors);
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+            
+            // id 138, Artifacts age 3: Mjolnir Amulet
+            case "138C1":
+                $step_max = 1; // --> 1 interaction: see B
+                break;
+
+            // id 139, Artifacts age 3: Philosopher's Stone
+            case "139N1":
+                $step_max = 2; // --> 1 interactions: see B
+                break;
+            
+            // id 140, Artifacts age 3: Beauvais Cathedral Clock
+            case "140N1":
+                // "Draw and reveal a 4"
+                $card = self::executeDraw($player_id, 4, 'revealed');
+                // "Splay right the color matching the drawn card"
+                self::splayRight($player_id, $player_id, $card['color']);
+                self::transferCardFromTo($card, $player_id, 'hand');
+                break;
+
+           // id 142, Artifacts age 3: Along the River during the Qingming Festival
+            case "142N1":
+                do {
+                    $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
+                    if ($card['color'] == 4) { // "If it is purple, score it"
+                        self::transferCardFromTo($card, $player_id, 'score');
+                    } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
+                        self::transferCardFromTo($card, $player_id, 'board', true);
+                    } else { // Put it in hand
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
+                break;
+
             // id 143, Artifacts age 3: Necronomicon
             case "143N1":
                 $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
@@ -8294,118 +8350,6 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
 
-            // id 135, Artifacts age 3: Dunhuang Star Chart
-            case "135N1":
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-                
-            // id 137, Artifacts age 2: Excalibur
-            case "137C1":
-                // Determine colors where top card has a higher value than the launcher's top card of the same color
-                $colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($player_top_card === null) {
-                        continue;
-                    }
-                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    if ($launcher_top_card === null || $player_top_card['age'] > $launcher_top_card['age']) {
-                        $colors[] = $color;
-                    }
-                }
-                self::setGameStateValueFromArray('auxiliary_value', $colors);
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-            
-            // id 138, Artifacts age 3: Mjolnir Amulet
-            case "138C1":
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-
-            // id 140, Artifacts age 3: Beauvais Cathedral Clock
-            case "140N1":
-                // "Draw and reveal a 4"
-                $card = self::executeDraw($player_id, 4, 'revealed');
-                // "Splay right the color matching the drawn card"
-                self::splayRight($player_id, $player_id, $card['color']);
-                self::transferCardFromTo($card, $player_id, 'hand');
-                break;
-
-            // id 139, Artifacts age 3: Philosopher's Stone
-            case "139N1":
-                $step_max = 2; // --> 1 interactions: see B
-                break;
-            
-            // id 142, Artifacts age 3: Along the River during the Qingming Festival
-            case "142N1":
-                do {
-                    $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                    if ($card['color'] == 4) { // "If it is purple, score it"
-                        self::transferCardFromTo($card, $player_id, 'score');
-                    } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
-                        self::transferCardFromTo($card, $player_id, 'board', true);
-                    } else { // Put it in hand
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
-                break;
-
-            // id 135, Artifacts age 3: Dunhuang Star Chart
-            case "135N1":
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-                
-            // id 137, Artifacts age 2: Excalibur
-            case "137C1":
-                // Determine colors where top card has a higher value than the launcher's top card of the same color
-                $colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($player_top_card === null) {
-                        continue;
-                    }
-                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    if ($launcher_top_card === null || $player_top_card['age'] > $launcher_top_card['age']) {
-                        $colors[] = $color;
-                    }
-                }
-                self::setGameStateValueFromArray('auxiliary_value', $colors);
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-            
-            // id 138, Artifacts age 3: Mjolnir Amulet
-            case "138C1":
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-
-            // id 140, Artifacts age 3: Beauvais Cathedral Clock
-            case "140N1":
-                // "Draw and reveal a 4"
-                $card = self::executeDraw($player_id, 4, 'revealed');
-                // "Splay right the color matching the drawn card"
-                self::splayRight($player_id, $player_id, $card['color']);
-                self::transferCardFromTo($card, $player_id, 'hand');
-                break;
-
-            // id 139, Artifacts age 3: Philosopher's Stone
-            case "139N1":
-                $step_max = 2; // --> 1 interactions: see B
-                break;
-            
-            // id 142, Artifacts age 3: Along the River during the Qingming Festival
-            case "142N1":
-                do {
-                    $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                    if ($card['color'] == 4) { // "If it is purple, score it"
-                        self::transferCardFromTo($card, $player_id, 'score', false, true);
-                    } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
-                        self::transferCardFromTo($card, $player_id, 'board', true);
-                    } else { // Put it in hand
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
-                break;
-
             // id 145, Artifacts age 4: Petition of Right
             case "145C1":
                 $number = 0;
@@ -8425,6 +8369,11 @@ class Innovation extends Table
                 }
                 self::setGameStateValue('auxiliary_value', $number);
                 $step_max = 1; // --> 1 interaction
+                break;
+
+            // id 146, Artifacts age 4: Delft Pocket Telescope
+            case "146N1":
+                $step_max = 1; // --> 1 interactions
                 break;
 
             // id 147, Artifacts age 4: East India Company Charter
@@ -11663,6 +11612,55 @@ class Innovation extends Table
             );
             break;
 
+        // id 146, Artifacts age 4: Delft Pocket Telescope
+        case "146N1A":
+            // "Return a card from your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+            
+        case "146N1B":            
+            // "return the drawn cards "
+             $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_id_1' => self::getGameStateValue('card_id_1'),
+                'card_id_2' => self::getGameStateValue('card_id_2')
+            );            
+            break;
+
+        case "146N1C":
+            // "reveal one of the drawn cards that has a symbol in common with the returned card."   
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed',
+
+                'card_id_1' => self::getGameStateValue('card_id_1'),
+                'card_id_2' => self::getGameStateValue('card_id_2')
+            );
+            break;
+
         // id 147, Artifacts age 4: East India Company Charter
         case "147N1A":
             // "Choose a value other than 5"
@@ -13556,6 +13554,62 @@ class Innovation extends Table
                             self::incGameStateValue('step_max', 1); // --> 1 more interaction
                         }
                     }
+                    break;
+
+                // id 146, Artifacts age 4: Delft Pocket Telescope
+                case "146N1A":
+                    if ($n > 0) { // If you do
+                        // draw a 5 and a 6
+                        $card1 = self::executeDraw($player_id, 5);
+                        $card2 = self::executeDraw($player_id, 6);
+                        
+                        self::setGameStateValue('card_id_1', $card1['id']);
+                        self::setGameStateValue('card_id_2', $card2['id']);
+                        
+                        $ret_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        $card1_flg = false;
+                        $card2_flg = false;
+                        // Check if any icons on the returned card match one of the drawn cards
+                        for ($icon = 1; $icon < 7; $icon++) { 
+                            $has_icon = self::hasRessource($ret_card, $icon);
+                            if ($has_icon && self::hasRessource($card1, $icon)) {
+                                // the icon matches this card!
+                                $card1_flg = true;
+                            }
+                            if ($has_icon && self::hasRessource($card2, $icon)) {
+                                // the icon matches this card!
+                                $card2_flg = true;
+                            }
+                        }
+                        
+                        if ($card1_flg == false && $card2_flg == false) {
+                            // "If you cannot,"
+                            self::setGameStateValue('step_max', 2);
+                        }
+                        else {
+                            $step = $step + 1;
+                            self::incGameStateValue('step', 1); // move to last interaction
+                            self::setGameStateValue('step_max', 3); // third interaction is now possible
+
+                            if ($card1_flg == true && $card2_flg == false ) {
+                                self::setGameStateValue('card_id_2', -1); // remove 2nd card as an option
+                            }
+                            else if ($card2_flg == true && $card1_flg == false ) {
+                                self::setGameStateValue('card_id_1', -1); // remove 1st card as an option
+                            }
+                        }                            
+                    } else {
+                        self::setGameStateValue('step_max', 1); // Stop the interaction loop and don't proceed to next interaction
+                    }
+                    break;
+
+                case "146N1B":
+                    $step = $step - 2;
+                    self::incGameStateValue('step', -2); // "and repeat this effect."
+                    break;
+
+                case "146N1C":
+                    self::transferCardFromTo(self::getCardInfo(self::getGameStateValue('id_last_selected')), $player_id, 'hand');
                     break;
 
                 // id 147, Artifacts age 4: East India Company Charter

@@ -276,6 +276,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 
 /* Artifacts - Age 4 */
 (145, 1, 4, 0, 3, 0, 1, 3, 3, FALSE, 0, 'deck', 0, NULL, FALSE),
+(146, 1, 4, 0, 5, 0, 3, 3, 3, FALSE, 0, 'deck', 0, NULL, FALSE),
 (147, 1, 4, 1, 1, 5, 5, 0, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
 (148, 1, 4, 1, 5, 5, 1, 0, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
 (149, 1, 4, 2, 3, 3, 3, 0, 3, FALSE, 0, 'deck', 0, NULL, FALSE),
