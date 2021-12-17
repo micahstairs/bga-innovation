@@ -78,12 +78,12 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `card_id` SMALLINT COMMENT '-1 means no card',
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
- `current_player_id` INT(10) NOT NULL COMMENT 'ID of the player currently executing the card',
+ `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
  `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
  `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
  `step` TINYINT COMMENT 'The interaction that the card is on',
  `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
- `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the card has not triggered another card, 1 means the card already triggered another card and resumed executing this card',
+ `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the effect has not triggered another card, 1 means the effect already triggered another card and resumed executing this effect',
  `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
   PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

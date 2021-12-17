@@ -132,7 +132,7 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['debug_draw'] = true;
-        if ($card['location'] == 'deck') {
+        if ($card['location'] == 'deck' || $card['location'] == 'score') {
             self::transferCardFromTo($card, $player_id, 'hand');
         }
         else if ($card['location'] == 'achievements') {
@@ -1522,7 +1522,13 @@ class Innovation extends Table
 
     function getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step) {
         $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-        return self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) . $letters[$step];
+        // TODO(nesting): Remove this since it's likely just masking another problem.
+        if ($step >= 1 && $step <= 4) {
+            $letter = $letters[$step];
+        } else {
+            $letter = '?';
+        }
+        return self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) . $letter;
     }
 
     function getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) {
@@ -3908,15 +3914,19 @@ class Innovation extends Table
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
         $players = self::loadPlayersBasicInfos();
-        // TODO(nesting): Remove this once I figure out what is happening.
-        // if ($player_id == - 1) {
-        //     return "unknown";
-        // }
+        // TODO(nesting): Remove this since it's likely just masking another problem.
+        if ($player_id == - 1 || $player_id == null) {
+            return "unknown";
+        }
         return $players[$player_id]['player_name'];
     }
     
     function getPlayerColorFromId($player_id) {
         $players = self::loadPlayersBasicInfos();
+        // TODO(nesting): Remove this since it's likely just masking another problem.
+        if ($player_id == - 1 || $player_id == null) {
+            return "unknown";
+        }
         return $players[$player_id]['player_color'];
     }
     
@@ -3980,7 +3990,7 @@ class Innovation extends Table
     function getFirstPlayerUnderEffect($dogma_effect_type, $launcher_id) {
         // I demand
         if ($dogma_effect_type == 0) {
-            $player_query = "stronger_or_equal = FALSE";
+            $player_query = self::format("stronger_or_equal = FALSE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
         // I compel
         } else if ($dogma_effect_type == 2) {
             $player_query = self::format("stronger_or_equal = TRUE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
@@ -4004,7 +4014,7 @@ class Innovation extends Table
     function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id) { // null if no player is found
         // I demand
         if ($dogma_effect_type == 0) {
-            $player_query = "stronger_or_equal = FALSE";
+            $player_query = self::format("stronger_or_equal = FALSE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
         // I compel
         } else if ($dogma_effect_type == 2) {
             $player_query = self::format("stronger_or_equal = TRUE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
@@ -4825,6 +4835,10 @@ class Innovation extends Table
         }
     }
 
+    function incrementStep($delta) {
+        self::setStep(self::getStep() + $delta);
+    }
+
     function setStep($step) {
         if (self::getGameStateValue('release_version') >= 1) {
             self::updateCurrentNestedCardState('step', $step);
@@ -4839,6 +4853,10 @@ class Innovation extends Table
         } else {
             return self::getGameStateValue('step');
         }
+    }
+
+    function incrementStepMax($delta) {
+        self::setStepMax(self::getStepMax() + $delta);
     }
 
     function setStepMax($step_max) {
@@ -4902,8 +4920,9 @@ class Innovation extends Table
 
     function executeAllEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute all effects of this card.'), array('You' => 'You'));
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes all effects of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+        // TODO(nesting): Replace X and Y with the names of the cards. Also consider making similar changes to the notifications in executeNonDemandEffects.
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the effects of X as if it were on Y.'), array('You' => 'You'));
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the effects of X as if it were on Y.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
     
@@ -4915,13 +4934,12 @@ class Innovation extends Table
             $has_i_demand = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
             $has_i_compel = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
-            $player_id = $effect_type == 1 ? $current_player_id : self::getFirstPlayerUnderEffect($effect_type, $current_player_id);
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
-                    (nesting_index, card_id, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max)
+                    (nesting_index, card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
                 VALUES
-                    ({nesting_index}, {card_id}, {player_id}, {player_id}, {effect_type}, 0, -1, -1)
-            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'player_id' => $player_id, 'effect_type' => $effect_type)));
+                    ({nesting_index}, {card_id}, {launcher_id}, {effect_type}, 1, -1, -1)
+            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -4935,6 +4953,8 @@ class Innovation extends Table
     function popCardFromNestedDogmaStack() {
         self::trace('nesting--');
         if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => self::getGameStateValue('current_nesting_index'))));
+            self::incGameStateValue('current_nesting_index', -1);
             self::updateCurrentNestedCardState('post_execution_index', 'post_execution_index + 1');
         } else {
             for($i=1; $i<=8; $i++) {
@@ -4947,7 +4967,12 @@ class Innovation extends Table
     function getNestedCardState($nesting_index) {
         return self::getObjectFromDB(
             self::format("
-                SELECT * FROM nested_card_execution WHERE nesting_index = {nesting_index}",
+                SELECT
+                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value
+                FROM
+                    nested_card_execution
+                WHERE
+                    nesting_index = {nesting_index}",
                 array('nesting_index' => $nesting_index)
         ));
     }
@@ -4974,7 +4999,7 @@ class Innovation extends Table
         if (self::getGameStateValue('release_version') >= 1) {
             $player_id = self::getCurrentNestedCardState()['current_player_id'];
             if ($player_id == -1) {
-                // TODO(nesting): Figure out why this is necessary and see if there's a cleaner solution than this hack.
+                // TODO(nesting): Remove this since it's likely just masking another problem.
                 return self::getGameStateValue('active_player');
             }
             return $player_id;
@@ -5345,10 +5370,6 @@ class Innovation extends Table
         $player_no_under_i_demand_effect = 0;
         $player_no_under_non_demand_effect = 0;
         
-        $card_with_i_demand_effect = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
-        $card_with_i_compel_effect = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
-        $card_with_non_demand_effect = $card['non_demand_effect_1'] !== null;
-        
         // Loop on players finishing with the one who triggered the dogma
         do {
             if ($player_no == $players_nb) { // End of table reached, go back to the top
@@ -5389,6 +5410,10 @@ class Innovation extends Table
             ));
             
         } while($player_no != $dogma_player_no);
+
+        $card_with_i_demand_effect = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
+        $card_with_i_compel_effect = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
+        $card_with_non_demand_effect = $card['non_demand_effect_1'] !== null;
 
         if ($card_with_i_compel_effect) {
             $current_effect_type = 2;
@@ -6542,7 +6567,12 @@ class Innovation extends Table
         
         // Search for the first player who will undergo/share the effects, if any
         $launcher_id = self::getLauncherId();
-        $first_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
+        if (self::getGameStateValue('release_version') >= 1) {
+            // Non-demand effects are not shared with other players.
+            $first_player = $nested_card_state['nesting_index'] > 0 && $current_effect_type == 1 ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
+        } else {
+            $first_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
+        }
         if ($first_player === null) {
             // There is no player affected by the effect
             self::notifyGeneralInfo("<span class='minor_information'>" . clienttranslate('Nobody is affected by the ${qualified_effect} of the card.') . "</span>", array(
@@ -6762,8 +6792,15 @@ class Innovation extends Table
         $step_max = null;
         $step = null;
         
-        $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
-        self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
+        if (self::getGameStateValue('release_version') >= 1) {
+            if ($nested_card_state['post_execution_index'] == 0) {
+                $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
+                self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
+            }
+        } else {
+            $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
+            self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
+        }
         
         $crown = self::getIconSquare(1);
         $leaf = self::getIconSquare(2);
@@ -9154,8 +9191,10 @@ class Innovation extends Table
                 break;
                 
             default:
-                // This should not happens
-                //throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section A: '{code}'"), array('code' => $code)));
+                // Do not throw an exception so that we are able to stop executing a card after it's popped from
+                // the stack and there's nothing left to do.
+                // TODO(nesting): Remove this.
+                self::notifyGeneralInfo($code);
                 break;
             }
             //[AA]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -9165,6 +9204,13 @@ class Innovation extends Table
             self::trace('EOG bubbled from self::stPlayerInvolvedTurn');
             self::trace('playerInvolvedTurn->justBeforeGameEnd');
             $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
+
+        // Move to dogma effect that was pushed onto the stack, if applicable
+        if (self::getGameStateValue('release_version') >= 1 && $nested_card_state['nesting_index'] != self::getGameStateValue('current_nesting_index')) {
+            self::trace('playerInvolvedTurn->dogmaEffect');
+            $this->gamestate->nextState('dogmaEffect');
             return;
         }
         
@@ -9236,7 +9282,7 @@ class Innovation extends Table
 
             // There are no more players which are eligible to share this effect
             if ($next_player === null) {
-                self::setLauncherId(-1);
+                self::updateCurrentNestedCardState('post_execution_index', 0);
                 self::trace('interPlayerInvolvedTurn->interDogmaEffect');
                 $this->gamestate->nextState('interDogmaEffect');
                 return;
@@ -12168,7 +12214,7 @@ class Innovation extends Table
                     'color' => array(0,1,3,4),
                     'auxiliary_value' => 1 // Indicate that player had fewer than four cards in hands
                 );
-                self::incGameStateValue('step_max', 1);
+                self::incrementStepMax(1);
 
             // "Meld a card from your hand"
             } else {
@@ -13162,7 +13208,7 @@ class Innovation extends Table
                         self::executeDraw($player_id, 1); // "Draw a 1"
                         self::setAuxiliaryValue(1); // A transfer has been made, flag it
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition => additionnal rule
-                            $step--; self::incGameStateValue('step', -1); // "Repeat that dogma effect"
+                            $step--; self::incrementStep(-1); // "Repeat that dogma effect"
                         }
                     }
                     break;
@@ -13204,7 +13250,7 @@ class Innovation extends Table
                 // id 13, age 1: Code of laws
                 case "13N1A":
                     if ($n > 0) { // "If you do"
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
                 
@@ -13224,7 +13270,7 @@ class Innovation extends Table
                 case "18N1A":
                     if ($n == 2) { // "If you melded two"
                         if (self::getTopCardOnBoard($player_id, 1) !== null) { // The player has a top red board card
-                            self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                            self::incrementStepMax(1);
                         }
                         else {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top red card on your board.'), array('You' => 'You'));
@@ -13324,14 +13370,14 @@ class Innovation extends Table
                 case "41D1A":
                     if ($n > 0) { // "If you do"
                         self::setAuxiliaryValue(self::getGameStateValue('age_last_selected')); // Save the age of the returned card
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
 
                 // id 42, age 4: Perspective
                 case "42N1A":
                     if ($n > 0) { // "If you do"
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
                     
@@ -13383,7 +13429,7 @@ class Innovation extends Table
                             self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
                         }
                         else { // First edition => color is chosen by the player
-                            self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                            self::incrementStepMax(1);
                         }
                     }
                     break;
@@ -13394,7 +13440,7 @@ class Innovation extends Table
                     if ($n > 0 && self::countCardsInLocation($player_id, 'hand') == 1) { // "If you do, and have only one card in hand afterwards"
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have now only one card in your hand.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has now only one card in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        $step--; self::incGameStateValue('step', -1); // --> "Repeat this demand"
+                        $step--; self::incrementStep(-1); // --> "Repeat this demand"
                     }
                     break;
                     
@@ -13433,7 +13479,7 @@ class Innovation extends Table
                             }
                         }
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Place back the card into player's hand
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
                     
@@ -13556,7 +13602,7 @@ class Innovation extends Table
                 // id 80, age 8: Mass media         
                 case "80N1A":
                     if ($n > 0) { // "If you do
-                        self::incGameStateValue('step_max', 2); // --> 2 more interactions: see B
+                        self::incrementStepMax(2);
                     }
                     break;
                 
@@ -13593,7 +13639,7 @@ class Innovation extends Table
                             self::transferCardFromTo($card, $player_id, 'score', null, true); // "Score the card beneath it"
                         }
                         self::setAuxiliaryValue($color);// Flag the chosen color for the next interaction
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
                 
@@ -13649,7 +13695,7 @@ class Innovation extends Table
                 // id 91, age 9: Ecology
                 case "91N1A":
                     if ($n > 0) { // "If you do
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
                     
@@ -13724,7 +13770,7 @@ class Innovation extends Table
                 case "114N1A":
                     // "If you do"
                     if ($n > 0) {
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                        self::incrementStepMax(1);
                     }
                     break;
                 
@@ -13736,6 +13782,7 @@ class Innovation extends Table
                         $top_card = self::getTopCardOnBoard($player_id, $color_scored);
                         if ($top_card !== null) { // "If you have a top card matching its color"
                             self::executeNonDemandEffects($top_card); // "Execute each of the top card's non-demand dogma effects. Do not share them."
+                            break;
                         }
                     }
                     break;
@@ -13752,7 +13799,7 @@ class Innovation extends Table
                         $scored = true;
                     }
                     if ($scored) { // "If you scored at least one card, repeat this effect"
-                        $step--; self::incGameStateValue('step', -1);
+                        $step--; self::incrementStep(-1);
                     }
                     break;
                 
@@ -13882,7 +13929,7 @@ class Innovation extends Table
                 // id 138, Artifacts age 3: Mjolnir Amulet
                 case "138C1A":
                     if ($n > 0) {
-                        self::incGameStateValue('step_max', 1); // --> 1 more interaction
+                        self::incrementStepMax(1);
                     }
                     break;
 
@@ -13898,7 +13945,7 @@ class Innovation extends Table
                 case "144N1A":
                     if ($n > 0) {
                         self::setAuxiliaryValue(1);
-                        self::incGameStateValue('step_max', 2); // --> 2 more interactions
+                        self::incrementStepMax(2);
                     }
                     break;
                 
@@ -13912,7 +13959,7 @@ class Innovation extends Table
                     if ($n > 0) {
                         // "If you did all three"
                         if (self::getAuxiliaryValue() + 1 === 3) {
-                            self::incGameStateValue('step_max', 1); // --> 1 more interaction
+                            self::incrementStepMax(1);
                         }
                     }
                     break;
@@ -13968,7 +14015,7 @@ class Innovation extends Table
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
                         if ($top_green_card != null) {
                             self::setAuxiliaryValue($top_green_card['age']);
-                            self::incGameStateValue('step_max', 1);
+                            self::incrementStepMax(1);
                         }
                     }
                     break;
@@ -13994,7 +14041,7 @@ class Innovation extends Table
                         }
                         // "If they have the same color, claim an achievement, ignoring eligibility"
                         if ($card_1['color'] == $card_2['color']) {
-                            self::incGameStateValue('step_max', 1);
+                            self::incrementStepMax(1);
                         }
                     }
                     break;
@@ -14028,7 +14075,7 @@ class Innovation extends Table
                 // id 164, Artifacts age 5: Almira, Queen of the Castle
                 case "164N1A":
                     if ($n > 0) { // If no card is melded, then the value cannot match an achievement
-                        self::incGameStateValue('step_max', 1);
+                        self::incrementStepMax(1);
                     }
                     break;
 
@@ -14172,7 +14219,7 @@ class Innovation extends Table
                     if ($n > 0) { // "If you do"
                         // "Splay up its color"
                         self::splayUp($player_id, $player_id, self::getGameStateValue('color_last_selected'));
-                        self::incGameStateValue('step_max', 1);
+                        self::incrementStepMax(1);
                     }
                     break;
 
@@ -14338,6 +14385,13 @@ class Innovation extends Table
                 return;
             }
         }
+
+        // Move to dogma effect that was pushed onto the stack, if applicable
+        if (self::getGameStateValue('release_version') >= 1 && $nested_card_state['nesting_index'] != self::getGameStateValue('current_nesting_index')) {
+            self::trace('interInteractionStep->dogmaEffect');
+            $this->gamestate->nextState('dogmaEffect');
+            return;
+        }
         
         $step_max = self::getStepMax();
         if ($step == $step_max) { // The last step has been completed
@@ -14347,7 +14401,7 @@ class Innovation extends Table
             return;
         }
         // New interaction step
-        self::incGameStateValue('step', 1);
+        self::incrementStep(1);
         self::trace('interInteractionStep->interactionStep');
         $this->gamestate->nextState('interactionStep');
     }
@@ -14595,7 +14649,7 @@ class Innovation extends Table
                 }
                 else { // Draw and score, then return
                     self::executeDraw($player_id, 8, 'score'); // "Draw and score a 8"
-                    self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                    self::incrementStepMax(1);
                 }
                 break;
                 
@@ -14682,7 +14736,7 @@ class Innovation extends Table
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
                     self::setAuxiliaryValue($card['color']); // Flag the sucessful colors
-                    self::incGameStateValue('step_max', 1);  // --> 1 more interaction: see B
+                    self::incrementStepMax(1);
                 }
                 break;
             
@@ -14697,14 +14751,7 @@ class Innovation extends Table
             
             // id 100, age 10: Self service
             case "100N1A":
-                self::executeAllEffects($card); // The player chose this card for execution
-                // TODO(nesting): Change this back.
-                // self::executeNonDemandEffects($card); // The player chose this card for execution
-                if (self::getGameStateValue('release_version') >= 1) {
-                    self::trace('interSelectionMove->dogmaEffect');
-                    $this->gamestate->nextState('dogmaEffect');
-                    return;
-                }
+                self::executeNonDemandEffects($card); // The player chose this card for execution
                 break;
             
             // id 102, age 10: Stem cells 
@@ -14737,6 +14784,7 @@ class Innovation extends Table
                 if ($card['color'] == 4) { // "If the drawn card is purple"
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
                     self::executeNonDemandEffects($card); // "Execute each of its non-demand effects. Do not share them."
+                    break;
                 } else  {
                     // Non-purple card is placed in the hand
                     self::transferCardFromTo($card, $player_id, 'hand');
@@ -14768,8 +14816,7 @@ class Innovation extends Table
 
                     // Store array of revealed values
                     $revealed_values = array();
-
-                    self::incGameStateValue('step_max', 1); // --> 1 more interaction: see B
+                    self::incrementStepMax(1);
                 
                 // Return revealed cards to players' hands.
                 } else {
@@ -14879,7 +14926,7 @@ class Innovation extends Table
                     self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
                     self::transferCardFromTo($card, $player_id, 'hand');
                     self::setAuxiliaryValue($card['color']);
-                    self::incGameStateValue('step_max', 1);
+                    self::incrementStepMax(1);
                 }
                 break;
                 
