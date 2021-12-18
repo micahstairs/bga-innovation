@@ -1755,6 +1755,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} take back ${<}${age}${>} ${<<}${name}${>>} from your board to your hand.');
             $message_for_others = clienttranslate('${player_name} takes back ${<}${age}${>} ${<<}${name}${>>} from his board to his hand.');
             break;
+        case 'board->revealed':
+            $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your board.');
+            $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his board.');
+            break;
         case 'board->board':
             if ($bottom_to) {
                 $message_for_player = clienttranslate('${You} tuck ${<}${age}${>} ${<<}${name}${>>}.');
@@ -6247,7 +6251,13 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} must choose three colors');
                 $message_for_others = clienttranslate('${player_name} must choose three colors');
                 break;
-            
+
+            // id 173, Artifacts age 6: Moonlight Sonata
+            case "173N1A":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+                
             // id 179, Artifacts age 7: International Prototype Metre Bar
             case "179N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -9069,6 +9079,11 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 167, Artifacts age 6: Frigate Constitution
+            case "167C1":
+                $step_max = 1;
+                break;
+
             // id 168, Artifacts age 6: U.S. Declaration of Independence
             case "168C1":
                 $step_max = 3;
@@ -9116,6 +9131,11 @@ class Innovation extends Table
                 } while (true); // "Repeat this effect"
                 break;
 
+            // id 173, Artifacts age 6: Moonlight Sonata
+            case "173N1":
+                $step_max = 2;
+                break;
+                
             // id 174, Artifacts age 6: Marcha Real
             case "174N1":
                 $step_max = 1;
@@ -12727,6 +12747,49 @@ class Innovation extends Table
             );
             break;
 
+        // id 167, Artifacts age 6: Frigate Constitution
+        case "167C1A":
+            // "I compel you to reveal a card in your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+            break;
+
+        case "167C1B":
+            // "return it"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
+        case "167C1C":
+            // "and all cards of its color from your board!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'pile',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'color' => array(self::getGameStateValue('color_last_selected'))
+            );
+            break;
         // id 168, Artifacts age 6: U.S. Declaration of Independence
         case "168C1A":
             // "Transfer the highest card in your hand to my hand"
@@ -12836,6 +12899,45 @@ class Innovation extends Table
             );
             break;
 
+        // id 173, Artifacts age 6: Moonlight Sonata
+        case "173N1A":
+            // "Choose a color on your board having the highest top card."
+            $max_age = self::getMaxAgeOnBoardTopCards($player_id);
+            $color_array = array();
+            for ($color = 0; $color < 5; $color++) {
+                $top_card = self::getTopCardOnBoard($player_id, $color);
+                if ($top_card != null && $top_card['age'] == $max_age) {
+                    $color_array[] = $color;
+                }
+            }
+            
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'choose_color' => true,
+                
+                'color' =>  $color_array
+            );
+            break;
+            
+        case "173N1B":
+            // "Claim an achievement ignoring eligibility"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'require_achievement_eligibility' => false
+            );
+            break;
+            
         // id 174, Artifacts age 6: Marcha Real
         case "174N1A":
             // Reveal two cards from your hand
@@ -14238,6 +14340,26 @@ class Innovation extends Table
                     } while ($card != null);
                     break;
 
+                // id 167, Artifacts age 6: Frigate Constitution
+                case "167C1A":
+                    if ($n > 0) { // "If you do"
+                        // "and its value is equal to the value of any of my top cards"
+                        $age_match = false;
+                        for ($color = 0; $color < 5; $color++) {
+                            $top_card = self::getTopCardOnBoard($launcher_id, $color);
+                            if ($top_card['age'] == self::getGameStateValue('age_last_selected')) {
+                                self::incrementStepMax(2); // two more interactions
+                                $age_match = true;
+                                break;
+                            }
+                        }
+                        if($age_match == false) {
+                            $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                            self::transferCardFromTo($card, $player_id, 'hand'); // keep the card
+                        }
+                    }
+                    break;
+                    
                 // id 171, Artifacts age 6: Stamp Act
                 case "171C1A":
                     if ($n > 0) { // "If you do"
@@ -14248,7 +14370,15 @@ class Innovation extends Table
                         }
                     }
                     break;
-            
+ 
+                // id 173, Artifacts age 6: Moonlight Sonata
+                case "173N1A":
+                    // Meld the bottom card on your board of that color.
+                    // The card is currently in the "revealed" location
+                    $cards = self::getCardsInLocation($player_id, 'revealed');
+                    self::transferCardFromTo($cards[0], $player_id, 'board'); // meld the card
+                    break;
+ 
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
@@ -15159,6 +15289,16 @@ class Innovation extends Table
                     self::setAuxiliaryValue($card['color']);
                     self::incrementStepMax(1);
                 }
+                break;
+
+            // id 173, Artifacts age 6: Moonlight Sonata
+            case "173N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setAuxiliaryValue($choice);
+                
+                // Move the bottom card of the selected color to the "revealed"
+                self::transferCardFromTo(self::getBottomCardOnBoard($player_id, $choice), $player_id, 'revealed'); 
                 break;
                 
             // id 179, Artifacts age 7: International Prototype Metre Bar
