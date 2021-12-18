@@ -3922,19 +3922,11 @@ class Innovation extends Table
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
         $players = self::loadPlayersBasicInfos();
-        // TODO(nesting): Remove this since it's likely just masking another problem.
-        // if ($player_id == - 1 || $player_id == null) {
-        //     return "unknown";
-        // }
         return $players[$player_id]['player_name'];
     }
     
     function getPlayerColorFromId($player_id) {
         $players = self::loadPlayersBasicInfos();
-        // TODO(nesting): Remove this since it's likely just masking another problem.
-        // if ($player_id == - 1 || $player_id == null) {
-        //     return "unknown";
-        // }
         return $players[$player_id]['player_color'];
     }
     
@@ -5009,10 +5001,6 @@ class Innovation extends Table
     function getCurrentPlayerUnderDogmaEffect() {
         if (self::getGameStateValue('release_version') >= 1) {
             $player_id = self::getCurrentNestedCardState()['current_player_id'];
-            // if ($player_id == -1) {
-                // TODO(nesting): Remove this since it's likely just masking another problem.
-                // return self::getGameStateValue('active_player');
-            // }
             return $player_id;
         } else {
             return self::getGameStateValue('current_player_under_dogma_effect');
