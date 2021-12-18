@@ -51,6 +51,7 @@ ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Wish fo
 ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Indicate if the player has changed the situation (TRUE) or not (FALSE) in the game when it was his turn to play within a dogma effect';
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
+/* TODO: Consider adding defaults for some of these columns. */
 CREATE TABLE IF NOT EXISTS `card` (
   `id` SMALLINT UNSIGNED NOT NULL COMMENT '0 to 104 for normal cards, 105 to 109 for special achievements',
   `type` TINYINT UNSIGNED NOT NULL COMMENT '0 for base, 1 for artifacts',
@@ -63,11 +64,28 @@ CREATE TABLE IF NOT EXISTS `card` (
   `dogma_icon` TINYINT UNSIGNED COMMENT 'Feature icon for dogma, 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
   `has_demand` BOOLEAN NOT NULL COMMENT 'Whether or not the card has at least one demand effect (will be populated using data in material.inc.php file)',
   `owner` INT(10) UNSIGNED NOT NULL COMMENT 'Id of the player who owns the card or 0 if no owner',
-  `location` VARCHAR(12) NOT NULL COMMENT 'Hand, board, score, achievements, deck or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
+  `location` VARCHAR(12) NOT NULL COMMENT 'Hand, board, score, achievements, deck, display or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
   `position` TINYINT UNSIGNED COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the color piles, 0 for the bottom card, maximum for active card.',
   `splay_direction` TINYINT UNSIGNED COMMENT 'Direction of the splay, 0 (no-splay), 1 (left), 2 (right), 3 (up) OR NULL if this card is not on board',
   `selected` BOOLEAN NOT NULL COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
   PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table used to manage the execution of nested effects */
+/* TODO: Add defaults for some of these columns. */
+CREATE TABLE IF NOT EXISTS `nested_card_execution` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
+ `card_id` SMALLINT COMMENT '-1 means no card',
+ `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
+ `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
+ `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
+ `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
+ `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
+ `step` TINYINT COMMENT 'The interaction that the card is on',
+ `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
+ `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the effect has not triggered another card, 1 means the effect already triggered another card and resumed executing this effect',
+ `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
+  PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
@@ -321,6 +339,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (192, 1, 8, 3, 0, 6, 6, 3, 6, FALSE, 0, 'deck', 0, NULL, FALSE),
 
 /* Artifacts - Age 9 */
+(195, 1, 9, 0, 6, 6, 5, 0, 6, FALSE, 0, 'deck', 0, NULL, FALSE),
 (196, 1, 9, 0, 5, 0, 5, 5, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
 (197, 1, 9, 1, 0, 2, 6, 2, 2, FALSE, 0, 'deck', 0, NULL, FALSE),
 (198, 1, 9, 1, 5, 5, 6, 0, 5, FALSE, 0, 'deck', 0, NULL, FALSE),
