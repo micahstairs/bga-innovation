@@ -132,7 +132,7 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['debug_draw'] = true;
-        if ($card['location'] == 'deck' || $card['location'] == 'score') {
+        if ($card['location'] == 'deck' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
             self::transferCardFromTo($card, $player_id, 'hand');
         }
         else if ($card['location'] == 'achievements') {
@@ -1708,6 +1708,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<}${name}${>>}.');
             break;
+        case 'revealed->removed':
+            $message_for_player = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
+            $message_for_others = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
+            break;
         case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
             if ($card['age'] === null) { // Special achivement
                 $message_for_player = clienttranslate('${You} achieve ${<<<}${achievement_name}${>>>}.');
@@ -2642,6 +2646,9 @@ class Innovation extends Table
             }
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_player_under_dogma_effect = $nested_card_state['current_player_id'];
+
+            // Tell all currently executing "The Big Bang" cards that the game state has changed.
+            self::DbQuery("UPDATE nested_card_execution SET auxiliary_value = 1 WHERE card_id = 203");
         } else {
             $current_effect_type = self::getGameStateValue('current_effect_type');
             if ($current_effect_type == -1) { // Not in dogma
@@ -3916,18 +3923,18 @@ class Innovation extends Table
     function getPlayerNameFromId($player_id) {
         $players = self::loadPlayersBasicInfos();
         // TODO(nesting): Remove this since it's likely just masking another problem.
-        if ($player_id == - 1 || $player_id == null) {
-            return "unknown";
-        }
+        // if ($player_id == - 1 || $player_id == null) {
+        //     return "unknown";
+        // }
         return $players[$player_id]['player_name'];
     }
     
     function getPlayerColorFromId($player_id) {
         $players = self::loadPlayersBasicInfos();
         // TODO(nesting): Remove this since it's likely just masking another problem.
-        if ($player_id == - 1 || $player_id == null) {
-            return "unknown";
-        }
+        // if ($player_id == - 1 || $player_id == null) {
+        //     return "unknown";
+        // }
         return $players[$player_id]['player_color'];
     }
     
@@ -4830,6 +4837,9 @@ class Innovation extends Table
 
     function getLauncherId() {
         if (self::getGameStateValue('release_version') >= 1) {
+            if (self::getGameStateValue('current_nesting_index') < 0) {
+                return self::getGameStateValue('active_player');
+            }
             return self::getCurrentNestedCardState()['launcher_id'];
         } else {
             return self::getGameStateValue('active_player');
@@ -4999,10 +5009,10 @@ class Innovation extends Table
     function getCurrentPlayerUnderDogmaEffect() {
         if (self::getGameStateValue('release_version') >= 1) {
             $player_id = self::getCurrentNestedCardState()['current_player_id'];
-            if ($player_id == -1) {
+            // if ($player_id == -1) {
                 // TODO(nesting): Remove this since it's likely just masking another problem.
-                return self::getGameStateValue('active_player');
-            }
+                // return self::getGameStateValue('active_player');
+            // }
             return $player_id;
         } else {
             return self::getGameStateValue('current_player_under_dogma_effect');
@@ -9182,7 +9192,30 @@ class Innovation extends Table
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
                     throw new EndOfGame();
                 }
-                break;            
+                break;
+            
+            // id 203, Artifacts age 9: The Big Bang
+            case "203N1+":
+                // "If this caused any change to occur, draw and remove a 10 from the game, then repeat this effect"
+                if (self::getAuxiliaryValue() == 1) {
+                    $card = self::executeDraw($player_id, 10, 'revealed');
+                    self::transferCardFromTo($card, 0, 'removed');
+                    // Reset the post_execution_index so that we will return to 203N1+ (instead of 203N1++)
+                    // if we repeat the effect again.
+                    self::updateCurrentNestedCardState('post_execution_index', 0);
+                    // Purposefully fall through to 203N1 so that the effect can be repeated.
+                } else {
+                    break;
+                }
+
+            case "203N1":
+                // "Execute the non-demand effects of your top blue card, without sharing"
+                $top_blue_card = self::getTopCardOnBoard($player_id, 0);
+                if ($top_blue_card != null) {
+                    self::setAuxiliaryValue(0);
+                    self::executeNonDemandEffects($top_blue_card);
+                }
+                break;
 
             // id 204, Artifacts age 9: Marilyn Diptych
             case "204N1":

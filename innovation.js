@@ -3017,7 +3017,7 @@ function (dojo, declare) {
         
         notif_transferedCard : function(notif) {
             var card = notif.args;
-            
+
             // Special code for my score management
             if (card.location_from == "score" && card.owner_from == this.player_id) {
                 // Remove the card from my score personal window
@@ -3028,8 +3028,8 @@ function (dojo, declare) {
             var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
             
             var visible_from = this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-            var visible_to = this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-            
+            // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
+            var visible_to = zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
             
             var id_from;
             var id_to;
@@ -3103,6 +3103,11 @@ function (dojo, declare) {
                 this.counter.max_age_on_board[card.owner_to].setValue(card.new_max_age_on_board_to);
             }
 
+            // Handle case where card is being removed from the game.
+            if (!zone_to) {
+                this.removeFromZone(zone_from, id_from, true, card.age);
+                return;
+            }
 
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
             
