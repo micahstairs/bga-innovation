@@ -3481,7 +3481,8 @@ class Innovation extends Table
     
     /** Information about card resources **/
     function hasRessource($card, $icon) {
-         return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon);
+        // TODO: Update this when the Cities expansion is added.
+        return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon);
     }
     
     /* Count the number of a particular icon on the specified card */
@@ -9077,15 +9078,31 @@ class Innovation extends Table
                 break;
             
             // id 195, Artifacts age 9: Yeager's Bell X-1A
+            case "195N1+":
+                // "If that card has a clock, repeat this effect"
+                if (self::getAuxiliaryValue() == 1) {
+                    // Reset the post_execution_index so that we will return to 195N1+ (instead of 195N1++)
+                    // if we repeat the effect again.
+                    self::updateCurrentNestedCardState('post_execution_index', 0);
+                    // Purposefully fall through to 195N1 so that the effect can be repeated.
+                } else {
+                    break;
+                }
+
             case "195N1":
                 // "Draw and meld a 9"
                 $card = self::executeDraw($player_id, 9, 'board');
 
+                // Store information about whether the card has a clock or not
+                if (self::hasRessource($card, 6)) {
+                    self::setAuxiliaryValue(1);
+                } else {
+                    self::setAuxiliaryValue(0);
+                }
+
                 // "Execute the effects of the melded card as if they were on this card, without sharing"
                 self::executeAllEffects($card);
-
-                // TODO: "If that card has a clock, repeat this effect"
-                break; 
+                break;
 
             // id 196, Artifacts age 9: Luna 3
             case "196N1":
@@ -9193,8 +9210,6 @@ class Innovation extends Table
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
                 // the stack and there's nothing left to do.
-                // TODO(nesting): Remove this.
-                self::notifyGeneralInfo($code);
                 break;
             }
             //[AA]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
