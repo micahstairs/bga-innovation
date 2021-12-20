@@ -100,6 +100,7 @@ class Innovation extends Table
             'owner_last_selected' => 75,
             'type_array' => 76,
             'age_array' => 77,
+            'player_array' => 78,
             
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
             'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
@@ -324,6 +325,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('age_array', -1); // List of selectable ages encoded in a single value
         self::setGameStateInitialValue('color_array', -1); // List of selectable colors encoded in a single value
         self::setGameStateInitialValue('type_array', -1); // List of selectable types encoded in a single value
+        self::setGameStateInitialValue('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 'player_no', not their 'player_id')
         self::setGameStateInitialValue('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         self::setGameStateInitialValue('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
         self::setGameStateInitialValue('not_id', -1); // id of a card which cannot be selected, else -2
@@ -728,6 +730,68 @@ class Innovation extends Table
     /** integer division **/
     function intDivision($a, $b) {
         return (int)($a/$b);
+    }
+
+    function getAllActivePlayers() {
+        return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
+    }
+
+    function getOtherActivePlayers($player_id) {
+        return self::getObjectListFromDB(self::format("
+            SELECT
+                player_no
+            FROM
+                player
+            WHERE
+                player_eliminated = 0 AND
+                player_id <> {player_id}
+        ", array('player_id' => $player_id)), true);
+    }
+
+    function getActiveOpponents($player_id) {
+        return self::getObjectListFromDB(self::format("
+            SELECT
+                player_no
+            FROM
+                player
+            WHERE
+                player_eliminated = 0 AND
+                player_team <> (
+                    SELECT
+                        player_team
+                    FROM
+                        player
+                    WHERE
+                        player_id = {player_id}
+                )
+        ", array('player_id' => $player_id)), true);
+    }
+
+    function getActiveOpponentsWithFewerPoints($player_id) {
+        return self::getObjectListFromDB(self::format("
+            SELECT
+                player_no
+            FROM
+                player
+            WHERE
+                player_eliminated = 0 AND
+                player_team <> (
+                    SELECT
+                        player_team
+                    FROM
+                        player
+                    WHERE
+                        player_id = {player_id}
+                ) AND
+                player_innovation_score < (
+                    SELECT
+                        player_innovation_score
+                    FROM
+                        player
+                    WHERE
+                        player_id = {player_id}
+                )
+        ", array('player_id' => $player_id)), true);
     }
     
     /** log for debugging **/
@@ -4228,15 +4292,17 @@ class Innovation extends Table
     }
     
     function setSelectionRange($options) {
-        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_three_colors', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
+        // TODO: Deprecate and remove 'choose_opponent' and 'choose_opponent_with_fewer_points' and use 'choose_player' instead.
+        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_three_colors', 'choose_player', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
                 self::setGameStateValue('can_pass', $options['can_pass'] ? 1 : 0); 
 
                 // Only used by 'choose_value'.
+                // TODO: Rename 'age' to 'ages' to make it more obvious it is an array
                 if (array_key_exists('age', $options)) {
-                    // NOTE: It is the responsibility of the card implementation to ensure that $options['age'] has
+                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['age'] has
                     // at least one element in it.
                     self::setGameStateValueFromArray('age_array', $options['age']);
                 } else {
@@ -4244,12 +4310,22 @@ class Innovation extends Table
                 }
 
                 // Only used by 'choose_color','choose_two_colors', and 'choose_three_colors'.
+                // TODO: Rename 'color' to 'colors' to make it more obvious it is an array
                 if (array_key_exists('color', $options)) {
-                    // NOTE: It is the responsibility of the card implementation to ensure that $options['color'] has enough
+                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['color'] has enough
                     // colors in it. For example, for 'choose_color', the array must have at least one element in it.
                     self::setGameStateValueFromArray('color_array', $options['color']);
                 } else {
                     self::setGameStateValueFromArray('color_array', array(0, 1, 2, 3, 4));
+                }
+
+                // Only used by 'choose_player'.
+                if (array_key_exists('players', $options)) {
+                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['players'] has
+                    // at least one element in it.
+                    self::setGameStateValueFromArray('player_array', $options['players']);
+                } else {
+                    self::setGameStateValueFromArray('player_array', self::getAllActivePlayers());
                 }
 
                 return;
@@ -4303,6 +4379,7 @@ class Innovation extends Table
             $rewritten_options['age_max'] = 10;
         }
         // TODO: Rewrite 'age' if we end up needing this. Right now we only use 'age' for 'choose_value'.
+        // TODO: Rewrite 'player' if we end up needing this. Right now we only use 'player' for 'choose_player'.
         if (!array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array(0, 1, 2, 3, 4);
         }
@@ -4395,8 +4472,11 @@ class Innovation extends Table
             case 'type':
                 self::setGameStateValueFromArray('type_array', $value);
                 break;
+            case 'players':
+                self::setGameStateValueFromArray('player_array', $value);
+                break;
             }
-            if ($key <> 'color' && $key <> 'type') {
+            if ($key <> 'color' && $key <> 'type' && $key <> 'players') {
                 self::setGameStateValue($key, $value);
             }
         }
@@ -4694,6 +4774,8 @@ class Innovation extends Table
             return 8;
        case 'choose_three_colors':
             return 9;
+        case 'choose_player':
+            return 10;
         }
     }
     
@@ -4717,6 +4799,8 @@ class Innovation extends Table
             return 'choose_type';
         case 9:
             return 'choose_three_colors';
+        case 10:
+            return 'choose_player';
         }
     }
     
@@ -5549,97 +5633,90 @@ class Innovation extends Table
                 // Player choice
                 // Check if the choice is a opponent
                 if ($choice == $player_id) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("You cannot choose yourself [Press F5 in case of troubles]"));
+                    self::throwInvalidChoiceException();
                 }
                 else if ($choice == self::getPlayerTeammate($player_id)) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("You cannot choose your teammate [Press F5 in case of troubles]"));
+                    self::throwInvalidChoiceException();
                 }
                 $players = self::loadPlayersBasicInfos();
                 if (!array_key_exists($choice, $players)) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("You must choose an opponent [Press F5 in case of troubles]"));
+                    self::throwInvalidChoiceException();
                 }
                 if ($choice == 'choose_opponent_with_fewer_points' && self::getPlayerScore($choice) >= self::getPlayerScore($player_id)) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("You must choose an opponent with fewer points than you [Press F5 in case of troubles]"));
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_value':
-                // Values choice
-                if (!ctype_digit($choice)  || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_color':
-                // Color choice
                 if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_two_colors':
-                // Two color choice
                 if (!ctype_digit($choice) || $choice < 0) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                    self::throwInvalidChoiceException();
                 }
                 $colors = self::getValueAsArray($choice);
                 if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
-                    // The player is cheating... 
-                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_three_colors':
-                // Three color choice
                 if (!ctype_digit($choice) || $choice < 0) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                    self::throwInvalidChoiceException();
                 }
                 $colors = self::getValueAsArray($choice);
                 $allowed_color_choices = self::getGameStateValueAsArray('color_array');
                 if (count($colors) <> 3 || count(array_unique($colors)) <> 3 || !in_array($colors[0], $allowed_color_choices) || !in_array($colors[1], $allowed_color_choices) || !in_array($colors[2], $allowed_color_choices)) {
-                    // The player is cheating... 
-                    throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
+                    self::throwInvalidChoiceException();
+                }
+                break;
+            case 'choose_player':
+                if (!ctype_digit($choice)) {
+                    self::throwInvalidChoiceException();
+                }
+                $player_no = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
+                if ($player_no == null || !in_array($player_no, self::getGameStateValueAsArray('player_array'))) {
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_rearrange':
-                $exception = self::_("Ill formated permutation info [Press F5 in case of troubles]");
                 // Choice contains the color and the permutations made
                 if (!is_array($choice) || !array_key_exists('color', $choice)) {
-                    throw new BgaUserException($exception);
+                    self::throwInvalidChoiceException();
                 }
                 $color = $choice['color'];
                 if (!ctype_digit($color) || $color < 0 || $color > 4) {
-                    // The player is cheating...
-                    throw new BgaUserException($exception);
+                    self::throwInvalidChoiceException();
                 }
                 if (!array_key_exists('permutations_done', $choice)) {
-                    throw new BgaUserException($exception);
+                    self::throwInvalidChoiceException();
                 }
                 $permutations_done = $choice['permutations_done'];
                 if (!is_array($permutations_done) || count($permutations_done) == 0) {
-                    throw new BgaUserException($exception);
+                    self::throwInvalidChoiceException();
                 }
                 $n = self::countCardsInLocation($player_id, 'board', null, false, true);
                 $n = $n[$color];
                 
                 foreach($permutations_done as $permutation) {
                     if (!array_key_exists('position', $permutation)) {
-                        throw new BgaUserException($exception);
+                        self::throwInvalidChoiceException();
                     }
                     $position = $permutation['position'];
                     if (!array_key_exists('delta', $permutation)) {
-                        throw new BgaUserException($exception);
+                        self::throwInvalidChoiceException();
                     }
                     $delta = $permutation['delta'];
                     if ($delta <> 1 && $delta <> -1) {
-                        throw new BgaUserException($exception);
+                        self::throwInvalidChoiceException();
                     }
                     if (!ctype_digit($position) || $position >= $n || $position + $delta >= $n) {
-                        throw new BgaUserException($exception);
+                        self::throwInvalidChoiceException();
                     }
                 }
                 
@@ -5669,15 +5746,14 @@ class Innovation extends Table
             case 'choose_yes_or_no':
                 // Yes/no choice
                 if ($choice != 0 && $choice != 1) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("You have to choose between yes or no [Press F5 in case of troubles]"));
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_type':
                 // Type choice
                 if (!ctype_digit($choice) || $choice < 0 || $choice > 1) {
-                    // The player is cheating...
-                    throw new BgaUserException(self::_("Your choice must be a type [Press F5 in case of troubles]"));
+                    // TODO: Update this when other expansions are added.
+                    self::throwInvalidChoiceException();
                 }
                 break;
             default:
@@ -5701,6 +5777,10 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         self::setPlayerWishForViewFull($player_id, $view_full);
         self::notifyPlayer($player_id, 'log', '', array());
+    }
+
+    function throwInvalidChoiceException() {
+        throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
     }
     
 //////////////////////////////////////////////////////////////////////////////
@@ -5897,6 +5977,19 @@ class Innovation extends Table
                 foreach (self::getGameStateValueAsArray('color_array') as $color) {
                     $options[] = array('value' => $color, 'text' => self::getColorInClear($color));
                 }                
+                break;
+            case 'choose_player':
+                $options = self::getObjectListFromDB(self::format("
+                    SELECT
+                        player_id AS value,
+                        player_name AS text
+                    FROM
+                        player
+                    WHERE
+                        player_no IN ({player_nos})
+                ",
+                    array('player_nos' => join(self::getGameStateValueAsArray('player_array'), ','))
+                ));
                 break;
             case 'choose_rearrange':
                 // Nothing
@@ -7227,42 +7320,13 @@ class Innovation extends Table
                 if (self::hasRessource($card, 1)) { // "If it has a crown"
                     self::notifyGeneralInfo(clienttranslate('It has a ${crown}.'), array('crown' => $crown));
                     self::executeDraw($player_id, 4, 'score'); // "Draw and score a 4"
-                }
-                else { // "Otherwise"
+                } else { // "Otherwise"
                     self::notifyGeneralInfo(clienttranslate('It does not have a ${crown}.'), array('crown' => $crown));
-                    $number_of_players_with_fewer_points = self::getUniqueValueFromDB(self::format("
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            player
-                        WHERE
-                            player_id <> {player_id} AND
-                            player_innovation_score < (
-                                SELECT
-                                    player_innovation_score
-                                FROM
-                                    player
-                                WHERE
-                                    player_id = {player_id}
-                            ) AND
-                            player_team <> (
-                                SELECT
-                                    player_team
-                                FROM
-                                    player
-                                WHERE
-                                    player_id = {player_id}
-                            )
-                    "
-                    ,
-                        array('player_id' => $player_id)
-                    ));
-                    if ($number_of_players_with_fewer_points == 0) {
+                    if (empty(self::getActiveOpponentsWithFewerPoints($player_id))) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${you}.'), array('you' => 'you'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${player_name}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                    }
-                    else {
-                        $step_max = 2; // --> 2 interactions: see B
+                    } else {
+                        $step_max = 2;
                     }
                 }
                 break;
@@ -9644,14 +9708,24 @@ class Innovation extends Table
             break;
             
         case "18N1B":
-            // "You may transfer your top red card to another player board. If you do, transfer that player's top green card to your board.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => true,
+            // "You may transfer your top red card to another player's board. If you do, transfer that player's top green card to your board.
+            if (self::getGameStateValue('release_version') >= 1) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => true,
+                    
+                    'choose_player' => true,
+                    'players' => self::getOtherActivePlayers($player_id)
+                );
                 
-                // TODO: This is technically a bug in 2v2 games where "choose an opponent" isn't the same as "choose another player".
-                'choose_opponent' => true
-            );
+            } else {
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => true,
+                    
+                    'choose_opponent' => true
+                );
+            }
             break;
             
         // id 19, age 2: Currency
@@ -9827,12 +9901,22 @@ class Innovation extends Table
         // id 28, age 3: Optics
         case "28N1A":
             // "An opponent with fewer points than you"
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'choose_opponent_with_fewer_points' => true
-            );
+            if (self::getGameStateValue('release_version') >= 1) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'choose_player' => true,
+                    'players' => self::getActiveOpponentsWithFewerPoints($player_id)
+                );
+            } else {
+                $options = array(
+                    'player_id' => $player_id,
+                    'can_pass' => false,
+                    
+                    'choose_opponent_with_fewer_points' => true
+                );
+            }
             break;
             
         case "28N1B":
@@ -11739,13 +11823,24 @@ class Innovation extends Table
 
         case "126N1C":
             // Choose an opponent to transfer the other card to
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
+            if (self::getGameStateValue('release_version') >= 1) {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
+                    
+                    'choose_player' => true,
+                    'players' => self::getActiveOpponents($player_id)
+                );
+            } else {
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => false,
 
-                'choose_opponent' => true
-            );
+                    'choose_opponent' => true
+                );
+            }
             break;
         
         // id 128, Artifacts age 2: Babylonian Chronicles
@@ -14627,6 +14722,7 @@ class Innovation extends Table
                     }
                 }
                 break;
+            
             // id 28, age 3: Optics        
             case "28N1A":
                 // Nothing to do but to go to the next step
@@ -14885,6 +14981,7 @@ class Innovation extends Table
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1A":
                 // "Draw two 2s of that type"
+                // TODO: Draw and reveal the cards instead of placing them in the player's hand.
                 self::setGameStateValue('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 self::setGameStateValue('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 break;
