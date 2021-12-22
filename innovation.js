@@ -179,7 +179,7 @@ function (dojo, declare) {
             
             "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
         */
-            setup: function (gamedatas) {
+        setup: function (gamedatas) {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
@@ -308,13 +308,19 @@ function (dojo, declare) {
             
             // Counters for ressources
             this.counter.ressource_count = {};
-            for(var player_id in this.players) {
+            for (var player_id in this.players) {
                 this.counter.ressource_count[player_id] = {};
-                for(var icon=1; icon<=6; icon++) {
+                for (var icon = 1; icon <= 6; icon++) {
                     this.counter.ressource_count[player_id][icon] = new ebg.counter();
                     this.counter.ressource_count[player_id][icon].create($("ressource_count_" + player_id + "_" + icon));
                     this.counter.ressource_count[player_id][icon].setValue(gamedatas.ressource_counts[player_id][icon]);
                 }
+            }
+            if (gamedatas.artifact_on_display != null) {
+                this.updateResourcesForArtifactOnDisplay(
+                    gamedatas.active_player,
+                    gamedatas.artifact_on_display.resource_icon,
+                    gamedatas.artifact_on_display.resource_count_delta);
             }
             
             // Action indicator
@@ -1301,6 +1307,7 @@ function (dojo, declare) {
             });
         },
         
+        // TODO: Refactor this and add logic for Artifacts on display
         createMyHandAndBoardTooltipsWithActions : function() {
             for(var i=0; i<2; i++) {
                 var card_nodes = i == 0 ? this.selectCardsInHand() : this.selectActiveCardsOnBoard();
@@ -1311,16 +1318,17 @@ function (dojo, declare) {
                     var HTML_help = self.saved_HTML_cards[id]; // Get the saved HTML code for the L card
                     var card = self.saved_cards[id];
                     if (i == 0) {
-                        var HTML_action = self.createActionTextForCardInHand(card);
+                        var HTML_action = self.createActionTextForMeld(card, /*on_display=*/ false);
                     }
                     else {
-                        var HTML_action = self.createActionTextForActiveCard(card);
+                        var HTML_action = self.createActionTextForDogma(card, /*on_display=*/ false);
                     }
                     self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
                 });
             }
         },
         
+        // TODO: Refactor this and add logic for Artifacts on display
         createMyHandAndBoardTooltipsWithoutActions : function(all_cards_on_board) {
             // Default values
             all_cards_on_board = this.setDefault(all_cards_on_board, false);
@@ -1371,7 +1379,7 @@ function (dojo, declare) {
             });
         },
         
-        createActionTextForCardInHand : function(card) {
+        createActionTextForMeld : function(card, on_display) {
             HTML_action = "<p class='possible_action'>" + _("Click to meld this card.") + "<p>";
             // See if melding this card would cover another one
             var pile = this.zone.board[this.player_id][card.color].items;
@@ -1401,6 +1409,7 @@ function (dojo, declare) {
             }
             
             // Add ressources brought by the new card
+            // TODO: Update this logic when implementing the Cities expansion
             new_ressource_counts[card.spot_1]++
             new_ressource_counts[card.spot_2]++
             new_ressource_counts[card.spot_3]++
@@ -1415,6 +1424,7 @@ function (dojo, declare) {
                     }
                 }
                 
+                // TODO: Update this logic when implementing the Cities expansion
                 switch(parseInt(splay_direction)) {
                 case 0: // All icons of the old top card are lost
                     new_ressource_counts[top_card.spot_1]--
@@ -1442,7 +1452,8 @@ function (dojo, declare) {
             return HTML_action;
         },
         
-        createActionTextForActiveCard : function(card) {
+        // TODO: Make a different version of this for the Artifact on display.
+        createActionTextForDogma : function(card, on_display) {
             var player_total = this.counter.ressource_count[this.player_id][card.dogma_icon].getValue();
             
             var weaker_players = [];
@@ -1577,6 +1588,7 @@ function (dojo, declare) {
                 var pile_card = this.saved_cards[pile_card_id];
                 
                 // Remove ressources brought by the current splay
+                // TODO: Update this logic when implementing the Cities expansion
                 switch(parseInt(current_splay_direction)) {
                 case 0: // Not currently splayed: no lost
                     break;
@@ -1595,6 +1607,7 @@ function (dojo, declare) {
                 }
                 
                 // Add ressources granted by the new splay
+                // TODO: Update this logic when implementing the Cities expansion
                 switch(parseInt(splay_direction)) {
                 case 0: // Not splayed (this should not happen)
                     break;
@@ -1886,12 +1899,12 @@ function (dojo, declare) {
             return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
         
-            getIconDiv: function (card, resource_icon_id, icon_location, size) {
-                if (resource_icon_id == 0) {
-                    return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
-                }
-                return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
-            },
+        getIconDiv: function (card, resource_icon_id, icon_location, size) {
+            if (resource_icon_id == 0) {
+                return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
+            }
+            return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+        },
         
         getSpecialAchievementText : function(card) {
             var achievement_name = _(card.achievement_name).toUpperCase();
@@ -2031,7 +2044,7 @@ function (dojo, declare) {
             }
         },
         
-            addToZone: function (zone, id, position, age) {
+        addToZone: function (zone, id, position, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             dojo.style(HTML_id, 'position', 'absolute')
             
@@ -2097,7 +2110,7 @@ function (dojo, declare) {
             }
         },
         
-            removeFromZone: function (zone, id, destroy, age) {
+        removeFromZone: function (zone, id, destroy, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
             
             // Update weights before removing
@@ -2276,7 +2289,7 @@ function (dojo, declare) {
          */
         givePlayerActionCard : function(player_id, action_number) {
             dojo.addClass('action_indicator_' + player_id, 'action_card');
-            var action_text = action_number == 0 ? _('Free Action') : 1 ? _('First Action') : _('Second Action');
+            var action_text = action_number == 0 ? _('Free Action') : action_number == 1 ? _('First Action') : _('Second Action');
             var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 15, 2);
             $('action_indicator_' + player_id).innerHTML = div_action_text;
         },
@@ -2858,6 +2871,7 @@ function (dojo, declare) {
                     ressource_counts[icon] = this.counter.ressource_count[player_id][icon].getValue();
                 }
                 
+                // TODO: Update this logic when implementing the Cities expansion
                 switch(parseInt(zone.splay_direction)) {
                 case 0: // All icons of the old top card are lost
                     ressource_counts[old_top_card.spot_1]--
@@ -2997,6 +3011,8 @@ function (dojo, declare) {
             dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile");  // This kind of notification does not need any delay
             
             dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
+
+            dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
             
             dojo.subscribe('log', this, "notif_log"); // This kind of notification does not change anything but log on the interface, no delay
             
@@ -3242,6 +3258,31 @@ function (dojo, declare) {
             // Disable the button for splay mode
             this.disableButtonForSplayMode();
             this.number_of_splayed_piles = 0;
+        },
+
+        notif_updateResourcesForArtifactOnDisplay: function(notif) {
+            this.updateResourcesForArtifactOnDisplay(notif.args.player_id, notif.args.resource_icon, notif.args.resource_count_delta);
+        },
+
+        updateResourcesForArtifactOnDisplay: function(player_id, resource_icon, resource_count_delta) {
+            previous_value = this.counter.ressource_count[player_id][resource_icon].getValue();
+            this.counter.ressource_count[player_id][resource_icon].setValue(previous_value + resource_count_delta);
+
+            // If icon count is increasing, then this is the start of the free action
+            if (resource_count_delta > 0) {
+
+                for (var icon = 1; icon <= 6; icon++) {
+                    opacity = icon == resource_icon ? 1 : 0.5;
+                    dojo.query(".player_info .ressource_" + icon).style("opacity", opacity);
+                }
+
+            // If icon count is decreasing, then this is the end of the free action
+            } else {
+
+                for (var icon = 1; icon <= 6; icon++) {
+                    dojo.query(".player_info .ressource_" + icon).style("opacity", 1);
+                }
+            }
         },
         
         notif_log: function(notif) {
