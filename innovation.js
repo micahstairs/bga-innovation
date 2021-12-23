@@ -139,10 +139,9 @@ function (dojo, declare) {
                     lock: true,
                     card_id: debug_card_list.selectedIndex
                 },
-                    this, function(result){}, function(is_error){},
-                    );
-                },
-        
+                this, function(result){}, function(is_error){},
+            );
+        },
         debug_score: function () {
             var debug_card_list = document.getElementById("debug_card_list");
             self = this;
@@ -151,9 +150,9 @@ function (dojo, declare) {
                     lock: true,
                     card_id: debug_card_list.selectedIndex
                 },
-                    this, function (result) { }, function (is_error) {}
-                    );
-            },  
+                this, function (result) { }, function (is_error) {}
+            );
+        },  
         debug_achieve: function () {
             var debug_card_list = document.getElementById("debug_card_list");
             self = this;
@@ -162,9 +161,31 @@ function (dojo, declare) {
                     lock: true,
                     card_id: debug_card_list.selectedIndex
                 },
-                    this, function (result) { }, function (is_error) {}
-                    );      
+                this, function (result) { }, function (is_error) {}
+            );      
+        },
+        debug_return: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_return.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
                 },
+                this, function (result) { }, function (is_error) {}
+            );      
+        },
+        debug_dig: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_dig.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
+                },
+                this, function (result) { }, function (is_error) {}
+            );      
+        },
         //******
                 
         /*
@@ -185,10 +206,14 @@ function (dojo, declare) {
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_card_list) {
                 var main_area = $('main_area');
-                main_area.innerHTML = "<button id='debug_return'>RETURN THIS CARD</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_achieve'>ACHIEVE THIS CARD</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_score'>SCORE THIS CARD</button>" + main_area.innerHTML
-                main_area.innerHTML = "<select id='debug_card_list'></select><button id='debug_draw'>DRAW THIS CARD</button>" + main_area.innerHTML
+                if (gamedatas.artifacts_expansion_enabled) {
+                    main_area.innerHTML = "<button id='debug_dig' class='action-button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML
+                }
+                main_area.innerHTML = "<button id='debug_return' class='action-button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_achieve' class='action-button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_score' class='action-button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_draw' class='action-button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML
+                main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML
 
                 for (var id = 0; id < gamedatas.debug_card_list.length; id++) {
                     $('debug_card_list').innerHTML += "<option value='card_'" + id + ">" + id + " - " + gamedatas.debug_card_list[id] + "</option>"
@@ -196,6 +221,10 @@ function (dojo, declare) {
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
                 dojo.connect($('debug_score'), 'onclick', this, 'debug_score');
                 dojo.connect($('debug_achieve'), 'onclick', this, 'debug_achieve');
+                dojo.connect($('debug_return'), 'onclick', this, 'debug_return');
+                if (gamedatas.artifacts_expansion_enabled) {
+                    dojo.connect($('debug_dig'), 'onclick', this, 'debug_dig');
+                }
 
             }
             //******

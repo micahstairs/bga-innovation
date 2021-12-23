@@ -67,6 +67,14 @@
     background-color: #ebd5bd;
 }
 
+#debug_card_list {
+    height: 30px;
+}
+
+#debug_draw, #debug_score, #debug_achieve, #debug_return, #debug_dig {
+    width: 100px;
+}
+
 /* card name in log */
 .card_name {
     font-weight: bold;

@@ -138,13 +138,13 @@ class Innovation extends Table
             self::transferCardFromTo($card, $player_id, 'hand');
         }
         else if ($card['location'] == 'achievements') {
-            throw new BgaUserException(self::_("This card is used as an achievement"));
+            throw new BgaUserException("This card is used as an achievement");
         }
         else if ($card['location'] == 'removed') {
-            throw new BgaUserException(self::_("This card is removed from the game"));
+            throw new BgaUserException("This card is removed from the game");
         }
         else {
-            throw new BgaUserException(self::format(self::_("This card is in {player_name}'s {location}"), array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
     function debug_score($card_id) {
@@ -158,13 +158,13 @@ class Innovation extends Table
             self::transferCardFromTo($card, $player_id, 'score', false, true);
         }
         else if ($card['location'] == 'achievements') {
-            throw new BgaUserException(self::_("This card is used as an achievement"));
+            throw new BgaUserException("This card is used as an achievement");
         }
         else if ($card['location'] == 'removed') {
-            throw new BgaUserException(self::_("This card is removed from the game"));
+            throw new BgaUserException("This card is removed from the game");
         }
         else {
-            throw new BgaUserException(self::format(self::_("This card is in {player_name}'s {location}"), array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
     function debug_achieve($card_id) {
@@ -175,9 +175,9 @@ class Innovation extends Table
         $card = self::getCardInfo($card_id);
         $card['debug_achieve'] = true;
         if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
-            throw new BgaUserException(self::_("You already have this card as an achievement"));
+            throw new BgaUserException("You already have this card as an achievement");
         } else if ($card['location'] == 'removed') {
-            throw new BgaUserException(self::_("This card is removed from the game"));
+            throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements') {
             try {
                 self::transferCardFromTo($card, $player_id, "achievements");
@@ -189,9 +189,61 @@ class Innovation extends Table
                 return;
             }
         } else {
-            throw new BgaUserException(self::format(self::_("This card is in {player_name}'s {location}"), array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
        
+    }
+    function debug_return($card_id) {
+        if (self::getGameStateValue('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardInfo($card_id);
+        $card['debug_return'] = true;
+        if ($card['location'] == 'deck') {
+            throw new BgaUserException("This card is already in the deck");
+        } else if ($card['location'] == 'achievements') {
+            throw new BgaUserException("This card is used as an achievement");
+        } else if ($card['location'] == 'removed') {
+            throw new BgaUserException("This card is removed from the game");
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score') {
+            try {
+                self::transferCardFromTo($card, $player_id, "deck");
+            }
+            catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::debug_return');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        } else {
+            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+        }
+    }
+    function debug_dig($card_id) {
+        if (self::getGameStateValue('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardInfo($card_id);
+        $card['debug_dig'] = true;
+        if (self::getArtifactOnDisplay($player_id) != null) {
+            throw new BgaUserException("There is already an Artifact on display");
+        } else if ($card['location'] == 'removed') {
+            throw new BgaUserException("This card is removed from the game");
+        } else if ($card['location'] == 'deck') {
+            try {
+                self::transferCardFromTo($card, $player_id, "display");
+            }
+            catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::debug_dig');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        } else {
+            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+        }
     }
     //******
     
@@ -1419,7 +1471,7 @@ class Innovation extends Table
         if ($one_player_involved) {
             $player_id = $owner_to == 0 ? $owner_from : $owner_to; // The player whom transfer will change something on the cards he owns
             //****** CODE FOR DEBUG MODE
-            if (array_key_exists('debug_draw', $card) || array_key_exists('debug_achieve', $card) || array_key_exists('debug_score', $card) || array_key_exists('debug_return', $card) ||  $location_to == 'achievements') {
+            if (array_key_exists('debug_draw', $card) || array_key_exists('debug_achieve', $card) || array_key_exists('debug_score', $card) || array_key_exists('debug_return', $card) || array_key_exists('debug_dig', $card) ||  $location_to == 'achievements') {
                 $launcher_id = $player_id;
                 $one_player_involved = true;
             }
