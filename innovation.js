@@ -1264,83 +1264,55 @@ function (dojo, declare) {
         /*
          * Tooltip management for cards
          */
-        
-        addTooltipsWithoutActionsToMyHand : function() {
+
+        addTooltipsWithoutActionsTo : function(nodes) {
             var self = this;
-            this.selectCardsInHand().forEach(function(node) {
+            nodes.forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
                 self.addCustomTooltip(HTML_id, HTML_help, "");
             });
+        },
+        
+        addTooltipsWithoutActionsToMyHand : function() {
+            this.addTooltipsWithoutActionsTo(this.selectCardsInHand());
         },
 
         addTooltipsWithoutActionsToMyBoard : function() {
-            var self = this;
-            this.selectAllCardsOnMyBoard().forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id];
-                self.addCustomTooltip(HTML_id, HTML_help, "");
-            });
+            this.addTooltipsWithoutActionsTo(this.selectAllCardsOnMyBoard());
         },
 
         addTooltipsWithoutActionsToMyArtifactOnDisplay : function() {
+            this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
+        },
+
+        addTooltipsWithActionsTo : function(nodes, action_text_function) {
             var self = this;
-            this.selectArtifactOnDisplay().forEach(function(node) {
+            nodes.forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
-                self.addCustomTooltip(HTML_id, HTML_help, "");
+                var card = self.saved_cards[id];
+                var HTML_action = action_text_function(self, card);
+                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
             });
         },
 
         addTooltipsWithActionsToMyHand : function() {
-            var self = this;
-            this.selectCardsInHand().forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id];
-                var card = self.saved_cards[id];
-                var HTML_action = self.createActionTextForMeld(card);
-                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
-            });
+            this.addTooltipsWithActionsTo(this.selectCardsInHand(), this.createActionTextForMeld);
         },
 
         addTooltipsWithActionsToMyBoard : function() {
-            var self = this;
-            this.selectActiveCardsOnBoard().forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id];
-                var card = self.saved_cards[id];
-                var HTML_action = self.createActionTextForDogma(card);
-                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
-            });
+            this.addTooltipsWithActionsTo(this.selectActiveCardsOnBoard(), this.createActionTextForDogma);
         },
 
         addTooltipWithMeldActionToMyArtifactOnDisplay : function() {
-            var self = this;
-            this.selectArtifactOnDisplay().forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id];
-                var card = self.saved_cards[id];
-                var HTML_action = self.createActionTextForMeld(card);
-                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
-            });
+            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplay(), this.createActionTextForMeld);
         },
 
         addTooltipWithDogmaActionToMyArtifactOnDisplay : function() {
-            var self = this;
-            this.selectArtifactOnDisplay().forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id];
-                var card = self.saved_cards[id];
-                var HTML_action = self.createActionTextForDogma(card);
-                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
-            });
+            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplay(), this.createActionTextForDogma);
         },
         
         addTooltipsWithSplayingActionsToColorsOnMyBoard : function(colors, colors_in_clear, splay_direction, splay_direction_in_clear) {
@@ -1364,18 +1336,18 @@ function (dojo, declare) {
             });
         },
         
-        createActionTextForMeld : function(card, on_display) {
+        createActionTextForMeld : function(self, card) {
             HTML_action = "<p class='possible_action'>" + _("Click to meld this card.") + "<p>";
             // See if melding this card would cover another one
-            var pile = this.zone.board[this.player_id][card.color].items;
+            var pile = self.zone.board[self.player_id][card.color].items;
             var covered_card = pile.length > 0;
             if (covered_card) {
                 var top_card = pile[pile.length - 1];
-                var top_card_id = this.getCardIdFromHTMLId(top_card.id);
-                var top_card = this.saved_cards[top_card_id];
+                var top_card_id = self.getCardIdFromHTMLId(top_card.id);
+                var top_card = self.saved_cards[top_card_id];
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
                     {
-                        'age': this.square('N', 'age', top_card.age, 'in_log'),
+                        'age': self.square('N', 'age', top_card.age, 'in_log'),
                         'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
                     });
             }
@@ -1388,7 +1360,7 @@ function (dojo, declare) {
             var current_ressource_counts = {};
             var new_ressource_counts = {};
             for(var icon=1; icon<=6; icon++) {
-                current_count = this.counter.ressource_count[this.player_id][icon].getValue();
+                current_count = self.counter.ressource_count[self.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
             }
@@ -1401,7 +1373,7 @@ function (dojo, declare) {
             new_ressource_counts[card.spot_4]++
             
             if (covered_card) { // Substract the ressources no longer visible
-                var splay_indicator = 'splay_indicator_' + this.player_id + '_' + top_card.color;
+                var splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
                 for (var direction=0; direction<=3; direction++) {
                     if (dojo.hasClass(splay_indicator, 'splay_' + direction)) {
                         var splay_direction = direction;
@@ -1432,20 +1404,20 @@ function (dojo, declare) {
                 }
             }
 
-            HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+            HTML_action += self.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
             
             return HTML_action;
         },
         
-        createActionTextForDogma : function(card) {
-            var player_total = this.counter.ressource_count[this.player_id][card.dogma_icon].getValue();
+        createActionTextForDogma : function(self, card) {
+            var player_total = self.counter.ressource_count[self.player_id][card.dogma_icon].getValue();
             
             var weaker_players = [];
             var stronger_or_equal_players = [];
-            for (var p=2; p<=Object.keys(this.players).length; p++) {
+            for (var p=2; p<=Object.keys(self.players).length; p++) {
                 var player_panel = dojo.query(".player:nth-of-type(" + p + ")")[0];
                 var player_id = dojo.attr(player_panel, 'id').substr(7); // Get players in sorted order relatively to me
-                if (this.counter.ressource_count[player_id][card.dogma_icon].getValue() < player_total) {
+                if (self.counter.ressource_count[player_id][card.dogma_icon].getValue() < player_total) {
                     weaker_players.push(player_id);
                 } else {
                     stronger_or_equal_players.push(player_id);
