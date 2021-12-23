@@ -102,6 +102,7 @@ class Innovation extends Table
             'age_array' => 77,
             'player_array' => 78,
             
+            'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
             'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
             'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
@@ -271,6 +272,9 @@ class Innovation extends Table
         self::setGameStateInitialValue('first_player_with_only_one_action', 1);
         self::setGameStateInitialValue('second_player_with_only_one_action', count($players) >= 4 ? 1 : 0); // used when >= 4 players only
         self::setGameStateInitialValue('has_second_action', 1);
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::setGameStateInitialValue('current_action_number', -1);
+        }
         
         // Flags used when the game ends to know how it ended
         self::setGameStateInitialValue('game_end_type', -1); // 0 for game end by achievements, 1 for game end by score, -1 for game end by dogma
@@ -504,7 +508,7 @@ class Innovation extends Table
         // Ressources for each player
         $result['ressource_counts'] = array();
         foreach ($players as $player_id => $player) {
-            $result['ressource_counts'][$player_id] = self::getPlayerRessourceCounts($player_id);
+            $result['ressource_counts'][$player_id] = self::getPlayerResourceCounts($player_id);
         }
         
         // Max age on board for each player
@@ -559,7 +563,18 @@ class Innovation extends Table
         $active_player = self::getGameStateValue('active_player');
         $result['active_player'] = $active_player == -1 ? null : $active_player;
         if ($active_player != -1) {
-            $result['action_number'] = self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') || self::getGameStateValue('has_second_action') ? 1 : 2;
+            if (self::getGameStateValue('release_version') >= 1) {
+                $action_number = self::getGameStateValue('current_action_number');
+                $result['action_number'] = $action_number;
+                $card = self::getArtifactOnDisplay($active_player);
+                if ($card !== null && $action_number == 0) {
+                    $result['artifact_on_display'] = array();
+                    $result['artifact_on_display']['resource_icon'] = $card['dogma_icon'];
+                    $result['artifact_on_display']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
+                }
+            } else {
+                $result['action_number'] = self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') || self::getGameStateValue('has_second_action') ? 1 : 2;
+            }
         }
         
         // Private information
@@ -1143,19 +1158,19 @@ class Innovation extends Table
     /** Splay mechanism **/
 
     function unsplay($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true);
+        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true);
     }
 
     function splayLeft($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 1);
+        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 1);
     }
 
     function splayRight($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 2);
+        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 2);
     }
 
     function splayUp($player_id, $target_player_id, $color) {
-        splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3);
+        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3);
     }
 
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
@@ -1337,19 +1352,6 @@ class Innovation extends Table
             array('player_id' => $player_id)
         )));
     }
-    
-    /*function isSelected($card_id) {
-        return self::getUniqueValueFromDB(self::format("
-            SELECT
-                selected
-            FROM
-                card
-            WHERE
-                id = {card_id}
-        ",
-            array("card_id" => $card_id)
-        ));
-    }*/
 
     function deselectAllCards() {
         /**
@@ -1402,8 +1404,6 @@ class Innovation extends Table
         
         $age = $card['age'];
         
-        $game_end = false;
-        
         // Check if this transfer triggers a sharing bonus
         self::checkIfSharingBonus();
         
@@ -1434,8 +1434,6 @@ class Innovation extends Table
         if ($one_player_involved) { // One player involved
             $transferInfo['player_id'] = $player_id;
             
-            $ressource_count_update = $location_from == 'board' || $location_to == 'board';
-            
             if ($score_from_update) {
                 $progressInfo['new_score'] = self::updatePlayerScore($owner_from, -$age);
             }
@@ -1447,7 +1445,7 @@ class Innovation extends Table
                 $progressInfo['new_max_age_on_board'] = $max_age_on_board;
                 self::setStat($max_age_on_board, 'max_age_on_board', $player_id);
             }
-            if ($ressource_count_update) {
+            if ($location_from == 'board' || $location_to == 'board') {
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
             if ($location_to == 'board' && $bottom_to) { // That's a tuck
@@ -1472,9 +1470,6 @@ class Innovation extends Table
             $transferInfo['player_id'] = $player_id;
             $transferInfo['opponent_id'] = $opponent_id;
             
-            $ressource_count_from_update = $location_from == 'board';
-            $ressource_count_to_update = $location_to == 'board';
-            
             if ($score_from_update) {
                 $progressInfo['new_score_from'] = self::updatePlayerScore($owner_from, -$age);
             }
@@ -1482,10 +1477,10 @@ class Innovation extends Table
                 $progressInfo['new_score_to'] = self::updatePlayerScore($owner_to, $age);
             }
             
-            if ($ressource_count_from_update) {
+            if ($location_from == 'board') {
                 $progressInfo['new_ressource_counts_from'] = self::updatePlayerRessourceCounts($owner_from);
             }
-            if ($ressource_count_to_update) {
+            if ($location_to == 'board') {
                 $progressInfo['new_ressource_counts_to'] = self::updatePlayerRessourceCounts($owner_to);
             }
             if ($max_age_on_board_from_update) {
@@ -1493,7 +1488,7 @@ class Innovation extends Table
                 $progressInfo['new_max_age_on_board_from'] = $max_age_on_board_from;
                 self::setStat($max_age_on_board_from, 'max_age_on_board', $owner_from);
             }
-            if ( $max_age_on_board_to_update) {
+            if ($max_age_on_board_to_update) {
                 $max_age_on_board_to = self::getMaxAgeOnBoardTopCards($owner_to);
                 $progressInfo['new_max_age_on_board_to'] = $max_age_on_board_to;
                 self::setStat($max_age_on_board_to, 'max_age_on_board', $owner_to);
@@ -2386,7 +2381,7 @@ class Innovation extends Table
             switch ($achievement_id) {
             case 105: // Empire: three or more icons of all six types
                 $eligible = true;
-                $ressource_counts = self::getPlayerRessourceCounts($player_id);
+                $ressource_counts = self::getPlayerResourceCounts($player_id);
                 foreach ($ressource_counts as $icon => $count) {
                     if ($count < 3) { // There are less than 3 icons
                         $eligible = false;
@@ -3171,15 +3166,17 @@ class Innovation extends Table
     function getArtifactsOnDisplay($players) {
         $result = array();
         foreach($players as $player_id => $player) {
-            $cards = self::getCardsInLocation($player_id, 'display', null, false, false);
-            if (empty($cards)) {
-                $result[$player_id] = null;
-            } else {
-                // There's never more than one Artifact on display per player.
-                $result[$player_id] = $cards[0];
-            }
+            $result[$player_id] = self::getArtifactOnDisplay($player_id);
         }
         return $result;
+    }
+
+    function getArtifactOnDisplay($player_id) {
+        $cards = self::getCardsInLocation($player_id, 'display');
+        if (empty($cards)) {
+            return null;
+        }
+        return $cards[0];
     }
     
     function getAllBoards($players) {
@@ -3755,7 +3752,7 @@ class Innovation extends Table
         ));
     }
     
-    function getPlayerRessourceCounts($player_id) {
+    function getPlayerResourceCounts($player_id) {
         $table = self::getNonEmptyObjectFromDB(self::format("
         SELECT
             player_icon_count_1, player_icon_count_2, player_icon_count_3, player_icon_count_4, player_icon_count_5, player_icon_count_6
@@ -3769,8 +3766,23 @@ class Innovation extends Table
         
         // Convert to a numeric associative array
         $result = array();
-        for($icon=1; $icon<=6; $icon++) {
+        for ($icon = 1; $icon <= 6; $icon++) {
             $result[$icon] = $table["player_icon_count_".$icon];
+        }
+        return $result;
+    }
+
+    function getPlayerResourceCountsOnDisplay($player_id) {
+        $result = array();
+        for ($icon = 1; $icon <= 6; $icon++) {
+            $result[$icon] = 0;
+        }
+
+        $card = self::getArtifactOnDisplay($player_id);
+        if ($card !== null) {
+            for ($icon = 1; $icon <= 6; $icon++) {
+                $result[$icon] = self::countIconsOnCard($card, $icon);
+            }
         }
         return $result;
     }
@@ -3917,7 +3929,7 @@ class Innovation extends Table
             icon_count
         ");
         
-        return self::getPlayerRessourceCounts($player_id);
+        return self::getPlayerResourceCounts($player_id);
     }
     
     function promoteScoreToBGAScore() {
@@ -4219,7 +4231,7 @@ class Innovation extends Table
     /** Execution of actions authorized by server **/
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
-        self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
+        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
@@ -5178,13 +5190,13 @@ class Innovation extends Table
         self::checkAction('dogmaArtifactOnDisplay');
 
         $player_id = self::getCurrentPlayerId();
-        $card = self::getCardsInLocation($player_id, 'display')[0];
+        $card = self::getArtifactOnDisplay($player_id);
+        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
 
         // TODO: Update statistics.
-        // TODO: Take icons on Artifact into account.
-        self::setUpDogma($player_id, $card);
+        self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));
 
         // Resolve the first dogma effect of the card
         self::trace('artifactPlayerTurn->dogmaEffect (dogmaArtifactOnDisplay)');
@@ -5196,7 +5208,8 @@ class Innovation extends Table
         self::checkAction('returnArtifactOnDisplay');
 
         $player_id = self::getCurrentPlayerId();
-        $card = self::getCardsInLocation($player_id, 'display')[0];
+        $card = self::getArtifactOnDisplay($player_id);
+        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
         self::transferCardFromTo($card, 0, 'deck');
 
         // Return to the resolution of the effect
@@ -5211,6 +5224,8 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to return or dogma your Artifact on display.'), array('You' => 'You'));    
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return or dogma his Artifact on display.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        $card = self::getArtifactOnDisplay($player_id);
+        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         // Return to the resolution of the effect
         self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
@@ -5241,12 +5256,7 @@ class Innovation extends Table
         // No cheating here
         
         // Stats
-        if (self::getGameStateValue('has_second_action') || self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action')) {
-            self::incStat(1, 'turns_number');
-            self::incStat(1, 'turns_number', $player_id);
-        }
-        self::incStat(1, 'actions_number');
-        self::incStat(1, 'actions_number', $player_id);
+        self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'achieve_actions_number', $player_id);
         
         // Execute the transfer
@@ -5272,12 +5282,7 @@ class Innovation extends Table
         $player_id = self::getActivePlayerId();
         
         // Stats
-        if (self::getGameStateValue('has_second_action') || self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action')) {
-            self::incStat(1, 'turns_number');
-            self::incStat(1, 'turns_number', $player_id);
-        }
-        self::incStat(1, 'actions_number');
-        self::incStat(1, 'actions_number', $player_id);
+        self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'draw_actions_number', $player_id);
         
         // Execute the draw
@@ -5311,12 +5316,7 @@ class Innovation extends Table
         // No cheating here
         
         // Stats
-        if (self::getGameStateValue('has_second_action') || self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action')) {
-            self::incStat(1, 'turns_number');
-            self::incStat(1, 'turns_number', $player_id);
-        }
-        self::incStat(1, 'actions_number');
-        self::incStat(1, 'actions_number', $player_id);
+        self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'meld_actions_number', $player_id);
         
         $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
@@ -5353,7 +5353,7 @@ class Innovation extends Table
         }
 
         // An Artifact is already on display.
-        if (count(self::getCardsInLocation($player_id, 'display')) > 0) {
+        if (self::getArtifactOnDisplay($player_id) !== null) {
             return;
         }
                 
@@ -5407,12 +5407,7 @@ class Innovation extends Table
         // No cheating here
         
         // Stats
-        if (self::getGameStateValue('has_second_action') || self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action')) {
-            self::incStat(1, 'turns_number');
-            self::incStat(1, 'turns_number', $player_id);
-        }
-        self::incStat(1, 'actions_number');
-        self::incStat(1, 'actions_number', $player_id);
+        self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'dogma_actions_number', $player_id);
 
         self::setUpDogma($player_id, $card);
@@ -5421,8 +5416,49 @@ class Innovation extends Table
         self::trace('playerTurn->dogmaEffect (dogma)');
         $this->gamestate->nextState('dogmaEffect');
     }
+
+    function updateActionAndTurnStats($player_id) {
+        if (self::getGameStateValue('release_version') >= 1) {
+            if (self::getGameStateValue('current_action_number') == 1) {
+                self::incStat(1, 'turns_number');
+                self::incStat(1, 'turns_number', $player_id);
+            }
+        } else {
+            if (self::getGameStateValue('has_second_action') || self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action')) {
+                self::incStat(1, 'turns_number');
+                self::incStat(1, 'turns_number', $player_id);
+            }
+        }
+        self::incStat(1, 'actions_number');
+        self::incStat(1, 'actions_number', $player_id);
+    }
+
+    function increaseResourcesForArtifactOnDisplay($player_id, $card) {
+        $resource_icon = $card['dogma_icon'];
+        $resource_count_delta = self::countIconsOnCard($card, $resource_icon);
+        self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
+    }
+
+    function decreaseResourcesForArtifactOnDisplay($player_id, $card) {
+        $resource_icon = $card['dogma_icon'];
+        $resource_count_delta = -self::countIconsOnCard($card, $resource_icon);
+        self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
+    }
+
+    function updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta) {
+        self::notifyPlayer($player_id, 'updateResourcesForArtifactOnDisplay', '', array(
+            'player_id' => $player_id,
+            'resource_icon' => $resource_icon,
+            'resource_count_delta' => $resource_count_delta,
+        ));
+        self::notifyAllPlayersBut($player_id, 'updateResourcesForArtifactOnDisplay', '', array(
+            'player_id' => $player_id,
+            'resource_icon' => $resource_icon,
+            'resource_count_delta' => $resource_count_delta,
+        ));
+    }
     
-    function setUpDogma($player_id, $card) {
+    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0) {
 
         self::notifyDogma($card);
         
@@ -5435,14 +5471,14 @@ class Innovation extends Table
         // Compare players ressources on dogma icon_count;
         $dogma_player = $players[$player_id];
         $dogma_player_team = $dogma_player['player_team'];
-        $dogma_player_ressource_count = $dogma_player[$ressource_column];
+        $dogma_player_ressource_count = $dogma_player[$ressource_column] + $extra_icons_from_artifact_on_display;
         $dogma_player_no = $dogma_player['player_no'];
         
         // Count each player ressources
         $players_ressource_count = array();
         foreach ($players as $id => $player) {
             $player_no = $player['player_no'];
-            $player_ressource_count = $player[$ressource_column];
+            $player_ressource_count = $id == $player_id ? $dogma_player_ressource_count : $player[$ressource_column];
             $players_ressource_count[$player_no] = $player_ressource_count;
             $players_teams[$player_no] = $player['player_team'];
             
@@ -5492,18 +5528,14 @@ class Innovation extends Table
                 array('stronger_or_equal' => $stronger_or_equal, 'player_no_under_effect' => $player_no_under_effect, 'player_no' => $player_no)
             ));
             
-        } while($player_no != $dogma_player_no);
+        } while ($player_no != $dogma_player_no);
 
-        $card_with_i_demand_effect = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
-        $card_with_i_compel_effect = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
-        $card_with_non_demand_effect = $card['non_demand_effect_1'] !== null;
-
-        if ($card_with_i_compel_effect) {
-            $current_effect_type = 2;
-        } else if ($card_with_i_demand_effect) {
-            $current_effect_type = 0;
-        } else {
+        if ($card['i_demand_effect_1'] == null) {
             $current_effect_type = 1;
+        } else if ($card['i_demand_effect_1_is_compel']) {
+            $current_effect_type = 2;
+        } else {
+            $current_effect_type = 0;
         }
         
         // Write info in global variables to prepare the first effect
@@ -5728,6 +5760,8 @@ class Innovation extends Table
                 }
                 
                 // This move was legal
+                // TODO: Fix this bug. During replays, the player's own pile is not getting rearranged.
+                // See https://boardgamearena.com/bug?id=25058.
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} rearrange your ${color} pile.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($color)));
                 self::notifyAllPlayersBut($player_id, 'rearrangedPile', clienttranslate('${player_name} rearranges his ${color} pile.'), array('i18n' => array('color'), 'player_id' => $player_id, 'rearrangement' => $choice, 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
                 try {
@@ -6587,6 +6621,7 @@ class Innovation extends Table
         self::setGameStateValue('active_player', $player_id);
         self::setLauncherId($player_id);
         $this->gamestate->changeActivePlayer($player_id);
+        self::setGameStateValue('current_action_number', 1);
         self::notifyGeneralInfo('<!--empty-->');
         self::trace('turn0->playerTurn');
         $this->gamestate->nextState();
@@ -6598,7 +6633,7 @@ class Innovation extends Table
         // Give him extra time for his actions to come
         self::giveExtraTime(self::getActivePlayerId());
         
-        // Does he plays again?
+        // Does he play again?
         if (self::getGameStateValue('first_player_with_only_one_action')) {
             // First turn: the player had only one action to make
             $next_player = true;
@@ -6630,11 +6665,21 @@ class Innovation extends Table
             self::setLauncherId($player_id);
 
             // Get next player to decide what to do with their Artifact
-            if (count(self::getCardsInLocation($player_id, 'display')) > 0) {
+            $card = self::getArtifactOnDisplay($player_id);
+            if ($card !== null) {
+                self::setGameStateValue('current_action_number', 0);
                 self::notifyGeneralInfo('<!--empty-->');
+                self::increaseResourcesForArtifactOnDisplay($player_id, $card);
                 self::trace('interPlayerTurn->artifactPlayerTurn');
                 $this->gamestate->nextState('artifactPlayerTurn');
                 return;
+            }
+            if (self::getGameStateValue('release_version') >= 1) {
+                self::setGameStateValue('current_action_number', 1);
+            }
+        } else {
+            if (self::getGameStateValue('release_version') >= 1) {
+                self::setGameStateValue('current_action_number', 2);
             }
         }
         self::notifyGeneralInfo('<!--empty-->');
@@ -6738,7 +6783,7 @@ class Innovation extends Table
                     }
                 }
             }
-            
+
             $sharing_bonus = self::getGameStateValue('sharing_bonus');
             $launcher_id = self::getGameStateValue('active_player');
             
@@ -8603,7 +8648,7 @@ class Innovation extends Table
                 $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id}", array('player_id' => $player_id)));
                 $min_bulbs = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_3) FROM player WHERE player_id != {player_id}",  array('player_id' => $player_id)));
                 
-                $this_player_icon_counts = self::getPlayerRessourceCounts($player_id);
+                $this_player_icon_counts = self::getPlayerResourceCounts($player_id);
                 
                 if ($this_player_icon_counts[4] <= $min_towers) {
                     $card = self::executeDraw($player_id, 2); // "If you have the least towers, draw a 2"
