@@ -1546,6 +1546,7 @@ function (dojo, declare) {
             }
 
             if (on_display) {
+                // TODO: Change this if the Artifact is returned regardless of its final location.
                 HTML_action += "<li>" + _("You will return this Artifact if it is still on display.") + "</li>"
             }
 

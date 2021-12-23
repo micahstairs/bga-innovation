@@ -206,7 +206,7 @@ class Innovation extends Table
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score') {
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display') {
             try {
                 self::transferCardFromTo($card, $player_id, "deck");
             }
@@ -6830,6 +6830,7 @@ class Innovation extends Table
                 // Return the Artifact on display if the free dogma action was used
                 if (self::getNestedCardState(0)['card_location'] == 'display') {
                     // Confirm that it's still in the display
+                    // TODO: Change this if the Artifact is returned regardless of its final location.
                     if ($card['location'] == 'display') {
                         self::transferCardFromTo($card, 0, 'deck');
                     }
