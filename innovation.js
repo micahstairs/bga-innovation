@@ -740,25 +740,18 @@ function (dojo, declare) {
                 
                 switch (stateName) {
                 case 'turn0':
-                    // Reset tooltips for hand (or board: no card)
-                    this.destroyMyHandAndBoardTooltips();
-                    this.createMyHandAndBoardTooltipsWithActions();
-                    
+                    this.addTooltipsWithActionsToMyHand();
                     var cards_in_hand = this.selectCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.on(cards_in_hand, 'onclick', 'action_clicForInitialMeld');
                     break;
                 case 'artifactPlayerTurn':
-                    // TODO: Reset toolips, as appropriate.
+                    this.addTooltipWithDogmaActionToMyArtifactOnDisplay();
                     var card_in_display = this.selectArtifactOnDisplay();
                     card_in_display.addClass("clickable");
                     this.on(card_in_display, 'onclick', 'action_clicForDogmaArtifact');
                     break;
                 case 'playerTurn':
-                    // Reset tooltips for hand or board
-                    this.destroyMyHandAndBoardTooltips();
-                    this.createMyHandAndBoardTooltipsWithActions();
-                
                     // Claimable achievements (achieve action)
                     if (args.args.claimable_ages.length > 0) {
                         var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
@@ -774,17 +767,20 @@ function (dojo, declare) {
                     }
                     
                     // Cards in hand (meld action)
+                    this.addTooltipsWithActionsToMyHand();
                     var cards_in_hand = this.selectCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clicForMeld');
 
                     // Artifact on display (meld action)
+                    this.addTooltipWithMeldActionToMyArtifactOnDisplay();
                     var artifact_on_display = this.selectArtifactOnDisplay();
                     artifact_on_display.addClass("clickable");
                     this.on(artifact_on_display, 'onclick', 'action_clicForMeld');
                     
                     // Cards on board (dogma action)
+                    this.addTooltipsWithActionsToMyBoard();
                     var cards_on_board = this.selectActiveCardsOnBoard();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clicForDogma');
@@ -816,7 +812,7 @@ function (dojo, declare) {
                         }
                         this.publication_permutations_done = [];
                         
-                        var selectable_cards = this.selectAllCardsOnBoard();
+                        var selectable_cards = this.selectAllCardsOnMyBoard();
                         selectable_cards.addClass("clickable");
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
                     }
@@ -829,8 +825,7 @@ function (dojo, declare) {
                     
                     if (args.args.splay_direction !== null) {
                         // Update tooltips for cards of piles that can be splayed
-                        this.destroyMyBoardTooltipsOfColors(args.args.splayable_colors);
-                        this.createMyBoardTooltipsForColorsWithSplayingActions(args.args.splayable_colors, args.args.splayable_colors_in_clear, args.args.splay_direction, args.args.splay_direction_in_clear);
+                        this.addTooltipsWithSplayingActionsToColorsOnMyBoard(args.args.splayable_colors, args.args.splayable_colors_in_clear, args.args.splay_direction, args.args.splay_direction_in_clear);
                     }
                     
                     if ((args.args.can_pass || args.args.can_stop) && (args.args.special_type_of_choice == 0 || args.args.special_type_of_choice == 6 /* rearrange */) && args.args.splay_direction === null) {
@@ -838,14 +833,11 @@ function (dojo, declare) {
                     }
                     break;
                 }
-            }
-            else {
+            } else {
                 // I am not supposed to play
                 switch (stateName) {
                 case 'turn0':
-                    // Reset tooltips for hand (or board: no card)
-                    this.destroyMyHandAndBoardTooltips();
-                    this.createMyHandAndBoardTooltipsWithActions();
+                    this.addTooltipsWithActionsToMyHand();
                     
                     var cards_in_hand = this.selectCardsInHand();
                     cards_in_hand.addClass("clickable");
@@ -888,16 +880,14 @@ function (dojo, declare) {
                 
                 switch (stateName) {
                 case 'artifactPlayerTurn':
-                    // TODO: Reset toolips, as appropriate.
+                    this.addTooltipWithDogmaActionToMyArtifactOnDisplay();
                     break;
                 case 'playerTurn':
-                    // Reset tooltips for hand or board
-                    this.destroyMyHandAndBoardTooltips(true);
-                    this.createMyHandAndBoardTooltipsWithoutActions(true);
+                    this.addTooltipsWithoutActionsToMyHand();
+                    this.addTooltipsWithoutActionsToMyBoard();
                 case 'selectionMove':
                     // Reset tooltips for board (in case there was a splaying choice)
-                    this.destroyAllMyBoardTooltips();
-                    this.createAllMyBoardTooltipsWithoutActions();
+                    this.addTooltipsWithoutActionsToMyBoard();
                     this.my_score_verso_window.hide();
                 }
             }
@@ -1272,87 +1262,93 @@ function (dojo, declare) {
         },
         
         /*
-         * Special tooltip management for my hand and board cards
+         * Tooltip management for cards
          */
-        destroyMyHandAndBoardTooltips : function(all_cards_on_board) {
-            // Default values
-            all_cards_on_board = this.setDefault(all_cards_on_board, false);
-            ///////
-            
-            for(var i=0; i<2; i++) {
-                var card_nodes = i == 0 ? this.selectCardsInHand() : (all_cards_on_board ? this.selectAllCardsOnBoard() : this.selectActiveCardsOnBoard());
-                var self = this;
-                card_nodes.forEach(function(node) {
-                    var HTML_id = dojo.attr(node, "id");
-                    self.removeTooltip(HTML_id)
-                });
-            }
-        },
         
-        destroyAllMyBoardTooltips : function() {
-            var card_nodes = this.selectAllCardsOnBoard();
+        addTooltipsWithoutActionsToMyHand : function() {
             var self = this;
-            card_nodes.forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                self.removeTooltip(HTML_id)
-            });
-        },
-        
-        destroyMyBoardTooltipsOfColors : function(colors) {
-            var card_nodes = this.selectCardsOnMyBoardOfColors(colors);
-            var self = this;
-            card_nodes.forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                self.removeTooltip(HTML_id)
-            });
-        },
-        
-        // TODO: Refactor this and add logic for Artifacts on display
-        createMyHandAndBoardTooltipsWithActions : function() {
-            for(var i=0; i<2; i++) {
-                var card_nodes = i == 0 ? this.selectCardsInHand() : this.selectActiveCardsOnBoard();
-                var self = this;
-                card_nodes.forEach(function(node) {
-                    var HTML_id = dojo.attr(node, "id");
-                    var id = self.getCardIdFromHTMLId(HTML_id);
-                    var HTML_help = self.saved_HTML_cards[id]; // Get the saved HTML code for the L card
-                    var card = self.saved_cards[id];
-                    if (i == 0) {
-                        var HTML_action = self.createActionTextForMeld(card, /*on_display=*/ false);
-                    }
-                    else {
-                        var HTML_action = self.createActionTextForDogma(card, /*on_display=*/ false);
-                    }
-                    self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
-                });
-            }
-        },
-        
-        // TODO: Refactor this and add logic for Artifacts on display
-        createMyHandAndBoardTooltipsWithoutActions : function(all_cards_on_board) {
-            // Default values
-            all_cards_on_board = this.setDefault(all_cards_on_board, false);
-            ///////
-            
-            for(var i=0; i<2; i++) {
-                var card_nodes = i == 0 ? this.selectCardsInHand() : (all_cards_on_board ? this.selectAllCardsOnBoard() : this.selectActiveCardsOnBoard());
-                var self = this;
-                card_nodes.forEach(function(node) {
-                    var HTML_id = dojo.attr(node, "id");
-                    var id = self.getCardIdFromHTMLId(HTML_id);
-                    var HTML_help = self.saved_HTML_cards[id]; // Get the saved HTML code for the L card
-                    self.addCustomTooltip(HTML_id, HTML_help, "");
-                });
-            }
-        },
-        
-        createMyBoardTooltipsForColorsWithSplayingActions : function(colors, colors_in_clear, splay_direction, splay_direction_in_clear) {
-            var card_nodes = this.selectCardsOnMyBoardOfColors(colors);
-            var self = this;
-            card_nodes.forEach(function(node) {
+            this.selectCardsInHand().forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id]; // Get the saved HTML code for the L card
+                var HTML_help = self.saved_HTML_cards[id];
+                self.addCustomTooltip(HTML_id, HTML_help, "");
+            });
+        },
+
+        addTooltipsWithoutActionsToMyBoard : function() {
+            var self = this;
+            this.selectAllCardsOnMyBoard().forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
+                self.addCustomTooltip(HTML_id, HTML_help, "");
+            });
+        },
+
+        addTooltipsWithoutActionsToMyArtifactOnDisplay : function() {
+            var self = this;
+            this.selectArtifactOnDisplay().forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
+                self.addCustomTooltip(HTML_id, HTML_help, "");
+            });
+        },
+
+        addTooltipsWithActionsToMyHand : function() {
+            var self = this;
+            this.selectCardsInHand().forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
+                var card = self.saved_cards[id];
+                var HTML_action = self.createActionTextForMeld(card);
+                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
+            });
+        },
+
+        addTooltipsWithActionsToMyBoard : function() {
+            var self = this;
+            this.selectActiveCardsOnBoard().forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
+                var card = self.saved_cards[id];
+                var HTML_action = self.createActionTextForDogma(card);
+                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
+            });
+        },
+
+        addTooltipWithMeldActionToMyArtifactOnDisplay : function() {
+            var self = this;
+            this.selectArtifactOnDisplay().forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
+                var card = self.saved_cards[id];
+                var HTML_action = self.createActionTextForMeld(card);
+                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
+            });
+        },
+
+        addTooltipWithDogmaActionToMyArtifactOnDisplay : function() {
+            var self = this;
+            this.selectArtifactOnDisplay().forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
+                var card = self.saved_cards[id];
+                var HTML_action = self.createActionTextForDogma(card);
+                self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
+            });
+        },
+        
+        addTooltipsWithSplayingActionsToColorsOnMyBoard : function(colors, colors_in_clear, splay_direction, splay_direction_in_clear) {
+            var self = this;
+            this.selectCardsOnMyBoardOfColors(colors).forEach(function(node) {
+                var HTML_id = dojo.attr(node, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var HTML_help = self.saved_HTML_cards[id];
                 var card = self.saved_cards[id];
                 
                 // Search for the name of the color in clear
@@ -1365,17 +1361,6 @@ function (dojo, declare) {
                 
                 HTML_action = self.createActionTextForCardInSplayablePile(card, color_in_clear, splay_direction, splay_direction_in_clear);
                 self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
-            });
-        },
-        
-        createAllMyBoardTooltipsWithoutActions : function() {
-            var card_nodes = this.selectAllCardsOnBoard();
-            var self = this;
-            card_nodes.forEach(function(node) {
-                var HTML_id = dojo.attr(node, "id");
-                var id = self.getCardIdFromHTMLId(HTML_id);
-                var HTML_help = self.saved_HTML_cards[id]; // Get the saved HTML code for the L card
-                self.addCustomTooltip(HTML_id, HTML_help, "");
             });
         },
         
@@ -1452,8 +1437,7 @@ function (dojo, declare) {
             return HTML_action;
         },
         
-        // TODO: Make a different version of this for the Artifact on display.
-        createActionTextForDogma : function(card, on_display) {
+        createActionTextForDogma : function(card) {
             var player_total = this.counter.ressource_count[this.player_id][card.dogma_icon].getValue();
             
             var weaker_players = [];
@@ -1463,12 +1447,12 @@ function (dojo, declare) {
                 var player_id = dojo.attr(player_panel, 'id').substr(7); // Get players in sorted order relatively to me
                 if (this.counter.ressource_count[player_id][card.dogma_icon].getValue() < player_total) {
                     weaker_players.push(player_id);
-                }
-                else {
+                } else {
                     stronger_or_equal_players.push(player_id);
                 }
             }
             
+            on_display = card.location == 'display'
             exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
             exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             exists_non_demand_effect = card.non_demand_effect_1 !== null;
@@ -1476,83 +1460,95 @@ function (dojo, declare) {
             
             several_effects = (card.i_demand_effect_1 !== null && exists_non_demand_effect) || exist_several_non_demand_effects;
             
-            if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0) {
-                HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
-            } else if (exists_i_compel_effect && !exists_non_demand_effect && stronger_or_equal_players.length == 0) {
-                HTML_action = "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
-            } else {
-                HTML_action = "<p class='possible_action'>" + (several_effects ? _("Click to execute the dogma effects of this card.") : _("Click to execute the dogma effect of this card.")) + "</p>";
-                HTML_action += "<p>" + _("If you do:") + "</p>"
-                HTML_action += "<ul class='recap_dogma'>"
-                
-                if (exists_i_demand_effect) {
-                    if (weaker_players.length == 0) {
-                        HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
-                    } else {
-                        var players = [];
-                        for(var p=0; p<weaker_players.length; p++) {
-                            var player_id = weaker_players[p];
-                            var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                            players.push(player);
-                        }
-                        if (players.length == 1) {
-                            HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I demand effect."), {'player': players[0]}) + "</li>"
-                        } else {
-                            HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': players.join(', ')}) + "</li>"
-                        }
-                    }
-                }
-
-                if (exists_i_compel_effect) {
-                    if (stronger_or_equal_players.length == 0) {
-                        HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
-                    } else {
-                        var players = [];
-                        for (var p=0; p<stronger_or_equal_players.length; p++) {
-                            var player_id = stronger_or_equal_players[p];
-                            var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                            players.push(player);
-                        }
-                        if (players.length == 1) {
-                            HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I compel effect."), {'player': players[0]}) + "</li>"
-                        } else {
-                            HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': players.join(', ')}) + "</li>"
-                        }
-                    }
-                }
-                
-                if (exists_non_demand_effect) {
-                    if (stronger_or_equal_players.length == 0) {
-                        if (exist_several_non_demand_effects) {
-                            HTML_action += "<li>" + _("You will execute the non-demand effects alone.") + "</li>"
-                        }
-                        else {
-                            HTML_action += "<li>" + _("You will execute the non-demand effect alone.") + "</li>"
-                        }
-                    } else {
-                        var players = [];
-                        for(var p=0; p<stronger_or_equal_players.length; p++) {
-                            var player_id = stronger_or_equal_players[p];
-                            var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                            players.push(player);
-                        }
-                        if (players.length == 1) {
-                            if (exist_several_non_demand_effects) {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${player} will share each non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
-                            } else {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${player} will share the non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
-                            }
-                        } else {
-                            if (exist_several_non_demand_effects) {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
-                            } else {
-                                HTML_action += "<li>" + dojo.string.substitute(_("${players} will share the non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
-                            }
-                        }
-                    }
-                }
-                HTML_action += "</ul>";
+            if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0 && !on_display) {
+                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
             }
+            
+            if (exists_i_compel_effect && !exists_non_demand_effect && stronger_or_equal_players.length == 0 && !on_display) {
+                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+            }
+
+            HTML_action = "<p class='possible_action'>";
+            if (several_effects) {
+                HTML_action += _("Click to execute the dogma effects of this card.");
+            } else {
+                HTML_action += _("Click to execute the dogma effect of this card.");
+            }
+            HTML_action += "</p>";
+            HTML_action += "<p>" + _("If you do:") + "</p>";
+            HTML_action += "<ul class='recap_dogma'>";
+            
+            if (exists_i_demand_effect) {
+                if (weaker_players.length == 0) {
+                    HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
+                } else {
+                    var players = [];
+                    for(var p=0; p<weaker_players.length; p++) {
+                        var player_id = weaker_players[p];
+                        var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                        players.push(player);
+                    }
+                    if (players.length == 1) {
+                        HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I demand effect."), {'player': players[0]}) + "</li>"
+                    } else {
+                        HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': players.join(', ')}) + "</li>"
+                    }
+                }
+            }
+
+            if (exists_i_compel_effect) {
+                if (stronger_or_equal_players.length == 0) {
+                    HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
+                } else {
+                    var players = [];
+                    for (var p=0; p<stronger_or_equal_players.length; p++) {
+                        var player_id = stronger_or_equal_players[p];
+                        var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                        players.push(player);
+                    }
+                    if (players.length == 1) {
+                        HTML_action += "<li>" + dojo.string.substitute(_("${player} will execute the I compel effect."), {'player': players[0]}) + "</li>"
+                    } else {
+                        HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': players.join(', ')}) + "</li>"
+                    }
+                }
+            }
+            
+            if (exists_non_demand_effect) {
+                if (stronger_or_equal_players.length == 0) {
+                    if (exist_several_non_demand_effects) {
+                        HTML_action += "<li>" + _("You will execute the non-demand effects alone.") + "</li>"
+                    } else {
+                        HTML_action += "<li>" + _("You will execute the non-demand effect alone.") + "</li>"
+                    }
+                } else {
+                    var players = [];
+                    for (var p = 0; p < stronger_or_equal_players.length; p++) {
+                        var player_id = stronger_or_equal_players[p];
+                        var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                        players.push(player);
+                    }
+                    if (players.length == 1) {
+                        if (exist_several_non_demand_effects) {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${player} will share each non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
+                        } else {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${player} will share the non-demand effect before you execute it."), {'player': players[0]}) + "</li>";
+                        }
+                    } else {
+                        if (exist_several_non_demand_effects) {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
+                        } else {
+                            HTML_action += "<li>" + dojo.string.substitute(_("${players} will share the non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
+                        }
+                    }
+                }
+            }
+
+            if (on_display) {
+                HTML_action += "<li>" + _("You will return this Artifact if it is still on display.") + "</li>"
+            }
+
+            HTML_action += "</ul>";
 
             return HTML_action;
         },
@@ -1661,7 +1657,7 @@ function (dojo, declare) {
             return dojo.query("#display_" + this.player_id + " > .card");
         },
         
-        selectAllCardsOnBoard : function() {
+        selectAllCardsOnMyBoard : function() {
             return dojo.query("#board_" + this.player_id + " .card");
         },
         
@@ -2321,10 +2317,8 @@ function (dojo, declare) {
                 return;
             }
             this.deactivateClickEvents();
-            
-            // Reset tooltips for hand or board
-            this.destroyMyHandAndBoardTooltips(true);
-            this.createMyHandAndBoardTooltipsWithoutActions(true);
+            this.addTooltipsWithoutActionsToMyHand();
+            this.addTooltipsWithoutActionsToMyBoard();
             
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var card_id = this.getCardIdFromHTMLId(HTML_id);
@@ -2346,10 +2340,8 @@ function (dojo, declare) {
     
         action_clickForUpdatedInitialMeld : function(event) {
             this.deactivateClickEvents();
-
-            // Reset tooltips for hand or board
-            this.destroyMyHandAndBoardTooltips(true);
-            this.createMyHandAndBoardTooltipsWithoutActions(true);
+            this.addTooltipsWithoutActionsToMyHand();
+            this.addTooltipsWithoutActionsToMyBoard();
             
             dojo.query(".selected").removeClass("selected");
             var HTML_id = this.getCardHTMLIdFromEvent(event);
@@ -2835,7 +2827,7 @@ function (dojo, declare) {
             dojo.destroy('publication_cancel');
             dojo.destroy('publication_done');
             
-            var selectable_cards = this.selectAllCardsOnBoard();
+            var selectable_cards = this.selectAllCardsOnMyBoard();
             selectable_cards.addClass("clickable");
             this.on(selectable_cards, 'onclick', 'publicationClicForMove');
             
@@ -2998,8 +2990,6 @@ function (dojo, declare) {
         
         */
             setupNotifications: function () {
-            console.log('notifications subscriptions setup');
-            
             var reasonnable_delay = 1000;
             
             dojo.subscribe('transferedCard', this, "notif_transferedCard");
