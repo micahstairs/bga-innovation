@@ -4231,7 +4231,7 @@ class Innovation extends Table
     /** Execution of actions authorized by server **/
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
-        self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
+        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
@@ -5196,8 +5196,7 @@ class Innovation extends Table
         // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
 
         // TODO: Update statistics.
-        // TODO: Take icons on Artifact into account.
-        self::setUpDogma($player_id, $card);
+        self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));
 
         // Resolve the first dogma effect of the card
         self::trace('artifactPlayerTurn->dogmaEffect (dogmaArtifactOnDisplay)');
@@ -5459,7 +5458,7 @@ class Innovation extends Table
         ));
     }
     
-    function setUpDogma($player_id, $card) {
+    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0) {
 
         self::notifyDogma($card);
         
@@ -5472,14 +5471,14 @@ class Innovation extends Table
         // Compare players ressources on dogma icon_count;
         $dogma_player = $players[$player_id];
         $dogma_player_team = $dogma_player['player_team'];
-        $dogma_player_ressource_count = $dogma_player[$ressource_column];
+        $dogma_player_ressource_count = $dogma_player[$ressource_column] + $extra_icons_from_artifact_on_display;
         $dogma_player_no = $dogma_player['player_no'];
         
         // Count each player ressources
         $players_ressource_count = array();
         foreach ($players as $id => $player) {
             $player_no = $player['player_no'];
-            $player_ressource_count = $player[$ressource_column];
+            $player_ressource_count = $id == $player_id ? $dogma_player_ressource_count : $player[$ressource_column];
             $players_ressource_count[$player_no] = $player_ressource_count;
             $players_teams[$player_no] = $player['player_team'];
             
@@ -5529,18 +5528,14 @@ class Innovation extends Table
                 array('stronger_or_equal' => $stronger_or_equal, 'player_no_under_effect' => $player_no_under_effect, 'player_no' => $player_no)
             ));
             
-        } while($player_no != $dogma_player_no);
+        } while ($player_no != $dogma_player_no);
 
-        $card_with_i_demand_effect = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
-        $card_with_i_compel_effect = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
-        $card_with_non_demand_effect = $card['non_demand_effect_1'] !== null;
-
-        if ($card_with_i_compel_effect) {
-            $current_effect_type = 2;
-        } else if ($card_with_i_demand_effect) {
-            $current_effect_type = 0;
-        } else {
+        if ($card['i_demand_effect_1'] == null) {
             $current_effect_type = 1;
+        } else if ($card['i_demand_effect_1_is_compel']) {
+            $current_effect_type = 2;
+        } else {
+            $current_effect_type = 0;
         }
         
         // Write info in global variables to prepare the first effect
@@ -6788,7 +6783,7 @@ class Innovation extends Table
                     }
                 }
             }
-            
+
             $sharing_bonus = self::getGameStateValue('sharing_bonus');
             $launcher_id = self::getGameStateValue('active_player');
             
