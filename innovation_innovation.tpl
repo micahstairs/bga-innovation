@@ -26,7 +26,6 @@
             <div id="revealed_container_{PLAYER_ID}" class="revealed_container">
                 <div id="revealed_{PLAYER_ID}" class="revealed"></div>
             </div>
-            
             <div id="display_container_{PLAYER_ID}" class="display_container">
                 <div style="background-color:rgba({R}, {G}, {B}, .2);">
                     <p>{DISPLAY}</p>

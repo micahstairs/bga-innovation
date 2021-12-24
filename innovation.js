@@ -61,18 +61,18 @@ function (dojo, declare) {
             this.HTML_class.achievements = "S recto"
             this.HTML_class.special_achievements = "S card"
             
-            this.nb_cards_in_row = {};
+            this.num_cards_in_row = {};
             
-            this.nb_cards_in_row.my_hand = null; // Will be computed dynamically
-            this.nb_cards_in_row.opponent_hand = null;
-            this.nb_cards_in_row.display = 1;
-            this.nb_cards_in_row.deck = 15;
-            this.nb_cards_in_row.score = null;
-            this.nb_cards_in_row.my_score_verso = null;
-            // For board, this.nb_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
-            this.nb_cards_in_row.revealed = 1;
-            this.nb_cards_in_row.achievements = null;
-            // For special achievements, this.nb_cards_in_row is not defined because it has a custom pattern
+            this.num_cards_in_row.my_hand = null; // Will be computed dynamically
+            this.num_cards_in_row.opponent_hand = null;
+            this.num_cards_in_row.display = 1;
+            this.num_cards_in_row.deck = 15;
+            this.num_cards_in_row.score = null;
+            this.num_cards_in_row.my_score_verso = null;
+            // For board, this.num_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
+            this.num_cards_in_row.revealed = 1;
+            this.num_cards_in_row.achievements = null;
+            // For special achievements, this.num_cards_in_row is not defined because it has a custom pattern
             
             this.delta = {};
             
@@ -266,8 +266,8 @@ function (dojo, declare) {
             
             // Defining the number of cards hand zone can host
             // 10 = 2 * padding
-            this.nb_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
-            this.nb_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
+            this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
+            this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
             
             // Setting the width of the score and achievement zones and the number of cards they can host
             var required_width_achievements_in_line = (this.number_of_achievements_needed_to_win - 1) * this.delta.achievements.x +  this.card_dimensions['S recto'].width;
@@ -280,8 +280,8 @@ function (dojo, declare) {
                     dojo.style('achievement_container_' + player_id, 'width', required_width_achievements_in_line + "px");
                     dojo.style('score_container_' + player_id, 'width', score_width + "px");
                 }
-                this.nb_cards_in_row.achievements = 6;
-                this.nb_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
+                this.num_cards_in_row.achievements = 6;
+                this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
             }
             else { // There is not enough space
                 // Set the score container to one card in a row and adapt the achievement container
@@ -290,15 +290,15 @@ function (dojo, declare) {
                     dojo.style('achievement_container_' + player_id, 'width', achievements_width + "px");
                     dojo.style('score_container_' + player_id, 'width', this.card_dimensions['S card'].width + "px");
                 }
-                this.nb_cards_in_row.achievements = parseInt((achievements_width + this.delta.achievements.x - this.card_dimensions['S card'].width) / (this.delta.achievements.x));
-                this.nb_cards_in_row.score = 1;
+                this.num_cards_in_row.achievements = parseInt((achievements_width + this.delta.achievements.x - this.card_dimensions['S card'].width) / (this.delta.achievements.x));
+                this.num_cards_in_row.score = 1;
             }
             
             // Defining the number of cards the window for score verso can host
             // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
-            this.nb_cards_in_row.my_score_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
-            if (this.nb_cards_in_row.my_score_verso > 6) {
-                this.nb_cards_in_row.my_score_verso = 6;
+            this.num_cards_in_row.my_score_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
+            if (this.num_cards_in_row.my_score_verso > 6) {
+                this.num_cards_in_row.my_score_verso = 6;
             }
             
             // PLAYER PANELS
@@ -551,7 +551,7 @@ function (dojo, declare) {
             // Piles
             this.zone.board = {};
             this.number_of_splayed_piles = 0;
-                for (var player_id in this.players) {
+            for (var player_id in this.players) {
                 this.zone.board[player_id] = {};
                 var player_board = gamedatas.board[player_id];
                 var player_splay_directions = gamedatas.board_splay_directions[player_id];
@@ -1462,11 +1462,11 @@ function (dojo, declare) {
             several_effects = (card.i_demand_effect_1 !== null && exists_non_demand_effect) || exist_several_non_demand_effects;
             
             if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0 && !on_display) {
-                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
             }
             
             if (exists_i_compel_effect && !exists_non_demand_effect && stronger_or_equal_players.length == 0 && !on_display) {
-                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': this.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
             }
 
             HTML_action = "<p class='possible_action'>";
@@ -1937,15 +1937,14 @@ function (dojo, declare) {
             var HTML_class;
             
             var new_location;
-            if(location == "hand") {
+            if (location == "hand") {
                 if (owner == this.player_id) {
                     new_location = 'my_hand';
                 }
                 else {
                     new_location = 'opponent_hand';
                 }
-            }
-            else {
+            } else {
                 new_location = location;
             }
 
@@ -1956,21 +1955,21 @@ function (dojo, declare) {
             var zone_width;
             if(new_location == 'board') {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
-            }
-            else if (new_location == 'score') {
+            // TODO: Figure out why this doesn't do anything
+            } else if (new_location == 'display') {
+                zone_width = card_dimensions.width;
+            } else if (new_location == 'score') {
                 zone_width = dojo.position('score_container_' + owner).w;
-            }
-            else if (new_location != 'achievements' && new_location != 'special_achievements') {
+            } else if (new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
-                var n = this.nb_cards_in_row[new_location];
+                var n = this.num_cards_in_row[new_location];
                 zone_width = card_dimensions.width + (n - 1) * delta_x;
             }
             
             // Id of the container
             if (location == "my_score_verso") {
                 var div_id = location;
-            }
-            else {
+            } else {
                 var div_id = location + owner_string + type_string + age_string + color_string;
             }
 
@@ -2176,7 +2175,7 @@ function (dojo, declare) {
                 var h = self.card_dimensions[this.HTML_class].height;
                 
                 var delta = self.delta[this['location']];
-                var n = self.nb_cards_in_row[this['location']];
+                var n = self.num_cards_in_row[this['location']];
                 
                 if (left_to_right) {
                     var x_beginning = 0;

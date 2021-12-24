@@ -114,11 +114,19 @@
 .display_container {
     background-color: #FFFFFF;
     border: 1px solid black;
+    width: 195px;
+    height: 165px;
+    margin-bottom: 5px;
 }
 
 .display_container > div {
     background-color: #ebd5bd;
     padding: 5px;
+}
+
+.display_container .display {
+    top: 5px;
+    padding-bottom: 12px;
 }
 
 /* hand */
@@ -130,6 +138,11 @@
 .hand_container > div {
     background-color: #ebd5bd;
     padding: 5px;
+    padding-bottom: 12px;
+}
+
+.hand_container .hand {
+    top: 5px;
 }
 
 /* container for revealed cards */
@@ -173,7 +186,6 @@
 
 /*board and piles*/
 .board {
-    padding: 5px;
     min-height: 171px;
 }
 
