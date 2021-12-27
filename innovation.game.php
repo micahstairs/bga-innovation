@@ -8103,7 +8103,7 @@ class Innovation extends Table
                                 UPDATE
                                     nested_card_execution
                                 SET
-                                    current_player_id = {player_id}
+                                    current_player_id = {player_id},
                                     current_effect_type = 1,
                                     current_effect_number = 1
                                 WHERE
