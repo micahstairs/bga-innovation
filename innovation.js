@@ -1955,9 +1955,6 @@ function (dojo, declare) {
             var zone_width;
             if(new_location == 'board') {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
-            // TODO: Figure out why this doesn't do anything
-            } else if (new_location == 'display') {
-                zone_width = card_dimensions.width;
             } else if (new_location == 'score') {
                 zone_width = dojo.position('score_container_' + owner).w;
             } else if (new_location != 'achievements' && new_location != 'special_achievements') {
