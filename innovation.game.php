@@ -12763,21 +12763,11 @@ class Innovation extends Table
             break;
 
         case "167C1B":
-            // "return it"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
+            // "Return it"
+            $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
+            self::transferCardFromTo($revealed_card, 0, 'deck');
 
-        case "167C1C":
-            // "and all cards of its color from your board!"
+            // "And all cards of its color from your board"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -12790,6 +12780,7 @@ class Innovation extends Table
                 'color' => array(self::getGameStateValue('color_last_selected'))
             );
             break;
+
         // id 168, Artifacts age 6: U.S. Declaration of Independence
         case "168C1A":
             // "Transfer the highest card in your hand to my hand"
@@ -12901,7 +12892,7 @@ class Innovation extends Table
 
         // id 173, Artifacts age 6: Moonlight Sonata
         case "173N1A":
-            // "Choose a color on your board having the highest top card."
+            // "Choose a color on your board having the highest top card"
             $max_age = self::getMaxAgeOnBoardTopCards($player_id);
             $color_array = array();
             for ($color = 0; $color < 5; $color++) {
@@ -12917,7 +12908,6 @@ class Innovation extends Table
                 'can_pass' => false,
 
                 'choose_color' => true,
-                
                 'color' =>  $color_array
             );
             break;
@@ -14344,18 +14334,20 @@ class Innovation extends Table
                 case "167C1A":
                     if ($n > 0) { // "If you do"
                         // "and its value is equal to the value of any of my top cards"
-                        $age_match = false;
-                        for ($color = 0; $color < 5; $color++) {
-                            $top_card = self::getTopCardOnBoard($launcher_id, $color);
-                            if ($top_card['age'] == self::getGameStateValue('age_last_selected')) {
-                                self::incrementStepMax(2); // two more interactions
-                                $age_match = true;
+                        $value_to_match = self::getGameStateValue('age_last_selected');
+                        $found_match = false;
+                        $top_cards = self::getTopCardsOnBoard($launcher_id);
+                        foreach ($top_cards as $top_card) {
+                            if ($top_card['age'] == $value_to_match) {
+                                self::incrementStepMax(1);
+                                $found_match = true;
                                 break;
                             }
                         }
-                        if($age_match == false) {
+                        // Otherwise keep the card
+                        if (!$found_match) {
                             $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
-                            self::transferCardFromTo($card, $player_id, 'hand'); // keep the card
+                            self::transferCardFromTo($card, $player_id, 'hand');
                         }
                     }
                     break;
@@ -14373,10 +14365,10 @@ class Innovation extends Table
  
                 // id 173, Artifacts age 6: Moonlight Sonata
                 case "173N1A":
-                    // Meld the bottom card on your board of that color.
-                    // The card is currently in the "revealed" location
-                    $cards = self::getCardsInLocation($player_id, 'revealed');
-                    self::transferCardFromTo($cards[0], $player_id, 'board'); // meld the card
+                    // "Meld the bottom card on your board of that color"
+                    $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
+                    $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
+                    self::transferCardFromTo($revealed_card, $player_id, 'board');
                     break;
  
                 // id 174, Artifacts age 6: Marcha Real
@@ -15296,9 +15288,6 @@ class Innovation extends Table
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
-                
-                // Move the bottom card of the selected color to the "revealed"
-                self::transferCardFromTo(self::getBottomCardOnBoard($player_id, $choice), $player_id, 'revealed'); 
                 break;
                 
             // id 179, Artifacts age 7: International Prototype Metre Bar
