@@ -496,7 +496,7 @@ function (dojo, declare) {
             // My score: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator) {
                 this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>Close</a>");
-                this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, grouped_by_age=true)
+                this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, grouped_by_age=true);
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
                 for(var i=0; i<gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
@@ -3371,11 +3371,13 @@ function (dojo, declare) {
         
         getCardChain : function(args) {
             var cards = [];
-            for(var i=0; i<=9; i++) {
+            var i = 0;
+            while (true) {
                 if (typeof args['card_'+i] != 'string') {
                     break;
                 }
                 cards.push(this.getColoredText(_(args['card_'+i]), args['ref_player_'+i]));
+                i++;
             }
             var arrow = '&rarr;';
             return cards.join(arrow);

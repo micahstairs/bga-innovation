@@ -208,7 +208,7 @@ class Innovation extends Table
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display') {
             try {
-                self::transferCardFromTo($card, $player_id, "deck");
+                self::transferCardFromTo($card, 0, "deck");
             }
             catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
@@ -1468,22 +1468,9 @@ class Innovation extends Table
         $progressInfo = array();
         // Update player progression if applicable
         $one_player_involved = $owner_from == 0 || $owner_to == 0 || $owner_from == $owner_to;
-        if ($one_player_involved) {
-            $player_id = $owner_to == 0 ? $owner_from : $owner_to; // The player whom transfer will change something on the cards he owns
-            //****** CODE FOR DEBUG MODE
-            if (array_key_exists('debug_draw', $card) || array_key_exists('debug_achieve', $card) || array_key_exists('debug_score', $card) || array_key_exists('debug_return', $card) || array_key_exists('debug_dig', $card) ||  $location_to == 'achievements') {
-                $launcher_id = $player_id;
-                $one_player_involved = true;
-            }
-            //******
-            else {
-                $launcher_id = self::getActivePlayerId(); // The player from whom this action is originated, most of the case, the same as player_id except for few dogma effects
-                // TODO: Figure out if commenting this out breaks anything. We want this commented out for Mask of Warka.
-                // $one_player_involved = $player_id == $launcher_id;
-            }
-        }
               
         if ($one_player_involved) { // One player involved
+            $player_id = $owner_to == 0 ? $owner_from : $owner_to; // The player whom transfer will change something on the cards he owns
             $transferInfo['player_id'] = $player_id;
             
             if ($score_from_update) {
@@ -5153,6 +5140,10 @@ class Innovation extends Table
     function getCurrentPlayerUnderDogmaEffect() {
         if (self::getGameStateValue('release_version') >= 1) {
             $player_id = self::getCurrentNestedCardState()['current_player_id'];
+            // TODO: Figure out why this workaround is necessary.
+            if ($player_id == -1) {
+                return self::getGameStateValue('active_player');
+            }
             return $player_id;
         } else {
             return self::getGameStateValue('current_player_under_dogma_effect');
