@@ -3190,17 +3190,20 @@ function (dojo, declare) {
         
         notif_rearrangedPile: function(notif) {
             var player_id = notif.args.player_id;
-            var rearrangement = notif.args.rearrangement;
-            
-            var color = rearrangement.color;
-            var permutations_done = rearrangement.permutations_done;
-            
-            var permuted_zone = this.zone.board[player_id][color];
+            this.counter.max_age_on_board[player_id].setValue(notif.args.new_max_age_on_board);
             
             // Make the permutations on the corresponding opponent pile
-            for(var i=0; i<permutations_done.length; i++) {
-                var permutation = permutations_done[i];
-                this.publicationSwap(player_id, permuted_zone, permutation.position, permutation.delta);
+            if (this.player_id != player_id) {
+
+                var rearrangement = notif.args.rearrangement;
+                var color = rearrangement.color;
+                var permutations_done = rearrangement.permutations_done;
+                var permuted_zone = this.zone.board[player_id][color];
+
+                for (var i=0; i < permutations_done.length; i++) {
+                    var permutation = permutations_done[i];
+                    this.publicationSwap(player_id, permuted_zone, permutation.position, permutation.delta);
+                }
             }
         },
         

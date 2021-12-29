@@ -5805,16 +5805,31 @@ class Innovation extends Table
                 if (!$actual_change) {
                     throw new BgaUserException(self::_("Your choice does not make any change in the rearrangement [Press F5 in case of troubles]"));
                 }
-                
-                // This move was legal
+
+                // Update max age on board in case it changed
+                $new_max_age_on_board = self::getMaxAgeOnBoardTopCards($player_id);
+                self::setStat($new_max_age_on_board, 'max_age_on_board', $player_id);
+
                 // TODO: Fix this bug. During replays, the player's own pile is not getting rearranged.
                 // See https://boardgamearena.com/bug?id=25058.
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} rearrange your ${color} pile.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($color)));
-                self::notifyAllPlayersBut($player_id, 'rearrangedPile', clienttranslate('${player_name} rearranges his ${color} pile.'), array('i18n' => array('color'), 'player_id' => $player_id, 'rearrangement' => $choice, 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
+                self::notifyPlayer($player_id, 'rearrangedPile', clienttranslate('${You} rearrange your ${color} pile.'), array(
+                    'i18n' => array('color'),
+                    'player_id' => $player_id,
+                    'new_max_age_on_board' => $new_max_age_on_board,
+                    'You' => 'You',
+                    'color' => self::getColorInClear($color)
+                ));
+                self::notifyAllPlayersBut($player_id, 'rearrangedPile', clienttranslate('${player_name} rearranges his ${color} pile.'), array(
+                    'i18n' => array('color'),
+                    'player_id' => $player_id,
+                    'new_max_age_on_board' => $new_max_age_on_board,
+                    'rearrangement' => $choice,
+                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+                    'color' => self::getColorInClear($color))
+                );
                 try {
                     self::checkForSpecialAchievements($player_id, false); // Check all except Wonder
-                }
-                catch (EndOfGame $e) {
+                } catch (EndOfGame $e) {
                     // End of the game: the exception has reached the highest level of code
                     self::trace('EOG bubbled from self::chooseSpecialOption');
                     self::trace('selectionMove->justBeforeGameEnd');
