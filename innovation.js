@@ -3192,8 +3192,9 @@ function (dojo, declare) {
             var player_id = notif.args.player_id;
             this.counter.max_age_on_board[player_id].setValue(notif.args.new_max_age_on_board);
             
-            // Make the permutations on the corresponding opponent pile
-            if (this.player_id != player_id) {
+            // Apply the permutations if either an opponent rearranged their pile or the game is being
+            // replayed (which eliminates a bug where Publications doesn't rearrange cards during replays)
+            if (this.player_id != player_id || this.isInReplayMode()) {
 
                 var rearrangement = notif.args.rearrangement;
                 var color = rearrangement.color;
@@ -3384,6 +3385,11 @@ function (dojo, declare) {
             }
             var arrow = '&rarr;';
             return cards.join(arrow);
+        },
+
+        // Returns true if the game is ongoing but the user clicked "reply from this move" in the log or the game is in archive mode after the game has ended
+        isInReplayMode : function () {
+            return typeof g_replayFrom != 'undefined' || g_archive_mode;
         }
    });
 });
