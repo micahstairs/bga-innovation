@@ -3025,7 +3025,10 @@ function (dojo, declare) {
             // Special code for my score management
             if (card.location_from == "score" && card.owner_from == this.player_id) {
                 // Remove the card from my score personal window
-                this.removeFromZone(this.zone.my_score_verso, card.id, true, card.age);
+                // NOTE: The button to look at the player's score pile is broken in archive mode.
+                if (!g_archive_mode) {
+                    this.removeFromZone(this.zone.my_score_verso, card.id, true, card.age);
+                }
             }
 
             var zone_from = card.age === null ? this.zone.special_achievements[0] : this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
@@ -3118,7 +3121,10 @@ function (dojo, declare) {
             // Special code for my score management
             if (card.location_to == "score" && card.owner_to == this.player_id) {
                 // Add the card to my score personal window
-                this.createAndAddToZone(this.zone.my_score_verso, card.position_to, card.type, card.age, card.id, dojo.body(), card);
+                // NOTE: The button to look at the player's score pile is broken in archive mode.
+                if (!g_archive_mode) {
+                    this.createAndAddToZone(this.zone.my_score_verso, card.position_to, card.type, card.age, card.id, dojo.body(), card);
+                }
                 visible_to = true;
             }
             
@@ -3210,7 +3216,10 @@ function (dojo, declare) {
         
         notif_removedHandsBoardsAndScores: function(notif) {
             // Remove all cards from the interface (except decks and achievements)
-            this.zone.my_score_verso.removeAll();
+            // NOTE: The button to look at the player's score pile is broken in archive mode.
+            if (!g_archive_mode) {
+                this.zone.my_score_verso.removeAll();
+            }
             for(var player_id in this.players) {
                 this.zone.revealed[player_id].removeAll();
                 this.zone.hand[player_id].removeAll();
