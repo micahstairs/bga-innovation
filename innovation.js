@@ -121,9 +121,6 @@ function (dojo, declare) {
             this.first_chosen_color = null;
             this.second_chosen_color = null;
             
-            // Name of the normal achievements
-            this.normal_achievement_names = null;
-            
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
             this.deactivated_cards_important = null;
@@ -239,7 +236,6 @@ function (dojo, declare) {
             this.card_icons = gamedatas.card_icons;
             this.players = gamedatas.players; 
             this.number_of_achievements_needed_to_win = gamedatas.number_of_achievements_needed_to_win;
-            this.normal_achievement_names = gamedatas.normal_achievement_names;
             
             var any_player_id = Object.keys(this.players)[0]; // This is used to get a referenced on any player (who that player is does not matter) for global design purposes
                                                               // This is especially important because targetting this.player_id won't work in spectator mode

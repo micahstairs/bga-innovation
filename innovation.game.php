@@ -577,12 +577,6 @@ class Innovation extends Table
         // Turn0 or not
         $result['turn0'] = self::getGameStateValue('turn0') == 1;
         
-        // Normal achievement names
-        $result['normal_achievement_names'] = array();
-        for($age=1; $age<=9; $age++) {
-            $result['normal_achievement_names'][$age] = self::getNormalAchievementName($age);
-        }
-        
         // Number of achievements needed to win
         $result['number_of_achievements_needed_to_win'] = self::getGameStateValue('number_of_achievements_needed_to_win');
         
@@ -5826,7 +5820,7 @@ class Innovation extends Table
                     'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
                     'color' => self::getColorInClear($color))
                 );
-                
+
                 try {
                     self::checkForSpecialAchievements($player_id, false); // Check all except Wonder
                 } catch (EndOfGame $e) {
