@@ -52,10 +52,10 @@ ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Ind
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
 CREATE TABLE IF NOT EXISTS `card` (
-  `id` SMALLINT UNSIGNED NOT NULL COMMENT '0 to 104 for normal cards, 105 to 109 for special achievements',
-  `type` TINYINT UNSIGNED NOT NULL COMMENT '0 for base, 1 for artifacts',
+  `id` SMALLINT UNSIGNED NOT NULL COMMENT '0-104 for base cards, 105-109 for base special achievements, 110-214 for artifact cards, 215-219 for relics',
+  `type` TINYINT UNSIGNED NOT NULL COMMENT '0 for base, 1 for artifacts, 2 for cities, 3 for echoes, 4 for figures',
   `age` TINYINT UNSIGNED DEFAULT NULL COMMENT '1 to 10, NULL for a special achievement',
-  `color` TINYINT UNSIGNED DEFAULT NULL COMMENT '0 (blue), 1 (red), 2 (green), 3 (yellow), 4(purple) or NULL for a special achievement',
+  `color` TINYINT UNSIGNED DEFAULT NULL COMMENT '0 (blue), 1 (red), 2 (green), 3 (yellow), 4 (purple) or NULL for a special achievement',
   `spot_1` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on top-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
   `spot_2` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
   `spot_3` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-middle, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
@@ -127,6 +127,16 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 (107, 0, 'achievements', 12),
 (108, 0, 'achievements', 13),
 (109, 0, 'achievements', 14);
+
+/* Insert relic cards */
+
+INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `location`, `position`) VALUES
+
+(215, 2, 3, 2, 3, 1, 1, 1, NULL, 'relics', 0), /* TODO: When implementing Cities, add extra icons to this card */
+(216, 0, 4, 0, 5, 0, 3, 3, 3, 'relics', 1),
+(217, 1, 5, 4, 5, 3, 5, 0, 5, 'relics', 2),
+(218, 4, 6, 1, 6, 6, 0, 2, 6, 'relics', 3),
+(219, 3, 7, 3, 0, 0, 2, 2, 2, 'relics', 4); /* TODO: When implementing Echoes, add Echo effect to this card */
 
 /* Insert normal cards */
 
