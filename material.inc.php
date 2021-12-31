@@ -2221,7 +2221,61 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => null,
     'condition_for_claiming' => null,
-    'alternative_condition_for_claiming' => null)
+    'alternative_condition_for_claiming' => null),
+
+/* Artifacts - Relics */
+
+215 => array('name' => clienttranslate('Timbuktu'),
+    'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
+    'non_demand_effect_1' => null,
+    'non_demand_effect_2' => null,
+    'non_demand_effect_3' => null,
+    'achievement_name' => null,
+    'condition_for_claiming' => null,
+    'alternative_condition_for_claiming' => null),
+
+216 => array('name' => clienttranslate('Complex Numbers'),
+    'i_demand_effect_1' => clienttranslate('You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board. If you do, claim an achievement of matching value, ignoring eligibility.'),
+    'i_demand_effect_1_is_compel' => false,
+    'non_demand_effect_1' => null,
+    'non_demand_effect_2' => null,
+    'non_demand_effect_3' => null,
+    'achievement_name' => null,
+    'condition_for_claiming' => null,
+    'alternative_condition_for_claiming' => null),
+
+217 => array('name' => clienttranslate('Newton-Wickins Telescope'),
+    'i_demand_effect_1' => clienttranslate('You may return any number of cards from your score pile. If you do, draw and meld a card of value equal to the number of cards returned. If the melded card has a ${icon_6}, return it.'),
+    'i_demand_effect_1_is_compel' => false,
+    'non_demand_effect_1' => null,
+    'non_demand_effect_2' => null,
+    'non_demand_effect_3' => null,
+    'achievement_name' => null,
+    'condition_for_claiming' => null,
+    'alternative_condition_for_claiming' => null),
+
+// TODO: When implementing Figures, we need to transcribe this relic.
+218 => array('name' => clienttranslate('Ching Shih'),
+    'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
+    'non_demand_effect_1' => null,
+    'non_demand_effect_2' => null,
+    'non_demand_effect_3' => null,
+    'achievement_name' => null,
+    'condition_for_claiming' => null,
+    'alternative_condition_for_claiming' => null),
+
+// TODO: When implementing Echoes, we need to transcribe this relic.
+219 => array('name' => clienttranslate('Safety Pin'),
+    'i_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => false,
+    'non_demand_effect_1' => null,
+    'non_demand_effect_2' => null,
+    'non_demand_effect_3' => null,
+    'achievement_name' => null,
+    'condition_for_claiming' => null,
+    'alternative_condition_for_claiming' => null),
 
 );
 
