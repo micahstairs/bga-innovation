@@ -105,7 +105,7 @@ class Innovation extends Table
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
             'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
-            'debug_mode' => 99, // Set to 1 to enable debug mode (to enable to draw any card in the game). Set to 0 in production
+            'debug_mode' => 99, // 0 for disabled, 1 for enabled
             
             'game_type' => 100, // 1 for normal game, 2 for team game
             'game_rules' => 101, // 1 for last edition, 2 for first edition

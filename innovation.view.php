@@ -66,6 +66,7 @@
         $this->page->begin_block( "innovation_innovation", "decks_group_3" );
         $this->page->begin_block( "innovation_innovation", "decks_group_4" );
         $this->page->begin_block( "innovation_innovation", "decks" );
+        $this->page->begin_block( "innovation_innovation", "available_relics" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
         $this->page->begin_block( "innovation_innovation", "special_achievements" );
         
@@ -164,6 +165,7 @@
             $this->page->insert_block("decks_group_4", array("TYPE" => 1, "AGE" => $age));
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
+        $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );
         $this->page->insert_block( "available_achievements", array("AVAILABLE_ACHIEVEMENTS" => self::_("Available achievements")) );
         $this->page->insert_block( "special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")) );
       }

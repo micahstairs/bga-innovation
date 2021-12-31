@@ -55,7 +55,7 @@
 
 <div id="decks_and_available_achievements">
     <div id="decks">
-        <p class="text_left"><!-- BEGIN decks -->{DECKS}<!-- END decks --></p>
+        <p class="text_center"><!-- BEGIN decks -->{DECKS}<!-- END decks --></p>
         <div id="deck_set_1" class="deck_set">
             <!-- BEGIN decks_group_1 -->
                 <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
@@ -75,6 +75,11 @@
             <!-- BEGIN decks_group_4 -->
                 <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
             <!-- END decks_group_4 -->
+        </div>
+    </div>
+    <div id="available_relics_container">
+        <p class="text_center"><!-- BEGIN available_relics -->{AVAILABLE_RELICS}<!-- END available_relics --></p>
+        <div id="relics">
         </div>
     </div>
     <div id="available_achievements_container">
