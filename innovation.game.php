@@ -428,7 +428,10 @@ class Innovation extends Table
         
         // Remove cards from expansions that are not in use.
         if (self::getGameStateValue('artifacts_mode') == 1) {
-            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE id > 109");
+            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 110 <= id AND id <= 214");
+        }
+        if (self::getGameStateValue('artifacts_mode') != 3) {
+            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 215 <= id AND id <= 219");
         }
 
         // Card shuffling in decks
