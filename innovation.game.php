@@ -491,6 +491,7 @@ class Innovation extends Table
         //******
 
         $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') != 1;
+        $result['relics_enabled'] = self::getGameStateValue('artifacts_mode') == 3;
     
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
         

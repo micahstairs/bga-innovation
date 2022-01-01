@@ -387,11 +387,13 @@ function (dojo, declare) {
             this.zone.relics = {};
             this.zone.relics["0"] = this.createZone('relics', 0);
             this.setPlacementRulesForRelics();
-            
-            // Add cards to zone according to the current situation
-            for(var i = 0; i < gamedatas.unclaimed_relics.length; i++) {
-                var relic = gamedatas.unclaimed_relics[i];
-                this.createAndAddToZone(this.zone.relics["0"], i, relic.type, relic.age, null, dojo.body(), null);
+            if (gamedatas.relics_enabled) {
+                for (var i = 0; i < gamedatas.unclaimed_relics.length; i++) {
+                    var relic = gamedatas.unclaimed_relics[i];
+                    this.createAndAddToZone(this.zone.relics["0"], i, relic.type, relic.age, null, dojo.body(), null);
+                }
+            } else {
+                dojo.byId('available_relics_container').style.display = 'none';
             }
             
             // AVAILABLE ACHIEVEMENTS
