@@ -134,16 +134,13 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['debug_draw'] = true;
-        if ($card['location'] == 'deck' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
+        if ($card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
             self::transferCardFromTo($card, $player_id, 'hand');
-        }
-        else if ($card['location'] == 'achievements') {
+        } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
-        }
-        else if ($card['location'] == 'removed') {
+        } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        }
-        else {
+        } else {
             throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
@@ -156,14 +153,13 @@ class Innovation extends Table
         $card['debug_score'] = true;
         if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck') {
             self::transferCardFromTo($card, $player_id, 'score', false, true);
-        }
-        else if ($card['location'] == 'achievements') {
+        } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
-        }
-        else if ($card['location'] == 'removed') {
+        } else if ($card['location'] == 'relics') {
+            throw new BgaUserException("This card is used as an relic");
+        } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        }
-        else {
+        } else {
             throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
@@ -176,6 +172,8 @@ class Innovation extends Table
         $card['debug_achieve'] = true;
         if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
             throw new BgaUserException("You already have this card as an achievement");
+        } else if ($card['location'] == 'relics') {
+            throw new BgaUserException("This card is used as an relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements') {
@@ -204,10 +202,14 @@ class Innovation extends Table
             throw new BgaUserException("This card is already in the deck");
         } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
+        } else if ($card['location'] == 'relics') {
+            throw new BgaUserException("This card is used as an relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display') {
             try {
+                // TODO: If the card is a relic, then it should be returned to the available relics instead.
+                // TODO: Consider the positioning of the relics. Should they have fixed locations?
                 self::transferCardFromTo($card, 0, "deck");
             }
             catch (EndOfGame $e) {
@@ -229,6 +231,10 @@ class Innovation extends Table
         $card['debug_dig'] = true;
         if (self::getArtifactOnDisplay($player_id) != null) {
             throw new BgaUserException("There is already an Artifact on display");
+        } else if ($card['location'] == 'achievements') {
+            throw new BgaUserException("This card is used as an achievement");
+        } else if ($card['location'] == 'relics') {
+            throw new BgaUserException("This card is used as an relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'deck') {
@@ -545,11 +551,14 @@ class Innovation extends Table
             $result['score'][$player_id] = self::getPlayerScore($player_id);
         }
         
-        // Revealed card
+        // Revealed cards
         $result['revealed'] = array();
         foreach($players as $player_id => $player) {
             $result['revealed'][$player_id] = self::getCardsInLocation($player_id, 'revealed');
-        }        
+        }
+
+        // Unclaimed achivements 
+        $result['unclaimed_relics'] = self::getCardsInLocation(0, 'relics');
         
         // Unclaimed achivements 
         $result['unclaimed_achievements'] = self::getCardsInLocation(0, 'achievements');
@@ -1073,9 +1082,11 @@ class Innovation extends Table
         $filter_from = self::format("owner = {owner_from} AND location = '{location_from}'", array('owner_from' => $owner_from, 'location_from' => $location_from));
         switch ($location_from) {
         case 'deck':
+            $filter_from .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
+            break;
         case 'hand':
         case 'score':
-            $filter_from .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
+            $filter_from .= self::format(" AND age = {age}", array('age' => $age));
             break;
         case 'board':
             $filter_from .= self::format(" AND color = {color}", array('color' => $color));
@@ -1088,9 +1099,11 @@ class Innovation extends Table
         $filter_to = self::format("owner = {owner_to} AND location = '{location_to}'", array('owner_to' => $owner_to, 'location_to' => $location_to));
         switch ($location_to) {
         case 'deck':
+            $filter_to .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
+            break;
         case 'hand':
         case 'score':
-            $filter_to .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
+            $filter_to .= self::format(" AND age = {age}", array('age' => $age));
             break;
         case 'board':
             $filter_to .= self::format(" AND color = {color}", array('color' => $color));
@@ -1810,6 +1823,10 @@ class Innovation extends Table
         case 'revealed->removed':
             $message_for_player = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
             $message_for_others = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
+            break;
+        case 'relics->hand':
+            $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} ${<<}${name}${>>} to your hand.');
+            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
             break;
         case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
             if ($card['age'] === null) { // Special achivement
@@ -4766,6 +4783,8 @@ class Innovation extends Table
             return 10;
         case 'display':
             return 11;
+        case 'relics':
+            return 12;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -4799,6 +4818,8 @@ class Innovation extends Table
             return 'none';
         case 11:
             return 'display';
+        case 12:
+            return 'relics';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));

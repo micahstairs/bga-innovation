@@ -58,6 +58,7 @@ function (dojo, declare) {
             this.HTML_class.score = "S recto";
             this.HTML_class.my_score_verso = "M card";
             this.HTML_class.revealed = "M card";
+            this.HTML_class.relics = "S recto"
             this.HTML_class.achievements = "S recto"
             this.HTML_class.special_achievements = "S card"
             
@@ -256,6 +257,7 @@ function (dojo, declare) {
             
             if (!large_screen) {
                 dojo.style('decks', 'display', 'inline-block');
+                dojo.style('available_relics_container', 'display', 'inline-block');
                 dojo.style('available_achievements_container', 'display', 'inline-block');
                 dojo.style('available_special_achievements_container', 'display', 'inline-block');
             }
@@ -378,6 +380,18 @@ function (dojo, declare) {
             if (!gamedatas.artifacts_expansion_enabled) {
                 dojo.byId('deck_set_2').style.display = 'none';
                 dojo.byId('deck_set_4').style.display = 'none';
+            }
+
+            // AVAILABLE RELICS
+            // Creation of the zone
+            this.zone.relics = {};
+            this.zone.relics["0"] = this.createZone('relics', 0);
+            this.setPlacementRulesForRelics();
+            
+            // Add cards to zone according to the current situation
+            for(var i = 0; i < gamedatas.unclaimed_relics.length; i++) {
+                var relic = gamedatas.unclaimed_relics[i];
+                this.createAndAddToZone(this.zone.relics["0"], i, relic.type, relic.age, null, dojo.body(), null);
             }
             
             // AVAILABLE ACHIEVEMENTS
@@ -1773,6 +1787,8 @@ function (dojo, declare) {
             switch(location) {
                 case "deck":
                     return root[type][age];
+                case "relics":
+                    return this.zone.relics[0];
                 case "hand":
                 case "display":
                 case "score":
@@ -1953,7 +1969,7 @@ function (dojo, declare) {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
             } else if (new_location == 'score') {
                 zone_width = dojo.position('score_container_' + owner).w;
-            } else if (new_location != 'achievements' && new_location != 'special_achievements') {
+            } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
                 var n = this.num_cards_in_row[new_location];
                 zone_width = card_dimensions.width + (n - 1) * delta_x;
@@ -2036,13 +2052,13 @@ function (dojo, declare) {
         
         addToZone: function (zone, id, position, age) {
             var HTML_id = this.getCardHTMLId(id, age, zone.HTML_class);
-            dojo.style(HTML_id, 'position', 'absolute')
+            dojo.style(HTML_id, 'position', 'absolute');
             
             if (zone['location'] == 'revealed' && zone.items.length == 0) {
                 dojo.style(zone.container_div, 'display', 'block');
             }
 
-            var grouped_by_age = zone['location'] != 'board' && zone['location'] != 'achievements';
+            var grouped_by_age = zone['location'] != 'board' && zone['location'] != 'achievements' && zone['location'] != 'relics';
             
             // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
             var found = false;
@@ -2186,17 +2202,31 @@ function (dojo, declare) {
                 return {'x':x_beginning + delta_x * n_x, 'y': delta_y * n_y, 'w':w, 'h':h}
             }
         },
+
+        setPlacementRulesForRelics : function() {
+            var self = this;
+            this.zone.relics["0"].itemIdToCoordsGrid = function(i, control_width) {                
+                var w = self.card_dimensions[this.HTML_class].width;
+                var h = self.card_dimensions[this.HTML_class].height;
+                
+                var x = (i % 3) * (w + 10);
+                if (i >= 3) {
+                    x = x + ((w + 10) / 2);
+                }
+                var y = parseInt(i / 3 ) * (h + 5);
+                
+                return {'x':x, 'y':y, 'w':w, 'h':h};
+            }
+        },
         
         setPlacementRulesForAchievements : function() {
             var self = this;
-            var zone = this.zone.achievements["0"];
-            
-            zone.itemIdToCoordsGrid = function(i, control_width) {                
+            this.zone.achievements["0"].itemIdToCoordsGrid = function(i, control_width) {                
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
                 var x = parseInt(i / 3) * (w + 10)
-                var y = (i %3 ) * (h + 5) 
+                var y = (i % 3 ) * (h + 5) 
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h}
             }
@@ -2204,9 +2234,7 @@ function (dojo, declare) {
         
         setPlacementRulesForSpecialAchievements : function() {
             var self = this;
-            var zone = this.zone.special_achievements["0"];
-            
-            zone.itemIdToCoordsGrid = function(i, control_width) {                
+            this.zone.special_achievements["0"].itemIdToCoordsGrid = function(i, control_width) {                
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
@@ -3027,7 +3055,7 @@ function (dojo, declare) {
                 }
             }
 
-            var zone_from = card.age === null ? this.zone.special_achievements[0] : this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
+            var zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
             var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
             
             var visible_from = this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too

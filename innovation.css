@@ -600,7 +600,12 @@
     height: 100%;
 }
 
-/* Available achievements */
+/* Available relics/achievements */
+
+#relics {
+    margin-left: 45px;
+}
+
 #achievements {
     margin-left: 45px;
 }
@@ -1576,6 +1581,18 @@
 
 .type_1.S.recto {
     background-position-y: -54px;
+}
+
+.type_2.S.recto {
+    background-position-y: -105px;
+}
+
+.type_3.S.recto {
+    background-position-y: -156px;
+}
+
+.type_4.S.recto {
+    background-position-y: -207px;
 }
 
 .age_1.S.recto {
