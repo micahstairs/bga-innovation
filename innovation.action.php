@@ -92,6 +92,33 @@
         self::ajaxResponse();
     }
 
+    public function passSeizeRelic() {
+        self::setAjaxMode();
+        
+        // Call passSeizeRelic from game logic
+        $this->game->passSeizeRelic();
+        
+        self::ajaxResponse();
+    }
+
+    public function seizeRelicToHand() {
+        self::setAjaxMode();
+        
+        // Call seizeRelicToHand from game logic
+        $this->game->seizeRelicToHand();
+        
+        self::ajaxResponse();
+    }
+
+    public function seizeRelicToAchievements() {
+        self::setAjaxMode();
+        
+        // Call seizeRelicToAchievements from game logic
+        $this->game->seizeRelicToAchievements();
+        
+        self::ajaxResponse();
+    }
+
     public function dogmaArtifactOnDisplay() {
         self::setAjaxMode();
         

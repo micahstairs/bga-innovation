@@ -921,11 +921,14 @@ function (dojo, declare) {
                 
                 switch (stateName) {
                 case 'artifactPlayerTurn':
+                    // TODO: I think this can be removed because it is immediately replaced by
+                    // addTooltipWithMeldActionToMyArtifactOnDisplay in another function.
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay();
                     break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
                     this.addTooltipsWithoutActionsToMyBoard();
+                    // TODO: Figure out if this fallthrough is intentional or is a bug. Maybe this is causing https://boardgamearena.com/bug?id=13012.
                 case 'selectionMove':
                     // Reset tooltips for board (in case there was a splaying choice)
                     this.addTooltipsWithoutActionsToMyBoard();
@@ -940,6 +943,21 @@ function (dojo, declare) {
         onUpdateActionButtons: function (stateName, args) {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
+                case 'relicPlayerTurn':
+                    if (args.can_seize_to_hand) {
+                        this.addActionButton("seize_relic_to_hand", _("Seize Relic to Hand"), "action_clicForSeizeRelicToHand");
+                    }
+                    if (args.can_seize_to_achievements) {
+                        this.addActionButton("seize_relic_to_achievements", _("Seize Relic to Achievements Pile"), "action_clicForSeizeRelicToAchievements");
+                    }
+                    this.addActionButton("pass_seize_relic", _("Pass"), "action_clicForPassSeizeRelic");
+                    if (args.can_seize_to_hand && args.can_seize_to_achievements) {
+                        dojo.place("<span class='extra_text'> , </span>", "seize_relic_to_hand", "after");
+                        dojo.place("<span class='extra_text'> , " + _("or") + "</span>", "pass_seize_relic", "before");
+                    } else {
+                        dojo.place("<span class='extra_text'> " + _("or") + "</span>", "pass_seize_relic", "before");
+                    }
+                    break;
                 case 'artifactPlayerTurn':
                     this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
                     dojo.place("<span class='extra_text'> , </span>", "dogma_artifact", "after");
@@ -2380,6 +2398,48 @@ function (dojo, declare) {
                             },
                              this, function(result){}, function(is_error){this.resurrectClickEvents(is_error);}
                         );
+        },
+
+        action_clicForSeizeRelicToHand : function() {
+            if (!this.checkAction('seizeRelicToHand')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/seizeRelicToHand.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clicForSeizeRelicToAchievements : function() {
+            if (!this.checkAction('seizeRelicToAchievements')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/seizeRelicToAchievements.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clicForPassSeizeRelic : function() {
+            if (!this.checkAction('passSeizeRelic')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/passSeizeRelic.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
         },
 
         action_clicForDogmaArtifact : function() {

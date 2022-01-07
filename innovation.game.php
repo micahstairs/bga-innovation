@@ -102,6 +102,7 @@ class Innovation extends Table
             'age_array' => 77,
             'player_array' => 78,
             
+            'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
             'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
@@ -156,7 +157,7 @@ class Innovation extends Table
         } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as an relic");
+            throw new BgaUserException("This card is used as a relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else {
@@ -173,7 +174,7 @@ class Innovation extends Table
         if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
             throw new BgaUserException("You already have this card as an achievement");
         } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as an relic");
+            throw new BgaUserException("This card is used as a relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements') {
@@ -203,7 +204,7 @@ class Innovation extends Table
         } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as an relic");
+            throw new BgaUserException("This card is used as a relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display') {
@@ -234,7 +235,7 @@ class Innovation extends Table
         } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as an relic");
+            throw new BgaUserException("This card is used as a relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'deck') {
@@ -407,6 +408,9 @@ class Innovation extends Table
         
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
+
+        // Flag specific to seizing Relics
+        self::setGameStateInitialValue('relic_id', -1);
         
         // Init game statistics
         self::initStat('table', 'turns_number', 0);
@@ -1825,6 +1829,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
             $message_for_others = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
             break;
+        case 'relics->achievements':
+            $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic to your achievements.');
+            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his achievements.');
+            break;
         case 'relics->hand':
             $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} ${<<}${name}${>>} to your hand.');
             $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
@@ -2160,6 +2168,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your board.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board.');
+                break;
+
+            case 'achievements->achievements':
+                $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic from ${opponent_name}\'s achievements to your achievements.');
+                $message_for_opponent = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${your} achievements to his achievements.');
+                $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${opponent_name}\'s achievements to his achievements.');
                 break;
                 
             default:
@@ -5251,6 +5265,45 @@ class Innovation extends Table
         $this->gamestate->setPlayerNonMultiactive($player_id, '');
     }
 
+    function passSeizeRelic() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('passSeizeRelic');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to seize the relic.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to seize the relic.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        self::setGameStateValue('relic_id', -1);
+
+        self::trace('relicPlayerTurn->interPlayerTurn (passSeizeRelic)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function seizeRelicToHand() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('seizeRelicToHand');
+
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardInfo(self::getGameStateValue('relic_id'));
+        self::transferCardFromTo($card, $player_id, 'hand');
+        self::setGameStateValue('relic_id', -1);
+
+        self::trace('relicPlayerTurn->interPlayerTurn (seizeRelicToHand)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function seizeRelicToAchievements() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('seizeRelicToAchievements');
+
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardInfo(self::getGameStateValue('relic_id'));
+        self::transferCardFromTo($card, $player_id, 'achievements');
+        self::setGameStateValue('relic_id', -1);
+
+        self::trace('relicPlayerTurn->interPlayerTurn (seizeRelicToAchievements)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
     function dogmaArtifactOnDisplay() {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('dogmaArtifactOnDisplay');
@@ -5278,7 +5331,6 @@ class Innovation extends Table
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
         self::transferCardFromTo($card, 0, 'deck');
 
-        // Return to the resolution of the effect
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
     }
@@ -5293,7 +5345,6 @@ class Innovation extends Table
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
-        // Return to the resolution of the effect
         self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
     }
@@ -5398,29 +5449,27 @@ class Innovation extends Table
             return;
         }
         
-        // After a meld occurs, the following actions occur in this order:
-        // 1) Execute a City icon's effect.
-        // 2) Draw a City.
-        // 3) Dig an artifact, and place it "on display".
-        self::digArtifactIfEligible($player_id, $previous_top_card, $card);
-        // 4) Promote a foreshadowed card.
-        // 5) Execute a figure's "when" karma effect.
-
+        if (self::tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $card)) {
+            self::trace('playerTurn->relicPlayerTurn');
+            $this->gamestate->nextState('relicPlayerTurn');
+            return;
+        }
         
         // End of player action
         self::trace('playerTurn->interPlayerTurn (meld)');
         $this->gamestate->nextState('interPlayerTurn');
     }
 
-    function digArtifactIfEligible($player_id, $previous_top_card, $melded_card) {
+    /* Returns true if a relic is being seized */
+    function tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $melded_card) {
         // The Artifacts expansion is not enabled.
         if (self::getGameStateValue('artifacts_mode') == 1) {
-            return;
+            return false;
         }
 
         // An Artifact is already on display.
         if (self::getArtifactOnDisplay($player_id) !== null) {
-            return;
+            return false;
         }
                 
         // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
@@ -5430,18 +5479,25 @@ class Innovation extends Table
             
             // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
             $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['age']);
-            $top_artifact_card = self::getDeckTopCard($age_draw, 1);
+            $top_artifact_card = self::getDeckTopCard($age_draw, /*type=*/ 1);
             
             if ($top_artifact_card == null) {
-                self::notifyPlayer($melded_card['owner'], "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
+                self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
             } else {
-                self::transferCardFromTo($top_artifact_card, $melded_card['owner'], 'display');
+                self::transferCardFromTo($top_artifact_card, $player_id, 'display');
                 
-                // TODO: Seizing a relic
-                // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn.
-                // You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
+                // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
+                if (self::getGameStateValue('artifacts_mode') == 3) {
+                    $relic = self::getRelicForAge($top_artifact_card['age']);
+                    // "You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
+                    if ($relic != null && ($relic['location'] == 'relics' || $relic['location'] == 'achievements')) {
+                        self::setGameStateValue('relic_id', $relic['id']);
+                        return true;
+                    }
+                }
             }
         }
+        return false;
     }
 
     function haveOverlappingHexagonIcons($card_1, $card_2) {
@@ -5452,7 +5508,15 @@ class Innovation extends Table
             ($card_1['spot_3'] == 0 && $card_2['spot_3'] == 0) ||
             ($card_1['spot_4'] == 0 && $card_2['spot_4'] == 0);
     }
-    
+
+    function getRelicForAge($age) {
+        // The IDs of the relic cards are in the range 215-219
+        if ($age >= 3 && $age <= 7) {
+            $id = 212 + $age;
+        }
+        return $id ? self::getCardInfo($id) : null;
+    }
+
     function dogma($card_id) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('dogma');
@@ -5937,6 +6001,30 @@ class Innovation extends Table
             return array('team_game' => true, 'messages' => $messages);
         }
         return array('team_game' => false);
+    }
+
+    function argRelicPlayerTurn() {
+        $player_id = self::getGameStateValue('active_player');
+        $relic = self::getCardInfo(self::getGameStateValue('relic_id'));
+        // TODO: You can only seize to your hand if the relic's set is currently in play.
+        return array(
+            'can_seize_to_hand' => self::relicSetIsInUse($relic) && ($relic['location'] != 'hand' || $relic['owner'] != $player_id),
+            'can_seize_to_achievements' => $relic['location'] != 'achievements' || $relic['owner'] != $player_id
+        );
+    }
+
+    /* Returns whether the relic's set is being used for this game. */
+    function relicSetIsInUse($relic) {
+        switch ($relic['age']) {
+            // Base set
+            case 0:
+                return true;
+            case 1:
+                return self::getGameStateValue('artifacts_mode') > 1;
+            // TODO: Add other cases when we implement other expansions.
+            default:
+                return false;
+        }
     }
 
     function argPlayerTurn() {

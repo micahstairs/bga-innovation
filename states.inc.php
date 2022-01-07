@@ -90,7 +90,12 @@ $machinestates = array(
         "type" => "activeplayer",
         "possibleactions" => array("draw", "meld", "dogma", "achieve"),
         "args" => "argPlayerTurn",
-        "transitions" => array("interPlayerTurn" => 5, "dogmaEffect" => 6, "justBeforeGameEnd" => 98)
+        "transitions" => array(
+            "interPlayerTurn" => 5,
+            "dogmaEffect" => 6,
+            "relicPlayerTurn" => 16,
+            "justBeforeGameEnd" => 98
+        )
     ),
     
     5 => array(
@@ -221,6 +226,16 @@ $machinestates = array(
         "type" => "activeplayer",
         "possibleactions" => array("dogmaArtifactOnDisplay", "returnArtifactOnDisplay", "passArtifactOnDisplay"),
         "transitions" => array("playerTurn" => 4, "dogmaEffect" => 6, "justBeforeGameEnd" => 98)
+    ),
+
+    16 => array(
+        "name" => "relicPlayerTurn",
+        "description" => clienttranslate('${actplayer} must choose whether to seize the relic'),
+        "descriptionmyturn" => clienttranslate('${You} must choose whether to:'),
+        "args" => "argRelicPlayerTurn",
+        "type" => "activeplayer",
+        "possibleactions" => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),
+        "transitions" => array("interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
     ),
    
     // Final state.
