@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `card` (
   `spot_4` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-right, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
   `dogma_icon` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Feature icon for dogma, 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
   `has_demand` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card has at least one demand effect (will be populated using data in material.inc.php file)',
+  `is_relic` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card is a relic',
   `owner` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Id of the player who owns the card or 0 if no owner',
   `location` VARCHAR(12) NOT NULL DEFAULT 'deck' COMMENT 'Hand, board, score, achievements, deck, display or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
   `position` TINYINT UNSIGNED DEFAULT 0 COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the color piles, 0 for the bottom card, maximum for active card.',
@@ -132,15 +133,15 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
 /* Insert relic cards */
 
-INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `location`, `position`) VALUES
+INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `is_relic`, `location`, `position`) VALUES
 
 /* TODO: When implementing Cities, add extra icons to this card */
-(215, 2, 3, 2, 3, 1, 1, 1, NULL, 'relics', 0),
-(216, 0, 4, 0, 5, 0, 3, 3, 3, 'relics', 1),
-(217, 1, 5, 4, 5, 3, 5, 0, 5, 'relics', 2),
-(218, 4, 6, 1, 6, 6, 0, 2, 6, 'relics', 3),
+(215, 2, 3, 2, 3, 1, 1, 1, NULL, TRUE, 'relics', 0),
+(216, 0, 4, 0, 5, 0, 3, 3, 3,    TRUE, 'relics', 1),
+(217, 1, 5, 4, 5, 3, 5, 0, 5,    TRUE, 'relics', 2),
+(218, 4, 6, 1, 6, 6, 0, 2, 6,    TRUE, 'relics', 3),
 /* TODO: When implementing Echoes, add Echo effect to this card */
-(219, 3, 7, 3, 0, 0, 2, 2, 2, 'relics', 4);
+(219, 3, 7, 3, 0, 0, 2, 2, 2,    TRUE, 'relics', 4);
 
 /* Insert normal cards */
 
