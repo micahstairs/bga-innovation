@@ -132,11 +132,13 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
 INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `location`, `position`) VALUES
 
-(215, 2, 3, 2, 3, 1, 1, 1, NULL, 'relics', 0), /* TODO: When implementing Cities, add extra icons to this card */
+/* TODO: When implementing Cities, add extra icons to this card */
+(215, 2, 3, 2, 3, 1, 1, 1, NULL, 'relics', 0),
 (216, 0, 4, 0, 5, 0, 3, 3, 3, 'relics', 1),
 (217, 1, 5, 4, 5, 3, 5, 0, 5, 'relics', 2),
 (218, 4, 6, 1, 6, 6, 0, 2, 6, 'relics', 3),
-(219, 3, 7, 3, 0, 0, 2, 2, 2, 'relics', 4); /* TODO: When implementing Echoes, add Echo effect to this card */
+/* TODO: When implementing Echoes, add Echo effect to this card */
+(219, 3, 7, 3, 0, 0, 2, 2, 2, 'relics', 4);
 
 /* Insert normal cards */
 
