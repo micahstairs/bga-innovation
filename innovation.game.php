@@ -9053,6 +9053,11 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
 
+            // id 146, Artifacts age 4: Delft Pocket Telescope
+            case "146N1":
+                $step_max = 1;
+                break;
+
             // id 147, Artifacts age 4: East India Company Charter
             case "147N1":
                 $step_max = 2;
@@ -12422,6 +12427,55 @@ class Innovation extends Table
             );
             break;
 
+        // id 146, Artifacts age 4: Delft Pocket Telescope
+        case "146N1A":
+            // "Return a card from your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+            
+        case "146N1B":            
+            // "Return the drawn cards"
+             $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_id_1' => self::getGameStateValue('card_id_1'),
+                'card_id_2' => self::getGameStateValue('card_id_2')
+            );            
+            break;
+
+        case "146N1C":
+            // "Reveal one of the drawn cards that has a symbol in common with the returned card"   
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed',
+
+                'card_id_1' => self::getGameStateValue('card_id_1'),
+                'card_id_2' => self::getGameStateValue('card_id_2')
+            );
+            break;
+
         // id 147, Artifacts age 4: East India Company Charter
         case "147N1A":
             // "Choose a value other than 5"
@@ -14398,6 +14452,61 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 146, Artifacts age 4: Delft Pocket Telescope
+                case "146N1A":
+                    // Reset the max steps in case the effect is being repeated
+                    self::setStepMax(1);
+
+                    if ($n > 0) { // "If you do"
+                        // "Draw a 5 and a 6"
+                        $card_1 = self::executeDraw($player_id, 5);
+                        self::setGameStateValue('card_id_1', $card_1['id']);
+                        $card_2 = self::executeDraw($player_id, 6);
+                        self::setGameStateValue('card_id_2', $card_2['id']);
+
+                        // Check if any icons on the returned card match one of the drawn cards
+                        $returned_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        $matching_icon_on_card_1 = false;
+                        $matching_icon_on_card_2 = false;
+                        for ($icon = 1; $icon <= 6; $icon++) { 
+                            $has_icon = self::hasRessource($returned_card, $icon);
+                            if ($has_icon && self::hasRessource($card_1, $icon)) {
+                                $matching_icon_on_card_1 = true;
+                            }
+                            if ($has_icon && self::hasRessource($card_2, $icon)) {
+                                $matching_icon_on_card_2 = true;
+                            }
+                        }
+                        
+                        if (!$matching_icon_on_card_1 && !$matching_icon_on_card_2) {
+                            // "If you cannot"
+                            self::setStepMax(2);
+                        } else {
+                            // Skip to the third interaction
+                            $step++;
+                            self::incrementStep(1);
+                            self::setStepMax(3);
+
+                            // Remove card as an option if it does not have any matching symbols
+                            if (!$matching_icon_on_card_1) {
+                                self::setGameStateValue('card_id_1', -1);
+                            } else if (!$matching_icon_on_card_2) {
+                                self::setGameStateValue('card_id_2', -1);
+                            }
+                        }
+                    }
+                    break;
+
+                case "146N1B":
+                    $step = $step - 2;
+                    self::incrementStep(-2); // "And repeat this effect"
+                    break;
+
+                case "146N1C":
+                    // Move revealed card back to the player's hand
+                    self::transferCardFromTo(self::getCardInfo(self::getGameStateValue('id_last_selected')), $player_id, 'hand');
+                    break;
+                    
                 // id 147, Artifacts age 4: East India Company Charter
                 case "147N1B":
                     // "For each player that returned cards, draw and score a 5"
