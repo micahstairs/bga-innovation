@@ -9523,6 +9523,73 @@ class Innovation extends Table
                 }
                 break;
 
+            // id 209, Artifacts age 10: Maastricht Treaty
+            case "209N1":
+                // "If you have the most cards in your score pile, you win"
+                $win_condition_met = true;
+                $cards_in_my_score_pile = self::countCardsInLocation($player_id, 'score');
+                $players = self::loadPlayersBasicInfos();
+                foreach ($players as $any_player_id => $player) {
+                    if ($player_id != $any_player_id && self::countCardsInLocation($any_player_id, 'score') >= $cards_in_my_score_pile) {
+                        $win_condition_met = false;
+                    }
+                }
+                if ($win_condition_met) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards in your score pile.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in their score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id);
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Maastricht Treaty');
+                    throw new EndOfGame();
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards in your score pile.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in their score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                }
+                break;
+
+            // id 210, Artifacts age 10: Seikan Tunnel
+            case "210N1":
+                // "If you have the most cards of a color showing on your board out of all colors on all boards, you win"
+                $win_condition_met = true;
+                // Get all of the visible card counts
+                $visible_card_counts = array();
+                for($color = 0; $color < 5; $color++){
+                    $visible_card_counts[] = self::countVisibleCards($player_id, $color);
+                }
+                
+                // See if the max happens more than once  
+                // TODO: Waiting for clarification on this: https://boardgamegeek.com/thread/1937834/seikan-tunnel-artifact-rules-question.
+                $max_visible_card_count = max($visible_card_counts);
+                foreach (array_count_values($visible_cards_on_board) as $value => $count) {
+                    if ($count > 1 && $value == $max_visible_card_count) {
+                        $win_condition_met = false;
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have multiple piles with the same maximum number of visible cards in a pile.'), array('You' => 'You'));
+                    }
+                }
+
+                if ($win_condition_met) {
+                    $players = self::loadPlayersBasicInfos();
+                    foreach ($players as $any_player_id => $player) {
+                        if ($player_id != $any_player_id) {
+                            for ($color = 0; $color < 5; $color++){
+                                if ($max_visible_card_count <= self::countVisibleCards($any_player_id, $color)) {
+                                    $win_condition_met = false;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // There is a single pile on your board that has the most cards of all piles on all boards
+                    // TODO: Revise wording once we get a clarification on https://boardgamegeek.com/thread/1937834/seikan-tunnel-artifact-rules-question.
+                    if ($win_condition_met) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most visible cards in a pile.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most visible cards in a pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Seikan Tunnel');
+                        throw new EndOfGame();
+                    }
+                }
+                break;
+                
             // id 211, Artifacts age 10: Dolly the Sheep
             case "211N1":
                 $step_max = 3;
