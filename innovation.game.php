@@ -8805,11 +8805,19 @@ class Innovation extends Table
              case "125N1":
                 // "Draw and meld a 3"
                 $melded_card = self::executeDraw($player_id, 3, 'board');
-                
+               
+                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$melded_card['color']];
                 // "Meld your bottom card of the drawn card's color"
-                $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
-                self::transferCardFromTo($bottom_card, $player_id, 'board');
-
+                if ($number_of_cards > 1) {
+                    $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
+                    self::transferCardFromTo($bottom_card, $player_id, 'revealed'); // reveal
+                    $bottom_card = self::getCardInfo($bottom_card['id']);
+                    self::transferCardFromTo($bottom_card, $player_id, 'board'); // move to top
+                    $bottom_card = self::getCardInfo($bottom_card['id']);
+                }
+                else {
+                    $bottom_card = $melded_card;
+                }
                 // "Execute its non-demand dogma effects. Do not share them."
                 self::executeNonDemandEffects($bottom_card);
                 break;
