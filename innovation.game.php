@@ -9100,6 +9100,11 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
 
+            // id 153, Artifacts age 4: Cross of Coronado
+            case "153N1":
+                $step_max = 1; // --> 1 interaction
+                break;
+
             // id 154, Artifacts age 4: Abell Gallery Harpsichord
             case "154N1":
                 // "For each value of top card on your board appearing exactly once draw and score a card of that value in ascending order"
@@ -12749,6 +12754,20 @@ class Innovation extends Table
                 'with_icon' => 1 /* tower */
             );
             break;
+            
+        // id 153, Artifacts age 4: Cross of Coronado
+        case "153N1A":    
+            // "Reveal your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+            break;
 
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
@@ -14687,6 +14706,40 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 153, Artifacts age 4: Cross of Coronado
+                case "153N1A":
+                	// "If you have exactly five cards and five colors in your hand, you win."
+                    $cards = self::getCardsInLocation($player_id, 'revealed');
+                    $i_win = true;
+                    if (count($cards) == 5) {
+                        $color_counts = array(0,0,0,0,0);
+                        foreach ($cards as $card) {
+                            if ($color_counts[$card['color']] == 0) {
+                                $color_counts[$card['color']] = 1;
+                            }
+                            else {
+                                $i_win = false;
+                            }
+                        }
+                    }
+                    else {
+                        $i_win = false;
+                    }
+                    
+                    if($i_win) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 5 cards in hand and 5 colors.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 5 cards in hand and 5 colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn CrossofCoronado');
+                        throw new EndOfGame();
+                    }
+                    else {
+                        foreach ($cards as $card) {
+                            self::transferCardFromTo($card, $player_id, 'hand');
+                        }
+                    }
+                    break;
+                    
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
