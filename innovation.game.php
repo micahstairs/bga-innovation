@@ -5510,11 +5510,12 @@ class Innovation extends Table
     }
 
     function getRelicForAge($age) {
+        $id = null;
         // The IDs of the relic cards are in the range 215-219
         if ($age >= 3 && $age <= 7) {
             $id = 212 + $age;
         }
-        return $id ? self::getCardInfo($id) : null;
+        return $id == null ? null : self::getCardInfo($id);
     }
 
     function dogma($card_id) {
