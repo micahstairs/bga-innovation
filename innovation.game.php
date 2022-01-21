@@ -6764,6 +6764,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
+            // id 214, Artifacts age 10: Twister
+            case "214C1A":
+                $message_for_player = clienttranslate('${You} must choose a color to meld');
+                $message_for_others = clienttranslate('${player_name} must choose a color to meld');
+				break;
+				
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -10107,6 +10113,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 217, Relic age 5: Newton-Wickins Telescope
             case "217N1":
                 $step_max = 1;
+                break;
+            
+            // id 214, Artifacts age 10: Twister
+            case "214C1":
+                // "I compel you to reveal your score pile!"
+                $score_cards = self::getCardsInLocation($player_id, 'score');
+                if(count($score_cards) > 0) {
+                    
+                    foreach($score_cards as $card) {
+                        self::transferCardFromTo($card, $player_id, 'revealed');
+                    }
+                    $colors = array();
+                    for ($i=0; $i < 5; $i++) {
+                        foreach($score_cards as $card) {
+                            if ($card['color'] == $i) {
+                                $colors[] = $i;
+                                break; // Move to next color
+                            }
+                        }
+                    }
+                    // This function automatically removes repeats
+                    self::setAuxiliaryValueFromArray($colors);
+                    
+                    $step_max = 2; // --> 2 interactions
+                }
                 break;
                 
             default:
@@ -14384,6 +14415,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+       // id 214, Artifacts age 10: Twister
+        case "214C1A":
+            // "For each color,"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'color' => self::getAuxiliaryValueAsArray(),
+                'choose_color' => true
+            );
+            break;
+
+        case "214C1B":
+            // "meld a card of that color from your score pile!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'color' => array(self::getGameStateValue('color_last_selected')),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -15910,8 +15968,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $player_id, 'deck');
                         }
                     }
+                    break;                                     
+
+                // id 214, Artifacts age 10: Twister
+                case "214C1B":
+                    // Determine what colors are left
+                    $colors_left = self::getAuxiliaryValueAsArray();
+                    $colors = array();
+                    foreach ($colors_left as $color) {                        
+                        if ($color != self::getGameStateValue('color_last_selected')) {
+                            $colors[] = $color;
+                        }
+                    }                    
+                    self::setAuxiliaryValueFromArray($colors);
+                    $color_cnt_left = count($colors);
+                    
+                    if ($color_cnt_left > 1) {
+                        $step -= 2; self::incrementStep(-2);
+                    }
+                    elseif ($color_cnt_left == 1) {
+                        self::setGameStateValue('color_last_selected', $colors[0]); // pick the last color automatically
+                        $step -= 1; self::incrementStep(-1);
+                    }
+                    
+                    // Put the cards back
+                    if ($color_cnt_left == 0) {
+                        $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    
+                        foreach($revealed_cards as $card) {
+                            self::transferCardFromTo($card, $player_id, 'score', false, false);
+                        }
+                    }
                     break;
-                
+
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -16534,7 +16623,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 self::setAuxiliaryValue($choice);
                 break;
-                
+
+            // id 214, Artifacts age 10: Twister
+            case "214C1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setGameStateValue('color_last_selected', $choice);
+                break;
+                                
             default:
                 if ($splay_direction == -1) {
                     // Do the transfer as stated in B
