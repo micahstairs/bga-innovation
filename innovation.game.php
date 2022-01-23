@@ -9155,6 +9155,11 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
 
+            // id 153, Artifacts age 4: Cross of Coronado
+            case "153N1":
+                $step_max = 1;
+                break;
+
             // id 154, Artifacts age 4: Abell Gallery Harpsichord
             case "154N1":
                 // "For each value of top card on your board appearing exactly once draw and score a card of that value in ascending order"
@@ -12833,6 +12838,21 @@ class Innovation extends Table
                 'with_icon' => 1 /* tower */
             );
             break;
+            
+        // id 153, Artifacts age 4: Cross of Coronado
+        case "153N1A":
+            // TODO: This shouldn't be an interaction, it should be done automatically for the player.
+            // "Reveal your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+            break;
 
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
@@ -14815,6 +14835,23 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 153, Artifacts age 4: Cross of Coronado
+                case "153N1A":
+                	// "If you have exactly five cards and five colors in your hand, you win"
+                    // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation.
+                    $card_count_by_color = self::countCardsInLocation($player_id, 'revealed', /*type=*/ null, /*ordered_by_age=*/false, /*ordered_by_color=*/ true);
+                    if (count(array_diff($card_count_by_color, array(1))) == 0) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
+                        throw new EndOfGame();
+                    }
+                    foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                    break;
+                    
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
