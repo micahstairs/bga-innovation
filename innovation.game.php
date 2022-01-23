@@ -9330,6 +9330,25 @@ class Innovation extends Table
                 self::executeDraw($player_id, self::countVisibleCards($player_id, $card['color']), 'score');
                 break;
 
+            // id 177, Artifacts age 7: Submarine H. L. Hunley
+            case "177C1":
+                // "I compel you to draw and meld a 7" 
+                $card = self::executeDraw($player_id, 7, 'board');
+
+                // "Reveal the bottom card on your board of the melded card's color"
+                $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
+                self::transferCardFromTo($bottom_card, $player_id, 'revealed');
+
+                // "If the revealed card is a 1"
+                if ($bottom_card['age'] == 1) {
+                    $step_max = 1;
+                    self::setAuxiliaryValue($bottom_card['color']);
+                }
+                // Put the revealed card back on the bottom
+                $revealed_card = self::getCardInfo($bottom_card['id']);
+                self::transferCardFromTo($revealed_card, $player_id, 'board', /*bottom_to=*/ true);
+                break;
+
             // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
             case "178N1":
                 // "Draw and score an 8"
@@ -13287,6 +13306,22 @@ class Innovation extends Table
             );
             break;
 
+        // id 177, Artifacts age 7: Submarine H. L. Hunley
+        case "177C1A":
+            // "Return all cards of its color from your board"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'pile',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'color' => array(self::getAuxiliaryValue())
+             );
+            break;
+            
         case "178N1A":
             // "Claim an achievement of value 8 if it is available, ignoring eligibility"
             $options = array(
