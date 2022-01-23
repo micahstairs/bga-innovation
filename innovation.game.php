@@ -5354,7 +5354,6 @@ class Innovation extends Table
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
-        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
 
@@ -5372,8 +5371,8 @@ class Innovation extends Table
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
-        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
         self::transferCardFromTo($card, 0, 'deck');
+        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
@@ -7002,12 +7001,14 @@ class Innovation extends Table
                 }
 
                 // Return the Artifact on display if the free dogma action was used
-                if (self::getNestedCardState(0)['card_location'] == 'display') {
+                $nested_card_state = self::getNestedCardState(0);
+                if ($nested_card_state['card_location'] == 'display') {
                     // Confirm that it's still in the display
                     // TODO: Change this if the Artifact is returned regardless of its final location.
                     if ($card['location'] == 'display') {
                         self::transferCardFromTo($card, 0, 'deck');
                     }
+                    self::decreaseResourcesForArtifactOnDisplay($nested_card_state['launcher_id'], $card);
                 }
             }
 
