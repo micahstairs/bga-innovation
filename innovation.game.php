@@ -9281,18 +9281,21 @@ class Innovation extends Table
 
             // id 177, Artifacts age 7: Submarine H. L. Hunley
             case "177C1":
-                // "I compel you to draw and meld a 7!" 
+                // "I compel you to draw and meld a 7" 
                 $card = self::executeDraw($player_id, 7, 'board');
+
+                // "Reveal the bottom card on your board of the melded card's color"
                 $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
-                // "Reveal the bottom card on your board of the melded card\'s color!"
                 self::transferCardFromTo($bottom_card, $player_id, 'revealed');
-                $bottom_card = self::getCardInfo($bottom_card['id']); // refresh position info
+
+                // "If the revealed card is a 1"
                 if ($bottom_card['age'] == 1) {
                     $step_max = 1;
                     self::setAuxiliaryValue($bottom_card['color']);
                 }
-                // Put the revealed card back on the bottom.
-                self::transferCardFromTo($bottom_card, $player_id, 'board', true /* bottom to */);
+                // Put the revealed card back on the bottom
+                $revealed_card = self::getCardInfo($bottom_card['id']);
+                self::transferCardFromTo($revealed_card, $player_id, 'board', /*bottom_to=*/ true);
                 break;
 
             // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
@@ -13244,7 +13247,7 @@ class Innovation extends Table
 
         // id 177, Artifacts age 7: Submarine H. L. Hunley
         case "177C1A":
-            // "If the revealed card is a 1, return all cards of its color from your board!"
+            // "Return all cards of its color from your board"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
