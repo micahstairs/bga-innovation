@@ -1441,10 +1441,18 @@
     box-shadow: 5px 5px grey;
 }
 
-/* Locations where the square and hexagon icons go on each card */
+/* Locations where the square and hexagon icons go on each card 
+*
+*  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
+*  Square icons should be ~6% of the card width away from the top edge. it is currently 7px
+* 
+*  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
+*
+* LMF: Peer review note -> for graphical choices, we probably can shave off 2px on the bottom 
+*/
 
 .M.top_left_icon.square_card_icon {
-    top: 8px;
+    top: 7px;
     left: 10px;
 }
 
@@ -1454,7 +1462,7 @@
 }
 
 .M.bottom_left_icon.square_card_icon {
-    top: 87px;
+    bottom: 7px;
     left: 10px;
 }
 
@@ -1464,8 +1472,8 @@
 }
 
 .M.bottom_center_icon.square_card_icon {
-    top: 87px;
-    left: 76px;
+    bottom: 7px;
+    left: 72px;
 }
 
 .M.bottom_center_icon.hexagon_card_icon {
@@ -1474,18 +1482,20 @@
 }
 
 .M.bottom_right_icon.square_card_icon {
-    top: 87px;
-    left: 140px;
-
+    bottom: 7px;
+    right: 7px;
 }
 
 .M.bottom_right_icon.hexagon_card_icon {
     top: 85px;
     left: 137px;
-
 }
 
-/* Square card icons (most cards have 3 large resource icons on them) */
+/* Square card icons (most cards have 3 large resource icons on them) 
+*
+*  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
+*  { Background-size, width, height, background-position-x, background-position-y }
+*/
 
 .square_card_icon {
     background-image: url('img/resource_icons.jpg');
