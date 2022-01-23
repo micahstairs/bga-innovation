@@ -810,6 +810,19 @@ class Innovation extends Table
         return (int)($a/$b);
     }
 
+    function playerIdToPlayerNo($player_id) {
+        return self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
+    }
+
+    function playerNoToPlayerId($player_no) {
+        return self::getUniqueValueFromDB(self::format("SELECT player_id FROM player WHERE player_no = {player_no}", array('player_no' => $player_no)));
+    }
+
+    function getAllActivePlayerIds() {
+        return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_eliminated = 0", true);
+    }
+
+
     function getAllActivePlayers() {
         return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
     }
@@ -1975,8 +1988,8 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('{player must} return {number} {card} he revealed');
                 break;
             case 'revealed->board':
-                $message_for_player = clienttranslate('{You must} transfer a {card} you revealed to a board');
-                $message_for_others = clienttranslate('{player must} transfer a {card} he revealed to board');
+                $message_for_player = clienttranslate('{You must} meld {number} {card} you revealed');
+                $message_for_others = clienttranslate('{player must} meld {number} {card} he revealed');
                 break;
             case 'revealed->score':
                 $message_for_player = clienttranslate('{You must} score {number} {card} you revealed');
@@ -2118,9 +2131,9 @@ class Innovation extends Table
                 break;
                 
             case 'revealed->board':
-                $message_for_player = clienttranslate('${You} transfer a card to ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a card to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfers a card to ${opponent_name}\'s board.');
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s board.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} board.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s board.');
                 break;
 
             default:
@@ -2255,7 +2268,7 @@ class Innovation extends Table
 
             case 'revealed->board':
                 $message_for_player = clienttranslate('{You must} transfer {number} {card} to {opponent_name}\'s board');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} to{your} board');
+                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} to {your} board');
                 $message_for_others = clienttranslate('{player must} transfer {number} {card} to {opponent_name}\'s board');
                 break;
 
@@ -5088,6 +5101,22 @@ class Innovation extends Table
     function getAuxiliaryValueAsArray() {
         return self::getValueAsArray(self::getAuxiliaryValue());
     }
+
+    function setAuxiliaryValue2($auxiliary_value_2) {
+        self::updateCurrentNestedCardState('auxiliary_value_2', $auxiliary_value_2);
+    }
+
+    function setAuxiliaryValue2FromArray($array) {
+        self::setAuxiliaryValue2(self::getArrayAsValue($array));
+    }
+
+    function getAuxiliaryValue2() {
+        return self::getCurrentNestedCardState()['auxiliary_value_2'];
+    }
+
+    function getAuxiliaryValue2AsArray() {
+        return self::getValueAsArray(self::getAuxiliaryValue2());
+    }
     
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
@@ -5158,7 +5187,7 @@ class Innovation extends Table
         return self::getObjectFromDB(
             self::format("
                 SELECT
-                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value
+                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
                 FROM
                     nested_card_execution
                 WHERE
@@ -6394,8 +6423,8 @@ class Innovation extends Table
 
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1A":
-                $message_for_player = clienttranslate('Choose a player to receive a card on their board');
-                $message_for_others = clienttranslate('${player_name} must choose a player to receive a card on their board.');
+                $message_for_player = clienttranslate('Choose a player to transfer a card to');
+                $message_for_others = clienttranslate('${player_name} must choose a player to transfer a card to');
                 break;
 
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
@@ -9342,9 +9371,8 @@ class Innovation extends Table
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1":
                 $step_max = 2;
-                // "For each player in the game, draw and reveal a 7."
-                $players = self::loadPlayersBasicInfos();
-                foreach($players as $any_player_id => $player) {
+                // "For each player in the game, draw and reveal a 7"
+                foreach (self::getAllActivePlayerIds() as $any_player_id) {
                     self::executeDraw($player_id, 7, 'revealed');
                 }
                 self::setGameStateValueFromArray('player_array', self::getAllActivePlayers());
@@ -13231,6 +13259,7 @@ class Innovation extends Table
 
         // id 184, Artifacts age 7: The Communist Manifesto
         case "184N1A":
+            // Choose a player
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13242,7 +13271,7 @@ class Innovation extends Table
             break;
 
         case "184N1B":
-            // "Transfer one of the drawn cards to each player's board."
+            // "Transfer one of the drawn cards to each player's board"
             $player_choice = self::getAuxiliaryValue();            
             $options = array(
                 'player_id' => $player_id,
@@ -14750,34 +14779,22 @@ class Innovation extends Table
                 case "184N1B":
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
                     if (self::getAuxiliaryValue() == $player_id) {
-                        // Track which color was melded by the initiator so it can be executed later
-                        self::setGameStateValueFromArray('color_array', array(self::getGameStateValue('color_last_selected')));
+                        // Track which card was melded by the launcher so it can be executed later.
+                        self::setAuxiliaryValue2(self::getGameStateValue('id_last_selected'));
                     }
                     if (count($revealed_cards) > 0) {
-                        // Remove the current choice
+                        // Remove the chosen player from the list of options.
                         $selectable_players = self::getGameStateValueAsArray('player_array');
                         $selected_player = self::getAuxiliaryValue();
-                        $idx = 1; // Player index starts at 1 (0 is the deck)
-                        $players = self::loadPlayersBasicInfos();
-                        foreach($players as $any_player_id => $player) {
-                            if ($any_player_id == $selected_player) {
-                                $selectable_players = array_diff($selectable_players, array($idx)); // Remove player that matches
-                            }
-                            $idx++;
-                        }
+                        $selectable_players = array_diff($selectable_players, array(self::playerIdToPlayerNo($selected_player)));
                         self::setGameStateValueFromArray('player_array', $selectable_players);
                         
+                        // Repeat for next player
                         $step = $step - 2;
-                        self::incrementStep(-2); // Repeat for all players
-                    }
-                    else {
-                        // if no card remains, then execute the effects of the card melded
-                        // by the originator
-                        $melded_color = self::getGameStateValueAsArray('color_array');
-                        $melded_card = self::getTopCardOnBoard($player_id, $melded_color[0]);
-                        
-                        // "Execute the non-demand effects of your card. Do not share them."
-                        self::executeNonDemandEffects($melded_card);
+                        self::incrementStep(-2);
+                    } else {
+                        // "Execute the non-demand effects of your card. Do not share them"
+                        self::executeNonDemandEffects(self::getCardInfo(self::getAuxiliaryValue2()));
                     }
                     break;
                     
@@ -15506,8 +15523,8 @@ class Innovation extends Table
 
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the player ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                // NOTE: It doesn't add any value if we log which player was chosen, since it will be obvious which player
+                // is chosen when the card is transferred to them.
                 self::setAuxiliaryValue($choice);
                 break;
                 

@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
  `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the effect has not triggered another card, 1 means the effect already triggered another card and resumed executing this effect',
  `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
+ `auxiliary_value_2` INT DEFAULT -1 COMMENT 'A second auxiliary value used by certain card implementations',
   PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
