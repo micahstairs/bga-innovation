@@ -9102,7 +9102,7 @@ class Innovation extends Table
 
             // id 153, Artifacts age 4: Cross of Coronado
             case "153N1":
-                $step_max = 1; // --> 1 interaction
+                $step_max = 1;
                 break;
 
             // id 154, Artifacts age 4: Abell Gallery Harpsichord
@@ -12756,8 +12756,9 @@ class Innovation extends Table
             break;
             
         // id 153, Artifacts age 4: Cross of Coronado
-        case "153N1A":    
-            // "Reveal your hand."
+        case "153N1A":
+            // TODO: This shouldn't be an interaction, it should be done automatically for the player.
+            // "Reveal your hand"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14708,35 +14709,18 @@ class Innovation extends Table
 
                 // id 153, Artifacts age 4: Cross of Coronado
                 case "153N1A":
-                	// "If you have exactly five cards and five colors in your hand, you win."
-                    $cards = self::getCardsInLocation($player_id, 'revealed');
-                    $i_win = true;
-                    if (count($cards) == 5) {
-                        $color_counts = array(0,0,0,0,0);
-                        foreach ($cards as $card) {
-                            if ($color_counts[$card['color']] == 0) {
-                                $color_counts[$card['color']] = 1;
-                            }
-                            else {
-                                $i_win = false;
-                            }
-                        }
-                    }
-                    else {
-                        $i_win = false;
-                    }
-                    
-                    if($i_win) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 5 cards in hand and 5 colors.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 5 cards in hand and 5 colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                	// "If you have exactly five cards and five colors in your hand, you win"
+                    // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation.
+                    $card_count_by_color = self::countCardsInLocation($player_id, 'revealed', /*type=*/ null, /*ordered_by_age=*/false, /*ordered_by_color=*/ true);
+                    if (count(array_diff($card_count_by_color, array(1))) == 0) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn CrossofCoronado');
+                        self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
                         throw new EndOfGame();
                     }
-                    else {
-                        foreach ($cards as $card) {
-                            self::transferCardFromTo($card, $player_id, 'hand');
-                        }
+                    foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
                     }
                     break;
                     
