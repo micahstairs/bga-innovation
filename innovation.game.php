@@ -810,6 +810,19 @@ class Innovation extends Table
         return (int)($a/$b);
     }
 
+    function playerIdToPlayerNo($player_id) {
+        return self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
+    }
+
+    function playerNoToPlayerId($player_no) {
+        return self::getUniqueValueFromDB(self::format("SELECT player_id FROM player WHERE player_no = {player_no}", array('player_no' => $player_no)));
+    }
+
+    function getAllActivePlayerIds() {
+        return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_eliminated = 0", true);
+    }
+
+
     function getAllActivePlayers() {
         return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
     }
@@ -1974,6 +1987,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} return {number} {card} you revealed');
                 $message_for_others = clienttranslate('{player must} return {number} {card} he revealed');
                 break;
+            case 'revealed->board':
+                $message_for_player = clienttranslate('{You must} meld {number} {card} you revealed');
+                $message_for_others = clienttranslate('{player must} meld {number} {card} he revealed');
+                break;
             case 'revealed->score':
                 $message_for_player = clienttranslate('{You must} score {number} {card} you revealed');
                 $message_for_others = clienttranslate('{player must} score {number} {card} he revealed');
@@ -2113,6 +2130,11 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his achievements to ${opponent_name}\'s achievements.');
                 break;
                 
+            case 'revealed->board':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s board.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} board.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s board.');
+                break;
 
             default:
                 // This should not happen
@@ -2242,6 +2264,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} transfer {number} {card} from your achievements to {opponent_name}\'s achievements');
                 $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his achievements to {your} achievements');
                 $message_for_others = clienttranslate('{player must} transfer {number} {card} from his achievements to {opponent_name}\'s achievements');
+                break;
+
+            case 'revealed->board':
+                $message_for_player = clienttranslate('{You must} transfer {number} {card} to {opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} to {your} board');
+                $message_for_others = clienttranslate('{player must} transfer {number} {card} to {opponent_name}\'s board');
                 break;
 
             default:
@@ -5073,6 +5101,22 @@ class Innovation extends Table
     function getAuxiliaryValueAsArray() {
         return self::getValueAsArray(self::getAuxiliaryValue());
     }
+
+    function setAuxiliaryValue2($auxiliary_value_2) {
+        self::updateCurrentNestedCardState('auxiliary_value_2', $auxiliary_value_2);
+    }
+
+    function setAuxiliaryValue2FromArray($array) {
+        self::setAuxiliaryValue2(self::getArrayAsValue($array));
+    }
+
+    function getAuxiliaryValue2() {
+        return self::getCurrentNestedCardState()['auxiliary_value_2'];
+    }
+
+    function getAuxiliaryValue2AsArray() {
+        return self::getValueAsArray(self::getAuxiliaryValue2());
+    }
     
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
@@ -5143,7 +5187,7 @@ class Innovation extends Table
         return self::getObjectFromDB(
             self::format("
                 SELECT
-                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value
+                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
                 FROM
                     nested_card_execution
                 WHERE
@@ -5310,7 +5354,6 @@ class Innovation extends Table
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
-        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
 
@@ -5328,8 +5371,8 @@ class Innovation extends Table
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
-        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
         self::transferCardFromTo($card, 0, 'deck');
+        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
@@ -6378,6 +6421,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
+            // id 184, Artifacts age 7: The Communist Manifesto
+            case "184N1A":
+                $message_for_player = clienttranslate('Choose a player to transfer a card to');
+                $message_for_others = clienttranslate('${player_name} must choose a player to transfer a card to');
+                break;
+
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -6952,12 +7001,14 @@ class Innovation extends Table
                 }
 
                 // Return the Artifact on display if the free dogma action was used
-                if (self::getNestedCardState(0)['card_location'] == 'display') {
+                $nested_card_state = self::getNestedCardState(0);
+                if ($nested_card_state['card_location'] == 'display') {
                     // Confirm that it's still in the display
                     // TODO: Change this if the Artifact is returned regardless of its final location.
                     if ($card['location'] == 'display') {
                         self::transferCardFromTo($card, 0, 'deck');
                     }
+                    self::decreaseResourcesForArtifactOnDisplay($nested_card_state['launcher_id'], $card);
                 }
             }
 
@@ -8805,13 +8856,18 @@ class Innovation extends Table
              case "125N1":
                 // "Draw and meld a 3"
                 $melded_card = self::executeDraw($player_id, 3, 'board');
-                
+               
+                // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation
+                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$melded_card['color']];
                 // "Meld your bottom card of the drawn card's color"
-                $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
-                self::transferCardFromTo($bottom_card, $player_id, 'board');
+                if ($number_of_cards > 1) {
+                    $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
+                    $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
+                    $melded_card = self::transferCardFromTo($revealed_card, $player_id, 'board');
+                }
 
                 // "Execute its non-demand dogma effects. Do not share them."
-                self::executeNonDemandEffects($bottom_card);
+                self::executeNonDemandEffects($melded_card);
                 break;
             
             // id 126, Artifacts age 2: Rosetta Stone
@@ -9100,6 +9156,11 @@ class Innovation extends Table
                 $step_max = 1; // --> 1 interaction
                 break;
 
+            // id 153, Artifacts age 4: Cross of Coronado
+            case "153N1":
+                $step_max = 1;
+                break;
+
             // id 154, Artifacts age 4: Abell Gallery Harpsichord
             case "154N1":
                 // "For each value of top card on your board appearing exactly once draw and score a card of that value in ascending order"
@@ -9280,6 +9341,25 @@ class Innovation extends Table
                 self::executeDraw($player_id, self::countVisibleCards($player_id, $card['color']), 'score');
                 break;
 
+            // id 177, Artifacts age 7: Submarine H. L. Hunley
+            case "177C1":
+                // "I compel you to draw and meld a 7" 
+                $card = self::executeDraw($player_id, 7, 'board');
+
+                // "Reveal the bottom card on your board of the melded card's color"
+                $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
+                self::transferCardFromTo($bottom_card, $player_id, 'revealed');
+
+                // "If the revealed card is a 1"
+                if ($bottom_card['age'] == 1) {
+                    $step_max = 1;
+                    self::setAuxiliaryValue($bottom_card['color']);
+                }
+                // Put the revealed card back on the bottom
+                $revealed_card = self::getCardInfo($bottom_card['id']);
+                self::transferCardFromTo($revealed_card, $player_id, 'board', /*bottom_to=*/ true);
+                break;
+
             // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
             case "178N1":
                 // "Draw and score an 8"
@@ -9322,6 +9402,16 @@ class Innovation extends Table
             // id 182, Artifacts age 7: Singer Model 27
             case "182N1":
                 $step_max = 1;
+                break;
+
+            // id 184, Artifacts age 7: The Communist Manifesto
+            case "184N1":
+                $step_max = 2;
+                // "For each player in the game, draw and reveal a 7"
+                foreach (self::getAllActivePlayerIds() as $any_player_id) {
+                    self::executeDraw($player_id, 7, 'revealed');
+                }
+                self::setGameStateValueFromArray('player_array', self::getAllActivePlayers());
                 break;
 
             // id 185, Artifacts age 8: Parnell Pitch Drop
@@ -12749,6 +12839,21 @@ class Innovation extends Table
                 'with_icon' => 1 /* tower */
             );
             break;
+            
+        // id 153, Artifacts age 4: Cross of Coronado
+        case "153N1A":
+            // TODO: This shouldn't be an interaction, it should be done automatically for the player.
+            // "Reveal your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+            break;
 
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
@@ -13227,6 +13332,22 @@ class Innovation extends Table
             );
             break;
 
+        // id 177, Artifacts age 7: Submarine H. L. Hunley
+        case "177C1A":
+            // "Return all cards of its color from your board"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'pile',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'color' => array(self::getAuxiliaryValue())
+             );
+            break;
+            
         case "178N1A":
             // "Claim an achievement of value 8 if it is available, ignoring eligibility"
             $options = array(
@@ -13319,6 +13440,34 @@ class Innovation extends Table
             );
             break;
 
+        // id 184, Artifacts age 7: The Communist Manifesto
+        case "184N1A":
+            // Choose a player
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_player' => true,
+                'players' => self::getGameStateValueAsArray('player_array')
+            );
+            break;
+
+        case "184N1B":
+            // "Transfer one of the drawn cards to each player's board"
+            $player_choice = self::getAuxiliaryValue();            
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => $player_choice,
+                'location_to' => 'board'
+            );
+            break;
+            
         // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E'),
         case "186N1A":
             // "For each value below nine, return a top card of that value from your board, in descending order"
@@ -14687,6 +14836,23 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 153, Artifacts age 4: Cross of Coronado
+                case "153N1A":
+                	// "If you have exactly five cards and five colors in your hand, you win"
+                    // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation.
+                    $card_count_by_color = self::countCardsInLocation($player_id, 'revealed', /*type=*/ null, /*ordered_by_age=*/false, /*ordered_by_color=*/ true);
+                    if (count(array_diff($card_count_by_color, array(1))) == 0) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
+                        throw new EndOfGame();
+                    }
+                    foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                    break;
+                    
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
@@ -14864,6 +15030,29 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 184, Artifacts age 7: The Communist Manifesto
+                case "184N1B":
+                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    if (self::getAuxiliaryValue() == $player_id) {
+                        // Track which card was melded by the launcher so it can be executed later.
+                        self::setAuxiliaryValue2(self::getGameStateValue('id_last_selected'));
+                    }
+                    if (count($revealed_cards) > 0) {
+                        // Remove the chosen player from the list of options.
+                        $selectable_players = self::getGameStateValueAsArray('player_array');
+                        $selected_player = self::getAuxiliaryValue();
+                        $selectable_players = array_diff($selectable_players, array(self::playerIdToPlayerNo($selected_player)));
+                        self::setGameStateValueFromArray('player_array', $selectable_players);
+                        
+                        // Repeat for next player
+                        $step = $step - 2;
+                        self::incrementStep(-2);
+                    } else {
+                        // "Execute the non-demand effects of your card. Do not share them"
+                        self::executeNonDemandEffects(self::getCardInfo(self::getAuxiliaryValue2()));
+                    }
+                    break;
+                    
                 // id 186, Artifacts age 8: Earhart's Lockheed Electra 10E
                 case "186N1A":
                     if ($n > 0) {
@@ -15587,6 +15776,13 @@ class Innovation extends Table
                 self::setAuxiliaryValue($choice);
                 break;
 
+            // id 184, Artifacts age 7: The Communist Manifesto
+            case "184N1A":
+                // NOTE: It doesn't add any value if we log which player was chosen, since it will be obvious which player
+                // is chosen when the card is transferred to them.
+                self::setAuxiliaryValue($choice);
+                break;
+                
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
