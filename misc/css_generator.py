@@ -15,9 +15,13 @@ dest_file = ".\\misc\\to_be_appended_into_innovation.css"
 
 def write_font_sizes(f):
 	for s in range(1, 31):
+		remSize = (s * 0.0625)
+		lineHeight = "line-height: 5px;" if s <=5 else "line-height: 8px;" #LMF: gotta make sure that the fonts over 8 don't matter here
+		
 		f.write(""".font_size_{s} <
-\tfont-size: {s}px;
->\n\n""".format(s=s).replace('<', '{').replace('>', '}'))
+\tfont-size: {remSize}rem;
+\n\t{lineHeight}
+>\n\n""".format(s=s,remSize=remSize,lineHeight=lineHeight).replace('<', '{').replace('>', '}'))
 
 def write_hexagon_icons(f):
 	x = 3
