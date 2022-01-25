@@ -25,6 +25,8 @@ php bga-sharedcode/misc/bgaprojectrename.php innovation innovationjohnsmith
 ```
 **WARNING:** In order for the script to work correctly, the directory containing our repository should be named `innovation` not `bga-innovation`.
 
+After using the `bgaprojectrename.php` script, check the `innovationjohnsmith.action.php` file and make sure the file contains `class action_innovationjohnsmith extends APP_GameAction` instead of `class action_innovationjohnsmithjohnsmith extends APP_GameAction`. If the name of the action class is wrong, then when you start a game you will just see a blank white screen.
+
 #### Make your changes
 Make all of your changes in this other directory (e.g. `innovationjohnsmith`), testing them on https://studio.boardgamearena.com/ by pushing them to your BGA project. This can be accomplished by using the SFTP extension in VSCode, for example.
 

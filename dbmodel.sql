@@ -84,6 +84,7 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
  `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the effect has not triggered another card, 1 means the effect already triggered another card and resumed executing this effect',
  `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
+ `auxiliary_value_2` INT DEFAULT -1 COMMENT 'A second auxiliary value used by certain card implementations',
   PRIMARY KEY(`nesting_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -316,6 +317,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (149, 1, 4, 2, 3, 3, 3, 0, 3),
 (150, 1, 4, 2, 3, 3, 0, 3, 3),
 (151, 1, 4, 3, 2, 2, 0, 2, 2),
+(153, 1, 4, 4, 1, 1, 0, 1, 1),
 (154, 1, 4, 4, 2, 0, 1, 2, 2),
 
 /* Artifacts - Age 5 */
@@ -343,10 +345,12 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 /* Artifacts - Age 7 */
 (175, 1, 7, 0, 3, 0, 3, 3, 3),
 (176, 1, 7, 0, 2, 3, 0, 2, 2),
+(177, 1, 7, 1, 5, 5, 5, 0, 5),
 (178, 1, 7, 1, 0, 6, 3, 3, 3),
 (179, 1, 7, 2, 1, 0, 1, 5, 1),
 (180, 1, 7, 2, 6, 2, 6, 0, 6),
 (182, 1, 7, 3, 0, 5, 6, 6, 6),
+(184, 1, 7, 4, 1, 1, 0, 2, 1),
 
 /* Artifacts - Age 8 */
 (185, 1, 8, 0, 3, 3, 3, 0, 3),
