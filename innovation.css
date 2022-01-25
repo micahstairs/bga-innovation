@@ -1472,8 +1472,6 @@
 *  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
 *
 *  The Hex icons do not fill their entire box so we have to fudg some of the offsets
-*
-* LMF: Peer review note -> for graphical choices, we probably can shave off 2px on the bottom 
 */
 
 .M.top_left_icon.square_card_icon {
