@@ -3148,7 +3148,16 @@ function (dojo, declare) {
             }
             
             // Update BGA score if needed
-            if(card.location_to == 'achievements') {
+            if(card.owner_from != 0 && card.location_from == 'achievements') {
+                // Decrement player BGA score (all the team in team game)
+                var player_team = this.players[card.owner_from].player_team;
+                for(var player_id in this.players) {
+                    if (this.players[player_id].player_team == player_team) {
+                        this.scoreCtrl[player_id].incValue(-1);
+                    }
+                }
+            }            
+            if(card.owner_to != 0 && card.location_to == 'achievements') {
                 // Increment player BGA score (all the team in team game)
                 var player_team = this.players[card.owner_to].player_team;
                 for(var player_id in this.players) {
