@@ -14287,7 +14287,7 @@ class Innovation extends Table
                         $color = self::getGameStateValue('color_last_selected');
                         $selectable_colors = self::getAuxiliaryValueAsArray();
                         $selectable_colors = array_diff($selectable_colors, array($color)); // Remove the color of the card the player has chosen: he could not choose the same for his next card
-                        self::setGameStateValueFromArray($selectable_colors);
+                        self::setAuxiliaryValueFromArray($selectable_colors);
                     }
                     break;
                     
