@@ -9398,6 +9398,30 @@ class Innovation extends Table
                     }
                 } while (true); // "Repeat this effect"
                 break;
+
+            // id 181, Artifacts age 7: Colt Paterson Revolver
+            case "181C1":
+                // "I compel you to reveal your hand!"
+                $cards = self::getCardsInHand($player_id);
+                $color_array = array(0,0,0,0,0);
+                foreach($cards as $card) {
+                    self::transferCardFromTo($card, $player_id, 'revealed');
+                    $color_array[$card['color']] = 1;
+                }
+                // "Draw a 7!"
+                $new_card = self::executeDraw($player_id, 7);
+
+                // put them back in hand so the return order can be determined by the player
+                $cards = self::getCardsInLocation($player_id, 'revealed');
+                foreach($cards as $card) {
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                }
+                
+                // "If the color of the drawn card matches the color of any other cards in your hand, 
+                if ($color_array[$new_card['color']] == 1) {
+                    $step_max = 2;
+                }
+                break;
                 
             // id 182, Artifacts age 7: Singer Model 27
             case "182N1":
@@ -13407,6 +13431,33 @@ class Innovation extends Table
             );
 
             break;
+
+        // id 181, Artifacts age 7: Colt Paterson Revolver
+        case "181C1A":
+            // "return all cards in your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
+
+        case "181C1B":
+            // "and all cards in your score pile!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
 
         // id 182, Artifacts age 7: Singer Model 27
         case "182N1A":
