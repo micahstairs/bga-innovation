@@ -9404,6 +9404,11 @@ class Innovation extends Table
                 $step_max = 1;
                 break;
 
+            // id 183, Artifacts age 7: Roundhay Garden Scene
+            case "183N1":
+                $step_max = 1;
+                break;
+
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1":
                 $step_max = 2;
@@ -13440,6 +13445,23 @@ class Innovation extends Table
             );
             break;
 
+        // id 183, Artifacts age 7: Roundhay Garden Scene
+        case "183N1A":
+            // "Meld the highest card from your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'age' => self::getMaxAgeInScore($player_id),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $player_id,
+                'location_to' => 'board'
+            );
+            break;
+            
         // id 184, Artifacts age 7: The Communist Manifesto
         case "184N1A":
             // Choose a player
@@ -15030,6 +15052,19 @@ class Innovation extends Table
                     }
                     break;
 
+                // id 183, Artifacts age 7: Roundhay Garden Scene
+                case "183N1A":
+                    if ($n > 0) {
+                        // "Draw and score two cards of value equal to the melded card."
+                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'score');
+                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'score');
+                        
+                        // "Execute the effects of the melded card as if they were on this card. Do not share them."
+                        $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        self::executeAllEffects($card);
+                    }
+                    break;
+                    
                 // id 184, Artifacts age 7: The Communist Manifesto
                 case "184N1B":
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
