@@ -9523,6 +9523,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 } while (true); // "Repeat this effect"
                 break;
+
+            // id 181, Artifacts age 7: Colt Paterson Revolver
+            case "181C1":
+                // "I compel you to reveal your hand"
+                $cards = self::getCardsInHand($player_id);
+                $colors_in_hand = array(0, 0, 0, 0, 0);
+                foreach ($cards as $card) {
+                    // TODO: Instead of physically moving the cards, we should dump the list to the game log.
+                    self::transferCardFromTo($card, $player_id, 'revealed');
+                    $colors_in_hand[$card['color']] = 1;
+                }
+                // "Draw a 7"
+                $new_card = self::executeDraw($player_id, 7);
+
+                // Put them back in hand so the return order can be determined by the player
+                $cards = self::getCardsInLocation($player_id, 'revealed');
+                foreach ($cards as $card) {
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                }
+                
+                // "If the color of the drawn card matches the color of any other cards in your hand"
+                if ($colors_in_hand[$new_card['color']] == 1) {
+                    $step_max = 2;
+                }
+                break;
                 
             // id 182, Artifacts age 7: Singer Model 27
             case "182N1":
@@ -13584,6 +13609,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
 
             break;
+
+        // id 181, Artifacts age 7: Colt Paterson Revolver
+        case "181C1A":
+            // "Return all cards in your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
+
+        case "181C1B":
+            // "Return all cards in your score pile"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;            
 
         // id 182, Artifacts age 7: Singer Model 27
         case "182N1A":
