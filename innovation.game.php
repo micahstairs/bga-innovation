@@ -12492,7 +12492,7 @@ class Innovation extends Table
 
         // id 141, Artifacts age 3: Moylough Belt Shrine
         case "141C1A":
-            // "transfer the card of my choice to my board!"
+            // "Transfer the card of my choice to my board"
             $options = array(
                 'player_id' => $launcher_id,
                 'n' => 1,
@@ -14665,6 +14665,7 @@ class Innovation extends Table
                 
                 // id 141, Artifacts age 3: Moylough Belt Shrine
                 case "141C1A":
+                    // Return revealed cards back to player's hand.
                     $cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($cards as $card) {
                         self::transferCardFromTo($card, $player_id, 'hand');
