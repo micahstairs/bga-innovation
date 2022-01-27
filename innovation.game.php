@@ -444,6 +444,9 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 215 <= id AND id <= 219");
         }
 
+        // Create Card icon hash
+        self::setCardIconHash();
+
         // Card shuffling in decks
         self::shuffle();
         
@@ -1233,6 +1236,38 @@ class Innovation extends Table
             }
         }
         return $card;
+    }
+
+    function setCardIconHash() {
+        //LMF: unsure if I have to grab this list from the db, I don't fully understand texual_card_infos.
+        $cards = self::getObjectListFromDB("
+            SELECT
+                id,
+                spot_1,
+                spot_2,
+                spot_3,
+                spot_4
+            FROM
+                card
+        ");
+        
+        foreach ($cards as $card) {
+            //icon_hash_key to be used instead of the db value for icons. 1 is used for hex icons, thus can be ignored through the product
+            $icon_hash_key = array(1,2,3,5,7,13,17);
+            $ind = $card['spot_1'];
+            if(is_null($ind)) {
+                $ind = 1;
+            }
+            $hash_value =  ($icon_hash_key[is_null($card['spot_1'])? 0: $card['spot_1']])
+                               * ($icon_hash_key[is_null($card['spot_2'])? 0: $card['spot_2']])
+                               * ($icon_hash_key[is_null($card['spot_3'])? 0: $card['spot_3']])
+                               * ($icon_hash_key[is_null($card['spot_4'])? 0: $card['spot_4']]);
+            self::DbQuery(self::format("
+                UPDATE card
+                SET icon_hash = {hash_value}
+                WHERE id = {id}
+            ",array('hash_value' => $hash_value, 'id' => $card['id'])));
+        }
     }
     
     /** Splay mechanism **/
@@ -14564,7 +14599,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $color = self::getGameStateValue('color_last_selected');
                         $selectable_colors = self::getAuxiliaryValueAsArray();
                         $selectable_colors = array_diff($selectable_colors, array($color)); // Remove the color of the card the player has chosen: he could not choose the same for his next card
-                        self::setAuxiliaryValueFromArray($selectable_colors);
+                        self::setGameStateValueFromArray($selectable_colors);
                     }
                     break;
                     

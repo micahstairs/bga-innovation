@@ -67,8 +67,13 @@ CREATE TABLE IF NOT EXISTS `card` (
   `position` TINYINT UNSIGNED DEFAULT 0 COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the color piles, 0 for the bottom card, maximum for active card.',
   `splay_direction` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Direction of the splay, 0 (no-splay), 1 (left), 2 (right), 3 (up) OR NULL if this card is not on board',
   `selected` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
+  `icon_hash` INT(32) UNSIGNED DEFAULT NULL COMMENT 'A column that is updated on game start with a calculated has of the card icons for card comparisson regardless of position. ',
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
 
 /* Table used to manage the execution of nested effects */
 /* TODO: Add defaults for some of these columns. */
