@@ -9842,6 +9842,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "211N1":
                 $step_max = 3;
                 break;
+
+            // id 217, Relic age 5: Newton-Wickins Telescope
+            case "217N1":
+                $step_max = 1;
+                break;
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
@@ -13990,6 +13995,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             break;
 
+        // id 217, Relic age 5: Newton-Wickins Telescope
+        case "217N1A":
+            // "You may return any number of cards from your score pile."
+             $options = array(
+                'player_id' => $player_id,
+                'n_min' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
+
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -15399,7 +15419,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "211N1C":
                     // "Then draw a 10"
                     self::executeDraw($player_id, 10);
-                    break;                                     
+                    break;
+                    
+                case "217N1A":
+                    // "If you do, draw and meld a card of value equal to the number of cards returned."
+                    if ($n > 0) {
+                        $card = self::executeDraw($player_id, $n, 'board');
+                        
+                        // "If the melded card has a clock, return it."
+                        if (self::countIconsOnCard($card, 6) > 0) {
+                            self::transferCardFromTo($card, $player_id, 'deck');
+                        }
+                    }
+                    break;
+                
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||

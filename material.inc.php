@@ -2236,9 +2236,9 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 216 => array('name' => clienttranslate('Complex Numbers'),
-    'i_demand_effect_1' => clienttranslate('You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board. If you do, claim an achievement of matching value, ignoring eligibility.'),
+    'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board. If you do, claim an achievement of matching value, ignoring eligibility.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
@@ -2246,9 +2246,9 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 217 => array('name' => clienttranslate('Newton-Wickins Telescope'),
-    'i_demand_effect_1' => clienttranslate('You may return any number of cards from your score pile. If you do, draw and meld a card of value equal to the number of cards returned. If the melded card has a ${icon_6}, return it.'),
+    'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('You may return any number of cards from your score pile. If you do, draw and meld a card of value equal to the number of cards returned. If the melded card has a ${icon_6}, return it.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
