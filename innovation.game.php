@@ -1564,13 +1564,18 @@ class Innovation extends Table
         }
         
         $end_of_game = false;
-        if ($location_to == 'achievements') { // The player has got an extra-achievement
+        if ($owner_from != 0 && $location_from == 'achievements') { // A player is losing an achievement
+            // The number of achievements is the BGA score (not to be confused with the definition of score in Innovation game)
+            // So, decrease BGA score by one
+            self::decrementBGAScore($owner_from);
+        }
+        
+        if ($owner_to != 0 && $location_to == 'achievements') { // A player is gaining an achievement
             // The number of achievements is the BGA score (not to be confused with the definition of score in Innovation game)
             // So, increase BGA score by one
             try {
                 self::incrementBGAScore($owner_to, $card['age'] === null);
-            }
-            catch(EndOfGame $e) {
+            } catch(EndOfGame $e) {
                 $end_of_game = true;
             }
         }
@@ -1850,6 +1855,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} ${<<}${name}${>>} to your hand.');
             $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
             break;
+        case 'achievements->deck':
+            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your achievements.');
+            $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his achievements.');
+            break;
         case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
             if ($card['age'] === null) { // Special achivement
                 $message_for_player = clienttranslate('${You} achieve ${<<<}${achievement_name}${>>>}.');
@@ -1914,6 +1923,10 @@ class Innovation extends Table
                     $message_for_player = clienttranslate('{You must} claim {number} {card} from the available achievements');
                     $message_for_others = clienttranslate('{player must} claim {number} {card} from the available achievements');
                 }
+                break;
+            case 'achievements->deck':
+                $message_for_player = clienttranslate('{You must} return {number} {card} from your achievements');
+                $message_for_others = clienttranslate('{player must} return {number} {card} from his achievements');
                 break;
             case 'hand->deck':
                 $message_for_player = clienttranslate('{You must} return {number} {card} from your hand');
@@ -2123,7 +2136,13 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${your} achievements.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${opponent_name}\'s achievements.');
                 break;     
-            
+
+            case 'revealed->achievements':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s achievements.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} achievements.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s achievements.');
+                break;
+                
             case 'achievements->achievements':
                 $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} from your achievements to ${opponent_name}\'s achievements.');
                 $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his achievements to ${your} achievements.');
@@ -2190,6 +2209,11 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your board.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board.');
+                break;
+                
+            case 'revealed->achievements':
+                $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<}${name}${>>}.');
                 break;
 
             case 'achievements->achievements':
@@ -3370,6 +3394,37 @@ class Innovation extends Table
         )));
     }
 
+
+function getOwnersOfTopCardWithColorAndAge($color, $age) {
+    /**
+    Returns the IDs of all players with a top card of the specified color and age
+    **/
+    return self::getObjectListFromDB(self::format("
+            SELECT
+                a.owner
+            FROM
+                card AS a
+            LEFT JOIN
+                (SELECT
+                    owner, MAX(position) AS position
+                FROM
+                    card
+                WHERE
+                    color = {color} AND
+                    location = 'board'
+                GROUP BY
+                    owner) AS b ON a.owner = b.owner
+            WHERE
+                a.owner != 0 AND
+                a.location = 'board' AND
+                a.color = {color} AND
+                a.age = {age} AND
+                a.position = b.position
+        ",
+        array('color' => $color, 'age' => $age)
+    ), true);
+}
+
     function getTopCardsOnBoard($player_id) {
         /**
         Get all of the top cards on a player board, or null if the player has no cards on his board
@@ -3465,7 +3520,7 @@ class Innovation extends Table
             array('player_id' => $player_id, 'splay_direction' => $splay_direction)
         ), true);
     }
-    
+
     function getMaxAgeOnBoardTopCards($player_id) {
         /**
         Get the age the player is in, that is to say, the maximum age that can be found on his board top cards
@@ -3494,6 +3549,38 @@ class Innovation extends Table
                 a.position = b.position
         ",
             array('player_id' => $player_id)
+       ));
+    }
+    
+    function getMaxAgeOfTopCardOfColor($color) {
+        /**
+        Get the maximum age that can be found on top of any player's pile of a specific color
+        (0 if tno players have that color on their board)
+        **/
+        
+        // Get the max of the age matching the position defined in the sub-request
+        return self::getUniqueValueFromDB(self::format("
+            SELECT
+                COALESCE(MAX(a.age), 0)
+            FROM
+                card AS a
+            LEFT JOIN
+                (SELECT
+                    owner, MAX(position) AS position
+                FROM
+                    card
+                WHERE
+                    color = {color} AND
+                    location = 'board'
+                GROUP BY
+                    owner) AS b ON a.owner = b.owner
+            WHERE
+                a.owner != 0 AND
+                a.location = 'board' AND
+                a.color = {color} AND
+                a.position = b.position
+        ",
+            array('color' => $color)
        ));
     }
     
@@ -3749,6 +3836,34 @@ class Innovation extends Table
         }
     }
     
+    /** Get and update game situation **/
+    function decrementBGAScore($player_id) {
+        $player = self::getObjectFromDB(self::format(
+            "SELECT
+                player_score, player_team
+            FROM
+                player
+            WHERE
+                player_id={player_id}"
+            ,
+                array('player_id' => $player_id)));
+        
+        $player['player_score']--;
+        
+        self::DbQuery(self::format(
+            "UPDATE
+                player
+            SET
+                player_score = {player_score}
+            WHERE
+                player_team={player_team}"
+            ,
+                $player));
+                
+        // Stats
+        self::incStat(-1, 'achievements_number', $player_id);
+    }
+
     function getPlayerScore($player_id) { // Player Innovation score is different from the BGA score (number of achievements)
         return self::getUniqueValueFromDB(self::format("
         SELECT
@@ -6059,7 +6174,7 @@ class Innovation extends Table
 
     /* Returns whether the relic's set is being used for this game. */
     function relicSetIsInUse($relic) {
-        switch ($relic['age']) {
+        switch ($relic['type']) {
             // Base set
             case 0:
                 return true;
@@ -9465,6 +9580,38 @@ class Innovation extends Table
             case "192C1":
                 $step_max = 1;
                 break;
+                
+            // id 194, Artifacts age 8: '30 World Cup Final Ball
+            case "194C1":
+                $step_max = 1;
+                break;
+
+            case "194N1":
+                do {
+                    // "Draw and reveal an 8"
+                    $card = self::executeDraw($player_id, 8, 'revealed');
+                    $color = $card['color'];
+                    
+                    // "The single player with the highest top card of the drawn card's color achieves it, ignoring eligibility"
+                    $player_ids = self::getOwnersOfTopCardWithColorAndAge($color, self::getMaxAgeOfTopCardOfColor($color));
+                    if (count($player_ids) == 1) {
+                        $single_player_id = $player_ids[0];
+                        self::notifyPlayer($single_player_id, 'log', clienttranslate('${You} have the highest top ${color} card.'), array(
+                            'You' => 'You',
+                            'color' => self::getColorInClear($color)
+                        )); 
+                        self::notifyAllPlayersBut($single_player_id, 'log', clienttranslate('${player_name} has the highest top ${color} card.'), array(
+                            'player_name' => self::getColoredText(self::getPlayerNameFromId($single_player_id), $single_player_id),
+                            'color' => self::getColorInClear($color)
+                        ));
+                        self::transferCardFromTo($card, $single_player_id, 'achievements');
+                    } else {
+                        break;
+                    }
+                } while (true); // "If that happens, repeat this effect"
+                self::transferCardFromTo($card, $player_id, 'hand');
+                break;
+                
             
             // id 195, Artifacts age 9: Yeager's Bell X-1A
             case "195N1+":
@@ -13576,6 +13723,21 @@ class Innovation extends Table
                 
                 'with_icon' => 6,
                 'color' => array(0, 1, 2, 4)
+            );
+            break;
+
+        // id 194, Artifacts age 8: 30 World Cup Final Ball
+        case "194C1A":
+            // "I compel you to return one of your achievements"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'deck'                
             );
             break;
 
