@@ -801,7 +801,7 @@
     padding-left: 9px;
     padding-right: 1px;
     padding-bottom: 1px;
-    line-height : 8px;
+    line-height: 8px;
     border-width: 1px;
     border-style: solid;
 }
@@ -1471,7 +1471,7 @@
 * 
 *  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
 *
-*  The Hex icons do not fill their entire box so we have to fudg some of the offsets
+*  The Hex icons do not fill their entire box so we have to fudge some of the offsets
 */
 
 .M.top_left_icon.square_card_icon {
@@ -1536,7 +1536,7 @@
 }
 
 .M.icon_2.square_card_icon  {
-    background-position-x: -39px;
+    background-position-x: -39.5px;
 }
 
 .M.icon_3.square_card_icon  {
@@ -1548,7 +1548,7 @@
 }
 
 .M.icon_5.square_card_icon  {
-    background-position-x: -155px;
+    background-position-x: -154.5px;
 }
 
 .M.icon_6.square_card_icon  {
@@ -1560,11 +1560,11 @@
 }
 
 .M.color_1.square_card_icon  {
-    background-position-y: -39px;
+    background-position-y: -39.5px;
 }
 
 .M.color_2.square_card_icon  {
-    background-position-y: -77px;
+    background-position-y: -78px;
 }
 
 .M.color_3.square_card_icon  {
