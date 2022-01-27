@@ -9133,6 +9133,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "139N1":
                 $step_max = 2; // --> 1 interactions: see B
                 break;
+
+            // id 141, Artifacts age 3: Moylough Belt Shrine
+            case "141C1":
+                // "I compel you to reveal all cards in your hand"
+                $cards = self::getCardsInLocation($player_id, 'hand');
+                foreach ($cards as $card) {
+                    self::transferCardFromTo($card, $player_id, 'revealed');
+                }
+                $step_max = 1;
+                break;
             
             // id 142, Artifacts age 3: Along the River during the Qingming Festival
             case "142N1":
@@ -12627,6 +12637,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 141, Artifacts age 3: Moylough Belt Shrine
+        case "141C1A":
+            // "Transfer the card of my choice to my board"
+            $options = array(
+                'player_id' => $launcher_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board'
+            );
+            break;
+
         // id 143, Artifacts age 3: Necronomicon
         case "143N1A":
             // "If red, return all cards in your score pile"
@@ -14799,7 +14824,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1);
                     }
                     break;
-
+                
+                // id 141, Artifacts age 3: Moylough Belt Shrine
+                case "141C1A":
+                    // Return revealed cards back to player's hand.
+                    $cards = self::getCardsInLocation($player_id, 'revealed');
+                    foreach ($cards as $card) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                    break;
+                    
                 // id 143, Artifacts age 3: Necronomicon
                 case "143N1A":
                     if (self::getAuxiliaryValue() == 1) { // Red
