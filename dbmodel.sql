@@ -71,10 +71,6 @@ CREATE TABLE IF NOT EXISTS `card` (
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-
-
-
 /* Table used to manage the execution of nested effects */
 /* TODO: Add defaults for some of these columns. */
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
