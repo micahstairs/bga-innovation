@@ -1282,7 +1282,7 @@ function (dojo, declare) {
             
             dojo.place(div_title, dojo.body());
             
-            // Determine the font-size between 1 and 30px which enables to fill the container without overflow
+            // Determine the font-size between 1 and 30 which enables to fill the container without overflow
             var font_size = font_max;
             var anc_font_size;
             var HTML_id_parent = $(HTML_id_parent);
