@@ -1239,7 +1239,6 @@ class Innovation extends Table
     }
 
     function setCardIconHash() {
-        //LMF: unsure if I have to grab this list from the db, I don't fully understand texual_card_infos.
         $cards = self::getObjectListFromDB("
             SELECT
                 id,
@@ -4703,8 +4702,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         if (!array_key_exists('splay_direction', $rewritten_options)) {
              $rewritten_options['splay_direction'] = -1;
-        }
-        else { // This is a choice for splay
+        } else { // This is a choice for splay
             $rewritten_options['owner_from'] = $player_id;
             $rewritten_options['location_from'] = 'board'; // Splaying is equivalent as selecting a board card, by design
             $rewritten_options['location_to'] = 'board';
