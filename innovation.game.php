@@ -1239,10 +1239,7 @@ class Innovation extends Table
     }
 
     /*
-     * Grabs all cards in the db
-     * For each card calculate it's icon hash using a product of primes
-     *  Update the card with the calculated value.
-     * A card's icon_hash, when equal to another card's icon_hash, means that the two cards share the same icons in both type and number
+     * Assigns each card in the DB a hash for the icons on the card (equality means that the two cards share the same icons in both type and number).
      */
     function calculateIconHashForAllCards() {
         $cards = self::getObjectListFromDB("
@@ -1257,17 +1254,14 @@ class Innovation extends Table
         ");
         
         foreach ($cards as $card) {
-            //icon_hash_key to be used instead of the db value for icons. 1 is used for hex icons, thus can be ignored through the product
-            $icon_hash_key = array(1,2,3,5,7,13,17);
-            $hash_value =  ($icon_hash_key[$card['spot_1']?: 0])
-                               * ($icon_hash_key[$card['spot_2']?: 0])
-                               * ($icon_hash_key[$card['spot_3']?: 0])
-                               * ($icon_hash_key[$card['spot_4']?: 0]);
-            self::DbQuery(self::format("
-                UPDATE card
-                SET icon_hash = {hash_value}
-                WHERE id = {id}
-            ",array('hash_value' => $hash_value, 'id' => $card['id'])));
+            // 1 is used for hex icons, allowing it to be ignored in the product
+            // TODO: Revisit this when implementing Cities.
+            $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
+            $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
+                          ($icon_hash_key[$card['spot_2'] ?: 0]) *
+                          ($icon_hash_key[$card['spot_3'] ?: 0]) *
+                          ($icon_hash_key[$card['spot_4'] ?: 0]);
+            self::DbQuery(self::format("UPDATE card SET icon_hash = {hash_value} WHERE id = {id}", array('hash_value' => $hash_value, 'id' => $card['id'])));
         }
     }
     
