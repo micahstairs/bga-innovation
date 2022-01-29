@@ -3228,6 +3228,25 @@ class Innovation extends Table
         **/
         return self::getIdsOfHighestOrLowestCardsInLocation($owner, $location, false);
     }
+
+    function getSizeOfMaxVisiblePileOnBoard($owner) {
+        /**
+            Return the size of the pile(s) which have maximum number of visible cards on a specific player's board 
+        **/
+        return self::getUniqueValueFromDB(self::format("
+            SELECT
+                COALESCE(MAX(CASE WHEN splay_direction = 0 THEN 1 ELSE position + 1 END), 0)
+            FROM
+                card
+            WHERE
+                owner = {owner} AND
+                location = 'board'
+        ",
+            array('owner' => $owner)
+       ));
+    }
+
+    
     
     function getOrCountCardsInLocation($count, $owner, $location, $type=null, $ordered_by_age, $ordered_by_color) {
         /**
@@ -9824,43 +9843,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "210N1":
                 // "If you have the most cards of a color showing on your board out of all colors on all boards, you win"
                 $win_condition_met = true;
-                // Get all of the visible card counts
-                $visible_card_counts = array();
-                for($color = 0; $color < 5; $color++){
-                    $visible_card_counts[] = self::countVisibleCards($player_id, $color);
-                }
-                
-                // See if the max happens more than once  
-                // TODO: Waiting for clarification on this: https://boardgamegeek.com/thread/1937834/seikan-tunnel-artifact-rules-question.
-                $max_visible_card_count = max($visible_card_counts);
-                foreach (array_count_values($visible_cards_on_board) as $value => $count) {
-                    if ($count > 1 && $value == $max_visible_card_count) {
+                $max_visible_card_count = self::getSizeOfMaxVisiblePileOnBoard($player_id);
+                foreach (self::getAllActivePlayerIds() as $any_player_id) {
+                    if ($any_player_id != $player_id && self::getSizeOfMaxVisiblePileOnBoard($any_player_id) > $max_visible_card_count) {
                         $win_condition_met = false;
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have multiple piles with the same maximum number of visible cards in a pile.'), array('You' => 'You'));
+                        break;
                     }
                 }
 
+                // There is a pile on your board that has the most cards of all piles on all boards
                 if ($win_condition_met) {
-                    $players = self::loadPlayersBasicInfos();
-                    foreach ($players as $any_player_id => $player) {
-                        if ($player_id != $any_player_id) {
-                            for ($color = 0; $color < 5; $color++){
-                                if ($max_visible_card_count <= self::countVisibleCards($any_player_id, $color)) {
-                                    $win_condition_met = false;
-                                }
-                            }
-                        }
-                    }
-                    
-                    // There is a single pile on your board that has the most cards of all piles on all boards
-                    // TODO: Revise wording once we get a clarification on https://boardgamegeek.com/thread/1937834/seikan-tunnel-artifact-rules-question.
-                    if ($win_condition_met) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most visible cards in a pile.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most visible cards in a pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Seikan Tunnel');
-                        throw new EndOfGame();
-                    }
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id);
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Seikan Tunnel');
+                    throw new EndOfGame();
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
                 break;
                 
