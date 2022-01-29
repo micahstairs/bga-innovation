@@ -444,6 +444,9 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 215 <= id AND id <= 219");
         }
 
+        // Create a hash of the icons for each card
+        self::calculateIconHashForAllCards();
+
         // Card shuffling in decks
         self::shuffle();
         
@@ -1233,6 +1236,33 @@ class Innovation extends Table
             }
         }
         return $card;
+    }
+
+    /*
+     * Assigns each card in the DB a hash for the icons on the card (equality means that the two cards share the same icons in both type and number).
+     */
+    function calculateIconHashForAllCards() {
+        $cards = self::getObjectListFromDB("
+            SELECT
+                id,
+                spot_1,
+                spot_2,
+                spot_3,
+                spot_4
+            FROM
+                card
+        ");
+        
+        foreach ($cards as $card) {
+            // 1 is used for hex icons, allowing it to be ignored in the product
+            // TODO: Revisit this when implementing Cities.
+            $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
+            $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
+                          ($icon_hash_key[$card['spot_2'] ?: 0]) *
+                          ($icon_hash_key[$card['spot_3'] ?: 0]) *
+                          ($icon_hash_key[$card['spot_4'] ?: 0]);
+            self::DbQuery(self::format("UPDATE card SET icon_hash = {hash_value} WHERE id = {id}", array('hash_value' => $hash_value, 'id' => $card['id'])));
+        }
     }
     
     /** Splay mechanism **/
@@ -4668,8 +4698,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         if (!array_key_exists('splay_direction', $rewritten_options)) {
              $rewritten_options['splay_direction'] = -1;
-        }
-        else { // This is a choice for splay
+        } else { // This is a choice for splay
             $rewritten_options['owner_from'] = $player_id;
             $rewritten_options['location_from'] = 'board'; // Splaying is equivalent as selecting a board card, by design
             $rewritten_options['location_to'] = 'board';
