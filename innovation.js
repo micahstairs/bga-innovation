@@ -369,7 +369,7 @@ function (dojo, declare) {
                     
                     // Add cards to zone according to the current situation
                     var num_cards = gamedatas.deck_counts[type][age];
-                    for(var i=0; i<num_cards; i++) {
+                    for (var i=0; i<num_cards; i++) {
                         this.createAndAddToZone(this.zone.deck[type][age], i, age, type, false, null, dojo.body(), null);
                     }
                     
@@ -421,7 +421,7 @@ function (dojo, declare) {
             this.setPlacementRulesForSpecialAchievements();
             
             // Add cards to zone according to the current situation
-            for(var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
+            for (var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
                 var achievement = gamedatas.unclaimed_achievements[i];
                 if (achievement.age !== null) {
                     continue;

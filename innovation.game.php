@@ -3132,6 +3132,8 @@ class Innovation extends Table
                 }
             }
         }
+        $card['is_relic'] = boolval($card['is_relic']);
+        $card['has_demand'] = boolval($card['has_demand']);
         return array_merge($card, $textual_infos);
     }
     
@@ -3309,7 +3311,7 @@ class Innovation extends Table
 
     
     
-    function getOrCountCardsInLocation($count, $owner, $location, $key, $type = null, $is_relic = null) {
+    function getOrCountCardsInLocation($count, $owner, $location, $key = null, $type = null, $is_relic = null) {
         /**
             Get ($count is false) or count ($count is true) all the cards in a particular location, sorted by position. The result can be first keyed by age (for deck or hand) or color (for board) if needed
         **/
@@ -9076,9 +9078,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw and meld a 3"
                 $melded_card = self::executeDraw($player_id, 3, 'board');
                
-                // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation
-                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$melded_card['color']];
                 // "Meld your bottom card of the drawn card's color"
+                $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
                 if ($number_of_cards > 1) {
                     $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
                     $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
@@ -15249,8 +15250,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 153, Artifacts age 4: Cross of Coronado
                 case "153N1A":
                 	// "If you have exactly five cards and five colors in your hand, you win"
-                    // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation.
-                    $card_count_by_color = self::countCardsInLocation($player_id, 'revealed', /*type=*/ null, /*ordered_by_age=*/false, /*ordered_by_color=*/ true);
+                    $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
                     if (count(array_diff($card_count_by_color, array(1))) == 0) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
