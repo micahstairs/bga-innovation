@@ -745,6 +745,15 @@
     line-height: 16px;
 }
 
+/*LMF: might have have something special for yamato */
+.card_age.L {
+    width: 22px;
+    height: 22px;
+    right: 25px;
+    top: 26px;
+    line-height: 16px;
+}
+
 /* Title of the card */
 
 .card_title {
@@ -795,15 +804,16 @@
 .effect.M:nth-of-type(n+2) {
     margin-top: 4px;
 }
-
-.effect.M {
+.effect {
     position: relative;
-    padding-left: 9px;
+    border-style: solid;
+    border-width: 1px;
     padding-right: 1px;
     padding-bottom: 1px;
+}
+.effect.M {
+    padding-left: 9px;
     line-height: 8px;
-    border-width: 1px;
-    border-style: solid;
 }
 
 .card_effects.M > .font_size_1 > .effect.M {
@@ -887,19 +897,19 @@
 /* Elements inside the card in the tooltip */
 
 .card_title.L {
-    left: 128px;
-    top: 7px;
-    width: 220px;
+    left: 137px;
+    top: 21px;
+    width: 236px;
     height: 31px;
     line-height: 31px; /* Ensure that the text is centered horizontally */
     border-width: 2px;
 }
 
 .card_effects.L {
-    left: 127px;
-    top: 43px;
-    width: 321px;
-    height: 145px;
+    left: 135px;
+    top: 64px;
+    width: 309px;
+    height: 137px;
 }
 
 .effect.L:nth-of-type(n+2) {
@@ -909,7 +919,6 @@
 
 .effect.L {
     padding-left: 19px;
-    text-indent: -19px;
     line-height : 22px;
 }
 
@@ -975,7 +984,7 @@
 }
 
 .L.in_tooltip {
-    vertical-align: middle;
+    vertical-align: text-bottom;
 }
 
 .P.in_tooltip {
@@ -1044,6 +1053,19 @@
 
 
 /* Square indicators */
+
+.all_icons {
+    background-image: url('img/squares.png');
+    display: inline-block;
+    width: 114px;
+    height: 19px;
+    background-position: -0px -82px;
+}
+
+.dogma_symbol {
+    position: absolute;
+}
+
 .simple_stats {
     height: 19px;
 }
@@ -1204,7 +1226,6 @@
 }
 
 .M.dogma_symbol {
-    position: absolute;
     left: -4px;
     top: -4px;
 }
@@ -1344,6 +1365,11 @@
     height: 19px;
 }
 
+.L.dogma_symbol {
+    left: -4px;
+    top: -4px;
+}
+
 .icon_1.L.square  {
     background-position: -0px -82px;
 }
@@ -1366,14 +1392,6 @@
 
 .icon_6.L.square  {
     background-position: -95px -82px;
-}
-
-.all_icons {
-    background-image: url('img/squares.png');
-    display: inline-block;
-    width: 114px;
-    height: 19px;
-    background-position: -0px -82px;
 }
 
 .age_1.L.square  {
@@ -1414,6 +1432,58 @@
 
 .age_10.L.square  {
     background-position: -171px -101px;
+}
+
+/*LMF: refactor background image out of M and L */
+.icon_1.L.dogma_symbol, .icon_2.L.dogma_symbol, .icon_3.M.dogma_symbol, .icon_4.L.dogma_symbol, .icon_5.L.dogma_symbol, .icon_6.L.dogma_symbol {
+    width: 20px;
+    height: 20px;
+    background-image: url('img/resource_icons.jpg');
+    background-size: 120px auto;
+}
+
+.icon_1.L.dogma_symbol  {
+    background-position-x: -0px;
+}
+
+.icon_2.L.dogma_symbol  {
+    background-position-x: -20px;
+}
+
+.icon_3.L.dogma_symbol  {
+    background-position-x: -40px;
+}
+
+.icon_4.L.dogma_symbol  {
+    background-position-x: -60px;
+}
+
+.icon_5.L.dogma_symbol  {
+    background-position-x: -80px;
+}
+
+.icon_6.L.dogma_symbol  {
+    background-position-x: -100px;
+}
+
+.color_0.L.dogma_symbol {
+    background-position-y: -0px;
+}
+
+.color_1.L.dogma_symbol {
+    background-position-y: -20px;
+}
+
+.color_2.L.dogma_symbol {
+    background-position-y: -40px;
+}
+
+.color_3.L.dogma_symbol {
+    background-position-y: -60px;
+}
+
+.color_4.L.dogma_symbol {
+    background-position-y: -80px;
 }
 
 /* Buttons for rearranging in Publication dogma effect */
@@ -1461,6 +1531,7 @@
     width: 456px;
     height: 316px;
     border-radius: 16px;
+    background-size: 2308px 323px;
     box-shadow: 5px 5px grey;
 }
 
@@ -1474,6 +1545,7 @@
 *  The Hex icons do not fill their entire box so we have to fudge some of the offsets
 */
 
+/* M size */
 .M.top_left_icon.square_card_icon {
     top: 7px;
     left: 7px;
@@ -1514,20 +1586,64 @@
     right: 2px;
 }
 
+/* L size */
+.L.top_left_icon.square_card_icon {
+    top: 30px;
+    left: 30px;
+}
+
+.L.top_left_icon.hexagon_card_icon {
+    top: 17px;
+    left: 24px;
+}
+
+.L.bottom_left_icon.square_card_icon {
+    bottom: 23px;
+    left: 29px;
+}
+
+.L.bottom_left_icon.hexagon_card_icon {
+    bottom: 23px;
+    left: 30px;
+}
+
+.L.bottom_center_icon.square_card_icon {
+    bottom: 23px;
+    left: 195px;
+}
+
+.L.bottom_center_icon.hexagon_card_icon {
+    bottom: 23px;
+    left: 195px;
+}
+
+.L.bottom_right_icon.square_card_icon {
+    bottom: 23px;
+    right: 28px;
+}
+
+.L.bottom_right_icon.hexagon_card_icon {
+    bottom: 23px;
+    right: 28px;
+}
+
 /* Square card icons (most cards have 3 large resource icons on them) 
 *
 *  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
 *  { Background-size, width, height, background-position-x, background-position-y }
 */
 
+/* Square card icons (most cards have 3 large resource icons on them) */
+
 .square_card_icon {
     background-image: url('img/resource_icons.jpg');
-    background-size: 230px auto;
     position: absolute;
 }
 
+/* M square icons */
 .M.square_card_icon {
     width: 36px;
+    background-size: 230px auto;
     height: 36px;
 }
 
@@ -1575,25 +1691,79 @@
     background-position-y: -154.5px;
 }
 
+/* L square icons */
+.L.square_card_icon {
+    width: 75px;
+    background-size: 470px auto;
+    height: 75px;
+}
+
+.L.icon_1.square_card_icon  {
+    background-position-x: -1px;
+}
+
+.L.icon_2.square_card_icon  {
+    background-position-x: -80px;
+}
+
+.L.icon_3.square_card_icon  {
+    background-position-x: -78px;
+}
+
+.L.icon_4.square_card_icon  {
+    background-position-x: -116px;
+}
+
+.L.icon_5.square_card_icon  {
+    background-position-x: -154.5px;
+}
+
+.L.icon_6.square_card_icon  {
+    background-position-x: -192.5px;
+}
+
+.L.color_0.square_card_icon  {
+    background-position-y: -1px;
+}
+
+.L.color_1.square_card_icon  {
+    background-position-y: -39.5px;
+}
+
+.L.color_2.square_card_icon  {
+    background-position-y: -78px;
+}
+
+.L.color_3.square_card_icon  {
+    background-position-y: -116px;
+}
+
+.L.color_4.square_card_icon  {
+    background-position-y: -154.5px;
+}
+
 
 /* Hexagon icons take up ~27 % of a real cards width. 
-*  Our cards will shoot for 25 % -> 45px
+*  Our cards will shoot for 25 % ->  M.45px
 *  If you ever change the background-size, you must edit the offset in css_generator.py
 */
 .hexagon_card_icon {
     background-image: url("img/hexagon_icons.png");
-    background-size: 735px, auto;
     position: absolute;
 }
 
 .M.hexagon_card_icon {
+    background-size: 735px, auto;
     width: 45px;
     height: 45px;
 }
 
-.M.hexagon_card_icon.hexagon_icon_0  {
-    background-position: 3px -3px;
+.L.hexagon_card_icon {
+    background-size: 1511px, auto;
+    width: 90px;
+    height: 90px;
 }
+
 
 .recto {
     display: inline-block;
@@ -1731,9 +1901,15 @@
 .color_0.M.card {
     background-position: -2px -2px;
 }
+.color_0.L.card {
+    background-position: -2px -2px;
+}
 
 /* Red card */
 .color_1.M.card {
+    background-position: -186px -2px;
+}
+.color_1.L.card {
     background-position: -186px -2px;
 }
 
@@ -2712,5 +2888,845 @@
 
 .M.hexagon_card_icon.hexagon_icon_214 {
 	background-position: -444px -934px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_0 {
+	background-position: -8px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_1 {
+	background-position: -57px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_2 {
+	background-position: -106px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_3 {
+	background-position: -155px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_4 {
+	background-position: -204px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_5 {
+	background-position: -253px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_6 {
+	background-position: -302px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_7 {
+	background-position: -351px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_8 {
+	background-position: -400px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_9 {
+	background-position: -449px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_10 {
+	background-position: -498px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_11 {
+	background-position: -547px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_12 {
+	background-position: -596px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_13 {
+	background-position: -645px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_14 {
+	background-position: -694px -8px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_15 {
+	background-position: -8px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_16 {
+	background-position: -57px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_17 {
+	background-position: -106px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_18 {
+	background-position: -155px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_19 {
+	background-position: -204px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_20 {
+	background-position: -253px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_21 {
+	background-position: -302px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_22 {
+	background-position: -351px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_23 {
+	background-position: -400px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_24 {
+	background-position: -449px -57px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_25 {
+	background-position: -8px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_26 {
+	background-position: -57px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_27 {
+	background-position: -106px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_28 {
+	background-position: -155px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_29 {
+	background-position: -204px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_30 {
+	background-position: -253px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_31 {
+	background-position: -302px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_32 {
+	background-position: -351px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_33 {
+	background-position: -400px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_34 {
+	background-position: -449px -106px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_35 {
+	background-position: -8px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_36 {
+	background-position: -57px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_37 {
+	background-position: -106px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_38 {
+	background-position: -155px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_39 {
+	background-position: -204px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_40 {
+	background-position: -253px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_41 {
+	background-position: -302px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_42 {
+	background-position: -351px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_43 {
+	background-position: -400px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_44 {
+	background-position: -449px -155px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_45 {
+	background-position: -8px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_46 {
+	background-position: -57px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_47 {
+	background-position: -106px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_48 {
+	background-position: -155px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_49 {
+	background-position: -204px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_50 {
+	background-position: -253px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_51 {
+	background-position: -302px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_52 {
+	background-position: -351px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_53 {
+	background-position: -400px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_54 {
+	background-position: -449px -204px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_55 {
+	background-position: -8px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_56 {
+	background-position: -57px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_57 {
+	background-position: -106px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_58 {
+	background-position: -155px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_59 {
+	background-position: -204px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_60 {
+	background-position: -253px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_61 {
+	background-position: -302px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_62 {
+	background-position: -351px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_63 {
+	background-position: -400px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_64 {
+	background-position: -449px -253px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_65 {
+	background-position: -8px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_66 {
+	background-position: -57px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_67 {
+	background-position: -106px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_68 {
+	background-position: -155px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_69 {
+	background-position: -204px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_70 {
+	background-position: -253px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_71 {
+	background-position: -302px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_72 {
+	background-position: -351px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_73 {
+	background-position: -400px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_74 {
+	background-position: -449px -302px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_75 {
+	background-position: -8px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_76 {
+	background-position: -57px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_77 {
+	background-position: -106px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_78 {
+	background-position: -155px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_79 {
+	background-position: -204px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_80 {
+	background-position: -253px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_81 {
+	background-position: -302px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_82 {
+	background-position: -351px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_83 {
+	background-position: -400px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_84 {
+	background-position: -449px -351px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_85 {
+	background-position: -8px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_86 {
+	background-position: -57px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_87 {
+	background-position: -106px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_88 {
+	background-position: -155px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_89 {
+	background-position: -204px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_90 {
+	background-position: -253px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_91 {
+	background-position: -302px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_92 {
+	background-position: -351px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_93 {
+	background-position: -400px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_94 {
+	background-position: -449px -400px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_95 {
+	background-position: -8px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_96 {
+	background-position: -57px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_97 {
+	background-position: -106px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_98 {
+	background-position: -155px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_99 {
+	background-position: -204px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_100 {
+	background-position: -253px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_101 {
+	background-position: -302px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_102 {
+	background-position: -351px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_103 {
+	background-position: -400px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_104 {
+	background-position: -449px -449px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_110 {
+	background-position: -8px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_111 {
+	background-position: -57px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_112 {
+	background-position: -106px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_113 {
+	background-position: -155px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_114 {
+	background-position: -204px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_115 {
+	background-position: -253px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_116 {
+	background-position: -302px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_117 {
+	background-position: -351px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_118 {
+	background-position: -400px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_119 {
+	background-position: -449px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_120 {
+	background-position: -498px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_121 {
+	background-position: -547px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_122 {
+	background-position: -596px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_123 {
+	background-position: -645px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_124 {
+	background-position: -694px -498px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_125 {
+	background-position: -8px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_126 {
+	background-position: -57px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_127 {
+	background-position: -106px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_128 {
+	background-position: -155px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_129 {
+	background-position: -204px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_130 {
+	background-position: -253px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_131 {
+	background-position: -302px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_132 {
+	background-position: -351px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_133 {
+	background-position: -400px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_134 {
+	background-position: -449px -547px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_135 {
+	background-position: -8px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_136 {
+	background-position: -57px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_137 {
+	background-position: -106px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_138 {
+	background-position: -155px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_139 {
+	background-position: -204px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_140 {
+	background-position: -253px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_141 {
+	background-position: -302px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_142 {
+	background-position: -351px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_143 {
+	background-position: -400px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_144 {
+	background-position: -449px -596px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_145 {
+	background-position: -8px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_146 {
+	background-position: -57px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_147 {
+	background-position: -106px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_148 {
+	background-position: -155px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_149 {
+	background-position: -204px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_150 {
+	background-position: -253px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_151 {
+	background-position: -302px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_152 {
+	background-position: -351px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_153 {
+	background-position: -400px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_154 {
+	background-position: -449px -645px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_155 {
+	background-position: -8px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_156 {
+	background-position: -57px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_157 {
+	background-position: -106px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_158 {
+	background-position: -155px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_159 {
+	background-position: -204px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_160 {
+	background-position: -253px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_161 {
+	background-position: -302px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_162 {
+	background-position: -351px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_163 {
+	background-position: -400px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_164 {
+	background-position: -449px -694px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_165 {
+	background-position: -8px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_166 {
+	background-position: -57px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_167 {
+	background-position: -106px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_168 {
+	background-position: -155px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_169 {
+	background-position: -204px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_170 {
+	background-position: -253px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_171 {
+	background-position: -302px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_172 {
+	background-position: -351px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_173 {
+	background-position: -400px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_174 {
+	background-position: -449px -743px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_175 {
+	background-position: -8px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_176 {
+	background-position: -57px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_177 {
+	background-position: -106px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_178 {
+	background-position: -155px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_179 {
+	background-position: -204px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_180 {
+	background-position: -253px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_181 {
+	background-position: -302px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_182 {
+	background-position: -351px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_183 {
+	background-position: -400px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_184 {
+	background-position: -449px -792px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_185 {
+	background-position: -8px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_186 {
+	background-position: -57px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_187 {
+	background-position: -106px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_188 {
+	background-position: -155px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_189 {
+	background-position: -204px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_190 {
+	background-position: -253px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_191 {
+	background-position: -302px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_192 {
+	background-position: -351px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_193 {
+	background-position: -400px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_194 {
+	background-position: -449px -841px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_195 {
+	background-position: -8px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_196 {
+	background-position: -57px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_197 {
+	background-position: -106px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_198 {
+	background-position: -155px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_199 {
+	background-position: -204px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_200 {
+	background-position: -253px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_201 {
+	background-position: -302px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_202 {
+	background-position: -351px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_203 {
+	background-position: -400px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_204 {
+	background-position: -449px -890px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_205 {
+	background-position: -8px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_206 {
+	background-position: -57px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_207 {
+	background-position: -106px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_208 {
+	background-position: -155px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_209 {
+	background-position: -204px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_210 {
+	background-position: -253px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_211 {
+	background-position: -302px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_212 {
+	background-position: -351px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_213 {
+	background-position: -400px -939px;
+}
+
+.L.hexagon_card_icon.hexagon_icon_214 {
+	background-position: -449px -939px;
 }
 

@@ -1158,6 +1158,7 @@ function (dojo, declare) {
                 return;
             }
             var HTML_help = this.createCard(card.id, card.type, card.age, "L card", card);
+            console.log(HTML_help)
             this.saved_cards[card.id] = card;
             this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
             this.addCustomTooltip(HTML_id, HTML_help, "");
