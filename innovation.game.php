@@ -822,7 +822,6 @@ class Innovation extends Table
         return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_eliminated = 0", true);
     }
 
-
     function getAllActivePlayers() {
         return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
     }
@@ -883,6 +882,10 @@ class Innovation extends Table
                         player_id = {player_id}
                 )
         ", array('player_id' => $player_id)), true);
+    }
+
+    function isEliminated($player_id) {
+        return self::getUniqueValueFromDB(self::format("SELECT player_eliminated FROM player WHERE player_id={player_id}", array('player_id' => $player_id)));
     }
     
     /** log for debugging **/
@@ -1766,19 +1769,33 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his hand.');
             break;
-        case 'hand->removed':
-            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your hand from the game.');
-            $message_for_others = clienttranslate('${player_name} removes a ${<}${age}${>} from his hand from the game.');
-            break;
         case 'board->deck':
         case 'pile->deck': // Skyscrapers
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
+        // TODO: Remove 'hand->removed', 'board->removed', 'pile->removed', 'score->removed', and 'achievements->removed' once Exxon Valdez removes cards all at once instead of individually.
+        case 'hand->removed':
+            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your hand from the game.');
+            $message_for_others = clienttranslate('${player_name} removes a ${<}${age}${>} from his hand from the game.');
+            break;
         case 'board->removed':
-        case 'pile->removed': // Exxon Valdex
+        case 'pile->removed':
             $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your board from the game.');
             $message_for_others = clienttranslate('${player_name} removes ${<}${age}${>} ${<<}${name}${>>} from his board from the game.');
+            break;
+        case 'score->removed':
+            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your score pile from the game.');
+            $message_for_others = clienttranslate('${player_name} removes ${<}${age}${>} ${<<}${name}${>>} from his score pile from the game.');
+            break;
+        case 'achievements->removed':
+            if ($card['age'] === null) { // Special achivement
+                $message_for_player = clienttranslate('${You} remove ${<<<}${achievement_name}${>>>} from the game.');
+                $message_for_others = clienttranslate('${player_name} removes ${<<<}${achievement_name}${>>>} from the game.');
+            } else { // Age achivement
+                $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your achievements from the game.');
+                $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his achievements from the game.');
+            }
             break;
         case 'board->hand':
             $message_for_player = clienttranslate('${You} take back ${<}${age}${>} ${<<}${name}${>>} from your board to your hand.');
@@ -1832,10 +1849,6 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his score pile.');
             break;
-        case 'score->removed':
-            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your score from the game.');
-            $message_for_others = clienttranslate('${player_name} removes ${<}${age}${>} ${<<}${name}${>>} from his score from the game.');
-            break;
         case 'revealed->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
@@ -1880,16 +1893,6 @@ class Innovation extends Table
             else { // Age achivement
                 $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
                 $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
-            }
-            break;
-        case 'achievements->removed':
-            if ($card['age'] === null) { // Special achivement
-                $message_for_player = clienttranslate('${You} remove ${<<<}${achievement_name}${>>>} from the game.');
-                $message_for_others = clienttranslate('${player_name} removes ${<<<}${achievement_name}${>>>} from the game.');
-            }
-            else { // Age achivement
-                $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your achievements from the game.');
-                $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his achievements from the game.');
             }
             break;
                 
@@ -2047,7 +2050,8 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} return {number} {card} from your board');
                 $message_for_others = clienttranslate('{player must} return {number} {card} from his board');
                 break;
-            case 'pile->removed': // Exxon Valdez
+            // TODO: Remove 'pile->removed once Exxon Valdez removes cards all at once instead of individually.
+            case 'pile->removed':
                 $message_for_player = clienttranslate('{You must} remove {number} {card} from your board from the game');
                 $message_for_others = clienttranslate('{player must} remove {number} {card} from his board from the game');
                 break;
@@ -7031,8 +7035,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Reset the flags for Monument special achievement
             self::resetFlagsForMonument();
             
-            // Activate the next player in turn
-            $this->activeNextPlayer();
+            // Activate the next non-eliminated player in turn order
+            do {
+                $this->activeNextPlayer();
+            } while (self::isEliminated($this->getActivePlayerId()));
             $player_id = self::getActivePlayerId();
             self::setGameStateValue('active_player', $player_id);
             self::setLauncherId($player_id);
@@ -9824,6 +9830,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            // id 207, Artifacts age 10: Exxon Valdez
             case "207C1":
                 // "I compel you to remove all cards from your hand, score pile, and achievements from the game!"
+                // TODO: Remove all cards at once instead of individually. Similar to Fission.
                 $hand_cards = self::getCardsInLocation($player_id, 'hand');
                 foreach ($hand_cards as $card) {
                     self::transferCardFromTo($card, $player_id, 'removed');
@@ -14030,11 +14037,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         // id 207, Artifacts age 10: Exxon Valdez
+        // TODO: Remove this once Exxon Valdez is removing all cards at once instead of individually.
         case "207C1A":
-            // Return all cards on your board.  The order might be relevant for special achievements like Empire.
+            // Return all cards on your board.
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => true,
+                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'pile',
@@ -15547,36 +15555,38 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "You lose! If there is only one player remaining in the game, that player wins!"
                     // Check to see if any players remain after the elimination happens.
                      if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
-                        $curr_players = self::getActiveOpponents($launcher_id);
-                        $teams_left = 0;
-                        foreach ($curr_players as $p_id => $player) {
-                            if (!self::isZombie($p_id)) {
-                                $teams_left++;
+                        $active_opponents = self::getActiveOpponents($launcher_id);
+                        $players_left = 0;
+                        foreach ($active_opponents as $opponent_id => $player) {
+                            if (!self::isEliminated($opponent_id)) {
+                                $players_left++;
                             }
                         }
-                        if ($teams_left == 1) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are eliminated.  ${launcher_name} wins.'), 
+                        if ($players_left == 1) {
+                            // TODO: We need to add another notify here so that the launcher gets the right log message.
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are eliminated. ${launcher_name} wins.'), 
                                 array('You' => 'You', 
                                       'launcher_name' => self::getColoredText(self::getPlayerNameFromId($launcher_id), $launcher_id)));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is eliminated.  ${launcher_name} wins.'), 
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is eliminated. ${launcher_name} wins.'), 
                                 array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 
                                       'launcher_name' => self::getColoredText(self::getPlayerNameFromId($launcher_id), $launcher_id)));
                             self::setGameStateValue('winner_by_dogma', $launcher_id);
                             self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
                             throw new EndOfGame();
                         }
-                    }
-                    else { // Team play
-                        // Other team loses if one player loses 
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team is eliminated.  The other team wins.'), array('Your' => 'Your'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} and their team is eliminated.  The other team wins.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    } else { // Team play
+                        // Entire team loses if one player loses 
+                        // TODO: We need to update these so that the teammate gets the same notifications as $player_id.
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team is eliminated. The other team wins.'), array('Your' => 'Your'));
+                        // TODO: Once this message is only going to the opposing team, it should tell them they win, instead of the referring to the "other team".
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} and their team is eliminated. The other team wins.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $launcher_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
                         throw new EndOfGame();
                     }
                     
                     // Remove the current player from the game.
-                    self::eliminatePlayer( $player_id );
+                    self::eliminatePlayer($player_id);
                     break;
 
                 // id 211, Artifacts age 10: Dolly the Sheep
@@ -16327,8 +16337,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         (ex: pass).
     */
 
-    function zombieTurn($state, $active_player)
-    {
+    function zombieTurn($state, $active_player) {
+        throw new feException( "Zombie mode not supported at this moment" );
         $statename = $state['name'];
         
         if ($state['type'] == "activeplayer") {
@@ -16369,6 +16379,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
 
+        throw new feException("Zombie mode not supported at this game state: ".$statename);
     }
     
     function isZombie($player_id) {
