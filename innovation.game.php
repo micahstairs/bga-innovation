@@ -7118,11 +7118,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Return the Artifact on display if the free dogma action was used
                 $nested_card_state = self::getNestedCardState(0);
                 if ($nested_card_state['card_location'] == 'display') {
-                    // Confirm that it's still in the display
-                    // TODO: Change this if the Artifact is returned regardless of its final location.
-                    if ($card['location'] == 'display') {
-                        self::transferCardFromTo($card, 0, 'deck');
-                    }
+                    self::transferCardFromTo($card, 0, 'deck');
                     self::decreaseResourcesForArtifactOnDisplay($nested_card_state['launcher_id'], $card);
                 }
             }
