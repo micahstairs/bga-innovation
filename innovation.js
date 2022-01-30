@@ -89,7 +89,6 @@ function (dojo, declare) {
             // For special achievements, this.delta is not defined because it has a custom pattern
             
             this.incremental_id = 0;
-            this.system_offset = 1000;
             
             this.selected_card = null;
             
@@ -364,13 +363,13 @@ function (dojo, declare) {
                 this.zone.deck[type] = {};
                 for (var age = 1; age <= 10; age++) {
                     // Creation of the zone
-                    this.zone.deck[type][age] = this.createZone('deck', 0, type, age, null, grouped_by_age=false, counter_method="COUNT", counter_display_zero=false)
+                    this.zone.deck[type][age] = this.createZone('deck', 0, type, age, null, grouped_by_age_type_and_is_relic=false, counter_method="COUNT", counter_display_zero=false)
                     this.setPlacementRules(this.zone.deck[type][age], left_to_right=true)
                     
                     // Add cards to zone according to the current situation
                     var num_cards = gamedatas.deck_counts[type][age];
                     for (var i=0; i<num_cards; i++) {
-                        this.createAndAddToZone(this.zone.deck[type][age], i, age, type, false, null, dojo.body(), null);
+                        this.createAndAddToZone(this.zone.deck[type][age], i, age, type, /*is_relic=*/ 0, null, dojo.body(), null);
                     }
                     
                     // Current number of cards in the deck
@@ -434,7 +433,7 @@ function (dojo, declare) {
             this.zone.hand = {};
             for (var player_id in this.players) {
                 // Creation of the zone
-                var zone = this.createZone('hand', player_id, null, null, null, grouped_by_age=true, counter_method="COUNT", counter_display_zero=true);
+                var zone = this.createZone('hand', player_id, null, null, null, grouped_by_age_type_and_is_relic=true, counter_method="COUNT", counter_display_zero=true);
                 this.zone.hand[player_id] = zone;
                 this.setPlacementRules(zone, left_to_right=true);
                            
@@ -453,7 +452,7 @@ function (dojo, declare) {
                     for (var type = 0; type <= 1; type++) {
                         for (var is_relic = 0; is_relic <= 1; is_relic++) {
                             for (var age = 1; age <= 10; age++) {
-                                var num_cards = gamedatas.hand_counts[player_id][type][is_relic];
+                                var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
                                 for (var i = 0; i < num_cards; i++) {
                                     this.createAndAddToZone(zone, i, age, type, is_relic, null, dojo.body(), null);
                                 }
@@ -472,7 +471,7 @@ function (dojo, declare) {
                 }
 
                 // Creation of the zone
-                var zone = this.createZone('display', player_id, null, null, null, grouped_by_age=false);
+                var zone = this.createZone('display', player_id, null, null, null, grouped_by_age_type_and_is_relic=false);
                 this.zone.display[player_id] = zone;
                 this.setPlacementRules(zone, left_to_right=true);
                         
@@ -488,7 +487,7 @@ function (dojo, declare) {
             this.zone.score = {};
             for (var player_id in this.players) {
                 // Creation of the zone
-                this.zone.score[player_id] = this.createZone('score', player_id, null, null, null, grouped_by_age=true);
+                this.zone.score[player_id] = this.createZone('score', player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
                     
                 // Add cards to zone according to the current situation
@@ -508,7 +507,7 @@ function (dojo, declare) {
             // My score: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator) {
                 this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>Close</a>");
-                this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, grouped_by_age=true);
+                this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
                 for(var i=0; i<gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
@@ -574,7 +573,7 @@ function (dojo, declare) {
                     var splay_direction_in_clear = player_splay_directions_in_clear[color];
                     
                     // Creation of the zone
-                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age=false)
+                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age_type_and_is_relic=false)
                     this.setSplayMode(this.zone.board[player_id][color], splay_direction)
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
@@ -607,7 +606,7 @@ function (dojo, declare) {
             // REVEALED ZONE
             this.zone.revealed = {};    
             for (var player_id in this.players) {
-                var zone = this.createZone('revealed', player_id, null, null, null, grouped_by_age=false);
+                var zone = this.createZone('revealed', player_id, null, null, null, grouped_by_age_type_and_is_relic=false);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
                 this.setPlacementRules(zone, left_to_right=true);
@@ -720,7 +719,7 @@ function (dojo, declare) {
                 }
             
                 if (this.selected_card !== null) {
-                    dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.selected_card.type, this.HTML_class.my_hand), 'selected')
+                    dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.selected_card.type, this.selected_card.is_relic, this.HTML_class.my_hand), 'selected')
                 }
                 break;
             case 'artifactPlayerTurn':
@@ -1093,12 +1092,12 @@ function (dojo, declare) {
          * Id management
          */
         uniqueId : function() {
-            this.incremental_id++;
-            return this.incremental_id;
+            return ++this.incremental_id;
         },
 
-        uniqueIdForCard : function(age) {
-            return this.system_offset * this.uniqueId() + age;
+        uniqueIdForCard : function(age, type, is_relic) {
+            // We need to multiply by a large number like 1000 to avoid colliding with the IDs of real cards
+            return ((this.uniqueId() * 1000 + age) * 5 + type) * 2 + parseInt(is_relic);
         },
         
         /*
@@ -1150,7 +1149,7 @@ function (dojo, declare) {
         
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
-            var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, zone.HTML_class);
+            var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
 
             // Special achievement
             if (card.age === null) {
@@ -1165,8 +1164,8 @@ function (dojo, declare) {
         
         addTooltipForStandardAchievement : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age);
-            var id = this.getCardIdFromPosition(zone, card.position, card.age);
-            var HTML_id = this.getCardHTMLId(id, card.age, card.type, zone.HTML_class);
+            var id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+            var HTML_id = this.getCardHTMLId(id, card.age, card.type, card.is_relic, zone.HTML_class);
             
             condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), {'age': this.square('N', 'age', card.age), 'n': 5 * card.age});
             this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
@@ -1576,8 +1575,7 @@ function (dojo, declare) {
             }
 
             if (on_display) {
-                // TODO: Change this if the Artifact is returned regardless of its final location.
-                HTML_action += "<li>" + _("You will return this Artifact if it is still on display.") + "</li>"
+                HTML_action += "<li>" + _("You will return this Artifact afterwards.") + "</li>"
             }
 
             HTML_action += "</ul>";
@@ -1739,7 +1737,7 @@ function (dojo, declare) {
             var identifiers = [];
             for (var i=0; i<cards.length; i++) {
                 var card = cards[i];
-                identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, "M card"));
+                identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "M card"));
             }
             return dojo.query(identifiers.join(","));
         },
@@ -1752,8 +1750,8 @@ function (dojo, declare) {
             for (var i=0; i<recto_positional_infos_array.length; i++) {
                 var card = recto_positional_infos_array[i];
                 var zone = this.getZone(card['location'], card.owner, card.type, card.age);
-                var id = this.getCardIdFromPosition(zone, card.position, card.age)
-                identifiers.push("#" + this.getCardHTMLId(id, card.age, card.type, zone.HTML_class));
+                var id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic)
+                identifiers.push("#" + this.getCardHTMLId(id, card.age, card.type, card.is_relic, zone.HTML_class));
             }
             return dojo.query(identifiers.join(","));
         },
@@ -1824,15 +1822,24 @@ function (dojo, declare) {
             }
         },
         
-        getCardIdFromPosition : function(zone, position, age) {
-            if (!zone.grouped_by_age) {
+        getCardIdFromPosition : function(zone, position, age, type, is_relic) {
+            if (!zone.grouped_by_age_type_and_is_relic) {
                 return this.getCardIdFromHTMLId(zone.items[position].id);
             }
+
+            // A relative position makes it easy to decide if this new card should go before or after another card.
+            // The cards are sorted by age, breaking ties by their type, and then breaking ties with non-relics first.
+            var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
+
             var p = 0;
             for (var i=0; i<zone.items.length; i++) {
                 var item = zone.items[i];
+                var item_age = this.getCardAgeFromHTMLId(item.id);
+                var item_type = this.getCardTypeFromHTMLId(item.id);
+                var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
+                var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
                 
-                if (this.getCardAgeFromHTMLId(item.id) != age) {
+                if (item_relative_position < relative_position) {
                     continue;
                 }
                 if (p == position) {
@@ -1842,9 +1849,9 @@ function (dojo, declare) {
             }
         },
         
-        getCardPositionFromId : function(zone, id, age) {
-            if (!zone.grouped_by_age) {
-                for(var p=0; p<zone.items.length; p++) {
+        getCardPositionFromId : function(zone, id, age, type, is_relic) {
+            if (!zone.grouped_by_age_type_and_is_relic) {
+                for (var p = 0; p < zone.items.length; p++) {
                     var item = zone.items[p];
                     if (this.getCardIdFromHTMLId(item.id) == id) {
                         return p;
@@ -1852,10 +1859,15 @@ function (dojo, declare) {
                 }
             }
             var p = 0;
-            for (var i=0; i<zone.items.length; i++) {
+            for (var i = 0; i < zone.items.length; i++) {
                 var item = zone.items[i];
-                
                 if (this.getCardAgeFromHTMLId(item.id) != age) {
+                    continue;
+                }
+                if (this.getCardTypeFromHTMLId(item.id) != type) {
+                    continue;
+                }
+                if (this.getCardIsRelicFromHTMLId(item.id) != parseInt(is_relic)) {
                     continue;
                 }
                 if (this.getCardIdFromHTMLId(item.id) == id) {
@@ -1869,12 +1881,11 @@ function (dojo, declare) {
             return dojo.getAttr(event.currentTarget, 'id');
         },
         
-        // TODO: add is_relic?
-        getCardHTMLId : function(id, age, type, zone_HTML_class) {
-            return ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class.replace(" ", "__")].join("__");
+        getCardHTMLId : function(id, age, type, is_relic, zone_HTML_class) {
+            return ["item_" + id, "age_" + age, "type_" + type, "is_relic_" + parseInt(is_relic), zone_HTML_class.replace(" ", "__")].join("__");
         },
         
-        getCardHTMLClass : function(id, age, type, card, is_relic, zone_HTML_class) {
+        getCardHTMLClass : function(id, age, type, is_relic, card, zone_HTML_class) {
             classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
             if (parseInt(is_relic)) {
                 classes.push("relic");
@@ -1892,13 +1903,21 @@ function (dojo, declare) {
         getCardAgeFromHTMLId : function(HTML_id) {
             return parseInt(HTML_id.split("__")[1].substr(4));
         },
+
+        getCardTypeFromHTMLId : function(HTML_id) {
+            return parseInt(HTML_id.split("__")[2].substr(5));
+        },
+
+        getCardIsRelicFromHTMLId : function(HTML_id) {
+            return parseInt(HTML_id.split("__")[3].substr(9));
+        },
         
         /*
          * Card creation
          */
         createCard : function(id, age, type, is_relic, zone_HTML_class, card) {
-            var HTML_id = this.getCardHTMLId(id, age, type, zone_HTML_class);
-            var HTML_class = this.getCardHTMLClass(id, age, type, card, is_relic, zone_HTML_class);
+            var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone_HTML_class);
+            var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
             if (card === null ) {
@@ -1955,12 +1974,12 @@ function (dojo, declare) {
         /*
          * Zone management systemcard
          */
-        createZone : function(location, owner, type, age, color, grouped_by_age, counter_method, counter_display_zero) {
+        createZone : function(location, owner, type, age, color, grouped_by_age_type_and_is_relic, counter_method, counter_display_zero) {
             // Default values
             type = this.setDefault(type, null);
             age = this.setDefault(age, null);
             color = this.setDefault(color, null);
-            grouped_by_age = this.setDefault(grouped_by_age, null);
+            grouped_by_age_type_and_is_relic = this.setDefault(grouped_by_age_type_and_is_relic, null);
             counter_method = this.setDefault(counter_method, null);
             counter_display_zero = this.setDefault(counter_display_zero, null);
             ///////
@@ -2018,7 +2037,7 @@ function (dojo, declare) {
             zone['location'] = new_location;
             zone.owner = owner;
             zone.HTML_class = HTML_class;
-            zone.grouped_by_age = grouped_by_age;
+            zone.grouped_by_age_type_and_is_relic = grouped_by_age_type_and_is_relic;
             
             if (counter_method != null) {
                 var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
@@ -2046,9 +2065,8 @@ function (dojo, declare) {
                 // Recto
                 visible_card = false;
                 
-                // The id is to be created
-                // TODO: also incoporate type and is_relic?
-                id = this.uniqueIdForCard(age); // Create a new id based on the age of the card
+                // Create a new id based only on the visible properties of the card
+                id = this.uniqueIdForCard(age, type, is_relic); 
             } else {
                 // verso
                 if (zone.owner != 0 && zone['location'] == 'achievements') {
@@ -2061,46 +2079,54 @@ function (dojo, declare) {
             var node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
             dojo.place(node, start);
             
-            // TODO: pass is_relic?
-            this.addToZone(zone, id, position, age, type);
+            this.addToZone(zone, id, position, age, type, is_relic);
         },
         
         moveBetweenZones: function(zone_from, zone_to, id_from, id_to, card) {
             if (id_from == id_to && card.age !== null) {
-                this.addToZone(zone_to, id_to, card.position_to, card.age, card.type);
-                this.removeFromZone(zone_from, id_from, false, card.age, card.type);
-            }
-            else {
-                this.createAndAddToZone(zone_to, card.position_to, card.age, card.type, card.is_relic, id_to, this.getCardHTMLId(id_from, card.age, card.type, zone_from.HTML_class), card);
-                this.removeFromZone(zone_from, id_from, true, card.age, card.type);
+                this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
+                this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
+            } else {
+                this.createAndAddToZone(zone_to, card.position_to, card.age, card.type, card.is_relic, id_to, this.getCardHTMLId(id_from, card.age, card.type, card.is_relic, zone_from.HTML_class), card);
+                this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
             }
         },
         
-        // TODO: add is_relic to parameters
-        // TODO: actually group by type and is_relic
-        addToZone: function (zone, id, position, age, type) {
-            var HTML_id = this.getCardHTMLId(id, age, type, zone.HTML_class);
+        addToZone: function (zone, id, position, age, type, is_relic) {
+            var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
             dojo.style(HTML_id, 'position', 'absolute');
             
             if (zone['location'] == 'revealed' && zone.items.length == 0) {
                 dojo.style(zone.container_div, 'display', 'block');
             }
 
-            var grouped_by_age = zone['location'] != 'board' && zone['location'] != 'achievements';
+            var grouped_by_age_type_and_is_relic = zone['location'] != 'board' && zone['location'] != 'achievements';
+
+            // A relative position makes it easy to decide if this new card should go before or after another card.
+            // We want the cards sorted by age, breaking ties by their type, and then breaking ties by placing non-relics first.
+            var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
+            console.log(relative_position);
             
             // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
             var found = false;
             var p = 0;
             for (var i=0; i<zone.items.length; i++) {
                 var item = zone.items[i];
+                var item_age = this.getCardAgeFromHTMLId(item.id);
+                var item_type = this.getCardTypeFromHTMLId(item.id);
+                var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
+                var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
+
+                // TODO: remove
+                console.log(i + " " + relative_position + " " + item_relative_position);
                 
-                if (grouped_by_age && this.getCardAgeFromHTMLId(item.id) < age) { // We have not reached the group the card can be put into
+                // We have not reached the group the card can be put into
+                if (grouped_by_age_type_and_is_relic && item_relative_position < relative_position) {
                     continue;
                 }
                 
-                if (!found && grouped_by_age && this.getCardAgeFromHTMLId(item.id) > age || // Cards are grouped by age, and there is no card with the same age as the card to be inserted
-                    p == position // The position in the group has been found
-                   ) { // This is the spot the card must be placed
+                // We found the spot where the card belongs
+                if (!found && grouped_by_age_type_and_is_relic && item_relative_position > relative_position || p == position) {
                     var weight = i;
                     found = true;
                 }
@@ -2144,9 +2170,8 @@ function (dojo, declare) {
             }
         },
         
-        // TODO: make callsites pass type
-        removeFromZone: function (zone, id, destroy, age, type) {
-            var HTML_id = this.getCardHTMLId(id, age, type, zone.HTML_class);
+        removeFromZone: function (zone, id, destroy, age, type, is_relic) {
+            var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
             
             // Update weights before removing
             var found = false;
@@ -2169,7 +2194,7 @@ function (dojo, declare) {
             if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
                 this.updateZoneWidth(zone);
             } else if (zone['location'] == 'revealed' && zone.items.length == 0) {
-                zone = this.createZone('revealed', zone.owner, null, null, null, grouped_by_age=false); // Recreate the zone (Dunno why it does not work if I don't do that)
+                zone = this.createZone('revealed', zone.owner, null, null, null, grouped_by_age_type_and_is_relic=false); // Recreate the zone (Dunno why it does not work if I don't do that)
                 dojo.style(zone.container_div, 'display', 'none');
             }
             zone.updateDisplay();
@@ -2643,6 +2668,8 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             var age = this.getCardAgeFromHTMLId(HTML_id);
+            var type = this.getCardTypeFromHTMLId(HTML_id);
+            var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
             
             // Search the zone containing that card
             var zone_container = event.currentTarget.parentNode;
@@ -2655,7 +2682,7 @@ function (dojo, declare) {
             var zone = this.getZone(location, owner, null, age);
             
             // Search the position the card is
-            var position = this.getCardPositionFromId(zone, card_id, age);
+            var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
             
             var self = this;
             this.ajaxcall("/innovation/innovation/chooseRecto.html",
@@ -3122,7 +3149,7 @@ function (dojo, declare) {
                 // Remove the card from my score personal window
                 // NOTE: The button to look at the player's score pile is broken in archive mode.
                 if (!g_archive_mode) {
-                    this.removeFromZone(this.zone.my_score_verso, card.id, true, card.age, card.type);
+                    this.removeFromZone(this.zone.my_score_verso, card.id, true, card.age, card.type, card.is_relic);
                 }
             }
 
@@ -3140,14 +3167,12 @@ function (dojo, declare) {
                 id_from = card.id;
                 if (visible_to) {
                     id_to = id_from // verso -> verso
-                }
-                else {
+                } else {
                     id_to = null; // verso -> recto: the card is being hidden. A new id must be created for the recto
                 }
-            }
-            else {
+            } else {
                 // The card is hidden at the start (recto)
-                var id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age);
+                var id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age, card.type, card.is_relic);
                 if (visible_to) {
                     id_to = card.id // recto -> verso: the card is being revealed
                 }
@@ -3216,7 +3241,7 @@ function (dojo, declare) {
 
             // Handle case where card is being removed from the game.
             if (!zone_to) {
-                this.removeFromZone(zone_from, id_from, true, card.age, card.type);
+                this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
                 return;
             }
 
@@ -3241,7 +3266,7 @@ function (dojo, declare) {
                 this.addTooltipForCard(card);
             }
             else if (card.location_to == 'achievements' && card.age !== null) {
-                var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, zone_from.HTML_class);
+                var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone_from.HTML_class);
                 this.removeTooltip(HTML_id);
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;

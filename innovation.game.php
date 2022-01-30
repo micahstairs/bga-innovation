@@ -1077,6 +1077,8 @@ class Innovation extends Table
             return;
         }
 
+        // TODO: If a relic is about to be returned to 'deck', return it to 'relics' instead.
+
         if ($location_to == 'deck') { // We always return card at the bottom of the deck
             $bottom_to = true;
         }
@@ -1125,7 +1127,7 @@ class Innovation extends Table
             break;
         case 'hand':
         case 'score':
-            $filter_from .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
+            $filter_to .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
             $filter_to .= self::format(" AND color = {color}", array('color' => $color));
