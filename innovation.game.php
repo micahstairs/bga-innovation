@@ -441,7 +441,7 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 110 <= id AND id <= 214");
         }
         if (self::getGameStateValue('artifacts_mode') != 3) {
-            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 215 <= id AND id <= 219");
+            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE NOT is_relic");
         }
 
         // Create a hash of the icons for each card
@@ -482,12 +482,10 @@ class Innovation extends Table
         _ when the game starts
         _ when a player refreshes the game page (F5)
     */
-    protected function getAllDatas()
-    {
+    protected function getAllDatas() {
         $result = array();
-        $debug_mode = self::getGameStateValue('debug_mode') == 1;
         
-        //****** CODE FOR DEBUG MODE
+        $debug_mode = self::getGameStateValue('debug_mode') == 1;
         if ($debug_mode) {
             $name_list  = array();
             foreach($this->textual_card_infos as $card) {
@@ -495,15 +493,13 @@ class Innovation extends Table
             }
             $result['debug_card_list'] = $name_list;
         }
-        //******
 
         $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') != 1;
         $result['relics_enabled'] = self::getGameStateValue('artifacts_mode') == 3;
     
-        $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
+        $current_player_id = self::getCurrentPlayerId();    // !! We must only return information visible by this player !!
         
         // Get information about players
-        // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
         $players = self::getCollectionFromDb("SELECT player_id, player_score, player_team FROM player");
         $result['players'] = $players;
         $result['current_player_id'] = $current_player_id;
@@ -535,21 +531,23 @@ class Innovation extends Table
         // Artifacts on display
         $result['artifacts_on_display'] = self::getArtifactsOnDisplay($players);
         
-        // Backs of the cards in hands (number of cards each player have in each age/type in their hands)
+        // Backs of the cards in hands
         $result['hand_counts'] = array();
         for ($type = 0; $type <= 1; $type++) {
-            $result['hand_counts'][$type] = array();
-            foreach ($players as $player_id => $player) {
-                $result['hand_counts'][$player_id][$type] = self::countCardsInLocation($player_id, 'hand', $type, true);
+            for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                foreach ($players as $player_id => $player) {
+                    $result['hand_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'hand', $type, $is_relic);
+                }
             }
         }
 
-        // Backs of the cards in hands (number of cards each player have in each age/type in their score piles)
+        // Backs of the cards in score piles
         $result['score_counts'] = array();
         for ($type = 0; $type <= 1; $type++) {
-            $result['score_counts'][$type] = array();
-            foreach ($players as $player_id => $player) {
-                $result['score_counts'][$player_id][$type] = self::countCardsInLocation($player_id, 'score', $type, true);
+            for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                foreach ($players as $player_id => $player) {
+                    $result['score_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'score', $type, $is_relic);
+                }
             }
         }
         
@@ -591,7 +589,7 @@ class Innovation extends Table
         
         // Remaining cards in deck
         for ($type = 0; $type <= 1; $type++) {
-            $result['deck_counts'][$type] = self::countCardsInLocation(0, 'deck', $type, true);
+            $result['deck_counts'][$type] = self::countCardsInLocationKeyedByAge(0, 'deck', $type);
         }
         
         // Turn0 or not
@@ -645,10 +643,10 @@ class Innovation extends Table
         
         // Private information
         // My hand
-        $result['my_hand'] = self::flatten(self::getCardsInLocation($current_player_id, 'hand', null, true));
+        $result['my_hand'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'hand'));
         
         // My score
-        $result['my_score'] = self::flatten(self::getCardsInLocation($current_player_id, 'score', null, true));
+        $result['my_score'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'score'));
         
         // My wish for splay
         $result['display_mode'] = self::getPlayerWishForSplay($current_player_id);        
@@ -693,7 +691,7 @@ class Innovation extends Table
         $weight = 0;
         $total_weight = 0;
         
-        $number_of_cards_in_decks = self::countCardsInLocation(0, 'deck', null, true);
+        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck');
         for($age=1; $age<=10; $age++) {
             $n = $number_of_cards_in_decks[$age];
             switch($age) {
@@ -1079,6 +1077,8 @@ class Innovation extends Table
             return;
         }
 
+        // TODO: If a relic is about to be returned to 'deck', return it to 'relics' instead.
+
         if ($location_to == 'deck') { // We always return card at the bottom of the deck
             $bottom_to = true;
         }
@@ -1086,6 +1086,7 @@ class Innovation extends Table
         $id = $card['id'];
         $age = $card['age'];
         $type = $card['type'];
+        $is_relic = $card['is_relic'];
         $color = $card['color'];
         $owner_from = $card['owner'];
         $location_from = $card['location'];
@@ -1101,7 +1102,6 @@ class Innovation extends Table
             $splay_direction_to = 'NULL';
         }
         
-        // Filters for cards of the same family: the cards of the decks are grouped by age and type, whereas the cards of the board are grouped by player and by color
         // Filter from
         $filter_from = self::format("owner = {owner_from} AND location = '{location_from}'", array('owner_from' => $owner_from, 'location_from' => $location_from));
         switch ($location_from) {
@@ -1110,7 +1110,7 @@ class Innovation extends Table
             break;
         case 'hand':
         case 'score':
-            $filter_from .= self::format(" AND age = {age}", array('age' => $age));
+            $filter_from .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
             $filter_from .= self::format(" AND color = {color}", array('color' => $color));
@@ -1127,7 +1127,7 @@ class Innovation extends Table
             break;
         case 'hand':
         case 'score':
-            $filter_to .= self::format(" AND age = {age}", array('age' => $age));
+            $filter_to .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
             $filter_to .= self::format(" AND color = {color}", array('color' => $color));
@@ -1294,7 +1294,7 @@ class Innovation extends Table
         }
 
         // Return early if a pile with less than 2 cards is attempting to be splayed.
-        if ($splay_direction >= 1 && self::countCardsInLocation($target_player_id, 'board', null, false, true)[$color] <= 1) {
+        if ($splay_direction >= 1 && self::countCardsInLocationKeyedByColor($target_player_id, 'board')[$color] <= 1) {
             return;
         }
 
@@ -1329,7 +1329,7 @@ class Innovation extends Table
     /* Rearrangement mechanism */
     function rearrange($player_id, $color, $permutations) {
         
-        $old_board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $old_board = self::getCardsInLocationKeyedByColor($player_id, 'board');
         
         foreach($permutations as $permutation) {
             $data = $permutation;
@@ -1354,7 +1354,7 @@ class Innovation extends Table
             ));
         }
         
-        $new_board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $new_board = self::getCardsInLocationKeyedByColor($player_id, 'board');
         
         $actual_change = $old_board[$color] != $new_board[$color];
         
@@ -2413,29 +2413,30 @@ class Innovation extends Table
         $notif_args_for_player['You'] = 'You';
         
         // Visibility for involved player
-        if (array_key_exists('<<', $delimiters_for_player)) { // The player can see the verso of the card
+        if (array_key_exists('<<', $delimiters_for_player)) {
+            // The player can see the front of the card
             $notif_args_for_player['i18n'] = array('name');
-            // Attach full info
             $notif_args_for_player = array_merge($notif_args_for_player, $card);
-        }
-        else if (array_key_exists('<<<', $delimiters_for_player))  { // Achievement, the player can't see the verso of the card
+        } else if (array_key_exists('<<<', $delimiters_for_player)) {
             $notif_args_for_player['i18n'] = array('achievement_name');
             $notif_args_for_player['age'] = $card['age'];
             $notif_args_for_player['type'] = $card['type'];
-            if($card['age'] === null) {
+            $notif_args_for_player['is_relic'] = $card['is_relic'];
+            if ($card['age'] === null) {
+                // The player can see the front of the card because it is a special achievement
                 $notif_args_for_player['id'] = $card['id'];
                 $notif_args_for_player['achievement_name'] = $card['achievement_name'];
                 $notif_args_for_player['condition_for_claiming'] = $card['condition_for_claiming'];
                 $notif_args_for_player['alternative_condition_for_claiming'] = $card['alternative_condition_for_claiming'];
-            }
-            else {
+            } else {
+                // The player can't see the front of the card
                 $notif_args_for_player['achievement_name'] = self::getNormalAchievementName($card['age']);
             }
-        }
-        else { // The player can't see the verso of the card
-            // Just attach the age and the type
+        } else {
+            // The player can't see the front of the card
             $notif_args_for_player['age'] = $card['age'];
             $notif_args_for_player['type'] = $card['type'];
+            $notif_args_for_player['is_relic'] = $card['is_relic'];
         }
         
         // Information to attach to others (other players and spectators)
@@ -2444,29 +2445,30 @@ class Innovation extends Table
         $notif_args_for_others['player_name'] =  $player_name; // The color in the log will be defined automatically by the system
         
         // Visibility for others
-        if (array_key_exists('<<', $delimiters_for_others)) { // The others can see the verso of the card
+        if (array_key_exists('<<', $delimiters_for_others)) {
+            // Other players can see the front of the card
             $notif_args_for_others['i18n'] = array('name');
-            // Attach full info
             $notif_args_for_others = array_merge($notif_args_for_others, $card);
-        }
-        else if (array_key_exists('<<<', $delimiters_for_player)) { // Achievement, the others can't see the verso of the card
+        } else if (array_key_exists('<<<', $delimiters_for_player)) {
             $notif_args_for_others['i18n'] = array('achievement_name');
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
-            if($card['age'] === null) {
+            $notif_args_for_others['is_relic'] = $card['is_relic'];
+            if ($card['age'] === null) {
+                // Other players can see the front of the card because it is a special achievement
                 $notif_args_for_others['id'] = $card['id'];
                 $notif_args_for_others['achievement_name'] = $card['achievement_name'];
                 $notif_args_for_others['condition_for_claiming'] = $card['condition_for_claiming'];
                 $notif_args_for_others['alternative_condition_for_claiming'] = $card['alternative_condition_for_claiming'];
-            }
-            else {
+            } else {
+                // Other players can't see the front of the card
                 $notif_args_for_others['achievement_name'] = self::getNormalAchievementName($card['age']);
             }
-        }
-        else { // The others can't see the verso of the card
-            // Just attach the age and type
+        } else {
+            // Other players can't see the front of the card
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
+            $notif_args_for_others['is_relic'] = $card['is_relic'];
         }
         
         self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
@@ -2504,15 +2506,15 @@ class Innovation extends Table
         $notif_args_for_others['opponent_name'] =  self::getColoredText($opponent_name, $opponent_id);
         
         // Visibility for others
-        if (array_key_exists('<<', $delimiters_for_others)) { // The others can see the verso of the card
+        if (array_key_exists('<<', $delimiters_for_others)) {
+            // Other players can see the front of the card
             $notif_args_for_others['i18n'] = array('name');
-            // Attach full info
             $notif_args_for_others = array_merge($notif_args_for_others, $card);
-        }
-        else { // The others can't see the verso of the card
-            // Just attach the age and type
+        } else {
+            // Other players can't see the front of the card
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
+            $notif_args_for_others['is_relic'] = $card['is_relic'];
         }
         
         self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
@@ -3201,7 +3203,7 @@ class Innovation extends Table
             $age_min = 1;
         }
     
-        $deck_count = self::countCardsInLocation(0, 'deck', /*type=*/ 0, true);
+        $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
         $age_to_draw = $age_min;
         while($age_to_draw <= 10 && $deck_count[$age_to_draw] == 0) {
             $age_to_draw++;
@@ -3309,17 +3311,24 @@ class Innovation extends Table
 
     
     
-    function getOrCountCardsInLocation($count, $owner, $location, $type=null, $ordered_by_age, $ordered_by_color) {
+    function getOrCountCardsInLocation($count, $owner, $location, $key = null, $type = null, $is_relic = null) {
         /**
-            Get ($count is false) or count ($count is true) all the cards in a particular location, sorted by position. The result can be first grouped or ordered by age (for deck or hand) or color (for board) if needed
+            Get ($count is false) or count ($count is true) all the cards in a particular location, sorted by position. The result can be first keyed by age (for deck or hand) or color (for board) if needed
         **/
         
         $type_of_result = $count ? "COUNT(*)" : "*";
         $opt_order_by = $count ? "" : "ORDER BY position";
         $getFromDB = $count ? 'getUniqueValueFromDB' : 'getObjectListFromDB'; // If we count, we want to get an unique value, else, we want to get a list of cards
         $type_condition = $type === null ? "" : self::format("type = {type} AND", array('type' => $type));
-
-        if(!$ordered_by_age && !$ordered_by_color) {
+        $is_relic_condition = $is_relic === null ? "" : self::format("is_relic = {is_relic} AND", array('is_relic' => $is_relic));
+                                                                    
+        if ($key == 'age') {
+            $num_min = 1;
+            $num_max = 10;
+        } else if ($key == 'color') {
+            $num_min = 0;
+            $num_max = 4;
+        } else {
             return self::$getFromDB(self::format("
                 SELECT
                     {type_of_result}
@@ -3327,28 +3336,18 @@ class Innovation extends Table
                     card
                 WHERE
                     {type_condition}
+                    {is_relic_condition}
                     owner = {owner} AND
                     location = '{location}'
                 {opt_order_by}
             ",
-                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'owner' => $owner, 'location' => $location, 'opt_order_by' => $opt_order_by)
-           ));
-        }
-                                                                    
-        if ($ordered_by_age) {
-            $key = 'age';
-            $num_min = 1;
-            $num_max = 10;
-        }
-        else if ($ordered_by_color) {
-            $key = 'color';
-            $num_min = 0;
-            $num_max = 4;
+                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner' => $owner, 'location' => $location, 'opt_order_by' => $opt_order_by)
+            ));
         }
         
         $result = array();
         
-        for($value = $num_min; $value <= $num_max; $value++) {
+        for ($value = $num_min; $value <= $num_max; $value++) {
             $result[$value] = self::$getFromDB(self::format("
                 SELECT
                     {type_of_result}
@@ -3356,12 +3355,13 @@ class Innovation extends Table
                     card
                 WHERE
                     {type_condition}
+                    {is_relic_condition}
                     owner = {owner} AND
                     location = '{location}' AND
                     {key} = {value}
                 {opt_order_by}
             ",
-                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'owner' => $owner, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
+                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner' => $owner, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
            ));
         }
         return $result;
@@ -3386,7 +3386,7 @@ class Innovation extends Table
     function getAllBoards($players) {
         $result = array();
         foreach($players as $player_id => $player) {
-            $result[$player_id] = self::getCardsInLocation($player_id, 'board', null, false, true);
+            $result[$player_id] = self::getCardsInLocationKeyedByColor($player_id, 'board');
         }
         return $result;
     }
@@ -3421,28 +3421,55 @@ class Innovation extends Table
         ));
         return $number_of_cards > 0;
     }
-    
-    function getCardsInLocation($owner, $location, $type=null, $ordered_by_age=false, $ordered_by_color=false) {
+
+    function getCardsInLocationKeyedByAge($owner, $location) {
         /**
-            Get all the cards in a particular location, sorted by position. The result can be first ordered by age (for deck or hand) or color (for board) if needed
+            Get all the cards in a particular location, keyed by age, then sorted by position.
         **/
-        $cards = self::getOrCountCardsInLocation(false, $owner, $location, $type, $ordered_by_age, $ordered_by_color);
-        if ($ordered_by_age || $ordered_by_color) {
-            foreach($cards as $key => &$card_list) {
-                $card_list = self::attachTextualInfoToList($card_list);
-            }
+        $cards = self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location, 'age');
+        foreach ($cards as $key => &$card_list) {
+            $card_list = self::attachTextualInfoToList($card_list);
         }
-        else {
-            $cards = self::attachTextualInfoToList($cards);
+        return $cards;
+    }
+
+    function getCardsInLocationKeyedByColor($owner, $location) {
+        /**
+            Get all the cards in a particular location, keyed by color, then sorted by position.
+        **/
+        $cards = self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location, 'color');
+        foreach ($cards as $key => &$card_list) {
+            $card_list = self::attachTextualInfoToList($card_list);
         }
         return $cards;
     }
     
-    function countCardsInLocation($owner, $location, $type=null, $ordered_by_age=false, $ordered_by_color=false) {
+    function getCardsInLocation($owner, $location) {
         /**
-            Count all the cards in a particular location, sorted by position. The result can be first grouped and ordered by age (for deck or hand) or color (for board) if needed
+            Get all the cards in a particular location, sorted by position.
         **/
-        return self::getOrCountCardsInLocation(true, $owner, $location, $type, $ordered_by_age, $ordered_by_color);
+        return self::attachTextualInfoToList(self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location));
+    }
+
+    function countCardsInLocationKeyedByAge($owner, $location, $type=null, $is_relic=null) {
+        /**
+            Count all the cards in a particular location, keyed by age, then sorted by position.
+        **/
+        return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, 'age', $type, $is_relic);
+    }
+
+    function countCardsInLocationKeyedByColor($owner, $location) {
+        /**
+            Count all the cards in a particular location, keyed by color, then sorted by position.
+        **/
+        return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, 'color');
+    }
+    
+    function countCardsInLocation($owner, $location, $type=null) {
+        /**
+            Count all the cards in a particular location, sorted by position.
+        **/
+        return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, /*key=*/ null, $type);
     }
     
     function getTopCardOnBoard($player_id, $color) {
@@ -3840,7 +3867,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function boardPileHasRessource($player_id, $color, $icon) {
-        $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
         $pile = $board[$color];
         if (count($pile) == 0) { // No card of that color
             return false;
@@ -3865,7 +3892,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Counts the number of visible cards based on the splay **/
     function countVisibleCards($player_id, $color) {
-        $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
         $pile = $board[$color];
         $pile_size = count($pile);
         if ($pile_size == 0) { // No card of that color
@@ -3990,7 +4017,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     // Returns the icon count for a particular color on a player's board (also works for hexagon icons if icon=0)
     function countVisibleIconsInPile($player_id, $icon, $color) {
-        $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
         $pile = $board[$color];
         $pile_size = count($pile);
 
@@ -4735,7 +4762,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['owner_from'] = $player_id;
             $rewritten_options['location_from'] = 'board'; // Splaying is equivalent as selecting a board card, by design
             $rewritten_options['location_to'] = 'board';
-            $number_of_cards_on_board = self::countCardsInLocation($player_id, 'board', null, false, true);
+            $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
             $splay_direction = $rewritten_options['splay_direction'];
             $colors = array();
             
@@ -5752,13 +5779,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ($card_1['spot_4'] == 0 && $card_2['spot_4'] == 0);
     }
 
+    /* Returns null if there is no relic of the specified age */
     function getRelicForAge($age) {
-        $id = null;
-        // The IDs of the relic cards are in the range 215-219
-        if ($age >= 3 && $age <= 7) {
-            $id = 212 + $age;
-        }
-        return $id == null ? null : self::getCardInfo($id);
+        $card = self::getUniqueValueFromDB(self::format("SELECT * FROM card WHERE age = {age} AND is_relic", array('age' => $age)));
+        return self::attachTextualInfo($card);
     }
 
     function dogma($card_id) {
@@ -6106,7 +6130,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (!is_array($permutations_done) || count($permutations_done) == 0) {
                     self::throwInvalidChoiceException();
                 }
-                $n = self::countCardsInLocation($player_id, 'board', null, false, true);
+                $n = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 $n = $n[$color];
                 
                 foreach($permutations_done as $permutation) {
@@ -6250,7 +6274,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function argRelicPlayerTurn() {
         $player_id = self::getGameStateValue('active_player');
         $relic = self::getCardInfo(self::getGameStateValue('relic_id'));
-        // TODO: You can only seize to your hand if the relic's set is currently in play.
         return array(
             'can_seize_to_hand' => self::relicSetIsInUse($relic) && ($relic['location'] != 'hand' || $relic['owner'] != $player_id),
             'can_seize_to_achievements' => $relic['location'] != 'achievements' || $relic['owner'] != $player_id
@@ -8431,7 +8454,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 86, age 9: Genetics     
             case "86N1":
                 $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
-                $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+                $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                 $pile = $board[$card['color']];
                 for($p=0; $p < count($pile)-1; $p++) { // "For each card beneath it"
                     $card = self::getCardInfo($pile[$p]['id']);
@@ -8497,7 +8520,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "89N1":
-                $number_of_cards_on_board = self::countCardsInLocation($player_id, 'board', null, false, true);
+                $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 $number_of_green_cards = $number_of_cards_on_board[2];
                 if ($number_of_green_cards >= 10) { // "If you have ten or more green cards on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least ten green cards.'), array('You' => 'You'));
@@ -9055,9 +9078,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw and meld a 3"
                 $melded_card = self::executeDraw($player_id, 3, 'board');
                
-                // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation
-                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$melded_card['color']];
                 // "Meld your bottom card of the drawn card's color"
+                $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
                 if ($number_of_cards > 1) {
                     $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
                     $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
@@ -10206,7 +10228,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 6, age 1: Clothing
         case "6N1A":
             // "Meld a card from your hand of different color of any card on your board"
-            $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+            $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
             $selectable_colors = array();
             for ($color=0; $color<5; $color++) {
                 if (count($board[$color]) == 0) { // This is a color the player does not have
@@ -10297,7 +10319,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 13, age 1: Code of laws
         case "13N1A":
             // "You may tuck a card from your hand of the same color of any card on your board"
-            $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+            $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
             $selectable_colors = array();
             for ($color=0; $color<5; $color++) {
                 if (count($board[$color]) > 0) { // This is a color the player already have
@@ -10444,7 +10466,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 23, age 2: Monotheism        
         case "23D1A":
             // "I demand you transfer a top card on your board of different color from any card on my board to my score pile!"
-            $board = self::getCardsInLocation($launcher_id, 'board', null, false, true);
+            $board = self::getCardsInLocationKeyedByColor($launcher_id, 'board');
             $selectable_colors = array();
             for ($color=0; $color<5; $color++) {
                 if (count($board[$color]) == 0) { // This is a color the player does not have
@@ -14503,7 +14525,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition
                             $color = self::getGameStateValue('color_last_selected');
                             self::splayRight($player_id, $player_id, $color); // "Splay that color of your cards right"
-                            $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$color];
+                            $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
                             if ($number_of_cards == 1) {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
                                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
@@ -14820,7 +14842,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "97N1A":
                     $age_last_selected = self::getGameStateValue('age_last_selected') == 10;
                     if ($n > 0 && $age_last_selected == 10) { // "If you returned a 10"
-                        $number_of_cards_in_score = self::countCardsInLocation($player_id, 'score', null, true);
+                        $number_of_cards_in_score = self::countCardsInLocationKeyedByAge($player_id, 'score');
                         $number_of_different_value = 0;
                         for($age=1; $age<=10; $age++) {
                             if ($number_of_cards_in_score[$age] > 0) {
@@ -14875,7 +14897,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 120, Artifacts age 1: Lurgan Canoe
                 case "120N1A":
-                    $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+                    $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                     $pile = $board[self::getGameStateValue('color_last_selected')];
                     $scored = false;
                     for($p=0; $p < count($pile)-1; $p++) { // "Score all other cards of the same color from your board"
@@ -14938,7 +14960,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 122, Artifacts age 1: Mask of Warka
                 case "122N1B":
                     // "Claim all achievements of value matching those [returned] cards, ignoring eligibility"
-                    $achievements_by_age = self::getCardsInLocation(0, "achievements", /*type=*/ null, /*ordered_by_age=*/ true);
+                    $achievements_by_age = self::getCardsInLocationKeyedByAge(0, "achievements");
                     $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                     foreach ($different_values_selected_so_far as $returned_age) {
                         foreach ($achievements_by_age[$returned_age] as $achievement) {
@@ -15228,8 +15250,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 153, Artifacts age 4: Cross of Coronado
                 case "153N1A":
                 	// "If you have exactly five cards and five colors in your hand, you win"
-                    // TODO: Use countCardsInLocationKeyedByColor instead of countCardsInLocation.
-                    $card_count_by_color = self::countCardsInLocation($player_id, 'revealed', /*type=*/ null, /*ordered_by_age=*/false, /*ordered_by_color=*/ true);
+                    $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
                     if (count(array_diff($card_count_by_color, array(1))) == 0) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
@@ -15893,7 +15914,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::splayRight($player_id, $player_id, $choice); // "Splay that color of your cards right"
-                $number_of_cards = self::countCardsInLocation($player_id, 'board', null, false, true)[$choice];
+                $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$choice];
                 if ($number_of_cards == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));

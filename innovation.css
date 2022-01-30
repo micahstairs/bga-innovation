@@ -1630,7 +1630,7 @@
 }
 
 .type_4.S.recto {
-    background-position-y: -207px;
+    background-position-y: -208px;
 }
 
 .age_1.S.recto {
@@ -1671,6 +1671,13 @@
 
 .age_10.S.recto {
     background-position-x: -312px;
+}
+
+/* Relics */
+
+.relic.S.recto {
+    border: none;
+    background-position-x: -347px;
 }
 
 /* Special achievements */
