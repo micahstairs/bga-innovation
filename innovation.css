@@ -1676,7 +1676,7 @@
 /* Relics */
 
 .relic.S.recto {
-    border: none;
+    border: solid 1px transparent;
     background-position-x: -347px;
 }
 

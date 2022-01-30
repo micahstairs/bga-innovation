@@ -384,7 +384,7 @@ function (dojo, declare) {
             // AVAILABLE RELICS
             // Creation of the zone
             this.zone.relics = {};
-            this.zone.relics["0"] = this.createZone('relics', 0);
+            this.zone.relics["0"] = this.createZone('relics', 0, null, null, null, grouped_by_age_type_and_is_relic = true);
             this.setPlacementRulesForRelics();
             if (gamedatas.relics_enabled) {
                 for (var i = 0; i < gamedatas.unclaimed_relics.length; i++) {
@@ -471,7 +471,7 @@ function (dojo, declare) {
                 }
 
                 // Creation of the zone
-                var zone = this.createZone('display', player_id, null, null, null, grouped_by_age_type_and_is_relic=false);
+                var zone = this.createZone('display', player_id, null, null, null);
                 this.zone.display[player_id] = zone;
                 this.setPlacementRules(zone, left_to_right=true);
                         
@@ -573,7 +573,7 @@ function (dojo, declare) {
                     var splay_direction_in_clear = player_splay_directions_in_clear[color];
                     
                     // Creation of the zone
-                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age_type_and_is_relic=false)
+                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color)
                     this.setSplayMode(this.zone.board[player_id][color], splay_direction)
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
@@ -606,7 +606,7 @@ function (dojo, declare) {
             // REVEALED ZONE
             this.zone.revealed = {};    
             for (var player_id in this.players) {
-                var zone = this.createZone('revealed', player_id, null, null, null, grouped_by_age_type_and_is_relic=false);
+                var zone = this.createZone('revealed', player_id, null, null, null);
                 this.zone.revealed[player_id] = zone;
                 dojo.style(zone.container_div, 'display', 'none');
                 this.setPlacementRules(zone, left_to_right=true);
@@ -2100,12 +2100,9 @@ function (dojo, declare) {
                 dojo.style(zone.container_div, 'display', 'block');
             }
 
-            var grouped_by_age_type_and_is_relic = zone['location'] != 'board' && zone['location'] != 'achievements';
-
             // A relative position makes it easy to decide if this new card should go before or after another card.
             // We want the cards sorted by age, breaking ties by their type, and then breaking ties by placing non-relics first.
             var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
-            console.log(relative_position);
             
             // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
             var found = false;
@@ -2117,16 +2114,13 @@ function (dojo, declare) {
                 var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
                 var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
 
-                // TODO: remove
-                console.log(i + " " + relative_position + " " + item_relative_position);
-                
                 // We have not reached the group the card can be put into
-                if (grouped_by_age_type_and_is_relic && item_relative_position < relative_position) {
+                if (zone.grouped_by_age_type_and_is_relic && item_relative_position < relative_position) {
                     continue;
                 }
                 
                 // We found the spot where the card belongs
-                if (!found && grouped_by_age_type_and_is_relic && item_relative_position > relative_position || p == position) {
+                if (!found && zone.grouped_by_age_type_and_is_relic && item_relative_position > relative_position || p == position) {
                     var weight = i;
                     found = true;
                 }
@@ -2194,7 +2188,7 @@ function (dojo, declare) {
             if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
                 this.updateZoneWidth(zone);
             } else if (zone['location'] == 'revealed' && zone.items.length == 0) {
-                zone = this.createZone('revealed', zone.owner, null, null, null, grouped_by_age_type_and_is_relic=false); // Recreate the zone (Dunno why it does not work if I don't do that)
+                zone = this.createZone('revealed', zone.owner, null, null, null); // Recreate the zone (Dunno why it does not work if I don't do that)
                 dojo.style(zone.container_div, 'display', 'none');
             }
             zone.updateDisplay();

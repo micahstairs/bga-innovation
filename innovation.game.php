@@ -173,11 +173,9 @@ class Innovation extends Table
         $card['debug_achieve'] = true;
         if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
             throw new BgaUserException("You already have this card as an achievement");
-        } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as a relic");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements') {
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements' || $card['location'] == 'relics') {
             try {
                 self::transferCardFromTo($card, $player_id, "achievements");
             }
@@ -201,16 +199,14 @@ class Innovation extends Table
         $card['debug_return'] = true;
         if ($card['location'] == 'deck') {
             throw new BgaUserException("This card is already in the deck");
-        } else if ($card['location'] == 'achievements') {
+        } else if ($card['location'] == 'achievements' && !$card['is_relic']) {
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as a relic");
+            throw new BgaUserException("This card is already in the relics area");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display') {
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || ($card['location'] == 'achievements' && $card['is_relic'])) {
             try {
-                // TODO: If the card is a relic, then it should be returned to the available relics instead.
-                // TODO: Consider the positioning of the relics. Should they have fixed locations?
                 self::transferCardFromTo($card, 0, "deck");
             }
             catch (EndOfGame $e) {
@@ -1077,7 +1073,10 @@ class Innovation extends Table
             return;
         }
 
-        // TODO: If a relic is about to be returned to 'deck', return it to 'relics' instead.
+        // Relics are not returned to the deck.
+        if ($card['is_relic'] && $location_to == 'deck') {
+            $location_to = 'relics';
+        }
 
         if ($location_to == 'deck') { // We always return card at the bottom of the deck
             $bottom_to = true;
@@ -1110,6 +1109,7 @@ class Innovation extends Table
             break;
         case 'hand':
         case 'score':
+        case 'relics':
             $filter_from .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
@@ -1127,6 +1127,7 @@ class Innovation extends Table
             break;
         case 'hand':
         case 'score':
+        case 'relics':
             $filter_to .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
@@ -1764,12 +1765,17 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his display.');
             break;
         case 'display->deck':
+        case 'display->relics': // Shouldn't be possible, but just in case.
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his display.');
             break;
         case 'hand->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
+            break;
+        case 'hand->relics':
+            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+            $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his hand.');
             break;
         case 'hand->board':
             if ($bottom_to) {
@@ -1800,7 +1806,9 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his hand.');
             break;
         case 'board->deck':
+        case 'board->relics':
         case 'pile->deck': // Skyscrapers
+        case 'pile->relics': // Skyscrapers
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
@@ -1826,6 +1834,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your achievements from the game.');
                 $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his achievements from the game.');
             }
+            break;
+        case 'achievements->relics':
+            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your achievements.');
+            $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his achievements.');
             break;
         case 'board->hand':
             $message_for_player = clienttranslate('${You} take back ${<}${age}${>} ${<<}${name}${>>} from your board to your hand.');
@@ -1857,6 +1869,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his score pile.');
             break;
+        case 'score->relics':
+            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
+            $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his score pile.');
+            break;
         case 'score->hand':
             $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your score pile to your hand.');
             $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to his hand.');
@@ -1880,6 +1896,7 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his score pile.');
             break;
         case 'revealed->deck':
+        case 'revealed->relics':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
             break;
@@ -1904,12 +1921,12 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
             break;
         case 'relics->achievements':
-            $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic to your achievements.');
-            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his achievements.');
+            $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} relic to your achievements.');
+            $message_for_others = clienttranslate('${player_name} seizes ${<}${age}${>} ${<<}${name}${>>} relic to his achievements.');
             break;
         case 'relics->hand':
-            $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} ${<<}${name}${>>} to your hand.');
-            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
+            $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} to your hand.');
+            $message_for_others = clienttranslate('${player_name} seizes ${<}${age}${>} relic to his hand.');
             break;
         case 'achievements->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your achievements.');
@@ -2117,8 +2134,14 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile.');
                 $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from ${opponent_name}\'s score pile.');
                 break;
+            case 'score->relics':
+                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile.');
+                $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile.');
+                $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile.');
+                break;
 
             case 'board->deck':
+            case 'board->relics':
                 $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
                 $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
                 $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
