@@ -3132,8 +3132,6 @@ class Innovation extends Table
                 }
             }
         }
-        $card['is_relic'] = boolval($card['is_relic']);
-        $card['has_demand'] = boolval($card['has_demand']);
         return array_merge($card, $textual_infos);
     }
     

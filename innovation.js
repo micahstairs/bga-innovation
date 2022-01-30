@@ -1876,7 +1876,7 @@ function (dojo, declare) {
         
         getCardHTMLClass : function(id, age, type, card, is_relic, zone_HTML_class) {
             classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
-            if (is_relic) {
+            if (parseInt(is_relic)) {
                 classes.push("relic");
             }
             if (card !== null) {
