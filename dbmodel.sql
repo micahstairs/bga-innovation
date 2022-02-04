@@ -21,7 +21,10 @@ ALTER TABLE `player` ADD `player_icon_count_3` SMALLINT UNSIGNED NOT NULL DEFAUL
 ALTER TABLE `player` ADD `player_icon_count_4` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of towers on player board';
 ALTER TABLE `player` ADD `player_icon_count_5` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of factories on player board';
 ALTER TABLE `player` ADD `player_icon_count_6` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of clocks on player board';
+/* stronger_or_equal is deprecated */
 ALTER TABLE `player` ADD `stronger_or_equal` BOOLEAN DEFAULT NULL COMMENT 'When in dogma state, TRUE if the player can share the non-demand effects, FALSE if the player has to execute "I demand" effects';
+ALTER TABLE `player` ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Number of visible icons matching the featured icon at the start of the dogma effect';
+/* player_no_under_effect is deprecated */
 ALTER TABLE `player` ADD `player_no_under_effect` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Order of the player when he is concerned by an effect';
 ALTER TABLE `player` ADD `number_of_tucked_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has tucked during the turn of the current player';
 ALTER TABLE `player` ADD `number_of_scored_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has scored during the turn of the current player';
@@ -59,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
  `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
+ `execute_demand_effects` BOOLEAN DEFAULT TRUE COMMENT 'Whether demand effects should be executed',
  `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
  `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
  `step` TINYINT COMMENT 'The interaction that the card is on',
