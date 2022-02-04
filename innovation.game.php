@@ -9916,6 +9916,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 2;
                 break;
 
+            // id 205, Artifacts age 10: Rover Curiosity
+            case "205N1":
+                // "Draw and meld an Artifact 10."
+                $card = self::executeDraw($player_id, 10, 'board', false, 1);
+                // "Execute the effects of the melded card as if they were on this card. Do not share them."
+                self::executeAllEffects($card);
+                break;
+                
            // id 207, Artifacts age 10: Exxon Valdez
             case "207C1":
                 // "I compel you to remove all cards from your hand, score pile, and achievements from the game!"
