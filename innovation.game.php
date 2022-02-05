@@ -6689,6 +6689,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
  
+             // id 152, Artifacts age 5: Mona Lisa
+            case "152N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
+                
+            case "152N1B":
+                $message_for_player = clienttranslate('Choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -9446,7 +9457,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 151, Artifacts age 4: Moses
             case "151C1":    
-                // "I demand you transfer all top cards with a crown from your board to my score pile"
+                // "I compel you transfer all top cards with a crown from your board to my score pile"
                 $no_top_card_with_crown = true;
                 for ($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
@@ -9463,6 +9474,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "151N1":
                 $step_max = 1; // --> 1 interaction
+                break;
+
+            // id 152, Artifacts age 4: Mona Lisa
+            case "152N1":
+                $step_max = 2; // --> 2 interactions
                 break;
 
             // id 153, Artifacts age 4: Cross of Coronado
@@ -13248,6 +13264,57 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'with_icon' => 1 /* tower */
             );
             break;
+        
+        // id 152, Artifacts age 4: Mona Lisa
+        case "152N1A":    
+            // "Choose a number"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true
+            );
+            break;
+
+        case "152N1B":
+            // "and a color"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_color' => true
+            );
+            break;
+
+        case "152N1C":
+            // "score them"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'color' => array(self::getGameStateValue('color_last_selected')),
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => $player_id,
+                'location_to' => 'score'
+            );
+            break;
+
+        case "152N1D":
+            // "Otherwise, return all cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => 0,
+                'location_to' => 'deck'
+            );
+            break;
             
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
@@ -15328,6 +15395,58 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
+                // id 152, Artifacts age 4: Mona Lisa
+                case "152N1B":
+                    // "Draw five 4, then reveal your hand."
+                    for($i=0; $i< 5; $i++) {
+                        self::executeDraw($player_id, 4, 'revealed');
+                    }
+
+                    $cards = self::getCardsInHand($player_id);
+                    foreach($cards as $card){
+                        self::transferCardFromTo($card, $player_id, 'revealed');
+                    }
+                    
+                    // "If you have exactly that many cards of that color, "
+                    $cards = self::getCardsInLocationKeyedByColor($player_id, 'revealed');
+                    $colored_cards = $cards[self::getGameStateValue('color_last_selected')];
+                    if (count($colored_cards) == self::getAuxiliaryValue()) {
+                        // If you have exactly that many cards of that color
+                        self::incrementStepMax(1); // One more interaction, scoring cards
+                    }
+                    else {
+                        self::incrementStepMax(2); // One more interaction, returning cards
+                        $step+=1;
+                        self::incrementStep(1); // Skip next interaction and go directly to returning cards
+                    }
+                    break;
+
+                case "152N1C":
+                    // "splay right your cards of that color."
+                    self::splayRight($player_id, $player_id, self::getGameStateValue('color_last_selected'));
+                    // Put all cards back in hand
+                    $cards = self::getCardsInLocation($player_id, 'revealed');
+                    foreach($cards as $card){
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                    break;
+                    
+                // id 153, Artifacts age 4: Cross of Coronado
+                case "153N1A":
+                	// "If you have exactly five cards and five colors in your hand, you win"
+                    $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
+                    if (count(array_diff($card_count_by_color, array(1))) == 0) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
+                        throw new EndOfGame();
+                    }
+                    foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                    }
+                    break;
+                    
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
@@ -16263,6 +16382,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
+                break;
+
+            // id 152, Artifacts age 5: Mona Lisa
+            case "152N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+            case "152N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setGameStateValue('color_last_selected', $choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
