@@ -1687,6 +1687,7 @@
     width: 45px;
     height: 31px;
     background-size: 232px, auto;
+    border-radius: 3px;
 }
 
 .item_105.S.card {
@@ -1698,7 +1699,7 @@
 }
 
 .item_107.S.card {
-    background-position: -94px -1px;
+    background-position: -93.5px -1px;
 }
 
 .item_108.S.card {
