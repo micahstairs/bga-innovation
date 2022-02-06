@@ -13966,18 +13966,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
        // id 193, Artifacts age 8: Garland's Ruby Slippers
         case "193N1A":
-            // "Meld an 8 from your hand."
+            // "Meld an 8 from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                'age' => 8,
-                
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+                
+                'age' => 8
             );
             break;
 
@@ -15582,19 +15582,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 193, Artifacts age 8: Garland's Ruby Slippers
                 case "193N1A":
-                    if ($n > 0) { // an 8 needs to be melded to do the rest
+                    // If a card was melded
+                    if ($n > 0) {
                         $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         
-                        if ($melded_card['type'] == 2 /* a city */ || $melded_card['id'] == 188 /* battleship yamamoto */) {
-                            // If the melded card has no effects, you win.
+                        // "If the melded card has no effects, you win"
+                        if ($melded_card['type'] == 2 /* a City card */ || $melded_card['id'] == 188 /* Battleship Yamato */) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with no effects.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Garlands Ruby Slippers');
                             throw new EndOfGame();
-                        }
-                        else {
-                        	// Otherwise, execute the effects of the melded card as if they were on this card. Do not share them.
+                        } else {
+                        	// "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
                             self::executeAllEffects($melded_card);
                         }
                     }
