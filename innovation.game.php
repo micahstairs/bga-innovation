@@ -6689,7 +6689,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
  
-             // id 152, Artifacts age 5: Mona Lisa
+            // id 152, Artifacts age 5: Mona Lisa
             case "152N1A":
                 $message_for_player = clienttranslate('Choose a value');
                 $message_for_others = clienttranslate('${player_name} must choose a value');
@@ -9478,7 +9478,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 152, Artifacts age 4: Mona Lisa
             case "152N1":
-                $step_max = 2; // --> 2 interactions
+                $step_max = 2;
                 break;
 
             // id 153, Artifacts age 4: Cross of Coronado
@@ -13273,6 +13273,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => false,
                 
+                // TODO(#225): Allow player to pick an integer in 0-999 range instead of 1-10.
                 'choose_value' => true
             );
             break;
@@ -13289,22 +13290,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "152N1C":
-            // "score them"
+            // "Score them"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
                 
-                'color' => array(self::getGameStateValue('color_last_selected')),
-                
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
                 'owner_to' => $player_id,
-                'location_to' => 'score'
+                'location_to' => 'score',
+                
+                'color' => array(self::getGameStateValue('color_last_selected'))
             );
             break;
 
         case "152N1D":
-            // "Otherwise, return all cards from your hand."
+            // "Otherwise, return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -15397,36 +15398,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 152, Artifacts age 4: Mona Lisa
                 case "152N1B":
-                    // "Draw five 4, then reveal your hand."
-                    for($i=0; $i< 5; $i++) {
+                    // "Draw five 4s, then reveal your hand"
+                    for ($i = 0; $i < 5; $i++) {
                         self::executeDraw($player_id, 4, 'revealed');
                     }
 
-                    $cards = self::getCardsInHand($player_id);
-                    foreach($cards as $card){
+                    foreach (self::getCardsInHand($player_id) as $card) {
                         self::transferCardFromTo($card, $player_id, 'revealed');
                     }
                     
-                    // "If you have exactly that many cards of that color, "
+                    // "If you have exactly that many cards of that color"
                     $cards = self::getCardsInLocationKeyedByColor($player_id, 'revealed');
                     $colored_cards = $cards[self::getGameStateValue('color_last_selected')];
                     if (count($colored_cards) == self::getAuxiliaryValue()) {
                         // If you have exactly that many cards of that color
-                        self::incrementStepMax(1); // One more interaction, scoring cards
-                    }
-                    else {
-                        self::incrementStepMax(2); // One more interaction, returning cards
-                        $step+=1;
+                        self::incrementStepMax(1); // One more interaction (scoring cards)
+                    } else {
+                        self::incrementStepMax(2); // One more interaction (returning cards)
+                        $step += 1;
                         self::incrementStep(1); // Skip next interaction and go directly to returning cards
                     }
                     break;
 
                 case "152N1C":
-                    // "splay right your cards of that color."
+                    // "Splay right your cards of that color"
                     self::splayRight($player_id, $player_id, self::getGameStateValue('color_last_selected'));
                     // Put all cards back in hand
                     $cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach($cards as $card){
+                    foreach ($cards as $card) {
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
                     break;
