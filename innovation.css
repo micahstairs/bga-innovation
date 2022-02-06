@@ -740,29 +740,60 @@
 .card_age.M {
     width: 14px;
     height: 14px;
-    left: 160px;
     top: 4px;
     line-height: 16px;
 }
 
+.color_0 .M.card_age, .color_2 .M.card_age, .color_4 .M.card_age {
+    right: 6.5px;
+}
+.color_1 .M.card_age, .color_3 .M.card_age {
+    right: 6px;
+}
 /*LMF: might have have something special for yamato */
 .card_age.L {
-    width: 22px;
-    height: 22px;
-    right: 23px;
+    width: 25px;
+    height: 25px;
     top: 26px;
-    line-height: 16px;
+    line-height: 14px;
+}
+
+.color_0 .L.card_age, .color_1 .L.card_age {
+    right: 21px;
+}
+.color_2 .L.card_age {
+    right: 20px;
+}
+.color_3 .L.card_age, .color_4 .L.card_age {
+    right: 22px;
 }
 
 /* Title of the card */
 
 .card_title {
     color: white;
-    text-align: center;
     font-family: Tahoma, Arial, sans-serif;
     position: absolute;
-}
+    display: flex;
+    justify-content: center;
+    align-items: center;
     
+}
+
+.card_title.M {
+    left: 53px;
+    top: 5px;
+    width: 95px;
+    height: 15px;
+}
+
+.card_title.L {
+    left: 139px;
+    top: 18px;
+    width: 235px;
+    height: 37px;
+}
+
 /* Elements for rewriting card texts */
 
 .i_demand, .i_compel, .immediately {
@@ -787,19 +818,7 @@
 
 /* Elements inside the card in play */
 
-.card_title.M {
-    left: 53px;
-    top: 7px;
-    width: 95px;
-    height: 15px;
-}
 
-.card_effects.M {
-    right: 7px;
-    top: 25px;
-    width: 120px;
-    height: 53px;
-}
 
 .effect.M:nth-of-type(n+2) {
     margin-top: 4px;
@@ -896,19 +915,17 @@
 
 /* Elements inside the card in the tooltip */
 
-.card_title.L {
-    left: 137px;
-    top: 21px;
-    width: 236px;
-    height: 31px;
-    line-height: 31px; /* Ensure that the text is centered horizontally */
-    border-width: 2px;
+.card_effects.M {
+    right: 7px;
+    top: 25px;
+    width: 120px;
+    height: 53px;
 }
 
 .card_effects.L {
     left: 135px;
     top: 64px;
-    width: 309px;
+    width: 295px;
     height: 137px;
 }
 
