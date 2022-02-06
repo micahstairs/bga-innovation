@@ -10111,13 +10111,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 214, Artifacts age 10: Twister
             case "214C1":
-                // "I compel you to reveal your score pile!"
+                // "I compel you to reveal your score pile"
                 $score_cards = self::getCardsInLocation($player_id, 'score');
-                if(count($score_cards) > 0) {
-                    foreach($score_cards as $card) {
+                if (count($score_cards) > 0) {
+                    // TODO(#105): Instead of moving cards one at a time, we should instead reveal by printing out the cards to the game log.
+                    foreach ($score_cards as $card) {
                         self::transferCardFromTo($card, $player_id, 'revealed');
                     }
-                    $step_max = 1; // --> 1 interaction
+                    $step_max = 1;
                 }
                 break;
                 
@@ -14398,7 +14399,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
        // id 214, Artifacts age 10: Twister
         case "214C1A":
-            // "meld a card of that color from your score pile!"
+            // "Meld a card of that color from your score pile"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -15941,14 +15942,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 214, Artifacts age 10: Twister
                 case "214C1A":
-                    // Put the rest of the cards of the same color back in the score pile
+                    // Put the rest of the cards of the same color back in the score pile (making it easier to isolate the selectable cards for future interactions)
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach($revealed_cards as $card) {
+                    foreach ($revealed_cards as $card) {
                         if ($card['color'] == self::getGameStateValue('color_last_selected')) {
-                            self::transferCardFromTo($card, $player_id, 'score', false, false);
-                        }
-                        else {
-                            $step = 0; self::setStep(0); // if at least one doesn't match, keep going.
+                            self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                        } else {
+                            // If at least one card is a different color, that means we will need to repeat this interation.
+                            $step = 0;
+                            self::setStep(0);
                         }
                     }
                     break;
