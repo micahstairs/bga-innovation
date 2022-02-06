@@ -10103,11 +10103,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "211N1":
                 $step_max = 3;
                 break;
-
-            // id 217, Relic age 5: Newton-Wickins Telescope
-            case "217N1":
-                $step_max = 1;
-                break;
             
             // id 214, Artifacts age 10: Twister
             case "214C1":
@@ -10120,6 +10115,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     $step_max = 1;
                 }
+                break;
+
+            // id 217, Relic age 5: Newton-Wickins Telescope
+            case "217N1":
+                $step_max = 1;
                 break;
                 
             default:
@@ -14382,6 +14382,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             break;
 
+       // id 214, Artifacts age 10: Twister
+       case "214C1A":
+        // "Meld a card of that color from your score pile"
+        $options = array(
+            'player_id' => $player_id,
+            'n' => 1,
+            'can_pass' => false,
+            
+            'owner_from' => $player_id,
+            'location_from' => 'revealed',
+            'owner_to' => $player_id,
+            'location_to' => 'board'
+        );
+        break;
+
         // id 217, Relic age 5: Newton-Wickins Telescope
         case "217N1A":
             // "You may return any number of cards from your score pile."
@@ -14394,21 +14409,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'score',
                 'owner_to' => 0,
                 'location_to' => 'deck'
-            );
-            break;
-
-       // id 214, Artifacts age 10: Twister
-        case "214C1A":
-            // "Meld a card of that color from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => $player_id,
-                'location_to' => 'board'
             );
             break;
             
@@ -15927,18 +15927,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Then draw a 10"
                     self::executeDraw($player_id, 10);
                     break;
-                    
-                case "217N1A":
-                    // "If you do, draw and meld a card of value equal to the number of cards returned."
-                    if ($n > 0) {
-                        $card = self::executeDraw($player_id, $n, 'board');
-                        
-                        // "If the melded card has a clock, return it."
-                        if (self::countIconsOnCard($card, 6) > 0) {
-                            self::transferCardFromTo($card, $player_id, 'deck');
-                        }
-                    }
-                    break;                                     
 
                 // id 214, Artifacts age 10: Twister
                 case "214C1A":
@@ -15951,6 +15939,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             // If at least one card is a different color, that means we will need to repeat this interation.
                             $step = 0;
                             self::setStep(0);
+                        }
+                    }
+                    break;
+                    
+                case "217N1A":
+                    // "If you do, draw and meld a card of value equal to the number of cards returned."
+                    if ($n > 0) {
+                        $card = self::executeDraw($player_id, $n, 'board');
+                        
+                        // "If the melded card has a clock, return it."
+                        if (self::countIconsOnCard($card, 6) > 0) {
+                            self::transferCardFromTo($card, $player_id, 'deck');
                         }
                     }
                     break;
