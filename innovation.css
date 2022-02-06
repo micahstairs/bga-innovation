@@ -777,20 +777,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    
+    text-align: center;
 }
 
 .card_title.M {
-    left: 53px;
+    left: 54px;
     top: 5px;
-    width: 95px;
+    width: 93px;
     height: 15px;
 }
 
 .card_title.L {
-    left: 139px;
+    left: 143px;
     top: 18px;
-    width: 235px;
+    width: 230px;
     height: 37px;
 }
 
