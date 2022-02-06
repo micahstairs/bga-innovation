@@ -153,7 +153,7 @@ class Innovation extends Table
         $card = self::getCardInfo($card_id);
         $card['debug_score'] = true;
         if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck') {
-            self::transferCardFromTo($card, $player_id, 'score', false, true);
+            self::scoreCard($card, $player_id);
         } else if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
@@ -1062,6 +1062,14 @@ class Innovation extends Table
         ");
     }
     
+    function tuckCard($card, $owner_to) {
+        return self::scoreCard($card, $owner_to, 'board', /*bottom_to=*/ true);
+    }
+
+    function scoreCard($card, $owner_to) {
+        return self::scoreCard($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+    }
+
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=false, $score_keyword=false) {
         /** Execute the transfer of the card with all information needed. The new position is calculated according to $location_to.
         
@@ -7507,7 +7515,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
                     if (self::hasRessource($card, 4)) { // "If it as tower"
                         self::notifyGeneralInfo(clienttranslate('It has a ${tower}.'), array('tower' => $tower));
-                        self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score it"
+                        self::scoreCard($card, $player_id); // "Score it"
                         continue; // "Repeat this dogma effect"
                     }
                     break; // "Otherwise"        
@@ -8166,7 +8174,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDrawAndTuck($player_id, 4); //
                 $card = self::getBottomCardOnBoard($player_id, 3 /* yellow */);
                 if ($card !== null) {
-                    self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score your bottom yellow card"
+                    self::scoreCard($card, $player_id);
                 }
                 break;
             
@@ -8523,7 +8531,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $pile = $board[$card['color']];
                 for($p=0; $p < count($pile)-1; $p++) { // "For each card beneath it"
                     $card = self::getCardInfo($pile[$p]['id']);
-                    self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score that card"
+                    self::scoreCard($card, $player_id); // "Score that card"
                 }
                 break;
             
@@ -8705,7 +8713,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "98N1":
                 $top_green_card = self::getTopCardOnBoard($player_id, 2 /* green */);
                 if ($top_green_card !== null) {
-                    self::transferCardFromTo($top_green_card, $player_id, 'score', false, true /* score keyword*/); // "Score your top green card"
+                    self::scoreCard($top_green_card, $player_id); // "Score your top green card"
                 }
                 $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10
                 self::executeNonDemandEffects($card); // "Execute each its non-demand dogma effects"
@@ -9004,7 +9012,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card !== null && $card['age'] == $top_card['age']) { // "If you have a top card of matching color and value"
-                        self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score the drawn card"
+                        self::scoreCard($card, $player_id); // "Score the drawn card"
                         continue; // "Repeat this effect"
                     }
                     self::notifyGeneralInfo(clienttranslate('There was not a top card of matching color and value.'));
@@ -9321,7 +9329,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($card['color'] == 4) { // "If it is purple, score it"
                         self::transferCardFromTo($card, $player_id, 'score');
                     } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
-                        self::transferCardFromTo($card, $player_id, 'board', true);
+                        self::tuckCard($card, $player_id);
                     } else { // Put it in hand
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
@@ -9375,9 +9383,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 do {
                     $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
                     if ($card['color'] == 4) { // "If it is purple, score it"
-                        self::transferCardFromTo($card, $player_id, 'score', false, true);
+                        self::scoreCard($card, $player_id);
                     } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
-                        self::transferCardFromTo($card, $player_id, 'board', true);
+                        self::tuckCard($card, $player_id);
                     } else { // Put it in hand
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
@@ -9523,7 +9531,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($color = 0; $color< 5; $color++) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
                     if ($card !== null) {
-                        self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
+                        self::scoreCard($card, $player_id);
                     }
                 }
                 $step_max = 1;
@@ -9602,7 +9610,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     // "Score the melded card"
-                    self::transferCardFromTo($card, $player_id, 'score', false, true);
+                    self::scoreCard($card, $player_id);
                 } while (true); // "Repeat this effect"
                 break;
 
@@ -9652,7 +9660,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 // Put the revealed card back on the bottom
                 $revealed_card = self::getCardInfo($bottom_card['id']);
-                self::transferCardFromTo($revealed_card, $player_id, 'board', /*bottom_to=*/ true);
+                self::tuckCard($revealed_card, $player_id);
                 break;
 
             // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
@@ -9689,7 +9697,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     } else {
                         // "If it has no clocks, tuck it"
-                        self::transferCardFromTo($card, $player_id, 'board', true);
+                        self::tuckCard($card, $player_id);
                     }
                 } while (true); // "Repeat this effect"
                 break;
@@ -9771,7 +9779,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for ($color = 0; $color < 5; $color++) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
                     if ($card != null) {
-                        $card = self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
+                        $card = self::scoreCard($card, $player_id);
                     }
                 }
                 break;
@@ -14565,7 +14573,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) { // "If you do"
                         $card = self::getTopCardOnBoard($player_id, self::getGameStateValue('color_last_selected'));
                         if ($card !== null) { // Check if the p^layer has a card beneath the card he scored
-                            self::transferCardFromTo($card, $player_id, 'score', false, true); // "Also score the card beneath it"
+                            self::scoreCard($card, $player_id); // "Also score the card beneath it"
                         }
                     }                
                     break;
@@ -14808,7 +14816,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $color = self::getGameStateValue('color_last_selected');
                         $card = self::getTopCardOnBoard($player_id, $color); // The card now on top of the pile
                         if ($card !== null) {
-                            self::transferCardFromTo($card, $player_id, 'score', null, true); // "Score the card beneath it"
+                            self::scoreCard($card, $player_id); // "Score the card beneath it"
                         }
                         self::setAuxiliaryValue($color);// Flag the chosen color for the next interaction
                         self::incrementStepMax(1);
@@ -14967,7 +14975,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $scored = false;
                     for($p=0; $p < count($pile)-1; $p++) { // "Score all other cards of the same color from your board"
                         $card = self::getCardInfo($pile[$p]['id']);
-                        self::transferCardFromTo($card, $player_id, 'score', false, true);
+                        self::scoreCard($card, $player_id);
                         $scored = true;
                     }
                     if ($scored) { // "If you scored at least one card, repeat this effect"
@@ -14991,7 +14999,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $remaining_revealed_cards = self::getCardsInLocation($player_id, 'revealed');
                     if (count($remaining_revealed_cards) == 1) {
                         $remaining_card = $remaining_revealed_cards[0];
-                        self::transferCardFromTo($remaining_card, $player_id, 'board', /*bottom_to*/ true);
+                        self::tuckCard($remaining_card, $player_id);
                         for ($i = 0; $i < 3; $i++) {
                             if ($revealed_card_ids[$i] == $remaining_card['id']) {
                                 $revealed_card_ids[$i] = -1;
@@ -15706,7 +15714,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $choice = self::getAuxiliaryValue();
                     if ($choice == 1) {
                         $bottom_yellow_card = self::getBottomCardOnBoard($player_id, 3);
-                        self::transferCardFromTo($bottom_yellow_card, $player_id, 'score', false, /*score_keyword=*/ true);
+                        self::scoreCard($bottom_yellow_card, $player_id);
                     }
                     break;
 
@@ -16007,7 +16015,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     for($color=0; $color<5; $color++) {
                         $card = self::getTopCardOnBoard($player_id, $color);
                         if ($card !== null && !self::hasRessource($card, 5)) {
-                            self::transferCardFromTo($card, $player_id, 'score', false, true); // "Score all your top cards without a factory
+                            self::scoreCard($card, $player_id); // "Score all your top cards without a factory"
                         }
                     }
                 }
@@ -16142,7 +16150,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Make the transfers
                     foreach($ids_of_cards_in_hand as $id) {
                         $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $player_id, 'score', false, true); // Note: this has a score keyword 
+                        self::scoreCard($card, $player_id);
                     }
                 }                
                 break;
@@ -16290,7 +16298,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "If the drawn card is one of the chosen colors, score it and splay up that color"
                 if ($card['color'] == $colors[0] || $card['color'] == $colors[1] || $card['color'] == $colors[2]) {
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
-                    self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword=*/ true);
+                    self::scoreCard($card, $player_id);
                     self::splayUp($player_id, $player_id, $card['color']);
 
                 // "Otherwise"
