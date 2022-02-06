@@ -1035,10 +1035,6 @@ function (dojo, declare) {
         
         */
         
-        setDefault : function(variable, default_value) {
-            return variable === undefined ? default_value : variable;
-        },
-        
         addToLog : function(message) {
             HTML = dojo.string.substitute('<div class="log" style="height: auto; display: block; color: rgb(0, 0, 0);"><div class="roundedbox">${msg}</div></div>',
                 {'msg': message})
@@ -1104,11 +1100,7 @@ function (dojo, declare) {
          * Icons and little stuff
          */
 
-        square : function(size, type, key, context) {
-            // Default values
-            context = this.setDefault(context, null);
-            ///////
-            
+        square : function(size, type, key, context = null) {
             return "<span class='square " + size + " " + type + "_" + key + (context !== null ? " " + context : "") + "'></span>"
         },
         
@@ -1133,17 +1125,11 @@ function (dojo, declare) {
             return HTML;
         },
         
-        addCustomTooltip : function(nodeId, help_HTML, action_HTML, delay) {
-            // Default values
-            delay = this.setDefault(delay, undefined);
-            ///////
+        addCustomTooltip : function(nodeId, help_HTML, action_HTML, delay = undefined) {
             this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), delay);
         },
         
-        addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML, delay) {
-            // Default values
-            delay = this.setDefault(delay, undefined);
-            ///////
+        addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML, delay = undefined) {
             this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), delay);
         },
         
@@ -1266,36 +1252,47 @@ function (dojo, declare) {
             this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
         },
         
-        createAdjustedContent : function(content, HTML_class, size, font_max, width_margin, height_margin) {
-            // Default values
-            width_margin = this.setDefault(width_margin, 0);
-            height_margin = this.setDefault(height_margin, 0);
-            ///////
-            
+        createAdjustedContent : function(content, HTML_class, size, font_max, width_margin = 0, height_margin = 0) {
             // Problem: impossible to get suitable text size because it is not possible to get the width and height of an element still unattached
             // Solution: first create the title hardly attached to the DOM, then destroy it and set the title in tooltip properly
             // Create temporary title hardly attached on the DOM
-            var HTML_id_parent = 'temp_parent';
-            var HTML_id = 'temp';
-            var div_title = "<div id='" + HTML_id_parent + "' class='" + HTML_class + " " + size + "'><span id='" + HTML_id + "' >" + content + "</span></div>";
+            var tempParentId = 'temp_parent';
+            var tempId = 'temp';
+            var div_title = "<div id='" + tempParentId + "' class='" + HTML_class + " " + size + "'><span id='" + tempId + "' >" + content + "</span></div>";
             
             dojo.place(div_title, dojo.body());
             
             // Determine the font-size between 1 and 30 which enables to fill the container without overflow
             var font_size = font_max;
             var anc_font_size;
-            var HTML_id_parent = $(HTML_id_parent);
-            var HTML_id = $(HTML_id);
-            dojo.addClass(HTML_id, 'font_size_' + font_size);
-            while(font_size > 1 && (dojo.position(HTML_id).w + width_margin > dojo.position(HTML_id_parent).w || dojo.position(HTML_id).h + height_margin > dojo.position(HTML_id_parent).h)) {
+            var elementParent = $(tempParentId);
+            var element = $(tempId);
+            dojo.addClass(element, 'font_size_' + font_size);
+            
+            var elementWidth;
+            var elementParentWidth;
+            var elementHeight;
+            var elementParentHeight;
+            var doesItFit;
+            do {
+                elementWidth = dojo.position(element).w + width_margin;
+                elementParentWidth = dojo.position(elementParent).w;
+                elementHeight = dojo.position(element).h + height_margin;
+                elementParentHeight = dojo.position(elementParent).h;
                 anc_font_size = font_size;
                 font_size -= 1;
-                dojo.removeClass(HTML_id, 'font_size_' + anc_font_size);
-                dojo.addClass(HTML_id, 'font_size_' + font_size);
-            }
+                dojo.removeClass(element, 'font_size_' + anc_font_size);
+                dojo.addClass(element, 'font_size_' + font_size);
+                if (HTML_class === 'card_title') {
+                    doesItFit = font_size > 1 && (elementHeight > elementParentHeight)
+                } else {
+                    doesItFit = font_size > 1 && (elementWidth > elementParentWidth || elementHeight > elementParentHeight)
+                }
+
+            } while(doesItFit);
             
             // Destroy the piece of HTML used for determination
-            dojo.destroy(HTML_id_parent);
+            dojo.destroy(elementParent);
             
             // Create actual HTML which will be added in tooltip
             return "<div class='" + HTML_class + " " + size + "'><span class='font_size_" + font_size + "'>" + content + "</span></div>";            
@@ -1795,12 +1792,7 @@ function (dojo, declare) {
             return zone_HTML_class.split(' ')[1];
         },
         
-        getZone : function(location, owner, type, age, color) {
-            // Default values
-            age = this.setDefault(age, null);
-            color = this.setDefault(color, null);
-            ///////
-
+        getZone : function(location, owner, type, age = null, color = null) {
             var root = this.zone[location];
             switch(location) {
                 case "deck":
@@ -1974,16 +1966,7 @@ function (dojo, declare) {
         /*
          * Zone management systemcard
          */
-        createZone : function(location, owner, type, age, color, grouped_by_age_type_and_is_relic, counter_method, counter_display_zero) {
-            // Default values
-            type = this.setDefault(type, null);
-            age = this.setDefault(age, null);
-            color = this.setDefault(color, null);
-            grouped_by_age_type_and_is_relic = this.setDefault(grouped_by_age_type_and_is_relic, null);
-            counter_method = this.setDefault(counter_method, null);
-            counter_display_zero = this.setDefault(counter_display_zero, null);
-            ///////
-
+        createZone : function(location, owner, type = null, age = null, color = null, grouped_by_age_type_and_is_relic = null, counter_method = null, counter_display_zero = null) {
             owner_string = owner != 0 ? '_' + owner : '';
             type_string = type !== null ? '_' + type : '';
             age_string = age !== null ? '_' + age : '';
@@ -2293,11 +2276,7 @@ function (dojo, declare) {
             }
         },
         
-        setSplayMode : function(zone, splay_direction, force_full_visible) {
-            // Default values
-            force_full_visible = this.setDefault(full_visible, null);
-            ///////
-            
+        setSplayMode : function(zone, splay_direction, force_full_visible = null) {
             var full_visible = force_full_visible || this.view_full;
             zone.splay_direction = splay_direction;
             if (splay_direction == 0 || splay_direction == 3 || full_visible) {
@@ -2929,11 +2908,7 @@ function (dojo, declare) {
             this.publicationResetInterface();
         },
         
-        publicationResetInterface : function(keep_arrows) {
-            // Default values
-            keep_arrows = this.setDefault(keep_arrows, false);
-            ///////
-            
+        publicationResetInterface : function(keep_arrows =false) {
             if (!keep_arrows) {
                 dojo.destroy('publication_arrow_up');
                 dojo.destroy('publication_arrow_down');
@@ -3497,10 +3472,7 @@ function (dojo, declare) {
 
         /* Implementation of proper colored You with background in case of white or light colors  */
 
-        getColoredText : function(translatable_text, player_id) {
-            // Default values
-            player_id = this.setDefault(player_id, this.player_id);
-            ///////
+        getColoredText : function(translatable_text, player_id = this.player_id) {
             var color = this.gamedatas.players[player_id].color;
             return "<span style='font-weight:bold;color:#" + color + "'>" + translatable_text + "</span>";
         },
