@@ -9453,7 +9453,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 153, Artifacts age 4: Cross of Coronado
             case "153N1":
-                $step_max = 1;
+                // "Reveal your hand."
+                $cards = self::getCardsInHand($player_id);
+                foreach ($cards as $card) {
+                    self::transferCardFromTo($card, $player_id, 'revealed');
+                }
+            
+                // "If you have exactly five cards and five colors in your hand, you win"
+                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
+                if (count(array_diff($card_count_by_color, array(1))) == 0) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::setGameStateValue('winner_by_dogma', $player_id);
+                    self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
+                    throw new EndOfGame();
+                }
+                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                }
                 break;
 
             // id 154, Artifacts age 4: Abell Gallery Harpsichord
@@ -13218,21 +13235,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 153, Artifacts age 4: Cross of Coronado
-        case "153N1A":
-            // TODO: This shouldn't be an interaction, it should be done automatically for the player.
-            // "Reveal your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed'
-            );
-            break;
-
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
             // "Return the lowest card in your hand"
@@ -15309,22 +15311,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($card_1['color'] == $card_2['color']) {
                             self::incrementStepMax(1);
                         }
-                    }
-                    break;
-
-                // id 153, Artifacts age 4: Cross of Coronado
-                case "153N1A":
-                	// "If you have exactly five cards and five colors in your hand, you win"
-                    $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
-                    if (count(array_diff($card_count_by_color, array(1))) == 0) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
-                        throw new EndOfGame();
-                    }
-                    foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
-                        self::transferCardFromTo($card, $player_id, 'hand');
                     }
                     break;
                     
