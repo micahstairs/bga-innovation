@@ -2956,6 +2956,7 @@ class Innovation extends Table
         ));
     }
     
+    // NOTE: This is only executed by a deprecated code path.
     function getExecutingPlayers() {
         return self::getCollectionFromDB("
             SELECT
@@ -2974,6 +2975,7 @@ class Innovation extends Table
                 player
             SET
                 stronger_or_equal = NULL,
+                featured_icon_count = NULL,
                 effects_had_impact = FALSE
         ");
     }
@@ -4342,11 +4344,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
+        // TODO: Identify and fix the nested execution bug which makes this hack necessary.
+        if ($player_id == -1 || $player_id == null) {
+            return "unknown";
+        }
         $players = self::loadPlayersBasicInfos();
         return $players[$player_id]['player_name'];
     }
     
     function getPlayerColorFromId($player_id) {
+        // TODO: Identify and fix the nested execution bug which makes this hack necessary.
+        if ($player_id == -1 || $player_id == null) {
+            return "unknown";
+        }
         $players = self::loadPlayersBasicInfos();
         return $players[$player_id]['player_color'];
     }
@@ -4409,59 +4419,67 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
                                   
     function getFirstPlayerUnderEffect($dogma_effect_type, $launcher_id) {
-        // I demand
-        if ($dogma_effect_type == 0) {
-            $player_query = self::format("stronger_or_equal = FALSE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
-        // I compel
-        } else if ($dogma_effect_type == 2) {
-            $player_query = self::format("stronger_or_equal = TRUE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
-        // Non-demand
-        } else {
-            $player_query = "stronger_or_equal = TRUE";
-        }
-        return self::getUniqueValueFromDB(self::format("
-            SELECT
-                player_id
-            FROM
-                player
-            WHERE
-                player_eliminated = 0 AND
-                {player_query}
-                AND player_no_under_effect = 1
-        ",
-            array('player_query' => $player_query)
-       ));
+        return self::getNextPlayerUnderEffect($dogma_effect_type, -1, $launcher_id);
     }
        
-    function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id) { // null if no player is found
+    /* Returns the ID of the next player under effect, or null */
+    function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id) {
         // I demand
-        if ($dogma_effect_type == 0) {
-            $player_query = self::format("stronger_or_equal = FALSE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
-        // I compel
-        } else if ($dogma_effect_type == 2) {
-            $player_query = self::format("stronger_or_equal = TRUE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
-        // Non-demand
+        if (self::getGameStateValue('release_version') >= 1) {
+            $launcher_icon_count = self::getUniqueValueFromDB(self::format("
+                SELECT
+                    featured_icon_count
+                FROM
+                    player
+                WHERE
+                    player_id = {launcher_id}
+            ",
+                array('launcher_id' => $launcher_id)
+            ));
+            // I demand
+            if ($dogma_effect_type == 0) {
+                $player_query = self::format("featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id}", array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count));
+            // I compel
+            } else if ($dogma_effect_type == 2) {
+                $player_query = self::format("featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id}", array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count));
+            // Non-demand
+            } else {
+                $player_query = self::format("featured_icon_count >= {launcher_icon_count}", array('launcher_icon_count' => $launcher_icon_count));
+            }
         } else {
-            $player_query = "stronger_or_equal = TRUE";
-        }       
+            if ($dogma_effect_type == 0) {
+                $player_query = self::format("stronger_or_equal = FALSE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
+            } else {
+                $player_query = "stronger_or_equal = TRUE";
+            }
+        }
+
+        // NOTE: The constant '100' is mostly arbitrary. It just needed to be at least as large as the maximum number of players in the game.
+        self::DbQuery(self::format("
+            UPDATE
+                player
+            SET
+                turn_order_ending_with_launcher = (CASE WHEN player_no <= {launcher_player_no} THEN player_no + 100 ELSE player_no END)
+        ", array('launcher_player_no' => self::playerIdToPlayerNo($launcher_id))));
+        $current_turn = $player_id == -1 ? -1 : self::getUniqueValueFromDB(self::format("SELECT turn_order_ending_with_launcher FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
         return self::getUniqueValueFromDB(self::format("
             SELECT
                 player_id
             FROM
                 player
             WHERE
-                player_eliminated = 0 AND
-                {player_query}
-                AND player_no_under_effect = (
+                turn_order_ending_with_launcher = (
                     SELECT
-                        player_no_under_effect
+                        MIN(turn_order_ending_with_launcher)
                     FROM
                         player
                     WHERE
-                        player_id = {player_id}
-                ) + 1
+                        player_eliminated = 0
+                        AND turn_order_ending_with_launcher > {current_turn}
+                        AND {player_query}
+                )
         ",
-            array('player_query' => $player_query, 'player_id' => $player_id)
+            array('player_query' => $player_query, 'current_turn' => $current_turn)
         ));
     }
     
@@ -5399,16 +5417,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::trace('nesting++');
         if (self::getGameStateValue('release_version') >= 1) {
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
+            $nested_card_state = self::getCurrentNestedCardState();
+            // Don't execute demand effects on the next card if the current card was supposed to skip demand effects.
+            if (!$nested_card_state['execute_demand_effects']) {
+                $execute_demand_effects = false;
+            }
             $nesting_index = self::incGameStateValue('current_nesting_index', 1);
             $has_i_demand = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
             $has_i_compel = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
-                    (nesting_index, card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
+                    (nesting_index, card_id, launcher_id, execute_demand_effects, current_effect_type, current_effect_number, step, step_max)
                 VALUES
-                    ({nesting_index}, {card_id}, {launcher_id}, {effect_type}, 1, -1, -1)
-            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+                    ({nesting_index}, {card_id}, {launcher_id}, {execute_demand_effects}, {effect_type}, 0, -1, -1)
+            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'execute_demand_effects' => $execute_demand_effects ? 1 : 0, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -5437,7 +5460,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getObjectFromDB(
             self::format("
                 SELECT
-                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
+                    nesting_index, card_id, card_location, launcher_id, current_player_id, execute_demand_effects, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
                 FROM
                     nested_card_execution
                 WHERE
@@ -5904,56 +5927,71 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $players_teams[$player_no] = $player['player_team'];
             
             self::notifyPlayerRessourceCount($id, $dogma_icon, $player_ressource_count);
+
+            if (self::getGameStateValue('release_version') >= 1) {
+                self::DBQuery(self::format("
+                    UPDATE 
+                        player
+                    SET
+                        featured_icon_count = {featured_icon_count}
+                    WHERE
+                        player_id = {player_id}"
+                ,
+                    array('featured_icon_count' => $player_ressource_count, 'player_id' => $id)
+                ));
+            }
         }
 
-        $player_no = $dogma_player_no;
-        $player_no_under_i_demand_effect = 0;
-        $player_no_under_non_demand_effect = 0;
-        
-        // Loop on players finishing with the one who triggered the dogma
-        do {
-            if ($player_no == $players_nb) { // End of table reached, go back to the top
-                $player_no = 1;
-            }
-            else { // Next row
-                $player_no = $player_no + 1;          
-            }
+        if (self::getGameStateValue('release_version') < 1) {
+            $player_no = $dogma_player_no;
+            $player_no_under_i_demand_effect = 0;
+            $player_no_under_non_demand_effect = 0;
             
-            $player_ressource_count = $players_ressource_count[$player_no];
-            
-            // Mark the player
-            if ($player_ressource_count >= $dogma_player_ressource_count) {
-                $stronger_or_equal = "TRUE";
-                $player_no_under_non_demand_effect++;
-                $player_no_under_effect = $player_no_under_non_demand_effect;
-            }
-            else {
-                $stronger_or_equal = "FALSE";
-                if ($players_teams[$player_no] != $dogma_player_team) {
-                    $player_no_under_i_demand_effect++;
-                    $player_no_under_effect = $player_no_under_i_demand_effect;
+            // Loop on players finishing with the one who triggered the dogma
+            do {
+                if ($player_no == $players_nb) { // End of table reached, go back to the top
+                    $player_no = 1;
                 }
-                else { // Player on the same team don't suffer the I demand effect of each other
-                    $player_no_under_effect = 0;
+                else { // Next row
+                    $player_no = $player_no + 1;          
                 }
-            }
-            self::DBQuery(self::format("
-                UPDATE 
-                    player
-                SET
-                    stronger_or_equal = {stronger_or_equal},
-                    player_no_under_effect = {player_no_under_effect}
-                WHERE
-                    player_no = {player_no}"
-            ,
-                array('stronger_or_equal' => $stronger_or_equal, 'player_no_under_effect' => $player_no_under_effect, 'player_no' => $player_no)
-            ));
-            
-        } while ($player_no != $dogma_player_no);
+                
+                $player_ressource_count = $players_ressource_count[$player_no];
+                
+                // Mark the player
+                if ($player_ressource_count >= $dogma_player_ressource_count) {
+                    $stronger_or_equal = "TRUE";
+                    $player_no_under_non_demand_effect++;
+                    $player_no_under_effect = $player_no_under_non_demand_effect;
+                }
+                else {
+                    $stronger_or_equal = "FALSE";
+                    if ($players_teams[$player_no] != $dogma_player_team) {
+                        $player_no_under_i_demand_effect++;
+                        $player_no_under_effect = $player_no_under_i_demand_effect;
+                    }
+                    else { // Player on the same team don't suffer the I demand effect of each other
+                        $player_no_under_effect = 0;
+                    }
+                }
+                self::DBQuery(self::format("
+                    UPDATE 
+                        player
+                    SET
+                        stronger_or_equal = {stronger_or_equal},
+                        player_no_under_effect = {player_no_under_effect}
+                    WHERE
+                        player_no = {player_no}"
+                ,
+                    array('stronger_or_equal' => $stronger_or_equal, 'player_no_under_effect' => $player_no_under_effect, 'player_no' => $player_no)
+                ));
+                
+            } while ($player_no != $dogma_player_no);
+        }
 
         if ($card['i_demand_effect_1'] == null) {
             $current_effect_type = 1;
-        } else if ($card['i_demand_effect_1_is_compel']) {
+        } else if (self::getGameStateValue('release_version') >= 1 && $card['i_demand_effect_1_is_compel']) {
             $current_effect_type = 2;
         } else {
             $current_effect_type = 0;
@@ -7261,20 +7299,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // Stats
             $i_demand_effects = false;
-            $executing_players = self::getExecutingPlayers();
-            foreach($executing_players as $player_id => $stronger_or_equal) {
-                if ($player_id == $launcher_id) {
-                    continue;
+            if (self::getGameStateValue('release_version') >= 1) {
+                // TODO: Use featured_icon_count to increment sharing_effects_number and i_demand_effects_number stats.
+            } else {
+                $executing_players = self::getExecutingPlayers();
+                foreach($executing_players as $player_id => $stronger_or_equal) {
+                    if ($player_id == $launcher_id) {
+                        continue;
+                    }
+                    if ($stronger_or_equal) { // This player had effectively shared some dogma effects of the card
+                        self::incStat(1, 'sharing_effects_number', $player_id);
+                    }
+                    else { // The card had an I demand effect, and at least one player executed it with effects
+                        self::incStat(1, 'i_demand_effects_number', $player_id);
+                        $i_demand_effects = true;
+                    }
                 }
-                if ($stronger_or_equal) { // This player had effectively shared some dogma effects of the card
-                    self::incStat(1, 'sharing_effects_number', $player_id);
-                }
-                else { // The card had an I demand effect, and at least one player executed it with effects
-                    self::incStat(1, 'i_demand_effects_number', $player_id);
-                    $i_demand_effects = true;
-                }
-
             }
+
             if ($i_demand_effects) {
                 self::incStat(1, 'dogma_actions_number_with_i_demand', $launcher_id);
             }
@@ -10092,12 +10134,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // If this is a nested card, don't allow other players to share the non-demand effect
             $nesting_index = self::getGameStateValue('current_nesting_index');
+            self::updateCurrentNestedCardState('post_execution_index', 0);
             $nested_card_state = self::getNestedCardState($nesting_index);
             $next_player = $nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1 ? null : self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
 
             // There are no more players which are eligible to share this effect
             if ($next_player === null) {
-                self::updateCurrentNestedCardState('post_execution_index', 0);
                 self::trace('interPlayerInvolvedTurn->interDogmaEffect');
                 $this->gamestate->nextState('interDogmaEffect');
                 return;
