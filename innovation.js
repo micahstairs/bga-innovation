@@ -2611,7 +2611,7 @@ function (dojo, declare) {
                     if (this.counter.ressource_count[player_id][dogma_icon].getValue() < player_total) {
                         player_total_is_min_value = false;
                     }
-                    if (this.counter.ressource_count[player_id][dogma_icon].getValue() >= player_total) {
+                    if (this.player_id != player_id && this.counter.ressource_count[player_id][dogma_icon].getValue() >= player_total) {
                         player_total_is_max_value = false;
                     }
                 }
