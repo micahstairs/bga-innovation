@@ -1070,7 +1070,7 @@ class Innovation extends Table
         return self::scoreCard($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
     }
 
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=false, $score_keyword=false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=null, $score_keyword=false) {
         /** Execute the transfer of the card with all information needed. The new position is calculated according to $location_to.
         
         Return the card transferred as a dictionary.
@@ -1086,7 +1086,8 @@ class Innovation extends Table
             $location_to = 'relics';
         }
 
-        if ($location_to == 'deck') { // We always return card at the bottom of the deck
+        // By default, cards are returned to the bottom of the deck
+        if ($location_to == 'deck' && $bottom_to === null) {
             $bottom_to = true;
         }
         
@@ -1747,7 +1748,7 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} draws a ${<}${age}${>}.');
             break;
         case 'deck->board':
-            if ($bottom_to) {;
+            if ($bottom_to) {
                 $message_for_player = clienttranslate('${You} draw and tuck ${<}${age}${>} ${<<}${name}${>>}.');
                 $message_for_others = clienttranslate('${player_name} draws and tucks ${<}${age}${>} ${<<}${name}${>>}.');
             }
@@ -1778,8 +1779,13 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his display.');
             break;
         case 'hand->deck':
-            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
-            $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
+            if ($bottom_to) {
+                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+                $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
+            } else {
+                $message_for_player = clienttranslate('${You} topdeck ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+                $message_for_others = clienttranslate('${player_name} topdecks a ${<}${age}${>} from his hand.');
+            }
             break;
         case 'hand->relics':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
