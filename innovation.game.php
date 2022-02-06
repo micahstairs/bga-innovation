@@ -4582,7 +4582,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to=false, $type = null) {
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
         if ($age_to_draw > 10) {
@@ -9918,9 +9918,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 205, Artifacts age 10: Rover Curiosity
             case "205N1":
-                // "Draw and meld an Artifact 10."
-                $card = self::executeDraw($player_id, 10, 'board', false, 1);
-                // "Execute the effects of the melded card as if they were on this card. Do not share them."
+                // "Draw and meld an Artifact 10"
+                $card = self::executeDraw($player_id, 10, 'board', /*bottom_to=*/ false, /*type=*/ 1);
+                // "Execute the effects of the melded card as if they were on this card. Do not share them"
                 self::executeAllEffects($card);
                 break;
                 
