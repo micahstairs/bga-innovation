@@ -24,6 +24,7 @@ ALTER TABLE `player` ADD `player_icon_count_6` SMALLINT UNSIGNED NOT NULL DEFAUL
 /* stronger_or_equal is deprecated */
 ALTER TABLE `player` ADD `stronger_or_equal` BOOLEAN DEFAULT NULL COMMENT 'When in dogma state, TRUE if the player can share the non-demand effects, FALSE if the player has to execute "I demand" effects';
 ALTER TABLE `player` ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Number of visible icons matching the featured icon at the start of the dogma effect';
+ALTER TABLE `player` ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Turn order ending with the player who launched the current dogma effect (these values will not necessarily be consecutive)';
 /* player_no_under_effect is deprecated */
 ALTER TABLE `player` ADD `player_no_under_effect` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Order of the player when he is concerned by an effect';
 ALTER TABLE `player` ADD `number_of_tucked_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has tucked during the turn of the current player';

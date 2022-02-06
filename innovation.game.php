@@ -4344,7 +4344,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
-        // TODO: Identify and fix the bug which makes this hack necessary.
+        // TODO: Identify and fix the nested execution bug which makes this hack necessary.
         if ($player_id == -1 || $player_id == null) {
             return "unknown";
         }
@@ -4353,7 +4353,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getPlayerColorFromId($player_id) {
-        // TODO: Identify and fix the bug which makes this hack necessary.
+        // TODO: Identify and fix the nested execution bug which makes this hack necessary.
         if ($player_id == -1 || $player_id == null) {
             return "unknown";
         }
@@ -4453,26 +4453,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $player_query = "stronger_or_equal = TRUE";
             }
         }
-        // After ordering the players in turn order ending with the launcher,
+
         // NOTE: The constant '100' is mostly arbitrary. It just needed to be at least as large as the maximum number of players in the game.
+        self::DbQuery(self::format("
+            UPDATE
+                player
+            SET
+                turn_order_ending_with_launcher = (CASE WHEN player_no <= {launcher_player_no} THEN player_no + 100 ELSE player_no END)
+        ", array('launcher_player_no' => self::playerIdToPlayerNo($launcher_id))));
+        $current_turn = $player_id == -1 ? -1 : self::getUniqueValueFromDB(self::format("SELECT turn_order_ending_with_launcher FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
         return self::getUniqueValueFromDB(self::format("
             SELECT
                 player_id
             FROM
                 player
             WHERE
-                player_no = MOD((
+                turn_order_ending_with_launcher = (
                     SELECT
-                        MIN(CASE WHEN player_no <= {launcher_player_no} THEN player_no + 100 ELSE player_no END)
+                        MIN(turn_order_ending_with_launcher)
                     FROM
                         player
                     WHERE
                         player_eliminated = 0
-                        AND player_no > {player_no}
+                        AND turn_order_ending_with_launcher > {current_turn}
                         AND {player_query}
-                ), 100)
+                )
         ",
-            array('player_query' => $player_query, 'player_no' => $player_id == -1 ? -1 : self::playerIdToPlayerNo($player_id), 'launcher_player_no' => self::playerIdToPlayerNo($launcher_id))
+            array('player_query' => $player_query, 'current_turn' => $current_turn)
         ));
     }
     
@@ -5930,7 +5937,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     WHERE
                         player_id = {player_id}"
                 ,
-                    array('featured_icon_count' => $player_ressource_count, 'player_id' => $player_id)
+                    array('featured_icon_count' => $player_ressource_count, 'player_id' => $id)
                 ));
             }
         }
