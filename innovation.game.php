@@ -6763,7 +6763,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-
+				
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -10102,6 +10102,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 211, Artifacts age 10: Dolly the Sheep
             case "211N1":
                 $step_max = 3;
+                break;
+            
+            // id 214, Artifacts age 10: Twister
+            case "214C1":
+                // "I compel you to reveal your score pile"
+                $score_cards = self::getCardsInLocation($player_id, 'score');
+                if (count($score_cards) > 0) {
+                    // TODO(#105): Instead of moving cards one at a time, we should instead reveal by printing out the cards to the game log.
+                    foreach ($score_cards as $card) {
+                        self::transferCardFromTo($card, $player_id, 'revealed');
+                    }
+                    $step_max = 1;
+                }
                 break;
 
             // id 217, Relic age 5: Newton-Wickins Telescope
@@ -14369,6 +14382,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             break;
 
+       // id 214, Artifacts age 10: Twister
+       case "214C1A":
+        // "Meld a card of that color from your score pile"
+        $options = array(
+            'player_id' => $player_id,
+            'n' => 1,
+            'can_pass' => false,
+            
+            'owner_from' => $player_id,
+            'location_from' => 'revealed',
+            'owner_to' => $player_id,
+            'location_to' => 'board'
+        );
+        break;
+
         // id 217, Relic age 5: Newton-Wickins Telescope
         case "217N1A":
             // "You may return any number of cards from your score pile."
@@ -14383,7 +14411,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck'
             );
             break;
-
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -15899,6 +15927,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Then draw a 10"
                     self::executeDraw($player_id, 10);
                     break;
+
+                // id 214, Artifacts age 10: Twister
+                case "214C1A":
+                    // Put the rest of the cards of the same color back in the score pile (making it easier to isolate the selectable cards for future interactions)
+                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    foreach ($revealed_cards as $card) {
+                        if ($card['color'] == self::getGameStateValue('color_last_selected')) {
+                            self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                        } else {
+                            // If at least one card is a different color, that means we will need to repeat this interation.
+                            $step = 0;
+                            self::setStep(0);
+                        }
+                    }
+                    break;
                     
                 case "217N1A":
                     // "If you do, draw and meld a card of value equal to the number of cards returned."
@@ -15911,7 +15954,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -16534,7 +16576,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 self::setAuxiliaryValue($choice);
                 break;
-                
+                                
             default:
                 if ($splay_direction == -1) {
                     // Do the transfer as stated in B
