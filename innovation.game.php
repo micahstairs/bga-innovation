@@ -9991,6 +9991,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "204N1":
                 $step_max = 2;
                 break;
+            
+            // id 206, Artifacts age 10: Higgs Boson
+            case "206N1":
+                $step_max = 1;
+                break;
+                
 
             // id 205, Artifacts age 10: Rover Curiosity
             case "205N1":
@@ -10102,6 +10108,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 217, Relic age 5: Newton-Wickins Telescope
             case "217N1":
                 $step_max = 1;
+                break;
+            // id 212, Artifacts age 10: Where's Waldo?
+            case "212N1":
+                // "You Win The Game"
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} Found Waldo!'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} Has Found Waldo!'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                self::setGameStateValue('winner_by_dogma', $player_id);
+                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
+                throw new EndOfGame();
                 break;
                 
             default:
@@ -14286,6 +14301,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'hand'
             );
             break;
+        
+        // id 206, Artifacts age 10: Higgs Boson
+        case "206N1A":
+            // "Transfer All Cards from your Board to Your Score Pile"
+            $board = self::getCardsInLocation($player_id, 'board', null, false, true);
+            for($ctr=0; $ctr < 5 ; $ctr++){
+                $pile = $board[$ctr];
+                for($p=count($pile)-1; $p > -1; $p--) { 
+                    $card = self::getCardInfo($pile[$p]['id']);
+                    self::transferCardFromTo($card, $player_id, 'score', false, true); 
+                }
+            }
+            
 
         // id 207, Artifacts age 10: Exxon Valdez
         // TODO: Remove this once Exxon Valdez is removing all cards at once instead of individually.
@@ -14393,6 +14421,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 );
             }
             break;
+        
 
        // id 214, Artifacts age 10: Twister
        case "214C1A":
