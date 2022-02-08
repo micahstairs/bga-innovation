@@ -342,7 +342,7 @@ function (dojo, declare) {
                     this.counter.ressource_count[player_id][icon].setValue(gamedatas.ressource_counts[player_id][icon]);
                 }
             }
-            if (gamedatas.artifact_on_display != null) {
+            if (gamedatas.artifact_on_display != null && gamedatas.artifact_on_display.resource_icon != null) {
                 this.updateResourcesForArtifactOnDisplay(
                     gamedatas.active_player,
                     gamedatas.artifact_on_display.resource_icon,
@@ -781,13 +781,13 @@ function (dojo, declare) {
                 switch (stateName) {
                 case 'turn0':
                     this.addTooltipsWithActionsToMyHand();
-                    var cards_in_hand = this.selectCardsInHand();
+                    var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.on(cards_in_hand, 'onclick', 'action_clicForInitialMeld');
                     break;
                 case 'artifactPlayerTurn':
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay();
-                    var card_in_display = this.selectArtifactOnDisplay();
+                    var card_in_display = this.selectArtifactOnDisplayIfEligibleForDogma();
                     card_in_display.addClass("clickable");
                     this.on(card_in_display, 'onclick', 'action_clicForDogmaArtifact');
                     break;
@@ -808,7 +808,7 @@ function (dojo, declare) {
                     
                     // Cards in hand (meld action)
                     this.addTooltipsWithActionsToMyHand();
-                    var cards_in_hand = this.selectCardsInHand();
+                    var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clicForMeld');
@@ -821,7 +821,7 @@ function (dojo, declare) {
                     
                     // Cards on board (dogma action)
                     this.addTooltipsWithActionsToMyBoard();
-                    var cards_on_board = this.selectActiveCardsOnBoard();
+                    var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clicForDogma');
                     break;
@@ -879,7 +879,7 @@ function (dojo, declare) {
                 case 'turn0':
                     this.addTooltipsWithActionsToMyHand();
                     
-                    var cards_in_hand = this.selectCardsInHand();
+                    var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
                     break;
@@ -958,10 +958,10 @@ function (dojo, declare) {
                     }
                     break;
                 case 'artifactPlayerTurn':
-                    this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
-                    dojo.place("<span class='extra_text'> , </span>", "dogma_artifact", "after");
+                    if (this.selectArtifactOnDisplayIfEligibleForDogma().length == 1) {
+                        this.addActionButton("dogma_artifact", _("Dogma and Return"), "action_clicForDogmaArtifact");
+                    }
                     this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
-                    dojo.place("<span class='extra_text'> , " + _("or") + "</span>", "return_artifact", "after");
                     this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
                     break;
                 case 'playerTurn':
@@ -1331,7 +1331,7 @@ function (dojo, declare) {
         },
         
         addTooltipsWithoutActionsToMyHand : function() {
-            this.addTooltipsWithoutActionsTo(this.selectCardsInHand());
+            this.addTooltipsWithoutActionsTo(this.selectMyCardsInHand());
         },
 
         addTooltipsWithoutActionsToMyBoard : function() {
@@ -1355,11 +1355,11 @@ function (dojo, declare) {
         },
 
         addTooltipsWithActionsToMyHand : function() {
-            this.addTooltipsWithActionsTo(this.selectCardsInHand(), this.createActionTextForMeld);
+            this.addTooltipsWithActionsTo(this.selectMyCardsInHand(), this.createActionTextForMeld);
         },
 
         addTooltipsWithActionsToMyBoard : function() {
-            this.addTooltipsWithActionsTo(this.selectActiveCardsOnBoard(), this.createActionTextForDogma);
+            this.addTooltipsWithActionsTo(this.selectMyTopCardsEligibleForDogma(), this.createActionTextForDogma);
         },
 
         addTooltipWithMeldActionToMyArtifactOnDisplay : function() {
@@ -1367,7 +1367,7 @@ function (dojo, declare) {
         },
 
         addTooltipWithDogmaActionToMyArtifactOnDisplay : function() {
-            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplay(), this.createActionTextForDogma);
+            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplayIfEligibleForDogma(), this.createActionTextForDogma);
         },
         
         addTooltipsWithSplayingActionsToColorsOnMyBoard : function(colors, colors_in_clear, splay_direction, splay_direction_in_clear) {
@@ -1676,12 +1676,21 @@ function (dojo, declare) {
             return dojo.query(".card, .recto");
         },
         
-        selectCardsInHand : function() {
+        selectMyCardsInHand : function() {
             return dojo.query("#hand_" + this.player_id + " > .card");
         },
 
         selectArtifactOnDisplay : function() {
             return dojo.query("#display_" + this.player_id + " > .card");
+        },
+
+        selectArtifactOnDisplayIfEligibleForDogma : function() {
+            var cards = dojo.query("#display_" + this.player_id + " > .card");
+            // Battleship Yamato does not have any dogma effects on it
+            if (cards.length > 0 && this.getCardIdFromHTMLId(cards[0].id) == 188) {
+                cards.pop();
+            }
+            return cards;
         },
         
         selectAllCardsOnMyBoard : function() {
@@ -1697,16 +1706,19 @@ function (dojo, declare) {
             return dojo.query(queries.join(","));
         },
         
-        selectActiveCardsOnBoard : function() {
+        selectMyTopCardsEligibleForDogma : function() {
             var player_board = this.zone.board[this.player_id];
             var selectable_list = [];
-            for (var color=0; color<5; color++) {
+            for (var color = 0; color < 5; color++) {
                 var pile = player_board[color].items;
                 if (pile.length == 0) {
                     continue;
                 }
                 var top_card = pile[pile.length - 1];
-                selectable_list.push("#" + top_card.id);
+                // Battleship Yamato does not have a dogma effect on it.
+                if (this.getCardIdFromHTMLId(top_card.id) != 188) {
+                    selectable_list.push("#" + top_card.id);
+                }
             }
             return selectable_list.length > 0 ? dojo.query(selectable_list.join(",")) : new dojo.NodeList();
         },
@@ -1928,8 +1940,7 @@ function (dojo, declare) {
             var icon3 = this.getIconDiv(card, icon_data['spot_3'], 'bottom_center_icon', size);
             var icon4 = this.getIconDiv(card, icon_data['spot_4'], 'bottom_right_icon', size);
 
-            // TODO: Make sure "Battleship Yamato" uses font size 7 for its age text.
-            var card_age = this.createAdjustedContent(card.age, 'card_age', size, size == 'M' ? (card.age == 10 ? 7 : 9) : 30);
+            var card_age = this.createAdjustedContent(card.faceup_age, 'card_age', size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
             var title = _(card.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
@@ -2373,7 +2384,7 @@ function (dojo, declare) {
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             dojo.addClass(HTML_id, "selected");
 
-            var cards_in_hand = this.selectCardsInHand();
+            var cards_in_hand = this.selectMyCardsInHand();
             this.off(cards_in_hand, 'onclick');
             this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
             

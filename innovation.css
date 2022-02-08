@@ -1657,6 +1657,11 @@
     position: absolute;
 }
 
+/* Necessary for Battleship Yamato */
+.square_card_icon.icon_null {
+    display: none;
+}
+
 /* M square icons */
 .M.square_card_icon {
     width: 36px;
