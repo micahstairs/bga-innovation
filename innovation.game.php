@@ -440,6 +440,9 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE NOT is_relic");
         }
 
+        // Store the age of each card when face-up
+        self::DbQuery("UPDATE card SET faceup_age = (CASE id WHEN 188 THEN 11 ELSE age END)");
+
         // Create a hash of the icons for each card
         self::calculateIconHashForAllCards();
 
@@ -5642,6 +5645,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
 
+        // Battleship Yamato does not have a dogma effect
+        if ($card['id'] == 188) {
+            self::throwInvalidChoiceException();
+        }
+
         // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
 
         // TODO: Update statistics.
@@ -5853,13 +5861,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check if the player has this card really on his board
         $card = self::getCardInfo($card_id);
         
+        // Player does not have this card on their board
         if ($card['owner'] != $player_id || $card['location'] != "board") {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You do not have this card on board [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
+        // Card is not at the top of a pile
         if (!self::isTopBoardCard($card)) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("This card is not on the top of the pile [Press F5 in case of troubles]"));            
+            self::throwInvalidChoiceException();
+        }
+        // Battleship Yamato does not have any dogma effects on it to execute
+        if ($card['id'] == 188) {
+            self::throwInvalidChoiceException();
         }
         
         // No cheating here
@@ -5892,12 +5904,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function increaseResourcesForArtifactOnDisplay($player_id, $card) {
+        // Battleship Yamato does not have any resource symbols
+        if ($card['id'] == 188) {
+            return;
+        }
         $resource_icon = $card['dogma_icon'];
         $resource_count_delta = self::countIconsOnCard($card, $resource_icon);
         self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
     }
 
     function decreaseResourcesForArtifactOnDisplay($player_id, $card) {
+        // Battleship Yamato does not have any resource symbols
+        if ($card['id'] == 188) {
+            return;
+        }
         $resource_icon = $card['dogma_icon'];
         $resource_count_delta = -self::countIconsOnCard($card, $resource_icon);
         self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
