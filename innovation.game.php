@@ -3679,7 +3679,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(a.age), 0)
+                COALESCE(MAX(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
@@ -3776,7 +3776,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(a.age), 0)
+                COALESCE(MAX(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
