@@ -111,7 +111,14 @@ class Innovation extends Table
             'game_type' => 100, // 1 for normal game, 2 for team game
             'game_rules' => 101, // 1 for last edition, 2 for first edition
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
-            'extra_achievement_to_win' => 103 // 1 for "Disabled", 2 for "Enabled"
+            'extra_achievement_to_win' => 103, // 1 for "Disabled", 2 for "Enabled"
+
+            'with_icon_hash' => 104,
+            'icon_hash_1' => 105, // icon_hash for top card of top of pile 1
+            'icon_hash_2' => 106, // icon_hash for top card of top of pile 2
+            'icon_hash_3' => 107, // icon_hash for top card of top of pile 3
+            'icon_hash_4' => 108, // icon_hash for top card of top of pile 4
+            'icon_hash_5' => 109 // icon_hash for top card of top of pile 5
         ));
     }
     
@@ -401,7 +408,12 @@ class Innovation extends Table
         self::setGameStateInitialValue('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         self::setGameStateInitialValue('require_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         self::setGameStateInitialValue('require_splayability', -1); // Only selectable if the card can be splayed in that direction (1=left, 2=right, 3=up), else -2
-        
+        self::setGameStateInitialValue('icon_hash_1', -1); // icon hash of top card on pile 1, else -1
+        self::setGameStateInitialValue('icon_hash_2', -1); // icon hash of top card on pile 2, else -1
+        self::setGameStateInitialValue('icon_hash_3', -1); // icon hash of top card on pile 3, else -1
+        self::setGameStateInitialValue('icon_hash_4', -1); // icon hash of top card on pile 4, else -1
+        self::setGameStateInitialValue('icon_hash_5', -1); // icon hash of top card on pile 5, else -1
+
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
 
@@ -4960,13 +4972,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Condition for icon
         $with_icon = self::getGameStateValue('with_icon');
         $without_icon = self::getGameStateValue('without_icon');
+        $with_icon_hash = self::getGameStateValue('with_icon_hash');
+        $icon_hash_1 = self::getGameStateValue('icon_hash_1');
+        $icon_hash_2 = self::getGameStateValue('icon_hash_2');
+        $icon_hash_3 = self::getGameStateValue('icon_hash_3');
+        $icon_hash_4 = self::getGameStateValue('icon_hash_4');
+        $icon_hash_5 = self::getGameStateValue('icon_hash_5');
+
         if ($with_icon > 0) {
             $condition_for_icon = self::format("AND (spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon})", array('icon' => $with_icon));
         }
         else if ($without_icon > 0) {
             $condition_for_icon = self::format("AND spot_1 <> {icon} AND spot_2 <> {icon} AND spot_3 <> {icon} AND spot_4 <> {icon}", array('icon' => $without_icon));
-        }
-        else {
+        } else if ($with_icon_hash >0 ){
+            $condition_for_icon = self::format(
+                "AND icon_hash = {icon_hash_1} OR icon_hash = {icon_hash_2} OR icon_hash = {icon_hash_3} OR icon_hash = {icon_hash_4} OR icon_hash = {icon_hash_5}",
+                array('icon_hash_1' => $icon_hash_1,'icon_hash_2' => $icon_hash_2, 'icon_hash_3' => $icon_hash_3, 'icon_hash_4' => $icon_hash_4, 'icon_hash_5' => $icon_hash_5)
+            );
+        } else {
             $condition_for_icon = "";
         }
 
