@@ -577,22 +577,22 @@
 }
 
 /*decks*/
-.deck_set, .deck_count, .deck {
+.deck_set, .deck {
     display: inline-block;
 }
 
 .deck_pile {
+    display: flex;
     height: 49px;
     margin-bottom: 5px;
     margin-right: 5px;
 }
 
 .deck_count {
-    height: 100%;
     margin-right: 2px;
-    vertical-align: middle;
-    text-align: left;
     width: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .deck {
