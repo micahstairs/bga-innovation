@@ -9261,37 +9261,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "134N1":
                 $step_max = 2; // --> 2 interactions: see B
                 break;
-            
-            // id 143, Artifacts age 3: Necronomicon
-            case "143N1":
-                $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
-                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
-                if ($card['color'] == 0)  { // Blue
-                    self::executeDraw($player_id, 9); // "Draw a 9"
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
-                } else if ($card['color'] == 2) { // Green
-                    for ($color = 0; $color < 5; $color++) {
-                        self::unsplay($player_id, $player_id, $color);
-                    }
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
-                } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
-                    self::setAuxiliaryValue($card['color']);
-                    $step_max = 1; // --> 1 interaction: see B
-                } else {
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
-                };
-                break;
-            
-            // id 144, Artifacts age 3: Shroud of Turin
-            case "144N1":
-                $step_max = 1; // --> 1 interaction
-                break;
 
             // id 135, Artifacts age 3: Dunhuang Star Chart
             case "135N1":
                 $step_max = 1; // --> 1 interaction: see B
                 break;
-                
+
             // id 137, Artifacts age 2: Excalibur
             case "137C1":
                 // Determine colors where top card has a higher value than the launcher's top card of the same color
@@ -9315,6 +9290,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
+            // id 139, Artifacts age 3: Philosopher's Stone
+            case "139N1":
+                $step_max = 2; // --> 1 interactions: see B
+                break;
+
             // id 140, Artifacts age 3: Beauvais Cathedral Clock
             case "140N1":
                 // "Draw and reveal a 4"
@@ -9322,11 +9302,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Splay right the color matching the drawn card"
                 self::splayRight($player_id, $player_id, $card['color']);
                 self::transferCardFromTo($card, $player_id, 'hand');
-                break;
-
-            // id 139, Artifacts age 3: Philosopher's Stone
-            case "139N1":
-                $step_max = 2; // --> 1 interactions: see B
                 break;
 
             // id 141, Artifacts age 3: Moylough Belt Shrine
@@ -9352,63 +9327,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
                 break;
-
-            // id 135, Artifacts age 3: Dunhuang Star Chart
-            case "135N1":
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-                
-            // id 137, Artifacts age 2: Excalibur
-            case "137C1":
-                // Determine colors where top card has a higher value than the launcher's top card of the same color
-                $colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($player_top_card === null) {
-                        continue;
+            
+            // id 143, Artifacts age 3: Necronomicon
+            case "143N1":
+                $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
+                if ($card['color'] == 0)  { // Blue
+                    self::executeDraw($player_id, 9); // "Draw a 9"
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
+                } else if ($card['color'] == 2) { // Green
+                    for ($color = 0; $color < 5; $color++) {
+                        self::unsplay($player_id, $player_id, $color);
                     }
-                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    if ($launcher_top_card === null || $player_top_card['age'] > $launcher_top_card['age']) {
-                        $colors[] = $color;
-                    }
-                }
-                self::setAuxiliaryValueFromArray($colors);
-                $step_max = 1; // --> 1 interaction: see B
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
+                } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
+                    self::setAuxiliaryValue($card['color']);
+                    $step_max = 1; // --> 1 interaction: see B
+                } else {
+                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
+                };
                 break;
             
-            // id 138, Artifacts age 3: Mjolnir Amulet
-            case "138C1":
-                $step_max = 1; // --> 1 interaction: see B
-                break;
-
-            // id 140, Artifacts age 3: Beauvais Cathedral Clock
-            case "140N1":
-                // "Draw and reveal a 4"
-                $card = self::executeDraw($player_id, 4, 'revealed');
-                // "Splay right the color matching the drawn card"
-                self::splayRight($player_id, $player_id, $card['color']);
-                self::transferCardFromTo($card, $player_id, 'hand');
-                break;
-
-            // id 139, Artifacts age 3: Philosopher's Stone
-            case "139N1":
-                $step_max = 2; // --> 1 interactions: see B
+            // id 144, Artifacts age 3: Shroud of Turin
+            case "144N1":
+                $step_max = 1; // --> 1 interaction
                 break;
             
-            // id 142, Artifacts age 3: Along the River during the Qingming Festival
-            case "142N1":
-                do {
-                    $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                    if ($card['color'] == 4) { // "If it is purple, score it"
-                        self::scoreCard($card, $player_id);
-                    } else if ($card['color'] == 3) { // "If it is yellow, tuck it"
-                        self::tuckCard($card, $player_id);
-                    } else { // Put it in hand
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-                } while($card['color'] == 0 || $card['color'] == 1 || $card['color'] == 2); // "Otherwise, repeat this effect"
-                break;
-
             // id 145, Artifacts age 4: Petition of Right
             case "145C1":
                 $number = 0;
