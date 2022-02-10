@@ -2335,7 +2335,7 @@ function (dojo, declare) {
         givePlayerActionCard : function(player_id, action_number) {
             dojo.addClass('action_indicator_' + player_id, 'action_card');
             var action_text = action_number == 0 ? _('Free Action') : action_number == 1 ? _('First Action') : _('Second Action');
-            var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 15, 2);
+            var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12, 2);
             $('action_indicator_' + player_id).innerHTML = div_action_text;
         },
 

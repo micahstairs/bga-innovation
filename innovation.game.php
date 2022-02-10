@@ -8673,10 +8673,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             case "95N2":
-                $players = self::loadPlayersBasicInfos();
+                $player_ids = self::getAllActivePlayerIds();
                 $max_number_of_leaves = -1;
                 $any_under_three_leaves = false;
-                foreach ($players as $player_id => $player) {
+                foreach ($player_ids as $player_id) {
                     $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
@@ -8794,9 +8794,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "101N1":
                 self::executeDraw($player_id, 6, 'score'); // "Draw and score a 6"
                 
-                $players = self::loadPlayersBasicInfos();
+                $player_ids = self::getAllActivePlayerIds();
                 $nobody_more_leaves_than_factories = true;
-                foreach ($players as $player_id => $player) {
+                foreach ($player_ids as $player_id) {
                     $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
                     $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5);
                     
@@ -9187,9 +9187,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 127, Artifacts age 2: Chronicle of Zuo
             case "127N1":
-                $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id}", array('player_id' => $player_id)));
-                $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id}", array('player_id' => $player_id)));
-                $min_bulbs = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_3) FROM player WHERE player_id != {player_id}",  array('player_id' => $player_id)));
+                $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
+                $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
+                $min_bulbs = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_3) FROM player WHERE player_id != {player_id} AND player_eliminated = 0",  array('player_id' => $player_id)));
                 
                 $this_player_icon_counts = self::getPlayerResourceCounts($player_id);
                 
@@ -13048,8 +13048,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards of that value from all score piles"
             $value_to_return = self::getAuxiliaryValue();
             $num_players_who_returned = 0;
-            $players = self::loadPlayersBasicInfos();
-            foreach($players as $any_player_id => $player) {
+            $player_ids = self::getAllActivePlayerIds();
+            foreach($player_ids as $any_player_id) {
                 $score_pile = self::getCardsInLocation($any_player_id, 'score');
                 foreach ($score_pile as $card) {
                     if ($card['age'] == $value_to_return) {
@@ -15122,12 +15122,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 123, Artifacts age 1: Ark of the Covenant
                 case "123N1A":
-                    $players = self::loadPlayersBasicInfos();
+                    $player_ids = self::getAllActivePlayerIds();
                     
                     if ($n > 0) { // Unsaid rule: the player must have returned a card or else this part of the effect can't continue
                         $returned_color = self::getGameStateValue('color_last_selected');
                             
-                        foreach($players as $all_player_id => $player) {
+                        foreach($player_ids as $all_player_id) {
                             $top_cards = self::getTopCardsOnBoard($all_player_id);
                             
                             $artifact_found = false;
@@ -16323,8 +16323,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Each player reveals all cards of that color from their hand"
                 // TODO: Consider iterating over the players in turn order beginning with the current player.
                 $only_player_to_reveal = true;
-                $players = self::loadPlayersBasicInfos();
-                foreach($players as $any_player_id => $player) {
+                $player_ids = self::getAllActivePlayerIds();
+                foreach($player_ids as $any_player_id) {
                     $cards = self::getCardsInLocation($any_player_id, 'hand');
                     foreach($cards as $card) {
                         if ($card['color'] == $choice) {
@@ -16345,7 +16345,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // Return revealed cards to players' hands.
                 } else {
-                    foreach($players as $any_player_id => $player) {
+                    foreach($player_ids as $any_player_id) {
                         $cards = self::getCardsInLocation($any_player_id, 'revealed');
                         foreach($cards as $card) {
                             self::transferCardFromTo($card, $any_player_id, 'hand');
