@@ -541,9 +541,9 @@
     display: inline-block;
     margin-left: 7px;
     width: 57px;
-    height: 37px;
+    height: 36px;
     background-image: url('img/action_card.jpg');
-    background-size: 57px 37px;
+    background-size: 57px 36px;
     background-position: -0px -0px;
     position: relative;
 }
@@ -551,13 +551,15 @@
 .action_text {
     position: absolute;
     text-align: center;
-    line-height: 15px; /* Force two lines of text */
-    left: 5px;
-    top: 5px;
+    line-height: 12px; /* Force two lines of text */
+    top: 7px;
     width: 47px;
-    height: 30px;
+    height: 29px;
     font-weight: bold;
+    margin-right: 5px;
+    margin-left: 5px;
 }
+
 
 /* Decks and available achievements */
 #decks_and_available_achievements {
