@@ -8263,7 +8263,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             continue;
                         }
                         $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                        if ($launcher_top_card === null /* => Value 0, so the color is selectable */ || $player_top_card['age'] > $launcher_top_card['age']) {
+                        if ($launcher_top_card === null /* => Value 0, so the color is selectable */ || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
                             $colors[] = $color; // This color is selectable
                         }
                     }
@@ -9048,7 +9048,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 while(true) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                    if ($top_card !== null && $card['age'] == $top_card['age']) { // "If you have a top card of matching color and value"
+                    if ($top_card !== null && $card['faceup_age'] == $top_card['faceup_age']) { // "If you have a top card of matching color and value"
                         self::scoreCard($card, $player_id); // "Score the drawn card"
                         continue; // "Repeat this effect"
                     }
@@ -10993,7 +10993,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'age' => self::getAuxiliaryValue()
+                'age' => self::getAuxiliaryValue(),
+                'not_id' => 188 // Battleship Yamato should not be returned even if an 8 is returned from the score pile
             );
             break;
             
@@ -11301,7 +11302,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "54D1A":
             // Last edition: "Transfer a card with a lightbulb higher than my top card of the same color from your board to my board"
             // First edition: "Transfer a top non-purple card with a lightbulb from your board to my board"
-            // Cf A
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
