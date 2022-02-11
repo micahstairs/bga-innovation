@@ -5451,7 +5451,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 INSERT INTO nested_card_execution
                     (nesting_index, card_id, launcher_id, execute_demand_effects, current_effect_type, current_effect_number, step, step_max)
                 VALUES
-                    ({nesting_index}, {card_id}, {launcher_id}, {execute_demand_effects}, {effect_type}, 0, -1, -1)
+                    ({nesting_index}, {card_id}, {launcher_id}, {execute_demand_effects}, {effect_type}, 1, -1, -1)
             ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'execute_demand_effects' => $execute_demand_effects ? 1 : 0, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
