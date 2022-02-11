@@ -5673,6 +5673,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::transferCardFromTo($card, 0, 'deck');
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
+        self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
     }
@@ -5687,6 +5688,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
+        self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
     }
@@ -7338,8 +7340,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Return the Artifact on display if the free dogma action was used
                 $nested_card_state = self::getNestedCardState(0);
                 if ($nested_card_state['card_location'] == 'display') {
+                    $launcher_id = $nested_card_state['launcher_id'];
                     self::transferCardFromTo($card, 0, 'deck');
-                    self::decreaseResourcesForArtifactOnDisplay($nested_card_state['launcher_id'], $card);
+                    self::decreaseResourcesForArtifactOnDisplay($launcher_id, $card);
+                    self::giveExtraTime($launcher_id);
                 }
             }
 
