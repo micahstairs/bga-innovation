@@ -11,6 +11,7 @@ BOTTOM_LEFT="99,351 62,415 99,479 172,479 209,415 172,351"
 BOTTOM_CENTER="341,351 304,415 341,479 414,479 451,415 414,351"
 BOTTOM_RIGHT="573,349 536,413 573,477 646,477 683,413 646,349"
 
+
 # Hexagon icon borders
 RED_BORDER="../card_icon_borders/red_hexagon_icon_border.png"
 YELLOW_BORDER="../card_icon_borders/yellow_hexagon_icon_border.png"
@@ -165,6 +166,8 @@ extract_base_hexagon	"105"	"$TOP_LEFT"	"$PURPLE_BORDER"	"104"
 
 # The bottom right icon is a few pixels off of the base set.
 BOTTOM_RIGHT="576,349 539,413 576,477 649,477 686,413 649,349"
+# Timbuktu has an icon on the top-right
+TOP_RIGHT="577,73 540,138 577,202 651,202 688,138 651,73"
 
 # File paths/prefixes
 READ_PATH="../cards/Print_ArtifactsCards_front/Print_ArtifactsCards_front-"
@@ -309,41 +312,55 @@ extract_artifact_hexagon	"099"	"$BOTTOM_CENTER"	"$YELLOW_BORDER"	"102"
 extract_artifact_hexagon	"104"	"$TOP_LEFT"	"$PURPLE_BORDER"	"103"
 extract_artifact_hexagon	"105"	"$TOP_LEFT"	"$PURPLE_BORDER"	"104"
 
+# Relics
+extract_artifact_hexagon	"108"	"$TOP_RIGHT"	"$GREEN_BORDER"	"105"
+extract_artifact_hexagon	"106"	"$BOTTOM_LEFT"	"$BLUE_BORDER"	"106"
+extract_artifact_hexagon	"109"	"$BOTTOM_RIGHT"	"$PURPLE_BORDER"	"107"
+extract_artifact_hexagon	"110"	"$BOTTOM_CENTER"	"$RED_BORDER"	"108"
+extract_artifact_hexagon	"107"	"$TOP_LEFT"	"$YELLOW_BORDER"	"109"
+
 ### SPRITESHEET ###
 
 echo "Building spritesheet..."
 
 # Create first row of base hexagon icons separately since it has 15 hexagon icons in it.
 magick montage \
-  temp/00{0..9}_base.png \
-  temp/0{10..14}_base.png \
-  -trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/base_hexagons_15x.png
+temp/00{0..9}_base.png \
+temp/0{10..14}_base.png \
+-trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/base_hexagons_15x.png
 
 # Build remaining 9 rows of base hexagon icons.
 magick montage \
-  temp/0{15..99}_base.png \
-  temp/{100..104}_base.png \
-  -trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/base_hexagons_10x.png
+temp/0{15..99}_base.png \
+temp/{100..104}_base.png \
+-trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/base_hexagons_10x.png
 
 # Create first row of Artifacts hexagon icons separately since it has 15 hexagon icons in it.
 magick montage \
-  temp/00{0..9}_artifacts.png \
-  temp/0{10..14}_artifacts.png \
-  -trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_15x.png
+temp/00{0..9}_artifacts.png \
+temp/0{10..14}_artifacts.png \
+-trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_15x.png
 
-# Build remaining 9 rows of Artifacts hexagon icons.
+# Create second row of Artifacts hexagon icons with age 2, then the 5 relics.
 magick montage \
-  temp/0{15..99}_artifacts.png \
-  temp/{100..104}_artifacts.png \
-  -trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_10x.png
+temp/0{15..24}_artifacts.png \
+temp/{105..109}_artifacts.png \
+-trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/artifacts_relics_hexagons_15x.png
+
+# Build remaining 8 rows of Artifacts hexagon icons.
+magick montage \
+temp/0{25..99}_artifacts.png \
+temp/{100..104}_artifacts.png \
+-trim -tile 10x8 -geometry 60x60+5+5 -background 'none' temp/artifacts_hexagons_10x.png
 
 # Combine all images into a single spritesheet.
 magick montage \
-  temp/base_hexagons_15x.png \
-  temp/base_hexagons_10x.png \
-  temp/artifacts_hexagons_15x.png \
-  temp/artifacts_hexagons_10x.png \
-  -tile 1x5 -geometry +0+0 -background 'none' ../../img/hexagon_icons.png
+temp/base_hexagons_15x.png \
+temp/base_hexagons_10x.png \
+temp/artifacts_hexagons_15x.png \
+temp/artifacts_relics_hexagons_15x.png  \
+temp/artifacts_hexagons_10x.png \
+-tile 1x6 -geometry +0+0 -background 'none' ../../img/hexagon_icons.png
 
 echo "Cleaning up..."
 
