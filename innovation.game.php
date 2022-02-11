@@ -1063,11 +1063,11 @@ class Innovation extends Table
     }
     
     function tuckCard($card, $owner_to) {
-        return self::scoreCard($card, $owner_to, 'board', /*bottom_to=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ true);
     }
 
     function scoreCard($card, $owner_to) {
-        return self::scoreCard($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
     }
 
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=null, $score_keyword=false) {
@@ -13418,10 +13418,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'owner_to' => $player_id, // Nothing is to be done with that card
                 'location_to' => 'none',
                 
-                'not_id' => 162 /* Not this card */
+                'not_id' => 162 // Not this card
             );       
             break;      
             
@@ -15409,9 +15408,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 162, Artifacts age 5: The Daily Courant
                 case "162N1A":
-                    // "Draw a card of any value"
+                    // "Draw a card of any value then place it on top of the draw pile of its age"
                     $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'hand');
-                    // "then place it on top of the draw pile of its age."
                     self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
                     break;
 
