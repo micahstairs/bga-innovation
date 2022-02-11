@@ -752,7 +752,7 @@
 .color_1 .M.card_age, .color_3 .M.card_age {
     right: 6px;
 }
-/*LMF: might have have something special for yamato */
+
 .card_age.L {
     width: 25px;
     height: 25px;
@@ -1657,6 +1657,11 @@
 .square_card_icon {
     background-image: url('img/resource_icons.jpg');
     position: absolute;
+}
+
+/* Necessary for Battleship Yamato */
+.square_card_icon.icon_null {
+    display: none;
 }
 
 /* M square icons */

@@ -440,6 +440,9 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE NOT is_relic");
         }
 
+        // Store the age of each card when face-up
+        self::DbQuery("UPDATE card SET faceup_age = (CASE id WHEN 188 THEN 11 ELSE age END)");
+
         // Create a hash of the icons for each card
         self::calculateIconHashForAllCards();
 
@@ -800,6 +803,10 @@ class Innovation extends Table
             $encoded_value /= 16;
         }
         return $return_array;
+    }
+
+    function getFaceupAgeLastSelected() {
+        return self::getUniqueValueFromDB(self::format("SELECT faceup_age FROM card WHERE id = {id}", array('id' => self::getGameStateValue('id_last_selected'))));
     }
     
     /** integer division **/
@@ -3199,9 +3206,9 @@ class Innovation extends Table
         $top_cards = self::getTopCardsOnBoard($player_id);
             
         foreach ($top_cards as $card_1) {
-            $top_age = $card_1['age'];
+            $top_age = $card_1['faceup_age'];
             foreach ($top_cards as $card_2) {
-                if ($card_1['id'] != $card_2['id'] && $card_2['age'] == $top_age) {
+                if ($card_1['id'] != $card_2['id'] && $card_2['faceup_age'] == $top_age) {
                     $colors[] = $card_1['color'];
                     continue 2;
                 }
@@ -3676,7 +3683,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(a.age), 0)
+                COALESCE(MAX(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
@@ -3701,13 +3708,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getMaxAgeOfTopCardOfColor($color) {
         /**
         Get the maximum age that can be found on top of any player's pile of a specific color
-        (0 if tno players have that color on their board)
+        (0 if no players have that color on their board)
         **/
         
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(a.age), 0)
+                COALESCE(MAX(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
@@ -3740,7 +3747,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MIN(a.age), 0)
+                COALESCE(MIN(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
@@ -3773,7 +3780,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(a.age), 0)
+                COALESCE(MAX(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
@@ -3805,7 +3812,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Get the max of the age matching the position defined in the sub-request
         return self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(a.age), 0)
+                COALESCE(MAX(a.faceup_age), 0)
             FROM
                 card AS a
             LEFT JOIN
@@ -5642,6 +5649,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
 
+        // Battleship Yamato does not have a dogma effect
+        if ($card['id'] == 188) {
+            self::throwInvalidChoiceException();
+        }
+
         // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
 
         // TODO: Update statistics.
@@ -5853,13 +5865,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check if the player has this card really on his board
         $card = self::getCardInfo($card_id);
         
+        // Player does not have this card on their board
         if ($card['owner'] != $player_id || $card['location'] != "board") {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You do not have this card on board [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
+        // Card is not at the top of a pile
         if (!self::isTopBoardCard($card)) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("This card is not on the top of the pile [Press F5 in case of troubles]"));            
+            self::throwInvalidChoiceException();
+        }
+        // Battleship Yamato does not have any dogma effects on it to execute
+        if ($card['id'] == 188) {
+            self::throwInvalidChoiceException();
         }
         
         // No cheating here
@@ -5892,12 +5908,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function increaseResourcesForArtifactOnDisplay($player_id, $card) {
+        // Battleship Yamato does not have any resource symbols
+        if ($card['id'] == 188) {
+            return;
+        }
         $resource_icon = $card['dogma_icon'];
         $resource_count_delta = self::countIconsOnCard($card, $resource_icon);
         self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
     }
 
     function decreaseResourcesForArtifactOnDisplay($player_id, $card) {
+        // Battleship Yamato does not have any resource symbols
+        if ($card['id'] == 188) {
+            return;
+        }
         $resource_icon = $card['dogma_icon'];
         $resource_count_delta = -self::countIconsOnCard($card, $resource_icon);
         self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
@@ -8243,7 +8267,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             continue;
                         }
                         $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                        if ($launcher_top_card === null /* => Value 0, so the color is selectable */ || $player_top_card['age'] > $launcher_top_card['age']) {
+                        if ($launcher_top_card === null /* => Value 0, so the color is selectable */ || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
                             $colors[] = $color; // This color is selectable
                         }
                     }
@@ -9028,7 +9052,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 while(true) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                    if ($top_card !== null && $card['age'] == $top_card['age']) { // "If you have a top card of matching color and value"
+                    if ($top_card !== null && $card['faceup_age'] == $top_card['faceup_age']) { // "If you have a top card of matching color and value"
                         self::scoreCard($card, $player_id); // "Score the drawn card"
                         continue; // "Repeat this effect"
                     }
@@ -9277,7 +9301,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         continue;
                     }
                     $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                    if ($launcher_top_card === null || $player_top_card['age'] > $launcher_top_card['age']) {
+                    if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
                         $colors[] = $color;
                     }
                 }
@@ -9453,8 +9477,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $top_cards = self::getTopCardsOnBoard($player_id);
                 $top_values = array();
                 foreach ($top_cards as $top_card) {
-                    // TODO: Handle 'Battleship Yamato' case.
-                    $top_values[] = $top_card['age'];
+                    $top_values[] = $top_card['faceup_age'];
                 }
                 asort($top_values);
                 foreach (array_count_values($top_values) as $value => $count) {
@@ -10973,7 +10996,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'age' => self::getAuxiliaryValue()
+                'age' => self::getAuxiliaryValue(),
+                'not_id' => 188 // Battleship Yamato should not be returned even if an 8 is returned from the score pile
             );
             break;
             
@@ -11281,7 +11305,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "54D1A":
             // Last edition: "Transfer a card with a lightbulb higher than my top card of the same color from your board to my board"
             // First edition: "Transfer a top non-purple card with a lightbulb from your board to my board"
-            // Cf A
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13309,10 +13332,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "155N1B":
             // "and the lowest top card on your board"
+            // TODO: Create new getMinAgeOnBoardTopCards function instead (based on getMaxAgeOnBoardTopCards).
             $all_cards = self::getTopCardsOnBoard($player_id);
             $ages = array();
             foreach($all_cards as $card) {
-                $ages[] = $card['age'];
+                $ages[] = $card['faceup_age'];
             }
             if (empty($ages)) {
                 $ages[] = 0;
@@ -13339,7 +13363,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             for($color = 1; $color < 5; $color++) { // non-blue
                 $top_card = self::getTopCardOnBoard($player_id, $color);
                 if ($top_card !== null) {
-                    $ages_on_top[] = $top_card['age'];
+                    $ages_on_top[] = $top_card['faceup_age'];
                 }
             }
             self::setAuxiliaryValue(self::getValueFromBase16Array($ages_on_top));
@@ -13470,7 +13494,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'achievements',
 
-                'age' => self::getGameStateValue('age_last_selected'),
+                'age' => self::getFaceupAgeLastSelected(),
                 'require_achievement_eligibility' => false
             );
             break;
@@ -13957,7 +13981,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => self::getGameStateValue('age_last_selected') - 1
+                'age' => self::getGameStateValue('age_last_selected') - 1,
+                'not_id' => 188 // Battleship Yamato's face-up age is 11 (not 8), so it's never a valid selection
             );
             break;
 
@@ -14014,6 +14039,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 191, Artifacts age 8: Plush Beweglich Rod Bear
         case "191N1A":
             // "Choose a value"
+            // TODO(#231): Give option to choose 11 only when Battleship Yamato is a top card on the player's board.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -15339,7 +15365,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $found_match = false;
                         $top_cards = self::getTopCardsOnBoard($launcher_id);
                         foreach ($top_cards as $top_card) {
-                            if ($top_card['age'] == $value_to_match) {
+                            if ($top_card['faceup_age'] == $value_to_match) {
                                 self::incrementStepMax(1);
                                 $found_match = true;
                                 break;
@@ -15388,8 +15414,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                     if ($card_1 != null && $card_2 != null) {
                         // "If they have the same value, draw a card of value one higher"
-                        if ($card_1['age'] == $card_2['age']) {
-                            self::executeDraw($player_id, $card_1['age'] + 1);
+                        if ($card_1['faceup_age'] == $card_2['faceup_age']) {
+                            self::executeDraw($player_id, $card_1['faceup_age'] + 1);
                         }
                         // "If they have the same color, claim an achievement, ignoring eligibility"
                         if ($card_1['color'] == $card_2['color']) {
@@ -15452,7 +15478,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "155N1B":
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
                     $first_age = self::getAuxiliaryValue();
-                    $second_age = self::getGameStateValue('age_last_selected');
+                    $second_age = self::getFaceupAgeLastSelected();
                     self::executeDraw($player_id, $first_age + $second_age, 'score');
                     break;
                     
@@ -15497,7 +15523,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you returned two cards and their values sum to ten, draw and score a 10"
                     $first_value = self::getAuxiliaryValue();
                     if ($first_value > 0 && $n > 0) {
-                        if ($first_value + self::getGameStateValue('age_last_selected') == 10) {
+                        if ($first_value + self::getFaceupAgeLastSelected() == 10) {
                             self::executeDraw($player_id, 10, 'score');
                         }
                     }
@@ -15575,7 +15601,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $color_2 = self::getGameStateValue('color_last_selected');
 
                     // "Draw a card of value one higher and meld it"
-                    $age_selected = self::getGameStateValue('age_last_selected');
+                    $age_selected = self::getFaceupAgeLastSelected();
                     $card = self::executeDraw($player_id, $age_selected + 1, 'board');
                     
                     // "If it melded over one of the chosen cards, repeat this effect"
@@ -15603,9 +15629,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::splayUp($player_id, $player_id, $card['color']);
                     
                     // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
-                    if ($age_value == self::countVisibleCards($player_id, $card['color'])) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} selected a value that is the equal to the number of visible cards in your ${color} pile.'), array('You' => 'You', 'color'=> self::getColorInClear($card['color'])));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} selected a value that is the equal to the number of visible cards in his ${color} pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color'=> self::getColorInClear($card['color'])));
+                    if ($card['faceup_age'] == self::countVisibleCards($player_id, $card['color'])) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card whose value is equal to the number of visible cards in your ${color} pile.'), array('You' => 'You', 'color'=> self::getColorInClear($card['color'])));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card whose value is equal to the number of visible cards in his ${color} pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color'=> self::getColorInClear($card['color'])));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep International Prototype Metre Bar');
                         throw new EndOfGame();
@@ -15629,12 +15655,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "183N1A":
                     if ($n > 0) {
                         // "Draw and score two cards of value equal to the melded card."
-                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'score');
-                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'score');
+                        $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
+                        self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
                         
                         // "Execute the effects of the melded card as if they were on this card. Do not share them."
-                        $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
-                        self::executeAllEffects($card);
+                        self::executeAllEffects($melded_card);
                     }
                     break;
                     
@@ -15705,7 +15731,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $age_value = self::getAuxiliaryValue();
                     $top_cards = self::getTopCardsOnBoard($player_id);
                     foreach ($top_cards as $top_card) {
-                        if ($top_card['age'] == $age_value) {
+                        if ($top_card['faceup_age'] == $age_value) {
                             self::splayUp($player_id, $player_id, $top_card['color']);
                         }
                     }
