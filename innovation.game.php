@@ -1070,11 +1070,11 @@ class Innovation extends Table
     }
     
     function tuckCard($card, $owner_to) {
-        return self::scoreCard($card, $owner_to, 'board', /*bottom_to=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ true);
     }
 
     function scoreCard($card, $owner_to) {
-        return self::scoreCard($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
     }
 
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=null, $score_keyword=false) {
@@ -6738,6 +6738,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
 
+            // id 162, Artifacts age 5: The Daily Courant
+            case "162N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
+                
             // id 170, Artifacts age 6: Buttonwood Agreement
             case "170N1A":
                 $message_for_player = clienttranslate('${You} must choose three colors');
@@ -9545,6 +9551,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 $step_max = 1;
+                break;
+
+            // id 162, Artifacts age 5: The Daily Courant
+            case "162N1":
+                $step_max = 2;
                 break;
 
             // id 163, Artifacts age 5: Sandham Room Cricket Bat
@@ -13453,7 +13464,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-        
+
+        // id 162, age 5: The Daily Courant
+        case "162N1A":
+            // "Draw a card of any value"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true
+            );       
+            break;
+            
+        case "162N1B":
+            // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'location_to' => 'none',
+                
+                'not_id' => 162 // Not this card
+            );       
+            break;      
+            
         // id 163, Artifacts age 5: Sandham Room Cricket Bat
         case "163N1A":
             // "Claim an achievement ignoring eligibility"
@@ -15504,6 +15542,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 162, Artifacts age 5: The Daily Courant
+                case "162N1A":
+                    // "Draw a card of any value then place it on top of the draw pile of its age"
+                    $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'hand');
+                    self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
+                    break;
+
+                case "162N1B":
+                    // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
+                    self::executeAllEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
+                    break;
+
                 // id 164, Artifacts age 5: Almira, Queen of the Castle
                 case "164N1A":
                     if ($n > 0) { // If no card is melded, then the value cannot match an achievement
@@ -16475,7 +16525,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
-
+            
+            // id 162, Artifacts age 5: The Daily Courant
+            case "162N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+            
             // id 170, Artifacts age 6: Buttonwood Agreement
             case "170N1A":
                 $colors = self::getValueAsArray($choice);
