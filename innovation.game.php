@@ -9999,6 +9999,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Execute the effects of the melded card as if they were on this card. Do not share them"
                 self::executeAllEffects($card);
                 break;
+            
+            // id 206, Artifacts age 10: Higgs Boson
+            case "206N1":
+                $step_max = 1;
+                break;
                 
            // id 207, Artifacts age 10: Exxon Valdez
             case "207C1":
@@ -10084,6 +10089,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 211, Artifacts age 10: Dolly the Sheep
             case "211N1":
                 $step_max = 3;
+                break;
+            
+            // id 212, Artifacts age 10: Where's Waldo?
+            case "212N1":
+                // "You win"
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} found Waldo!'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} found Waldo!'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                self::setGameStateValue('winner_by_dogma', $player_id);
+                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
+                throw new EndOfGame();
                 break;
             
             // id 214, Artifacts age 10: Twister
@@ -14286,6 +14301,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'hand'
             );
             break;
+        
+        // id 206, Artifacts age 10: Higgs Boson
+        case "206N1A":
+            // "Transfer all cards on your board to your score pile"
+            // TODO: Do a bulk transfer instead of moving cards one at a time.
+            $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
+            for ($i = 0; $i < 5 ; $i++){
+                $pile = $piles[$i];
+                for ($j = count($pile) - 1; $j >= 0; $j--) { 
+                    self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
+                }
+            }
+            break;
 
         // id 207, Artifacts age 10: Exxon Valdez
         // TODO: Remove this once Exxon Valdez is removing all cards at once instead of individually.
@@ -14393,6 +14421,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 );
             }
             break;
+        
 
        // id 214, Artifacts age 10: Twister
        case "214C1A":
