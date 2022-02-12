@@ -9991,12 +9991,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "204N1":
                 $step_max = 2;
                 break;
-            
-            // id 206, Artifacts age 10: Higgs Boson
-            case "206N1":
-                $step_max = 1;
-                break;
-                
 
             // id 205, Artifacts age 10: Rover Curiosity
             case "205N1":
@@ -10004,6 +9998,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, 10, 'board', /*bottom_to=*/ false, /*type=*/ 1);
                 // "Execute the effects of the melded card as if they were on this card. Do not share them"
                 self::executeAllEffects($card);
+                break;
+            
+            // id 206, Artifacts age 10: Higgs Boson
+            case "206N1":
+                $step_max = 1;
                 break;
                 
            // id 207, Artifacts age 10: Exxon Valdez
@@ -10092,6 +10091,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 3;
                 break;
             
+            // id 212, Artifacts age 10: Where's Waldo?
+            case "212N1":
+                // "You win"
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} found Waldo!'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} found Waldo!'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                self::setGameStateValue('winner_by_dogma', $player_id);
+                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
+                throw new EndOfGame();
+                break;
+            
             // id 214, Artifacts age 10: Twister
             case "214C1":
                 // "I compel you to reveal your score pile"
@@ -10108,15 +10117,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 217, Relic age 5: Newton-Wickins Telescope
             case "217N1":
                 $step_max = 1;
-                break;
-            // id 212, Artifacts age 10: Where's Waldo?
-            case "212N1":
-                // "You Win The Game"
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} Found Waldo!'), array('You' => 'You'));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} Has Found Waldo!'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                self::setGameStateValue('winner_by_dogma', $player_id);
-                self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
-                throw new EndOfGame();
                 break;
                 
             default:
@@ -14304,16 +14304,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 206, Artifacts age 10: Higgs Boson
         case "206N1A":
-            // "Transfer All Cards from your Board to Your Score Pile"
-            $board = self::getCardsInLocation($player_id, 'board', null, false, true);
-            for($ctr=0; $ctr < 5 ; $ctr++){
-                $pile = $board[$ctr];
-                for($p=count($pile)-1; $p > -1; $p--) { 
-                    $card = self::getCardInfo($pile[$p]['id']);
-                    self::transferCardFromTo($card, $player_id, 'score', false, true); 
+            // "Transfer all cards on your board to your score pile"
+            // TODO: Do a bulk transfer instead of moving cards one at a time.
+            $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
+            for ($i = 0; $i < 5 ; $i++){
+                $pile = $piles[$i];
+                for ($j = count($pile) - 1; $j >= 0; $j--) { 
+                    self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
                 }
             }
-            
+            break;
 
         // id 207, Artifacts age 10: Exxon Valdez
         // TODO: Remove this once Exxon Valdez is removing all cards at once instead of individually.
