@@ -5855,7 +5855,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Returns null if there is no relic of the specified age */
     function getRelicForAge($age) {
-        $card = self::getUniqueValueFromDB(self::format("SELECT * FROM card WHERE age = {age} AND is_relic", array('age' => $age)));
+        $card = self::getNonEmptyObjectFromDB(self::format("SELECT * FROM card WHERE age = {age} AND is_relic", array('age' => $age)));
         return self::attachTextualInfo($card);
     }
 
