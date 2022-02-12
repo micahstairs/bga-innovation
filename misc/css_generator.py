@@ -38,7 +38,7 @@ def write_hexagon_icons(f, size, x, y, offset):
 			x += offset
 
 	# Artifact cards
-	for id in range(110,210):
+	for id in range(110,215):
 		f.write(""".{size}.hexagon_card_icon.hexagon_icon_{id} <
 \tbackground-position: -{x}px -{y}px;
 >\n\n""".format(size=size, id=id, x=x, y=y).replace('<', '{').replace('>', '}'))
@@ -53,9 +53,9 @@ def write_hexagon_icons(f, size, x, y, offset):
 	# Back up y x and y offset to the end of age 2 of Artifact cards
 	x_temp = x
 	y_temp = y
-	y -= offset * 8
-	x += offset * 11
-	for id in range (209,215):
+	y -= offset * 9
+	x += offset * 10
+	for id in range (215,220):
 		f.write(""".{size}.hexagon_card_icon.hexagon_icon_{id} <
 \tbackground-position: -{x}px -{y}px;
 >\n\n""".format(size=size, id=id, x=x, y=y).replace('<', '{').replace('>', '}'))
