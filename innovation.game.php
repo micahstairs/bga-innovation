@@ -5817,12 +5817,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
                 
         // A dig happens when a card is covered with a card of lower or equal value, or both cards have their hexagonal icons in the same location.
-        $covered_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['age'] >= $melded_card['age'];
+        $new_card_has_lower_or_equal_value = $previous_top_card !== null && $previous_top_card['faceup_age'] >= $melded_card['faceup_age'];
         $overlapping_icons = $previous_top_card !== null && self::haveOverlappingHexagonIcons($previous_top_card, $melded_card);
-        if ($covered_card_has_lower_or_equal_value || $overlapping_icons) {
+        if ($new_card_has_lower_or_equal_value || $overlapping_icons) {
             
             // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
-            $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['age']);
+            $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
             $top_artifact_card = self::getDeckTopCard($age_draw, /*type=*/ 1);
             
             if ($top_artifact_card == null) {
@@ -5832,7 +5832,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
                 if (self::getGameStateValue('artifacts_mode') == 3) {
-                    $relic = self::getRelicForAge($top_artifact_card['age']);
+                    $relic = self::getRelicForAge($top_artifact_card['faceup_age']);
                     // "You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
                     if ($relic != null && ($relic['location'] == 'relics' || $relic['location'] == 'achievements')) {
                         self::setGameStateValue('relic_id', $relic['id']);
@@ -5847,10 +5847,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function haveOverlappingHexagonIcons($card_1, $card_2) {
         // TODO: When Cities expansion is added, this expression will need to be expanded to include the extra 2 spots.
         return
-            ($card_1['spot_1'] == 0 && $card_2['spot_1'] == 0) || 
-            ($card_1['spot_2'] == 0 && $card_2['spot_2'] == 0) || 
-            ($card_1['spot_3'] == 0 && $card_2['spot_3'] == 0) ||
-            ($card_1['spot_4'] == 0 && $card_2['spot_4'] == 0);
+            ($card_1['spot_1'] === 0 && $card_2['spot_1'] === 0) || 
+            ($card_1['spot_2'] === 0 && $card_2['spot_2'] === 0) || 
+            ($card_1['spot_3'] === 0 && $card_2['spot_3'] === 0) ||
+            ($card_1['spot_4'] === 0 && $card_2['spot_4'] === 0);
     }
 
     /* Returns null if there is no relic of the specified age */
