@@ -11779,7 +11779,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $number_of_clocks = self::getPlayerSingleRessourceCount($player_id, 6 /* clock */);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${clocks}.'), array('You' => 'You', 'n' => $number_of_clocks, 'clocks' => $clock));
             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
-            // "Return a card from any other player's score pile for any two clocks on your board"
+            // "Return a card in any opponent's score pile for every two clocks on your board"
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::intDivision($number_of_clocks, 2),
@@ -12206,7 +12206,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 95, age 10: Bioengineering
         case "95N1A":
-            // "Transfer a top card with a leaf from any other player's board to your score pile"
+            // "Transfer a top card with a leaf from any opponent's board to your score pile"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -16184,7 +16184,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 18, age 2: Road building
             case "18N1B":
-                // $choice is the chosen oppenent id
+                // $choice is the chosen player id
                 $top_red_card = self::getTopCardOnBoard($player_id, 1);
                 self::transferCardFromTo($top_red_card, $choice, 'board'); // "Transfer your top red card to another's player's board"
                 $top_green_card = self::getTopCardOnBoard($choice, 2);
