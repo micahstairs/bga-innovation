@@ -96,7 +96,7 @@ class Innovation extends Table
             'card_id_3' => 71,
             'require_achievement_eligibility' => 72,
             'require_demand_effect' => 73,
-            'require_splayability' => 74,
+            'has_splay_direction' => 74,
             'owner_last_selected' => 75,
             'type_array' => 76,
             'age_array' => 77,
@@ -400,7 +400,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('score_keyword', -1); // 1 if the action with the chosen card will be scoring, else 0
         self::setGameStateInitialValue('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         self::setGameStateInitialValue('require_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
-        self::setGameStateInitialValue('require_splayability', -1); // Only selectable if the card can be splayed in that direction (1=left, 2=right, 3=up), else -2
+        self::setGameStateInitialValue('has_splay_direction', -1); // List of splay directions encoded in a single value
         
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
@@ -1973,7 +1973,7 @@ class Innovation extends Table
         self::sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo);
     }
     
-    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $require_splayability) {
+    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
             // TODO: We can simplify Self Service to use "board->none", but we need to make this change carefully to avoid breaking any games.
@@ -1994,12 +1994,15 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('{player must} transfer {number} top {card} from the board of {targetable_players} to his score pile');
                 break;
             case 'board->none':
-                if ($require_splayability) { // Cyrus Cylinder
-                    $message_for_player = clienttranslate('{You must} choose {number} pile from the board of {targetable_players} to splay left');
-                    $message_for_others = clienttranslate('{player must} choose {number} pile from the board of {targetable_players} to splay left');
-                } else {
+                if ($code === '134N1A') {
                     $message_for_player = clienttranslate('{You must} choose {number} other top {card} from the board of {targetable_players}');
                     $message_for_others = clienttranslate('{player must} choose {number} other top {card} from the board of {targetable_players}');
+                } else if ($code === '134N1+A') {
+                    $message_for_player = clienttranslate('{You must} choose a pile to splay left from the board of {targetable_players}');
+                    $message_for_others = clienttranslate('{player must} choose a pile to splay left from the board of {targetable_players}');
+                } else {
+                    // This should not happen
+                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 }
                 break;
             default:
@@ -4815,8 +4818,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('require_demand_effect', $rewritten_options)) {
             $rewritten_options['require_demand_effect'] = false;
         }
-        if (!array_key_exists('require_splayability', $rewritten_options)) {
-            $rewritten_options['require_splayability'] = -2;
+        if (!array_key_exists('has_splay_direction', $rewritten_options)) {
+            $rewritten_options['has_splay_direction'] = array(0, 1, 2, 3); // Unsplayed, left, right, or up
         }
         if (!array_key_exists('splay_direction', $rewritten_options)) {
              $rewritten_options['splay_direction'] = -1;
@@ -4872,8 +4875,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'players':
                 self::setGameStateValueFromArray('player_array', $value);
                 break;
+            case 'has_splay_direction':
+                self::setGameStateValueFromArray('has_splay_direction', $value);
+                break;
             }
-            if ($key <> 'color' && $key <> 'type' && $key <> 'players') {
+            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'players' && $key <> 'has_splay_direction') {
                 self::setGameStateValue($key, $value);
             }
         }
@@ -4977,13 +4983,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $condition_for_icon = "";
         }
 
-        // Condition for whether the pile can be splayed
-        $require_splayability = self::getGameStateValue('require_splayability');
-        if ($require_splayability >= 1) {
-            $condition_for_splayability = self::format("AND splay_direction != {direction} AND position > 0 AND location = 'board'", array("direction" => $require_splayability));
-        } else {
-            $condition_for_splayability = "";
-        }
+        // Condition for whether the pile is splayed
+        $splay_directions = self::getGameStateValueAsArray('has_splay_direction');
+        $condition_for_splay = count($splay_directions) == 0 ? "AND FALSE" : "AND splay_direction IN (".join($splay_directions, ',').")";
 
         // Condition for requiring ID
         $condition_for_requiring_id = "";
@@ -5027,7 +5029,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_color}
                     {condition_for_type}
                     {condition_for_icon}
-                    {condition_for_splayability}
+                    {condition_for_splay}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
             ",
@@ -5040,7 +5042,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_color' => $condition_for_color,
                     'condition_for_type' => $condition_for_type,
                     'condition_for_icon' => $condition_for_icon,
-                    'condition_for_splayability' => $condition_for_splayability,
+                    'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
                 )
@@ -5061,7 +5063,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_color}
                     {condition_for_type}
                     {condition_for_icon}
-                    {condition_for_splayability}
+                    {condition_for_splay}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
             ",
@@ -5074,7 +5076,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_color' => $condition_for_color,
                     'condition_for_type' => $condition_for_type,
                     'condition_for_icon' => $condition_for_icon,
-                    'condition_for_splayability' => $condition_for_splayability,
+                    'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
                 )
@@ -6482,6 +6484,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $can_pass = self::getGameStateValue('can_pass') == 1;
         $can_stop = self::getGameStateValue('n_min') <= 0;
+
+        $step = self::getStep();
+        $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         
         if ($special_type_of_choice > 0) {
             switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
@@ -6579,11 +6584,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             default:
                 break;
             }
-            
+
             // The message to display is specific of the card
-            $step = self::getStep();
-            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-            
             $message_args_for_player = array('You' => 'You', 'you' => 'you');
             $message_args_for_others = array('player_name' => $player_name);
             
@@ -6837,7 +6839,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $with_icon = self::getGameStateValue("with_icon");
             $without_icon = self::getGameStateValue("without_icon");
             $with_demand_effect = self::getGameStateValue("require_demand_effect");
-            $require_splayability = self::getGameStateValue("require_splayability");
         }
         
         // Number of cards
@@ -7057,7 +7058,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Creation of the message
         if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3) {
             if ($splay_direction == -1) {
-                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $require_splayability);
+                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
                 $splay_direction_in_clear = null;
             }
@@ -9293,7 +9294,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 134, Artifacts age 2: Cyrus Cylinder
             case "134N1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 1;
+                break;
+
+            case "134N1+":
+                $step_max = 1;
                 break;
 
             // id 135, Artifacts age 3: Dunhuang Star Chart
@@ -12805,8 +12810,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        case "134N1B":
-            // Prompt player to pick a pile which can be splayed left.
+        case "134N1+A":
+            // Prompt player to pick a pile which to splay left.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -12814,9 +12819,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
-                'location_to' => 'none',
-
-                'require_splayability' => 1 // Must be able to be splayed left
+                'location_to' => 'none'
             );
             break;
             
@@ -15266,7 +15269,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                 
                 // id 134, Artifacts age 2: Cyrus Cylinder
-                case "134N1B":
+                case "134N1A":
+                    // "Execute its non-demand dogma effects"
+                    if ($n > 0) {
+                        self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
+                    }
+                    break;
+
+                case "134N1+A":
                     // "Splay left a color on any player's board"
                     if ($n > 0) {
                         $color = self::getGameStateValue('color_last_selected');
