@@ -375,7 +375,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('n_min', -1); // Minimal number of cards to be chosen (999 stands for all possible)
         self::setGameStateInitialValue('n_max', -1); // Maximal number of cards to be chosen (999 stands for no limit)
         self::setGameStateInitialValue('solid_constraint', -1); // 1 if there need to be at least n_min cards to trigger the effect or 0 if it is triggered no matter what, which will consume all eligible cards (do what you can rule)
-        self::setGameStateInitialValue('owner_from', -1); // Owner from whom choose the card (0 for nobody, -2 for any player, -3 for any opponent)
+        self::setGameStateInitialValue('owner_from', -1); // Owner from whom choose the card (0 for nobody, -2 for any player, -3 for any opponent, -4 for any other player)
         self::setGameStateInitialValue('location_from', -1); // Location from where choose the card (0 for deck, 1 for hand, 2 for board, 3 for score)
         self::setGameStateInitialValue('owner_to', -1); // Owner to whom the chosen card will be transfered (0 for nobody)
         self::setGameStateInitialValue('location_to', -1); // Location where the chosen card will be transfered (0 for deck, 1 for hand, 2 for board, 3 for score)
@@ -4744,9 +4744,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'owner_from':
                 if ($value === 'any player') {
                     $value = -2;
-                }
-                else if ($value === 'any opponent') {
+                } else if ($value === 'any opponent') {
                     $value = -3;
+                } else if ($value === 'any other player') {
+                    $value = -4;
                 }
                 $rewritten_options['owner_from'] = $value;
                 break;
@@ -4902,8 +4903,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $owner_from = self::getGameStateValue('owner_from');
         if ($owner_from == -2) { // Any player
             $condition_for_owner = "owner <> 0";
-        }
-        else if ($owner_from == -3) { // Any opponent
+        } else if ($owner_from == -3) { // Any opponent
             $opponents = self::getObjectListFromDB(self::format("
                 SELECT
                     player_id
@@ -4922,8 +4922,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 array('player_id' => $player_id)), true
             );
             $condition_for_owner = self::format("owner IN ({opponents})", array('opponents' => join($opponents, ',')));
-        }
-        else {
+        } else if ($owner_from == -4) { // Any other player
+            $other_players = self::getObjectListFromDB(self::format("
+                SELECT
+                    player_id
+                FROM
+                    player
+                WHERE
+                    player_id <> {player_id}
+            ",
+                array('player_id' => $player_id)), true
+            );
+            $condition_for_owner = self::format("owner IN ({other_players})", array('other_players' => join($other_players, ',')));
+        } else {
             $condition_for_owner = self::format("owner = {owner_from}", array('owner_from' => $owner_from));
         }
         
@@ -6849,9 +6860,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id_is_owner_from = $owner_from == $player_id;
         
         // Identification of the potential opponent(s)
-        if ($splay_direction == -1 && ($owner_from == -2 || $owner_from == -3)) {
+        if ($splay_direction == -1 && ($owner_from == -2 || $owner_from == -3 || $owner_from == -4)) {
             $opponent_id = $owner_from;
-        } else if ($splay_direction == -1 && ($owner_to == -2 || $owner_to == -3)) {
+        } else if ($splay_direction == -1 && ($owner_to == -2 || $owner_to == -3 || $owner_to == -4)) {
             $opponent_id = $owner_to;
         } else if ($splay_direction == -1 && $owner_from > 0 && $owner_from <> $player_id) {
             $opponent_id = $owner_from;
@@ -6864,27 +6875,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($opponent_id === null) {
             $your = null;
             $opponent_name = null;
-        }
-        else if ($opponent_id > 0) {
+        } else if ($opponent_id > 0) {
             $your = 'your';
             $opponent_name = self::getColoredText(self::getPlayerNameFromId($opponent_id), $opponent_id);
-        }
-        else if ($opponent_id == -2) {
+        } else if ($opponent_id == -2) {
             $your = null;
             if ($n_min > 800) {
                 $opponent_name = clienttranslate("all players");
-            }
-            else {
+            } else {
                 $opponent_name = clienttranslate("any player");
             }
-        }
-        else { // opponent_id == -3
+        } else if ($opponent_id == -3) {
             $your = null;
             if ($n_min > 800) {
                 $opponent_name = clienttranslate("all opponents");
-            }
-            else {
+            } else {
                 $opponent_name = clienttranslate("any opponent");
+            }
+        } else { // opponent_id == -4
+            $your = null;
+            if ($n_min > 800) {
+                $opponent_name = clienttranslate("all other players");
+            } else {
+                $opponent_name = clienttranslate("any other player");
             }
         }
         
@@ -7056,7 +7069,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Creation of the message
-        if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3) {
+        if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4) {
             if ($splay_direction == -1) {
                 $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
