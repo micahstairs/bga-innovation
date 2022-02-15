@@ -4996,7 +4996,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Condition for whether the pile is splayed
         $splay_directions = self::getGameStateValueAsArray('has_splay_direction');
-        $condition_for_splay = count($splay_directions) == 0 ? "AND FALSE" : "AND splay_direction IN (".join($splay_directions, ',').")";
+        $condition_for_splay = "";
+        if (count($splay_directions) == 0) {
+            $condition_for_splay = "AND FALSE";
+        } else if (count($splay_directions) < 4) {
+            $condition_for_splay = "AND splay_direction IN (".join($splay_directions, ',').")";
+        }
 
         // Condition for requiring ID
         $condition_for_requiring_id = "";
