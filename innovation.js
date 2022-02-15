@@ -3101,6 +3101,7 @@ function (dojo, declare) {
             dojo.subscribe('rearrangedPile', this, "notif_rearrangedPile");  // This kind of notification does not need any delay
             
             dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
+            dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
             
@@ -3116,6 +3117,7 @@ function (dojo, declare) {
                 dojo.subscribe('rearrangedPile_spectator', this, "notif_rearrangedPile_spectator"); // This kind of notification does not need any delay
                 
                 dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('log_spectator', this, "notif_log_spectator"); // This kind of notification does not change anything but log on the interface, no delay
             };
@@ -3324,7 +3326,6 @@ function (dojo, declare) {
         },
         
         notif_removedHandsBoardsAndScores: function(notif) {
-            // Remove all cards from the interface (except decks and achievements)
             // NOTE: The button to look at the player's score pile is broken in archive mode.
             if (!g_archive_mode) {
                 this.zone.my_score_verso.removeAll();
@@ -3366,6 +3367,43 @@ function (dojo, declare) {
             }
             
             // Disable the button for splay mode
+            this.disableButtonForSplayMode();
+            this.number_of_splayed_piles = 0;
+        },
+
+        notif_removedTopCardsAndHands: function(notif) {
+            // Remove cards
+            for (var player_id in this.players) {
+                this.zone.hand[player_id].removeAll();
+            }
+            for (var card in notif.args.top_cards_to_remove) {
+                this.removeFromZone(this.zone.board[card.owner][card.color], card.id, true, card.age, card.type, card.is_relic);
+            }
+            
+            // Update counters
+            for (var player_id in this.players) {
+                this.zone.hand[player_id].counter.setValue(0);
+                this.counter.max_age_on_board[player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
+                for (var icon = 1; icon <= 6; icon++) {
+                    this.counter.ressource_count[player_id][icon].setValue(notif.args.new_resource_counts_by_player[icon]);
+                }
+            }
+            
+            // Unsplay all piles and update the splay indicator (show nothing bacause there are no more splayed pile)
+            // TODO: Update this
+            for(var player_id in this.players) {
+                for(var color = 0; color < 5; color++) {
+                    this.setSplayMode(this.zone.board[player_id][color], 0)
+                    var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
+                    dojo.addClass(splay_indicator, 'splay_0');
+                    for(var direction = 1; direction <= 3; direction++) {
+                        dojo.removeClass(splay_indicator, 'splay_' + direction);
+                    }
+                }
+            }
+            
+            // Disable the button for splay mode
+            // TODO: Update this
             this.disableButtonForSplayMode();
             this.number_of_splayed_piles = 0;
         },
