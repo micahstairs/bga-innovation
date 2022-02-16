@@ -14144,12 +14144,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
+        // id 187, Artifacts age 8: Battleship Bismarck
         case "187C1A":
             // "Draw and reveal an 8"
             $card = self::executeDraw($player_id, 8, 'revealed');
             self::transferCardFromTo($card, $player_id, 'hand');
 
             // "Return all cards of the drawn color from your board"
+            // TODO: Make this a bulk operation instead of an interaction.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14160,8 +14162,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array($card['color'])
-                );
-                break;
+            );
+            break;
             
         // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
         case "190N1A":
