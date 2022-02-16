@@ -134,7 +134,6 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        $card['debug_draw'] = true;
         if ($card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
             self::transferCardFromTo($card, $player_id, 'hand');
         } else if ($card['location'] == 'achievements') {
@@ -151,7 +150,6 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        $card['debug_score'] = true;
         if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck') {
             self::scoreCard($card, $player_id);
         } else if ($card['location'] == 'achievements') {
@@ -170,7 +168,6 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        $card['debug_achieve'] = true;
         if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
             throw new BgaUserException("You already have this card as an achievement");
         } else if ($card['location'] == 'removed') {
@@ -196,7 +193,6 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        $card['debug_return'] = true;
         if ($card['location'] == 'deck') {
             throw new BgaUserException("This card is already in the deck");
         } else if ($card['location'] == 'achievements' && !$card['is_relic']) {
@@ -225,7 +221,6 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        $card['debug_dig'] = true;
         if (self::getArtifactOnDisplay($player_id) != null) {
             throw new BgaUserException("There is already an Artifact on display");
         } else if ($card['location'] == 'achievements') {
