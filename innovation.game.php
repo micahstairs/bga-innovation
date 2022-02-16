@@ -4716,30 +4716,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $top_cards_to_remove = array_merge($top_cards_to_remove, self::getTopCardsOnBoard($player_id));
         }
 
-        // Count the number of piles that will be unsplayed.
-        $num_unsplayed_piles = self::getUniqueValueFromDB("
-            SELECT
-                COUNT(*)
-            FROM
-                card
-            LEFT JOIN
-                (SELECT
-                    owner, color, MAX(position) AS position
-                FROM
-                    card
-                WHERE
-                    location = 'board'
-                GROUP BY
-                    owner, color) AS b ON card.owner = b.owner AND card.color = b.color
-            WHERE
-                card.location = 'board' AND
-                card.owner = b.owner AND
-                card.color = b.color AND
-                card.position = b.position AND
-                card.position = 1 AND
-                card.splay_direction >= 1
-        ");
-        
         // Remove top cards from boards.
         self::DbQuery("
             UPDATE
@@ -4764,44 +4740,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 card.position = b.position
         ");
 
-        // Unsplay piles which only have 1 card left in them.
-        self::DbQuery("
-            UPDATE
-                card
-            LEFT JOIN
-                (SELECT
-                    owner, color, MAX(position) AS position
-                FROM
-                    card
-                WHERE
-                    location = 'board'
-                GROUP BY
-                    owner, color) AS b ON card.owner = b.owner AND card.color = b.color
-            SET
-                card.splay_direction = 0
-            WHERE
-                card.location = 'board' AND
-                card.owner = b.owner AND
-                card.color = b.color AND
-                card.position = b.position AND
-                card.position = 0
-        ");
-
         $new_resource_counts_by_player = array();
         $new_max_age_on_board_by_player = array();
         foreach ($player_ids as $player_id) {
-            $resource_counts_by_player[$player_id] = self::updatePlayerRessourceCounts($player_id);
+            $new_resource_counts_by_player[$player_id] = self::updatePlayerRessourceCounts($player_id);
             $new_max_age_on_board = self::getMaxAgeOnBoardTopCards($player_id);
             $new_max_age_on_board_by_player[$player_id] = $new_max_age_on_board;
             self::setStat($new_max_age_on_board, 'max_age_on_board', $player_id);
         }
-        self::notifyAll($player_id, 'removedTopCardsAndHands', clienttranslate('All top cards on all boards and all cards in all hands are removed from the game.'), array(
+        self::notifyAll('removedTopCardsAndHands', clienttranslate('All top cards on all boards and all cards in all hands are removed from the game.'), array(
             'new_resource_counts_by_player' => $new_resource_counts_by_player,
             'new_max_age_on_board_by_player' => $new_max_age_on_board_by_player,
             'top_cards_to_remove' => $top_cards_to_remove,
         ));
-        if ($num_unsplayed_piles > 0) {
-            self::notifyAll($player_id, 'log', clienttranslate('{number} pile(s) are reduced to one card and loses its splay.'), array('number' => $num_unsplayed_piles));
+
+        // Unsplay all piles which only have one card left in them.
+        foreach ($player_ids as $player_id) {
+            $number_of_cards_per_pile = self::countCardsInLocationKeyedByColor($player_id, 'board');
+            for ($color = 0; $color < 5; $color++) {
+                if ($number_of_cards_per_pile[$color] == 1) {
+                    self::splay($player_id, $player_id, $color, /*splay_direction=*/ 0); // Unsplay
+                }
+            }
         }
 
         // TODO: Check to see if any players are eligible for special achievements, breaking ties as appropriate.
@@ -10242,7 +10202,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              // id 213, Artifacts age 10: DeLorean DMC-12
             case "213N1":
                 // "If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game"
-                if (self::isTopBoardCard($player_id, 213)) {
+                if (self::isTopBoardCard(self::getCardInfo(213))) {
                     self::removeAllTopCardsAndHands();
                 }
                 break;

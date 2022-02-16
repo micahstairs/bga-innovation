@@ -3376,7 +3376,8 @@ function (dojo, declare) {
             for (var player_id in this.players) {
                 this.zone.hand[player_id].removeAll();
             }
-            for (var card in notif.args.top_cards_to_remove) {
+            for (var i = 0; i < notif.args.top_cards_to_remove.length; i++) {
+                var card = notif.args.top_cards_to_remove[i];
                 this.removeFromZone(this.zone.board[card.owner][card.color], card.id, true, card.age, card.type, card.is_relic);
             }
             
@@ -3385,27 +3386,9 @@ function (dojo, declare) {
                 this.zone.hand[player_id].counter.setValue(0);
                 this.counter.max_age_on_board[player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
                 for (var icon = 1; icon <= 6; icon++) {
-                    this.counter.ressource_count[player_id][icon].setValue(notif.args.new_resource_counts_by_player[icon]);
+                    this.counter.ressource_count[player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
                 }
             }
-            
-            // Unsplay all piles and update the splay indicator (show nothing bacause there are no more splayed pile)
-            // TODO: Update this
-            for(var player_id in this.players) {
-                for(var color = 0; color < 5; color++) {
-                    this.setSplayMode(this.zone.board[player_id][color], 0)
-                    var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
-                    dojo.addClass(splay_indicator, 'splay_0');
-                    for(var direction = 1; direction <= 3; direction++) {
-                        dojo.removeClass(splay_indicator, 'splay_' + direction);
-                    }
-                }
-            }
-            
-            // Disable the button for splay mode
-            // TODO: Update this
-            this.disableButtonForSplayMode();
-            this.number_of_splayed_piles = 0;
         },
 
         notif_updateResourcesForArtifactOnDisplay: function(notif) {
