@@ -3118,6 +3118,8 @@ function (dojo, declare) {
                 
                 dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
+
+                dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('log_spectator', this, "notif_log_spectator"); // This kind of notification does not change anything but log on the interface, no delay
             };
@@ -3465,6 +3467,14 @@ function (dojo, declare) {
             
             // Call normal notif
             this.notif_removedTopCardsAndHands(notif);
+        },
+
+        notif_updateResourcesForArtifactOnDisplay_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+            
+            // Call normal notif
+            this.notif_updateResourcesForArtifactOnDisplay(notif);
         },
         
         notif_log_spectator: function(notif) {
