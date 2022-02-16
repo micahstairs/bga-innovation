@@ -1984,7 +1984,11 @@ class Innovation extends Table
                 } else if ($code === '134N1+A') {
                     $message_for_player = clienttranslate('{You must} choose a pile to splay left from the board of {targetable_players}');
                     $message_for_others = clienttranslate('{player must} choose a pile to splay left from the board of {targetable_players}');
-                } else {
+                } else if ($code === '136N1B') {
+                    $message_for_player = clienttranslate('{You must} choose a card to execute from the board of {targetable_players}');
+                    $message_for_others = clienttranslate('{player must} choose a card to execute from the board of {targetable_players}');
+                }
+                else {
                     // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 }
@@ -9387,6 +9391,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
+            // id 136, Artifacts age 3: Charter of Liberties
+            case "136N1":
+                $step_max = 1;
+                break;
+
             // id 137, Artifacts age 2: Excalibur
             case "137C1":
                 // Determine colors where top card has a higher value than the launcher's top card of the same color
@@ -12927,7 +12936,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck'
             );
             break;
-             
+
+        // id 136, Artifacts age 3: Charter of Liberties
+        case "136N1A":
+            // "Tuck a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true
+            );
+            break;
+
+        case "136N1B":
+            // "choose a splayed color on any player's board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 'any player',
+                'location_from' => 'board',
+                'location_to' => 'none',
+                
+                'has_splay_direction' => array(1,2,3)
+            );
+            break;
+
         // id 137, Artifacts age 2: Excalibur
         case "137C1A":
             // "I compel you to transfer a top card of higher value than my
@@ -15381,7 +15422,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a card of value equal to the number of cards returned"
                     self::executeDraw($player_id, self::getAuxiliaryValue());
                 	break;
-                	
+
+
+                // id 136, Artifacts age 3: Charter of Liberties
+                case "136N1A":
+                    if ($n > 0) {
+                        // If you do, splay left its color
+                        self::splayLeft($player_id, $player_id, self::getGameStateValue('color_last_selected'));
+                        
+                        self::incrementStepMax(1); // 1 more interaction
+                    }
+                    break;
+
+                case "136N1B":
+                    if ($n > 0) {
+                        // "Execute all of that color's top card's non-demand effects, without sharing."
+                        self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
+                    }
+                    break;
+                    
                 // id 138, Artifacts age 3: Mjolnir Amulet
                 case "138C1A":
                     if ($n > 0) {
