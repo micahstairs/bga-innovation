@@ -626,9 +626,9 @@ class Innovation extends Table
                 $result['action_number'] = $action_number;
                 $card = self::getArtifactOnDisplay($active_player);
                 if ($card !== null && $action_number == 0) {
-                    $result['artifact_on_display'] = array();
-                    $result['artifact_on_display']['resource_icon'] = $card['dogma_icon'];
-                    $result['artifact_on_display']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
+                    $result['artifact_on_display_icons'] = array();
+                    $result['artifact_on_display_icons']['resource_icon'] = $card['dogma_icon'];
+                    $result['artifact_on_display_icons']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
                 }
             } else {
                 $result['action_number'] = self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') || self::getGameStateValue('has_second_action') ? 1 : 2;
@@ -5744,6 +5744,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
+        self::setGameStateValue('current_action_number', 1);
     }
 
     function passArtifactOnDisplay() {
@@ -5759,6 +5760,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
+        self::setGameStateValue('current_action_number', 1);
     }
     
     function achieve($age) {
@@ -7264,27 +7266,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function stInterPlayerTurn() {
         // An action of the player has been fully resolved.
-        
+
         // Give him extra time for his actions to come
         self::giveExtraTime(self::getActivePlayerId());
         
         // Does he play again?
-        if (self::getGameStateValue('first_player_with_only_one_action')) {
+        if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_action_number') == 0) {
+            $next_player = false;
+        } else if (self::getGameStateValue('first_player_with_only_one_action')) {
             // First turn: the player had only one action to make
             $next_player = true;
             self::setGameStateValue('first_player_with_only_one_action', 0);
-        }
-        else if (self::getGameStateValue('second_player_with_only_one_action')) {
+        } else if (self::getGameStateValue('second_player_with_only_one_action')) {
             // 4 players at least and this is the second turn: the player had only one action to make
             $next_player = true;
             self::setGameStateValue('second_player_with_only_one_action', 0);
-        }
-        else if (self::getGameStateValue('has_second_action')) {
+        } else if (self::getGameStateValue('has_second_action')) {
             // The player took his first action and has another one
             $next_player = false;
             self::setGameStateValue('has_second_action', 0);
-        }
-        else {
+        } else {
             // The player took his second action
             $next_player = true;
             self::setGameStateValue('has_second_action', 1);
@@ -7316,7 +7317,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         } else {
             if (self::getGameStateValue('release_version') >= 1) {
-                self::setGameStateValue('current_action_number', 2);
+                self::incGameStateValue('current_action_number', 1);
             }
         }
         self::notifyGeneralInfo('<!--empty-->');

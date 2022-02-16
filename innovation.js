@@ -342,11 +342,11 @@ function (dojo, declare) {
                     this.counter.ressource_count[player_id][icon].setValue(gamedatas.ressource_counts[player_id][icon]);
                 }
             }
-            if (gamedatas.artifact_on_display != null && gamedatas.artifact_on_display.resource_icon != null) {
+            if (gamedatas.artifact_on_display_icons != null && gamedatas.artifact_on_display_icons.resource_icon != null) {
                 this.updateResourcesForArtifactOnDisplay(
                     gamedatas.active_player,
-                    gamedatas.artifact_on_display.resource_icon,
-                    gamedatas.artifact_on_display.resource_count_delta);
+                    gamedatas.artifact_on_display_icons.resource_icon,
+                    gamedatas.artifact_on_display_icons.resource_count_delta);
             }
             
             // Action indicator
