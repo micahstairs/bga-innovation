@@ -1336,9 +1336,8 @@ class Innovation extends Table
             self::trace('EOG bubbled from self::splay');
             throw $e; // Re-throw exception to higher level
         }
-        
-        // Check if this transfer triggers a sharing bonus        
-        self::checkIfSharingBonus();
+          
+        self::recordThatChangeOccurred();
     }
     
     /* Rearrangement mechanism */
@@ -1375,8 +1374,8 @@ class Innovation extends Table
         
         if ($actual_change) {
             self::updatePlayerRessourceCounts($player_id);
-            self::checkIfSharingBonus();
-        } // If there is no actual change, the player is cheating
+            self::recordThatChangeOccurred();
+        }
         
         return $actual_change;
     }
@@ -1522,18 +1521,14 @@ class Innovation extends Table
     }
     
     function updateGameSituation($card, $transferInfo) {
+        self::recordThatChangeOccurred();
+
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
-
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
-        
         $bottom_to = $transferInfo['bottom_to'];
-        
         $age = $card['age'];
-        
-        // Check if this transfer triggers a sharing bonus
-        self::checkIfSharingBonus();
         
         $score_from_update = $location_from == 'score';
         $score_to_update = $location_to == 'score';
@@ -2904,9 +2899,8 @@ class Innovation extends Table
         self::notifyAll('log', $message, array_merge($args, $delimiters));
     }
     
-    /** Sharing bonus **/
-    function checkIfSharingBonus() {
-        // This function is called when something changed in the game
+    /** This function should be called whenever something changes in the game **/
+    function recordThatChangeOccurred() {
         
         if (self::getGameStateValue('release_version') >= 1) {
             $nested_card_state = self::getCurrentNestedCardState();
@@ -3417,6 +3411,9 @@ class Innovation extends Table
     }
 
     function isTopBoardCard($card) {
+        if ($card['position'] == null) {
+            return false;
+        }
         $number_of_cards_above = self::getUniqueValueFromDB(self::format("
                 SELECT
                     COUNT(*)
@@ -4680,6 +4677,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             WHERE
                 location = 'hand'
         ");
+        if (self::DbAffectedRow() > 0) {
+            self::recordThatChangeOccurred();
+        }
         
         // Get list of the all top cards on the board.
         $top_cards_to_remove = array();
@@ -4711,6 +4711,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 card.color = b.color AND
                 card.position = b.position
         ");
+        if (self::DbAffectedRow() > 0) {
+            self::recordThatChangeOccurred();
+        }
 
         $new_resource_counts_by_player = array();
         $new_max_age_on_board_by_player = array();
