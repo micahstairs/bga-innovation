@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
  `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
- `execute_demand_effects` BOOLEAN DEFAULT TRUE COMMENT 'Whether demand effects should be executed',
  `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
  `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
  `step` TINYINT COMMENT 'The interaction that the card is on',

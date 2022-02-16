@@ -5511,20 +5511,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
             $nested_card_state = self::getCurrentNestedCardState();
-            // Don't execute demand effects on the next card if the current card was supposed to skip demand effects.
-            if (!$nested_card_state['execute_demand_effects']) {
-                $execute_demand_effects = false;
-            }
             $nesting_index = self::incGameStateValue('current_nesting_index', 1);
             $has_i_demand = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
             $has_i_compel = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
-                    (nesting_index, card_id, launcher_id, execute_demand_effects, current_effect_type, current_effect_number, step, step_max)
+                    (nesting_index, card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
                 VALUES
-                    ({nesting_index}, {card_id}, {launcher_id}, {execute_demand_effects}, {effect_type}, 1, -1, -1)
-            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'execute_demand_effects' => $execute_demand_effects ? 1 : 0, 'effect_type' => $effect_type)));
+                    ({nesting_index}, {card_id}, {launcher_id}, {effect_type}, 1, -1, -1)
+            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -5553,7 +5549,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getObjectFromDB(
             self::format("
                 SELECT
-                    nesting_index, card_id, card_location, launcher_id, current_player_id, execute_demand_effects, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
+                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
                 FROM
                     nested_card_execution
                 WHERE
