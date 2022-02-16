@@ -3458,6 +3458,14 @@ function (dojo, declare) {
             // Call normal notif
             this.notif_removedHandsBoardsAndScores(notif);
         },
+
+        notif_removedTopCardsAndHands_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+            
+            // Call normal notif
+            this.notif_removedTopCardsAndHands(notif);
+        },
         
         notif_log_spectator: function(notif) {
             // Put the message for the spectator in log
