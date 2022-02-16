@@ -1336,9 +1336,8 @@ class Innovation extends Table
         
         // Check for all achievements
         try {
-            self::checkForSpecialAchievements($target_player_id, true); // All including Wonder
-        }
-        catch(EndOfGame $e) {
+            self::checkForSpecialAchievements($target_player_id);
+        } catch(EndOfGame $e) {
             self::trace('EOG bubbled from self::splay');
             throw $e; // Re-throw exception to higher level
         }
@@ -1618,52 +1617,47 @@ class Innovation extends Table
         }
         
         $end_of_game = false;
-        if ($owner_from != 0 && $location_from == 'achievements') { // A player is losing an achievement
-            // The number of achievements is the BGA score (not to be confused with the definition of score in Innovation game)
-            // So, decrease BGA score by one
+
+        // A player is losing an achievement
+        if ($owner_from != 0 && $location_from == 'achievements') {
+            // // The number of achievements is the BGA score (not to be confused with the definition of score in an Innovation game)
             self::decrementBGAScore($owner_from);
         }
         
-        if ($owner_to != 0 && $location_to == 'achievements') { // A player is gaining an achievement
-            // The number of achievements is the BGA score (not to be confused with the definition of score in Innovation game)
-            // So, increase BGA score by one
+        // A player is gaining an achievement
+        if ($owner_to != 0 && $location_to == 'achievements') {
             try {
+                // The number of achievements is the BGA score (not to be confused with the definition of score in an Innovation game)
                 self::incrementBGAScore($owner_to, $card['age'] === null);
             } catch(EndOfGame $e) {
                 $end_of_game = true;
             }
         }
-        else { // This was not an achievement-transfer
-            // Check if the change brought by the transfer enables a player to get a special achievements
-            if ($one_player_involved) {
-                try {
-                    self::checkForSpecialAchievements($player_id, false); // Check all except Wonder
-                }
-                catch(EndOfGame $e) {
-                    $end_of_game = true;
-                }
+        // Check if the change brought by the transfer enables a player to get a special achievements
+        if ($one_player_involved) {
+            try {
+                self::checkForSpecialAchievements($player_id);
+            } catch(EndOfGame $e) {
+                $end_of_game = true;
             }
-            else {
-                // Determine players priority for claiming special achievements (to solve the rare case when both would be eligible for the same one)
-                // Rule: in that case, the winner of the card is the one who triggered the dogma if he is one of the two player, else the player who is nearer to him in turn order
-                list($player_1, $player_2) = self::getPlayerPriorityForSpecialAchievements($player_id, $opponent_id);
-                
-                // Check for special achievements: first player
-                try {
-                    self::checkForSpecialAchievements($player_1, false); // Check all except Wonder
-                }
-                catch(EndOfGame $e) {
-                    $end_of_game = true;
-                }
+        } else {
+            // Determine players priority for claiming special achievements (to solve the rare case when both would be eligible for the same one)
+            // Rule: in that case, the winner of the card is the one who triggered the dogma if he is one of the two player, else the player who is nearer to him in turn order
+            list($player_1, $player_2) = self::getPlayerPriorityForSpecialAchievements($player_id, $opponent_id);
+            
+            // Check for special achievements: first player
+            try {
+                self::checkForSpecialAchievements($player_1);
+            } catch(EndOfGame $e) {
+                $end_of_game = true;
+            }
 
-                // Check for special achievements: second player
-                try {
-                    self::checkForSpecialAchievements($player_2, false); // Check all except Wonder
-                }
-                catch(EndOfGame $e) {
-                    $end_of_game = true;
-                } 
-            }
+            // Check for special achievements: second player
+            try {
+                self::checkForSpecialAchievements($player_2);
+            } catch(EndOfGame $e) {
+                $end_of_game = true;
+            } 
         }
         if ($end_of_game) {
             self::trace('EOG bubbled from self::updateGameSituation');
@@ -2604,10 +2598,11 @@ class Innovation extends Table
         }
     }
     
-    function checkForSpecialAchievements($player_id, $wonder_included) { // Check if the player gather the conditions to get a special achievement. Do the transfer if he does.
-        $achievements_to_test = $wonder_included ? array(105, 106, 107, 108, 109) : array(105, 106, 108, 109);
+    /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
+    function checkForSpecialAchievements($player_id) {
+        // TODO: Update this once there are other special achievements to test for.
+        $achievements_to_test = array(105, 106, 107, 108, 109);
         $end_of_game = false;
-        
         
         foreach ($achievements_to_test as $achievement_id) {
             $achievement = self::getCardInfo($achievement_id);
@@ -6373,7 +6368,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 );
 
                 try {
-                    self::checkForSpecialAchievements($player_id, false); // Check all except Wonder
+                    self::checkForSpecialAchievements($player_id);
                 } catch (EndOfGame $e) {
                     // End of the game: the exception has reached the highest level of code
                     self::trace('EOG bubbled from self::chooseSpecialOption');
