@@ -117,15 +117,15 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
 /* Insert relic cards */
 
-INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `is_relic`, `location`, `position`) VALUES
+INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `is_relic`, `location`) VALUES
 
 /* TODO: When implementing Cities, add extra icons to this card */
-(215, 2, 3, 2, 3, 1, 1, 1, NULL, TRUE, 'relics', 0),
-(216, 0, 4, 0, 5, 0, 3, 3, 3,    TRUE, 'relics', 1),
-(217, 1, 5, 4, 5, 3, 5, 0, 5,    TRUE, 'relics', 2),
-(218, 4, 6, 1, 6, 6, 0, 2, 6,    TRUE, 'relics', 3),
+(215, 2, 3, 2, 3, 1, 1, 1, NULL, TRUE, 'relics'),
+(216, 0, 4, 0, 5, 0, 3, 3, 3,    TRUE, 'relics'),
+(217, 1, 5, 4, 5, 3, 5, 0, 5,    TRUE, 'relics'),
+(218, 4, 6, 1, 6, 6, 0, 2, 6,    TRUE, 'relics'),
 /* TODO: When implementing Echoes, add Echo effect to this card */
-(219, 3, 7, 3, 0, 0, 2, 2, 2,    TRUE, 'relics', 4);
+(219, 3, 7, 3, 0, 0, 2, 2, 2,    TRUE, 'relics');
 
 /* Insert normal cards */
 
