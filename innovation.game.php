@@ -2556,8 +2556,13 @@ class Innovation extends Table
     function getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() {
         $players = self::getCollectionFromDB("SELECT player_no, player_id, player_eliminated FROM player");
         $num_players = count($players);
-        
-        $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
+
+        if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_nesting_index') < 0) {
+            $current_player_id = self::getGameStateValue('active_player');
+        } else {
+            $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
+        }
+
         $current_player_no =  self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
 
         $player_ids = [];
