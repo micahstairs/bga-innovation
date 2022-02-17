@@ -5769,7 +5769,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getActivePlayerId();
         
         // Check if the player really meet the conditions to achieve that card
-        $card = self::getObjectFromDB("SELECT * FROM card WHERE location = 'achievements' AND age = " . $age);
+        // TODO: Update this once there can be more than one achievement of the same age in the claimable achievements pile.
+        $card = self::getObjectFromDB(self::format("SELECT * FROM card WHERE location = 'achievements' AND age = {age} AND owner = 0", array('age' => $age)));
         if ($card['owner'] != 0) {
             // The player is cheating...
             throw new BgaUserException(self::_("This achievement has already been claimed [Press F5 in case of troubles]"));
