@@ -12939,7 +12939,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 136, Artifacts age 3: Charter of Liberties
         case "136N1A":
-            // "Tuck a card from your hand."
+            // "Tuck a card from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -12955,7 +12955,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "136N1B":
-            // "choose a splayed color on any player's board."
+            // "Choose a splayed color on any player's board"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -12965,7 +12965,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
                 
-                'has_splay_direction' => array(1,2,3)
+                'has_splay_direction' => array(1, 2, 3)
             );
             break;
 
@@ -15423,20 +15423,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, self::getAuxiliaryValue());
                 	break;
 
-
                 // id 136, Artifacts age 3: Charter of Liberties
                 case "136N1A":
                     if ($n > 0) {
-                        // If you do, splay left its color
+                        // "If you do, splay left its color"
                         self::splayLeft($player_id, $player_id, self::getGameStateValue('color_last_selected'));
-                        
-                        self::incrementStepMax(1); // 1 more interaction
+                        self::incrementStepMax(1);
                     }
                     break;
 
                 case "136N1B":
                     if ($n > 0) {
-                        // "Execute all of that color's top card's non-demand effects, without sharing."
+                        // "Execute all of that color's top card's non-demand effects, without sharing"
                         self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
                     }
                     break;
