@@ -2313,6 +2313,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${your} achievements to his achievements.');
                 $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${opponent_name}\'s achievements to his achievements.');
                 break;
+
+            case 'achievements->hand':
+                $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic from ${opponent_name}\'s achievements to your hand.');
+                $message_for_opponent = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${your} achievements to his hand.');
+                $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${opponent_name}\'s achievements to his hand.');
+                break;
                 
             default:
                 // This should not happen
