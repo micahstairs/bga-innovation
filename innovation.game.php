@@ -9650,9 +9650,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 161, Artifacts age 5: Gujin Tushu Jinsheng
             case "161N1":
                 // "If Gujin Tushu Jinsheng is on your board"
-                $top_card = self::getTopCardOnBoard($player_id, 3);
-                if($top_card['id'] == 161)
-                {
+                $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
+                if ($top_yellow_card['id'] == 161) {
                     $step_max = 1;
                 }
                 break;
@@ -13624,7 +13623,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 161, Artifacts age 5: Gujin Tushu Jinsheng
         case "161N1A":
-            // "choose any other top card on any other board."
+            // "Choose any other top card on any other board"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -15754,7 +15753,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 161, Artifacts age 5: Gujin Tushu Jinsheng
                 case "161N1A":
-                    // "Execute the effects on the chosen card as if they were on this card. Do not share them."
+                    // "Execute the effects on the chosen card as if they were on this card. Do not share them"
                     if ($n > 0) {
                         self::executeAllEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
                     }
