@@ -950,12 +950,6 @@ function (dojo, declare) {
                         this.addActionButton("seize_relic_to_achievements", _("Seize Relic to Achievements Pile"), "action_clicForSeizeRelicToAchievements");
                     }
                     this.addActionButton("pass_seize_relic", _("Pass"), "action_clicForPassSeizeRelic");
-                    if (args.can_seize_to_hand && args.can_seize_to_achievements) {
-                        dojo.place("<span class='extra_text'> , </span>", "seize_relic_to_hand", "after");
-                        dojo.place("<span class='extra_text'> , " + _("or") + "</span>", "pass_seize_relic", "before");
-                    } else {
-                        dojo.place("<span class='extra_text'> " + _("or") + "</span>", "pass_seize_relic", "before");
-                    }
                     break;
                 case 'artifactPlayerTurn':
                     if (this.selectArtifactOnDisplayIfEligibleForDogma().length == 1) {
