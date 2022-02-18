@@ -1463,7 +1463,7 @@ class Innovation extends Table
     function getSelectableRectos($player_id) {
         return self::getObjectListFromDB(self::format("
             SELECT
-                owner, location, age, position
+                owner, location, age, type, is_relic, position
             FROM
                 card
             WHERE
@@ -14659,7 +14659,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board"
             $options = array(
                 'player_id' => $player_id,
-                'n_min' => 1,
+                'n' => 1,
                 'can_pass' => true,
                 
                 'owner_from' => $player_id,
@@ -14675,7 +14675,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "216N1B":
             // "Claim an achievement of matching value, ignoring eligibility"
-            $age_selected = self::getGameStateValue('age_last_selected');
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -14686,7 +14685,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'achievements',
 
-                'age' => $age_selected,
+                'age' => self::getGameStateValue('age_last_selected'),
                 'require_achievement_eligibility' => false
             );
             break;
