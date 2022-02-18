@@ -16927,11 +16927,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "211N1B":
                 $age_to_draw_in = self::getAgeToDrawIn($player_id, 1);
                 if ($choice == 0) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to not draw and tuck a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($age_to_draw_in)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not draw and tuck a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_to_draw_in)));
-                } else{
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($age_to_draw_in)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_to_draw_in)));                    
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to draw and tuck.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to draw and tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
