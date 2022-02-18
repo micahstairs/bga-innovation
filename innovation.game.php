@@ -1284,7 +1284,7 @@ class Innovation extends Table
         
         foreach ($cards as $card) {
             // 1 is used for hex icons, allowing it to be ignored in the product
-            // TODO: Revisit this when implementing Cities.
+            // TODO(CITIES): Revisit formula.
             $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
             $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
                           ($icon_hash_key[$card['spot_2'] ?: 0]) *
@@ -1697,7 +1697,7 @@ class Innovation extends Table
 
     function getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step) {
         $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-        // TODO(nesting): Remove this since it's likely just masking another problem.
+        // TODO(ARTIFACTS): Remove this hack since it's likely just masking another problem.
         if ($step >= 1 && $step <= 4) {
             $letter = $letters[$step];
         } else {
@@ -1827,7 +1827,7 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
-        // TODO: Remove 'hand->removed', 'board->removed', 'pile->removed', 'score->removed', and 'achievements->removed' once Exxon Valdez removes cards all at once instead of individually.
+        // TODO(#255): Remove 'hand->removed', 'board->removed', 'pile->removed', 'score->removed', and 'achievements->removed' once Exxon Valdez removes cards all at once instead of individually.
         case 'hand->removed':
             $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your hand from the game.');
             $message_for_others = clienttranslate('${player_name} removes a ${<}${age}${>} from his hand from the game.');
@@ -1970,7 +1970,7 @@ class Innovation extends Table
     function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
-            // TODO: We can simplify Self Service to use "board->none", but we need to make this change carefully to avoid breaking any games.
+            // TODO(ARTIFACTS): We can simplify Self Service to use "board->none", guarded by release_version.
             $message_for_player = clienttranslate('{You must} choose {number} other top {card} from your board');
             $message_for_others = clienttranslate('{player must} choose {number} other top {card} from his board');            
         } else if ($targetable_players !== null) { // Used when several players can be targeted
@@ -2118,7 +2118,7 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('{You must} return {number} {card} from your board');
                 $message_for_others = clienttranslate('{player must} return {number} {card} from his board');
                 break;
-            // TODO: Remove 'pile->removed once Exxon Valdez removes cards all at once instead of individually.
+            // TODO(#255): Remove 'pile->removed once Exxon Valdez removes cards all at once instead of individually.
             case 'pile->removed':
                 $message_for_player = clienttranslate('{You must} remove {number} {card} from your board from the game');
                 $message_for_others = clienttranslate('{player must} remove {number} {card} from his board from the game');
@@ -2596,7 +2596,7 @@ class Innovation extends Table
     
     /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
     function tryToClaimSpecialAchievements($player_id) {
-        // TODO: Update this once there are other special achievements to test for.
+        // TODO(CITIES,ECHOES): Update this once there are other special achievements to test for.
         $achievements_to_test = array(105, 106, 107, 108, 109);
         $end_of_game = false;
         
@@ -3889,13 +3889,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Information about card resources **/
     function hasRessource($card, $icon) {
-        // TODO: Update this when the Cities expansion is added.
+        // TODO(CITIES): Handle extra icons.
         return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon);
     }
     
     /* Count the number of a particular icon on the specified card */
     function countIconsOnCard($card, $icon) {
-        // TODO: This logic needs to be updated when Cities is implemented.
+        // TODO(CITIES): Handle extra icons.
         $icon_count = 0;
         if ($card['spot_1'] == $icon) {
             $icon_count++;
@@ -4088,7 +4088,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Add icons of the other cards.
-        // TODO: When implementing the Cities expansion, we will need to update this logic.
+        // TODO(CITIES): Handle extra icons.
         for ($i = 0; $i < $pile_size - 1; $i++) {
             $card = $pile[$i];
             if ($splayed_right) {
@@ -4365,7 +4365,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
-        // TODO: Identify and fix the nested execution bug which makes this hack necessary.
+        // TODO(ARTIFACTS): Identify and fix the nested execution bug which makes this hack necessary.
         if ($player_id == -1 || $player_id == null) {
             return "unknown";
         }
@@ -4374,7 +4374,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getPlayerColorFromId($player_id) {
-        // TODO: Identify and fix the nested execution bug which makes this hack necessary.
+        // TODO(ARTIFACTS): Identify and fix the nested execution bug which makes this hack necessary.
         if ($player_id == -1 || $player_id == null) {
             return "unknown";
         }
@@ -4771,7 +4771,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function setSelectionRange($options) {
-        // TODO: Deprecate and remove 'choose_opponent' and 'choose_opponent_with_fewer_points' and use 'choose_player' instead.
+        // TODO(LATER): Deprecate and remove 'choose_opponent' and 'choose_opponent_with_fewer_points' and use 'choose_player' instead.
         $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_three_colors', 'choose_player', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
@@ -4779,7 +4779,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setGameStateValue('can_pass', $options['can_pass'] ? 1 : 0); 
 
                 // Only used by 'choose_value'.
-                // TODO: Rename 'age' to 'ages' to make it more obvious it is an array
+                // TODO(ARTIFACTS): Rename 'age' to 'ages' to make it more obvious it is an array
                 if (array_key_exists('age', $options)) {
                     // NOTE: It is the responsibility of the card's implementation to ensure that $options['age'] has
                     // at least one element in it.
@@ -4789,7 +4789,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
 
                 // Only used by 'choose_color','choose_two_colors', and 'choose_three_colors'.
-                // TODO: Rename 'color' to 'colors' to make it more obvious it is an array
+                // TODO(ARTIFACTS): Rename 'color' to 'colors' to make it more obvious it is an array
                 if (array_key_exists('color', $options)) {
                     // NOTE: It is the responsibility of the card's implementation to ensure that $options['color'] has enough
                     // colors in it. For example, for 'choose_color', the array must have at least one element in it.
@@ -4858,13 +4858,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('age_max', $rewritten_options)) {
             $rewritten_options['age_max'] = 10;
         }
-        // TODO: Rewrite 'age' if we end up needing this. Right now we only use 'age' for 'choose_value'.
-        // TODO: Rewrite 'player' if we end up needing this. Right now we only use 'player' for 'choose_player'.
+        // TODO(LATER): Rewrite 'age' if we end up needing this. Right now we only use 'age' for 'choose_value'.
+        // TODO(LATER): Rewrite 'player' if we end up needing this. Right now we only use 'player' for 'choose_player'.
         if (!array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array(0, 1, 2, 3, 4);
         }
         if (!array_key_exists('type', $rewritten_options)) {
-            // TODO: Add values to this array when expansions are added.
+            // TODO(ARTIFACTS): Change this to array(0, 1, 2, 3, 4) so that this default won't break later.
             $rewritten_options['type'] = array(0, 1);
         }
         if (!array_key_exists('with_icon', $rewritten_options)) {
@@ -5047,7 +5047,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $age_min = self::getGameStateValue('age_min');
         $age_max = self::getGameStateValue('age_max');
         $condition_for_age = self::format("age BETWEEN {age_min} AND {age_max}", array('age_min' => $age_min, 'age_max' => $age_max));
-        // TODO: Take 'age_array' into account if there are any cards which need to rely on this mechanism.
+        // TODO(LATER): Take 'age_array' into account if there are any cards which need to rely on this mechanism.
 
         // Condition for age because of achievement eligibility
         $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
@@ -5568,7 +5568,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function executeAllEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        // TODO(nesting): Replace X and Y with the names of the cards. Also consider making similar changes to the notifications in executeNonDemandEffects.
+        // TODO(ARTIFACTS): Replace X and Y with the names of the cards. Also consider making similar changes to the notifications in executeNonDemandEffects.
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the effects of X as if it were on Y.'), array('You' => 'You'));
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the effects of X as if it were on Y.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
@@ -5626,7 +5626,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
 
-    // TODO: Create a setCurrentNestedCardState equivalent to help refactor some of our code.
+    // TODO(ARTIFACTS): Create a setCurrentNestedCardState equivalent to help refactor some of our code.
     function getCurrentNestedCardState() {
         return self::getNestedCardState(self::getGameStateValue('current_nesting_index'));
     }
@@ -5647,7 +5647,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getCurrentPlayerUnderDogmaEffect() {
         if (self::getGameStateValue('release_version') >= 1) {
             $player_id = self::getCurrentNestedCardState()['current_player_id'];
-            // TODO: Figure out why this workaround is necessary.
+            // TODO(ARTIFACTS): Figure out why this workaround is necessary.
             if ($player_id == -1) {
                 return self::getGameStateValue('active_player');
             }
@@ -5790,9 +5790,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
-        // TODO: When implementing Echoes, make sure this triggers all applicable Echo effects.
+        // TODO(ECHOES): Triggers all applicable Echo effects.
 
-        // TODO: Update statistics.
+        // TODO(#202): Update statistics.
         self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));
 
         // Resolve the first dogma effect of the card
@@ -5837,7 +5837,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getActivePlayerId();
         
         // Check if the player really meet the conditions to achieve that card
-        // TODO: Update this once there can be more than one achievement of the same age in the claimable achievements pile.
+        // TODO(ECHOES): Update this once there can be more than one achievement of the same age in the claimable achievements pile.
         $card = self::getObjectFromDB(self::format("SELECT * FROM card WHERE location = 'achievements' AND age = {age} AND owner = 0", array('age' => $age)));
         if ($card['owner'] != 0) {
             // The player is cheating...
@@ -5984,7 +5984,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function haveOverlappingHexagonIcons($card_1, $card_2) {
-        // TODO: When Cities expansion is added, this expression will need to be expanded to include the extra 2 spots.
+        // TODO(CITIES): Expans expression to include the extra 2 spots.
         return
             ($card_1['spot_1'] === 0 && $card_2['spot_1'] === 0) || 
             ($card_1['spot_2'] === 0 && $card_2['spot_2'] === 0) || 
@@ -6438,8 +6438,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case 'choose_type':
                 // Type choice
+                // TODO(ARTIFACTS): Use the stored array of types to perform validation.
                 if (!ctype_digit($choice) || $choice < 0 || $choice > 1) {
-                    // TODO: Update this when other expansions are added.
                     self::throwInvalidChoiceException();
                 }
                 break;
@@ -6528,7 +6528,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return true;
             case 1:
                 return self::getGameStateValue('artifacts_mode') > 1;
-            // TODO: Add other cases when we implement other expansions.
+            // TODO(CITIES,ECHOES): Add other cases when we implement other expansions.
             default:
                 return false;
         }
@@ -6713,7 +6713,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case 'choose_type':
                 $options = array();
-                // TODO: Update this loop when new expansions are added.
+                // TODO(ARTIFACTS): Use array of types in order to decide which options to show.
                 for($type=0; $type<=1; $type++) {
                     $options[] = array('value' => $type, 'text' => self::getPrintableStringForCardType($type));
                 }                
@@ -7498,7 +7498,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Stats
             $i_demand_effects = false;
             if (self::getGameStateValue('release_version') >= 1) {
-                // TODO: Use featured_icon_count to increment sharing_effects_number and i_demand_effects_number stats.
+                // TODO(#202): Use featured_icon_count to increment sharing_effects_number and i_demand_effects_number stats.
             } else {
                 $executing_players = self::getExecutingPlayers();
                 foreach($executing_players as $player_id => $stronger_or_equal) {
@@ -9776,7 +9776,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 172, Artifacts age 6: Pride and Prejudice
             case "172N1":
-                // TODO: Prevent this from throwing an error ("generated notifications are larger than 128k") when it draws out the remaining cards in the game.
+                // TODO(ARTIFACTS): Prevent this from throwing an error ("generated notifications are larger than 128k") when it draws out the remaining cards in the game.
                 do {
                     // "Draw and meld a 6"
                     $card = self::executeDraw($player_id, 6, 'board');
@@ -9886,7 +9886,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $cards = self::getCardsInHand($player_id);
                 $colors_in_hand = array(0, 0, 0, 0, 0);
                 foreach ($cards as $card) {
-                    // TODO: Instead of physically moving the cards, we should dump the list to the game log.
+                    // TODO(#105): Instead of physically moving the cards, we should dump the list to the game log.
                     self::transferCardFromTo($card, $player_id, 'revealed');
                     $colors_in_hand[$card['color']] = 1;
                 }
@@ -10165,7 +10165,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            // id 207, Artifacts age 10: Exxon Valdez
             case "207C1":
                 // "I compel you to remove all cards from your hand, score pile, and achievements from the game!"
-                // TODO: Remove all cards at once instead of individually. Similar to Fission.
+                // TODO(#255): Remove all cards at once instead of individually. Similar to Fission.
                 $hand_cards = self::getCardsInLocation($player_id, 'hand');
                 foreach ($hand_cards as $card) {
                     self::transferCardFromTo($card, $player_id, 'removed');
@@ -13562,7 +13562,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "155N1B":
             // "and the lowest top card on your board"
-            // TODO: Create new getMinAgeOnBoardTopCards function instead (based on getMaxAgeOnBoardTopCards).
+            // TODO(ARTIFACTS): Create new getMinAgeOnBoardTopCards function instead (based on getMaxAgeOnBoardTopCards).
             $all_cards = self::getTopCardsOnBoard($player_id);
             $ages = array();
             foreach($all_cards as $card) {
@@ -13649,7 +13649,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         case "158N1C":
             // "And score all cards of that color from your board"
-            // TODO: This shouldn't be an interaction. It should be an automated step that happens during 158N1B after the color is chosen.
+            // TODO(ARTIFACTS): This shouldn't be an interaction. It should be an automated step that happens during 158N1B after the color is chosen.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14280,7 +14280,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::transferCardFromTo($card, $player_id, 'hand');
 
             // "Return all cards of the drawn color from your board"
-            // TODO: Make this a bulk operation instead of an interaction.
+            // TODO(ARTIFACTS): Make this a bulk operation instead of an interaction.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14528,7 +14528,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 206, Artifacts age 10: Higgs Boson
         case "206N1A":
             // "Transfer all cards on your board to your score pile"
-            // TODO: Do a bulk transfer instead of moving cards one at a time.
+            // TODO(ARTIFACTS): Do a bulk transfer instead of moving cards one at a time.
             $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
             for ($i = 0; $i < 5 ; $i++){
                 $pile = $piles[$i];
@@ -14539,7 +14539,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         // id 207, Artifacts age 10: Exxon Valdez
-        // TODO: Remove this once Exxon Valdez is removing all cards at once instead of individually.
+        // TODO(#255): Remove this once Exxon Valdez is removing all cards at once instead of individually.
         case "207C1A":
             // Return all cards on your board.
             $options = array(
@@ -16213,7 +16213,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                         }
                         if ($players_left == 1) {
-                            // TODO: We need to add another notify here so that the launcher gets the right log message.
+                            // TODO(ARTIFACTS): We need to add another notify here so that the launcher gets the right log message.
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} are eliminated. ${launcher_name} wins.'), 
                                 array('You' => 'You', 
                                       'launcher_name' => self::getColoredText(self::getPlayerNameFromId($launcher_id), $launcher_id)));
@@ -16226,9 +16226,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     } else { // Team play
                         // Entire team loses if one player loses 
-                        // TODO: We need to update these so that the teammate gets the same notifications as $player_id.
+                        // TODO(ARTIFACTS): We need to update these so that the teammate gets the same notifications as $player_id.
                         self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team is eliminated. The other team wins.'), array('Your' => 'Your'));
-                        // TODO: Once this message is only going to the opposing team, it should tell them they win, instead of the referring to the "other team".
+                        // TODO(ARTIFACTS): Once this message is only going to the opposing team, it should tell them they win, instead of the referring to the "other team".
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} and their team is eliminated. The other team wins.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $launcher_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
@@ -16782,7 +16782,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1A":
                 // "Draw two 2s of that type"
-                // TODO: Draw and reveal the cards instead of placing them in the player's hand.
+                // TODO(ARTIFACTS): Draw and reveal the cards instead of placing them in the player's hand.
                 self::setGameStateValue('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 self::setGameStateValue('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 break;

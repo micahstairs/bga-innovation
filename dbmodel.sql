@@ -57,7 +57,6 @@ CREATE TABLE IF NOT EXISTS `card` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Table used to manage the execution of nested effects */
-/* TODO: Add defaults for some of these columns. */
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
  `card_id` SMALLINT COMMENT '-1 means no card',
@@ -119,12 +118,12 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
 INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `is_relic`, `location`) VALUES
 
-/* TODO: When implementing Cities, add extra icons to this card */
+/* TODO(CITIES): Add extra icons to this card */
 (215, 2, 3, 2, 3, 1, 1, 1, NULL, TRUE, 'relics'),
 (216, 0, 4, 0, 5, 0, 3, 3, 3,    TRUE, 'relics'),
 (217, 1, 5, 4, 5, 3, 5, 0, 5,    TRUE, 'relics'),
 (218, 4, 6, 1, 6, 6, 0, 2, 6,    TRUE, 'relics'),
-/* TODO: When implementing Echoes, add Echo effect to this card */
+/* TODO(ECHOES): Add Echo effect to this card */
 (219, 3, 7, 3, 0, 0, 2, 2, 2,    TRUE, 'relics');
 
 /* Insert normal cards */

@@ -920,14 +920,14 @@ function (dojo, declare) {
                 
                 switch (stateName) {
                 case 'artifactPlayerTurn':
-                    // TODO: I think this can be removed because it is immediately replaced by
+                    // TODO(ARTIFACTS): I think this can be removed because it is immediately replaced by
                     // addTooltipWithMeldActionToMyArtifactOnDisplay in another function.
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay();
                     break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
                     this.addTooltipsWithoutActionsToMyBoard();
-                    // TODO: Figure out if this fallthrough is intentional or is a bug. Maybe this is causing https://boardgamearena.com/bug?id=13012.
+                    // TODO(LATER): Figure out if this fallthrough is intentional or is a bug. Maybe this is causing https://boardgamearena.com/bug?id=13012.
                 case 'selectionMove':
                     // Reset tooltips for board (in case there was a splaying choice)
                     this.addTooltipsWithoutActionsToMyBoard();
@@ -1421,7 +1421,7 @@ function (dojo, declare) {
             }
             
             // Add ressources brought by the new card
-            // TODO: Update this logic when implementing the Cities expansion
+            // TODO(CITIES): Account for more spots on the card.
             new_ressource_counts[card.spot_1]++
             new_ressource_counts[card.spot_2]++
             new_ressource_counts[card.spot_3]++
@@ -1436,7 +1436,7 @@ function (dojo, declare) {
                     }
                 }
                 
-                // TODO: Update this logic when implementing the Cities expansion
+                // TODO(CITIES): Account for more spots on the card.
                 switch(parseInt(splay_direction)) {
                 case 0: // All icons of the old top card are lost
                     new_ressource_counts[top_card.spot_1]--
@@ -1611,7 +1611,7 @@ function (dojo, declare) {
                 var pile_card = this.saved_cards[pile_card_id];
                 
                 // Remove ressources brought by the current splay
-                // TODO: Update this logic when implementing the Cities expansion
+                // TODO(CITIES): Account for more spots on the card.
                 switch(parseInt(current_splay_direction)) {
                 case 0: // Not currently splayed: no lost
                     break;
@@ -1630,7 +1630,7 @@ function (dojo, declare) {
                 }
                 
                 // Add ressources granted by the new splay
-                // TODO: Update this logic when implementing the Cities expansion
+                // TODO(CITIES): Account for more spots on the card.
                 switch(parseInt(splay_direction)) {
                 case 0: // Not splayed (this should not happen)
                     break;
@@ -2963,7 +2963,7 @@ function (dojo, declare) {
                     ressource_counts[icon] = this.counter.ressource_count[player_id][icon].getValue();
                 }
                 
-                // TODO: Update this logic when implementing the Cities expansion
+                // TODO(CITIES): Account for more spots on the card.
                 switch(parseInt(zone.splay_direction)) {
                 case 0: // All icons of the old top card are lost
                     ressource_counts[old_top_card.spot_1]--

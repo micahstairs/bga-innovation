@@ -1453,7 +1453,7 @@
     background-position: -171px -101px;
 }
 
-/*LMF: refactor background image out of M and L */
+/* TODO(ARTIFACTS): refactor background image out of M and L */
 .icon_1.L.dogma_symbol, .icon_2.L.dogma_symbol, .icon_3.L.dogma_symbol, .icon_4.L.dogma_symbol, .icon_5.L.dogma_symbol, .icon_6.L.dogma_symbol {
     width: 20px;
     height: 20px;

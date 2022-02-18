@@ -2255,7 +2255,7 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-// TODO: When implementing Figures, we need to transcribe this relic.
+// TODO(FIGURES): When implementing Figures, we need to transcribe this relic.
 218 => array('name' => clienttranslate('Ching Shih'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
@@ -2266,7 +2266,7 @@ $this->textual_card_infos = array(
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),
 
-// TODO: When implementing Echoes, we need to transcribe this relic.
+// TODO(ECHOES): When implementing Echoes, we need to transcribe this relic.
 219 => array('name' => clienttranslate('Safety Pin'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
