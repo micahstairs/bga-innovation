@@ -14312,12 +14312,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 191, Artifacts age 8: Plush Beweglich Rod Bear
         case "191N1A":
             // "Choose a value"
-            // TODO(#231): Give option to choose 11 only when Battleship Yamato is a top card on the player's board.
+            $selectable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            // The value 11 should only be an option when Battleship Yamato is a top card on the player's board.
+            $battleship_yamato = self::getCardInfo(188);
+            if (self::isTopBoardCard($battleship_yamato) && $battleship_yamato['owner'] === $player_id) {
+                $selectable_ages[] = 11;
+            }
+            
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
 
-                'choose_value' => true
+                'choose_value' => true,
+                'age' => $selectable_ages
             );
             break;
 
