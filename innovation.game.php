@@ -101,6 +101,11 @@ class Innovation extends Table
             'type_array' => 76,
             'age_array' => 77,
             'player_array' => 78,
+            'icon_hash_1' => 79,
+            'icon_hash_2' => 80,
+            'icon_hash_3' => 81,
+            'icon_hash_4' => 82,
+            'icon_hash_5' => 83,
             
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -386,6 +391,11 @@ class Innovation extends Table
         self::setGameStateInitialValue('card_id_1', -1); // id of a card which is allowed to be selected, else -2
         self::setGameStateInitialValue('card_id_2', -1); // id of a card which is allowed to be selected, else -2
         self::setGameStateInitialValue('card_id_3', -1); // id of a card which is allowed to be selected, else -2
+        self::setGameStateInitialValue('icon_hash_1', -1); // icon hash of a card which is allowed to be selected, else -1
+        self::setGameStateInitialValue('icon_hash_2', -1); // icon hash of a card which is allowed to be selected, else -1
+        self::setGameStateInitialValue('icon_hash_3', -1); // icon hash of a card which is allowed to be selected, else -1
+        self::setGameStateInitialValue('icon_hash_4', -1); // icon hash of a card which is allowed to be selected, else -1
+        self::setGameStateInitialValue('icon_hash_5', -1); // icon hash of a card which is allowed to be selected, else -1
         self::setGameStateInitialValue('can_pass', -1); // 1 if the player can pass else 0
         self::setGameStateInitialValue('n', -1); // Actual number of cards having being selected yet
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
@@ -4875,6 +4885,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('card_id_3', $rewritten_options)) {
             $rewritten_options['card_id_3'] = -2;
         }
+        if (!array_key_exists('icon_hash_1', $rewritten_options)) {
+            $rewritten_options['icon_hash_1'] = -1;
+        }
+        if (!array_key_exists('icon_hash_2', $rewritten_options)) {
+            $rewritten_options['icon_hash_2'] = -1;
+        }
+        if (!array_key_exists('icon_hash_3', $rewritten_options)) {
+            $rewritten_options['icon_hash_3'] = -1;
+        }
+        if (!array_key_exists('icon_hash_4', $rewritten_options)) {
+            $rewritten_options['icon_hash_4'] = -1;
+        }
+        if (!array_key_exists('icon_hash_5', $rewritten_options)) {
+            $rewritten_options['icon_hash_5'] = -1;
+        }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
             $rewritten_options['bottom_to'] = false;
         }
@@ -5062,6 +5087,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $condition_for_icon = "";
         }
 
+        // Condition for icon hash
+        $icon_hash_1 = self::getGameStateValue('icon_hash_1');
+        $icon_hash_2 = self::getGameStateValue('icon_hash_2');
+        $icon_hash_3 = self::getGameStateValue('icon_hash_3');
+        $icon_hash_4 = self::getGameStateValue('icon_hash_4');
+        $icon_hash_5 = self::getGameStateValue('icon_hash_5');
+        if ($icon_hash_1 >= 0 || $icon_hash_2 >= 0 || $icon_hash_3 >= 0 || $icon_hash_4 >= 0 || $icon_hash_5 >= 0) {
+            $condition_for_icon_hash = self::format("
+                AND (
+                    icon_hash = {icon_hash_1} OR
+                    icon_hash = {icon_hash_2} OR
+                    icon_hash = {icon_hash_3} OR
+                    icon_hash = {icon_hash_4} OR
+                    icon_hash = {icon_hash_5}
+                )", array(
+                    'icon_hash_1' => $icon_hash_1,
+                    'icon_hash_2' => $icon_hash_2,
+                    'icon_hash_3' => $icon_hash_3,
+                    'icon_hash_4' => $icon_hash_4,
+                    'icon_hash_5' => $icon_hash_5
+                )
+            );
+        } else {
+            $condition_for_icon_hash = "";
+        }
+
         // Condition for whether the pile is splayed
         $splay_directions = self::getGameStateValueAsArray('has_splay_direction');
         $condition_for_splay = "";
@@ -5113,6 +5164,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_color}
                     {condition_for_type}
                     {condition_for_icon}
+                    {condition_for_icon_hash}
                     {condition_for_splay}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
@@ -5126,6 +5178,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_color' => $condition_for_color,
                     'condition_for_type' => $condition_for_type,
                     'condition_for_icon' => $condition_for_icon,
+                    'condition_for_icon_hash' => $condition_for_icon_hash,
                     'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
@@ -5147,6 +5200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_color}
                     {condition_for_type}
                     {condition_for_icon}
+                    {condition_for_icon_hash}
                     {condition_for_splay}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
@@ -5160,6 +5214,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_color' => $condition_for_color,
                     'condition_for_type' => $condition_for_type,
                     'condition_for_icon' => $condition_for_icon,
+                    'condition_for_icon_hash' => $condition_for_icon_hash,
                     'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id
@@ -5167,7 +5222,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ));
         }
         
-        //return self::DbAffectedRow(); // This does not seem to work all the time...
         return self::getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE selected IS TRUE");
     }
     
@@ -10225,6 +10279,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            // id 216, Relic age 4: Complex Numbers
+            case "216N1":
+                $step_max = 1;
+                break;
+
             // id 217, Relic age 5: Newton-Wickins Telescope
             case "217N1":
                 $step_max = 1;
@@ -12652,9 +12711,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'can_pass' => false,
 
                 // Propagate values required to detect whether the scored cards are the same color
-                'card_id_1' => self::getGameStateValue('card_id_1'),
-                'card_id_2' => self::getGameStateValue('card_id_2'),
-                'card_id_3' => self::getGameStateValue('card_id_3'),
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2,
+                'card_id_3' => $card_id_3,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -14595,10 +14654,47 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         );
         break;
 
+        // id 216, Relic age 4: Complex Numbers
+        case "216N1A":
+            // "You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board"
+            $options = array(
+                'player_id' => $player_id,
+                'n_min' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
+            );
+            $i = 1;
+            foreach (self::getTopCardsOnBoard($player_id) as $top_card) {
+                $options += array('icon_hash_'.$i++ => $top_card['icon_hash']);
+            }
+            break;
+
+        case "216N1B":
+            // "Claim an achievement of matching value, ignoring eligibility"
+            $age_selected = self::getGameStateValue('age_last_selected');
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+
+                'age' => $age_selected,
+                'require_achievement_eligibility' => false
+            );
+            break;
+
         // id 217, Relic age 5: Newton-Wickins Telescope
         case "217N1A":
-            // "You may return any number of cards from your score pile."
-             $options = array(
+            // "You may return any number of cards from your score pile"
+            $options = array(
                 'player_id' => $player_id,
                 'n_min' => 1,
                 'can_pass' => true,
@@ -16181,6 +16277,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $step = 0;
                             self::setStep(0);
                         }
+                    }
+                    break;
+
+                case "216N1A":
+                    // "If you do"
+                    if ($n > 0) {
+                        // Return card to hand
+                        $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
+                        self::transferCardFromTo($revealed_card, $player_id, 'hand');
+                        self::incrementStepMax(1);
                     }
                     break;
                     
