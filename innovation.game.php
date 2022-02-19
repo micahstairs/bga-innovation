@@ -4864,8 +4864,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['color'] = array(0, 1, 2, 3, 4);
         }
         if (!array_key_exists('type', $rewritten_options)) {
-            // TODO(ARTIFACTS): Change this to array(0, 1, 2, 3, 4) so that this default won't break later.
-            $rewritten_options['type'] = array(0, 1);
+            $rewritten_options['type'] = array(0, 1, 2, 3, 4);
         }
         if (!array_key_exists('with_icon', $rewritten_options)) {
             $rewritten_options['with_icon'] = 0;
