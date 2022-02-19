@@ -5997,12 +5997,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function haveOverlappingHexagonIcons($card_1, $card_2) {
-        // TODO(CITIES): Expans expression to include the extra 2 spots.
+        // TODO(CITIES): Expand expression to include the extra 2 spots.
         return
-            ($card_1['spot_1'] === 0 && $card_2['spot_1'] === 0) || 
-            ($card_1['spot_2'] === 0 && $card_2['spot_2'] === 0) || 
-            ($card_1['spot_3'] === 0 && $card_2['spot_3'] === 0) ||
-            ($card_1['spot_4'] === 0 && $card_2['spot_4'] === 0);
+            ($card_1['spot_1'] === '0' && $card_2['spot_1'] === '0') || 
+            ($card_1['spot_2'] === '0' && $card_2['spot_2'] === '0') || 
+            ($card_1['spot_3'] === '0' && $card_2['spot_3'] === '0') ||
+            ($card_1['spot_4'] === '0' && $card_2['spot_4'] === '0');
     }
 
     /* Returns null if there is no relic of the specified age */
