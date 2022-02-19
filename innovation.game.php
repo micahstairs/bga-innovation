@@ -819,6 +819,14 @@ class Innovation extends Table
         return (int)($a/$b);
     }
 
+    /** Returns the card types in use by the current game **/
+    function getActiveCardTypes() {
+        // TODO(CITIES, ECHOES): This needs to be updated when expansions are added. Right now, the only time
+        // we use this is when we are playing with Artifacts, so if that's the case then both the Base and
+        // Artifacts card types are being used by the game.
+        return array(0, 1);
+    }
+
     function playerIdToPlayerNo($player_id) {
         return self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
     }
@@ -4779,7 +4787,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setGameStateValue('can_pass', $options['can_pass'] ? 1 : 0); 
 
                 // Only used by 'choose_value'.
-                // TODO(ARTIFACTS): Rename 'age' to 'ages' to make it more obvious it is an array
                 if (array_key_exists('age', $options)) {
                     // NOTE: It is the responsibility of the card's implementation to ensure that $options['age'] has
                     // at least one element in it.
@@ -4789,13 +4796,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
 
                 // Only used by 'choose_color','choose_two_colors', and 'choose_three_colors'.
-                // TODO(ARTIFACTS): Rename 'color' to 'colors' to make it more obvious it is an array
                 if (array_key_exists('color', $options)) {
                     // NOTE: It is the responsibility of the card's implementation to ensure that $options['color'] has enough
                     // colors in it. For example, for 'choose_color', the array must have at least one element in it.
                     self::setGameStateValueFromArray('color_array', $options['color']);
                 } else {
                     self::setGameStateValueFromArray('color_array', array(0, 1, 2, 3, 4));
+                }
+
+                // Only used by 'choose_type'.
+                if (array_key_exists('type', $options)) {
+                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['type'] has
+                    // at least one element in it.
+                    self::setGameStateValueFromArray('type_array', $options['type']);
+                } else {
+                    self::setGameStateValueFromArray('type_array', self::getActiveCardTypes());
                 }
 
                 // Only used by 'choose_player'.
@@ -6436,9 +6451,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             case 'choose_type':
-                // Type choice
-                // TODO(ARTIFACTS): Use the stored array of types to perform validation.
-                if (!ctype_digit($choice) || $choice < 0 || $choice > 1) {
+                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('type_array'))) {
                     self::throwInvalidChoiceException();
                 }
                 break;
@@ -6712,10 +6725,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case 'choose_type':
                 $options = array();
-                // TODO(ARTIFACTS): Use array of types in order to decide which options to show.
-                for($type=0; $type<=1; $type++) {
+                foreach (self::getGameStateValueAsArray('type_array') as $type) {
                     $options[] = array('value' => $type, 'text' => self::getPrintableStringForCardType($type));
-                }                
+                }
                 break;
             default:
                 break;
@@ -12563,7 +12575,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'can_pass' => false,
                 
-                'choose_type' => true
+                'choose_type' => true,
+                'type' => self::getActiveCardTypes()
             );
             break;
         
@@ -12796,7 +12809,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'can_pass' => false,
 
-                'choose_type' => true
+                'choose_type' => true,
+                'type' => self::getActiveCardTypes()
             );
             break;
 
