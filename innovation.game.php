@@ -5640,7 +5640,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
 
-    // TODO(ARTIFACTS): Create a setCurrentNestedCardState equivalent to help refactor some of our code.
     function getCurrentNestedCardState() {
         return self::getNestedCardState(self::getGameStateValue('current_nesting_index'));
     }
