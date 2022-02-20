@@ -1073,14 +1073,6 @@
 
 /* Square indicators */
 
-.all_icons {
-    background-image: url('img/squares.png');
-    display: inline-block;
-    width: 114px;
-    height: 19px;
-    background-position: -0px -82px;
-}
-
 .dogma_symbol {
     position: absolute;
 }
@@ -1503,6 +1495,39 @@
 
 .color_4.L.dogma_symbol {
     background-position-y: -80px;
+}
+
+/*icons in tooltips */
+.icon_1.in_tooltip.square, .icon_2.in_tooltip.square, .icon_3.in_tooltip.square, .icon_4.in_tooltip.square, .icon_5.in_tooltip.square, .icon_6.in_tooltip.square {
+    width: 13px;
+    height: 12px;
+    background-image: url('img/resource_icons.jpg');
+    background-size: 83px auto;
+    background-position-y: -42px;
+}
+
+.icon_1.in_tooltip.square  {
+    background-position-x: -0px;
+}
+
+.icon_2.in_tooltip.square  {
+    background-position-x: -14px;
+}
+
+.icon_3.in_tooltip.square  {
+    background-position-x: -28px;
+}
+
+.icon_4.in_tooltip.square  {
+    background-position-x: -42px;
+}
+
+.icon_5.in_tooltip.square  {
+    background-position-x: -56px;
+}
+
+.icon_6.in_tooltip.square  {
+    background-position-x: -70px;
 }
 
 /* Buttons for rearranging in Publication dogma effect */
