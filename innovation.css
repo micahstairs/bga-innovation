@@ -1247,6 +1247,7 @@
     background-image: url('img/resource_icons.jpg');
     background-size: 50px auto;
     background-position-y: -42px;
+    vertical-align: bottom;
 }
 
 .icon_1.M.square  {
@@ -1328,6 +1329,7 @@
     width: 8px;
     height: 8px;
     background-size: 80px, auto;
+    vertical-align: bottom;
 }
 
 .age_1.M.square  {
@@ -1379,6 +1381,10 @@
 .L.dogma_symbol {
     left: -4px;
     top: -4px;
+}
+
+.in_tooltip .L.square {
+    vertical-align: text-bottom;
 }
 
 .icon_1.L.square  {
