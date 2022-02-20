@@ -1310,7 +1310,7 @@ function (dojo, declare) {
                 text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age, 'in_tooltip'));
             }
             for (var symbol=1; symbol <= 6; symbol++) {
-                text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol, 'in_tooltip'));
+                text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol));
             }
             return text;
         },
