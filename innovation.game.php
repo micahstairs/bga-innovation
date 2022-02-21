@@ -5991,7 +5991,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getGameStateValue('artifacts_mode') == 3) {
                     $relic = self::getRelicForAge($top_artifact_card['faceup_age']);
                     // "You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
-                    if ($relic != null && ($relic['location'] == 'relics' || $relic['location'] == 'achievements')) {
+                    if ($relic != null && (self::canSeizeRelicToHand($relic, $player_id) || self::canSeizeRelicToAchievements($relic, $player_id))) {
                         self::setGameStateValue('relic_id', $relic['id']);
                         return true;
                     }
@@ -6531,9 +6531,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getGameStateValue('active_player');
         $relic = self::getCardInfo(self::getGameStateValue('relic_id'));
         return array(
-            'can_seize_to_hand' => self::relicSetIsInUse($relic) && ($relic['location'] != 'hand' || $relic['owner'] != $player_id),
-            'can_seize_to_achievements' => $relic['location'] != 'achievements' || $relic['owner'] != $player_id
+            'can_seize_to_hand' => self::canSeizeRelicToHand($relic, $player_id),
+            'can_seize_to_achievements' => self::canSeizeRelicToAchievements($relic, $player_id)
         );
+    }
+
+    function canSeizeRelicToHand($relic, $player_id) {
+        return self::relicSetIsInUse($relic) && ($relic['location'] != 'hand' || $relic['owner'] != $player_id);
+    }
+
+    function canSeizeRelicToAchievements($relic, $player_id) {
+        return $relic['location'] != 'achievements' || $relic['owner'] != $player_id;
     }
 
     /* Returns whether the relic's set is being used for this game. */
