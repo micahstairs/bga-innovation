@@ -5781,6 +5781,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
+        self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
+
         // TODO(ECHOES): Triggers all applicable Echo effects.
 
         // TODO(#202): Update statistics.
@@ -5797,8 +5799,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
-        self::transferCardFromTo($card, 0, 'deck');
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
+        self::transferCardFromTo($card, 0, 'deck');
 
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
@@ -7473,7 +7475,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($nested_card_state['card_location'] == 'display') {
                     $launcher_id = $nested_card_state['launcher_id'];
                     self::transferCardFromTo($card, 0, 'deck');
-                    self::decreaseResourcesForArtifactOnDisplay($launcher_id, $card);
                     self::giveExtraTime($launcher_id);
                 }
             }
