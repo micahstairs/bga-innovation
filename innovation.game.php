@@ -5784,7 +5784,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo(self::getGameStateValue('relic_id'));
-        self::transferCardFromTo($card, $player_id, 'achievements');
+        try {
+            self::transferCardFromTo($card, $player_id, "achievements");
+        } catch (EndOfGame $e) {
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
         self::setGameStateValue('relic_id', -1);
 
         self::trace('relicPlayerTurn->interPlayerTurn (seizeRelicToAchievements)');
