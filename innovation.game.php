@@ -319,7 +319,7 @@ class Innovation extends Table
         if (self::getGameStateValue('extra_achievement_to_win') == 2) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
-        
+
         // Flag used to know if we are still on turn0 (1) or not (0)
         self::setGameStateInitialValue('turn0', 1);
         
@@ -16799,7 +16799,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1A":
                 // "Draw two 2s of that type"
-                // TODO(#257): Draw and reveal the cards instead of placing them in the player's hand.
                 self::setGameStateValue('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 self::setGameStateValue('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 break;
