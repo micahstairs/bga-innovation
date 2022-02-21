@@ -15414,20 +15414,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                
-                
+
                 // id 120, Artifacts age 1: Lurgan Canoe
                 case "120N1A":
-                    $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                    $pile = $board[self::getGameStateValue('color_last_selected')];
-                    $scored = false;
-                    for($p=0; $p < count($pile)-1; $p++) { // "Score all other cards of the same color from your board"
-                        $card = self::getCardInfo($pile[$p]['id']);
-                        self::scoreCard($card, $player_id);
-                        $scored = true;
-                    }
-                    if ($scored) { // "If you scored at least one card, repeat this effect"
-                        $step--; self::incrementStep(-1);
+                    if ($n > 0) {
+                        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
+                        $pile = $board[self::getGameStateValue('color_last_selected')];
+                        $scored = false;
+                        for($p=0; $p < count($pile)-1; $p++) { // "Score all other cards of the same color from your board"
+                            $card = self::getCardInfo($pile[$p]['id']);
+                            self::scoreCard($card, $player_id);
+                            $scored = true;
+                        }
+                        if ($scored) { // "If you scored at least one card, repeat this effect"
+                            $step--; self::incrementStep(-1);
+                        }
                     }
                     break;
                 
