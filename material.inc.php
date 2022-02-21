@@ -1228,7 +1228,7 @@ $this->textual_card_infos = array(
 117 => array('name' => clienttranslate('Electrum Stater of Efesos'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
-    'non_demand_effect_1' => clienttranslate('Draw and revel a ${age_3}. If you do not have a top card of the drawn card\'s color, meld it and repeat this effect.'),
+    'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_3}. If you do not have a top card of the drawn card\'s color, meld it and repeat this effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,
