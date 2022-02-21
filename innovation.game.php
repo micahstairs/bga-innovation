@@ -16433,7 +16433,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Flags
             $owner_to = self::getGameStateValue('owner_to');
             $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
-            $bottom_to = self::getGameStateValue('bottom_to') == 1;
+            $bottom_to = self::getGameStateValue('bottom_to') == 1 ? true : null;
             $score_keyword = self::getGameStateValue('score_keyword') == 1;
             
             $splay_direction = self::getGameStateValue('splay_direction'); // -1 if that was not a choice for splay
