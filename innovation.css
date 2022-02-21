@@ -112,7 +112,7 @@
 
 /* Artifacts on display */
 .display_container {
-    background-color: #FFFFFF;
+    background-color: #FFFFFF; /* required for child div to have a nicer look using transparency rgb background color*/
     border: 1px solid black;
     width: 195px;
     height: 165px;
@@ -120,8 +120,8 @@
 }
 
 .display_container > div {
-    background-color: #ebd5bd;
     padding: 5px;
+    height: inherit;
 }
 
 .display_container .display {
