@@ -104,7 +104,11 @@ $machinestates = array(
         "type" => "game",
         "action" => "stInterPlayerTurn",
         "updateGameProgression" => true,
-        "transitions" => array("playerTurn" => 4, "artifactPlayerTurn" => 15)
+        "transitions" => array(
+            "playerTurn" => 4,
+            "artifactPlayerTurn" => 15,
+            "justBeforeGameEnd" => 98
+        )
     ),
 
     6 => array(
