@@ -519,7 +519,7 @@ class Innovation extends Table
         // All boards
         $result['board'] = self::getAllBoards($players);
         
-        // Splay state for piles on board
+        // Splay state for stacks on board
         $result['board_splay_directions'] = array();
         $result['board_splay_directions_in_clear'] = array();
         foreach($players as $player_id => $player) {
@@ -1322,12 +1322,12 @@ class Innovation extends Table
 
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
 
-        // Return early if the pile is already splayed in the requested direction.
+        // Return early if the stack is already splayed in the requested direction.
         if (self::getCurrentSplayDirection($target_player_id, $color) == $splay_direction) {
             return;
         }
 
-        // Return early if a pile with less than 2 cards is attempting to be splayed.
+        // Return early if a stack with less than 2 cards is attempting to be splayed.
         if ($splay_direction >= 1 && self::countCardsInLocationKeyedByColor($target_player_id, 'board')[$color] <= 1) {
             return;
         }
@@ -2717,7 +2717,7 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
             }
 
-            self::notifyPlayer($player_id, 'splayedPile', clienttranslate('${Your} ${colored} pile is reduced to one card: it looses its splay.'), array(
+            self::notifyPlayer($player_id, 'splayedPile', clienttranslate('${Your} ${colored} stack is reduced to one card so it loses its splay.'), array(
                 'i18n' => array('colored'),
                 'Your' => 'Your',
                 'colored' => $color_in_clear,
@@ -2726,7 +2726,7 @@ class Innovation extends Table
                 'splay_direction' => $splay_direction
             ));
             
-            self::notifyAllPlayersBut($player_id, 'splayedPile', clienttranslate('${player_name}\'s ${colored} pile is reduced to one card: it looses its splay.'), array(
+            self::notifyAllPlayersBut($player_id, 'splayedPile', clienttranslate('${player_name}\'s ${colored} stack is reduced to one card so it loses its splay.'), array(
                 'i18n' => array('colored'),
                 'player_name' => self::getPlayerNameFromId($player_id),
                 'colored' => $color_in_clear,
@@ -3096,7 +3096,7 @@ class Innovation extends Table
             }
         }
         else {
-            $message = clienttranslate("No pile matches the criteria of the effect for splaying.");
+            $message = clienttranslate("No stack matches the criteria of the effect for splaying.");
         }
         self::notifyGeneralInfo($message);
     }
@@ -3345,7 +3345,7 @@ class Innovation extends Table
 
     function getSizeOfMaxVisiblePileOnBoard($owner) {
         /**
-            Return the size of the pile(s) which have maximum number of visible cards on a specific player's board 
+            Return the size of the stack(s) which have maximum number of visible cards on a specific player's board 
         **/
         return self::getUniqueValueFromDB(self::format("
             SELECT
@@ -3927,14 +3927,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return false;
         }
         $top_card = $pile[count($pile)-1];
-        if (self::hasRessource($top_card, $icon)) { // The top card of that pile has that icon
+        if (self::hasRessource($top_card, $icon)) { // The top card of that stack has that icon
             return true;
         }
         $splay_direction = $top_card['splay_direction'];
         if ($splay_direction == 0) { // Unsplayed
             return false;
         }
-        // Since the pile is not unsplayed, it has at least two cards
+        // Since the stack is not unsplayed, it has at least two cards
         for($i=0; $i<count($pile)-1; $i++) {
             $card = $pile[$i];
             if($splay_direction == 1 && $card['spot_4'] == $icon || $splay_direction == 2 && ($card['spot_1'] == $icon || $card['spot_2'] == $icon) || $splay_direction == 3 && ($card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon)) {
@@ -3956,7 +3956,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($top_card['splay_direction'] == 0) { // Unsplayed
             return 1;
         }
-        return $pile_size; // All other splays result in the current pile count
+        return $pile_size; // All other splays result in the current stack size
     }
     
     /** Get and update game situation **/
@@ -4761,7 +4761,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'top_cards_to_remove' => $top_cards_to_remove,
         ));
 
-        // Unsplay all piles which only have one card left in them.
+        // Unsplay all stacks which only have one card left in them.
         $player_ids_in_turn_order = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
         foreach ($player_ids_in_turn_order as $player_id) {
             $number_of_cards_per_pile = self::countCardsInLocationKeyedByColor($player_id, 'board');
@@ -4940,15 +4940,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $colors = array();
             
             foreach ($rewritten_options['color'] as $color) {
-                // Check if the piles have at least 2 cards
+                // Check if the stacks have at least 2 cards
                 if ($number_of_cards_on_board[$color] < 2) {
-                    // This color can't be chosen for splay since the pile is one card or less
+                    // This color can't be chosen for splay since the stack is one card or less
                     continue;
                 }
                 
-                // Check if the pile is not already splayed in the same direction
+                // Check if the stack is not already splayed in the same direction
                 if (self::getCurrentSplayDirection($player_id, $color) == $splay_direction) {
-                    // This color can't be chosen for splay since the pile is already splayed in the same direction
+                    // This color can't be chosen for splay since the stack is already splayed in the same direction
                     continue;
                 }
                 // This color is still eligible for splaying
@@ -5127,7 +5127,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $condition_for_icon_hash = "";
         }
 
-        // Condition for whether the pile is splayed
+        // Condition for whether the stack is splayed
         $splay_directions = self::getGameStateValueAsArray('has_splay_direction');
         $condition_for_splay = "";
         if (count($splay_directions) == 0) {
@@ -6028,7 +6028,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($card['owner'] != $player_id || $card['location'] != "board") {
             self::throwInvalidChoiceException();
         }
-        // Card is not at the top of a pile
+        // Card is not at the top of a stack
         if (!self::isTopBoardCard($card)) {
             self::throwInvalidChoiceException();
         }
@@ -6419,7 +6419,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $new_max_age_on_board = self::getMaxAgeOnBoardTopCards($player_id);
                 self::setStat($new_max_age_on_board, 'max_age_on_board', $player_id);
 
-                self::notifyPlayer($player_id, 'rearrangedPile', clienttranslate('${You} rearrange your ${color} pile.'), array(
+                self::notifyPlayer($player_id, 'rearrangedPile', clienttranslate('${You} rearrange your ${color} stack.'), array(
                     'i18n' => array('color'),
                     'player_id' => $player_id,
                     'new_max_age_on_board' => $new_max_age_on_board,
@@ -6427,7 +6427,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'You' => 'You',
                     'color' => self::getColorInClear($color)
                 ));
-                self::notifyAllPlayersBut($player_id, 'rearrangedPile', clienttranslate('${player_name} rearranges his ${color} pile.'), array(
+                self::notifyAllPlayersBut($player_id, 'rearrangedPile', clienttranslate('${player_name} rearranges his ${color} stack.'), array(
                     'i18n' => array('color'),
                     'player_id' => $player_id,
                     'new_max_age_on_board' => $new_max_age_on_board,
@@ -10099,7 +10099,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "199N1":
-                // If there are only one or two splayable piles then we can splay up automatically
+                // If there are only one or two splayable stacks then we can splay up automatically
                 $splayable_colors = self::getSplayableColorsOnBoard($player_id, /*splay_direction=*/ 3);
                 if (count($splayable_colors) <= 2) {
                     foreach ($splayable_colors as $color) {
@@ -10253,7 +10253,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
 
-                // There is a pile on your board that has the most cards of all piles on all boards
+                // There is a stack on your board that has the most cards of all stacks on all boards
                 if ($win_condition_met) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
