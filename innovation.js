@@ -1966,7 +1966,7 @@ function (dojo, declare) {
             var achievement_name = _(card.achievement_name).toUpperCase();
             var is_monument = card.id == 106;
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
-            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card.condition_for_claiming), 'L') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
+            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
             var div_alternative_condition_for_claiming = "</br><div>" + _(card.alternative_condition_for_claiming) + "</div>";
             

@@ -1121,7 +1121,8 @@
 }
 
 .icon_help.basic.square {
-    background-position: -32px -0px;
+    background-position: -25px -0px;
+    background-size: 151px;
 }
 
 .icon_action.basic.square {
@@ -1504,9 +1505,57 @@
 }
 
 /*icons in tooltips */
-.icon_1.in_tooltip.square, .icon_2.in_tooltip.square, .icon_3.in_tooltip.square, .icon_4.in_tooltip.square, .icon_5.in_tooltip.square, .icon_6.in_tooltip.square {
+.in_tooltip.square {
     width: 13px;
     height: 12px;
+}
+
+.age_1.in_tooltip.square, .age_2.in_tooltip.square, .age_3.in_tooltip.square, .age_4.in_tooltip.square, .age_5.in_tooltip.square, .age_6.in_tooltip.square, .age_7.in_tooltip.square, .age_8.in_tooltip.square, .age_9.in_tooltip.square, .age_10.in_tooltip.square  {
+    background-size: 134px auto;
+    background-position-y: -72px;
+}
+
+.age_1.in_tooltip.square {
+    background-position-x: 0px;
+}
+
+.age_2.in_tooltip.square {
+    background-position-x: -14px;
+}
+
+.age_3.in_tooltip.square {
+    background-position-x: -27px;
+}
+
+.age_4.in_tooltip.square {
+    background-position-x: -41px;
+}
+
+.age_5.in_tooltip.square {
+    background-position-x: -54px;
+}
+
+.age_6.in_tooltip.square {
+    background-position-x: -67px;
+}
+
+.age_7.in_tooltip.square {
+    background-position-x: -81px;
+}
+
+.age_8.in_tooltip.square {
+    background-position-x: -94px;
+}
+
+.age_9.in_tooltip.square {
+    background-position-x: -107px;
+}
+
+.age_10.in_tooltip.square {
+    background-position-x: -121px;
+}
+
+.icon_1.in_tooltip.square, .icon_2.in_tooltip.square, .icon_3.in_tooltip.square, .icon_4.in_tooltip.square, .icon_5.in_tooltip.square, .icon_6.in_tooltip.square {
     background-image: url('img/resource_icons.jpg');
     background-size: 83px auto;
     background-position-y: -42px;
