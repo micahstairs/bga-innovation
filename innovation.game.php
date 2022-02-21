@@ -442,7 +442,7 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 110 <= id AND id <= 214");
         }
         if (self::getGameStateValue('artifacts_mode') != 3) {
-            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE NOT is_relic");
+            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE is_relic");
         }
 
         // Store the age of each card when face-up
