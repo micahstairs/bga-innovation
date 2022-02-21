@@ -184,7 +184,7 @@
     cursor: auto;
 }
 
-/*board and piles*/
+/* board and stacks */
 .board {
     min-height: 171px;
 }

@@ -29,8 +29,8 @@ ALTER TABLE `player` ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEF
 ALTER TABLE `player` ADD `player_no_under_effect` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Order of the player when he is concerned by an effect';
 ALTER TABLE `player` ADD `number_of_tucked_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has tucked during the turn of the current player';
 ALTER TABLE `player` ADD `number_of_scored_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has scored during the turn of the current player';
-ALTER TABLE `player` ADD `pile_display_mode` BOOLEAN DEFAULT TRUE COMMENT 'Wish for the player for pile display, TRUE for expanded, FALSE for compact';
-ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Wish for the player to view all cards in pile, TRUE if yes, FALSE if no';
+ALTER TABLE `player` ADD `pile_display_mode` BOOLEAN DEFAULT TRUE COMMENT 'Player preference for how stacks on the board are displayed, TRUE for expanded, FALSE for compact';
+ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Player preference for whether to show all cards in a stack on the board, TRUE if yes, FALSE if no';
 ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Indicate if the player has changed the situation (TRUE) or not (FALSE) in the game when it was his turn to play within a dogma effect';
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS `card` (
   `is_relic` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card is a relic',
   `owner` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Id of the player who owns the card or 0 if no owner',
   `location` VARCHAR(12) NOT NULL DEFAULT 'deck' COMMENT 'Hand, board, score, achievements, deck, display or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
-  `position` TINYINT UNSIGNED DEFAULT 0 COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the color piles, 0 for the bottom card, maximum for active card.',
+  `position` TINYINT UNSIGNED DEFAULT 0 COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the stacks, 0 for the bottom card, maximum for active card.',
   `splay_direction` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Direction of the splay, 0 (no-splay), 1 (left), 2 (right), 3 (up) OR NULL if this card is not on board',
   `selected` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
   `icon_hash` INT(32) UNSIGNED DEFAULT NULL COMMENT 'A column that is updated on game start with a calculated hash of the card icons. This is for icon comparisson purposes regardless of the icon position.',

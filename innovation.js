@@ -112,7 +112,7 @@ function (dojo, declare) {
             this.publication_permutations_done = null;
             this.publication_original_items = null;
             
-            // Special flag used when a selection has to be made within a color pile
+            // Special flag used when a selection has to be made within a stack
             this.color_pile = null;
             
             // Special flags to indicate that multiple colors must be chosen
@@ -559,7 +559,7 @@ function (dojo, declare) {
                 this.view_full = gamedatas.view_full;
             }
             
-            // Piles
+            // Stacks
             this.zone.board = {};
             this.number_of_splayed_piles = 0;
             for (var player_id in this.players) {
@@ -579,7 +579,7 @@ function (dojo, declare) {
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
                     if (splay_direction > 0) {
                         this.number_of_splayed_piles++;
-                        this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This pile is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
+                        this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This stack is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
                     }
                     
                     // Add cards to zone according to the current situation
@@ -857,14 +857,14 @@ function (dojo, declare) {
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
                     }
                     
-                    if (args.args.color_pile !== null) { // The selection involves cards in pile
+                    if (args.args.color_pile !== null) { // The selection involves cards in a stack
                         this.color_pile = args.args.color_pile;
                         var zone = this.zone.board[this.player_id][this.color_pile];
-                        this.setSplayMode(zone, zone.splay_direction, full_visible=true); // Show all cards of that pile
+                        this.setSplayMode(zone, zone.splay_direction, full_visible=true); // Show all cards of that stack
                     }
                     
                     if (args.args.splay_direction !== null) {
-                        // Update tooltips for cards of piles that can be splayed
+                        // Update tooltips for cards of stacks that can be splayed
                         this.addTooltipsWithSplayingActionsToColorsOnMyBoard(args.args.splayable_colors, args.args.splayable_colors_in_clear, args.args.splay_direction, args.args.splay_direction_in_clear);
                     }
                     
@@ -1049,7 +1049,7 @@ function (dojo, declare) {
             var button = this.format_string_recursive("<i id='change_view_full_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text':button_text, 'i18n':['button_text']});
             
             dojo.place(button, 'name_' + player_id, 'after');
-            this.addCustomTooltip('change_view_full_button', '<p>' + _('Use this to look at all the cards in board piles.') + '</p>', "")
+            this.addCustomTooltip('change_view_full_button', '<p>' + _('Use this to look at all the cards on the board.') + '</p>', "")
             this.on(dojo.query('#change_view_full_button'), 'onclick', 'toggle_view');
         },
         
@@ -1060,8 +1060,8 @@ function (dojo, declare) {
             var button = this.format_string_recursive("<i id='change_display_mode_button' class='bgabutton bgabutton_gray'>${arrows} ${button_text}</i>", {'arrows':arrows, 'button_text':button_text, 'i18n':['button_text']});
             
             dojo.place(button, 'change_view_full_button', 'after');
-            this.addCustomTooltip('change_display_mode_button', '<p>' + _('<b>Expanded mode:</b> the splayed piles are displayed like in real game, to show which icons are made visible.') + '</p>' +
-                                                                '<p>' + _('<b>Compact mode:</b> the splayed piles are displayed with minimum offset, to save space.') + '</p>', "")
+            this.addCustomTooltip('change_display_mode_button', '<p>' + _('<b>Expanded mode:</b> the splayed stacks are displayed like in real game, to show which icons are made visible.') + '</p>' +
+                                                                '<p>' + _('<b>Compact mode:</b> the splayed stacks are displayed with minimum offset, to save space.') + '</p>', "")
             
             this.disableButtonForSplayMode(); // Disabled by default
         },
@@ -1162,7 +1162,7 @@ function (dojo, declare) {
             var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
             
             var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);
-            var meld_parag_text = _("Play a card from your hand to your board, on stack on matching color. Continue any splay if present.");
+            var meld_parag_text = _("Play a card from your hand to your board, on a stack of matching color. Continue any splay if present.");
             var meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag reference_card_block', '', 12);
             
             var draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title reference_card_block', '', 30);
@@ -1580,7 +1580,7 @@ function (dojo, declare) {
         },
         
         createActionTextForCardInSplayablePile : function(card, color_in_clear, splay_direction, splay_direction_in_clear) {
-            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} pile ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
+            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
             HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
 
             var pile = this.zone.board[this.player_id][card.color].items;
@@ -2623,7 +2623,7 @@ function (dojo, declare) {
             if(!this.checkAction('choose')){
                 return;
             }
-            if (this.color_pile !== null) { // Special code where a pile needed to be selected
+            if (this.color_pile !== null) { // Special code where a stack needed to be selected
                 var zone = this.zone.board[this.player_id][this.color_pile];
                 this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
             }
@@ -2751,7 +2751,7 @@ function (dojo, declare) {
                 this.publication_permutations_done = null;
                 this.publication_original_items = null;
             }
-            else if (this.color_pile !== null) { // Special code where a pile needed to be selected
+            else if (this.color_pile !== null) { // Special code where a stack needed to be selected
                 var zone = this.zone.board[this.player_id][this.color_pile];
                 this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
             }
@@ -3026,7 +3026,7 @@ function (dojo, declare) {
             
             $('change_display_mode_button').innerHTML = inside_button;
             
-            // Update the display of the piles
+            // Update the display of the stacks
             for(var player_id in this.players) {
                 for(var color = 0; color < 5; color++){
                     var zone = this.zone.board[player_id][color];
@@ -3056,7 +3056,7 @@ function (dojo, declare) {
             
             $('change_view_full_button').innerHTML = inside_button;
             
-            // Update the display of the piles
+            // Update the display of the stacks
             for(var player_id in this.players) {
                 for(var color = 0; color < 5; color++){
                     var zone = this.zone.board[player_id][color];
@@ -3281,7 +3281,7 @@ function (dojo, declare) {
             // Update the tooltip text if needed
             this.removeTooltip('splay_' + player_id + '_' + color);
             if (splay_direction > 0) {
-                this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This pile is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
+                this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This stack is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
             }
             
             // Update the ressource counts for that player
@@ -3310,7 +3310,7 @@ function (dojo, declare) {
             var player_id = notif.args.player_id;
             this.counter.max_age_on_board[player_id].setValue(notif.args.new_max_age_on_board);
             
-            // Apply the permutations if either an opponent rearranged their pile or the game is being
+            // Apply the permutations if either an opponent rearranged their stack or the game is being
             // replayed (which eliminates a bug where Publications doesn't rearrange cards during replays)
             if (this.player_id != player_id || this.isInReplayMode()) {
 
@@ -3355,7 +3355,7 @@ function (dojo, declare) {
                 }
             }
             
-            // Unsplay all piles and update the splay indicator (show nothing bacause there are no more splayed pile)
+            // Unsplay all stacks and update the splay indicator (show nothing bacause there are no more splayed stacks)
             for(var player_id in this.players) {
                 for(var color=0; color<5; color++) {
                     this.setSplayMode(this.zone.board[player_id][color], 0)
