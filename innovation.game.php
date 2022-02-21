@@ -13436,6 +13436,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "If you have fewer than four cards in your hand"
             if (self::countCardsInLocation($player_id, 'hand') < 4) {
                 // "Return all non-green top cards from your board"
+                self::setAuxiliaryValue(1); // Indicate that player had fewer than four cards in hands
                 $options = array(
                     'player_id' => $player_id,
                     'can_pass' => false,
@@ -13445,13 +13446,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'owner_to' => 0,
                     'location_to' => 'deck',
 
-                    'color' => array(0,1,3,4),
-                    'auxiliary_value' => 1 // Indicate that player had fewer than four cards in hands
+                    'color' => array(0,1,3,4)
                 );
                 self::incrementStepMax(1);
 
             // "Meld a card from your hand"
             } else {
+                self::setAuxiliaryValue(0); // Indicate that player had at least four cards in hands
                 $options = array(
                     'player_id' => $player_id,
                     'n' => 1,
@@ -13460,15 +13461,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'owner_from' => $player_id,
                     'location_from' => 'hand',
                     'owner_to' => $player_id,
-                    'location_to' => 'board',
-
-                    'auxiliary_value' => 0 // // Indicate that player had at least four cards in hands
+                    'location_to' => 'board'
                 );
             }
             break;
             
         case "150N1B":
-           // "Meld a card from your hand"
+            // "Meld a card from your hand"
+            self::setAuxiliaryValue(0);
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13477,9 +13477,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'auxiliary_value' => 0
+                'location_to' => 'board'
             );
             break;
 
@@ -13556,6 +13554,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "155N1A":
             // "Return the lowest card in your hand"
             $min_hand_age = self::getMinAgeInHand($player_id);
+            self::setAuxiliaryValue($min_hand_age);
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13566,10 +13565,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => $min_hand_age,
-                'auxiliary_value' => $min_hand_age
+                'age' => $min_hand_age
             );
-
             break;
 
         case "155N1B":
