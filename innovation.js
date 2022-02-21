@@ -1100,11 +1100,11 @@ function (dojo, declare) {
         
         all_icons : function(type) {
             return "<span class='icon_1 square " + type + "'></span>" +
-                    "<span class='icon_2 square " + type + "'></span>" +
-                    "<span class='icon_3 square " + type + "'></span>" +
-                    "<span class='icon_4 square " + type + "'></span>" +
-                    "<span class='icon_5 square " + type + "'></span>" +
-                    "<span class='icon_6 square " + type + "'></span>"
+                    "&nbsp<span class='icon_2 square " + type + "'></span>" +
+                    "&nbsp<span class='icon_3 square " + type + "'></span>" +
+                    "&nbsp<span class='icon_4 square " + type + "'></span>" +
+                    "&nbsp<span class='icon_5 square " + type + "'></span>" +
+                    "&nbsp<span class='icon_6 square " + type + "'></span>"
         },
          
         /*
