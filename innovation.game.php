@@ -7533,6 +7533,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // [R] Disable the flags used when in dogma 
             if (self::getGameStateValue('release_version') >= 1) {
+                // NOTE: The implementation of Dancing Girl relies on the fact that the auxiliary_value is initialized to -1.
                 self::DbQuery("
                     UPDATE
                         nested_card_execution
@@ -7576,9 +7577,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setGameStateValue('age_max', -1);
             self::setGameStateValue('age_array', -1);
             self::setGameStateValue('color_array', -1);
+            self::setGameStateValue('type_array', -1);
+            self::setGameStateValue('player_array', -1);
             self::setGameStateValue('with_icon', -1);
             self::setGameStateValue('without_icon', -1);
             self::setGameStateValue('not_id', -1);
+            self::setGameStateValue('card_id_1', -1);
+            self::setGameStateValue('card_id_2', -1);
+            self::setGameStateValue('card_id_3', -1);
+            self::setGameStateValue('icon_hash_1', -1);
+            self::setGameStateValue('icon_hash_2', -1);
+            self::setGameStateValue('icon_hash_3', -1);
+            self::setGameStateValue('icon_hash_4', -1);
+            self::setGameStateValue('icon_hash_5', -1);
             self::setGameStateValue('can_pass', -1);
             self::setGameStateValue('n', -1);
             self::setGameStateValue('id_last_selected', -1);
@@ -7588,7 +7599,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setGameStateValue('score_keyword', -1);
             self::setGameStateValue('require_achievement_eligibility', -1);
             self::setGameStateValue('require_demand_effect', -1);
-            
+            self::setGameStateValue('has_splay_direction', -1);
+
             // End of this player action
             self::trace('interDogmaEffect->interPlayerTurn');
             $this->gamestate->nextState('interPlayerTurn');
@@ -9185,7 +9197,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 111, Artifacts age 1: Sibidu Needle
             case "111N1":
-                while(true) {
+                while (true) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card !== null && $card['faceup_age'] == $top_card['faceup_age']) { // "If you have a top card of matching color and value"
@@ -9209,7 +9221,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         'english_name_1' => $top_card['name'],
                         'english_name_2' => $card['name']
                     ));
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 } else {
                     self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} does not come before ${english_name_2}.'), array(
                         'english_name_1' => $top_card['name'],
@@ -9221,7 +9233,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 113, Artifacts age 1: Holmegaard Bows
             case "113C1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "113N1":
@@ -9231,7 +9243,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 114, Artifacts age 1: Papyrus of Ani
             case "114N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1;
                 break;
 
             // id 115, Artifacts age 1: Pavlovian Tusk
@@ -9245,26 +9257,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setGameStateValue('card_id_1', self::executeDraw($player_id, $top_green_card_age)['id']);
                 self::setGameStateValue('card_id_2', self::executeDraw($player_id, $top_green_card_age)['id']);
                 self::setGameStateValue('card_id_3', self::executeDraw($player_id, $top_green_card_age)['id']);
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
             
             // id 116, Artifacts age 1: Priest-King
             case "116N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1;
                 break;
             
             case "116N2":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1;
                 break;
             
             // id 117, Artifacts age 1: Electrum Stater of Efesos
             case "117N1":
-                while(true) {
+                while (true) {
                     $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                    if ($top_card == null) 
-                    { // "If you do not have a top card of the drawn card's color"
-                        self::transferCardFromTo($card, $player_id, 'board'); // "meld it"
+                    if ($top_card == null) { // "If you do not have a top card of the drawn card's color"
+                        self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
                         continue; // "Repeat this effect"
                     }
                     break;
@@ -9274,7 +9285,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 118, Artifacts age 1: Jiskairumoko Necklace
             case "118C1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
             
              // id 119, Artifacts age 1: Dancing Girl
@@ -9299,28 +9310,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 120, Artifacts age 1: Lurgan Canoe
             case "120N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 121, Artifacts age 1: Xianrendong Shards
             case "121N1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
 
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1":
                 self::setAuxiliaryValueFromArray(array());
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 123, Artifacts age 1: Ark of the Covenant
             case "123N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
             
              // id 125, Artifacts age 2: Seikilos Epitaph
@@ -12658,6 +12669,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "118C1B":
             // "If you do, transfer an achievement of the same value from your achievements to mine"
             $returned_age = self::getGameStateValue('age_last_selected');
+            // TODO(ARTIFACTS): Instead of using age_last_selected (which may be a stale value), let's do a proper "n > 0" check before advancing to this second interaction.
             if ($returned_age >= 1) {
                 $options = array(
                     'player_id' => $player_id,
@@ -15404,8 +15416,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                         $pile = $board[self::getGameStateValue('color_last_selected')];
                         $scored = false;
-                        for($p=0; $p < count($pile)-1; $p++) { // "Score all other cards of the same color from your board"
-                            $card = self::getCardInfo($pile[$p]['id']);
+                        for ($i = 0; $i < count($pile) - 1; $i++) { // "Score all other cards of the same color from your board"
+                            $card = self::getCardInfo($pile[$i]['id']);
                             self::scoreCard($card, $player_id);
                             $scored = true;
                         }
@@ -15425,6 +15437,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "121N1B":
+                    // TODO(ARTIFACTS): There's currently a bug here where some of these variables could be holding stale card IDs from when an opponent
+                    // executed the card. We should consider re-initializing these at the start of 121N1.
                     $revealed_card_ids = array(self::getGameStateValue('card_id_1'), self::getGameStateValue('card_id_2'), self::getGameStateValue('card_id_3'));
 
                     // "Tuck the other"
@@ -15476,24 +15490,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 123, Artifacts age 1: Ark of the Covenant
                 case "123N1A":
-                    $player_ids = self::getAllActivePlayerIds();
+                    $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
                     
                     if ($n > 0) { // Unsaid rule: the player must have returned a card or else this part of the effect can't continue
                         $returned_color = self::getGameStateValue('color_last_selected');
                             
-                        foreach($player_ids as $all_player_id) {
-                            $top_cards = self::getTopCardsOnBoard($all_player_id);
+                        foreach ($player_ids as $id) {
+                            $top_cards = self::getTopCardsOnBoard($id);
                             
                             $artifact_found = false;
-                            foreach($top_cards as &$card) {
+                            foreach ($top_cards as &$card) {
                                 if ($card['type'] == 1) { // Artifact
                                     $artifact_found = true;
                                     break;
                                 }
                             }
                             
+                            // TODO(ARTIFACTS): Add logging here for both cases (artifact is found and artifact is not found).
                             if (!$artifact_found) {
-                                while (($top_card = self::getTopCardOnBoard($all_player_id, $returned_color)) !== null) {   
+                                while (($top_card = self::getTopCardOnBoard($id, $returned_color)) !== null) {   
                                     // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
                                     self::transferCardFromTo($top_card, $player_id, 'score');
                                 }
@@ -15501,11 +15516,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             
                         }
                     }
-                    // "If Ark of the Covenant is a top card on any board, transfer it to your hand."
-                    // This happens even if the first part does not.
-                    $ark_card = self::getIfTopCardOnBoard(123);
-                    if ($ark_card !== null) {
-                        self::transferCardFromTo($ark_card, $player_id, 'hand');
+
+                    // "If Ark of the Covenant is a top card on any board, transfer it to your hand"
+                    $ark_of_the_covenant = self::getIfTopCardOnBoard(123);
+                    if ($ark_of_the_covenant !== null) {
+                        self::transferCardFromTo($ark_of_the_covenant, $player_id, 'hand');
                     }
                     break;
                 
@@ -15516,6 +15531,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "124N1B":
+                    // TODO(ARTIFACTS): There's a bug here. We should use a '$n > 0' check instead so that we don't read a stale value from opponents using this card.
                     $melded_color = self::getGameStateValue('color_last_selected');
                     if ($melded_color >= 0) { // "If you (melded a card)"
                         self::splayLeft($player_id, $player_id, $melded_color); // "Splay that color left"
@@ -16717,7 +16733,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
                     self::executeNonDemandEffects($card); // "Execute each of its non-demand effects. Do not share them."
                     break;
-                } else  {
+                } else {
                     // Non-purple card is placed in the hand
                     self::transferCardFromTo($card, $player_id, 'hand');
                 }
@@ -16729,13 +16745,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 // "Each player reveals all cards of that color from their hand"
                 $only_player_to_reveal = true;
-                $player_ids = self::getAllActivePlayerIds();
-                foreach(self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $any_player_id) {
-                    $cards = self::getCardsInLocation($any_player_id, 'hand');
-                    foreach($cards as $card) {
+                $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
+                foreach ($player_ids as $id) {
+                    $cards = self::getCardsInLocation($id, 'hand');
+                    foreach ($cards as $card) {
                         if ($card['color'] == $choice) {
-                            self::transferCardFromTo($card, $any_player_id, 'revealed');
-                            if ($any_player_id != $player_id) {
+                            self::transferCardFromTo($card, $id, 'revealed');
+                            if ($id != $player_id) {
                                 $only_player_to_reveal = false;
                             }
                         }
@@ -16744,17 +16760,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // "If you are the only player to reveal cards, return them"
                 if ($only_player_to_reveal) {
-
-                    // Store array of revealed values
-                    $revealed_values = array();
                     self::incrementStepMax(1);
                 
                 // Return revealed cards to players' hands.
                 } else {
-                    foreach($player_ids as $any_player_id) {
-                        $cards = self::getCardsInLocation($any_player_id, 'revealed');
-                        foreach($cards as $card) {
-                            self::transferCardFromTo($card, $any_player_id, 'hand');
+                    foreach ($player_ids as $id) {
+                        $cards = self::getCardsInLocation($id, 'revealed');
+                        foreach ($cards as $card) {
+                            self::transferCardFromTo($card, $id, 'hand');
                         }
                     }
                 }
