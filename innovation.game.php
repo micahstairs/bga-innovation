@@ -8369,17 +8369,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 53, age 5: Astronomy
             case "53N1":
-                while(true) {
+                while (true) {
                     $card = self::executeDraw($player_id, 6, 'revealed'); // "Draw and reveal a 6"
+                    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                     if ($card['color'] != 0 /* blue */ && $card['color'] != 2 /* green */) {
-                        self::notifyGeneralInfo(clienttranslate("This card is neither blue nor green."));
                         break; // "Otherwise"
                     };
                     // "If the card is green or blue"
-                    self::notifyGeneralInfo($card['color'] == 0 ? clienttranslate("This card is blue.") : clienttranslate("This card is green."));
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
                 }
-                self::transferCardFromTo($card, $player_id, 'hand'); // ("Keep it")
+                self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
                 break;
             
             case "53N2":
@@ -8736,7 +8735,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "88D1":
                 $card = self::executeDraw($player_id, 10, 'revealed'); // "Draw a 10"
                 if ($card['color'] == 1 /* red */) { // "If it is red"
-                    self::notifyGeneralInfo(clienttranslate('This card is red.'));
+                    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                     self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
                     self::notifyAll('removedHandsBoardsAndScores', clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'), array());
                     
@@ -9440,7 +9439,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 135, Artifacts age 3: Dunhuang Star Chart
             case "135N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 136, Artifacts age 3: Charter of Liberties
@@ -9463,17 +9462,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 self::setAuxiliaryValueFromArray($colors);
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 138, Artifacts age 3: Mjolnir Amulet
             case "138C1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 139, Artifacts age 3: Philosopher's Stone
             case "139N1":
-                $step_max = 2; // --> 1 interactions: see B
+                $step_max = 2;
                 break;
 
             // id 140, Artifacts age 3: Beauvais Cathedral Clock
@@ -9523,7 +9522,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 } else if ($card['color'] == 1 || $card['color'] == 3)  { // Red or yellow
                     self::setAuxiliaryValue($card['color']);
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 } else {
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
                 };
@@ -9531,7 +9530,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 144, Artifacts age 3: Shroud of Turin
             case "144N1":
-                $step_max = 1; // --> 1 interaction
+                $step_max = 1;
                 break;
             
             // id 145, Artifacts age 4: Petition of Right
@@ -13039,7 +13038,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
                 
-                'has_splay_direction' => array(1, 2, 3)
+                'has_splay_direction' => array(1, 2, 3) // Left, right, or up
             );
             break;
 
@@ -13094,7 +13093,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 139, Artifacts age 3: Philosopher's Stone
         case "139N1A":
-            // Return a card from your hand.
+            // "Return a card from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -13108,7 +13107,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "139N1B":
-            // Score a number of cards from your hand equal to the value of the card returned.
+            // "Score a number of cards from your hand equal to the value of the card returned"
+            // TODO(ARTIFACTS): There's a bug here because we are assuming a card was returned.
             $age_selected = self::getGameStateValue('age_last_selected');
             $options = array(
                 'player_id' => $player_id,
@@ -13169,10 +13169,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 144, Artifacts age 3: Shroud of Turin
         case "144N1A":
             // "Return a card from hand"
+            // TODO(ARTIFACTS): We should give other players partial information about the returned card (i.e. card color).
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
+                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -13199,6 +13200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "144N1C":
             // "Return a card from score pile of the returned card's color"
+            // TODO(ARTIFACTS): We should give other players partial information about the returned card (i.e. card color).
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -15561,6 +15563,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 135, Artifacts age 3: Dunhuang Star Chart
                 case "135N1A":
                     // "Draw a card of value equal to the number of cards returned"
+                    // TODO(ARTIFACTS): See if we can use $n instead of setting the auxiliary value.
                     self::executeDraw($player_id, self::getAuxiliaryValue());
                 	break;
 
@@ -15614,16 +15617,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 case "144N1B":
                     if ($n > 0) {
-                        self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+                        self::setAuxiliaryValue(2);
                     }
                     break;
                 
                 case "144N1C":
-                    if ($n > 0) {
-                        // "If you did all three"
-                        if (self::getAuxiliaryValue() + 1 === 3) {
-                            self::incrementStepMax(1);
-                        }
+                    // "If you did all three"
+                    if ($n > 0 && self::getAuxiliaryValue() === 2) {
+                        self::incrementStepMax(1);
                     }
                     break;
 
