@@ -11406,7 +11406,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'age' => self::getMinAgeOnBoardTopCardsWithIcon($player_id, 1 /* crown */),
-                'with_icon' => 1 /* crown */
+                'with_icon' => 1, /* crown */
+
+                'score_keyword' => true
             );
             break;
 
@@ -12964,9 +12966,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'score',
-                'score_keyword' => true,
                 
-                'without_icon' => 4 // tower
+                'without_icon' => 4, // tower
+
+                'score_keyword' => true
             );
             break;
         
@@ -13067,7 +13070,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         // id 138, Artifacts age 3: Mjolnir Amulet
-        case "138C1A":    
+        case "138C1A":
             // "I compel you to choose a top card on your board!"
             $options = array(
                 'player_id' => $player_id,
@@ -13083,6 +13086,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         case "138C1B":
             // "Transfer all cards of that card's color from your board to my score pile!"
+            // TODO(ARTIFACTS): This shouldn't be an interaction. We need to automate it.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -13103,6 +13107,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'can_pass' => false,
                 'n' => 1,
+
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => 0,
@@ -13121,7 +13126,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'score'
+                'location_to' => 'score',
+
+                'score_keyword' => true
             );
             break;
 
@@ -13494,7 +13501,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
                 
-                'with_icon' => 1 /* tower */
+                'with_icon' => 1, /* tower */
+
+                'score_keyword' => true
             );
             break;
         
@@ -13533,7 +13542,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
                 
-                'color' => array(self::getGameStateValue('color_last_selected'))
+                'color' => array(self::getGameStateValue('color_last_selected')),
+
+                'score_keyword' => true
             );
             break;
 
@@ -13668,9 +13679,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
-                'score_keyword' => true,
+                'color' => array(self::getAuxiliaryValue()),
 
-                'color' => array(self::getAuxiliaryValue())
+                'score_keyword' => true
             );            
             break;
             
