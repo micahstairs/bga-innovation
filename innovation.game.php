@@ -5555,7 +5555,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function executeAllEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        // TODO(ARTIFACTS): Replace X and Y with the names of the cards. Also consider making similar changes to the notifications in executeNonDemandEffects.
+        // TODO(#272): Replace X and Y with the names of the cards. Also consider making similar changes to the notifications in executeNonDemandEffects.
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the effects of X as if it were on Y.'), array('You' => 'You'));
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the effects of X as if it were on Y.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
@@ -12672,7 +12672,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "118C1B":
             // "If you do, transfer an achievement of the same value from your achievements to mine"
             $returned_age = self::getGameStateValue('age_last_selected');
-            // TODO(ARTIFACTS): Instead of using age_last_selected (which may be a stale value), let's do a proper "n > 0" check before advancing to this second interaction.
+            // TODO(#276): Instead of using age_last_selected (which may be a stale value), let's do a proper "n > 0" check before advancing to this second interaction.
             if ($returned_age >= 1) {
                 $options = array(
                     'player_id' => $player_id,
@@ -12911,7 +12911,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "131N1B":
-            // TODO(ARTIFACTS): There is a bug here because we are making the assumption that a card was returned from hand.
+            // TODO(#277): There is a bug here because we are making the assumption that a card was returned from hand.
             $age_selected = self::getGameStateValue('age_last_selected');
             // "Claim an achievement of matching value, ignoring eligibility"
             $options = array(
@@ -13078,7 +13078,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         case "138C1B":
             // "Transfer all cards of that card's color from your board to my score pile!"
-            // TODO(ARTIFACTS): This shouldn't be an interaction. We need to automate it.
+            // TODO(#278): This shouldn't be an interaction. We need to automate it.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -13661,7 +13661,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         case "158N1C":
             // "And score all cards of that color from your board"
-            // TODO(ARTIFACTS): This shouldn't be an interaction. It should be an automated step that happens during 158N1B after the color is chosen.
+            // TODO(#279): This shouldn't be an interaction. It should be an automated step that happens during 158N1B after the color is chosen.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14292,7 +14292,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::transferCardFromTo($card, $player_id, 'hand');
 
             // "Return all cards of the drawn color from your board"
-            // TODO(ARTIFACTS): Make this a bulk operation instead of an interaction.
+            // TODO(#280): Make this an automatic operation instead of an interaction.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14540,7 +14540,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 206, Artifacts age 10: Higgs Boson
         case "206N1A":
             // "Transfer all cards on your board to your score pile"
-            // TODO(ARTIFACTS): Do a bulk transfer instead of moving cards one at a time.
+            // TODO(ARTIFACTS): Do a bulk transfer (like Fission) instead of moving cards one at a time.
             $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
             for ($i = 0; $i < 5 ; $i++){
                 $pile = $piles[$i];
@@ -15430,7 +15430,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                 
-                // id 121, Artifacts age 1: Xianrendong Shards    
+                // id 121, Artifacts age 1: Xianrendong Shards
                 case "121N1A":
                     // Store IDs of revealed cards so that we are later able to see if the scored cards had the same color.
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
@@ -15440,8 +15440,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "121N1B":
-                    // TODO(ARTIFACTS): There's currently a bug here where some of these variables could be holding stale card IDs from when an opponent
-                    // executed the card. We should consider re-initializing these at the start of 121N1.
+                    // TODO(#281): There's currently a bug here where some of these variables could be holding stale card IDs from when an opponent
+                    // executed the card. We should initialize these at the start of 121N1.
                     $revealed_card_ids = array(self::getGameStateValue('card_id_1'), self::getGameStateValue('card_id_2'), self::getGameStateValue('card_id_3'));
 
                     // "Tuck the other"
@@ -15534,7 +15534,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "124N1B":
-                    // TODO(ARTIFACTS): There's a bug here. We should use a '$n > 0' check instead so that we don't read a stale value from opponents using this card.
+                    // TODO(#282): There's a bug here. We should use a '$n > 0' check instead so that we don't read a stale value from opponents using this card.
                     $melded_color = self::getGameStateValue('color_last_selected');
                     if ($melded_color >= 0) { // "If you (melded a card)"
                         self::splayLeft($player_id, $player_id, $melded_color); // "Splay that color left"
@@ -16810,7 +16810,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1A":
-                // TODO(ARTIFACTS): There are bug ing here because we are making an assumption that cards were
+                // TODO(#283): There are bugs in here because we are making an assumption that cards were
                 // melded. When that assumption is broken, id_last_selected could be stale.
                 if (self::getAuxiliaryValue() == -1) {
                     // Log the card that is melded first
