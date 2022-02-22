@@ -9342,6 +9342,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Meld your bottom card of the drawn card's color"
                 $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
                 if ($number_of_cards > 1) {
+                    // TODO(#217): Use meld from bottom functionality once it exists.
                     $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
                     $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
                     $melded_card = self::transferCardFromTo($revealed_card, $player_id, 'board');
@@ -9353,7 +9354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1":
-                $step_max = 3; // --> 3 interactions: see B
+                $step_max = 3;
                 break;
 
             // id 127, Artifacts age 2: Chronicle of Zuo
@@ -9377,7 +9378,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 128, Artifacts age 2: Babylonian Chronicles
             case "128C1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "128N1":
@@ -9405,27 +9406,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1":
                 self::setAuxiliaryValue(-1);
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 131, Artifacts age 2: Holy Grail
             case "131N1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
 
             // id 132, Artifacts age 2: Terracotta Army
             case "132C1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "132N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 133, Artifacts age 2: Dead Sea Scrolls
             case "133N1":
                 // "Draw an Artifact of value equal to the value of your highest top card"
-                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', false, 1);
+                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 1);
                 break;
 
             // id 134, Artifacts age 2: Cyrus Cylinder
@@ -12834,24 +12835,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "126N1C":
             // Choose an opponent to transfer the other card to
-            if (self::getGameStateValue('release_version') >= 1) {
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => false,
-                    
-                    'choose_player' => true,
-                    'players' => self::getActiveOpponents($player_id)
-                );
-            } else {
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => false,
-
-                    'choose_opponent' => true
-                );
-            }
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_player' => true,
+                'players' => self::getActiveOpponents($player_id)
+            );
             break;
         
         // id 128, Artifacts age 2: Babylonian Chronicles
@@ -12868,7 +12859,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'with_icon' => 4, // tower
-                'color' => array(0,2,3,4) // non-red
+                'color' => array(0, 2, 3, 4) // non-red
             );
             break;
 
@@ -12885,7 +12876,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
                  
-                'type' => array(1) // Artifact cards
+                'type' => array(1) // Artifact
             );
             break;
 
@@ -12920,6 +12911,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "131N1B":
+            // TODO(ARTIFACTS): There is a bug here because we are making the assumption that a card was returned from hand.
             $age_selected = self::getGameStateValue('age_last_selected');
             // "Claim an achievement of matching value, ignoring eligibility"
             $options = array(
@@ -16818,16 +16810,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1A":
+                // TODO(ARTIFACTS): There are bug ing here because we are making an assumption that cards were
+                // melded. When that assumption is broken, id_last_selected could be stale.
                 if (self::getAuxiliaryValue() == -1) {
                     // Log the card that is melded first
                     $card_id = self::getGameStateValue('id_last_selected');
                     self::setAuxiliaryValue($card_id);
                     self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'board');
-                }
-                else {
+                } else {
                     // If you melded two of the same color and they are of different types
                     $first_card = self::getCardInfo(self::getAuxiliaryValue());
-                    
                     $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                     self::transferCardFromTo($second_card, $player_id, 'board');
                     if ($first_card['type'] !== $second_card['type'] &&
@@ -16837,7 +16829,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::executeDraw($player_id, 2, 'score');
                         }
                     }
-                    self::setAuxiliaryValue(-1);
                 }
                 break;
 
