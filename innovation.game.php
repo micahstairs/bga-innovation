@@ -9315,9 +9315,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 121, Artifacts age 1: Xianrendong Shards
             case "121N1":
-                self::setGameStateValue('card_id_1', -2); // init states
-                self::setGameStateValue('card_id_1', -2);
-                self::setGameStateValue('card_id_1', -2);
+                self::setGameStateValue('card_id_1', -1);
+                self::setGameStateValue('card_id_2', -1);
+                self::setGameStateValue('card_id_3', -1);
                 $step_max = 2;
                 break;
 
@@ -12673,20 +12673,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         case "118C1B":
-            // "If you do, transfer an achievement of the same value from your achievements to mine"
-            $returned_age = self::getGameStateValue('age_last_selected');
-            if ($returned_age >= 1) {
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => false,
-                    
-                    'owner_from' => $player_id,
-                    'location_from' => 'achievements',
-                    'owner_to' => $launcher_id,
-                    'location_to' => 'achievements'
-                );
-            }
+            // "Transfer an achievement of the same value from your achievements to mine"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'achievements',
+                'owner_to' => $launcher_id,
+                'location_to' => 'achievements'
+            );
             break;
         
         // id 120, Artifacts age 1: Lurgan Canoe
@@ -12913,14 +12910,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "131N1B":
-            $age_selected = self::getGameStateValue('age_last_selected');
             // "Claim an achievement of matching value, ignoring eligibility"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                'age' => $age_selected,
+                'age' => self::getGameStateValue('age_last_selected'),
                 'owner_from' => 0,
                 'location_from' => 'achievements',
                 'owner_to' => $player_id,
@@ -13556,7 +13552,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 155, Artifacts age 5: Boerhavve Silver Microscope
         case "155N1A":
             // "Return the lowest card in your hand"
-            $min_hand_age = self::getMinAgeInHand($player_id);
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13567,7 +13562,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => $min_hand_age
+                'age' => self::getMinAgeInHand($player_id)
             );
             break;
 
@@ -15447,8 +15442,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "121N1B":
-                    // TODO(#281): There's currently a bug here where some of these variables could be holding stale card IDs from when an opponent
-                    // executed the card. We should initialize these at the start of 121N1.
                     $revealed_card_ids = array(self::getGameStateValue('card_id_1'), self::getGameStateValue('card_id_2'), self::getGameStateValue('card_id_3'));
 
                     // "Tuck the other"
@@ -15541,11 +15534,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "124N1B":
-                    if($n > 0) {
-                        $melded_color = self::getGameStateValue('color_last_selected');
-                        if ($melded_color >= 0) { // "If you (melded a card)"
-                            self::splayLeft($player_id, $player_id, $melded_color); // "Splay that color left"
-                        }
+                    // "If you (melded a card)"
+                    if ($n > 0) {
+                        // "Splay that color left"
+                        self::splayLeft($player_id, $player_id, self::getGameStateValue('color_last_selected')); 
                     }
                     break;
 
@@ -15862,23 +15854,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 155, Artifacts age 5: Boerhavve Silver Microscope
                 case "155N1A":
-                    if($n > 0) {
+                    if ($n > 0) {
                         self::setAuxiliaryValue(self::getGameStateValue('age_last_selected'));
-                    }
-                    else {
+                    } else {
                         self::setAuxiliaryValue(0);
                     }
                     break;
 
                 case "155N1B":
-                    if($n > 0) {
+                    $first_age = self::getAuxiliaryValue();
+                    if ($n > 0) {
                         $second_age = self::getFaceupAgeLastSelected();
-                    }
-                    else {
+                    } else {
                         $second_age = 0;
                     }
                     
-                    $first_age = self::getAuxiliaryValue();
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
                     self::executeDraw($player_id, $first_age + $second_age, 'score');
                     break;
