@@ -12823,8 +12823,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
 
-                'card_id_1' => self::getGameStateValue('card_id_1'),
-                'card_id_2' => self::getGameStateValue('card_id_2')
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2
             );
             break;
 
@@ -13269,8 +13269,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'card_id_1' => self::getGameStateValue('card_id_1'),
-                'card_id_2' => self::getGameStateValue('card_id_2')
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2
             );            
             break;
 
@@ -13286,8 +13286,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'revealed',
 
-                'card_id_1' => self::getGameStateValue('card_id_1'),
-                'card_id_2' => self::getGameStateValue('card_id_2')
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2
             );
             break;
 
