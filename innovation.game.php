@@ -14292,7 +14292,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::transferCardFromTo($card, $player_id, 'hand');
 
             // "Return all cards of the drawn color from your board"
-            // TODO(#280): Make this an automatic operation instead of an interaction.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
