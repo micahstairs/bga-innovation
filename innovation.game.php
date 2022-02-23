@@ -15852,7 +15852,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     
                     // "Draw and score a card of value equal to the sum of the values of the cards returned"
-                    self::executeDraw($player_id, $first_age + $second_age, 'score');
+                    $sum = $first_age + $second_age;
+                    self::notifyGeneralInfo(clienttranslate('The values sum to ${number}'), array('number' => $sum));
+                    self::executeDraw($player_id, $sum, 'score');
                     break;
                     
                 // id 156, Artifacts age 5: Principia
@@ -15915,10 +15917,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "165N1B":
                     // "If you returned two cards and their values sum to ten, draw and score a 10"
                     $first_value = self::getAuxiliaryValue();
-                    if ($first_value > 0 && $n > 0) {
-                        if ($first_value + self::getFaceupAgeLastSelected() == 10) {
-                            self::executeDraw($player_id, 10, 'score');
-                        }
+                    if ($n > 0) {
+                        $second_value = self::getFaceupAgeLastSelected();
+                    } else {
+                        $second_value = 0;
+                    }
+                    $sum = $first_value + $second_value;
+                    self::notifyGeneralInfo(clienttranslate('The values sum to ${number}'), array('number' => $sum));
+                    if ($sum == 10) {
+                        self::executeDraw($player_id, 10, 'score');
                     }
                     break;
 
