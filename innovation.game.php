@@ -9535,23 +9535,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 145, Artifacts age 4: Petition of Right
             case "145C1":
-                $number = 0;
-                $no_top_card_with_tower = true;
+                $num_cards = 0;
                 for ($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null && self::hasRessource($top_card, 4)) { // This top card is present, with a tower on it
-                        $number++;
+                        $num_cards++;
                     }
                 }
-                if ($number == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top card with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top cards with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top cards with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'tower' => $tower));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top card(s) with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($num_cards), 'tower' => $tower));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card(s) with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($num_cards), 'tower' => $tower));
+                self::setAuxiliaryValue($num_cards);
+                if ($num_cards > 0) {
+                    $step_max = 1;
                 }
-                self::setAuxiliaryValue($number);
-                $step_max = 1; // --> 1 interaction
                 break;
 
             // id 146, Artifacts age 4: Delft Pocket Telescope
