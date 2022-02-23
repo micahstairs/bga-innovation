@@ -9567,12 +9567,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 149, Artifacts age 4: Molasses Reef Caravel
             case "149N1":
-                $step_max = 4; // --> 4 interactions
+                $step_max = 4;
                 break;
 
             // id 150, Artifacts age 4: Hunt-Lenox Globe
             case "150N1":
-                $step_max = 1; // --> 1 interaction
+                $step_max = 1;
                 break;
             
             // id 151, Artifacts age 4: Moses
@@ -9593,7 +9593,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "151N1":
-                $step_max = 1; // --> 1 interaction
+                $step_max = 1;
                 break;
 
             // id 152, Artifacts age 4: Mona Lisa
@@ -9603,7 +9603,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 153, Artifacts age 4: Cross of Coronado
             case "153N1":
-                // "Reveal your hand."
+                // "Reveal your hand"
+                // TODO(#105): Use a bulk reveal instead.
                 $cards = self::getCardsInHand($player_id);
                 foreach ($cards as $card) {
                     self::transferCardFromTo($card, $player_id, 'revealed');
@@ -13305,14 +13306,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 147, Artifacts age 4: East India Company Charter
         case "147N1B":
             // "Return all cards of that value from all score piles"
             $value_to_return = self::getAuxiliaryValue();
             $num_players_who_returned = 0;
-            $player_ids = self::getAllActivePlayerIds();
-            foreach($player_ids as $any_player_id) {
-                $score_pile = self::getCardsInLocation($any_player_id, 'score');
+            foreach (self::getAllActivePlayerIds() as $id) {
+                $score_pile = self::getCardsInLocation($id, 'score');
                 foreach ($score_pile as $card) {
                     if ($card['age'] == $value_to_return) {
                         $num_players_who_returned++;
@@ -13338,6 +13337,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 148, Artifacts age 4: Tortugas Galleon
         case "148C1A":
             // "Transfer all the highest cards from your score pile to my score pile"
+            // TODO(ARTIFACTS): This shouldn't be an interaction. It should be automated.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -13364,6 +13364,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
 
+                // TODO(ARTIFACTS): Once the previous part is automated we will need to use the auxiliary value instead of age_last_selected.
                 'age' => self::getGameStateValue('age_last_selected')
             );
             break;
@@ -13491,7 +13492,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
                 
-                'with_icon' => 1, /* tower */
+                'with_icon' => 1, /* crown */
 
                 'score_keyword' => true
             );
@@ -13532,7 +13533,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
                 
-                'color' => array(self::getGameStateValue('color_last_selected')),
+                'color' => array(self::getAuxiliaryValue()),
 
                 'score_keyword' => true
             );
@@ -15794,10 +15795,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 152, Artifacts age 4: Mona Lisa
                 case "152N1B":
                     // "Draw five 4s, then reveal your hand"
+                    // TODO(#105): We should draw the cards to the player's hand and then use a bulk reveal.
                     for ($i = 0; $i < 5; $i++) {
                         self::executeDraw($player_id, 4, 'revealed');
                     }
-
                     foreach (self::getCardsInHand($player_id) as $card) {
                         self::transferCardFromTo($card, $player_id, 'revealed');
                     }
@@ -15821,22 +15822,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Put all cards back in hand
                     $cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($cards as $card) {
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                    }
-                    break;
-                    
-                // id 153, Artifacts age 4: Cross of Coronado
-                case "153N1A":
-                	// "If you have exactly five cards and five colors in your hand, you win"
-                    $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
-                    if (count(array_diff($card_count_by_color, array(1))) == 0) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        self::setGameStateValue('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
-                        throw new EndOfGame();
-                    }
-                    foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
                     break;
@@ -16846,7 +16831,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "152N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setGameStateValue('color_last_selected', $choice);
+                self::setAuxiliaryValue($choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
