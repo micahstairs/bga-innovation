@@ -9681,13 +9681,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "159N1":
                 do {
                     $card = self::executeDraw($player_id, 5, 'board'); // "Draw and meld a 5"
-                } while($card['color'] != 2); // // "If the drawn card is not green, repeat this effect"
+                } while ($card['color'] != 2); // // "If the drawn card is not green, repeat this effect"
                 break;
 
             // id 160, Artifacts age 5: Hudson's Bay Company Archives
             case "160N1":
                 // "Score the bottom card of every color on your board"
-                for($color = 0; $color< 5; $color++) {
+                for ($color = 0; $color< 5; $color++) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
                     if ($card !== null) {
                         self::scoreCard($card, $player_id);
@@ -9717,6 +9717,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($card['color'] == 1) { // "If it is red"
                     $step_max = 1;
                 }
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
  
@@ -13601,7 +13602,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "156N1A":
             // Record the values of all non-blue top cards.
             $ages_on_top = array();
-            for($color = 1; $color < 5; $color++) { // non-blue
+            for ($color = 1; $color < 5; $color++) { // non-blue
                 $top_card = self::getTopCardOnBoard($player_id, $color);
                 if ($top_card !== null) {
                     $ages_on_top[] = $top_card['faceup_age'];
@@ -13619,7 +13620,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'color' => array(1,2,3,4) // non-blue
+                'color' => array(1, 2, 3, 4) // non-blue
             );
             break;
 
@@ -15839,7 +15840,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $ages_on_top = self::getBase16ArrayFromValue(self::getAuxiliaryValue());
                     sort($ages_on_top);
                     // "For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order"
-                    foreach($ages_on_top as $card_age) {
+                    foreach ($ages_on_top as $card_age) {
                         self::executeDraw($player_id, $card_age + 1, 'board');
                     }
                     break;
@@ -16792,8 +16793,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1A":
-                // TODO(#283): There are bugs in here because we are making an assumption that cards were
-                // melded. When that assumption is broken, id_last_selected could be stale.
                 if (self::getAuxiliaryValue() == -1) {
                     // Log the card that is melded first
                     $card_id = self::getGameStateValue('id_last_selected');
