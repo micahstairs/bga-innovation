@@ -10064,7 +10064,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "197N1":
                 // "If you have a top card on your board with a demand effect, draw a 10"
                 $top_cards = self::getTopCardsOnBoard($player_id);
-                foreach($top_cards as $card){
+                foreach ($top_cards as $card){
                     if ($card['has_demand'] == true) {
                         self::executeDraw($player_id, 10);
                         break;
@@ -10148,7 +10148,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "203N1":
                 // "Execute the non-demand effects of your top blue card, without sharing"
                 $top_blue_card = self::getTopCardOnBoard($player_id, 0);
-                if ($top_blue_card != null) {
+                if ($top_blue_card !== null) {
                     self::setAuxiliaryValue(0);
                     self::executeNonDemandEffects($top_blue_card);
                 }
@@ -14465,6 +14465,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Splay up a color on your board
             $options = array(
                 'player_id' => $player_id,
+                // TODO(ARTIFACTS): We can probably remove part B of the interaction by changing 'n' to 2.
                 'n' => 1,
                 'can_pass' => false,
                 
@@ -16195,7 +16196,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 case "198C1B":
                     // "If you do neither, I win"
-                    if ($n == 0){
+                    if ($n == 0) {
                         self::notifyGeneralInfo(clienttranslate('Neither transfer took place.'));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Velcro Shoes');
