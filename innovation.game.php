@@ -13329,7 +13329,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 148, Artifacts age 4: Tortugas Galleon
         case "148C1A":
             // "Transfer all the highest cards from your score pile to my score pile"
-            // TODO(ARTIFACTS): This shouldn't be an interaction. It should be automated.
+            // TODO(#291): This shouldn't be an interaction. It should be automated.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -13356,7 +13356,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
 
-                // TODO(ARTIFACTS): Once the previous part is automated we will need to use the auxiliary value instead of age_last_selected.
+                // TODO(#291): Once the previous part is automated we will need to use the auxiliary value instead of age_last_selected.
                 'age' => self::getGameStateValue('age_last_selected')
             );
             break;
@@ -13961,7 +13961,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 173, Artifacts age 6: Moonlight Sonata
         case "173N1A":
             // "Choose a color on your board having the highest top card"
-            // TODO(ARTIFACTS): There's a bug here because we assume there's at least one color in the
+            // TODO(#292): There's a bug here because we assume there's at least one color in the
             // array. We shouldn't advance to this interaction unless getMaxAgeOnBoardTopCards is at
             // least 1.
             $max_age = self::getMaxAgeOnBoardTopCards($player_id);
