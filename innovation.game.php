@@ -13710,7 +13710,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 162, age 5: The Daily Courant
         case "162N1A":
-            // "Draw a card of any value"
+            // Choose value to draw
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13721,7 +13721,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "162N1B":
-            // Return the card 
+            // Return the card to top of deck
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13732,7 +13732,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'bottom_to' => false, // put on top
+                'bottom_to' => false, // Place on top of deck
                 
                 'card_id_1' => self::getGameStateValue('card_id_1')
             );       
@@ -15895,7 +15895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 162, Artifacts age 5: The Daily Courant
                 case "162N1A":
-                    // "Draw a card of any value then place it on top of the draw pile of its age"
+                    // "Draw a card of any value"
                     $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'hand');
                     self::setGameStateValue('card_id_1', $card['id']);
                     break;
