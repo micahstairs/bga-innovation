@@ -13096,7 +13096,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "139N1B":
             // "Score a number of cards from your hand equal to the value of the card returned"
-            // TODO(ARTIFACTS): There's a bug here because we are assuming a card was returned.
+            // TODO(#289): There's a bug here because we are assuming a card was returned.
             $age_selected = self::getGameStateValue('age_last_selected');
             $options = array(
                 'player_id' => $player_id,
