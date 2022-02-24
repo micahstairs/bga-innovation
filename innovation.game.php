@@ -9763,7 +9763,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 171, Artifacts age 6: Stamp Act
             case "171C1":
                 $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                if ($top_yellow_card != null) {
+                if ($top_yellow_card !== null) {
                     self::setAuxiliaryValue($top_yellow_card['age']);
                     $step_max = 1;
                 }
@@ -13918,7 +13918,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "171C1B":
-            // // "Return a card from your score pile of value equal to the top green card on your board"
+            // "Return a card from your score pile of value equal to the top green card on your board"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13936,11 +13936,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 173, Artifacts age 6: Moonlight Sonata
         case "173N1A":
             // "Choose a color on your board having the highest top card"
+            // TODO(ARTIFACTS): There's a bug here because we assume there's at least one color in the
+            // array. We shouldn't advance to this interaction unless getMaxAgeOnBoardTopCards is at
+            // least 1.
             $max_age = self::getMaxAgeOnBoardTopCards($player_id);
             $color_array = array();
             for ($color = 0; $color < 5; $color++) {
                 $top_card = self::getTopCardOnBoard($player_id, $color);
-                if ($top_card != null && $top_card['age'] == $max_age) {
+                if ($top_card !== null && $top_card['age'] == $max_age) {
                     $color_array[] = $color;
                 }
             }
@@ -15743,14 +15746,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
 
                     // Return revealed cars from your hand
-                    if ($card_1 != null) {
+                    if ($card_1 !== null) {
                         self::transferCardFromTo($card_1, 0, 'deck');
                     }
-                    if ($card_2 != null) {
+                    if ($card_2 !== null) {
                         self::transferCardFromTo($card_2, 0, 'deck');
                     }
 
-                    if ($card_1 != null && $card_2 != null) {
+                    // TODO(ARTIFACTS): Figure out if a 1 should be drawn if no cards were returned.
+                    if ($card_1 !== null && $card_2 !== null) {
                         // "If they have the same value, draw a card of value one higher"
                         if ($card_1['faceup_age'] == $card_2['faceup_age']) {
                             self::executeDraw($player_id, $card_1['faceup_age'] + 1);
@@ -15910,7 +15914,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "171C1A":
                     if ($n > 0) { // "If you do"
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card != null) {
+                        if ($top_green_card !== null) {
                             self::setAuxiliaryValue($top_green_card['age']);
                             self::incrementStepMax(1);
                         }
