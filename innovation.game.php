@@ -15753,7 +15753,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::transferCardFromTo($card_2, 0, 'deck');
                     }
 
-                    // TODO(ARTIFACTS): Figure out if a 1 should be drawn if no cards were returned.
                     if ($card_1 !== null && $card_2 !== null) {
                         // "If they have the same value, draw a card of value one higher"
                         if ($card_1['faceup_age'] == $card_2['faceup_age']) {
