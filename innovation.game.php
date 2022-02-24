@@ -9710,7 +9710,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 162, Artifacts age 5: The Daily Courant
             case "162N1":
-                $step_max = 2;
+                $step_max = 3;
                 break;
 
             // id 163, Artifacts age 5: Sandham Room Cricket Bat
@@ -13702,7 +13702,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 162, age 5: The Daily Courant
         case "162N1A":
-            // "Draw a card of any value"
+            // Choose value to draw
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13711,8 +13711,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'choose_value' => true
             );       
             break;
-            
+
         case "162N1B":
+            // Return the card to top of deck
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'bottom_to' => false, // Place on top of deck
+                
+                'card_id_1' => self::getGameStateValue('card_id_1')
+            );       
+            break;
+            
+        case "162N1C":
             // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
             $options = array(
                 'player_id' => $player_id,
@@ -15885,12 +15903,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 162, Artifacts age 5: The Daily Courant
                 case "162N1A":
-                    // "Draw a card of any value then place it on top of the draw pile of its age"
+                    // "Draw a card of any value"
                     $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'hand');
-                    self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
+                    self::setGameStateValue('card_id_1', $card['id']);
                     break;
 
-                case "162N1B":
+                case "162N1C":
                     // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
                     self::executeAllEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
                     break;
