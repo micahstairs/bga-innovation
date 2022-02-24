@@ -95,7 +95,7 @@ class Innovation extends Table
             'card_id_2' => 70,
             'card_id_3' => 71,
             'require_achievement_eligibility' => 72,
-            'require_demand_effect' => 73,
+            'has_demand_effect' => 73,
             'has_splay_direction' => 74,
             'owner_last_selected' => 75,
             'type_array' => 76,
@@ -404,7 +404,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('owner_last_selected', -1); // Owner of the last selected card
         self::setGameStateInitialValue('score_keyword', -1); // 1 if the action with the chosen card will be scoring, else 0
         self::setGameStateInitialValue('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
-        self::setGameStateInitialValue('require_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
+        self::setGameStateInitialValue('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         self::setGameStateInitialValue('has_splay_direction', -1); // List of splay directions encoded in a single value
         
         // Flags specific to some dogmas
@@ -4896,8 +4896,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('require_achievement_eligibility', $rewritten_options)) {
             $rewritten_options['require_achievement_eligibility'] = false;
         }
-        if (!array_key_exists('require_demand_effect', $rewritten_options)) {
-            $rewritten_options['require_demand_effect'] = false;
+        if (!array_key_exists('has_demand_effect', $rewritten_options)) {
+            $rewritten_options['has_demand_effect'] = false;
         }
         if (!array_key_exists('has_splay_direction', $rewritten_options)) {
             $rewritten_options['has_splay_direction'] = array(0, 1, 2, 3); // Unsplayed, left, right, or up
@@ -4937,7 +4937,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'score_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
-            case 'require_demand_effect':
+            case 'has_demand_effect':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
@@ -5049,7 +5049,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Condition for whether it has a demand effect
         $condition_for_demand_effect = "TRUE";
-        if (self::getGameStateValue('require_demand_effect') == 1) {
+        if (self::getGameStateValue('has_demand_effect') == 1) {
             $condition_for_demand_effect = "has_demand = TRUE";
         }
         
@@ -6963,7 +6963,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $age_max = self::getGameStateValue("age_max");
             $with_icon = self::getGameStateValue("with_icon");
             $without_icon = self::getGameStateValue("without_icon");
-            $with_demand_effect = self::getGameStateValue("require_demand_effect");
+            $with_demand_effect = self::getGameStateValue("has_demand_effect");
         }
         
         // Number of cards
@@ -7598,7 +7598,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setGameStateValue('owner_last_selected', -1);
             self::setGameStateValue('score_keyword', -1);
             self::setGameStateValue('require_achievement_eligibility', -1);
-            self::setGameStateValue('require_demand_effect', -1);
+            self::setGameStateValue('has_demand_effect', -1);
             self::setGameStateValue('has_splay_direction', -1);
 
             // End of this player action
@@ -12509,7 +12509,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'require_demand_effect' => true
+                'has_demand_effect' => true
             );
             break;
         
@@ -12526,7 +12526,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
 
                 'color' => array(1,2,3,4), // non-blue
-                'require_demand_effect' => true,
+                'has_demand_effect' => true,
 
                 'score_keyword' => true
             );
@@ -14423,7 +14423,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'score',
 
-                'require_demand_effect' => true
+                'has_demand_effect' => true
             );
             break;
 
