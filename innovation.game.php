@@ -10211,8 +10211,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $win_condition_met = true;
                 $cards_in_my_score_pile = self::countCardsInLocation($player_id, 'score');
                 $players = self::loadPlayersBasicInfos();
-                foreach ($players as $any_player_id => $player) {
-                    if ($player_id != $any_player_id && self::countCardsInLocation($any_player_id, 'score') >= $cards_in_my_score_pile) {
+                foreach ($players as $id => $player) {
+                    if ($player_id != $id && self::countCardsInLocation($id, 'score') >= $cards_in_my_score_pile) {
                         $win_condition_met = false;
                     }
                 }
@@ -10233,8 +10233,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "If you have the most cards of a color showing on your board out of all colors on all boards, you win"
                 $win_condition_met = true;
                 $max_visible_card_count = self::getSizeOfMaxVisiblePileOnBoard($player_id);
-                foreach (self::getAllActivePlayerIds() as $any_player_id) {
-                    if ($any_player_id != $player_id && self::getSizeOfMaxVisiblePileOnBoard($any_player_id) > $max_visible_card_count) {
+                foreach (self::getAllActivePlayerIds() as $id) {
+                    if ($id != $player_id && self::getSizeOfMaxVisiblePileOnBoard($id) > $max_visible_card_count) {
                         $win_condition_met = false;
                         break;
                     }
@@ -16327,6 +16327,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 216, Relic age 4: Complex Numbers
                 case "216N1A":
                     // "If you do"
                     if ($n > 0) {
@@ -16337,12 +16338,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
+                // id 217, Relic age 5: Newton-Wickins Telescope
                 case "217N1A":
-                    // "If you do, draw and meld a card of value equal to the number of cards returned."
+                    // "If you do, draw and meld a card of value equal to the number of cards returned"
                     if ($n > 0) {
                         $card = self::executeDraw($player_id, $n, 'board');
                         
-                        // "If the melded card has a clock, return it."
+                        // "If the melded card has a clock, return it"
                         if (self::countIconsOnCard($card, 6) > 0) {
                             self::transferCardFromTo($card, $player_id, 'deck');
                         }
