@@ -9671,9 +9671,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "158N1":
                 $number_of_cards_in_score_pile = self::countCardsInLocation($player_id, 'score');
                 if ($number_of_cards_in_score_pile == 0) {
-                    // Only do interactions B and C
+                    // Only do interaction B
                     $step = 2;
-                    $step_max = 3;
+                    $step_max = 2;
                 } else {
                     // Only do interaction A
                     $step_max = 1;
@@ -13056,7 +13056,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 138, Artifacts age 3: Mjolnir Amulet
         case "138C1A":
-            // "I compel you to choose a top card on your board!"
+            // "I compel you to choose a top card on your board"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13064,25 +13064,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score'
-             );
-            break;
-            
-        case "138C1B":
-            // "Transfer all cards of that card's color from your board to my score pile!"
-            // TODO(#278): This shouldn't be an interaction. We need to automate it.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-                
-                'color' => array(self::getGameStateValue('color_last_selected'))
-             );
+                'location_to' => 'none'
+            );
             break;
             
         // id 139, Artifacts age 3: Philosopher's Stone
@@ -13651,24 +13634,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'choose_color' => true
             );
-            break;
-            
-        case "158N1C":
-            // "And score all cards of that color from your board"
-            // TODO(#279): This shouldn't be an interaction. It should be an automated step that happens during 158N1B after the color is chosen.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'color' => array(self::getAuxiliaryValue()),
-
-                'score_keyword' => true
-            );            
             break;
             
         // id 160, Artifacts age 5: Hudson's Bay Company Archives
@@ -15609,7 +15574,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 138, Artifacts age 3: Mjolnir Amulet
                 case "138C1A":
                     if ($n > 0) {
-                        self::incrementStepMax(1);
+                        // "Transfer all cards of that card's color from your board to my score pile"
+                        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
+                        $pile = $board[self::getGameStateValue('color_last_selected')];
+                        for ($i = count($pile) - 1; $i >= 0; $i--) {
+                            self::transferCardFromTo($pile[$i], $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
+                        }
                     }
                     break;
                 
@@ -15882,6 +15852,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order"
                     foreach ($ages_on_top as $card_age) {
                         self::executeDraw($player_id, $card_age + 1, 'board');
+                    }
+                    break;
+
+                // id 158, Artifacts age 5: Ship of the Line Sussex
+                case "158N1B":
+                    // "Score all cards of that color from your board"
+                    $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
+                    $pile = $board[self::getAuxiliaryValue()];
+                    for ($i = count($pile) - 1; $i >= 0; $i--) {
+                        self::scoreCard($pile[$i], $player_id);
                     }
                     break;
 
