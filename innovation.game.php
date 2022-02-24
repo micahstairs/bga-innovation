@@ -9668,7 +9668,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "158N1":
                 $number_of_cards_in_score_pile = self::countCardsInLocation($player_id, 'score');
                 if ($number_of_cards_in_score_pile == 0) {
-                    // Only do interactions B
+                    // Only do interaction B
                     $step = 2;
                     $step_max = 2;
                 } else {
@@ -13059,7 +13059,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 138, Artifacts age 3: Mjolnir Amulet
         case "138C1A":
-            // "I compel you to choose a top card on your board!"
+            // "I compel you to choose a top card on your board"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -13067,9 +13067,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'owner_to' => 0,
                 'location_to' => 'none'
-             );
+            );
             break;
             
         // id 139, Artifacts age 3: Philosopher's Stone
@@ -15549,12 +15548,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 138, Artifacts age 3: Mjolnir Amulet
                 case "138C1A":
                     if ($n > 0) {
-                        // "Transfer all cards of that card's color from your board to my score pile!"
+                        // "Transfer all cards of that card's color from your board to my score pile"
                         $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                         $pile = $board[self::getGameStateValue('color_last_selected')];
-                        for($p=0; $p < count($pile); $p++) {
-                            $card = self::getCardInfo($pile[$p]['id']);
-                            self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/false, /*score_keyword=*/false); 
+                        for ($i = count($pile) - 1; $i >= 0; $i--) {
+                            self::transferCardFromTo($pile[$i], $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
                         }
                     }
                     break;
@@ -15818,12 +15816,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 158, Artifacts age 5: Ship of the Line Sussex
                 case "158N1B":
-                    // "score all cards of that color from your board."
+                    // "Score all cards of that color from your board"
                     $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                     $pile = $board[self::getAuxiliaryValue()];
-                    for($p=0; $p < count($pile); $p++) { 
-                        $card = self::getCardInfo($pile[$p]['id']);
-                        self::scoreCard($card, $player_id);
+                    for ($i = count($pile) - 1; $i >= 0; $i--) {
+                        self::scoreCard($pile[$i], $player_id);
                     }
                     break;
 
