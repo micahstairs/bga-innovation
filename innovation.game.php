@@ -9818,7 +9818,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Splay up the color of the tucked card"
                 self::splayUp($player_id, $player_id, $card['color']);
                 //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
-                self::executeDraw($player_id, self::countVisibleCards($player_id, $card['color']), 'score');
+                $visible_card_count = self::countVisibleCards($player_id, $card['color']);
+                self::notifyPlayer($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${your} board.'), array(
+                    'number' => $visible_card_count,
+                    'color' => self::getColorInClear($card['color']),
+                    'your' => 'your')
+                );
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${player_name}\'s board.'), array(
+                    'number' => $visible_card_count,
+                    'color' => self::getColorInClear($card['color']),
+                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id))
+                );
+                self::executeDraw($player_id, $visible_card_count, 'score');
                 break;
 
             // id 177, Artifacts age 7: Submarine H. L. Hunley
@@ -9831,7 +9842,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::transferCardFromTo($bottom_card, $player_id, 'revealed');
 
                 // "If the revealed card is a 1"
-                if ($bottom_card['age'] == 1) {
+                if ($bottom_card['faceup_age'] == 1) {
                     $step_max = 1;
                     self::setAuxiliaryValue($bottom_card['color']);
                 }
@@ -9856,7 +9867,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 180, Artifacts age 7: Hansen Writing Ball
             case "180C1":
-                // "I compel you to draw four 7's!"
+                // "I compel you to draw four 7s"
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
@@ -9916,12 +9927,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 184, Artifacts age 7: The Communist Manifesto
             case "184N1":
-                $step_max = 2;
                 // "For each player in the game, draw and reveal a 7"
                 foreach (self::getAllActivePlayerIds() as $any_player_id) {
                     self::executeDraw($player_id, 7, 'revealed');
                 }
                 self::setGameStateValueFromArray('player_array', self::getAllActivePlayers());
+                $step_max = 2;
                 break;
 
             // id 185, Artifacts age 8: Parnell Pitch Drop
@@ -14067,6 +14078,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              );
             break;
             
+        // id 178, Artifacts age 7: Jedlik's Electromagnetic Self-Rotor
         case "178N1A":
             // "Claim an achievement of value 8 if it is available, ignoring eligibility"
             $options = array(
@@ -14114,7 +14126,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "180C1B":
-            // "Transfer all cards in your hand to my hand!"
+            // "Transfer all cards in your hand to my hand"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -14188,7 +14200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 183, Artifacts age 7: Roundhay Garden Scene
         case "183N1A":
-            // "Meld the highest card from your score pile."
+            // "Meld the highest card from your score pile"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -16014,9 +16026,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $step = $step - 2;
                             self::incrementStep(-2);
                         }
-
                     }
-                    
                     break;
 
                 // id 179, Artifacts age 7: International Prototype Metre Bar   
@@ -16054,8 +16064,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 183, Artifacts age 7: Roundhay Garden Scene
                 case "183N1A":
+                    // TODO(ARTIFACTS): Figure out if there's a bug here. Should the absence of a card be treated like a 0?
                     if ($n > 0) {
-                        // "Draw and score two cards of value equal to the melded card."
+                        // "Draw and score two cards of value equal to the melded card"
                         $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
                         self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
