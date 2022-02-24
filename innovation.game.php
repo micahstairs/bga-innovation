@@ -16901,8 +16901,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 170, Artifacts age 6: Buttonwood Agreement
             case "170N1A":
                 $colors = self::getValueAsArray($choice);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1}, ${color_2}, and ${color_3}.'), array('i18n' => array('color_1', 'color_2', 'color_3'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1]), 'color_3' => self::getColorInClear($colors[2])));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array('i18n' => array('color_1', 'color_2', 'color_3'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1]), 'color_3' => self::getColorInClear($colors[2])));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1}, ${color_2}, and ${color_3}.'), array(
+                    'i18n' => array('color_1', 'color_2', 'color_3'),
+                    'You' => 'You',
+                    'color_1' => self::getColorInClear($colors[0]),
+                    'color_2' => self::getColorInClear($colors[1]),
+                    'color_3' => self::getColorInClear($colors[2]))
+                );
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array(
+                    'i18n' => array('color_1', 'color_2', 'color_3'),
+                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+                    'color_1' => self::getColorInClear($colors[0]),
+                    'color_2' => self::getColorInClear($colors[1]),
+                    'color_3' => self::getColorInClear($colors[2]))
+                );
                 
                 // "Draw and reveal a 8"
                 $card = self::executeDraw($player_id, 8, 'revealed');
