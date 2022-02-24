@@ -8055,7 +8055,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $no_top_card_with_tower = true;
                 for($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($top_card !== null && self::hasRessource($top_card, 4)) { // This top card is present, with a tower on it
+                    if (self::hasRessource($top_card, 4)) { // This top card has a tower on it
                         $no_top_card_with_tower = false;
                         self::transferCardFromTo($top_card, $launcher_id, 'score');
                     }
@@ -8178,7 +8178,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "37N1":
                 do {
                     $card = self::executeDrawAndTuck($player_id, 3); // "Draw and tuck a 3"
-                } while(self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this dogma effect"
+                } while (self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this dogma effect"
                 break;
             
             // id 38, age 4: Gunpowder
@@ -8408,9 +8408,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getGameStateValue('game_rules') == 1) { // Last edition
                     $colors = array();
                     // Determine colors which top cards with a lightbulb of the player have a value higher than the tops cards of the launcher
-                    for($color=0; $color<5; $color++) {
+                    for ($color = 0; $color < 5; $color++) {
                         $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($player_top_card === null || !self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                        if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
                             continue;
                         }
                         $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
@@ -9541,7 +9541,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $num_cards = 0;
                 for ($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($top_card !== null && self::hasRessource($top_card, 4)) { // This top card is present, with a tower on it
+                    if (self::hasRessource($top_card, 4 /* tower */)) {
                         $num_cards++;
                     }
                 }
@@ -9584,7 +9584,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $no_top_card_with_crown = true;
                 for ($color = 0; $color < 5 ; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($top_card !== null && self::hasRessource($top_card, 1)) { // This top card is present, with a crown on it
+                    if (self::hasRessource($top_card, 1 /* crown */)) {
                         $no_top_card_with_crown = false;
                         self::transferCardFromTo($top_card, $launcher_id, 'score');
                     }
@@ -16603,15 +16603,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($choice == 0) { // No tuck
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                }
-                else { // Draw and tuck
+                } else { // Draw and tuck
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     
                     self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
                     
                     // Make the transfers
-                    for($color=0; $color<5; $color++) {
+                    for ($color = 0; $color < 5; $color++) {
                         $card = self::getTopCardOnBoard($player_id, $color);
                         if ($card !== null && !self::hasRessource($card, 5)) {
                             self::scoreCard($card, $player_id); // "Score all your top cards without a factory"
