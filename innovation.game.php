@@ -9941,8 +9941,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1, 'board');
                 if (self::countIconsOnCard($card, 6) == 3) {
                     // "If the melded card has three clocks, you win"
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 clocks.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 clocks.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 ${clocks}.'), array('You' => 'You', 'clocks' => $clock));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 ${clocks}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'clocks' => $clock));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Parnell Pitch Drop');
                     throw new EndOfGame();
@@ -9966,7 +9966,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Score all bottom cards from your board"
                 for ($color = 0; $color < 5; $color++) {
                     $card = self::getBottomCardOnBoard($player_id, $color);
-                    if ($card != null) {
+                    if ($card !== null) {
                         $card = self::scoreCard($card, $player_id);
                     }
                 }
@@ -16131,6 +16131,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
                 case "190N1A":
                     // "Draw and score three cards of the returned card's value"
+                    // TODO(ARTIFACTS): What's the correct thing to do when no cards are returned?
                     $age_to_score = self::getGameStateValue('age_last_selected');
                     self::executeDraw($player_id, $age_to_score, 'score');
                     self::executeDraw($player_id, $age_to_score, 'score');
