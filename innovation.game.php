@@ -12682,6 +12682,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         case "118C1B":
             // "Transfer an achievement of the same value from your achievements to mine"
+            // TODO(#290): This is not obeying "of the same value".
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
