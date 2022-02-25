@@ -3397,12 +3397,14 @@ function (dojo, declare) {
         },
 
         updateResourcesForArtifactOnDisplay: function(player_id, resource_icon, resource_count_delta) {
-            previous_value = this.counter.ressource_count[player_id][resource_icon].getValue();
-            this.counter.ressource_count[player_id][resource_icon].setValue(previous_value + resource_count_delta);
+            console.log(player_id + " " + resource_icon+ " " + resource_count_delta);
+            if (resource_count_delta != 0) {
+                previous_value = this.counter.ressource_count[player_id][resource_icon].getValue();
+                this.counter.ressource_count[player_id][resource_icon].setValue(previous_value + resource_count_delta);
+            }
 
             // If icon count is increasing, then this is the start of the free action
             if (resource_count_delta > 0) {
-
                 for (var icon = 1; icon <= 6; icon++) {
                     opacity = icon == resource_icon ? 1 : 0.5;
                     dojo.query(".player_info .ressource_" + icon).style("opacity", opacity);
@@ -3410,7 +3412,6 @@ function (dojo, declare) {
 
             // If icon count is decreasing, then this is the end of the free action
             } else {
-
                 for (var icon = 1; icon <= 6; icon++) {
                     dojo.query(".player_info .ressource_" + icon).style("opacity", 1);
                 }

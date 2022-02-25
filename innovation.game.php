@@ -1518,8 +1518,8 @@ class Innovation extends Table
         }
         
         // Notify players
-        foreach($this->players as $player_id => $player) {
-            if(in_array($player_id, $player_ids)) {
+        foreach (self::getAllActivePlayerIds() as $player_id) {
+            if (in_array($player_id, $player_ids)) {
                 continue;
             }
             self::notifyPlayer($player_id, $notification_type, $notification_log, $notification_args);
@@ -6045,30 +6045,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function increaseResourcesForArtifactOnDisplay($player_id, $card) {
         // Battleship Yamato does not have any resource symbols
         if ($card['id'] == 188) {
-            return;
+            $resource_icon = null;
+            $resource_count_delta = 0;
+        } else {
+            $resource_icon = $card['dogma_icon'];
+            $resource_count_delta = self::countIconsOnCard($card, $resource_icon);
         }
-        $resource_icon = $card['dogma_icon'];
-        $resource_count_delta = self::countIconsOnCard($card, $resource_icon);
         self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
     }
 
     function decreaseResourcesForArtifactOnDisplay($player_id, $card) {
         // Battleship Yamato does not have any resource symbols
         if ($card['id'] == 188) {
-            return;
+            $resource_icon = null;
+            $resource_count_delta = 0;
+        } else {
+            $resource_icon = $card['dogma_icon'];
+            $resource_count_delta = -self::countIconsOnCard($card, $resource_icon);
         }
-        $resource_icon = $card['dogma_icon'];
-        $resource_count_delta = -self::countIconsOnCard($card, $resource_icon);
         self::updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta);
     }
 
     function updateResourcesForArtifactOnDisplay($player_id, $resource_icon, $resource_count_delta) {
-        self::notifyPlayer($player_id, 'updateResourcesForArtifactOnDisplay', '', array(
-            'player_id' => $player_id,
-            'resource_icon' => $resource_icon,
-            'resource_count_delta' => $resource_count_delta,
-        ));
-        self::notifyAllPlayersBut($player_id, 'updateResourcesForArtifactOnDisplay', '', array(
+        self::notifyAll('updateResourcesForArtifactOnDisplay', '', array(
             'player_id' => $player_id,
             'resource_icon' => $resource_icon,
             'resource_count_delta' => $resource_count_delta,
