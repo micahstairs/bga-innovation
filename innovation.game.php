@@ -15793,6 +15793,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::transferCardFromTo($card_2, 0, 'deck');
                     }
 
+                    // TODO(#295): When no cards are returned from hand, then the two absences are considered to have the same value (but not the same color).
                     if ($card_1 !== null && $card_2 !== null) {
                         // "If they have the same value, draw a card of value one higher"
                         if ($card_1['faceup_age'] == $card_2['faceup_age']) {
@@ -16066,7 +16067,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 183, Artifacts age 7: Roundhay Garden Scene
                 case "183N1A":
-                    // TODO(ARTIFACTS): Figure out if there's a bug here. Should the absence of a card be treated like a 0?
+                    // TODO(#293): This implementation needs to be updated. According to Carl, there is
+                    // no "if you do" on the card, so the value is zero, and two 1s are drawn and scored.
                     if ($n > 0) {
                         // "Draw and score two cards of value equal to the melded card"
                         $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
@@ -16133,7 +16135,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
                 case "190N1A":
                     // "Draw and score three cards of the returned card's value"
-                    // TODO(ARTIFACTS): What's the correct thing to do when no cards are returned?
+                    // TODO(#294): When no cards are returned, $age_to_score should be 0. Let's not use the stale age_last_selected value.
                     $age_to_score = self::getGameStateValue('age_last_selected');
                     self::executeDraw($player_id, $age_to_score, 'score');
                     self::executeDraw($player_id, $age_to_score, 'score');
