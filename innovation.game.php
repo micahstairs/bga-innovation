@@ -7544,7 +7544,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         current_player_id = -1,
                         current_effect_type = -1,
                         current_effect_number = -1,
-                        auxiliary_value = -1
+                        auxiliary_value = -1,
+                        auxiliary_value_2 = -1
                     WHERE
                         nesting_index = 0"
                 );
