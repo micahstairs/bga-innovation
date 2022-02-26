@@ -3242,20 +3242,27 @@ function (dojo, declare) {
                 visible_to = true;
             }
             
-            // Add tooltip
+            // Add tooltip to card
             if (visible_to) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
                 card.splay_direction = card.splay_direction_to;
                 this.addTooltipForCard(card);
-            }
-            else if (card.location_to == 'achievements' && card.age !== null) {
+            } else if (card.location_to == 'achievements' && card.age !== null) {
                 var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone_from.HTML_class);
                 this.removeTooltip(HTML_id);
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
+            }
+
+            // Add tooltip to game log
+            if (card.id !== null) {
+                console.log("here!");
+                console.log(dojo.query(".card_id_" + card.id));
+                console.log(this.saved_HTML_cards[card.id]);
+                this.addCustomTooltipToClass("card_id_" + card.id, this.saved_HTML_cards[card.id], "");
             }
         },
         

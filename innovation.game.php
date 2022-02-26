@@ -1638,11 +1638,12 @@ class Innovation extends Table
         }
     }
     
-    function getDelimiterMeanings($text) {
+    function getDelimiterMeanings($text, $card_id = null) {
         $left_v = "<span class='square N age_";
         $right_v = "'></span>";
         
-        $left_vv = "<span class='card_name'>";
+        // Without an ID it's not possible to add a BGA tooltip to it.
+        $left_vv = "<span id='".uniqid()."'class='card_name card_id_".$card_id."'>";
         $right_vv = "</span>";
         
         $left_vvv = "<span class='achievement_name'>";
@@ -2407,7 +2408,7 @@ class Innovation extends Table
         $info = array_merge($transferInfo, $progressInfo);
         
         // Information to attach to the involved player
-        $delimiters_for_player = self::getDelimiterMeanings($message_for_player);
+        $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
         $notif_args_for_player = array_merge($info, $delimiters_for_player);
         $notif_args_for_player['You'] = 'You';
         
@@ -2439,7 +2440,7 @@ class Innovation extends Table
         }
         
         // Information to attach to others (other players and spectators)
-        $delimiters_for_others = self::getDelimiterMeanings($message_for_others);
+        $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
         $notif_args_for_others = array_merge($info, $delimiters_for_others);
         $notif_args_for_others['player_name'] =  $player_name; // The color in the log will be defined automatically by the system
         
@@ -2483,7 +2484,7 @@ class Innovation extends Table
         $info = array_merge($transferInfo, $progressInfo);
         
         // Information to attach to the player
-        $delimiters_for_player = self::getDelimiterMeanings($message_for_player);
+        $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
         $notif_args_for_player = array_merge($info, $delimiters_for_player, $card); // The player can always see the card
         $notif_args_for_player['i18n'] = array('name');
         $notif_args_for_player['You'] =  'You';
@@ -2491,7 +2492,7 @@ class Innovation extends Table
         $notif_args_for_player['opponent_name'] =  self::getColoredText($opponent_name, $opponent_id);
         
         // Information to attach to the opponent
-        $delimiters_for_opponent = self::getDelimiterMeanings($message_for_opponent);
+        $delimiters_for_opponent = self::getDelimiterMeanings($message_for_opponent, $card['id']);
         $notif_args_for_opponent = array_merge($info, $delimiters_for_opponent, $card); // The opponent can always see the card
         $notif_args_for_player['i18n'] = array('name');
         $notif_args_for_opponent['You'] = 'You';
@@ -2499,7 +2500,7 @@ class Innovation extends Table
         $notif_args_for_opponent['player_name'] =  $player_name;  // The color in the log will be defined automatically by the system
         
         // Information to attach to others (other players and spectators)
-        $delimiters_for_others = self::getDelimiterMeanings($message_for_others);
+        $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
         $notif_args_for_others = array_merge($info, $delimiters_for_others);
         $notif_args_for_others['player_name'] =  $player_name; // The color in the log will be defined automatically by the system
         $notif_args_for_others['opponent_name'] =  self::getColoredText($opponent_name, $opponent_id);
@@ -3000,8 +3001,8 @@ class Innovation extends Table
         $message_for_player = clienttranslate('${You} activate the dogma of ${<}${age}${>} ${<<}${name}${>>} with ${[}${icon}${]} as featured icon.');
         $message_for_others = clienttranslate('${player_name} activates the dogma of ${<}${age}${>} ${<<}${name}${>>} with ${[}${icon}${]} as featured icon.');
         
-        $delimiters_for_player = self::getDelimiterMeanings($message_for_player);
-        $delimiters_for_others = self::getDelimiterMeanings($message_for_others);
+        $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
+        $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
         
         self::notifyPlayer($player_id, 'log', $message_for_player, array_merge($card, $delimiters_for_player, array(
             'i18n' => array('name'),
@@ -7192,7 +7193,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if ($with_demand_effect === 1) {
                 $cards .= clienttranslate(" with a demand effect");
             }
-            $cards = self::format($cards, self::getDelimiterMeanings($cards, false));
+            $cards = self::format($cards, self::getDelimiterMeanings($cards));
         } else { // splay_direction <> -1
             $splayable_colors = self::getGameStateValueAsArray('color_array');
             $splayable_colors_in_clear = array();
