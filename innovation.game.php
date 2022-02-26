@@ -7777,21 +7777,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 // Indicate this number
-                if ($number_to_be_scored == 0) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no specific color on your board.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no specific color on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                }
-                else if ($number_to_be_scored == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have one specific color on your board.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has one specific color on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                }
-                else {
-                    $translated_number = self::getTranslatedNumber($number_to_be_scored);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} specific colors on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $translated_number));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} specific colors on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $translated_number));
-                }
+                $translated_number = self::getTranslatedNumber($number_to_be_scored);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color(s) present on your board not present on any opponent\'s board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $translated_number));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color(s) present on his board not present on any of his opponents\' boards.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $translated_number));
+
                 // Score this number of times
-                for ($i=0; $i < $number_to_be_scored; $i++) {
+                for ($i = 0; $i < $number_to_be_scored; $i++) {
                     self::executeDraw($player_id, 1, 'score');
                 }
                 break;
