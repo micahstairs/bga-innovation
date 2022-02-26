@@ -3101,6 +3101,7 @@ function (dojo, declare) {
             
             dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
             dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
+            dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
             
@@ -3117,6 +3118,7 @@ function (dojo, declare) {
                 
                 dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
                 dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
                 
@@ -3392,6 +3394,32 @@ function (dojo, declare) {
             }
         },
 
+        notif_removedPlayer: function(notif) {
+            var player_id = notif.args.player_to_remove;
+            // NOTE: The button to look at the player's score pile is broken in archive mode.
+            if (!g_archive_mode) {
+                this.zone.my_score_verso.removeAll();
+            }
+            this.zone.revealed[player_id].removeAll();
+            this.zone.hand[player_id].removeAll();
+            this.zone.score[player_id].removeAll();
+            this.zone.achievements[player_id].removeAll();
+            this.zone.display[player_id].removeAll();
+            for (var color = 0; color < 5; color++) {
+                this.zone.board[player_id][color].removeAll();
+            }
+
+            this.scoreCtrl[player_id].setValue(0);
+            this.counter.score[player_id].setValue(0);
+            this.zone.hand[player_id].counter.setValue(0);
+            this.counter.max_age_on_board[player_id].setValue(0);
+            for (var icon = 1; icon <= 6; icon++) {
+                this.counter.ressource_count[player_id][icon].setValue(0);
+            }
+
+            dojo.byId('player_' + player_id).style.display = 'none';
+        },
+
         notif_updateResourcesForArtifactOnDisplay: function(notif) {
             this.updateResourcesForArtifactOnDisplay(notif.args.player_id, notif.args.resource_icon, notif.args.resource_count_delta);
         },
@@ -3467,6 +3495,14 @@ function (dojo, declare) {
             
             // Call normal notif
             this.notif_removedTopCardsAndHands(notif);
+        },
+
+        notif_removedPlayer_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+            
+            // Call normal notif
+            this.notif_removedPlayer(notif);
         },
 
         notif_updateResourcesForArtifactOnDisplay_spectator: function(notif) {

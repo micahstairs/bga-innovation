@@ -1518,7 +1518,7 @@ class Innovation extends Table
         }
         
         // Notify players
-        foreach (self::getAllActivePlayerIds() as $player_id) {
+        foreach (self::getAllPlayerIds() as $player_id) {
             if (in_array($player_id, $player_ids)) {
                 continue;
             }
@@ -1804,29 +1804,6 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
-        // TODO(#255): Remove 'hand->removed', 'board->removed', 'pile->removed', 'score->removed', and 'achievements->removed' once Exxon Valdez removes cards all at once instead of individually.
-        case 'hand->removed':
-            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your hand from the game.');
-            $message_for_others = clienttranslate('${player_name} removes a ${<}${age}${>} from his hand from the game.');
-            break;
-        case 'board->removed':
-        case 'pile->removed':
-            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your board from the game.');
-            $message_for_others = clienttranslate('${player_name} removes ${<}${age}${>} ${<<}${name}${>>} from his board from the game.');
-            break;
-        case 'score->removed':
-            $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your score pile from the game.');
-            $message_for_others = clienttranslate('${player_name} removes ${<}${age}${>} ${<<}${name}${>>} from his score pile from the game.');
-            break;
-        case 'achievements->removed':
-            if ($card['age'] === null) { // Special achivement
-                $message_for_player = clienttranslate('${You} remove ${<<<}${achievement_name}${>>>} from the game.');
-                $message_for_others = clienttranslate('${player_name} removes ${<<<}${achievement_name}${>>>} from the game.');
-            } else { // Age achivement
-                $message_for_player = clienttranslate('${You} remove ${<}${age}${>} ${<<}${name}${>>} from your achievements from the game.');
-                $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his achievements from the game.');
-            }
-            break;
         case 'achievements->relics':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your achievements.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his achievements.');
@@ -2094,11 +2071,6 @@ class Innovation extends Table
             case 'pile->deck': // Skyscrapers
                 $message_for_player = clienttranslate('{You must} return {number} {card} from your board');
                 $message_for_others = clienttranslate('{player must} return {number} {card} from his board');
-                break;
-            // TODO(#255): Remove 'pile->removed once Exxon Valdez removes cards all at once instead of individually.
-            case 'pile->removed':
-                $message_for_player = clienttranslate('{You must} remove {number} {card} from your board from the game');
-                $message_for_others = clienttranslate('{player must} remove {number} {card} from his board from the game');
                 break;
             default:
                 // This should not happen
@@ -2865,38 +2837,41 @@ class Innovation extends Table
     
     function notifyEndOfGameByDogma() {
         $player_id = self::getGameStateValue('winner_by_dogma');
+        if (self::getGameStateValue('release_version') >= 1) {
+            $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
+        } else {
+            $dogma_card_id = self::getGameStateValue('dogma_card_id');
+        }
+
         if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
-            self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. He wins!'), array(
-                'player_name' => self::getPlayerNameFromId($player_id)
-            ));
-            
-            self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${You} meet the victory condition. You win!'), array(
-                'You' => 'You'
-            ));
+            if ($dogma_card_id == 207 /* Exxon Valdez */ ) {
+                self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} is the only remaining player. He wins!'), array(
+                    'player_name' => self::getPlayerNameFromId($player_id)
+                ));
+                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining player. You win!'), array());
+            } else {
+                self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. He wins!'), array(
+                    'player_name' => self::getPlayerNameFromId($player_id)
+                ));
+                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You meet the victory condition. You win!'), array());
+            }
         } else { // Team play
             $teammate_id = self::getPlayerTeammate($player_id);
             $winning_team = array($player_id, $teammate_id);
-            if (self::getGameStateValue('release_version') >= 1) {
-                $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
-            } else {
-                $dogma_card_id = self::getGameStateValue('dogma_card_id');
-            }
             
-            if ($dogma_card_id == 100 /* Self service*/ || $dogma_card_id == 101 /* Globalization */) {
+            if ($dogma_card_id == 207 /* Exxon Valdez */ ) {
+                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: The other team is the only remaining team. They win!'), array());
+                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining team. You win!'), array());
+                self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining team. You win!'), array());
+            } else if ($dogma_card_id == 100 /* Self service*/ || $dogma_card_id == 101 /* Globalization */) {
                 self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: The other team meets the victory condition. They win!'), array());
-                
                 self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: Your team meets the victory condition. You win!'), array());
-                
                 self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: Your team meets the victory condition. You win!'), array());
             } else {
                 self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. The other team wins!'), array(
                     'player_name' => self::getPlayerNameFromId($player_id)
                 ));
-                
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${You} meet the victory condition. Your team wins!'), array(
-                    'You' => 'You'
-                ));
-                
+                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You meet the victory condition. Your team wins!'), array());
                 self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. Your team wins!'), array(
                     'player_name' => self::getPlayerNameFromId($player_id)
                 ));
@@ -4674,6 +4649,51 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setStat(0, 'score', $player_id);
             self::setStat(0, 'max_age_on_board', $player_id);
         }
+    }
+
+    function removeAllCardsFromPlayer($player_id) {
+        // Even if no cards are removed we will still mark that change has occurred because a player has been eliminated.
+        self::recordThatChangeOccurred();
+
+        self::DbQuery(self::format("
+            UPDATE
+                card
+            SET
+                owner = 0,
+                location = 'removed',
+                position = NULL
+            WHERE
+                owner = {player_id}
+        ", array('player_id' => $player_id)));
+
+        // NOTE: It doesn't matter that we are technically zeroing the player's teammate's achievement count,
+        // because if the game is 2v2 then the game will instantly end and the score will be binarized.
+        self::DbQuery("
+            UPDATE
+                player
+            SET
+                player_score = 0,
+                player_innovation_score = 0,
+                player_icon_count_1 = 0,
+                player_icon_count_2 = 0,
+                player_icon_count_3 = 0,
+                player_icon_count_4 = 0,
+                player_icon_count_5 = 0,
+                player_icon_count_6 = 0
+        ");
+        self::setStat(0, 'achievements_number', $player_id);
+        self::setStat(0, 'special_achievements_number', $player_id);
+        self::setStat(0, 'score', $player_id);
+        self::setStat(0, 'max_age_on_board', $player_id);
+
+        self::notifyPlayer($player_id, 'removedPlayer', clienttranslate('All ${your} cards were removed from the game.'), array(
+            'your' => 'your',
+            'player_to_remove' => $player_id,
+        ));
+        self::notifyAllPlayersBut($player_id, 'removedPlayer', clienttranslate('All ${player_name}\'s cards were removed from the game.'), array(
+            'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+            'player_to_remove' => $player_id,
+        ));
     }
 
     function removeAllTopCardsAndHands() {
@@ -10174,22 +10194,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
            // id 207, Artifacts age 10: Exxon Valdez
             case "207C1":
-                // "I compel you to remove all cards from your hand, score pile, and achievements from the game!"
-                // TODO(#255): Remove all cards at once instead of individually. Similar to Fission.
-                $hand_cards = self::getCardsInLocation($player_id, 'hand');
-                foreach ($hand_cards as $card) {
-                    self::transferCardFromTo($card, $player_id, 'removed');
+                // "I compel you to remove all cards from your hand, score pile, board, and achievements from the game"
+                self::removeAllCardsFromPlayer($player_id);
+                
+                // "You lose! If there is only one player remaining in the game, that player wins"
+                if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
+                        'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)
+                    ));
+                    self::eliminatePlayer($player_id);
+                    if (count(self::getAllActivePlayers()) == 1) {
+                        self::setGameStateValue('winner_by_dogma', $launcher_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
+                        throw new EndOfGame();
+                    }
+                } else { // Team play
+                    // Entire team loses if one player loses 
+                    $teammate_id = self::getPlayerTeammate($player_id);
+                    $winning_team = array($player_id, $teammate_id);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
+                    self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
+                    self::notifyAllPlayersBut($winning_team, 'log', clienttranslate('The other team loses.'), array());
+                    self::eliminatePlayer($player_id);
+                    self::setGameStateValue('winner_by_dogma', $launcher_id);
+                    self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
+                    throw new EndOfGame();
                 }
-                $score_cards = self::getCardsInLocation($player_id, 'score');
-                foreach ($score_cards as $card) {
-                    self::transferCardFromTo($card, $player_id, 'removed');
-                }
-                $achieve_cards = self::getCardsInLocation($player_id, 'achievements');
-                foreach ($achieve_cards as $card) {
-                    self::transferCardFromTo($card, $player_id, 'removed');
-                }
-
-                $step_max = 1;
                 break;
 
             // id 208, Artifacts age 10: Maldives
@@ -14542,21 +14573,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
             }
             break;
-
-        // id 207, Artifacts age 10: Exxon Valdez
-        // TODO(#255): Remove this once Exxon Valdez is removing all cards at once instead of individually.
-        case "207C1A":
-            // Return all cards on your board.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'pile',
-                'owner_to' => 0,
-                'location_to' => 'removed'
-            );
-            break;
             
         // id 208, Artifacts age 10: Maldives
         case "208C1A":
@@ -16242,45 +16258,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::trace('EOG bubbled from self::stInterInteractionStep Marilyn Diptych');
                         throw new EndOfGame();
                     }
-                    break;
-
-                // id 207, Artifacts age 10: Exxon Valdez
-                case "207C1A":
-                    // "You lose! If there is only one player remaining in the game, that player wins!"
-                    // Check to see if any players remain after the elimination happens.
-                     if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
-                        $active_opponents = self::getActiveOpponents($launcher_id);
-                        $players_left = 0;
-                        foreach ($active_opponents as $opponent_id => $player) {
-                            if (!self::isEliminated($opponent_id)) {
-                                $players_left++;
-                            }
-                        }
-                        if ($players_left == 1) {
-                            // TODO(ARTIFACTS): We need to add another notify here so that the launcher gets the right log message.
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are eliminated. ${launcher_name} wins.'), 
-                                array('You' => 'You', 
-                                      'launcher_name' => self::getColoredText(self::getPlayerNameFromId($launcher_id), $launcher_id)));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is eliminated. ${launcher_name} wins.'), 
-                                array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 
-                                      'launcher_name' => self::getColoredText(self::getPlayerNameFromId($launcher_id), $launcher_id)));
-                            self::setGameStateValue('winner_by_dogma', $launcher_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
-                            throw new EndOfGame();
-                        }
-                    } else { // Team play
-                        // Entire team loses if one player loses 
-                        // TODO(ARTIFACTS): We need to update these so that the teammate gets the same notifications as $player_id.
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team is eliminated. The other team wins.'), array('Your' => 'Your'));
-                        // TODO(ARTIFACTS): Once this message is only going to the opposing team, it should tell them they win, instead of the referring to the "other team".
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} and their team is eliminated. The other team wins.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        self::setGameStateValue('winner_by_dogma', $launcher_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
-                        throw new EndOfGame();
-                    }
-                    
-                    // Remove the current player from the game.
-                    self::eliminatePlayer($player_id);
                     break;
 
                 // id 211, Artifacts age 10: Dolly the Sheep
