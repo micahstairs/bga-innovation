@@ -9318,12 +9318,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "119N1":
                 $num_movements = self::getAuxiliaryValue() + 1; // + 1 since the variable is initialized to -1, not 0
                 $initial_location = self::getCurrentNestedCardState()['card_location'];
-                if ($player_id == $launcher_id && $num_movements == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                    self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Dancing Girl');
-                    throw new EndOfGame();
+                if ($player_id == $launcher_id) {
+                    if ($num_movements == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Dancing Girl');
+                        throw new EndOfGame();
+                    } else {
+                        self::notifyAll('log', clienttranslate('Dancing Girl has not been on every board during this action.'), array());
+                    }
                 }
                 break;
             
