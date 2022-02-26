@@ -13189,7 +13189,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 144, Artifacts age 3: Shroud of Turin
         case "144N1A":
             // "Return a card from hand"
-            // TODO(ARTIFACTS): We should give other players partial information about the returned card (i.e. card color).
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -15636,6 +15635,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 144, Artifacts age 3: Shroud of Turin
                 case "144N1A":
                     if ($n > 0) {
+                        self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array(
+                            'i18n' => array('color'),
+                            'color' => self::getColorInClear(self::getGameStateValue('color_last_selected'))
+                        ));
                         self::setAuxiliaryValue(1);
                         self::incrementStepMax(2);
                     }
