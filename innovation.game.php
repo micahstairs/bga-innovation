@@ -9594,11 +9594,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "I compel you to transfer all the highest cards from your score pile to my score pile!"
                     $cards = self::getCardsInLocationKeyedByAge($player_id, 'score');
                     $cards_to_transfer = $cards[$max_age];
-                    foreach($cards_to_transfer as $card) {
-                        self::transferCardFromTo($card, $launcher_id, 'score', false, false);
+                    // TODO(ARTIFACTS): Fix front-end bug which occurs when this effect is triggered and more than one card is transfered.
+                    foreach ($cards_to_transfer as $card) {
+                        self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
                     }
-                    $step_max = 1;
                     self::setAuxiliaryValue($max_age);
+                    $step_max = 1;
                 }
                 break;
             
@@ -13989,9 +13990,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 173, Artifacts age 6: Moonlight Sonata
         case "173N1A":
             // "Choose a color on your board having the highest top card"
-            // TODO(#292): There's a bug here because we assume there's at least one color in the
-            // array. We shouldn't advance to this interaction unless getMaxAgeOnBoardTopCards is at
-            // least 1.
             $max_age = self::getMaxAgeOnBoardTopCards($player_id);
             $color_array = array();
             for ($color = 0; $color < 5; $color++) {
@@ -15995,11 +15993,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($card_1['color'] == $card_2['color']) {
                             self::incrementStepMax(1);
                         }
-                    }
-                    else if ($card_1 == null && $card_2 == null) { // if none are returned, they have the same value (0)
+                    } else if ($card_1 == null && $card_2 == null) { // If none are returned, they are still considered to have the same value (0)
                         self::executeDraw($player_id, 1);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned two cards of value 0.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned two cards of value 0.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     }
                     break;
 
@@ -16071,10 +16066,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         // "Execute the effects of the melded card as if they were on this card. Do not share them."
                         self::executeAllEffects($melded_card);
-                    }
-                    else { // if no card is melded, you still score two 1s
-                        self::executeDraw($player_id, 1, 'score');
-                        self::executeDraw($player_id, 1, 'score');
+                    } else { // If no card is melded, the absence is treated like a 0 and cards are still scored.
+                        self::executeDraw($player_id, 0, 'score');
+                        self::executeDraw($player_id, 0, 'score');
                     }
                     break;
                     
@@ -16135,8 +16129,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw and score three cards of the returned card's value"
                     if ($n > 0) {
                         $age_to_score = self::getGameStateValue('age_last_selected');
-                    }
-                    else {
+                    } else {
                         $age_to_score = 0;
                     }
                     self::executeDraw($player_id, $age_to_score, 'score');
