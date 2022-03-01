@@ -2082,11 +2082,11 @@ function (dojo, declare) {
         
         moveBetweenZones: function(zone_from, zone_to, id_from, id_to, card) {
             if (id_from == id_to && card.age !== null) {
-                this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
+                this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
             } else {
-                this.createAndAddToZone(zone_to, card.position_to, card.age, card.type, card.is_relic, id_to, this.getCardHTMLId(id_from, card.age, card.type, card.is_relic, zone_from.HTML_class), card);
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+                this.createAndAddToZone(zone_to, card.position_to, card.age, card.type, card.is_relic, id_to, this.getCardHTMLId(id_from, card.age, card.type, card.is_relic, zone_from.HTML_class), card);
             }
         },
         

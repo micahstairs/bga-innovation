@@ -1184,8 +1184,7 @@ class Innovation extends Table
                 array('filter_to' => $filter_to)
            ));
             $position_to = 0;
-        }
-        else { // $bottom_to is false
+        } else { // $bottom_to is false
             // new_position = number of cards in the location
             $position_to = self::getUniqueValueFromDB(self::format("
             SELECT
@@ -9391,10 +9390,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Meld your bottom card of the drawn card's color"
                 $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
                 if ($number_of_cards > 1) {
-                    // TODO(#217): Use meld from bottom functionality once it exists.
                     $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
-                    $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
-                    $melded_card = self::transferCardFromTo($revealed_card, $player_id, 'board');
+                    $melded_card = self::transferCardFromTo($bottom_card, $player_id, 'board');
                 }
 
                 // "Execute its non-demand dogma effects. Do not share them."
@@ -15817,8 +15814,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "173N1A":
                     // "Meld the bottom card on your board of that color"
                     $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                    $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
-                    self::transferCardFromTo($revealed_card, $player_id, 'board');
+                    self::transferCardFromTo($bottom_card, $player_id, 'board');
                     break;
                     
                 // id 152, Artifacts age 4: Mona Lisa
