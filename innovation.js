@@ -3267,7 +3267,7 @@ function (dojo, declare) {
             }
 
             // Add tooltip to game log
-            if (card.id !== null) {
+            if (card.id !== undefined) {
                 this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
             }
         },
