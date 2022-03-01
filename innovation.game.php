@@ -9517,7 +9517,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 139, Artifacts age 3: Philosopher's Stone
             case "139N1":
-                $step_max = 2;
+                $step_max = 1;
                 break;
 
             // id 140, Artifacts age 3: Beauvais Cathedral Clock
@@ -9607,7 +9607,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 148, Artifacts age 4: Tortugas Galleon
             case "148C1":
-                $step_max = 1;
+                $max_age = self::getMaxAgeInScore($player_id);
+                if ($max_age > 0) {
+                    // "I compel you to transfer all the highest cards from your score pile to my score pile!"
+                    $cards = self::getCardsInLocationKeyedByAge($player_id, 'score');
+                    $cards_to_transfer = $cards[$max_age];
+                    // TODO(ARTIFACTS): Fix front-end bug which occurs when this effect is triggered and more than one card is transfered.
+                    foreach ($cards_to_transfer as $card) {
+                        self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                    }
+                    self::setAuxiliaryValue($max_age);
+                    $step_max = 1;
+                }
                 break;
             
             // id 149, Artifacts age 4: Molasses Reef Caravel
@@ -9835,7 +9846,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 173, Artifacts age 6: Moonlight Sonata
             case "173N1":
-                $step_max = 2;
+                if (self::getMaxAgeOnBoardTopCards($player_id) > 0) {
+                    $step_max = 2;
+                }
                 break;
                 
             // id 174, Artifacts age 6: Marcha Real
@@ -12735,7 +12748,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         case "118C1B":
             // "Transfer an achievement of the same value from your achievements to mine"
-            // TODO(#290): This is not obeying "of the same value".
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -12744,7 +12756,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'achievements',
                 'owner_to' => $launcher_id,
-                'location_to' => 'achievements'
+                'location_to' => 'achievements',
+                
+                'age' => self::getGameStateValue('age_last_selected')
             );
             break;
         
@@ -13150,7 +13164,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "139N1B":
             // "Score a number of cards from your hand equal to the value of the card returned"
-            // TODO(#289): There's a bug here because we are assuming a card was returned.
             $age_selected = self::getGameStateValue('age_last_selected');
             $options = array(
                 'player_id' => $player_id,
@@ -13380,23 +13393,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 148, Artifacts age 4: Tortugas Galleon
         case "148C1A":
-            // "Transfer all the highest cards from your score pile to my score pile"
-            // TODO(#291): This shouldn't be an interaction. It should be automated.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'age' => self::getMaxAgeInScore($player_id)
-            );
-            break;
-
-        // id 148, Artifacts age 4: Tortugas Galleon
-        case "148C1B":
             // "Transfer a top card on your board of that value to my board"
             $options = array(
                 'player_id' => $player_id,
@@ -13408,8 +13404,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
 
-                // TODO(#291): Once the previous part is automated we will need to use the auxiliary value instead of age_last_selected.
-                'age' => self::getGameStateValue('age_last_selected')
+                'age' => self::getAuxiliaryValue()
             );
             break;
             
@@ -14013,9 +14008,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 173, Artifacts age 6: Moonlight Sonata
         case "173N1A":
             // "Choose a color on your board having the highest top card"
-            // TODO(#292): There's a bug here because we assume there's at least one color in the
-            // array. We shouldn't advance to this interaction unless getMaxAgeOnBoardTopCards is at
-            // least 1.
             $max_age = self::getMaxAgeOnBoardTopCards($player_id);
             $color_array = array();
             for ($color = 0; $color < 5; $color++) {
@@ -15447,7 +15439,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 // id 118, Artifacts age 1: Jiskairumoko Necklace
-                case "118N1A":
+                case "118C1A":
                     // "If you do"
                     if ($n > 0) {
                         self::incrementStepMax(1);
@@ -15639,7 +15631,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                
+
+                // id 139, Artifacts age 3: Philosopher's Stone
+                case "139N1A":
+                    // Move to next interaction if a card was returned
+                    if ($n > 0) {
+                        self::incrementStepMax(1);
+                    }
+                    break;
+            
                 // id 141, Artifacts age 3: Moylough Belt Shrine
                 case "141C1A":
                     // Return revealed cards back to player's hand.
@@ -15744,13 +15744,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, 5, 'score');
                     }
                     break;
-
-                // id 148, Artifacts age 4: Tortugas Galleon
-                case "148C1A":
-                    if ($n > 0) { // "If you transfered any"
-                        self::incrementStepMax(1);
-                    }
-                    break;
                     
                 // id 149, Artifacts age 4: Molasses Reef Caravel
                 case "149N1A":
@@ -15821,33 +15814,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
                     $revealed_card = self::transferCardFromTo($bottom_card, $player_id, 'revealed');
                     self::transferCardFromTo($revealed_card, $player_id, 'board');
-                    break;
- 
-                // id 174, Artifacts age 6: Marcha Real
-                case "174N1A":
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
-                    $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
-
-                    // Return revealed cars from your hand
-                    if ($card_1 !== null) {
-                        self::transferCardFromTo($card_1, 0, 'deck');
-                    }
-                    if ($card_2 !== null) {
-                        self::transferCardFromTo($card_2, 0, 'deck');
-                    }
-
-                    // TODO(#295): When no cards are returned from hand, then the two absences are considered to have the same value (but not the same color).
-                    if ($card_1 !== null && $card_2 !== null) {
-                        // "If they have the same value, draw a card of value one higher"
-                        if ($card_1['faceup_age'] == $card_2['faceup_age']) {
-                            self::executeDraw($player_id, $card_1['faceup_age'] + 1);
-                        }
-                        // "If they have the same color, claim an achievement, ignoring eligibility"
-                        if ($card_1['color'] == $card_2['color']) {
-                            self::incrementStepMax(1);
-                        }
-                    }
                     break;
                     
                 // id 152, Artifacts age 4: Mona Lisa
@@ -16031,7 +15997,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
                     $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
 
-                    // Return revealed cars from your hand
+                    // Return revealed cards from your hand
                     if ($card_1 != null) {
                         self::transferCardFromTo($card_1, 0, 'deck');
                     }
@@ -16048,6 +16014,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($card_1['color'] == $card_2['color']) {
                             self::incrementStepMax(1);
                         }
+                    } else if ($card_1 == null && $card_2 == null) { // If none are returned, they are still considered to have the same value (0)
+                        self::executeDraw($player_id, 1);
                     }
                     break;
 
@@ -16111,9 +16079,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 183, Artifacts age 7: Roundhay Garden Scene
                 case "183N1A":
-                    // TODO(#293): This implementation needs to be updated. According to Carl, there is
-                    // no "if you do" on the card, so the value is zero, and two 1s are drawn and scored.
-                    if ($n > 0) {
+                     if ($n > 0) {
                         // "Draw and score two cards of value equal to the melded card"
                         $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
@@ -16121,6 +16087,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         // "Execute the effects of the melded card as if they were on this card. Do not share them."
                         self::executeAllEffects($melded_card);
+                    } else { // If no card is melded, the absence is treated like a 0 and cards are still scored.
+                        self::executeDraw($player_id, 0, 'score');
+                        self::executeDraw($player_id, 0, 'score');
                     }
                     break;
                     
@@ -16179,8 +16148,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 190, Artifacts age 8: Meiji-Mura Stamp Vending Machine
                 case "190N1A":
                     // "Draw and score three cards of the returned card's value"
-                    // TODO(#294): When no cards are returned, $age_to_score should be 0. Let's not use the stale age_last_selected value.
-                    $age_to_score = self::getGameStateValue('age_last_selected');
+                    if ($n > 0) {
+                        $age_to_score = self::getGameStateValue('age_last_selected');
+                    } else {
+                        $age_to_score = 0;
+                    }
                     self::executeDraw($player_id, $age_to_score, 'score');
                     self::executeDraw($player_id, $age_to_score, 'score');
                     self::executeDraw($player_id, $age_to_score, 'score');
