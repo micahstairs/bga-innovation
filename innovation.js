@@ -3099,7 +3099,7 @@ function (dojo, declare) {
             dojo.subscribe('transferedCard', this, "notif_transferedCard");
             this.notifqueue.setSynchronous( 'transferedCard', reasonnable_delay );   // Wait X milliseconds after executing the transferedCard handler
 
-            dojo.subscribe('revealCards', this, "notif_revealCards");  // This kind of notification does not need any delay
+            dojo.subscribe('logWithCardTooltips', this, "notif_logWithCardTooltips");  // This kind of notification does not need any delay
             
             dojo.subscribe('splayedPile', this, "notif_splayedPile")
             this.notifqueue.setSynchronous( 'splayedPile', reasonnable_delay );   // Wait X milliseconds after executing the splayedPile handler
@@ -3118,7 +3118,7 @@ function (dojo, declare) {
                 dojo.subscribe('transferedCard_spectator', this, "notif_transferedCard_spectator");
                 this.notifqueue.setSynchronous( 'transferedCard_spectator', reasonnable_delay );   // Wait X milliseconds after executing the handler
 
-                dojo.subscribe('revealCards_spectator', this, "notif_revealCards_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('logWithCardTooltips_spectator', this, "notif_logWithCardTooltips_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('splayedPile_spectator', this, "notif_splayedPile_spectator");
                 this.notifqueue.setSynchronous( 'splayedPile_spectator', reasonnable_delay );   // Wait X milliseconds after executing the handler
@@ -3272,10 +3272,10 @@ function (dojo, declare) {
             }
         },
 
-        notif_revealCards: function(notif) {
+        notif_logWithCardTooltips: function(notif) {
             // Add tooltips to game log
-            for (var i = 0; i < notif.args.revealed_cards.length; i++) {
-                var card = notif.args.revealed_cards[i];
+            for (var i = 0; i < notif.args.cards.length; i++) {
+                var card = notif.args.cards[i];
                 this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
             }
         },
@@ -3486,12 +3486,12 @@ function (dojo, declare) {
             this.notif_transferedCard(notif);
         },
 
-        notif_revealCards_spectator: function(notif) {
+        notif_logWithCardTooltips_spectator: function(notif) {
             // Put the message for the spectator in log
             this.log_for_spectator(notif);
             
             // Call normal notif
-            this.notif_revealCards(notif);
+            this.notif_logWithCardTooltips(notif);
         },
 
         notif_splayedPile_spectator: function(notif) {

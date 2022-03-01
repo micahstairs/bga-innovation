@@ -1645,10 +1645,10 @@ class Innovation extends Table
             return;
         }
         $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
-        $this->notifyPlayer($player_id, 'revealCards', clienttranslate('${You} reveal your hand: ${card_list}.'),
-            array_merge($args, ['You' => 'You', 'revealed_cards' => $cards]));
-        $this->notifyAllPlayersBut($player_id, 'revealCards', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'revealed_cards' => $cards]));
+        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your hand: ${card_list}.'),
+            array_merge($args, ['You' => 'You', 'cards' => $cards]));
+        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'cards' => $cards]));
     }
 
     function getNotificationArgsForCardList($cards) {
@@ -5605,10 +5605,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function executeAllEffects($card) {
+        $current_card = self::getCardInfo(self::getCurrentNestedCardState()['card_id']);
+        $card_1_args = self::getNotificationArgsForCardList([$current_card]);
+        $card_2_args = self::getNotificationArgsForCardList([$card]);
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        // TODO(#272): Replace X and Y with the names of the cards. Also consider making similar changes to the notifications in executeNonDemandEffects.
-        self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the effects of X as if it were on Y.'), array('You' => 'You'));
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the effects of X as if it were on Y.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+        $icon = self::getIconSquare($current_card['dogma_icon']);
+        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
+            ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'cards' => [$current_card, $card], 'icon' => $icon]);
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
+            ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'cards' => [$current_card, $card], 'icon' => $icon]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
     
