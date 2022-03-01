@@ -1640,6 +1640,11 @@ class Innovation extends Table
 
     function revealPlayerHand($player_id) {
         $cards = self::getCardsInHand($player_id);
+        if (count($cards) == 0) {
+            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty hand.'), ['You' => 'You']);
+            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty hand.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
+            return;
+        }
         $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
         $this->notifyPlayer($player_id, 'revealCards', clienttranslate('${You} reveal your hand: ${card_list}.'),
             array_merge($args, ['You' => 'You', 'revealed_cards' => $cards]));
