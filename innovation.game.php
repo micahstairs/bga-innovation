@@ -1637,6 +1637,32 @@ class Innovation extends Table
             throw $e; // Re-throw exception to higher level
         }
     }
+
+    function revealPlayerHand($player_id) {
+        $cards = self::getCardsInHand($player_id);
+        $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
+        $this->notifyPlayer($player_id, 'revealCards', clienttranslate('${You} reveal your hand: ${card_list}.'),
+            array_merge($args, ['You' => 'You', 'revealed_cards' => $cards]));
+        $this->notifyAllPlayersBut($player_id, 'revealCards', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'revealed_cards' => $cards]));
+    }
+
+    function getNotificationArgsForCardList($cards) {
+        $args = array();
+        $args['i18n'] = array();
+        $log = "";
+        for ($i = 0; $i < count($cards); $i++) {
+            $card = $cards[$i];
+            if ($i > 0) {
+                $log = $log.', ';
+            }
+            $log = $log."<span class='square N age_".$card['age']."'></span> ";
+            $log = $log.'<span id=\''.uniqid().'\'class=\'card_name card_id_'.$card['id'].'\'>${name_'.$i.'}</span>';
+            $args['name_'.$i] = $card['name'];
+            $args['i18n'][] = 'name_'.$i;
+        }
+        return ['log' => $log, 'args'=> $args];
+    }
     
     function getDelimiterMeanings($text, $card_id = null) {
         $left_v = "<span class='square N age_";
@@ -14840,6 +14866,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if (self::getGameStateValue('game_rules') == 1) { // Last edition => additionnal rule
                             $step--; self::incrementStep(-1); // "Repeat that dogma effect"
                         }
+                    } else {
+                        // Reveal hand to prove that they have no crowns.
+                        self::revealPlayerHand($player_id);
                     }
                     break;
                 

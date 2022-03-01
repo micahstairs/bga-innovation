@@ -1141,10 +1141,15 @@ function (dojo, declare) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
                 return;
             }
-            var HTML_help = this.createCard(card.id, card.age, card.type, card.is_relic, "L card", card);
             this.saved_cards[card.id] = card;
-            this.saved_HTML_cards[card.id] = HTML_help; // Save this tooltip in case it needs to be rebuilt
-            this.addCustomTooltip(HTML_id, HTML_help, "");
+            this.addCustomTooltip(HTML_id, this.getTooltipForCard(card), "");
+        },
+
+        getTooltipForCard : function(card) {
+            if (this.saved_HTML_cards[card.id] === undefined) {
+                this.saved_HTML_cards[card.id] = this.createCard(card.id, card.age, card.type, card.is_relic, "L card", card);
+            }
+            return this.saved_HTML_cards[card.id];
         },
         
         addTooltipForStandardAchievement : function(card) {
@@ -3093,6 +3098,8 @@ function (dojo, declare) {
             
             dojo.subscribe('transferedCard', this, "notif_transferedCard");
             this.notifqueue.setSynchronous( 'transferedCard', reasonnable_delay );   // Wait X milliseconds after executing the transferedCard handler
+
+            dojo.subscribe('revealCards', this, "notif_revealCards");  // This kind of notification does not need any delay
             
             dojo.subscribe('splayedPile', this, "notif_splayedPile")
             this.notifqueue.setSynchronous( 'splayedPile', reasonnable_delay );   // Wait X milliseconds after executing the splayedPile handler
@@ -3110,6 +3117,8 @@ function (dojo, declare) {
             if (this.isSpectator) {
                 dojo.subscribe('transferedCard_spectator', this, "notif_transferedCard_spectator");
                 this.notifqueue.setSynchronous( 'transferedCard_spectator', reasonnable_delay );   // Wait X milliseconds after executing the handler
+
+                dojo.subscribe('revealCards_spectator', this, "notif_revealCards_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('splayedPile_spectator', this, "notif_splayedPile_spectator");
                 this.notifqueue.setSynchronous( 'splayedPile_spectator', reasonnable_delay );   // Wait X milliseconds after executing the handler
@@ -3259,10 +3268,15 @@ function (dojo, declare) {
 
             // Add tooltip to game log
             if (card.id !== null) {
-                console.log("here!");
-                console.log(dojo.query(".card_id_" + card.id));
-                console.log(this.saved_HTML_cards[card.id]);
-                this.addCustomTooltipToClass("card_id_" + card.id, this.saved_HTML_cards[card.id], "");
+                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+            }
+        },
+
+        notif_revealCards: function(notif) {
+            // Add tooltips to game log
+            for (var i = 0; i < notif.args.revealed_cards.length; i++) {
+                var card = notif.args.revealed_cards[i];
+                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
             }
         },
         
@@ -3470,6 +3484,14 @@ function (dojo, declare) {
             
             // Call normal notif
             this.notif_transferedCard(notif);
+        },
+
+        notif_revealCards_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+            
+            // Call normal notif
+            this.notif_revealCards(notif);
         },
 
         notif_splayedPile_spectator: function(notif) {
