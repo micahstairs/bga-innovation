@@ -3233,7 +3233,10 @@ function (dojo, declare) {
 
             // Add tooltip to game log
             if (card.id !== undefined) {
-                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+                // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
+                if (card.id != 215 && card.id != 218 && card.id != 219) {
+                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+                }
             }
         },
 
@@ -3241,7 +3244,10 @@ function (dojo, declare) {
             // Add tooltips to game log
             for (var i = 0; i < notif.args.cards.length; i++) {
                 var card = notif.args.cards[i];
-                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+                // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
+                if (card.id != 215 && card.id != 218 && card.id != 219) {
+                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+                }
             }
         },
         
