@@ -106,6 +106,7 @@ class Innovation extends Table
             'icon_hash_3' => 81,
             'icon_hash_4' => 82,
             'icon_hash_5' => 83,
+            'topdeck' => 84,
             
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -4941,6 +4942,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('bottom_to', $rewritten_options)) {
             $rewritten_options['bottom_to'] = false;
         }
+        if (!array_key_exists('topdeck', $rewritten_options)) {
+            $rewritten_options['topdeck'] = false;
+        }
         if (!array_key_exists('score_keyword', $rewritten_options)) {
             $rewritten_options['score_keyword'] = false;
         }
@@ -4985,6 +4989,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             switch($key) {
             case 'can_pass':
             case 'bottom_to':
+            case 'topdeck':
             case 'score_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
@@ -7026,7 +7031,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $location_from = self::decodeLocation(self::getGameStateValue("location_from"));
             $owner_to = self::getGameStateValue("owner_to");
             $location_to = self::decodeLocation(self::getGameStateValue("location_to"));
-            $bottom_to = self::getGameStateValue("bottom_to") == 1;
+            $bottom_to = self::getGameStateValue("bottom_to");
             $age_min = self::getGameStateValue("age_min");
             $age_max = self::getGameStateValue("age_max");
             $with_icon = self::getGameStateValue("with_icon");
@@ -13781,7 +13786,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'bottom_to' => false, // Place on top of deck
+                'topdeck' => true,
                 
                 'card_id_1' => self::getGameStateValue('card_id_1')
             );       
@@ -16473,7 +16478,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Flags
             $owner_to = self::getGameStateValue('owner_to');
             $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
-            $bottom_to = self::getGameStateValue('bottom_to') == 1 ? true : null;
+            $bottom_to = self::getGameStateValue('bottom_to');
+            $topdeck = self::getGameStateValue('topdeck');
             $score_keyword = self::getGameStateValue('score_keyword') == 1;
             
             $splay_direction = self::getGameStateValue('splay_direction'); // -1 if that was not a choice for splay
@@ -16820,7 +16826,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, /*bottom_to=*/ $topdeck ? false : $bottom_to, $score_keyword);
                 break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
