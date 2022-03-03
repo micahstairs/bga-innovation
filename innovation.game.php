@@ -5588,18 +5588,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        if ($card['non_demand_effect_1'] === null) { // There is no non-demand effect
-            self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
-            // No exclusive execution: do nothing
-            return;
-        }
-        if ($card['non_demand_effect_2'] !== null) { // There are 2 or 3 non-demand effects
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effects of this card.'), array('You' => 'You'));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effects of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+        if (self::getGameStateValue('release_version') >= 1) {
+            $card_args = self::getNotificationArgsForCardList([$card]);
+            if ($card['non_demand_effect_1'] === null) {
+                self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card_1} to execute.'), ['card_1' => $card_args, 'cards' => [$card]]);
+                return;
             }
-        else { // There is a single non-demand effect
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effect of this card.'), array('You' => 'You'));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effect of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+            self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card_1}.'),
+                ['You' => 'You', 'card_1' => $card_args, 'cards' => [$card]]);
+            self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card_1}.'),
+                ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_args, 'cards' => [$card]]);
+        } else {
+            if ($card['non_demand_effect_1'] === null) { // There is no non-demand effect
+                self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
+                // No exclusive execution: do nothing
+                return;
+            }
+            if ($card['non_demand_effect_2'] !== null) { // There are 2 or 3 non-demand effects
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effects of this card.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effects of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                }
+            else { // There is a single non-demand effect
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effect of this card.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effect of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+            }
         }
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
     }
@@ -5609,7 +5621,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_1_args = self::getNotificationArgsForCardList([$current_card]);
         $card_2_args = self::getNotificationArgsForCardList([$card]);
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        $icon = self::getIconSquare($current_card['dogma_icon']);
+        $initially_executed_card = self::getCardInfo(self::getNestedCardState(0)['card_id']);
+        $icon = self::getIconSquare($initially_executed_card['dogma_icon']);
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'cards' => [$current_card, $card], 'icon' => $icon]);
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
@@ -5622,7 +5635,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
             $nested_card_state = self::getCurrentNestedCardState();
-            $nesting_index = self::incGameStateValue('current_nesting_index', 1);
+            $nesting_index = self::getGameStateValue('current_nesting_index');
             $has_i_demand = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
             $has_i_compel = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
@@ -5631,7 +5644,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     (nesting_index, card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
                 VALUES
                     ({nesting_index}, {card_id}, {launcher_id}, {effect_type}, 1, -1, -1)
-            ", array('nesting_index' => $nesting_index, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+            ", array('nesting_index' => $nesting_index + 1, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -7508,6 +7521,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         $card = self::getCardInfo($card_id);
+
+        // Switch to new card
+        if (self::getGameStateValue('release_version') >= 1 && self::getNestedCardState($nested_card_state['nesting_index'] + 1) != null) {
+            // throw new BgaUserException("commenting this out leads to an infinite loop");
+            self::incGameStateValue('current_nesting_index', 1);
+            self::trace('interDogmaEffect->dogmaEffect');
+            $this->gamestate->nextState('dogmaEffect');
+            return;
+        }
         
         // If there isn't another dogma effect on the card
         if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
@@ -7515,7 +7537,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if (self::getGameStateValue('release_version') >= 1) {
                 // Finish executing the card which triggered this one
                 if (self::getGameStateValue('current_nesting_index') >= 1) {
-                    self::notifyGeneralInfo(clienttranslate("Card execution within dogma completed."));
+                    $player_id = self::getCurrentPlayerUnderDogmaEffect();
+                    $card_args = self::getNotificationArgsForCardList([$card]);
+                    self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
+                        ['card_1' => $card_args, 'cards' => [$card]]);
+                    
                     self::popCardFromNestedDogmaStack();
 
                     $nested_card_state = self::getCurrentNestedCardState();
@@ -9030,7 +9056,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($nobody_more_leaves_than_factories) { // "If no player has more leaves than factories on their board"
                     $teams = array();
                     $scores = array();
-                    foreach ($players as $player_id => $player) {
+                    foreach ($player_ids as $player_id) {
                         $team = self::getPlayerTeam($player_id);
                         $score = self::getPlayerScore($player_id);
                         if (!array_key_exists($team, $teams)) {
