@@ -611,7 +611,7 @@ class Innovation extends Table
                 $current_effect_type = $nested_card_state['current_effect_type'];
                 $current_effect_number = $nested_card_state['current_effect_number'];
                 $card_id = $nested_card_state['card_id'];
-                $JSCardEffectQuery = $card_id == -1 ? null : self::getJSCardEffectQuery($card_id, self::getCardInfo($card_id)['age'], $current_effect_type, $current_effect_number);
+                $JSCardEffectQuery = $card_id == -1 ? null : self::getJSCardEffectQuery(self::getCardInfo($card_id), $current_effect_type, $current_effect_number);
             }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
@@ -622,7 +622,7 @@ class Innovation extends Table
                 $card = self::getCardInfo($card_id);
                 $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
                 $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
-                $JSCardEffectQuery = $current_effect_number == -1 ? null : self::getJSCardEffectQuery($card_id, $card['age'], $current_effect_type, $current_effect_number);
+                $JSCardEffectQuery = $current_effect_number == -1 ? null : self::getJSCardEffectQuery($card, $current_effect_type, $current_effect_number);
             }
         }
         $result['JSCardEffectQuery'] = $JSCardEffectQuery;
@@ -5422,7 +5422,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $args = array_merge(array(
             'qualified_effect' => self::qualifyEffect($current_effect_type, $current_effect_number, $card),
             'card_name' => 'card_name',
-            'JSCardEffectQuery' => self::getJSCardEffectQuery($card_id, $card['age'], $current_effect_type, $current_effect_number)
+            'JSCardEffectQuery' => self::getJSCardEffectQuery($card, $current_effect_type, $current_effect_number)
         ), $card_names);
         
         $args['i18n'][] = 'qualified_effect';
@@ -5485,12 +5485,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_names;
     }
     
-    function getJSCardId($card_id, $card_age) {
-        return "#item_" . $card_id. "__age_" . $card_age . "__M__card";
+    function getJSCardId($card) {
+        return "#item_" . $card['id'] . "__age_" . $card['age'] . "__type_" . $card['type'] . "__is_relic_" . $card['is_relic'] . "__M__card";
     }
     
-    function getJSCardEffectQuery($card_id, $card_age, $effect_type, $effect_number) {
-        return self::getJSCardId($card_id, $card_age) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
+    function getJSCardEffectQuery($card, $effect_type, $effect_number) {
+        return self::getJSCardId($card) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
 
     function setLauncherId($launcher_id) {
