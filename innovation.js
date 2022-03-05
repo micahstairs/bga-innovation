@@ -1127,9 +1127,8 @@ function (dojo, declare) {
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
-
-            // Special achievement
-            if (card.age === null) {
+             // Special achievement
+             if (card.age === null) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
                 return;
             }
@@ -3234,7 +3233,7 @@ function (dojo, declare) {
             // Add tooltip to game log
             if (card.id !== undefined) {
                 // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
-                if (card.id != 215 && card.id != 218 && card.id != 219) {
+                if (card.age !== null && card.id != 215 && card.id != 218 && card.id != 219) {
                     this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
                 }
             }
@@ -3245,7 +3244,7 @@ function (dojo, declare) {
             for (var i = 0; i < notif.args.cards.length; i++) {
                 var card = notif.args.cards[i];
                 // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
-                if (card.id != 215 && card.id != 218 && card.id != 219) {
+                if (card.age !== null && card.id != 215 && card.id != 218 && card.id != 219) {
                     this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
                 }
             }
