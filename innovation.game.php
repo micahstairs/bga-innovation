@@ -15715,7 +15715,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 case "144N1C":
                     // "If you did all three"
-                    if ($n > 0 && self::getAuxiliaryValue() === 2) {
+                    if ($n > 0 && self::getAuxiliaryValue() == 2) {
                         self::incrementStepMax(1);
                     }
                     break;
