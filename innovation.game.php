@@ -106,7 +106,6 @@ class Innovation extends Table
             'icon_hash_3' => 81,
             'icon_hash_4' => 82,
             'icon_hash_5' => 83,
-            'topdeck' => 84,
             
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -1095,11 +1094,12 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
     }
 
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=null, $score_keyword=false) {
-        /** Execute the transfer of the card with all information needed. The new position is calculated according to $location_to.
-        
-        Return the card transferred as a dictionary.
-        **/
+    /**
+     * Executes the transfer of the card, returning the new card info.
+     * 
+     * bottom_to can either be -1 (unspecified), 0 (false), or 1 (true).
+     **/
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=-1, $score_keyword=false) {
 
         // Do not move the card at all.
         if ($location_to == 'none') {
@@ -1112,8 +1112,8 @@ class Innovation extends Table
         }
 
         // By default, cards are returned to the bottom of the deck
-        if ($location_to == 'deck' && $bottom_to === null) {
-            $bottom_to = true;
+        if ($bottom_to == -1) {
+            $bottom_to = $location_to == 'deck';
         }
         
         $id = $card['id'];
@@ -4940,10 +4940,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['icon_hash_5'] = -1;
         }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
-            $rewritten_options['bottom_to'] = false;
-        }
-        if (!array_key_exists('topdeck', $rewritten_options)) {
-            $rewritten_options['topdeck'] = false;
+            $rewritten_options['bottom_to'] = -1;
         }
         if (!array_key_exists('score_keyword', $rewritten_options)) {
             $rewritten_options['score_keyword'] = false;
@@ -4987,9 +4984,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         foreach($rewritten_options as $key => $value) {
             switch($key) {
-            case 'can_pass':
             case 'bottom_to':
-            case 'topdeck':
+                // Only fallthrough if bottom_to is true/false
+                if ($value == -1) {
+                    break;
+                }
+            case 'can_pass':
             case 'score_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
@@ -13786,7 +13786,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'topdeck' => true,
+                'bottom_to' => false,
                 
                 'card_id_1' => self::getGameStateValue('card_id_1')
             );       
@@ -16479,7 +16479,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $owner_to = self::getGameStateValue('owner_to');
             $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
             $bottom_to = self::getGameStateValue('bottom_to');
-            $topdeck = self::getGameStateValue('topdeck');
             $score_keyword = self::getGameStateValue('score_keyword') == 1;
             
             $splay_direction = self::getGameStateValue('splay_direction'); // -1 if that was not a choice for splay
@@ -16826,7 +16825,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, /*bottom_to=*/ $topdeck ? false : $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                 break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
