@@ -445,23 +445,23 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE is_relic");
         }
 
+        // Initialize Artifacts-specific statistics
         if (self::getGameStateValue('artifacts_mode') != 1) {
-            // Add in Artifacts-specific statistics
             self::initStat('player', 'dig_events_number', 0);
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
             self::initStat('player', 'free_action_pass_number', 0);
+            // TODO(#202): Increment this stat in the right spot in the code.
             self::initStat('player', 'dogma_actions_number_with_i_compel', 0);
+            // TODO(#202): Increment this stat in the right spot in the code.
             self::initStat('player', 'i_compel_effects_number', 0);
             
-            // Artifacts + Relics specific
+            // Initialize Relic-specific statistics
             if (self::getGameStateValue('artifacts_mode') == 3) {
-                // Add in Relics-specific statistics
                 self::initStat('player', 'relics_seized_number', 0);
                 self::initStat('player', 'relics_stolen_number', 0);
             }
         }
-        
         
         // Store the age of each card when face-up
         self::DbQuery("UPDATE card SET faceup_age = (CASE id WHEN 188 THEN 11 ELSE age END)");
@@ -5836,13 +5836,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo(self::getGameStateValue('relic_id'));
-        self::transferCardFromTo($card, $player_id, 'hand');
-        self::setGameStateValue('relic_id', -1);
 
-        if($card['owner'] != 0 && $card['owner'] != $player_id) {
+        if ($card['owner'] != 0 && $card['owner'] != $player_id) {
             self::incStat(1, 'relics_stolen_number', $card['owner']);
         }
         self::incStat(1, 'relics_seized_number', $player_id);
+
+        self::transferCardFromTo($card, $player_id, 'hand');
+        self::setGameStateValue('relic_id', -1);
        
         self::trace('relicPlayerTurn->interPlayerTurn (seizeRelicToHand)');
         $this->gamestate->nextState('interPlayerTurn');
@@ -5854,17 +5855,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo(self::getGameStateValue('relic_id'));
+
+        if ($card['owner'] != 0 && $card['owner'] != $player_id) {
+            self::incStat(1, 'relics_stolen_number', $card['owner']);
+        }
+        self::incStat(1, 'relics_seized_number', $player_id);
+
         try {
             self::transferCardFromTo($card, $player_id, "achievements");
         } catch (EndOfGame $e) {
             $this->gamestate->nextState('justBeforeGameEnd');
             return;
         }
-        
-        if($card['owner'] != 0 && $card['owner'] != $player_id) {
-            self::incStat(1, 'relics_stolen_number', $card['owner']);
-        }
-        self::incStat(1, 'relics_seized_number', $player_id);
        
         self::transferCardFromTo($card, $player_id, 'achievements');
         self::setGameStateValue('relic_id', -1);
@@ -5889,9 +5891,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // TODO(ECHOES): Triggers all applicable Echo effects.
 
-        // TODO(#202): Update statistics.
-        self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));
-        
+        self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));        
         self::incStat(1, 'free_action_dogma_number', $player_id);
         
         // Resolve the first dogma effect of the card
@@ -6072,6 +6072,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
             } else {
                 self::transferCardFromTo($top_artifact_card, $player_id, 'display');
+                self::incStat(1, 'dig_events_number', $player_id);
                 
                 // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
                 if (self::getGameStateValue('artifacts_mode') == 3) {
@@ -6082,7 +6083,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         return true;
                     }
                 }
-                self::incStat(1, 'dig_events_number', $player_id);
             }
         }
         return false;

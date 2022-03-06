@@ -138,11 +138,11 @@ $stats_type = array(
         
         // Artifacts-specific 
         "dig_events_number" => array("id"=> 24,
-                    "name" => totranslate("Number of artifacts on display"),
+                    "name" => totranslate("Number of artifacts dug"),
                     "type" => "int" ),
 
         "free_action_dogma_number" => array("id"=> 25,
-                    "name" => totranslate("Number of free actions executed"),
+                    "name" => totranslate("Number of times that an artifact on display was executed"),
                     "type" => "int" ),
 
         "free_action_return_number" => array("id"=> 26,
@@ -150,7 +150,7 @@ $stats_type = array(
                     "type" => "int" ),
 
         "free_action_pass_number" => array("id"=> 27,
-                    "name" => totranslate("Number of passed free actions"),
+                    "name" => totranslate("Number of turns that an artifact on display was not used or returned"),
                     "type" => "int" ),
 
         "dogma_actions_number_with_i_compel" => array("id"=> 28,
