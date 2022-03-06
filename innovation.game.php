@@ -1117,7 +1117,7 @@ class Innovation extends Table
      * 
      * bottom_to can either be -1 (unspecified), 0 (false), or 1 (true).
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to=-1, $score_keyword=false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = -1, $score_keyword = false) {
 
         // Do not move the card at all.
         if ($location_to == 'none') {
@@ -1129,8 +1129,9 @@ class Innovation extends Table
             $location_to = 'relics';
         }
 
-        // By default, cards are returned to the bottom of the deck
-        if ($bottom_to == -1) {
+        // If it's not specified whether to put the card at the top or bottom, pick a default based on the location.
+        if ($bottom_to === -1) {
+            // By default, cards are returned to the bottom of the deck.
             $bottom_to = $location_to == 'deck';
         }
         
@@ -4633,7 +4634,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null) {
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = -1, $type = null) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
         if ($age_to_draw > 10) {
