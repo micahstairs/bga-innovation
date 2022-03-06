@@ -7527,15 +7527,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $card = self::getCardInfo($card_id);
 
-        // Switch to new card
-        if (self::getGameStateValue('release_version') >= 1 && self::getNestedCardState($nested_card_state['nesting_index'] + 1) != null) {
-            // throw new BgaUserException("commenting this out leads to an infinite loop");
-            self::incGameStateValue('current_nesting_index', 1);
-            self::trace('interDogmaEffect->dogmaEffect');
-            $this->gamestate->nextState('dogmaEffect');
-            return;
-        }
-        
         // If there isn't another dogma effect on the card
         if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
 
@@ -10418,13 +10409,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
 
-        // Move to dogma effect that was pushed onto the stack, if applicable
-        if (self::getGameStateValue('release_version') >= 1 && $nested_card_state['nesting_index'] != self::getGameStateValue('current_nesting_index')) {
-            self::trace('playerInvolvedTurn->dogmaEffect');
-            $this->gamestate->nextState('dogmaEffect');
-            return;
-        }
-        
         if ($step_max === null) {
             // End of the effect for this player
             self::trace('playerInvolvedTurn->interPlayerInvolvedTurn');
@@ -10480,8 +10464,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::stInterPlayerInvolvedTurn');
-            self::trace('interPlayerTurn->justBeforeGameEnd');
+            self::trace('interPlayerInvolvedTurn->justBeforeGameEnd');
             $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
+
+        // Switch to new card that was pushed onto the stack
+        if (self::getGameStateValue('release_version') >= 1 && self::getNestedCardState(self::getGameStateValue('current_nesting_index') + 1) != null) {
+            self::incGameStateValue('current_nesting_index', 1);
+            self::trace('interPlayerInvolvedTurn->dogmaEffect');
+            $this->gamestate->nextState('dogmaEffect');
             return;
         }
 
@@ -10492,10 +10484,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $nesting_index = self::getGameStateValue('current_nesting_index');
             $current_effect_type = self::getNestedCardState($nesting_index)['current_effect_type'];
-        } else {
-            $current_effect_type = self::getGameStateValue('current_effect_type');
-        }
-        if (self::getGameStateValue('release_version') >= 1) {
 
             // If this is a nested card, don't allow other players to share the non-demand effect
             $nesting_index = self::getGameStateValue('current_nesting_index');
@@ -10511,6 +10499,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             self::updateCurrentNestedCardState('current_player_id', $next_player);
         } else {
+            $current_effect_type = self::getGameStateValue('current_effect_type');
             $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
             if ($next_player === null) {
                 // There is no more player eligible for this effect
@@ -16379,13 +16368,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        // Move to dogma effect that was pushed onto the stack, if applicable
-        if (self::getGameStateValue('release_version') >= 1 && $nested_card_state['nesting_index'] != self::getGameStateValue('current_nesting_index')) {
-            self::trace('interInteractionStep->dogmaEffect');
-            $this->gamestate->nextState('dogmaEffect');
-            return;
-        }
-        
         $step_max = self::getStepMax();
         if ($step == $step_max) { // The last step has been completed
             // End of the turn for the player involved

@@ -141,7 +141,6 @@ $machinestates = array(
         "action" => "stPlayerInvolvedTurn",
         "args" => "argPlayerInvolvedTurn",
         "transitions" => array(
-            "dogmaEffect" => 6, // Used by mechanism which executes nested effects
             "interPlayerInvolvedTurn" => 9,
             "interactionStep" => 10,
             "justBeforeGameEnd" => 98
@@ -155,7 +154,11 @@ $machinestates = array(
         "action" => "stInterPlayerInvolvedTurn",
         "args" => "argInterPlayerInvolvedTurn",
         "updateGameProgression" => true,
-        "transitions" => array("playerInvolvedTurn" => 8, "interDogmaEffect" => 7)
+        "transitions" => array(
+            "dogmaEffect" => 6,
+            "interDogmaEffect" => 7,
+            "playerInvolvedTurn" => 8,
+        )
     ),
     
     10 => array(
@@ -175,7 +178,6 @@ $machinestates = array(
         "args" => "argInterInteractionStep",
         "updateGameProgression" => true,
         "transitions" => array(
-            "dogmaEffect" => 6, // Used by mechanism which executes nested effects
             "interPlayerInvolvedTurn" => 9,
             "interactionStep" => 10,
             "justBeforeGameEnd" => 98)
