@@ -5753,11 +5753,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card = self::getCardInfo($card_id);
         
         if ($card['owner'] != $player_id || $card['location'] != "hand") {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You do not have this card in hand [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
-        
-        // No cheating here
         
         // Stats
         self::setStat(1, 'turns_number', $player_id); // First turn for this player
@@ -5789,11 +5786,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card = self::getCardInfo($card_id);
         $player_id = self::getCurrentPlayerId();
         if ($card['owner'] != $player_id || $card['location'] != "hand") {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You do not have this card in hand [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
-        
-        // No cheating here
         
         // Update card selection
         $cards = self::getCardsInHand($player_id);
@@ -5944,8 +5938,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // TODO(ECHOES): Update this once there can be more than one achievement of the same age in the claimable achievements pile.
         $card = self::getObjectFromDB(self::format("SELECT * FROM card WHERE location = 'achievements' AND age = {age} AND owner = 0", array('age' => $age)));
         if ($card['owner'] != 0) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("This achievement has already been claimed [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
         
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
@@ -5953,11 +5946,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
         if ($age > $age_max || $player_score < 5*$age) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You do not meet the conditions to claim this achievement [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
-        
-        // No cheating here
         
         // Stats
         self::updateActionAndTurnStats($player_id);
@@ -6013,11 +6003,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check if the player really has this card in their hand or on display
         $card = self::getCardInfo($card_id);
         if ($card['owner'] != $player_id || ($card['location'] != "hand" && $card['location'] != "display")) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You do not have this card in hand [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
-        
-        // No cheating here
         
         // Stats
         self::updateActionAndTurnStats($player_id);
@@ -6124,8 +6111,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($card['id'] == 188) {
             self::throwInvalidChoiceException();
         }
-        
-        // No cheating here
         
         // Stats
         self::updateActionAndTurnStats($player_id);
@@ -6315,35 +6300,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($card_id == -1) {
             // The player chooses to pass or stop
             if (self::getGameStateValue('can_pass') == 0 && self::getGameStateValue('n_min') > 0) {
-                // The player is cheating...
-                throw new BgaUserException(self::_("You cannot pass or stop [Press F5 in case of troubles]"));
+                self::throwInvalidChoiceException();
             }
-            // No cheating here
             if (self::getGameStateValue('special_type_of_choice') == 0) {
                 self::setGameStateValue('id_last_selected', -1);
-            }
-            else {
+            } else {
                 self::setGameStateValue('choice', -2);
             }
-        }
-        else if (self::getGameStateValue('special_type_of_choice') != 0) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You cannot choose a card; you have to choose a special option [Press F5 in case of troubles]"));
-        }
-        else {
+        } else if (self::getGameStateValue('special_type_of_choice') != 0) {
+            self::throwInvalidChoiceException();
+        } else {
             // Check if the card is within the selection range
             $card = self::getCardInfo($card_id);
             
             if (!$card['selected']) {
-                // The player is cheating...
-                throw new BgaUserException(self::_("This card cannot be selected [Press F5 in case of troubles]"));
-            }
-            else if ($card['location'] <> 'board' && $card['owner'] <> $player_id) {
-                // The player is cheating...
-                throw new BgaUserException(self::_("You attempt to select a specific card you can't see [Press F5 in case of troubles]"));
+                self::throwInvalidChoiceException();
             }
             
-            // No cheating here
             self::setGameStateValue('id_last_selected', $card_id);
             self::unmarkAsSelected($card_id);
             
@@ -6362,23 +6335,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $players = array_keys(self::loadPlayersBasicInfos());
         $player_id = self::getActivePlayerId();
         if (self::getGameStateValue('special_type_of_choice') != 0) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("You cannot choose a card; you have to choose a special option [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
-        else if ((!in_array($owner, $players) && $owner != 0) || !in_array($location, self::getObjectListFromDB("SELECT DISTINCT location FROM card", true)) || $age < 1 || $age > 10) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("Wrong transmitted positional info [Press F5 in case of troubles]"));
+        if ((!in_array($owner, $players) && $owner != 0) || !in_array($location, self::getObjectListFromDB("SELECT DISTINCT location FROM card", true)) || $age < 1 || $age > 10) {
+            self::throwInvalidChoiceException();
         }
         
         $card = self::getCardInfoFromPosition($owner, $location, $age, $position);
         if ($card === null) {
-            throw new BgaUserException(self::_("Transmitted positional info out of range [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
         if (!$card['selected']) {
-            // The player is cheating...
-            throw new BgaUserException(self::_("This card cannot be selected [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
-        // No cheating here
+        
         self::setGameStateValue('id_last_selected', $card['id']);
         self::unmarkAsSelected($card['id']);
         
@@ -6398,8 +6368,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         
         if ($special_type_of_choice == 0) { // This is not a special choice
-            // The player is cheating...
-            throw new BgaUserException(self::_("You cannot choose a special option; you have to choose a card [Press F5 in case of troubles]"));
+            self::throwInvalidChoiceException();
         }
         
         switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
@@ -6499,7 +6468,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $actual_change = self::rearrange($player_id, $color, $permutations_done);
                 
                 if (!$actual_change) {
-                    throw new BgaUserException(self::_("Your choice does not make any change in the rearrangement [Press F5 in case of troubles]"));
+                    self::throwInvalidChoiceException();
                 }
 
                 // Update max age on board in case it changed
@@ -6538,7 +6507,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             default:
                 break;
         }
-        // No cheating here
         self::setGameStateValue('choice', $choice);
         
         // Return to the resolution of the effect
