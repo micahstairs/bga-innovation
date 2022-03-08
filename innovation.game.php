@@ -1130,7 +1130,7 @@ class Innovation extends Table
         }
 
         // If it's not specified whether to put the card at the top or bottom, pick a default based on the location.
-        if ($bottom_to === -1) {
+        if (intval($bottom_to) === -1) {
             // By default, cards are returned to the bottom of the deck.
             $bottom_to = $location_to == 'deck';
         }
@@ -6348,7 +6348,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!$card['selected']) {
             self::throwInvalidChoiceException();
         }
-        
+
         self::setGameStateValue('id_last_selected', $card['id']);
         self::unmarkAsSelected($card['id']);
         
