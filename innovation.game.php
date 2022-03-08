@@ -6581,11 +6581,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function canSeizeRelicToHand($relic, $player_id) {
-        return self::relicSetIsInUse($relic) && ($relic['location'] != 'hand' || $relic['owner'] != $player_id);
+        return self::relicSetIsInUse($relic) && ($relic['location'] == 'achievements' || $relic['location'] == 'relics');
     }
 
     function canSeizeRelicToAchievements($relic, $player_id) {
-        return $relic['location'] != 'achievements' || $relic['owner'] != $player_id;
+        return $relic['location'] == 'relics' || ($relic['location'] == 'achievements' && $relic['owner'] != $player_id);
     }
 
     /* Returns whether the relic's set is being used for this game. */
