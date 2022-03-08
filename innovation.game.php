@@ -1114,10 +1114,8 @@ class Innovation extends Table
 
     /**
      * Executes the transfer of the card, returning the new card info.
-     * 
-     * bottom_to can either be -1 (unspecified), 0 (false), or 1 (true).
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = -1, $score_keyword = false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = false, $score_keyword = false) {
 
         // Do not move the card at all.
         if ($location_to == 'none') {
@@ -1129,12 +1127,6 @@ class Innovation extends Table
             $location_to = 'relics';
         }
 
-        // If it's not specified whether to put the card at the top or bottom, pick a default based on the location.
-        if (intval($bottom_to) === -1) {
-            // By default, cards are returned to the bottom of the deck.
-            $bottom_to = $location_to == 'deck';
-        }
-        
         $id = $card['id'];
         $age = $card['age'];
         $type = $card['type'];
@@ -4634,7 +4626,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = -1, $type = null) {
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
         if ($age_to_draw > 10) {
@@ -4959,7 +4951,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['icon_hash_5'] = -1;
         }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
-            $rewritten_options['bottom_to'] = -1;
+            $rewritten_options['bottom_to'] = (array_key_exists('location_to', $rewritten_options) && $rewritten_options['location_to'] == 'deck');
         }
         if (!array_key_exists('score_keyword', $rewritten_options)) {
             $rewritten_options['score_keyword'] = false;
@@ -5003,16 +4995,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         foreach($rewritten_options as $key => $value) {
             switch($key) {
-            case 'bottom_to':
-                // Only fallthrough if bottom_to is true/false
-                if ($value == -1) {
-                    break;
-                }
             case 'can_pass':
             case 'score_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
             case 'has_demand_effect':
+            case 'bottom_to':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
