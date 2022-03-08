@@ -5125,13 +5125,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join($type_array, ',').")";
         
         // Condition for icon
+        // TODO(CITIES): Update this to handle 6 icons.
         $with_icon = self::getGameStateValue('with_icon');
         $without_icon = self::getGameStateValue('without_icon');
         if ($with_icon > 0) {
             $condition_for_icon = self::format("AND (spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon})", array('icon' => $with_icon));
         }
         else if ($without_icon > 0) {
-            $condition_for_icon = self::format("AND spot_1 <> {icon} AND spot_2 <> {icon} AND spot_3 <> {icon} AND spot_4 <> {icon}", array('icon' => $without_icon));
+            $condition_for_icon = self::format("AND (spot_1 IS NULL OR spot_1 <> {icon}) AND (spot_2 IS NULL OR spot_2 <> {icon}) AND (spot_3 IS NULL OR spot_3 <> {icon}) AND (spot_4 IS NULL OR spot_4 <> {icon})", array('icon' => $without_icon));
         }
         else {
             $condition_for_icon = "";
