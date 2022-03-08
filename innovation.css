@@ -1,71 +1,22 @@
 @import "../../../css/csslayer.css";
-/* card name in log */
-/* player */
-/* Artifacts on display */
-/* hand */
-/* container for revealed cards */
-/* display buttons */
-/*board and piles*/
-/*progress*/
-/* Decks and available achievements */
-/*decks*/
-/* Available relics/achievements */
-/* Texts */
-/* Player panel */
-/* Number on the card indicating the age */
-/* Title of the card */
-/* Elements for rewriting card texts */
-/* Elements inside the card in play */
-/* Blue */
-/* Red */
-/* Green */
-/* Yellow */
-/* Purple */
-/* Elements inside the card in the tooltip */
-/* Within dogma, indicators of the current effect */
-/* Indicators for splay */
-/* Context */
-/* Square indicators */
-/* N: for squares in log (Notification) */
-/* P: for squares in player Panels */
-/* M: for squares used with cards of size M */
-/* L: for squares used with cards of size L */
-/* TODO(ARTIFACTS): refactor background image out of M and L */
-/* Buttons for rearranging in Publication dogma effect */
-/* Front of cards */
-/* Cards of size M */
-/* Cards of size L */
-/* Locations where the square and hexagon icons go on each card 
-*
-*  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
-*  Square icons should be ~6% of the card width away from the top edge. it is currently 7px
-* 
-*  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
-*
-*  The Hex icons do not fill their entire box so we have to fudge some of the offsets
-*/
-/* M size */
-/* L size */
-/* Square card icons (most cards have 3 large resource icons on them) 
-*
-*  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
-*  { Background-size, width, height, background-position-x, background-position-y }
-*/
-/* Square card icons (most cards have 3 large resource icons on them) */
-/* Necessary for Battleship Yamato */
-/* M square icons */
-/* L square icons */
-/* Hexagon icons take up ~27 % of a real cards width. 
-*  Our cards will shoot for 25 % ->  M.45px
-*  If you ever change the background-size, you must edit the offset in css_generator.py
-*/
-/* Relics */
-/* Special achievements */
-/* Blue card */
-/* Red card */
-/* Green card */
-/* Yellow card */
-/* Purple card */
+/* codex for numbers and symbols
+ *
+ * **Icons**
+ * icon_0 - hex
+ * icon_1 - crowns
+ * icon_2 - leaves 
+ * icon_3 - bulbs 
+ * icon_4 - towers 
+ * icon_5 - factories 
+ * icon_6 - clocks
+ *
+ * **Colors**
+ * color_0 - blue
+ * color_1 - red
+ * color_2 - green
+ * color_3 - yellow
+ * color_4 - purple
+ */
 #main_area {
   display: inline-block;
   vertical-align: top;
@@ -91,23 +42,7 @@
   height: 30px;
 }
 
-#debug_draw {
-  width: 100px;
-}
-
-#debug_score {
-  width: 100px;
-}
-
-#debug_achieve {
-  width: 100px;
-}
-
-#debug_return {
-  width: 100px;
-}
-
-#debug_dig {
+#debug_draw, #debug_score, #debug_achieve, #debug_return, #debug_dig {
   width: 100px;
 }
 
@@ -276,12 +211,6 @@
   height: 49px;
 }
 
-.reference_card {
-  display: inline-block;
-  background-image: url("img/reference_cards.jpg");
-  position: relative;
-}
-
 .achievements {
   display: inline-block;
   margin-top: 18px;
@@ -297,23 +226,25 @@
   cursor: pointer;
 }
 
+.reference_card {
+  display: inline-block;
+  background-image: url("img/reference_cards.jpg");
+  position: relative;
+}
+.reference_card.M {
+  width: 560px;
+  height: 408px;
+  background-size: 570px auto;
+}
 .reference_card.S {
   width: 96px;
   height: 69px;
   background-size: 100px auto;
   background-position: -2px -145px;
 }
-
-.reference_card.M {
-  width: 560px;
-  height: 408px;
-  background-size: 570px auto;
-}
-
 .reference_card.side_1.M {
   background-position: -2px -2px;
 }
-
 .reference_card.side_2.M {
   background-position: -2px -408px;
 }
@@ -322,20 +253,17 @@
   font-family: "tradegothiclt-condeighteen", Arial, sans-serif;
   position: absolute;
 }
-
-.actions_header {
+.reference_card_block.actions_header {
   font-size: 1.5em;
   font-weight: bold;
 }
-
-.actions_txt {
+.reference_card_block.actions_txt {
   width: 450px;
   height: 36px;
   left: 55px;
   top: 38px;
 }
-
-.meld_title {
+.reference_card_block.meld_title {
   width: 143px;
   height: 23px;
   left: 55px;
@@ -343,15 +271,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.meld_parag {
+.reference_card_block.meld_parag {
   width: 143px;
   height: 94px;
   left: 55px;
   top: 114px;
 }
-
-.draw_title {
+.reference_card_block.draw_title {
   width: 143px;
   height: 23px;
   left: 206px;
@@ -359,15 +285,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.draw_parag {
+.reference_card_block.draw_parag {
   width: 143px;
   height: 94px;
   left: 206px;
   top: 114px;
 }
-
-.achieve_title {
+.reference_card_block.achieve_title {
   width: 148px;
   height: 23px;
   left: 357px;
@@ -375,15 +299,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.achieve_parag {
+.reference_card_block.achieve_parag {
   width: 148px;
   height: 94px;
   left: 357px;
   top: 114px;
 }
-
-.dogma_title {
+.reference_card_block.dogma_title {
   width: 450px;
   height: 23px;
   left: 55px;
@@ -391,15 +313,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.dogma_parag {
+.reference_card_block.dogma_parag {
   width: 450px;
   height: 121px;
   left: 55px;
   top: 232px;
 }
-
-.tuck_title {
+.reference_card_block.tuck_title {
   width: 145px;
   height: 23px;
   left: 55px;
@@ -407,15 +327,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.tuck_parag {
+.reference_card_block.tuck_parag {
   width: 145px;
   height: 72px;
   left: 55px;
   top: 63px;
 }
-
-.return_title {
+.reference_card_block.return_title {
   width: 145px;
   height: 23px;
   left: 206px;
@@ -423,15 +341,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.return_parag {
+.reference_card_block.return_parag {
   width: 145px;
   height: 72px;
   left: 206px;
   top: 63px;
 }
-
-.draw_and_x_title {
+.reference_card_block.draw_and_x_title {
   width: 148px;
   height: 23px;
   left: 357px;
@@ -439,15 +355,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.draw_and_x_parag {
+.reference_card_block.draw_and_x_parag {
   width: 148px;
   height: 72px;
   left: 357px;
   top: 63px;
 }
-
-.splay_title {
+.reference_card_block.splay_title {
   width: 450px;
   height: 23px;
   left: 55px;
@@ -455,15 +369,13 @@
   text-align: center;
   font-weight: bold;
 }
-
-.splay_parag {
+.reference_card_block.splay_parag {
   width: 341px;
   height: 28px;
   left: 55px;
   top: 168px;
 }
-
-.splayed_left_example {
+.reference_card_block.splayed_left_example {
   width: 115px;
   height: 14px;
   left: 75px;
@@ -471,8 +383,7 @@
   text-align: center;
   font-style: italic;
 }
-
-.splayed_right_example {
+.reference_card_block.splayed_right_example {
   width: 115px;
   height: 14px;
   left: 245px;
@@ -480,8 +391,7 @@
   text-align: center;
   font-style: italic;
 }
-
-.splayed_up_example {
+.reference_card_block.splayed_up_example {
   width: 115px;
   height: 14px;
   left: 402px;
@@ -489,8 +399,7 @@
   text-align: center;
   font-style: italic;
 }
-
-.empty_piles_title {
+.reference_card_block.empty_piles_title {
   width: 145px;
   height: 23px;
   left: 55px;
@@ -498,93 +407,80 @@
   text-align: center;
   font-weight: bold;
 }
-
-.empty_piles_parag {
+.reference_card_block.empty_piles_parag {
   width: 145px;
   height: 57px;
   left: 55px;
   top: 309px;
 }
-
-.icon_1_ages {
+.reference_card_block.icon_1_ages {
   width: 50px;
   height: 18px;
   left: 316px;
   top: 307px;
 }
-
-.icon_2_ages {
+.reference_card_block.icon_2_ages {
   width: 50px;
   height: 18px;
   left: 316px;
   top: 330px;
 }
-
-.icon_3_ages {
+.reference_card_block.icon_3_ages {
   width: 50px;
   height: 18px;
   left: 316px;
   top: 352px;
 }
-
-.icon_4_ages {
+.reference_card_block.icon_4_ages {
   width: 50px;
   height: 18px;
   left: 240px;
   top: 307px;
 }
-
-.icon_5_ages {
+.reference_card_block.icon_5_ages {
   width: 50px;
   height: 18px;
   left: 240px;
   top: 330px;
 }
-
-.icon_6_ages {
+.reference_card_block.icon_6_ages {
   width: 50px;
   height: 18px;
   left: 240px;
   top: 352px;
 }
-
-.colors_title {
+.reference_card_block.colors_title {
   width: 67px;
   height: 18px;
   left: 395px;
   top: 284px;
   font-weight: bold;
 }
-
-.red_icon {
+.reference_card_block.red_icon {
   width: 47px;
   height: 18px;
   left: 414px;
   top: 308px;
 }
-
-.purple_icon {
+.reference_card_block.purple_icon {
   width: 47px;
   height: 18px;
   left: 414px;
   top: 329px;
 }
-
-.blue_icon {
+.reference_card_block.blue_icon {
   width: 47px;
   height: 18px;
   left: 414px;
   top: 352px;
 }
-
-.green_icon {
+.reference_card_block.green_icon {
   width: 47px;
   height: 18px;
   left: 485px;
   top: 308px;
 }
-
-.yellow_icon {
+.reference_card_block.yellow_icon {
   width: 39px;
   height: 18px;
   left: 485px;
@@ -654,21 +550,18 @@
 .deck_set {
   display: inline-block;
 }
-
-.deck {
-  display: inline-block;
-  width: 80px;
-  height: 100%;
-}
-
-.deck_pile {
+.deck_set > .deck_pile {
   display: flex;
   height: 49px;
   margin-bottom: 5px;
   margin-right: 5px;
 }
-
-.deck_count {
+.deck_set > .deck_pile > .deck {
+  display: inline-block;
+  width: 80px;
+  height: 100%;
+}
+.deck_set > .deck_pile > .deck_count {
   margin-right: 2px;
   width: 20px;
   display: flex;
@@ -722,40 +615,32 @@
   display: inline-block;
   margin-top: 5px;
 }
-
-.ressource {
+.ressource_table .ressource {
   border-radius: 4px;
   width: 20px;
   text-align: center;
   font-size: 14px;
   color: #ffffff;
 }
-
-.ressource.with_border {
+.ressource_table .ressource.with_border {
   text-shadow: 1px 1px 2px black, 0 0 25px black, 0 0 5px black;
 }
-
-.ressource_1 {
+.ressource_table .ressource_1 {
   background-color: #e7ab22;
 }
-
-.ressource_2 {
+.ressource_table .ressource_2 {
   background-color: #153a1c;
 }
-
-.ressource_3 {
+.ressource_table .ressource_3 {
   background-color: #913c97;
 }
-
-.ressource_4 {
+.ressource_table .ressource_4 {
   background-color: #404446;
 }
-
-.ressource_5 {
+.ressource_table .ressource_5 {
   background-color: #850e04;
 }
-
-.ressource_6 {
+.ressource_table .ressource_6 {
   background-color: #14247f;
 }
 
@@ -781,54 +666,47 @@
   font-weight: bold;
   position: absolute;
 }
-
 .card_age.M {
   width: 14px;
   height: 14px;
   top: 4px;
   line-height: 16px;
 }
-
-.color_0 .M.card_age {
+.card_age.M.color_0 {
   right: 6.5px;
 }
-.color_0 .L.card_age {
-  right: 21px;
-}
-
-.color_2 .M.card_age {
-  right: 6.5px;
-}
-.color_2 .L.card_age {
-  right: 20px;
-}
-
-.color_4 .M.card_age {
-  right: 6.5px;
-}
-.color_4 .L.card_age {
-  right: 22px;
-}
-
-.color_1 .M.card_age {
+.card_age.M.color_1 {
   right: 6px;
 }
-.color_1 .L.card_age {
-  right: 21px;
+.card_age.M.color_2 {
+  right: 6.5px;
 }
-
-.color_3 .M.card_age {
+.card_age.M.color_3 {
   right: 6px;
 }
-.color_3 .L.card_age {
-  right: 22px;
+.card_age.M.color_4 {
+  right: 6.5px;
 }
-
 .card_age.L {
   width: 25px;
   height: 25px;
   top: 26px;
   line-height: 14px;
+}
+.card_age.L.color_0 {
+  right: 21px;
+}
+.card_age.L.color_1 {
+  right: 21px;
+}
+.card_age.L.color_2 {
+  right: 20px;
+}
+.card_age.L.color_3 {
+  right: 22px;
+}
+.card_age.L.color_4 {
+  right: 22px;
 }
 
 .card_title {
@@ -840,14 +718,12 @@
   align-items: center;
   text-align: center;
 }
-
 .card_title.M {
   left: 54px;
   top: 5px;
   width: 93px;
   height: 15px;
 }
-
 .card_title.L {
   left: 143px;
   top: 18px;
@@ -874,21 +750,11 @@
 .effect_text {
   font-family: Tahoma, Arial, sans-serif;
 }
-
 .effect_text.light {
   color: black;
 }
-
 .effect_text.dark {
   color: white;
-}
-
-.effect.M {
-  padding-left: 9px;
-  line-height: 8px;
-}
-.effect.M:nth-of-type(n+2) {
-  margin-top: 4px;
 }
 
 .effect {
@@ -897,6 +763,20 @@
   border-width: 1px;
   padding-right: 1px;
   padding-bottom: 1px;
+}
+.effect.M {
+  padding-left: 9px;
+  line-height: 8px;
+}
+.effect.M:nth-of-type(n+2) {
+  margin-top: 4px;
+}
+.effect.L {
+  padding-left: 19px;
+  line-height: 22px;
+}
+.effect.L:nth-of-type(n+2) {
+  margin-top: 10px;
 }
 
 .card_effects.M {
@@ -926,67 +806,6 @@
 .card_effects.M > .font_size_7 > .effect.M {
   line-height: 7px;
 }
-
-.effect.color_0 {
-  border-color: #0e2a50;
-}
-
-.effect.color_0.light {
-  background-color: #8bd2f1;
-}
-
-.effect.color_0.dark {
-  background-color: #0e2a50;
-}
-
-.effect.color_1 {
-  border-color: #5a090c;
-}
-
-.effect.color_1.light {
-  background-color: #f7c3d2;
-}
-
-.effect.color_1.dark {
-  background-color: #5a090c;
-}
-
-.effect.color_2 {
-  border-color: #122c18;
-}
-
-.effect.color_2.light {
-  background-color: #9dd19b;
-}
-
-.effect.color_2.dark {
-  background-color: #122c18;
-}
-
-.effect.color_3 {
-  border-color: #8b6a28;
-}
-
-.effect.color_3.light {
-  background-color: #f4f4be;
-}
-
-.effect.color_3.dark {
-  background-color: #8b6a28;
-}
-
-.effect.color_4 {
-  border-color: #220e40;
-}
-
-.effect.color_4.light {
-  background-color: #b4bcd8;
-}
-
-.effect.color_4.dark {
-  background-color: #220e40;
-}
-
 .card_effects.L {
   left: 135px;
   top: 64px;
@@ -994,22 +813,62 @@
   height: 137px;
 }
 
-.effect.L {
-  padding-left: 19px;
-  line-height: 22px;
+.effect.color_0 {
+  border-color: #0e2a50;
 }
-.effect.L:nth-of-type(n+2) {
-  margin-top: 10px;
+.effect.color_0.light {
+  background-color: #8bd2f1;
+}
+.effect.color_0.dark {
+  background-color: #0e2a50;
+}
+
+.effect.color_1 {
+  border-color: #5a090c;
+}
+.effect.color_1.light {
+  background-color: #f7c3d2;
+}
+.effect.color_1.dark {
+  background-color: #5a090c;
+}
+
+.effect.color_2 {
+  border-color: #122c18;
+}
+.effect.color_2.light {
+  background-color: #9dd19b;
+}
+.effect.color_2.dark {
+  background-color: #122c18;
+}
+
+.effect.color_3 {
+  border-color: #8b6a28;
+}
+.effect.color_3.light {
+  background-color: #f4f4be;
+}
+.effect.color_3.dark {
+  background-color: #8b6a28;
+}
+
+.effect.color_4 {
+  border-color: #220e40;
+}
+.effect.color_4.light {
+  background-color: #b4bcd8;
+}
+.effect.color_4.dark {
+  background-color: #220e40;
 }
 
 .current_effect {
   box-shadow: 0px 0px 6px 2px #fff;
 }
-
 .current_effect.light {
   background-color: rgba(255, 255, 255, 0.8) !important;
 }
-
 .current_effect.dark {
   background-color: rgba(0, 0, 0, 0.8) !important;
 }
@@ -1035,39 +894,32 @@
   width: 16px;
   height: 16px;
 }
-
-.splay_1 {
+.splay_indicator.splay_1, .splay_indicator.splay_2, .splay_indicator.splay_3 {
   background-image: url("img/squares.png");
+}
+.splay_indicator.splay_1 {
   background-position: -80px 0px;
 }
-
-.splay_2 {
-  background-image: url("img/squares.png");
+.splay_indicator.splay_2 {
   background-position: -96px 0px;
 }
-
-.splay_3 {
-  background-image: url("img/squares.png");
+.splay_indicator.splay_3 {
   background-position: -112px 0px;
 }
 
 .in_tooltip {
   display: inline-block;
 }
-
-.M.in_tooltip {
+.in_tooltip.M {
   vertical-align: bottom;
 }
-
-.L.in_tooltip {
+.in_tooltip.L {
   vertical-align: text-bottom;
 }
-
-.P.in_tooltip {
+.in_tooltip.P {
   vertical-align: middle;
 }
-
-.basic.in_tooltip {
+.in_tooltip.basic {
   margin-right: 4px;
 }
 
@@ -1082,7 +934,6 @@
   text-align: justify;
   text-justify: distribute;
 }
-
 .action.in_tooltip {
   margin-top: 20px;
   margin-right: 20px;
@@ -1145,500 +996,332 @@
   background-image: url("img/squares.png");
   display: inline-block;
 }
-
-.basic.square {
+.square.basic {
   width: 16px;
   height: 16px;
 }
-
-.icon_score.basic.square {
+.square.basic.icon_score {
   background-position: 0px 0px;
   margin-top: 2px;
   margin-left: 2px;
 }
-
-.icon_hand.basic.square {
+.square.basic.icon_hand {
   background-position: -16px 0px;
   vertical-align: top;
   margin-top: 4px;
   margin-left: 3px;
 }
-
-.icon_age_indicator.basic.square {
+.square.basic.icon_age_indicator {
   background-position: -64px 0px;
   vertical-align: top;
   margin-top: 4px;
   margin-left: 4px;
 }
-
-.icon_help.basic.square {
+.square.basic.icon_help {
   background-position: -32px 0px;
 }
-
-.icon_action.basic.square {
+.square.basic.icon_action {
   background-position: -48px 0px;
 }
-
-.N.square {
+.square.N {
   width: 14px;
   height: 14px;
 }
-
-.icon_1.N.square {
+.square.N.icon_1 {
   background-position: 0px -16px;
 }
-
-.icon_2.N.square {
+.square.N.icon_2 {
   background-position: -14px -16px;
 }
-
-.icon_3.N.square {
+.square.N.icon_3 {
   background-position: -28px -16px;
 }
-
-.icon_4.N.square {
+.square.N.icon_4 {
   background-position: -42px -16px;
 }
-
-.icon_5.N.square {
+.square.N.icon_5 {
   background-position: -56px -16px;
 }
-
-.icon_6.N.square {
+.square.N.icon_6 {
   background-position: -70px -16px;
 }
-
-.age_1.N.square {
+.square.N.age_1 {
   background-position: 0px -30px;
 }
-
-.age_2.N.square {
+.square.N.age_2 {
   background-position: -14px -30px;
 }
-
-.age_3.N.square {
+.square.N.age_3 {
   background-position: -28px -30px;
 }
-
-.age_4.N.square {
+.square.N.age_4 {
   background-position: -42px -30px;
 }
-
-.age_5.N.square {
+.square.N.age_5 {
   background-position: -56px -30px;
 }
-
-.age_6.N.square {
+.square.N.age_6 {
   background-position: -70px -30px;
 }
-
-.age_7.N.square {
+.square.N.age_7 {
   background-position: -84px -30px;
 }
-
-.age_8.N.square {
+.square.N.age_8 {
   background-position: -98px -30px;
 }
-
-.age_9.N.square {
+.square.N.age_9 {
   background-position: -112px -30px;
 }
-
-.age_10.N.square {
+.square.N.age_10 {
   background-position: -126px -30px;
 }
-
-.P.square {
+.square.P {
   width: 20px;
   height: 20px;
   background-image: url("img/resource_icons.jpg");
   background-size: 133px auto;
 }
-
-.icon_1.P.square {
+.square.P.icon_1 {
   background-position: -1px -112px;
 }
-
-.icon_2.P.square {
+.square.P.icon_2 {
   background-position: -23px -112px;
 }
-
-.icon_3.P.square {
+.square.P.icon_3 {
   background-position: -45px -112px;
 }
-
-.icon_4.P.square {
+.square.P.icon_4 {
   background-position: -68px -112px;
 }
-
-.icon_5.P.square {
+.square.P.icon_5 {
   background-position: -90px -112px;
 }
-
-.icon_6.P.square {
+.square.P.icon_6 {
   background-position: -112px -112px;
 }
-
-.M.square {
+.square.M {
   width: 9px;
   height: 9px;
 }
-
-.M.dogma_symbol {
-  left: -4px;
-  top: -4px;
-}
-
-.icon_1.M.square {
+.square.M.icon_1, .square.M.icon_2, .square.M.icon_3, .square.M.icon_4, .square.M.icon_5, .square.M.icon_6 {
   width: 8px;
   height: 8px;
   background-image: url("img/resource_icons.jpg");
   background-size: 50px auto;
+}
+.square.M.icon_1 {
   background-position-y: -42px;
   background-position-x: 0px;
 }
-
-.icon_2.M.square {
-  width: 8px;
-  height: 8px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 50px auto;
+.square.M.icon_2 {
   background-position-y: -42px;
   background-position-x: -8px;
 }
-
-.icon_3.M.square {
-  width: 8px;
-  height: 8px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 50px auto;
+.square.M.icon_3 {
   background-position-y: -42px;
   background-position-x: -17px;
 }
-
-.icon_4.M.square {
-  width: 8px;
-  height: 8px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 50px auto;
+.square.M.icon_4 {
   background-position-y: -42px;
   background-position-x: -25px;
 }
-
-.icon_5.M.square {
-  width: 8px;
-  height: 8px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 50px auto;
+.square.M.icon_5 {
   background-position-y: -42px;
   background-position-x: -34px;
 }
-
-.icon_6.M.square {
-  width: 8px;
-  height: 8px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 50px auto;
+.square.M.icon_6 {
   background-position-y: -42px;
   background-position-x: -42px;
 }
-
-.icon_1.M.dogma_symbol {
-  width: 10px;
-  height: 10px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 60px auto;
-  background-position-x: 0px;
-}
-
-.icon_2.M.dogma_symbol {
-  width: 10px;
-  height: 10px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 60px auto;
-  background-position-x: -10px;
-}
-
-.icon_3.M.dogma_symbol {
-  width: 10px;
-  height: 10px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 60px auto;
-  background-position-x: -20px;
-}
-
-.icon_4.M.dogma_symbol {
-  width: 10px;
-  height: 10px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 60px auto;
-  background-position-x: -30px;
-}
-
-.icon_5.M.dogma_symbol {
-  width: 10px;
-  height: 10px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 60px auto;
-  background-position-x: -40px;
-}
-
-.icon_6.M.dogma_symbol {
-  width: 10px;
-  height: 10px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 60px auto;
-  background-position-x: -50px;
-}
-
-.color_0.M.dogma_symbol {
-  background-position-y: 0px;
-}
-
-.color_1.M.dogma_symbol {
-  background-position-y: -10px;
-}
-
-.color_2.M.dogma_symbol {
-  background-position-y: -20px;
-}
-
-.color_3.M.dogma_symbol {
-  background-position-y: -30px;
-}
-
-.color_4.M.dogma_symbol {
-  background-position-y: -40px;
-}
-
-.age_1.M.square {
+.square.M.age_1, .square.M.age_2, .square.M.age_3, .square.M.age_4, .square.M.age_5, .square.M.age_6, .square.M.age_7, .square.M.age_8, .square.M.age_9, .square.M.age_10 {
   width: 8px;
   height: 8px;
   background-size: 80px, auto;
+}
+.square.M.age_1 {
   background-position: 0px -93px;
 }
-
-.age_2.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_2 {
   background-position: -8px -93px;
 }
-
-.age_3.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_3 {
   background-position: -16px -93px;
 }
-
-.age_4.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_4 {
   background-position: -24px -93px;
 }
-
-.age_5.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_5 {
   background-position: -32px -93px;
 }
-
-.age_6.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_6 {
   background-position: -40px -93px;
 }
-
-.age_7.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_7 {
   background-position: -48px -93px;
 }
-
-.age_8.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_8 {
   background-position: -56px -93px;
 }
-
-.age_9.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_9 {
   background-position: -64px -93px;
 }
-
-.age_10.M.square {
-  width: 8px;
-  height: 8px;
-  background-size: 80px, auto;
+.square.M.age_10 {
   background-position: -72px -93px;
 }
-
-.L.square {
+.square.L {
   width: 19px;
   height: 19px;
 }
-
-.L.dogma_symbol {
-  left: -4px;
-  top: -4px;
-}
-
-.icon_1.L.square {
+.square.L.icon_1 {
   background-position: 0px -82px;
 }
-
-.icon_2.L.square {
+.square.L.icon_2 {
   background-position: -19px -82px;
 }
-
-.icon_3.L.square {
+.square.L.icon_3 {
   background-position: -38px -82px;
 }
-
-.icon_4.L.square {
+.square.L.icon_4 {
   background-position: -57px -82px;
 }
-
-.icon_5.L.square {
+.square.L.icon_5 {
   background-position: -76px -82px;
 }
-
-.icon_6.L.square {
+.square.L.icon_6 {
   background-position: -95px -82px;
 }
-
-.age_1.L.square {
+.square.L.age_1 {
   background-position: 0px -101px;
 }
-
-.age_2.L.square {
+.square.L.age_2 {
   background-position: -19px -101px;
 }
-
-.age_3.L.square {
+.square.L.age_3 {
   background-position: -38px -101px;
 }
-
-.age_4.L.square {
+.square.L.age_4 {
   background-position: -57px -101px;
 }
-
-.age_5.L.square {
+.square.L.age_5 {
   background-position: -76px -101px;
 }
-
-.age_6.L.square {
+.square.L.age_6 {
   background-position: -95px -101px;
 }
-
-.age_7.L.square {
+.square.L.age_7 {
   background-position: -114px -101px;
 }
-
-.age_8.L.square {
+.square.L.age_8 {
   background-position: -133px -101px;
 }
-
-.age_9.L.square {
+.square.L.age_9 {
   background-position: -152px -101px;
 }
-
-.age_10.L.square {
+.square.L.age_10 {
   background-position: -171px -101px;
 }
 
-.icon_1.L.dogma_symbol {
-  width: 20px;
-  height: 20px;
+.dogma_symbol.M {
+  left: -4px;
+  top: -4px;
+}
+.dogma_symbol.M.icon_1, .dogma_symbol.M.icon_2, .dogma_symbol.M.icon_3, .dogma_symbol.M.icon_4, .dogma_symbol.M.icon_5, .dogma_symbol.M.icon_6 {
+  width: 10px;
+  height: 10px;
   background-image: url("img/resource_icons.jpg");
-  background-size: 120px auto;
+  background-size: 60px auto;
+}
+.dogma_symbol.M.icon_1 {
   background-position-x: 0px;
 }
-
-.icon_2.L.dogma_symbol {
-  width: 20px;
-  height: 20px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 120px auto;
+.dogma_symbol.M.icon_2 {
+  background-position-x: -10px;
+}
+.dogma_symbol.M.icon_3 {
   background-position-x: -20px;
 }
-
-.icon_3.L.dogma_symbol {
-  width: 20px;
-  height: 20px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 120px auto;
+.dogma_symbol.M.icon_4 {
+  background-position-x: -30px;
+}
+.dogma_symbol.M.icon_5 {
   background-position-x: -40px;
 }
-
-.icon_4.L.dogma_symbol {
-  width: 20px;
-  height: 20px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 120px auto;
-  background-position-x: -60px;
+.dogma_symbol.M.icon_6 {
+  background-position-x: -50px;
 }
-
-.icon_5.L.dogma_symbol {
-  width: 20px;
-  height: 20px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 120px auto;
-  background-position-x: -80px;
-}
-
-.icon_6.L.dogma_symbol {
-  width: 20px;
-  height: 20px;
-  background-image: url("img/resource_icons.jpg");
-  background-size: 120px auto;
-  background-position-x: -100px;
-}
-
-.color_0.L.dogma_symbol {
+.dogma_symbol.M.color_0 {
   background-position-y: 0px;
 }
-
-.color_1.L.dogma_symbol {
+.dogma_symbol.M.color_1 {
+  background-position-y: -10px;
+}
+.dogma_symbol.M.color_2 {
   background-position-y: -20px;
 }
-
-.color_2.L.dogma_symbol {
+.dogma_symbol.M.color_3 {
+  background-position-y: -30px;
+}
+.dogma_symbol.M.color_4 {
   background-position-y: -40px;
 }
-
-.color_3.L.dogma_symbol {
+.dogma_symbol.L {
+  left: -4px;
+  top: -4px;
+}
+.dogma_symbol.L.icon_1, .dogma_symbol.L.icon_2, .dogma_symbol.L.icon_3, .dogma_symbol.L.icon_4, .dogma_symbol.L.icon_5, .dogma_symbol.L.icon_6 {
+  width: 20px;
+  height: 20px;
+  background-image: url("img/resource_icons.jpg");
+  background-size: 120px auto;
+}
+.dogma_symbol.L.icon_1 {
+  background-position-x: 0px;
+}
+.dogma_symbol.L.icon_2 {
+  background-position-x: -20px;
+}
+.dogma_symbol.L.icon_3 {
+  background-position-x: -40px;
+}
+.dogma_symbol.L.icon_4 {
+  background-position-x: -60px;
+}
+.dogma_symbol.L.icon_5 {
+  background-position-x: -80px;
+}
+.dogma_symbol.L.icon_6 {
+  background-position-x: -100px;
+}
+.dogma_symbol.L.color_0 {
+  background-position-y: 0px;
+}
+.dogma_symbol.L.color_1 {
+  background-position-y: -20px;
+}
+.dogma_symbol.L.color_2 {
+  background-position-y: -40px;
+}
+.dogma_symbol.L.color_3 {
   background-position-y: -60px;
 }
-
-.color_4.L.dogma_symbol {
+.dogma_symbol.L.color_4 {
   background-position-y: -80px;
 }
 
-#publication_arrow_up {
+#publication_arrow_up, #publication_arrow_down {
   position: absolute;
   left: 0px;
   font-weight: bolder;
   font-size: 25px;
   padding-bottom: 8px;
-  top: 0px;
 }
 
 #publication_arrow_down {
-  position: absolute;
-  left: 0px;
-  font-weight: bolder;
-  font-size: 25px;
-  padding-bottom: 8px;
   top: 80px;
+}
+
+#publication_arrow_up {
+  top: 0px;
 }
 
 #publication_cancel {
@@ -1651,227 +1334,252 @@
   position: relative;
   border: solid 1px #ffffff;
 }
-
-.M.card {
+.card.M {
   width: 180px;
   height: 124px;
   background-size: 920px 128px;
   border-radius: 6px;
   box-shadow: 3px 3px grey;
 }
-
-.L.card {
+.card.M.color_0 {
+  background-position: -2px -2px;
+}
+.card.M.color_1 {
+  background-position: -186px -2px;
+}
+.card.M.color_2 {
+  background-position: -370px -2px;
+}
+.card.M.color_3 {
+  background-position: -554px -2px;
+}
+.card.M.color_4 {
+  background-position: -738px -2px;
+}
+.card.L {
   width: 456px;
   height: 316px;
   border-radius: 16px;
   background-size: 2308px 323px;
   box-shadow: 5px 5px grey;
 }
-
-.M.top_left_icon.square_card_icon {
-  top: 7px;
-  left: 7px;
+.card.L.color_0 {
+  background-position: 0px -2px;
+}
+.card.L.color_1 {
+  background-position: -462px -2px;
+}
+.card.L.color_2 {
+  background-position: -922px -2px;
+}
+.card.L.color_3 {
+  background-position: -1387px -2px;
+}
+.card.L.color_4 {
+  background-position: -1849px -2px;
+}
+.card.S.age_null {
+  background-image: url("img/special_achievements_landscape.jpg");
+  width: 45px;
+  height: 31px;
+  background-size: 232px, auto;
+  border-radius: 3px;
+}
+.card.S.item_105 {
+  background-position: -1px -1px;
+}
+.card.S.item_106 {
+  background-position: -47px -1px;
+}
+.card.S.item_107 {
+  background-position: -93.5px -1px;
+}
+.card.S.item_108 {
+  background-position: -140px -1px;
+}
+.card.S.item_109 {
+  background-position: -186px -1px;
 }
 
-.M.top_left_icon.hexagon_card_icon {
-  top: 2px;
-  left: 4px;
-}
-
-.M.bottom_left_icon.square_card_icon {
-  bottom: 7px;
-  left: 7px;
-}
-
-.M.bottom_left_icon.hexagon_card_icon {
-  bottom: 1px;
-  left: 4px;
-}
-
-.M.bottom_center_icon.square_card_icon {
-  bottom: 7px;
-  left: 72px;
-}
-
-.M.bottom_center_icon.hexagon_card_icon {
-  bottom: 1px;
-  left: 69px;
-}
-
-.M.bottom_right_icon.square_card_icon {
-  bottom: 7px;
-  right: 7px;
-}
-
-.M.bottom_right_icon.hexagon_card_icon {
-  bottom: 1px;
-  right: 2px;
-}
-
-.L.top_left_icon.square_card_icon {
-  top: 25px;
-  left: 30px;
-}
-
-.L.top_left_icon.hexagon_card_icon {
-  top: 17px;
-  left: 26px;
-}
-
-.L.bottom_left_icon.square_card_icon {
-  bottom: 23px;
-  left: 30px;
-}
-
-.L.bottom_left_icon.hexagon_card_icon {
-  bottom: 11px;
-  left: 26px;
-}
-
-.L.bottom_center_icon.square_card_icon {
-  bottom: 23px;
-  left: 195px;
-}
-
-.L.bottom_center_icon.hexagon_card_icon {
-  bottom: 11px;
-  left: 192px;
-}
-
-.L.bottom_right_icon.square_card_icon {
-  bottom: 23px;
-  right: 26px;
-}
-
-.L.bottom_right_icon.hexagon_card_icon {
-  bottom: 11px;
-  right: 15px;
-}
-
+/* Locations where the square and hexagon icons go on each card 
+*
+*  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
+*  Square icons should be ~6% of the card width away from the top edge. it is currently 7px
+* 
+*  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
+*
+*  The Hex icons do not fill their entire box so we have to fudge some of the offsets
+*/
+/* Square card icons (most cards have 3 large resource icons on them) 
+*
+*  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
+*  { Background-size, width, height, background-position-x, background-position-y }
+*/
 .square_card_icon {
   background-image: url("img/resource_icons.jpg");
   position: absolute;
 }
-
 .square_card_icon.icon_null {
   display: none;
 }
-
-.M.square_card_icon {
+.square_card_icon.M {
   width: 36px;
   background-size: 230px auto;
   height: 36px;
 }
-
-.M.icon_1.square_card_icon {
+.square_card_icon.M.icon_1 {
   background-position-x: -1px;
 }
-
-.M.icon_2.square_card_icon {
+.square_card_icon.M.icon_2 {
   background-position-x: -39.5px;
 }
-
-.M.icon_3.square_card_icon {
+.square_card_icon.M.icon_3 {
   background-position-x: -78px;
 }
-
-.M.icon_4.square_card_icon {
+.square_card_icon.M.icon_4 {
   background-position-x: -116px;
 }
-
-.M.icon_5.square_card_icon {
+.square_card_icon.M.icon_5 {
   background-position-x: -154.5px;
 }
-
-.M.icon_6.square_card_icon {
+.square_card_icon.M.icon_6 {
   background-position-x: -192.5px;
 }
-
-.M.color_0.square_card_icon {
+.square_card_icon.M.color_0 {
   background-position-y: -1px;
 }
-
-.M.color_1.square_card_icon {
+.square_card_icon.M.color_1 {
   background-position-y: -39.5px;
 }
-
-.M.color_2.square_card_icon {
+.square_card_icon.M.color_2 {
   background-position-y: -78px;
 }
-
-.M.color_3.square_card_icon {
+.square_card_icon.M.color_3 {
   background-position-y: -116px;
 }
-
-.M.color_4.square_card_icon {
+.square_card_icon.M.color_4 {
   background-position-y: -154.5px;
 }
-
-.L.square_card_icon {
+.square_card_icon.M.top_left_icon {
+  top: 7px;
+  left: 7px;
+}
+.square_card_icon.M.bottom_left_icon {
+  bottom: 7px;
+  left: 7px;
+}
+.square_card_icon.M.bottom_center_icon {
+  bottom: 7px;
+  left: 72px;
+}
+.square_card_icon.M.bottom_right_icon {
+  bottom: 7px;
+  right: 7px;
+}
+.square_card_icon.L {
   width: 75px;
   background-size: 470px auto;
   height: 75px;
 }
-
-.L.icon_1.square_card_icon {
+.square_card_icon.L.icon_1 {
   background-position-x: -1.5px;
 }
-
-.L.icon_2.square_card_icon {
+.square_card_icon.L.icon_2 {
   background-position-x: -80px;
 }
-
-.L.icon_3.square_card_icon {
+.square_card_icon.L.icon_3 {
   background-position-x: -158.5px;
 }
-
-.L.icon_4.square_card_icon {
+.square_card_icon.L.icon_4 {
   background-position-x: -236.5px;
 }
-
-.L.icon_5.square_card_icon {
+.square_card_icon.L.icon_5 {
   background-position-x: -315.5px;
 }
-
-.L.icon_6.square_card_icon {
+.square_card_icon.L.icon_6 {
   background-position-x: -393.5px;
 }
-
-.L.color_0.square_card_icon {
+.square_card_icon.L.color_0 {
   background-position-y: -1px;
 }
-
-.L.color_1.square_card_icon {
+.square_card_icon.L.color_1 {
   background-position-y: -79.5px;
 }
-
-.L.color_2.square_card_icon {
+.square_card_icon.L.color_2 {
   background-position-y: -158px;
 }
-
-.L.color_3.square_card_icon {
+.square_card_icon.L.color_3 {
   background-position-y: -236px;
 }
-
-.L.color_4.square_card_icon {
+.square_card_icon.L.color_4 {
   background-position-y: -315px;
 }
+.square_card_icon.L.top_left_icon {
+  top: 25px;
+  left: 30px;
+}
+.square_card_icon.L.bottom_left_icon {
+  bottom: 23px;
+  left: 30px;
+}
+.square_card_icon.L.bottom_center_icon {
+  bottom: 23px;
+  left: 195px;
+}
+.square_card_icon.L.bottom_right_icon {
+  bottom: 23px;
+  right: 26px;
+}
 
+/* Hexagon icons take up ~27 % of a real cards width. 
+*  Our cards will shoot for 25 % ->  M.45px
+*  If you ever change the background-size, you must edit the offset in css_generator.py
+*/
 .hexagon_card_icon {
   background-image: url("img/hexagon_icons.png");
   position: absolute;
 }
-
-.M.hexagon_card_icon {
+.hexagon_card_icon.M {
   background-size: 735px, auto;
   width: 45px;
   height: 45px;
 }
-
-.L.hexagon_card_icon {
+.hexagon_card_icon.M.top_left_icon {
+  top: 2px;
+  left: 4px;
+}
+.hexagon_card_icon.M.bottom_left_icon {
+  bottom: 1px;
+  left: 4px;
+}
+.hexagon_card_icon.M.bottom_center_icon {
+  bottom: 1px;
+  left: 69px;
+}
+.hexagon_card_icon.M.bottom_right_icon {
+  bottom: 1px;
+  right: 2px;
+}
+.hexagon_card_icon.L {
   background-size: 1511px, auto;
   width: 90px;
   height: 90px;
+}
+.hexagon_card_icon.L.top_left_icon {
+  top: 17px;
+  left: 26px;
+}
+.hexagon_card_icon.L.bottom_left_icon {
+  bottom: 11px;
+  left: 26px;
+}
+.hexagon_card_icon.L.bottom_center_icon {
+  bottom: 11px;
+  left: 192px;
+}
+.hexagon_card_icon.L.bottom_right_icon {
+  bottom: 11px;
+  right: 15px;
 }
 
 .recto {
@@ -1881,188 +1589,81 @@
   box-shadow: -1px 1px grey;
   border-radius: 3px;
 }
-
-.S.recto {
+.recto.S {
   width: 31px;
   height: 45px;
 }
-
-.age_1.S.recto {
+.recto.S.age_1, .recto.S.age_2, .recto.S.age_3, .recto.S.age_4, .recto.S.age_5, .recto.S.age_6, .recto.S.age_7, .recto.S.age_8, .recto.S.age_9, .recto.S.age_10 {
   background-image: url("img/card_backs_portrait.jpg");
   background-size: 380px 256px;
+}
+.recto.S.age_1 {
   background-position-x: -2px;
 }
-
-.age_2.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_2 {
   background-position-x: -36px;
 }
-
-.age_3.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_3 {
   background-position-x: -71px;
 }
-
-.age_4.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_4 {
   background-position-x: -105px;
 }
-
-.age_5.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_5 {
   background-position-x: -140px;
 }
-
-.age_6.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_6 {
   background-position-x: -174px;
 }
-
-.age_7.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_7 {
   background-position-x: -209px;
 }
-
-.age_8.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_8 {
   background-position-x: -243px;
 }
-
-.age_9.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_9 {
   background-position-x: -278px;
 }
-
-.age_10.S.recto {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
+.recto.S.age_10 {
   background-position-x: -312px;
 }
-
-.type_0.S.recto {
+.recto.S.type_0 {
   background-position-y: -3px;
 }
-
-.type_1.S.recto {
+.recto.S.type_1 {
   background-position-y: -54px;
 }
-
-.type_2.S.recto {
+.recto.S.type_2 {
   background-position-y: -105px;
 }
-
-.type_3.S.recto {
+.recto.S.type_3 {
   background-position-y: -156px;
 }
-
-.type_4.S.recto {
+.recto.S.type_4 {
   background-position-y: -208px;
 }
-
-.relic.S.recto {
+.recto.S.relic {
   border: solid 1px transparent;
   background-position-x: -347px;
 }
-
-.age_null.S.card {
-  background-image: url("img/special_achievements_landscape.jpg");
-  width: 45px;
-  height: 31px;
-  background-size: 232px, auto;
-  border-radius: 3px;
-}
-
-.item_105.S.card {
-  background-position: -1px -1px;
-}
-
-.item_106.S.card {
-  background-position: -47px -1px;
-}
-
-.item_107.S.card {
-  background-position: -93.5px -1px;
-}
-
-.item_108.S.card {
-  background-position: -140px -1px;
-}
-
-.item_109.S.card {
-  background-position: -186px -1px;
-}
-
-.age_null.S.recto {
+.recto.S.age_null {
   background-image: url("img/special_achievements_portrait.jpg");
   background-size: 175px, auto;
 }
-
-.item_105.S.recto {
+.recto.S.item_105 {
   background-position: -1px -1px;
 }
-
-.item_106.S.recto {
+.recto.S.item_106 {
   background-position: -36px -1px;
 }
-
-.item_107.S.recto {
+.recto.S.item_107 {
   background-position: -71px -1px;
 }
-
-.item_108.S.recto {
+.recto.S.item_108 {
   background-position: -106px -1px;
 }
-
-.item_109.S.recto {
+.recto.S.item_109 {
   background-position: -141px -1px;
-}
-
-.color_0.M.card {
-  background-position: -2px -2px;
-}
-
-.color_0.L.card {
-  background-position: 0px -2px;
-}
-
-.color_1.M.card {
-  background-position: -186px -2px;
-}
-
-.color_1.L.card {
-  background-position: -462px -2px;
-}
-
-.color_2.M.card {
-  background-position: -370px -2px;
-}
-
-.color_2.L.card {
-  background-position: -922px -2px;
-}
-
-.color_3.M.card {
-  background-position: -554px -2px;
-}
-
-.color_3.L.card {
-  background-position: -1387px -2px;
-}
-
-.color_4.M.card {
-  background-position: -738px -2px;
-}
-
-.color_4.L.card {
-  background-position: -1849px -2px;
 }
 
 /* scss_generator starts here */
