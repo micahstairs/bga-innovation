@@ -158,6 +158,7 @@ $machinestates = array(
             "dogmaEffect" => 6,
             "interDogmaEffect" => 7,
             "playerInvolvedTurn" => 8,
+            "justBeforeGameEnd" => 98,
         )
     ),
     
