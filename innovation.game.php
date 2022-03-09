@@ -15849,7 +15849,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "If you have exactly that many cards of that color"
                     $cards = self::getCardsInLocationKeyedByColor($player_id, 'revealed');
-                    $colored_cards = $cards[self::getGameStateValue('color_last_selected')];
+                    $colored_cards = $cards[self::getAuxiliaryValue2()];
                     if (count($colored_cards) == self::getAuxiliaryValue()) {
                         // If you have exactly that many cards of that color
                         self::incrementStepMax(1); // One more interaction (scoring cards)
@@ -16865,7 +16865,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "152N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
-                self::setAuxiliaryValue($choice);
+                self::setAuxiliaryValue2($choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
