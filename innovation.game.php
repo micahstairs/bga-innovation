@@ -1115,7 +1115,7 @@ class Innovation extends Table
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = false, $score_keyword = false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false) {
 
         // Do not move the card at all.
         if ($location_to == 'none') {
@@ -1125,6 +1125,11 @@ class Innovation extends Table
         // Relics are not returned to the deck.
         if ($card['is_relic'] && $location_to == 'deck') {
             $location_to = 'relics';
+        }
+
+        // By default, cards are returned to the bottom of the deck, but other cards are returned to the top of their locations
+        if ($bottom_to === null) {
+            $bottom_to = $location_to == 'deck';
         }
 
         $id = $card['id'];
