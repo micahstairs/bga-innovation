@@ -3088,7 +3088,7 @@ class Innovation extends Table
         ));
     }
     
-    function notifyUndoable() {
+    function notifyNoSelectableCards() {
         if (self::getGameStateValue('splay_direction') == -1) {
             if (self::getGameStateValue('n') == 0) {
                 $message = clienttranslate("No card matches the criteria of the effect.");
@@ -3096,15 +3096,10 @@ class Innovation extends Table
             else {
                 $message = clienttranslate("No more card matches the criteria of the effect.");
             }
-        }
-        else {
+        } else {
             $message = clienttranslate("No stack matches the criteria of the effect for splaying.");
         }
         self::notifyGeneralInfo($message);
-    }
-    
-    function notifyUndoableInTotality() {
-        self::notifyGeneralInfo(clienttranslate("There are not enough cards to fulfill the condition."));
     }
     
     function notifyPlayerRessourceCount($player_id, $dogma_icon, $ressource_count) {
@@ -16385,48 +16380,69 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $n_min = self::getGameStateValue('n_min');
             $n_max = self::getGameStateValue('n_max');
             $splay_direction = self::getGameStateValue('splay_direction');
+            $can_pass = self::getGameStateValue('can_pass') == 1;
+            $owner_from = self::getGameStateValue('owner_from');
+            $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
+            $colors = self::getGameStateValueAsArray('color_array');
+            $with_icon = self::getGameStateValue('with_icon');
+            $without_icon = self::getGameStateValue('without_icon');
+
+            // TODO(ARTIFACTS,ECHOES,FIGURES): Figure out if we need to make any updates to this logic.
+            $selection_will_reveal_hidden_information =
+                ($splay_direction == -1 && ($can_pass || $n_min <= 0)) &&
+                ($location_from == 'hand' || $location_from == 'score') &&
+                self::countCardsInLocation($owner_from, $location_from) > 0 &&
+                ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0);
             
-            if($selection_size == 0) { // There is no selectable card
-                $can_pass = self::getGameStateValue('can_pass') == 1;
-                $owner_from = self::getGameStateValue('owner_from');
-                $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
-                $colors = self::getGameStateValueAsArray('color_array');
-                $with_icon = self::getGameStateValue('with_icon');
-                $without_icon = self::getGameStateValue('without_icon');
+            // There is no selectable card
+            if ($selection_size == 0) {
                 
-                if(($splay_direction == -1 && ($can_pass || $n_min <= 0)) && ($location_from == 'hand' || $location_from == 'score') && self::countCardsInLocation($owner_from, $location_from) > 0 && ($colors != array(0,1,2,3,4) || $with_icon > 0 || $without_icon > 0)) {
+                if ($selection_will_reveal_hidden_information) {
                     // The player can pass or stop and the opponents can't know that the player has no eligible card
                     // This can happen for example in the Masonry effect
                     
-                    // No automatic pass or stop: the only choice the player will have in client side is to pass or stop
-                    // This way the other players won't get the information that the player was compeled to pass or stop
+                    // No automatic pass or stop: the only choice the player will have in client side is to pass/stop
+                    // This way the other players won't get the information that the player was compeled to pass/stop
                     self::trace('preSelectionMove->selectionMove (player has to pass)');
                     $this->gamestate->nextState('selectionMove');
                     return;
                 }
                 
                 // The player passes or stops automatically
-                self::notifyUndoable();
+                self::notifyNoSelectableCards();
                 self::trace('preSelectionMove->interInteractionStep (no card)');
                 $this->gamestate->nextState('interInteractionStep');
                 return;
-            }
-            else if ($n_min < 800 && $selection_size < $n_min) { // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
+
+            // There is only one selectable card
+            } else if ($selection_size == 1 && !$selection_will_reveal_hidden_information) {
+                // The player chooses the card automatically
+                $card = self::getSelectedCards()[0];
+                // Simplified version of self::choose()
+                self::setGameStateValue('id_last_selected', $card['id']);
+                self::unmarkAsSelected($card['id']);
+                self::setGameStateValue('can_pass', 0);
+
+                self::trace('preSelectionMove->interSelectionMove (only one card)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            
+            // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
+            } else if ($n_min < 800 && $selection_size < $n_min) {
                 if (self::getGameStateValue('solid_constraint') == 1) {
-                    self::notifyUndoableInTotality();
+                    self::notifyGeneralInfo(clienttranslate("There are not enough cards to fulfill the condition."));
                     self::deselectAllCards();
                     self::trace('preSelectionMove->interInteractionStep (not enough cards)');
                     $this->gamestate->nextState('interInteractionStep');
                     return;
-                }
-                else {
+                } else {
                     // Reduce n_min and n_max to the selection size
                     self::setGameStateValue('n_min', $selection_size);
                     self::setGameStateValue('n_max', $selection_size);
                 }
-            }
-            else if ($n_max < 800 && $selection_size < $n_max) {
-                // Reduce n_max to the selection size
+
+            // Reduce n_max to the selection size
+            } else if ($n_max < 800 && $selection_size < $n_max) {
                 self::setGameStateValue('n_max', $selection_size);
             }
         }

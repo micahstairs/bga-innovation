@@ -190,7 +190,11 @@ $machinestates = array(
         "type" => "game",
         "action" => "stPreSelectionMove",
         "args" => "argPreSelectionMove",
-        "transitions" => array("selectionMove" => 13, "interInteractionStep" => 11)
+        "transitions" => array(
+            "interInteractionStep" => 11,
+            "selectionMove" => 13,
+            "interSelectionMove" => 14, // Automatic card selection when there's only one selectable card   
+        )
     ),
     
     13 => array(
