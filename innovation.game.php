@@ -7532,9 +7532,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if (self::getGameStateValue('release_version') >= 1) {
                 // Finish executing the card which triggered this one
                 if (self::getGameStateValue('current_nesting_index') >= 1) {
-                    $player_id = self::getCurrentPlayerUnderDogmaEffect();
                     $card_args = self::getNotificationArgsForCardList([$card]);
-                    self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
+                    self::notifyAll('logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
                         ['card_1' => $card_args, 'cards' => [$card]]);
                     
                     self::popCardFromNestedDogmaStack();
