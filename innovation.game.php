@@ -16414,8 +16414,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->gamestate->nextState('interInteractionStep');
                 return;
 
-            // There is only one selectable card
-            } else if ($selection_size == 1 && !$selection_will_reveal_hidden_information) {
+            // There is only one selectable card (and it must be chosen)
+            } else if ($selection_size == 1 && !$selection_will_reveal_hidden_information && $n_min >= 1) {
                 // The player chooses the card automatically
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
