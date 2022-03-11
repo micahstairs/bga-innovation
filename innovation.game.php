@@ -16377,6 +16377,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stPreSelectionMove() {
         if (self::getGameStateValue('special_type_of_choice') == 0) {
             $selection_size = self::countSelectedCards();
+            $cards_chosen_so_far = self::getGameStateValue('n');
             $n_min = self::getGameStateValue('n_min');
             $n_max = self::getGameStateValue('n_max');
             $splay_direction = self::getGameStateValue('splay_direction');
@@ -16415,7 +16416,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return;
 
             // There is only one selectable card (and it must be chosen)
-            } else if ($selection_size == 1 && !$selection_will_reveal_hidden_information && $n_min >= 1) {
+            } else if ($selection_size == 1 && !$selection_will_reveal_hidden_information && (($cards_chosen_so_far == 0 && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= 1))) {
                 // The player chooses the card automatically
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
