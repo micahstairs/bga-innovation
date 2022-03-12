@@ -935,11 +935,16 @@ function (dojo, declare) {
             if(this.isCurrentPlayerActive()) {            
                 switch(stateName) {
                 case 'relicPlayerTurn':
+                    var age = args.relic_age;
                     if (args.can_seize_to_hand) {
-                        this.addActionButton("seize_relic_to_hand", _("Seize Relic to Hand"), "action_clicForSeizeRelicToHand");
+                        this.addActionButton("seize_relic_to_hand",
+                            _("Seize ${age} Relic to Hand").replace("${age}", this.square('N', 'age', age)),
+                            "action_clicForSeizeRelicToHand");
                     }
                     if (args.can_seize_to_achievements) {
-                        this.addActionButton("seize_relic_to_achievements", _("Seize Relic to Achievements Pile"), "action_clicForSeizeRelicToAchievements");
+                        this.addActionButton("seize_relic_to_achievements",
+                            _("Seize ${age} Relic to Achievements").replace("${age}", this.square('N', 'age', age)),
+                            "action_clicForSeizeRelicToAchievements");
                     }
                     this.addActionButton("pass_seize_relic", _("Pass"), "action_clicForPassSeizeRelic");
                     break;
