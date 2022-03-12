@@ -106,6 +106,7 @@ class Innovation extends Table
             'icon_hash_3' => 81,
             'icon_hash_4' => 82,
             'icon_hash_5' => 83,
+            'enable_autoselection' => 84,
             
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -396,6 +397,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('icon_hash_3', -1); // icon hash of a card which is allowed to be selected, else -1
         self::setGameStateInitialValue('icon_hash_4', -1); // icon hash of a card which is allowed to be selected, else -1
         self::setGameStateInitialValue('icon_hash_5', -1); // icon hash of a card which is allowed to be selected, else -1
+        self::setGameStateInitialValue('enable_autoselection', -1); // 1 if cards are allowed to be autoselected during an interaction
         self::setGameStateInitialValue('can_pass', -1); // 1 if the player can pass else 0
         self::setGameStateInitialValue('n', -1); // Actual number of cards having being selected yet
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
@@ -4950,6 +4952,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('icon_hash_5', $rewritten_options)) {
             $rewritten_options['icon_hash_5'] = -1;
         }
+        if (!array_key_exists('enable_autoselection', $rewritten_options)) {
+            $rewritten_options['enable_autoselection'] = 1;
+        }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
             $rewritten_options['bottom_to'] = (array_key_exists('location_to', $rewritten_options) && $rewritten_options['location_to'] == 'deck');
         }
@@ -5001,6 +5006,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'require_achievement_eligibility':
             case 'has_demand_effect':
             case 'bottom_to':
+            case 'enable_autoselection':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
@@ -7661,6 +7667,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setGameStateValue('icon_hash_3', -1);
             self::setGameStateValue('icon_hash_4', -1);
             self::setGameStateValue('icon_hash_5', -1);
+            self::setGameStateValue('enable_autoselection', -1);
             self::setGameStateValue('can_pass', -1);
             self::setGameStateValue('n', -1);
             self::setGameStateValue('id_last_selected', -1);
@@ -13762,13 +13769,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
+                'enable_autoselection' => false, // Give the player the chance to read the card
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => 0,
                 'location_to' => 'deck',
-                
-                'bottom_to' => false,
+
+                'bottom_to' => false, // Topdeck
                 
                 'card_id_1' => self::getGameStateValue('card_id_1')
             );       
@@ -16382,6 +16390,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $n_max = self::getGameStateValue('n_max');
             $splay_direction = self::getGameStateValue('splay_direction');
             $can_pass = self::getGameStateValue('can_pass') == 1;
+            $enable_autoselection = self::getGameStateValue('enable_autoselection') == 1;
             $owner_from = self::getGameStateValue('owner_from');
             $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
             $colors = self::getGameStateValueAsArray('color_array');
@@ -16416,7 +16425,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return;
 
             // There is only one selectable card (and it must be chosen)
-            } else if ($selection_size == 1 && !$selection_will_reveal_hidden_information && (($cards_chosen_so_far == 0 && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= 1))) {
+            } else if ($selection_size == 1
+                    && $enable_autoselection
+                    && !$selection_will_reveal_hidden_information
+                    && (($cards_chosen_so_far == 0 && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= 1))) {
                 // The player chooses the card automatically
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
