@@ -15945,7 +15945,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 case "162N1C":
                     // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
-                    self::executeAllEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
+                    if ($n > 0) {
+                        self::executeAllEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
+                    }
                     break;
 
                 // id 164, Artifacts age 5: Almira, Queen of the Castle
