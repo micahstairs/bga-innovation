@@ -1940,12 +1940,17 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
             break;
         case 'relics->achievements':
-            $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} relic to your achievements.');
-            $message_for_others = clienttranslate('${player_name} seizes ${<}${age}${>} ${<<}${name}${>>} relic to his achievements.');
+            $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic to your achievements.');
+            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his achievements.');
             break;
         case 'relics->hand':
             $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} to your hand.');
-            $message_for_others = clienttranslate('${player_name} seizes ${<}${age}${>} relic to his hand.');
+            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
+            break;
+        case 'achievements->hand':
+            // TODO(ECHOES,FIGURES): Update this if any cards transfer non-relic cards from a player's achievement pile to their hand.
+            $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} from your achievements to your hand.');
+            $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from his achievements to his hand.');
             break;
         case 'achievements->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your achievements.');
@@ -1955,8 +1960,7 @@ class Innovation extends Table
             if ($card['age'] === null) { // Special achivement
                 $message_for_player = clienttranslate('${You} achieve ${<<<}${achievement_name}${>>>}.');
                 $message_for_others = clienttranslate('${player_name} achieves ${<<<}${achievement_name}${>>>}.');
-            }
-            else { // Age achivement
+            } else { // Age achivement
                 $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
                 $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
             }
@@ -2327,7 +2331,7 @@ class Innovation extends Table
                 break;
 
             case 'achievements->hand':
-                $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic from ${opponent_name}\'s achievements to your hand.');
+                $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s achievements to your hand.');
                 $message_for_opponent = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${your} achievements to his hand.');
                 $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${opponent_name}\'s achievements to his hand.');
                 break;
