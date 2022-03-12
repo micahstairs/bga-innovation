@@ -507,7 +507,7 @@ function (dojo, declare) {
             // My score: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator) {
                 this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>Close</a>");
-                this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, grouped_by_age_type_and_is_relic=true);
+                this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
                 for(var i=0; i<gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
@@ -2103,7 +2103,7 @@ function (dojo, declare) {
             }
             
             // Add the card
-            dojo.style(HTML_id, 'z-index', weight)
+            dojo.style(HTML_id, 'z-index', weight);
             zone.placeInZone(HTML_id, weight);
             
             if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
