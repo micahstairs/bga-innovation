@@ -1484,12 +1484,19 @@ function (dojo, declare) {
             exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             exists_non_demand_effect = card.non_demand_effect_1 !== null;
             
-            if (exists_i_demand_effect && !exists_non_demand_effect && weaker_players.length == 0 && !on_display) {
-                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I demand" effect and nobody has less ${icon} than you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
-            }
+            // Mapmaking, Gunpowder, The Pirate Code and Vaccination all have non-demand effects but they do not have any effect unless their demand effect affects opponents.
+            non_demand_effects_only_work_if_demand_happens = [20, 38, 48, 62].includes(parseInt(card.id));
             
-            if (exists_i_compel_effect && !exists_non_demand_effect && stronger_or_equal_players.length == 0 && !on_display) {
-                return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since it has only an "I compel" effect and nobody has at least as many ${icon} as you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+            // TODO(ARTIFACTS): I don't think "&& !on_display" should be part of this conditional.
+            if ((!exists_non_demand_effect || non_demand_effects_only_work_if_demand_happens) && !on_display) {
+                if (exists_i_demand_effect && weaker_players.length == 0) {
+                    // TODO(ARTIFACTS): "nobody has" should be change to "no opponents have". We also need to update the above logic so that weaker_players doesn't include the teammate.
+                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since nobody has less ${icon} than you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                }
+                if (exists_i_compel_effect && stronger_or_equal_players.length == 0 && !on_display) {
+                    // TODO(ARTIFACTS): "nobody has" should be change to "no opponents have". We also need to update the above logic so that stronger_or_equal_players doesn't include the teammate.
+                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since nobody has at least as many ${icon} as you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                }
             }
 
             HTML_action = "<p class='possible_action'>";
@@ -2564,7 +2571,11 @@ function (dojo, declare) {
             
             var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
             var is_compel_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1.is_compel_effect").length == 1;
-            if (i_demand_effect_only) {
+
+            // Mapmaking, Gunpowder, The Pirate Code and Vaccination all have non-demand effects but they do not have any effect unless their demand effect affects opponents.
+            non_demand_effects_only_work_if_demand_happens = [20, 38, 48, 62].includes(parseInt(card_id));
+
+            if (i_demand_effect_only || non_demand_effects_only_work_if_demand_happens) {
                 // Get dogma icon
                 var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
                 var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
@@ -2574,6 +2585,7 @@ function (dojo, declare) {
                 var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
                 var player_total_is_min_value = true;
                 var player_total_is_max_value = true;
+                // TODO(ARTIFACTS): Teammates should be ignored here.
                 for(var player_id in this.players) {
                     if (this.counter.ressource_count[player_id][dogma_icon].getValue() < player_total) {
                         player_total_is_min_value = false;
