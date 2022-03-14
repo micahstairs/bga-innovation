@@ -729,9 +729,13 @@ function (dojo, declare) {
             case 'playerTurn':
                 this.destroyActionCard();
                 this.givePlayerActionCard(this.getActivePlayerId(), args.args.action_number);
-                // Add confirmation buttons
+                // Add confirmation/cancel buttons
                 this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
                 dojo.addClass("dogma_confirm_button", 'hidden');
+                this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
+                dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
+                dojo.addClass("dogma_cancel_button", 'bgabutton_red');
+                dojo.addClass("dogma_cancel_button", 'hidden');
                 break;
             case 'whoBegins':
                 dojo.query(".selected").removeClass("selected");
@@ -2586,9 +2590,18 @@ function (dojo, declare) {
             $('pagemaintitletext').innerHTML = _("You choose to dogma X.");
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
+            $("dogma_confirm_button").innerHTML = _("Confirm");
             this.startActionTimer("dogma_confirm_button", 3, this.action_confirmDogma, HTML_id);
             dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
-            dojo.query('#dogma_confirm_button').removeClass('hidden');
+            dojo.removeClass("dogma_confirm_button", 'hidden');
+            dojo.removeClass("dogma_cancel_button", 'hidden');
+        },
+
+        action_cancelDogma : function(event) {
+            this.stopActionTimer();
+            this.resurrectClickEvents(true);
+            dojo.addClass("dogma_confirm_button", 'hidden');
+            dojo.addClass("dogma_cancel_button", 'hidden');
         },
 
         action_manuallyConfirmDogma : function(event) {
