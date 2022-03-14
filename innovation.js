@@ -729,6 +729,9 @@ function (dojo, declare) {
             case 'playerTurn':
                 this.destroyActionCard();
                 this.givePlayerActionCard(this.getActivePlayerId(), args.args.action_number);
+                // Add confirmation buttons
+                this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
+                dojo.addClass("dogma_confirm_button", 'hidden');
                 break;
             case 'whoBegins':
                 dojo.query(".selected").removeClass("selected");
@@ -820,7 +823,7 @@ function (dojo, declare) {
                     this.addTooltipsWithActionsToMyBoard();
                     var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
-                    this.on(cards_on_board, 'onclick', 'action_clicForDogma');
+                    this.on(cards_on_board, 'onclick', 'action_clickDogma');
                     break;
                 case 'selectionMove':
                     this.choose_two_colors = args.args.special_type_of_choice == 5 /* choose_two_colors */;
@@ -1030,6 +1033,40 @@ function (dojo, declare) {
             HTML = dojo.string.substitute('<div class="log" style="height: auto; display: block; color: rgb(0, 0, 0);"><div class="roundedbox">${msg}</div></div>',
                 {'msg': message})
             dojo.place(HTML, $('logs'), 'first')
+        },
+
+        startActionTimer(buttonId, time, callback, callbackParam) {
+            var button = $(buttonId);
+            var isReadOnly = this.isReadOnly();
+            if (button == null || isReadOnly) {
+                return;
+            }
+    
+            this._actionTimerLabel = button.innerHTML;
+            this._actionTimerSeconds = time;
+            this._callback = callback;
+            this._callbackParam = callbackParam;
+            this._actionTimerFunction = () => {
+                var button = $(buttonId);
+                if (button == null) {
+                    this.stopActionTimer();
+                } else if (this._actionTimerSeconds-- > 1) {
+                    button.innerHTML = this._actionTimerLabel + ' (' + this._actionTimerSeconds + ')';
+                } else {
+                    button.innerHTML = this._actionTimerLabel;
+                    this._callback(this._callbackParam);
+                    this.stopActionTimer();
+                }
+            };
+            this._actionTimerFunction();
+            this._actionTimerId = window.setInterval(this._actionTimerFunction, 1000);
+        },
+    
+        stopActionTimer() {
+            if (this._actionTimerId != null) {
+                window.clearInterval(this._actionTimerId);
+                delete this._actionTimerId;
+            }
         },
         
         addButtonForViewFull : function() {
@@ -2544,17 +2581,28 @@ function (dojo, declare) {
                         );
         },
         
-        action_clicForDogma : function(event) {
-            if(!this.checkAction('dogma')){
+        action_clickDogma : function(event) {
+            this.deactivateClickEvents();
+            $('pagemaintitletext').innerHTML = _("You choose to dogma X.");
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            this.startActionTimer("dogma_confirm_button", 3, this.action_confirmDogma, HTML_id);
+            dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
+            dojo.query('#dogma_confirm_button').removeClass('hidden');
+        },
+
+        action_manuallyConfirmDogma : function(event) {
+            var HTML_id = dojo.attr('dogma_confirm_button', 'html_id');
+            this.action_confirmDogma(HTML_id);
+        },
+
+        action_confirmDogma : function(HTML_id) {
+            if(!this.checkAction('dogma')) {
                 return;
             }
-            
-            //
-            //Get the dogma icon from the square on the card and compare players counters
-            //
-            var HTML_id = this.getCardHTMLIdFromEvent(event);
+
             var card_id = this.getCardIdFromHTMLId(HTML_id);
-            
+
             var self = this;
             var ajax_call = function() {
                 self.deactivateClickEvents();
@@ -3595,6 +3643,11 @@ function (dojo, declare) {
             }
             var arrow = '&rarr;';
             return cards.join(arrow);
+        },
+
+        // Returns true if the current player is a spectator or if the game is currently in replay mode
+        isReadOnly() {
+            return this.isSpectator || this.isInReplayMode();
         },
 
         // Returns true if the game is ongoing but the user clicked "reply from this move" in the log or the game is in archive mode after the game has ended
