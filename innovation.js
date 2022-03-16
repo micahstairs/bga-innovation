@@ -729,13 +729,6 @@ function (dojo, declare) {
             case 'playerTurn':
                 this.destroyActionCard();
                 this.givePlayerActionCard(this.getActivePlayerId(), args.args.action_number);
-                // Add confirmation/cancel buttons
-                this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
-                dojo.addClass("dogma_confirm_button", 'hidden');
-                this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
-                dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
-                dojo.addClass("dogma_cancel_button", 'bgabutton_red');
-                dojo.addClass("dogma_cancel_button", 'hidden');
                 break;
             case 'whoBegins':
                 dojo.query(".selected").removeClass("selected");
@@ -793,7 +786,7 @@ function (dojo, declare) {
                     this.on(cards_in_hand, 'onclick', 'action_clicForInitialMeld');
                     break;
                 case 'artifactPlayerTurn':
-                    this.addTooltipWithDogmaActionToMyArtifactOnDisplay();
+                    this.addTooltipWithDogmaActionToMyArtifactOnDisplay(args.args._private.dogma_effect_info);
                     break;
                 case 'playerTurn':
                     // Claimable achievements (achieve action)
@@ -824,10 +817,21 @@ function (dojo, declare) {
                     this.on(artifact_on_display, 'onclick', 'action_clicForMeld');
                     
                     // Cards on board (dogma action)
-                    this.addTooltipsWithActionsToMyBoard();
+                    this.addTooltipsWithActionsToMyBoard(args.args._private.dogma_effect_info);
                     var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clickDogma');
+
+                    // Add cancel button
+                    this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
+                    dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
+                    dojo.addClass("dogma_cancel_button", 'bgabutton_red');
+                    dojo.addClass("dogma_cancel_button", 'hidden');
+
+                    // Add confirm button
+                    this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
+                    dojo.addClass("dogma_confirm_button", 'hidden');
+                    
                     break;
                 case 'selectionMove':
                     this.choose_two_colors = args.args.special_type_of_choice == 5 /* choose_two_colors */;
@@ -1047,7 +1051,7 @@ function (dojo, declare) {
             }
     
             this._actionTimerLabel = button.innerHTML;
-            this._actionTimerSeconds = time;
+            this._actionTimerSeconds = time + 1;
             this._callback = callback;
             this._callbackParam = callbackParam;
             this._actionTimerFunction = () => {
@@ -1383,14 +1387,14 @@ function (dojo, declare) {
             this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
         },
 
-        addTooltipsWithActionsTo : function(nodes, action_text_function) {
+        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param) {
             var self = this;
             nodes.forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
                 var card = self.saved_cards[id];
-                var HTML_action = action_text_function(self, card);
+                var HTML_action = action_text_function(self, card, extra_param);
                 self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
             });
         },
@@ -1399,16 +1403,30 @@ function (dojo, declare) {
             this.addTooltipsWithActionsTo(this.selectMyCardsInHand(), this.createActionTextForMeld);
         },
 
-        addTooltipsWithActionsToMyBoard : function() {
-            this.addTooltipsWithActionsTo(this.selectMyTopCardsEligibleForDogma(), this.createActionTextForDogma);
+        addTooltipsWithActionsToMyBoard : function(dogma_effect_info) {
+            var cards = this.selectMyTopCardsEligibleForDogma();
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info);
+            // TODO(ARTIFACTS): Move this logic to the backend.
+            // TODO(ARTIFACTS): Make sure special warnings for Mapmaking, Gunpowder, The Pirate Code and Vaccination are still working.
+            var self = this;
+            cards.forEach(function(card) {
+                var HTML_id = dojo.attr(card, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                var info = dogma_effect_info[id];
+                var i_demand_will_be_executed = info.players_executing_i_demand_effects ? info.players_executing_i_demand_effects.length > 0 : false;
+                var i_compel_will_be_executed = info.players_executing_i_compel_effects ? info.players_executing_i_compel_effects.length > 0 : false;
+                var non_demand_will_be_executed = info.players_executing_non_demand_effects ? info.players_executing_non_demand_effects.length > 0 : false;
+                var no_effect = !i_demand_will_be_executed && !i_compel_will_be_executed && !non_demand_will_be_executed;
+                dojo.attr(HTML_id, 'no_effect', no_effect);
+            });
         },
 
         addTooltipWithMeldActionToMyArtifactOnDisplay : function() {
             this.addTooltipsWithActionsTo(this.selectArtifactOnDisplay(), this.createActionTextForMeld);
         },
 
-        addTooltipWithDogmaActionToMyArtifactOnDisplay : function() {
-            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplayIfEligibleForDogma(), this.createActionTextForDogma);
+        addTooltipWithDogmaActionToMyArtifactOnDisplay : function(dogma_effect_info) {
+            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplayIfEligibleForDogma(), this.createActionTextForDogma, dogma_effect_info);
         },
         
         addTooltipsWithSplayingActionsToColorsOnMyBoard : function(colors, colors_in_clear, splay_direction, splay_direction_in_clear) {
@@ -1505,38 +1523,28 @@ function (dojo, declare) {
             return HTML_action;
         },
         
-        createActionTextForDogma : function(self, card) {
-            var player_total = self.counter.ressource_count[self.player_id][card.dogma_icon].getValue();
-            
-            var weaker_players = [];
-            var stronger_or_equal_players = [];
-            for (var p=2; p<=Object.keys(self.players).length; p++) {
-                var player_panel = dojo.query(".player:nth-of-type(" + p + ")")[0];
-                var player_id = dojo.attr(player_panel, 'id').substr(7); // Get players in sorted order relatively to me
-                if (self.counter.ressource_count[player_id][card.dogma_icon].getValue() < player_total) {
-                    weaker_players.push(player_id);
-                } else {
-                    stronger_or_equal_players.push(player_id);
-                }
-            }
-            
-            on_display = card.location == 'display'
+        createActionTextForDogma : function(self, card, dogma_effect_info) {
+            var info = dogma_effect_info[card.id];
+
+            // Use workaround to get this.player_id, since it is unfortunately not accessible from here.
+            var player_panel = dojo.query(".player:nth-of-type(1)")[0];
+            var player_id = dojo.attr(player_panel, 'id').substr(7);
+
+            on_display = card.location == 'display';
             exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
             exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             exists_non_demand_effect = card.non_demand_effect_1 !== null;
             
             // Mapmaking, Gunpowder, The Pirate Code and Vaccination all have non-demand effects but they do not have any effect unless their demand effect affects opponents.
+            // TODO(ARTIFACTS): Move this logic to the backend.
             non_demand_effects_only_work_if_demand_happens = [20, 38, 48, 62].includes(parseInt(card.id));
             
-            // TODO(ARTIFACTS): I don't think "&& !on_display" should be part of this conditional.
-            if ((!exists_non_demand_effect || non_demand_effects_only_work_if_demand_happens) && !on_display) {
-                if (exists_i_demand_effect && weaker_players.length == 0) {
-                    // TODO(ARTIFACTS): "nobody has" should be change to "no opponents have". We also need to update the above logic so that weaker_players doesn't include the teammate.
-                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since nobody has less ${icon} than you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+            if ((!exists_non_demand_effect || non_demand_effects_only_work_if_demand_happens)) {
+                if (exists_i_demand_effect && info.players_executing_i_demand_effects.length == 0) {
+                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since no opponents have less ${icon} than you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
                 }
-                if (exists_i_compel_effect && stronger_or_equal_players.length == 0 && !on_display) {
-                    // TODO(ARTIFACTS): "nobody has" should be change to "no opponents have". We also need to update the above logic so that stronger_or_equal_players doesn't include the teammate.
-                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since nobody has at least as many ${icon} as you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                if (exists_i_compel_effect && info.players_executing_i_compel_effects.length == 0) {
+                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since no opponents have at least as many ${icon} as you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
                 }
             }
 
@@ -1549,46 +1557,39 @@ function (dojo, declare) {
             HTML_action += "</p>";
             HTML_action += "<p>" + _("If you do:") + "</p>";
             HTML_action += "<ul class='recap_dogma'>";
-            
-            if (exists_i_demand_effect) {
-                if (weaker_players.length == 0) {
-                    HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
-                } else {
-                    var players = [];
-                    for(var p=0; p<weaker_players.length; p++) {
-                        var player_id = weaker_players[p];
-                        var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+
+            getOtherPlayersCommaSeparated = function(player_ids) {
+                var players = [];
+                for (var i = 0; i < player_ids.length; i++) {
+                    if (player_ids[i] != player_id) {
+                        var player = $('name_' + player_ids[i]).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
                         players.push(player);
                     }
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': players.join(', ')}) + "</li>"
+                }
+                return players.join(', ');
+            };
+            
+            if (exists_i_demand_effect) {
+                if (info.players_executing_i_demand_effects.length == 0) {
+                    HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
+                } else {
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects)}) + "</li>"
                 }
             }
 
             if (exists_i_compel_effect) {
-                if (stronger_or_equal_players.length == 0) {
+                if (info.players_executing_i_compel_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
                 } else {
-                    var players = [];
-                    for (var p=0; p<stronger_or_equal_players.length; p++) {
-                        var player_id = stronger_or_equal_players[p];
-                        var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                        players.push(player);
-                    }
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': players.join(', ')}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)}) + "</li>"
                 }
             }
             
             if (exists_non_demand_effect) {
-                if (stronger_or_equal_players.length == 0) {
+                if (info.players_executing_non_demand_effects.length == 1) {
                     HTML_action += "<li>" + _("You will execute the non-demand effect(s) alone.") + "</li>"
-                } else {
-                    var players = [];
-                    for (var p = 0; p < stronger_or_equal_players.length; p++) {
-                        var player_id = stronger_or_equal_players[p];
-                        var player = $('name_' + player_id).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                        players.push(player);
-                    }
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': players.join(', ')}) + "</li>"
+                } else if (info.players_executing_non_demand_effects.length > 1) {
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
                 }
             }
 
@@ -2587,14 +2588,25 @@ function (dojo, declare) {
         
         action_clickDogma : function(event) {
             this.deactivateClickEvents();
-            $('pagemaintitletext').innerHTML = _("You choose to dogma X.");
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var no_effect = dojo.attr(HTML_id, 'no_effect');
+            // TODO(ARTIFACTS): Replace X with card name.
+            if (no_effect) {
+                $('pagemaintitletext').innerHTML = _("Are you sure you want to dogma X? It will have no effect.");
+            } else {
+                $('pagemaintitletext').innerHTML = _("You choose to dogma X.");
+            }
+
+            dojo.removeClass("dogma_cancel_button", 'hidden');
             $("dogma_confirm_button").innerHTML = _("Confirm");
-            this.startActionTimer("dogma_confirm_button", 3, this.action_confirmDogma, HTML_id);
+
+            if (!no_effect) {
+                this.startActionTimer("dogma_confirm_button", 2, this.action_confirmDogma, HTML_id);
+            }
+
             dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
             dojo.removeClass("dogma_confirm_button", 'hidden');
-            dojo.removeClass("dogma_cancel_button", 'hidden');
         },
 
         action_cancelDogma : function(event) {
@@ -2610,64 +2622,22 @@ function (dojo, declare) {
         },
 
         action_confirmDogma : function(HTML_id) {
-            if(!this.checkAction('dogma')) {
+            if (!this.checkAction('dogma')) {
                 return;
             }
 
             var card_id = this.getCardIdFromHTMLId(HTML_id);
-
             var self = this;
-            var ajax_call = function() {
-                self.deactivateClickEvents();
-                var selfie = self;
-                self.ajaxcall("/innovation/innovation/dogma.html",
-                    {
-                        lock: true,
-                        player_id: self.player_id,
-                        card_id: card_id
-                    },
-                     self, function(result){/*self.deactivateClickEvents()*/}, function(is_error){if(is_error)selfie.resurrectClickEvents(false)}
-                );
-            }
-            
-            var i_demand_effect_only = dojo.query("#" + HTML_id + " .i_demand_effect_1").length == 1 && dojo.query("#" + HTML_id + " .non_demand_effect_1").length == 0
-            var is_compel_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1.is_compel_effect").length == 1;
-
-            // Mapmaking, Gunpowder, The Pirate Code and Vaccination all have non-demand effects but they do not have any effect unless their demand effect affects opponents.
-            non_demand_effects_only_work_if_demand_happens = [20, 38, 48, 62].includes(parseInt(card_id));
-
-            if (i_demand_effect_only || non_demand_effects_only_work_if_demand_happens) {
-                // Get dogma icon
-                var demand_effect = dojo.query("#" + HTML_id + " .i_demand_effect_1")[0];
-                var dogma_symbol_span = dojo.query(".dogma_symbol", demand_effect)[0];
-                var dogma_symbol_classes = dojo.attr(dogma_symbol_span, 'class');
-                var dogma_icon = dogma_symbol_classes.substr(-1);
-                // Compare player counters
-                var player_total = this.counter.ressource_count[this.player_id][dogma_icon].getValue();
-                var player_total_is_min_value = true;
-                var player_total_is_max_value = true;
-                // TODO(ARTIFACTS): Teammates should be ignored here.
-                for(var player_id in this.players) {
-                    if (this.counter.ressource_count[player_id][dogma_icon].getValue() < player_total) {
-                        player_total_is_min_value = false;
-                    }
-                    if (this.player_id != player_id && this.counter.ressource_count[player_id][dogma_icon].getValue() >= player_total) {
-                        player_total_is_max_value = false;
-                    }
-                }
-                // Leave an opportunity for the player to cancel a demand or compel that can't target any players
-                if (!is_compel_effect && player_total_is_min_value) {
-                    this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"), dojo.hitch(this, ajax_call));
-                } else if (is_compel_effect && player_total_is_max_value) {
-                    this.confirmationDialog(_("Activating this card will have no effect. Are you sure you want to do this?"), dojo.hitch(this, ajax_call));
-                } else {
-                    // Just make the AJAX call
-                    ajax_call();
-                }
-            } else {
-                // Just make the AJAX call
-                ajax_call();
-            }
+            this.ajaxcall("/innovation/innovation/dogma.html",
+                {
+                    lock: true,
+                    player_id: self.player_id,
+                    card_id: card_id
+                },
+                self,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(false); }
+            );
         },
         
         action_clicForChoose : function(event) {

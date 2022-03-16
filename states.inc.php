@@ -234,6 +234,7 @@ $machinestates = array(
         "name" => "artifactPlayerTurn",
         "description" => clienttranslate('${actplayer} must choose what to do with his Artifact on display'),
         "descriptionmyturn" => clienttranslate('${You} must choose what to do with your Artifact on display:'),
+        "args" => "argPlayerArtifactTurn",
         "type" => "activeplayer",
         "possibleactions" => array("dogmaArtifactOnDisplay", "returnArtifactOnDisplay", "passArtifactOnDisplay"),
         "transitions" => array("playerTurn" => 4, "dogmaEffect" => 6, "justBeforeGameEnd" => 98)

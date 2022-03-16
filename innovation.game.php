@@ -6601,6 +6601,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
     }
 
+    function argPlayerArtifactTurn() {
+        $player_id = self::getGameStateValue('active_player');
+        $card = self::getArtifactOnDisplay($player_id);
+        return array(
+            '_private' => array(
+                'active' => array( // "Active" player only
+                    "dogma_effect_info" => array($card['id'] => self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/ true)),
+                )
+            )
+        );
+    }
+
     function argPlayerTurn() {
         $player_id = self::getGameStateValue('active_player');
         return array(
@@ -6610,7 +6622,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'qualified_action' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') ? clienttranslate('an action') :
                                   (self::getGameStateValue('has_second_action') ? clienttranslate('a first action') : clienttranslate('a second action')),
             'age_to_draw' => self::getAgeToDrawIn($player_id),
-            'claimable_ages' => self::getClaimableAges($player_id)
+            'claimable_ages' => self::getClaimableAges($player_id),
+            '_private' => array(
+                'active' => array( // "Active" player only
+                    "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id)
+                )
+            )
         );
     }
 
@@ -6630,6 +6647,60 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
         return $claimable_ages;
+    }
+
+    /** Returns dogma effect information about the top cards belonging to the specified player. */
+    function getDogmaEffectInfoOfTopCards($launcher_id) {
+        $dogma_effect_info = array();
+        foreach (self::getTopCardsOnBoard($launcher_id) as $top_card) {
+            $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+        }
+        return $dogma_effect_info;
+    }
+
+    /** Returns dogma effect information of the specified card. */
+    function getDogmaEffectInfo($card, $launcher_id, $is_on_display = false) {
+        $dogma_effect_info = array();
+
+        // Battleship Yamato does not have any resource symbols
+        if ($card['id'] == 188) {
+            return $dogma_effect_info;
+        }
+
+        $dogma_icon = $card['dogma_icon'];
+        $resource_column = 'player_icon_count_' . $dogma_icon;
+        $extra_icons = $is_on_display ? self::countIconsOnCard($card, $dogma_icon) : 0;
+
+        if ($card['i_demand_effect_1_is_compel'] === true) {
+            $dogma_effect_info['players_executing_i_compel_effects'] =
+                self::getObjectListFromDB(self::format("
+                    SELECT
+                        player_id
+                    FROM
+                        player
+                    WHERE
+                        {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                        AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
+                ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        } else if ($card['i_demand_effect_1'] !== null) { 
+            $dogma_effect_info['players_executing_i_demand_effects'] =
+                self::getObjectListFromDB(self::format("
+                        SELECT
+                            player_id
+                        FROM
+                            player
+                        WHERE
+                            {col} < {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                            AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
+                    ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        }
+        if ($card['non_demand_effect_1'] !== null) {
+            $dogma_effect_info['players_executing_non_demand_effects'] =
+                self::getObjectListFromDB(self::format("
+                        SELECT player_id FROM player WHERE player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                    ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        }
+        return $dogma_effect_info;
     }
     
     function argDogmaEffect() {
