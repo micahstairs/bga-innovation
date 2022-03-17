@@ -1418,6 +1418,7 @@ function (dojo, declare) {
                 var non_demand_will_be_executed = info.players_executing_non_demand_effects ? info.players_executing_non_demand_effects.length > 0 : false;
                 var no_effect = !i_demand_will_be_executed && !i_compel_will_be_executed && !non_demand_will_be_executed;
                 dojo.attr(HTML_id, 'no_effect', no_effect);
+                dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
             });
         },
 
@@ -2591,11 +2592,12 @@ function (dojo, declare) {
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var no_effect = dojo.attr(HTML_id, 'no_effect');
-            // TODO(ARTIFACTS): Replace X with card name.
+            var card_name = dojo.attr(HTML_id, 'card_name');
+            
             if (no_effect) {
-                $('pagemaintitletext').innerHTML = _("Are you sure you want to dogma X? It will have no effect.");
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${card_name}? It will have no effect."), {'card_name' : _(card_name)});
             } else {
-                $('pagemaintitletext').innerHTML = _("You choose to dogma X.");
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("You choose to dogma ${card_name}."), {'card_name' : _(card_name)});
             }
 
             dojo.removeClass("dogma_cancel_button", 'hidden');
