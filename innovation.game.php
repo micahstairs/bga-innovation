@@ -6601,6 +6601,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
     }
 
+    function argPlayerArtifactTurn() {
+        $player_id = self::getGameStateValue('active_player');
+        $card = self::getArtifactOnDisplay($player_id);
+        return array(
+            '_private' => array(
+                'active' => array( // "Active" player only
+                    "dogma_effect_info" => array($card['id'] => self::getDogmaEffectInfo($card, $player_id, /*is_on_display=*/ true)),
+                )
+            )
+        );
+    }
+
     function argPlayerTurn() {
         $player_id = self::getGameStateValue('active_player');
         return array(
@@ -6610,7 +6622,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'qualified_action' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') ? clienttranslate('an action') :
                                   (self::getGameStateValue('has_second_action') ? clienttranslate('a first action') : clienttranslate('a second action')),
             'age_to_draw' => self::getAgeToDrawIn($player_id),
-            'claimable_ages' => self::getClaimableAges($player_id)
+            'claimable_ages' => self::getClaimableAges($player_id),
+            '_private' => array(
+                'active' => array( // "Active" player only
+                    "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id)
+                )
+            )
         );
     }
 
@@ -6630,6 +6647,121 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
         return $claimable_ages;
+    }
+
+    /** Returns dogma effect information about the top cards belonging to the specified player. */
+    function getDogmaEffectInfoOfTopCards($launcher_id) {
+        $dogma_effect_info = array();
+        foreach (self::getTopCardsOnBoard($launcher_id) as $top_card) {
+            $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+        }
+        return $dogma_effect_info;
+    }
+
+    /** Returns dogma effect information of the specified card. */
+    function getDogmaEffectInfo($card, $launcher_id, $is_on_display = false) {
+        $dogma_effect_info = array();
+
+        // Battleship Yamato cannot be triggered as a dogma effect, so we don't need to return anything
+        if ($card['id'] == 188) {
+            return $dogma_effect_info;
+        }
+
+        $dogma_icon = $card['dogma_icon'];
+        $resource_column = 'player_icon_count_' . $dogma_icon;
+        $extra_icons = $is_on_display ? self::countIconsOnCard($card, $dogma_icon) : 0;
+
+        $dogma_effect_info['players_executing_i_compel_effects'] = [];
+        $dogma_effect_info['players_executing_i_demand_effects'] = [];
+        $dogma_effect_info['players_executing_non_demand_effects'] = [];
+
+        if ($card['i_demand_effect_1_is_compel'] === true) {
+            $dogma_effect_info['players_executing_i_compel_effects'] =
+                self::getObjectListFromDB(self::format("
+                    SELECT
+                        player_id
+                    FROM
+                        player
+                    WHERE
+                        {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                        AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
+                ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        } else if ($card['i_demand_effect_1'] !== null) { 
+            $dogma_effect_info['players_executing_i_demand_effects'] =
+                self::getObjectListFromDB(self::format("
+                        SELECT
+                            player_id
+                        FROM
+                            player
+                        WHERE
+                            {col} < {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                            AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
+                    ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        }
+        if ($card['non_demand_effect_1'] !== null) {
+            $dogma_effect_info['players_executing_non_demand_effects'] =
+                self::getObjectListFromDB(self::format("
+                        SELECT player_id FROM player WHERE player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                    ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        }
+
+        $dogma_effect_info['no_effect'] = self::dogmaHasNoEffect(
+            $card,
+            $dogma_effect_info['players_executing_i_compel_effects'],
+            $dogma_effect_info['players_executing_i_demand_effects'],
+            $dogma_effect_info['players_executing_non_demand_effects']
+        );
+
+        return $dogma_effect_info;
+    }
+
+    /** Returns true if this dogma is guaranteed to have no effect. */
+    function dogmaHasNoEffect($card, $i_compel_players, $i_demand_players, $non_demand_players) {
+
+        $i_compel_will_be_executed = count($i_compel_players) > 0;
+        $i_demand_will_be_executed = count($i_demand_players) > 0;
+        $non_demand_will_be_executed = count($non_demand_players) > 0;
+
+        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed) {
+            return true;
+        }
+
+        if ($card['id'] !== 48) {
+            // self::throwInvalidChoiceException();
+        }
+
+        switch ($card['id']) {
+
+            // id 20, age 2: Mapmaking
+            case 20:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+
+            // id 38, age 4: Gunpowder
+            case 38:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+
+            // id 48, age 5: The Pirate Code
+            case 48:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+
+            // id 62, age 6: Vaccination
+            case 62:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+        }
+
+        return false;
     }
     
     function argDogmaEffect() {
