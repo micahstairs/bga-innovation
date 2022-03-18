@@ -2593,21 +2593,28 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var no_effect = dojo.attr(HTML_id, 'no_effect');
             var card_name = dojo.attr(HTML_id, 'card_name');
+
+            console.log(this.prefs[100].value);
             
             if (no_effect) {
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${card_name}? It will have no effect."), {'card_name' : _(card_name)});
             } else {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("You choose to dogma ${card_name}."), {'card_name' : _(card_name)});
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${card_name}?"), {'card_name' : _(card_name)});
             }
 
-            dojo.removeClass("dogma_cancel_button", 'hidden');
             $("dogma_confirm_button").innerHTML = _("Confirm");
+            dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
 
-            if (!no_effect) {
+            if (this.prefs[100].value == 1) {
+                // Click the confirmation button instantly
+                this.startActionTimer("dogma_confirm_button", 0, this.action_confirmDogma, HTML_id);
+            } else if (no_effect) {
+                // If the card will not have an effect, force the player to manually click confirm
+            } else {
                 this.startActionTimer("dogma_confirm_button", 2, this.action_confirmDogma, HTML_id);
             }
 
-            dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
+            dojo.removeClass("dogma_cancel_button", 'hidden');
             dojo.removeClass("dogma_confirm_button", 'hidden');
         },
 
