@@ -6662,7 +6662,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getDogmaEffectInfo($card, $launcher_id, $is_on_display = false) {
         $dogma_effect_info = array();
 
-        // Battleship Yamato does not have any resource symbols
+        // Battleship Yamato cannot be triggered as a dogma effect, so we don't need to return anything
         if ($card['id'] == 188) {
             return $dogma_effect_info;
         }
@@ -6670,6 +6670,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $dogma_icon = $card['dogma_icon'];
         $resource_column = 'player_icon_count_' . $dogma_icon;
         $extra_icons = $is_on_display ? self::countIconsOnCard($card, $dogma_icon) : 0;
+
+        $dogma_effect_info['players_executing_i_compel_effects'] = [];
+        $dogma_effect_info['players_executing_i_demand_effects'] = [];
+        $dogma_effect_info['players_executing_non_demand_effects'] = [];
 
         if ($card['i_demand_effect_1_is_compel'] === true) {
             $dogma_effect_info['players_executing_i_compel_effects'] =
@@ -6700,7 +6704,64 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         SELECT player_id FROM player WHERE player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
+
+        $dogma_effect_info['no_effect'] = self::dogmaHasNoEffect(
+            $card,
+            $dogma_effect_info['players_executing_i_compel_effects'],
+            $dogma_effect_info['players_executing_i_demand_effects'],
+            $dogma_effect_info['players_executing_non_demand_effects']
+        );
+
         return $dogma_effect_info;
+    }
+
+    /** Returns true if this dogma is guaranteed to have no effect. */
+    function dogmaHasNoEffect($card, $i_compel_players, $i_demand_players, $non_demand_players) {
+
+        $i_compel_will_be_executed = count($i_compel_players) > 0;
+        $i_demand_will_be_executed = count($i_demand_players) > 0;
+        $non_demand_will_be_executed = count($non_demand_players) > 0;
+
+        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed) {
+            return true;
+        }
+
+        if ($card['id'] !== 48) {
+            // self::throwInvalidChoiceException();
+        }
+
+        switch ($card['id']) {
+
+            // id 20, age 2: Mapmaking
+            case 20:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+
+            // id 38, age 4: Gunpowder
+            case 38:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+
+            // id 48, age 5: The Pirate Code
+            case 48:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+
+            // id 62, age 6: Vaccination
+            case 62:
+                // The non-demand has no effect unless the I demand is also executed.
+                if (!$i_demand_will_be_executed) {
+                    return true;
+                }
+        }
+
+        return false;
     }
     
     function argDogmaEffect() {

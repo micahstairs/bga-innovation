@@ -1406,17 +1406,11 @@ function (dojo, declare) {
         addTooltipsWithActionsToMyBoard : function(dogma_effect_info) {
             var cards = this.selectMyTopCardsEligibleForDogma();
             this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info);
-            // TODO(ARTIFACTS): Move this logic to the backend.
-            // TODO(ARTIFACTS): Make sure special warnings for Mapmaking, Gunpowder, The Pirate Code and Vaccination are still working.
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                var info = dogma_effect_info[id];
-                var i_demand_will_be_executed = info.players_executing_i_demand_effects ? info.players_executing_i_demand_effects.length > 0 : false;
-                var i_compel_will_be_executed = info.players_executing_i_compel_effects ? info.players_executing_i_compel_effects.length > 0 : false;
-                var non_demand_will_be_executed = info.players_executing_non_demand_effects ? info.players_executing_non_demand_effects.length > 0 : false;
-                var no_effect = !i_demand_will_be_executed && !i_compel_will_be_executed && !non_demand_will_be_executed;
+                var no_effect = dogma_effect_info[id].no_effect;
                 dojo.attr(HTML_id, 'no_effect', no_effect);
                 dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
             });
@@ -1536,16 +1530,12 @@ function (dojo, declare) {
             exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             exists_non_demand_effect = card.non_demand_effect_1 !== null;
             
-            // Mapmaking, Gunpowder, The Pirate Code and Vaccination all have non-demand effects but they do not have any effect unless their demand effect affects opponents.
-            // TODO(ARTIFACTS): Move this logic to the backend.
-            non_demand_effects_only_work_if_demand_happens = [20, 38, 48, 62].includes(parseInt(card.id));
-            
-            if ((!exists_non_demand_effect || non_demand_effects_only_work_if_demand_happens)) {
+            if ((!exists_non_demand_effect)) {
                 if (exists_i_demand_effect && info.players_executing_i_demand_effects.length == 0) {
-                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since no opponents have less ${icon} than you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                    return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
                 }
                 if (exists_i_compel_effect && info.players_executing_i_compel_effects.length == 0) {
-                    return "<p class='warning'>" + dojo.string.substitute(_('Activating this card will have no effect, since no opponents have at least as many ${icon} as you.'), {'icon': self.square('N', 'icon', card.dogma_icon, 'in_log')}) + "</p>";
+                    return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
                 }
             }
 
@@ -2605,12 +2595,14 @@ function (dojo, declare) {
             $("dogma_confirm_button").innerHTML = _("Confirm");
             dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
 
-            if (this.prefs[100].value == 1) {
+
+            if (no_effect) {
+                // If the card will not have an effect, force the player to manually click confirm
+            } else if (this.prefs[100].value == 1) {
                 // Click the confirmation button instantly
                 this.startActionTimer("dogma_confirm_button", 0, this.action_confirmDogma, HTML_id);
-            } else if (no_effect) {
-                // If the card will not have an effect, force the player to manually click confirm
             } else {
+                // Confirm automatically after a few seconds
                 this.startActionTimer("dogma_confirm_button", 2, this.action_confirmDogma, HTML_id);
             }
 
