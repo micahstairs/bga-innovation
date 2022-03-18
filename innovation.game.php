@@ -1999,7 +1999,7 @@ class Innovation extends Table
                 if ($code === '134N1A') {
                     $message_for_player = clienttranslate('{You must} choose {number} other top {card} from the board of {targetable_players}');
                     $message_for_others = clienttranslate('{player must} choose {number} other top {card} from the board of {targetable_players}');
-                } else if ($code === '134N1+A') {
+                } else if ($code === '134N1+A' || $code === '134N1B') {
                     $message_for_player = clienttranslate('{You must} choose a pile to splay left from the board of {targetable_players}');
                     $message_for_others = clienttranslate('{player must} choose a pile to splay left from the board of {targetable_players}');
                 } else if ($code === '136N1B' || $code === '161N1A') {
@@ -13218,6 +13218,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        case "134N1B":
+            // Prompt player to pick a stack which to splay left. (no purple card to execute)
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => 'any player',
+                'location_from' => 'board',
+                'location_to' => 'none'
+            );
+            break;
+            
         case "134N1+A":
             // Prompt player to pick a stack which to splay left.
             $options = array(
@@ -15504,8 +15517,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                     
                 case "90N3A":
-                    $card = self::getCardInfo(self::getGameStateValue('id_last_selected')); // The card the player melded from his hand
-                    self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
+                    if ($n > 0) {
+                        $card = self::getCardInfo(self::getGameStateValue('id_last_selected')); // The card the player melded from his hand
+                        self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
+                    }
                     break;
                     
                 // id 91, age 9: Ecology
@@ -15751,8 +15766,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
                     }
+                    else {
+                        self::incrementStepMax(1); // still need to do the splay
+                    }
                     break;
 
+                case "134N1B":
                 case "134N1+A":
                     // "Splay left a color on any player's board"
                     if ($n > 0) {
