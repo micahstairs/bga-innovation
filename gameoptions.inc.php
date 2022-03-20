@@ -105,4 +105,14 @@ $game_options = array(
     )
 );
 
-
+$game_preferences = array(
+    100 => array(
+        'name' => totranslate('Dogma confirmation'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('Disabled')),
+            2 => array('name' => totranslate('Enabled'))
+        ),
+        'default' => 1
+    )
+);

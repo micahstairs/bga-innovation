@@ -190,7 +190,11 @@ $machinestates = array(
         "type" => "game",
         "action" => "stPreSelectionMove",
         "args" => "argPreSelectionMove",
-        "transitions" => array("selectionMove" => 13, "interInteractionStep" => 11)
+        "transitions" => array(
+            "interInteractionStep" => 11,
+            "selectionMove" => 13,
+            "interSelectionMove" => 14, // Automatic card selection when there's only one selectable card   
+        )
     ),
     
     13 => array(
@@ -230,6 +234,7 @@ $machinestates = array(
         "name" => "artifactPlayerTurn",
         "description" => clienttranslate('${actplayer} must choose what to do with his Artifact on display'),
         "descriptionmyturn" => clienttranslate('${You} must choose what to do with your Artifact on display:'),
+        "args" => "argPlayerArtifactTurn",
         "type" => "activeplayer",
         "possibleactions" => array("dogmaArtifactOnDisplay", "returnArtifactOnDisplay", "passArtifactOnDisplay"),
         "transitions" => array("playerTurn" => 4, "dogmaEffect" => 6, "justBeforeGameEnd" => 98)
