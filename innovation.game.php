@@ -7228,26 +7228,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Action to be done
         if ($n == 0) {
             if ($can_pass || $can_stop) {
-                $you_must = clienttranslate("{You} may");
-                $player_must = clienttranslate("{player_name} may");
+                $you_must = clienttranslate('${You} may');
+                $player_must = clienttranslate('${player_name} may');
             }
             else {
-                $you_must = clienttranslate("{You} must");
-                $player_must = clienttranslate("{player_name} must");
+                $you_must = clienttranslate('${You} must');
+                $player_must = clienttranslate('${player_name} must');
             }
         }
         else {
             if ($can_pass || $can_stop) {
-                $you_must = clienttranslate("{You} still may");
-                $player_must = clienttranslate("{player_name} still may");
+                $you_must = clienttranslate('${You} still may');
+                $player_must = clienttranslate('${player_name} still may');
             }
             else {
-                $you_must = clienttranslate("{You} still must");
-                $player_must = clienttranslate("{player_name} still must");
+                $you_must = clienttranslate('${You} still must');
+                $player_must = clienttranslate('${player_name} still must');
             }
         }
-        $you_must = self::format($you_must, array('You' => $You));
-        $player_must = self::format($player_must, array('player_name' => $player_name));
         
         // Number
         if ($n_min > 800) {
@@ -7398,13 +7396,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
                 $splay_direction_in_clear = null;
-            }
-            else {
-                $messages = array('message_for_player' => $you_must, 'message_for_others' => $player_must, 'splayable_colors' => $splayable_colors, 'splayable_colors_in_clear' => $splayable_colors_in_clear);
+            } else {
+                $messages = [
+                    'message_for_player' => ['i18n' => ['log'], 'log' => $you_must, 'args' => ['You' => 'You']],
+                    'message_for_others' => ['i18n' => ['log'], 'log' => $player_must, 'args' => ['player_name' => $player_name]],
+                    'splayable_colors' => $splayable_colors,
+                    'splayable_colors_in_clear' => $splayable_colors_in_clear
+                ];
                 $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
             }
-        }
-        else {
+        } else {
             $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
             $splay_direction = null;
             $splay_direction_in_clear = null;
