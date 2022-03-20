@@ -219,18 +219,18 @@
 		width: 560px;
 		height: 408px;
 		background-size: 570px auto;
+		&.side_1{
+			background-position: -2px -2px;
+		}
+		&.side_2 {
+			background-position: -2px -408px;
+		}
 	}
 	&.S {
 		width: 96px;
 		height: 69px;
 		background-size: 100px auto;
 		background-position: -2px -145px;
-	}
-	&.side_1.M {
-		background-position: -2px -2px;
-	}
-	&.side_2.M {
-		background-position: -2px -408px;
 	}
 }
 .reference_card_block {
@@ -770,27 +770,7 @@
 		width: 120px;
 		height: 53px;
 
-		>.font_size_1 {
-			>.effect.M {
-				line-height: 5px;
-			}
-		}
-		>.font_size_2 {
-			>.effect.M {
-				line-height: 5px;
-			}
-		}
-		>.font_size_3 {
-			>.effect.M {
-				line-height: 5px;
-			}
-		}
-		>.font_size_4 {
-			>.effect.M {
-				line-height: 5px;
-			}
-		}
-		>.font_size_5 {
+		>.font_size_1, >.font_size_2, >.font_size_3, >.font_size_4, >.font_size_5 {
 			>.effect.M {
 				line-height: 5px;
 			}

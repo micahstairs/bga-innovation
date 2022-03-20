@@ -236,17 +236,17 @@
   height: 408px;
   background-size: 570px auto;
 }
+.reference_card.M.side_1 {
+  background-position: -2px -2px;
+}
+.reference_card.M.side_2 {
+  background-position: -2px -408px;
+}
 .reference_card.S {
   width: 96px;
   height: 69px;
   background-size: 100px auto;
   background-position: -2px -145px;
-}
-.reference_card.side_1.M {
-  background-position: -2px -2px;
-}
-.reference_card.side_2.M {
-  background-position: -2px -408px;
 }
 
 .reference_card_block {
@@ -790,19 +790,7 @@
   width: 120px;
   height: 53px;
 }
-.card_effects.M > .font_size_1 > .effect.M {
-  line-height: 5px;
-}
-.card_effects.M > .font_size_2 > .effect.M {
-  line-height: 5px;
-}
-.card_effects.M > .font_size_3 > .effect.M {
-  line-height: 5px;
-}
-.card_effects.M > .font_size_4 > .effect.M {
-  line-height: 5px;
-}
-.card_effects.M > .font_size_5 > .effect.M {
+.card_effects.M > .font_size_1 > .effect.M, .card_effects.M > .font_size_2 > .effect.M, .card_effects.M > .font_size_3 > .effect.M, .card_effects.M > .font_size_4 > .effect.M, .card_effects.M > .font_size_5 > .effect.M {
   line-height: 5px;
 }
 .card_effects.M > .font_size_6 > .effect.M {
