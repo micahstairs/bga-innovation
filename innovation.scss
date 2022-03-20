@@ -1,4 +1,6 @@
+@use "sass:math";
 @import "../../../css/csslayer.css";
+
 
 /* codex for numbers and symbols
  *
@@ -81,7 +83,7 @@
 	height: 165px;
 	margin-bottom: 5px;
 	>div {
-		background-color: #ebd5bd;
+		height: inherit;
 		padding: 5px;
 		>p {
 			font-style: italic;
@@ -637,40 +639,60 @@
 		height: 14px;
 		top: 4px;
 		line-height: 16px;
-		&.color_0 {
-			right: 6.5px;
-		}
-		&.color_1 {
-			right: 6px;
-		}
-		&.color_2 {
-			right: 6.5px;
-		}
-		&.color_3 {
-			right: 6px;
-		}
-		&.color_4 {
-			right: 6.5px;
-		}
 	}
 	&.L {
 		width: 25px;
 		height: 25px;
 		top: 26px;
 		line-height: 14px;
-		&.color_0 {
+	}
+}
+.color_0 {
+	.card_age {
+		&.M {
+			right: 6.5px;
+		}
+		&.L {
 			right: 21px;
 		}
-		&.color_1 {
+	}
+}
+.color_1 {
+	.card_age {
+		&.M {
+			right: 6px;
+		}
+		&.L {
 			right: 21px;
 		}
-		&.color_2 {
+	}
+}
+.color_2 {
+	.card_age {
+		&.M {
+			right: 6.5px;
+		}
+		&.L {
 			right: 20px;
 		}
-		&.color_3 {
+	}
+}
+.color_3 {
+	.card_age {
+		&.M {
+			right: 6px;
+		}
+		&.L {
 			right: 22px;
 		}
-		&.color_4 {
+	}
+}
+.color_4 {
+	.card_age {
+		&.M {
+			right: 6.5px;
+		}
+		&.L {
 			right: 22px;
 		}
 	}
@@ -1634,1426 +1656,86 @@
 		}
 	}
 }
-/* scss_generator code starts here */
-/* anything below this will get blown away on rebuild */
 
-.font_size_1 {
-	font-size: 0.0625rem;
+/* Font sizes */
+$rem: 0.0625rem;
+@for $i from 1 through 30 {
+	.font_size_#{$i} {
+		font-size: $rem * $i;
+	}
 }
 
-.font_size_2 {
-	font-size: 0.125rem;
-}
+/* hexagon card icons */
 
-.font_size_3 {
-	font-size: 0.1875rem;
-}
+$M_offset:		49;
+$M_x_position: 	3;
+$M_y_position: 	3;
+$L_offset:		101;
+$L_x_position: 	8;
+$L_y_position: 	8;
 
-.font_size_4 {
-	font-size: 0.25rem;
-}
-
-.font_size_5 {
-	font-size: 0.3125rem;
-}
-
-.font_size_6 {
-	font-size: 0.375rem;
-}
-
-.font_size_7 {
-	font-size: 0.4375rem;
-}
-
-.font_size_8 {
-	font-size: 0.5rem;
-}
-
-.font_size_9 {
-	font-size: 0.5625rem;
-}
-
-.font_size_10 {
-	font-size: 0.625rem;
-}
-
-.font_size_11 {
-	font-size: 0.6875rem;
-}
-
-.font_size_12 {
-	font-size: 0.75rem;
-}
-
-.font_size_13 {
-	font-size: 0.8125rem;
-}
-
-.font_size_14 {
-	font-size: 0.875rem;
-}
-
-.font_size_15 {
-	font-size: 0.9375rem;
-}
-
-.font_size_16 {
-	font-size: 1.0rem;
-}
-
-.font_size_17 {
-	font-size: 1.0625rem;
-}
-
-.font_size_18 {
-	font-size: 1.125rem;
-}
-
-.font_size_19 {
-	font-size: 1.1875rem;
-}
-
-.font_size_20 {
-	font-size: 1.25rem;
-}
-
-.font_size_21 {
-	font-size: 1.3125rem;
-}
-
-.font_size_22 {
-	font-size: 1.375rem;
-}
-
-.font_size_23 {
-	font-size: 1.4375rem;
-}
-
-.font_size_24 {
-	font-size: 1.5rem;
-}
-
-.font_size_25 {
-	font-size: 1.5625rem;
-}
-
-.font_size_26 {
-	font-size: 1.625rem;
-}
-
-.font_size_27 {
-	font-size: 1.6875rem;
-}
-
-.font_size_28 {
-	font-size: 1.75rem;
-}
-
-.font_size_29 {
-	font-size: 1.8125rem;
-}
-
-.font_size_30 {
-	font-size: 1.875rem;
-}
-
-.M { 
-	&.hexagon_card_icon {
-		&.hexagon_icon_0 {
-			background-position: -3px -3px;
-		}
-		&.hexagon_icon_1 {
-			background-position: -52px -3px;
-		}
-		&.hexagon_icon_2 {
-			background-position: -101px -3px;
-		}
-		&.hexagon_icon_3 {
-			background-position: -150px -3px;
-		}
-		&.hexagon_icon_4 {
-			background-position: -199px -3px;
-		}
-		&.hexagon_icon_5 {
-			background-position: -248px -3px;
-		}
-		&.hexagon_icon_6 {
-			background-position: -297px -3px;
-		}
-		&.hexagon_icon_7 {
-			background-position: -346px -3px;
-		}
-		&.hexagon_icon_8 {
-			background-position: -395px -3px;
-		}
-		&.hexagon_icon_9 {
-			background-position: -444px -3px;
-		}
-		&.hexagon_icon_10 {
-			background-position: -493px -3px;
-		}
-		&.hexagon_icon_11 {
-			background-position: -542px -3px;
-		}
-		&.hexagon_icon_12 {
-			background-position: -591px -3px;
-		}
-		&.hexagon_icon_13 {
-			background-position: -640px -3px;
-		}
-		&.hexagon_icon_14 {
-			background-position: -689px -3px;
-		}
-		&.hexagon_icon_15 {
-			background-position: -3px -52px;
-		}
-		&.hexagon_icon_16 {
-			background-position: -52px -52px;
-		}
-		&.hexagon_icon_17 {
-			background-position: -101px -52px;
-		}
-		&.hexagon_icon_18 {
-			background-position: -150px -52px;
-		}
-		&.hexagon_icon_19 {
-			background-position: -199px -52px;
-		}
-		&.hexagon_icon_20 {
-			background-position: -248px -52px;
-		}
-		&.hexagon_icon_21 {
-			background-position: -297px -52px;
-		}
-		&.hexagon_icon_22 {
-			background-position: -346px -52px;
-		}
-		&.hexagon_icon_23 {
-			background-position: -395px -52px;
-		}
-		&.hexagon_icon_24 {
-			background-position: -444px -52px;
-		}
-		&.hexagon_icon_25 {
-			background-position: -3px -101px;
-		}
-		&.hexagon_icon_26 {
-			background-position: -52px -101px;
-		}
-		&.hexagon_icon_27 {
-			background-position: -101px -101px;
-		}
-		&.hexagon_icon_28 {
-			background-position: -150px -101px;
-		}
-		&.hexagon_icon_29 {
-			background-position: -199px -101px;
-		}
-		&.hexagon_icon_30 {
-			background-position: -248px -101px;
-		}
-		&.hexagon_icon_31 {
-			background-position: -297px -101px;
-		}
-		&.hexagon_icon_32 {
-			background-position: -346px -101px;
-		}
-		&.hexagon_icon_33 {
-			background-position: -395px -101px;
-		}
-		&.hexagon_icon_34 {
-			background-position: -444px -101px;
-		}
-		&.hexagon_icon_35 {
-			background-position: -3px -150px;
-		}
-		&.hexagon_icon_36 {
-			background-position: -52px -150px;
-		}
-		&.hexagon_icon_37 {
-			background-position: -101px -150px;
-		}
-		&.hexagon_icon_38 {
-			background-position: -150px -150px;
-		}
-		&.hexagon_icon_39 {
-			background-position: -199px -150px;
-		}
-		&.hexagon_icon_40 {
-			background-position: -248px -150px;
-		}
-		&.hexagon_icon_41 {
-			background-position: -297px -150px;
-		}
-		&.hexagon_icon_42 {
-			background-position: -346px -150px;
-		}
-		&.hexagon_icon_43 {
-			background-position: -395px -150px;
-		}
-		&.hexagon_icon_44 {
-			background-position: -444px -150px;
-		}
-		&.hexagon_icon_45 {
-			background-position: -3px -199px;
-		}
-		&.hexagon_icon_46 {
-			background-position: -52px -199px;
-		}
-		&.hexagon_icon_47 {
-			background-position: -101px -199px;
-		}
-		&.hexagon_icon_48 {
-			background-position: -150px -199px;
-		}
-		&.hexagon_icon_49 {
-			background-position: -199px -199px;
-		}
-		&.hexagon_icon_50 {
-			background-position: -248px -199px;
-		}
-		&.hexagon_icon_51 {
-			background-position: -297px -199px;
-		}
-		&.hexagon_icon_52 {
-			background-position: -346px -199px;
-		}
-		&.hexagon_icon_53 {
-			background-position: -395px -199px;
-		}
-		&.hexagon_icon_54 {
-			background-position: -444px -199px;
-		}
-		&.hexagon_icon_55 {
-			background-position: -3px -248px;
-		}
-		&.hexagon_icon_56 {
-			background-position: -52px -248px;
-		}
-		&.hexagon_icon_57 {
-			background-position: -101px -248px;
-		}
-		&.hexagon_icon_58 {
-			background-position: -150px -248px;
-		}
-		&.hexagon_icon_59 {
-			background-position: -199px -248px;
-		}
-		&.hexagon_icon_60 {
-			background-position: -248px -248px;
-		}
-		&.hexagon_icon_61 {
-			background-position: -297px -248px;
-		}
-		&.hexagon_icon_62 {
-			background-position: -346px -248px;
-		}
-		&.hexagon_icon_63 {
-			background-position: -395px -248px;
-		}
-		&.hexagon_icon_64 {
-			background-position: -444px -248px;
-		}
-		&.hexagon_icon_65 {
-			background-position: -3px -297px;
-		}
-		&.hexagon_icon_66 {
-			background-position: -52px -297px;
-		}
-		&.hexagon_icon_67 {
-			background-position: -101px -297px;
-		}
-		&.hexagon_icon_68 {
-			background-position: -150px -297px;
-		}
-		&.hexagon_icon_69 {
-			background-position: -199px -297px;
-		}
-		&.hexagon_icon_70 {
-			background-position: -248px -297px;
-		}
-		&.hexagon_icon_71 {
-			background-position: -297px -297px;
-		}
-		&.hexagon_icon_72 {
-			background-position: -346px -297px;
-		}
-		&.hexagon_icon_73 {
-			background-position: -395px -297px;
-		}
-		&.hexagon_icon_74 {
-			background-position: -444px -297px;
-		}
-		&.hexagon_icon_75 {
-			background-position: -3px -346px;
-		}
-		&.hexagon_icon_76 {
-			background-position: -52px -346px;
-		}
-		&.hexagon_icon_77 {
-			background-position: -101px -346px;
-		}
-		&.hexagon_icon_78 {
-			background-position: -150px -346px;
-		}
-		&.hexagon_icon_79 {
-			background-position: -199px -346px;
-		}
-		&.hexagon_icon_80 {
-			background-position: -248px -346px;
-		}
-		&.hexagon_icon_81 {
-			background-position: -297px -346px;
-		}
-		&.hexagon_icon_82 {
-			background-position: -346px -346px;
-		}
-		&.hexagon_icon_83 {
-			background-position: -395px -346px;
-		}
-		&.hexagon_icon_84 {
-			background-position: -444px -346px;
-		}
-		&.hexagon_icon_85 {
-			background-position: -3px -395px;
-		}
-		&.hexagon_icon_86 {
-			background-position: -52px -395px;
-		}
-		&.hexagon_icon_87 {
-			background-position: -101px -395px;
-		}
-		&.hexagon_icon_88 {
-			background-position: -150px -395px;
-		}
-		&.hexagon_icon_89 {
-			background-position: -199px -395px;
-		}
-		&.hexagon_icon_90 {
-			background-position: -248px -395px;
-		}
-		&.hexagon_icon_91 {
-			background-position: -297px -395px;
-		}
-		&.hexagon_icon_92 {
-			background-position: -346px -395px;
-		}
-		&.hexagon_icon_93 {
-			background-position: -395px -395px;
-		}
-		&.hexagon_icon_94 {
-			background-position: -444px -395px;
-		}
-		&.hexagon_icon_95 {
-			background-position: -3px -444px;
-		}
-		&.hexagon_icon_96 {
-			background-position: -52px -444px;
-		}
-		&.hexagon_icon_97 {
-			background-position: -101px -444px;
-		}
-		&.hexagon_icon_98 {
-			background-position: -150px -444px;
-		}
-		&.hexagon_icon_99 {
-			background-position: -199px -444px;
-		}
-		&.hexagon_icon_100 {
-			background-position: -248px -444px;
-		}
-		&.hexagon_icon_101 {
-			background-position: -297px -444px;
-		}
-		&.hexagon_icon_102 {
-			background-position: -346px -444px;
-		}
-		&.hexagon_icon_103 {
-			background-position: -395px -444px;
-		}
-		&.hexagon_icon_104 {
-			background-position: -444px -444px;
-		}
-		&.hexagon_icon_110 {
-			background-position: -3px -493px;
-		}
-		&.hexagon_icon_111 {
-			background-position: -52px -493px;
-		}
-		&.hexagon_icon_112 {
-			background-position: -101px -493px;
-		}
-		&.hexagon_icon_113 {
-			background-position: -150px -493px;
-		}
-		&.hexagon_icon_114 {
-			background-position: -199px -493px;
-		}
-		&.hexagon_icon_115 {
-			background-position: -248px -493px;
-		}
-		&.hexagon_icon_116 {
-			background-position: -297px -493px;
-		}
-		&.hexagon_icon_117 {
-			background-position: -346px -493px;
-		}
-		&.hexagon_icon_118 {
-			background-position: -395px -493px;
-		}
-		&.hexagon_icon_119 {
-			background-position: -444px -493px;
-		}
-		&.hexagon_icon_120 {
-			background-position: -493px -493px;
-		}
-		&.hexagon_icon_121 {
-			background-position: -542px -493px;
-		}
-		&.hexagon_icon_122 {
-			background-position: -591px -493px;
-		}
-		&.hexagon_icon_123 {
-			background-position: -640px -493px;
-		}
-		&.hexagon_icon_124 {
-			background-position: -689px -493px;
-		}
-		&.hexagon_icon_125 {
-			background-position: -3px -542px;
-		}
-		&.hexagon_icon_126 {
-			background-position: -52px -542px;
-		}
-		&.hexagon_icon_127 {
-			background-position: -101px -542px;
-		}
-		&.hexagon_icon_128 {
-			background-position: -150px -542px;
-		}
-		&.hexagon_icon_129 {
-			background-position: -199px -542px;
-		}
-		&.hexagon_icon_130 {
-			background-position: -248px -542px;
-		}
-		&.hexagon_icon_131 {
-			background-position: -297px -542px;
-		}
-		&.hexagon_icon_132 {
-			background-position: -346px -542px;
-		}
-		&.hexagon_icon_133 {
-			background-position: -395px -542px;
-		}
-		&.hexagon_icon_134 {
-			background-position: -444px -542px;
-		}
-		&.hexagon_icon_135 {
-			background-position: -3px -591px;
-		}
-		&.hexagon_icon_136 {
-			background-position: -52px -591px;
-		}
-		&.hexagon_icon_137 {
-			background-position: -101px -591px;
-		}
-		&.hexagon_icon_138 {
-			background-position: -150px -591px;
-		}
-		&.hexagon_icon_139 {
-			background-position: -199px -591px;
-		}
-		&.hexagon_icon_140 {
-			background-position: -248px -591px;
-		}
-		&.hexagon_icon_141 {
-			background-position: -297px -591px;
-		}
-		&.hexagon_icon_142 {
-			background-position: -346px -591px;
-		}
-		&.hexagon_icon_143 {
-			background-position: -395px -591px;
-		}
-		&.hexagon_icon_144 {
-			background-position: -444px -591px;
-		}
-		&.hexagon_icon_145 {
-			background-position: -3px -640px;
-		}
-		&.hexagon_icon_146 {
-			background-position: -52px -640px;
-		}
-		&.hexagon_icon_147 {
-			background-position: -101px -640px;
-		}
-		&.hexagon_icon_148 {
-			background-position: -150px -640px;
-		}
-		&.hexagon_icon_149 {
-			background-position: -199px -640px;
-		}
-		&.hexagon_icon_150 {
-			background-position: -248px -640px;
-		}
-		&.hexagon_icon_151 {
-			background-position: -297px -640px;
-		}
-		&.hexagon_icon_152 {
-			background-position: -346px -640px;
-		}
-		&.hexagon_icon_153 {
-			background-position: -395px -640px;
-		}
-		&.hexagon_icon_154 {
-			background-position: -444px -640px;
-		}
-		&.hexagon_icon_155 {
-			background-position: -3px -689px;
-		}
-		&.hexagon_icon_156 {
-			background-position: -52px -689px;
-		}
-		&.hexagon_icon_157 {
-			background-position: -101px -689px;
-		}
-		&.hexagon_icon_158 {
-			background-position: -150px -689px;
-		}
-		&.hexagon_icon_159 {
-			background-position: -199px -689px;
-		}
-		&.hexagon_icon_160 {
-			background-position: -248px -689px;
-		}
-		&.hexagon_icon_161 {
-			background-position: -297px -689px;
-		}
-		&.hexagon_icon_162 {
-			background-position: -346px -689px;
-		}
-		&.hexagon_icon_163 {
-			background-position: -395px -689px;
-		}
-		&.hexagon_icon_164 {
-			background-position: -444px -689px;
-		}
-		&.hexagon_icon_165 {
-			background-position: -3px -738px;
-		}
-		&.hexagon_icon_166 {
-			background-position: -52px -738px;
-		}
-		&.hexagon_icon_167 {
-			background-position: -101px -738px;
-		}
-		&.hexagon_icon_168 {
-			background-position: -150px -738px;
-		}
-		&.hexagon_icon_169 {
-			background-position: -199px -738px;
-		}
-		&.hexagon_icon_170 {
-			background-position: -248px -738px;
-		}
-		&.hexagon_icon_171 {
-			background-position: -297px -738px;
-		}
-		&.hexagon_icon_172 {
-			background-position: -346px -738px;
-		}
-		&.hexagon_icon_173 {
-			background-position: -395px -738px;
-		}
-		&.hexagon_icon_174 {
-			background-position: -444px -738px;
-		}
-		&.hexagon_icon_175 {
-			background-position: -3px -787px;
-		}
-		&.hexagon_icon_176 {
-			background-position: -52px -787px;
-		}
-		&.hexagon_icon_177 {
-			background-position: -101px -787px;
-		}
-		&.hexagon_icon_178 {
-			background-position: -150px -787px;
-		}
-		&.hexagon_icon_179 {
-			background-position: -199px -787px;
-		}
-		&.hexagon_icon_180 {
-			background-position: -248px -787px;
-		}
-		&.hexagon_icon_181 {
-			background-position: -297px -787px;
-		}
-		&.hexagon_icon_182 {
-			background-position: -346px -787px;
-		}
-		&.hexagon_icon_183 {
-			background-position: -395px -787px;
-		}
-		&.hexagon_icon_184 {
-			background-position: -444px -787px;
-		}
-		&.hexagon_icon_185 {
-			background-position: -3px -836px;
-		}
-		&.hexagon_icon_186 {
-			background-position: -52px -836px;
-		}
-		&.hexagon_icon_187 {
-			background-position: -101px -836px;
-		}
-		&.hexagon_icon_188 {
-			background-position: -150px -836px;
-		}
-		&.hexagon_icon_189 {
-			background-position: -199px -836px;
-		}
-		&.hexagon_icon_190 {
-			background-position: -248px -836px;
-		}
-		&.hexagon_icon_191 {
-			background-position: -297px -836px;
-		}
-		&.hexagon_icon_192 {
-			background-position: -346px -836px;
-		}
-		&.hexagon_icon_193 {
-			background-position: -395px -836px;
-		}
-		&.hexagon_icon_194 {
-			background-position: -444px -836px;
-		}
-		&.hexagon_icon_195 {
-			background-position: -3px -885px;
-		}
-		&.hexagon_icon_196 {
-			background-position: -52px -885px;
-		}
-		&.hexagon_icon_197 {
-			background-position: -101px -885px;
-		}
-		&.hexagon_icon_198 {
-			background-position: -150px -885px;
-		}
-		&.hexagon_icon_199 {
-			background-position: -199px -885px;
-		}
-		&.hexagon_icon_200 {
-			background-position: -248px -885px;
-		}
-		&.hexagon_icon_201 {
-			background-position: -297px -885px;
-		}
-		&.hexagon_icon_202 {
-			background-position: -346px -885px;
-		}
-		&.hexagon_icon_203 {
-			background-position: -395px -885px;
-		}
-		&.hexagon_icon_204 {
-			background-position: -444px -885px;
-		}
-		&.hexagon_icon_205 {
-			background-position: -3px -934px;
-		}
-		&.hexagon_icon_206 {
-			background-position: -52px -934px;
-		}
-		&.hexagon_icon_207 {
-			background-position: -101px -934px;
-		}
-		&.hexagon_icon_208 {
-			background-position: -150px -934px;
-		}
-		&.hexagon_icon_209 {
-			background-position: -199px -934px;
-		}
-		&.hexagon_icon_210 {
-			background-position: -248px -934px;
-		}
-		&.hexagon_icon_211 {
-			background-position: -297px -934px;
-		}
-		&.hexagon_icon_212 {
-			background-position: -346px -934px;
-		}
-		&.hexagon_icon_213 {
-			background-position: -395px -934px;
-		}
-		&.hexagon_icon_214 {
-			background-position: -444px -934px;
-		}
-		&.hexagon_icon_215 {
-			background-position: -493px -542px;
-		}
-		&.hexagon_icon_216 {
-			background-position: -542px -542px;
-		}
-		&.hexagon_icon_217 {
-			background-position: -591px -542px;
-		}
-		&.hexagon_icon_218 {
-			background-position: -640px -542px;
-		}
-		&.hexagon_icon_219 {
-			background-position: -689px -542px;
+.hexagon_card_icon {
+	// Base cards
+	@for $i from 0 through 104 {
+		@if $i <= 14 {
+			&.hexagon_icon_#{$i} {
+				&.M {
+					background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+				}
+				&.L {
+					background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+				}
+			}
+		}
+		@if $i > 14 {
+			&.hexagon_icon_#{$i} {
+				&.M {
+					background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $M_offset}px;
+				}
+				&.L {
+					background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $L_offset}px;
+				}
+			}
 		}
 	}
-} 
-
-.L { 
-	&.hexagon_card_icon {
-		&.hexagon_icon_0 {
-			background-position: -8px -8px;
-		}
-		&.hexagon_icon_1 {
-			background-position: -109px -8px;
-		}
-		&.hexagon_icon_2 {
-			background-position: -210px -8px;
-		}
-		&.hexagon_icon_3 {
-			background-position: -311px -8px;
-		}
-		&.hexagon_icon_4 {
-			background-position: -412px -8px;
-		}
-		&.hexagon_icon_5 {
-			background-position: -513px -8px;
-		}
-		&.hexagon_icon_6 {
-			background-position: -614px -8px;
-		}
-		&.hexagon_icon_7 {
-			background-position: -715px -8px;
-		}
-		&.hexagon_icon_8 {
-			background-position: -816px -8px;
-		}
-		&.hexagon_icon_9 {
-			background-position: -917px -8px;
-		}
-		&.hexagon_icon_10 {
-			background-position: -1018px -8px;
-		}
-		&.hexagon_icon_11 {
-			background-position: -1119px -8px;
-		}
-		&.hexagon_icon_12 {
-			background-position: -1220px -8px;
-		}
-		&.hexagon_icon_13 {
-			background-position: -1321px -8px;
-		}
-		&.hexagon_icon_14 {
-			background-position: -1422px -8px;
-		}
-		&.hexagon_icon_15 {
-			background-position: -8px -109px;
-		}
-		&.hexagon_icon_16 {
-			background-position: -109px -109px;
-		}
-		&.hexagon_icon_17 {
-			background-position: -210px -109px;
-		}
-		&.hexagon_icon_18 {
-			background-position: -311px -109px;
-		}
-		&.hexagon_icon_19 {
-			background-position: -412px -109px;
-		}
-		&.hexagon_icon_20 {
-			background-position: -513px -109px;
-		}
-		&.hexagon_icon_21 {
-			background-position: -614px -109px;
-		}
-		&.hexagon_icon_22 {
-			background-position: -715px -109px;
-		}
-		&.hexagon_icon_23 {
-			background-position: -816px -109px;
-		}
-		&.hexagon_icon_24 {
-			background-position: -917px -109px;
-		}
-		&.hexagon_icon_25 {
-			background-position: -8px -210px;
-		}
-		&.hexagon_icon_26 {
-			background-position: -109px -210px;
-		}
-		&.hexagon_icon_27 {
-			background-position: -210px -210px;
-		}
-		&.hexagon_icon_28 {
-			background-position: -311px -210px;
-		}
-		&.hexagon_icon_29 {
-			background-position: -412px -210px;
-		}
-		&.hexagon_icon_30 {
-			background-position: -513px -210px;
-		}
-		&.hexagon_icon_31 {
-			background-position: -614px -210px;
-		}
-		&.hexagon_icon_32 {
-			background-position: -715px -210px;
-		}
-		&.hexagon_icon_33 {
-			background-position: -816px -210px;
-		}
-		&.hexagon_icon_34 {
-			background-position: -917px -210px;
-		}
-		&.hexagon_icon_35 {
-			background-position: -8px -311px;
-		}
-		&.hexagon_icon_36 {
-			background-position: -109px -311px;
-		}
-		&.hexagon_icon_37 {
-			background-position: -210px -311px;
-		}
-		&.hexagon_icon_38 {
-			background-position: -311px -311px;
-		}
-		&.hexagon_icon_39 {
-			background-position: -412px -311px;
-		}
-		&.hexagon_icon_40 {
-			background-position: -513px -311px;
-		}
-		&.hexagon_icon_41 {
-			background-position: -614px -311px;
-		}
-		&.hexagon_icon_42 {
-			background-position: -715px -311px;
-		}
-		&.hexagon_icon_43 {
-			background-position: -816px -311px;
-		}
-		&.hexagon_icon_44 {
-			background-position: -917px -311px;
-		}
-		&.hexagon_icon_45 {
-			background-position: -8px -412px;
-		}
-		&.hexagon_icon_46 {
-			background-position: -109px -412px;
-		}
-		&.hexagon_icon_47 {
-			background-position: -210px -412px;
-		}
-		&.hexagon_icon_48 {
-			background-position: -311px -412px;
-		}
-		&.hexagon_icon_49 {
-			background-position: -412px -412px;
-		}
-		&.hexagon_icon_50 {
-			background-position: -513px -412px;
-		}
-		&.hexagon_icon_51 {
-			background-position: -614px -412px;
-		}
-		&.hexagon_icon_52 {
-			background-position: -715px -412px;
-		}
-		&.hexagon_icon_53 {
-			background-position: -816px -412px;
-		}
-		&.hexagon_icon_54 {
-			background-position: -917px -412px;
-		}
-		&.hexagon_icon_55 {
-			background-position: -8px -513px;
-		}
-		&.hexagon_icon_56 {
-			background-position: -109px -513px;
-		}
-		&.hexagon_icon_57 {
-			background-position: -210px -513px;
-		}
-		&.hexagon_icon_58 {
-			background-position: -311px -513px;
-		}
-		&.hexagon_icon_59 {
-			background-position: -412px -513px;
-		}
-		&.hexagon_icon_60 {
-			background-position: -513px -513px;
-		}
-		&.hexagon_icon_61 {
-			background-position: -614px -513px;
-		}
-		&.hexagon_icon_62 {
-			background-position: -715px -513px;
-		}
-		&.hexagon_icon_63 {
-			background-position: -816px -513px;
-		}
-		&.hexagon_icon_64 {
-			background-position: -917px -513px;
-		}
-		&.hexagon_icon_65 {
-			background-position: -8px -614px;
-		}
-		&.hexagon_icon_66 {
-			background-position: -109px -614px;
-		}
-		&.hexagon_icon_67 {
-			background-position: -210px -614px;
-		}
-		&.hexagon_icon_68 {
-			background-position: -311px -614px;
-		}
-		&.hexagon_icon_69 {
-			background-position: -412px -614px;
-		}
-		&.hexagon_icon_70 {
-			background-position: -513px -614px;
-		}
-		&.hexagon_icon_71 {
-			background-position: -614px -614px;
-		}
-		&.hexagon_icon_72 {
-			background-position: -715px -614px;
-		}
-		&.hexagon_icon_73 {
-			background-position: -816px -614px;
-		}
-		&.hexagon_icon_74 {
-			background-position: -917px -614px;
-		}
-		&.hexagon_icon_75 {
-			background-position: -8px -715px;
-		}
-		&.hexagon_icon_76 {
-			background-position: -109px -715px;
-		}
-		&.hexagon_icon_77 {
-			background-position: -210px -715px;
-		}
-		&.hexagon_icon_78 {
-			background-position: -311px -715px;
-		}
-		&.hexagon_icon_79 {
-			background-position: -412px -715px;
-		}
-		&.hexagon_icon_80 {
-			background-position: -513px -715px;
-		}
-		&.hexagon_icon_81 {
-			background-position: -614px -715px;
-		}
-		&.hexagon_icon_82 {
-			background-position: -715px -715px;
-		}
-		&.hexagon_icon_83 {
-			background-position: -816px -715px;
-		}
-		&.hexagon_icon_84 {
-			background-position: -917px -715px;
-		}
-		&.hexagon_icon_85 {
-			background-position: -8px -816px;
-		}
-		&.hexagon_icon_86 {
-			background-position: -109px -816px;
-		}
-		&.hexagon_icon_87 {
-			background-position: -210px -816px;
-		}
-		&.hexagon_icon_88 {
-			background-position: -311px -816px;
-		}
-		&.hexagon_icon_89 {
-			background-position: -412px -816px;
-		}
-		&.hexagon_icon_90 {
-			background-position: -513px -816px;
-		}
-		&.hexagon_icon_91 {
-			background-position: -614px -816px;
-		}
-		&.hexagon_icon_92 {
-			background-position: -715px -816px;
-		}
-		&.hexagon_icon_93 {
-			background-position: -816px -816px;
-		}
-		&.hexagon_icon_94 {
-			background-position: -917px -816px;
-		}
-		&.hexagon_icon_95 {
-			background-position: -8px -917px;
-		}
-		&.hexagon_icon_96 {
-			background-position: -109px -917px;
-		}
-		&.hexagon_icon_97 {
-			background-position: -210px -917px;
-		}
-		&.hexagon_icon_98 {
-			background-position: -311px -917px;
-		}
-		&.hexagon_icon_99 {
-			background-position: -412px -917px;
-		}
-		&.hexagon_icon_100 {
-			background-position: -513px -917px;
-		}
-		&.hexagon_icon_101 {
-			background-position: -614px -917px;
-		}
-		&.hexagon_icon_102 {
-			background-position: -715px -917px;
-		}
-		&.hexagon_icon_103 {
-			background-position: -816px -917px;
-		}
-		&.hexagon_icon_104 {
-			background-position: -917px -917px;
-		}
-		&.hexagon_icon_110 {
-			background-position: -8px -1018px;
-		}
-		&.hexagon_icon_111 {
-			background-position: -109px -1018px;
-		}
-		&.hexagon_icon_112 {
-			background-position: -210px -1018px;
-		}
-		&.hexagon_icon_113 {
-			background-position: -311px -1018px;
-		}
-		&.hexagon_icon_114 {
-			background-position: -412px -1018px;
-		}
-		&.hexagon_icon_115 {
-			background-position: -513px -1018px;
-		}
-		&.hexagon_icon_116 {
-			background-position: -614px -1018px;
-		}
-		&.hexagon_icon_117 {
-			background-position: -715px -1018px;
-		}
-		&.hexagon_icon_118 {
-			background-position: -816px -1018px;
-		}
-		&.hexagon_icon_119 {
-			background-position: -917px -1018px;
-		}
-		&.hexagon_icon_120 {
-			background-position: -1018px -1018px;
-		}
-		&.hexagon_icon_121 {
-			background-position: -1119px -1018px;
-		}
-		&.hexagon_icon_122 {
-			background-position: -1220px -1018px;
-		}
-		&.hexagon_icon_123 {
-			background-position: -1321px -1018px;
-		}
-		&.hexagon_icon_124 {
-			background-position: -1422px -1018px;
-		}
-		&.hexagon_icon_125 {
-			background-position: -8px -1119px;
-		}
-		&.hexagon_icon_126 {
-			background-position: -109px -1119px;
-		}
-		&.hexagon_icon_127 {
-			background-position: -210px -1119px;
-		}
-		&.hexagon_icon_128 {
-			background-position: -311px -1119px;
-		}
-		&.hexagon_icon_129 {
-			background-position: -412px -1119px;
-		}
-		&.hexagon_icon_130 {
-			background-position: -513px -1119px;
-		}
-		&.hexagon_icon_131 {
-			background-position: -614px -1119px;
-		}
-		&.hexagon_icon_132 {
-			background-position: -715px -1119px;
-		}
-		&.hexagon_icon_133 {
-			background-position: -816px -1119px;
-		}
-		&.hexagon_icon_134 {
-			background-position: -917px -1119px;
-		}
-		&.hexagon_icon_135 {
-			background-position: -8px -1220px;
-		}
-		&.hexagon_icon_136 {
-			background-position: -109px -1220px;
-		}
-		&.hexagon_icon_137 {
-			background-position: -210px -1220px;
-		}
-		&.hexagon_icon_138 {
-			background-position: -311px -1220px;
-		}
-		&.hexagon_icon_139 {
-			background-position: -412px -1220px;
-		}
-		&.hexagon_icon_140 {
-			background-position: -513px -1220px;
-		}
-		&.hexagon_icon_141 {
-			background-position: -614px -1220px;
-		}
-		&.hexagon_icon_142 {
-			background-position: -715px -1220px;
-		}
-		&.hexagon_icon_143 {
-			background-position: -816px -1220px;
-		}
-		&.hexagon_icon_144 {
-			background-position: -917px -1220px;
-		}
-		&.hexagon_icon_145 {
-			background-position: -8px -1321px;
-		}
-		&.hexagon_icon_146 {
-			background-position: -109px -1321px;
-		}
-		&.hexagon_icon_147 {
-			background-position: -210px -1321px;
-		}
-		&.hexagon_icon_148 {
-			background-position: -311px -1321px;
-		}
-		&.hexagon_icon_149 {
-			background-position: -412px -1321px;
-		}
-		&.hexagon_icon_150 {
-			background-position: -513px -1321px;
-		}
-		&.hexagon_icon_151 {
-			background-position: -614px -1321px;
-		}
-		&.hexagon_icon_152 {
-			background-position: -715px -1321px;
-		}
-		&.hexagon_icon_153 {
-			background-position: -816px -1321px;
-		}
-		&.hexagon_icon_154 {
-			background-position: -917px -1321px;
-		}
-		&.hexagon_icon_155 {
-			background-position: -8px -1422px;
-		}
-		&.hexagon_icon_156 {
-			background-position: -109px -1422px;
-		}
-		&.hexagon_icon_157 {
-			background-position: -210px -1422px;
-		}
-		&.hexagon_icon_158 {
-			background-position: -311px -1422px;
-		}
-		&.hexagon_icon_159 {
-			background-position: -412px -1422px;
-		}
-		&.hexagon_icon_160 {
-			background-position: -513px -1422px;
-		}
-		&.hexagon_icon_161 {
-			background-position: -614px -1422px;
-		}
-		&.hexagon_icon_162 {
-			background-position: -715px -1422px;
-		}
-		&.hexagon_icon_163 {
-			background-position: -816px -1422px;
-		}
-		&.hexagon_icon_164 {
-			background-position: -917px -1422px;
-		}
-		&.hexagon_icon_165 {
-			background-position: -8px -1523px;
-		}
-		&.hexagon_icon_166 {
-			background-position: -109px -1523px;
-		}
-		&.hexagon_icon_167 {
-			background-position: -210px -1523px;
-		}
-		&.hexagon_icon_168 {
-			background-position: -311px -1523px;
-		}
-		&.hexagon_icon_169 {
-			background-position: -412px -1523px;
-		}
-		&.hexagon_icon_170 {
-			background-position: -513px -1523px;
-		}
-		&.hexagon_icon_171 {
-			background-position: -614px -1523px;
-		}
-		&.hexagon_icon_172 {
-			background-position: -715px -1523px;
-		}
-		&.hexagon_icon_173 {
-			background-position: -816px -1523px;
-		}
-		&.hexagon_icon_174 {
-			background-position: -917px -1523px;
-		}
-		&.hexagon_icon_175 {
-			background-position: -8px -1624px;
-		}
-		&.hexagon_icon_176 {
-			background-position: -109px -1624px;
-		}
-		&.hexagon_icon_177 {
-			background-position: -210px -1624px;
-		}
-		&.hexagon_icon_178 {
-			background-position: -311px -1624px;
-		}
-		&.hexagon_icon_179 {
-			background-position: -412px -1624px;
-		}
-		&.hexagon_icon_180 {
-			background-position: -513px -1624px;
-		}
-		&.hexagon_icon_181 {
-			background-position: -614px -1624px;
-		}
-		&.hexagon_icon_182 {
-			background-position: -715px -1624px;
-		}
-		&.hexagon_icon_183 {
-			background-position: -816px -1624px;
-		}
-		&.hexagon_icon_184 {
-			background-position: -917px -1624px;
-		}
-		&.hexagon_icon_185 {
-			background-position: -8px -1725px;
-		}
-		&.hexagon_icon_186 {
-			background-position: -109px -1725px;
-		}
-		&.hexagon_icon_187 {
-			background-position: -210px -1725px;
-		}
-		&.hexagon_icon_188 {
-			background-position: -311px -1725px;
-		}
-		&.hexagon_icon_189 {
-			background-position: -412px -1725px;
-		}
-		&.hexagon_icon_190 {
-			background-position: -513px -1725px;
-		}
-		&.hexagon_icon_191 {
-			background-position: -614px -1725px;
-		}
-		&.hexagon_icon_192 {
-			background-position: -715px -1725px;
-		}
-		&.hexagon_icon_193 {
-			background-position: -816px -1725px;
-		}
-		&.hexagon_icon_194 {
-			background-position: -917px -1725px;
-		}
-		&.hexagon_icon_195 {
-			background-position: -8px -1826px;
-		}
-		&.hexagon_icon_196 {
-			background-position: -109px -1826px;
-		}
-		&.hexagon_icon_197 {
-			background-position: -210px -1826px;
-		}
-		&.hexagon_icon_198 {
-			background-position: -311px -1826px;
-		}
-		&.hexagon_icon_199 {
-			background-position: -412px -1826px;
-		}
-		&.hexagon_icon_200 {
-			background-position: -513px -1826px;
-		}
-		&.hexagon_icon_201 {
-			background-position: -614px -1826px;
-		}
-		&.hexagon_icon_202 {
-			background-position: -715px -1826px;
-		}
-		&.hexagon_icon_203 {
-			background-position: -816px -1826px;
-		}
-		&.hexagon_icon_204 {
-			background-position: -917px -1826px;
-		}
-		&.hexagon_icon_205 {
-			background-position: -8px -1927px;
-		}
-		&.hexagon_icon_206 {
-			background-position: -109px -1927px;
-		}
-		&.hexagon_icon_207 {
-			background-position: -210px -1927px;
-		}
-		&.hexagon_icon_208 {
-			background-position: -311px -1927px;
-		}
-		&.hexagon_icon_209 {
-			background-position: -412px -1927px;
-		}
-		&.hexagon_icon_210 {
-			background-position: -513px -1927px;
-		}
-		&.hexagon_icon_211 {
-			background-position: -614px -1927px;
-		}
-		&.hexagon_icon_212 {
-			background-position: -715px -1927px;
-		}
-		&.hexagon_icon_213 {
-			background-position: -816px -1927px;
-		}
-		&.hexagon_icon_214 {
-			background-position: -917px -1927px;
-		}
-		&.hexagon_icon_215 {
-			background-position: -1018px -1119px;
-		}
-		&.hexagon_icon_216 {
-			background-position: -1119px -1119px;
-		}
-		&.hexagon_icon_217 {
-			background-position: -1220px -1119px;
-		}
-		&.hexagon_icon_218 {
-			background-position: -1321px -1119px;
-		}
-		&.hexagon_icon_219 {
-			background-position: -1422px -1119px;
+	// Artifact cards
+	@for $i from 110 through 214 {
+		@if $i <= 124 {
+			&.hexagon_icon_#{$i} {
+				&.M {
+					background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i),11)))) * $M_offset}px;
+				}
+				&.L {
+					background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i),11)))) * $L_offset}px;
+				}
+			}
+		}
+		@if $i > 124 {
+			&.hexagon_icon_#{$i} {
+				&.M {
+					background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))) * $M_offset}px;
+				}
+				&.L {
+					background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))) * $L_offset}px;
+				}
+			}
 		}
 	}
-} 
+	// Relic cards
+	// They are located on the age 2 line at the end of the Artifact cards, use those numbers for xy calcs
+	@for $i from 215 through 219 {
+		&.hexagon_icon_#{$i} {
+			&.M {
+				background-position: -#{$M_x_position + ($i + 5) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 100),10)))) * $M_offset}px;
+			}
+			&.L {
+				background-position: -#{$L_x_position + ($i + 5) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 100),10)))) * $L_offset}px;
+			}
+		}
+	}
+}
+
+
+// /* scss_generator code starts here */
+// /* anything below this will get blown away on rebuild */
 

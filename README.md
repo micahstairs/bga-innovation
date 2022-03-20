@@ -11,7 +11,6 @@ In order to test changes to the game, you need to be able to copy the code out o
 - Clone this repository onto your computer (`git clone https://github.com/micahstairs/bga-innovation.git innovation`). You'll make your life easier if the directory is named `innovation` instead of `bga-innovation`.
 - Clone https://github.com/elaskavaia/bga-sharedcode onto your computer (`git clone https://github.com/elaskavaia/bga-sharedcode.git`).
 - Install PHP (https://windows.php.net/download#php-7.3).
-- Install Python 3 (https://www.python.org/downloads/)
 - Install SASS (https://sass-lang.com/install)
 - Install VSCode (https://code.visualstudio.com/download)
 
@@ -76,25 +75,9 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
 ```
 - Sometimes you will have to run a manual push of your files and you can do that by using the command shortcut `Ctrl+Shift+P` and runing `SFTP: Sync Local -> Remote`
 - Install Run on Save extension (https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save)
-- Configure the Run on Save extention by clickin the Extensions tab in VSCode -> Gear icon on Run on Save -> Extension Settings -> Edit settings.json -> copy this into that file,  replacing `johnsmith`as appropriate.
+- Configure the Run on Save extention by clickin the Extensions tab in VSCode -> Gear icon on Run on Save -> Extension Settings -> Edit settings.json -> copy this into that file
 ```
 "runOnSave.commands": [
-        {  
-            "match": ".*\\.py$",
-            "command": "python ${fileDirname}/${fileBasenameNoExtension}.py",
-            "runIn": "backend",
-            "async": false,
-            "runningStatusMessage": "Compiling ${fileBasename}",
-            "finishStatusMessage": "${fileBasename} compiled"
-        },
-        {  
-            "match": ".*\\.py$",
-            "command": "sass ${fileDirname}/../innovationjohnsmith.scss ${fileDirname}/../innovationjohnsmith.css",
-            "runIn": "backend",
-            "async": false,
-            "runningStatusMessage": "Compiling innovationjohnsmith.css",
-            "finishStatusMessage": "innovationjohnsmith.css compiled"
-        },
         {
             "match": ".*\\.scss$",
             "command": "sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",

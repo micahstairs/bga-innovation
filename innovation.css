@@ -83,7 +83,7 @@
   margin-bottom: 5px;
 }
 .display_container > div {
-  background-color: #ebd5bd;
+  height: inherit;
   padding: 5px;
 }
 .display_container > div > p {
@@ -672,40 +672,45 @@
   top: 4px;
   line-height: 16px;
 }
-.card_age.M.color_0 {
-  right: 6.5px;
-}
-.card_age.M.color_1 {
-  right: 6px;
-}
-.card_age.M.color_2 {
-  right: 6.5px;
-}
-.card_age.M.color_3 {
-  right: 6px;
-}
-.card_age.M.color_4 {
-  right: 6.5px;
-}
 .card_age.L {
   width: 25px;
   height: 25px;
   top: 26px;
   line-height: 14px;
 }
-.card_age.L.color_0 {
+
+.color_0 .card_age.M {
+  right: 6.5px;
+}
+.color_0 .card_age.L {
   right: 21px;
 }
-.card_age.L.color_1 {
+
+.color_1 .card_age.M {
+  right: 6px;
+}
+.color_1 .card_age.L {
   right: 21px;
 }
-.card_age.L.color_2 {
+
+.color_2 .card_age.M {
+  right: 6.5px;
+}
+.color_2 .card_age.L {
   right: 20px;
 }
-.card_age.L.color_3 {
+
+.color_3 .card_age.M {
+  right: 6px;
+}
+.color_3 .card_age.L {
   right: 22px;
 }
-.card_age.L.color_4 {
+
+.color_4 .card_age.M {
+  right: 6.5px;
+}
+.color_4 .card_age.L {
   right: 22px;
 }
 
@@ -1666,8 +1671,7 @@
   background-position: -141px -1px;
 }
 
-/* scss_generator code starts here */
-/* anything below this will get blown away on rebuild */
+/* Font sizes */
 .font_size_1 {
   font-size: 0.0625rem;
 }
@@ -1788,1295 +1792,1295 @@
   font-size: 1.875rem;
 }
 
-.M.hexagon_card_icon.hexagon_icon_0 {
+/* hexagon card icons */
+.hexagon_card_icon.hexagon_icon_0.M {
   background-position: -3px -3px;
 }
-.M.hexagon_card_icon.hexagon_icon_1 {
-  background-position: -52px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_2 {
-  background-position: -101px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_3 {
-  background-position: -150px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_4 {
-  background-position: -199px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_5 {
-  background-position: -248px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_6 {
-  background-position: -297px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_7 {
-  background-position: -346px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_8 {
-  background-position: -395px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_9 {
-  background-position: -444px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_10 {
-  background-position: -493px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_11 {
-  background-position: -542px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_12 {
-  background-position: -591px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_13 {
-  background-position: -640px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_14 {
-  background-position: -689px -3px;
-}
-.M.hexagon_card_icon.hexagon_icon_15 {
-  background-position: -3px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_16 {
-  background-position: -52px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_17 {
-  background-position: -101px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_18 {
-  background-position: -150px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_19 {
-  background-position: -199px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_20 {
-  background-position: -248px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_21 {
-  background-position: -297px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_22 {
-  background-position: -346px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_23 {
-  background-position: -395px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_24 {
-  background-position: -444px -52px;
-}
-.M.hexagon_card_icon.hexagon_icon_25 {
-  background-position: -3px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_26 {
-  background-position: -52px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_27 {
-  background-position: -101px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_28 {
-  background-position: -150px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_29 {
-  background-position: -199px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_30 {
-  background-position: -248px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_31 {
-  background-position: -297px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_32 {
-  background-position: -346px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_33 {
-  background-position: -395px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_34 {
-  background-position: -444px -101px;
-}
-.M.hexagon_card_icon.hexagon_icon_35 {
-  background-position: -3px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_36 {
-  background-position: -52px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_37 {
-  background-position: -101px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_38 {
-  background-position: -150px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_39 {
-  background-position: -199px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_40 {
-  background-position: -248px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_41 {
-  background-position: -297px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_42 {
-  background-position: -346px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_43 {
-  background-position: -395px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_44 {
-  background-position: -444px -150px;
-}
-.M.hexagon_card_icon.hexagon_icon_45 {
-  background-position: -3px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_46 {
-  background-position: -52px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_47 {
-  background-position: -101px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_48 {
-  background-position: -150px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_49 {
-  background-position: -199px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_50 {
-  background-position: -248px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_51 {
-  background-position: -297px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_52 {
-  background-position: -346px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_53 {
-  background-position: -395px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_54 {
-  background-position: -444px -199px;
-}
-.M.hexagon_card_icon.hexagon_icon_55 {
-  background-position: -3px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_56 {
-  background-position: -52px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_57 {
-  background-position: -101px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_58 {
-  background-position: -150px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_59 {
-  background-position: -199px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_60 {
-  background-position: -248px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_61 {
-  background-position: -297px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_62 {
-  background-position: -346px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_63 {
-  background-position: -395px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_64 {
-  background-position: -444px -248px;
-}
-.M.hexagon_card_icon.hexagon_icon_65 {
-  background-position: -3px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_66 {
-  background-position: -52px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_67 {
-  background-position: -101px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_68 {
-  background-position: -150px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_69 {
-  background-position: -199px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_70 {
-  background-position: -248px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_71 {
-  background-position: -297px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_72 {
-  background-position: -346px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_73 {
-  background-position: -395px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_74 {
-  background-position: -444px -297px;
-}
-.M.hexagon_card_icon.hexagon_icon_75 {
-  background-position: -3px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_76 {
-  background-position: -52px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_77 {
-  background-position: -101px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_78 {
-  background-position: -150px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_79 {
-  background-position: -199px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_80 {
-  background-position: -248px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_81 {
-  background-position: -297px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_82 {
-  background-position: -346px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_83 {
-  background-position: -395px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_84 {
-  background-position: -444px -346px;
-}
-.M.hexagon_card_icon.hexagon_icon_85 {
-  background-position: -3px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_86 {
-  background-position: -52px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_87 {
-  background-position: -101px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_88 {
-  background-position: -150px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_89 {
-  background-position: -199px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_90 {
-  background-position: -248px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_91 {
-  background-position: -297px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_92 {
-  background-position: -346px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_93 {
-  background-position: -395px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_94 {
-  background-position: -444px -395px;
-}
-.M.hexagon_card_icon.hexagon_icon_95 {
-  background-position: -3px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_96 {
-  background-position: -52px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_97 {
-  background-position: -101px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_98 {
-  background-position: -150px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_99 {
-  background-position: -199px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_100 {
-  background-position: -248px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_101 {
-  background-position: -297px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_102 {
-  background-position: -346px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_103 {
-  background-position: -395px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_104 {
-  background-position: -444px -444px;
-}
-.M.hexagon_card_icon.hexagon_icon_110 {
-  background-position: -3px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_111 {
-  background-position: -52px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_112 {
-  background-position: -101px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_113 {
-  background-position: -150px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_114 {
-  background-position: -199px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_115 {
-  background-position: -248px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_116 {
-  background-position: -297px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_117 {
-  background-position: -346px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_118 {
-  background-position: -395px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_119 {
-  background-position: -444px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_120 {
-  background-position: -493px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_121 {
-  background-position: -542px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_122 {
-  background-position: -591px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_123 {
-  background-position: -640px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_124 {
-  background-position: -689px -493px;
-}
-.M.hexagon_card_icon.hexagon_icon_125 {
-  background-position: -3px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_126 {
-  background-position: -52px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_127 {
-  background-position: -101px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_128 {
-  background-position: -150px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_129 {
-  background-position: -199px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_130 {
-  background-position: -248px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_131 {
-  background-position: -297px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_132 {
-  background-position: -346px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_133 {
-  background-position: -395px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_134 {
-  background-position: -444px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_135 {
-  background-position: -3px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_136 {
-  background-position: -52px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_137 {
-  background-position: -101px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_138 {
-  background-position: -150px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_139 {
-  background-position: -199px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_140 {
-  background-position: -248px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_141 {
-  background-position: -297px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_142 {
-  background-position: -346px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_143 {
-  background-position: -395px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_144 {
-  background-position: -444px -591px;
-}
-.M.hexagon_card_icon.hexagon_icon_145 {
-  background-position: -3px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_146 {
-  background-position: -52px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_147 {
-  background-position: -101px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_148 {
-  background-position: -150px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_149 {
-  background-position: -199px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_150 {
-  background-position: -248px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_151 {
-  background-position: -297px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_152 {
-  background-position: -346px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_153 {
-  background-position: -395px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_154 {
-  background-position: -444px -640px;
-}
-.M.hexagon_card_icon.hexagon_icon_155 {
-  background-position: -3px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_156 {
-  background-position: -52px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_157 {
-  background-position: -101px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_158 {
-  background-position: -150px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_159 {
-  background-position: -199px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_160 {
-  background-position: -248px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_161 {
-  background-position: -297px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_162 {
-  background-position: -346px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_163 {
-  background-position: -395px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_164 {
-  background-position: -444px -689px;
-}
-.M.hexagon_card_icon.hexagon_icon_165 {
-  background-position: -3px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_166 {
-  background-position: -52px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_167 {
-  background-position: -101px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_168 {
-  background-position: -150px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_169 {
-  background-position: -199px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_170 {
-  background-position: -248px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_171 {
-  background-position: -297px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_172 {
-  background-position: -346px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_173 {
-  background-position: -395px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_174 {
-  background-position: -444px -738px;
-}
-.M.hexagon_card_icon.hexagon_icon_175 {
-  background-position: -3px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_176 {
-  background-position: -52px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_177 {
-  background-position: -101px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_178 {
-  background-position: -150px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_179 {
-  background-position: -199px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_180 {
-  background-position: -248px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_181 {
-  background-position: -297px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_182 {
-  background-position: -346px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_183 {
-  background-position: -395px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_184 {
-  background-position: -444px -787px;
-}
-.M.hexagon_card_icon.hexagon_icon_185 {
-  background-position: -3px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_186 {
-  background-position: -52px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_187 {
-  background-position: -101px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_188 {
-  background-position: -150px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_189 {
-  background-position: -199px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_190 {
-  background-position: -248px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_191 {
-  background-position: -297px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_192 {
-  background-position: -346px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_193 {
-  background-position: -395px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_194 {
-  background-position: -444px -836px;
-}
-.M.hexagon_card_icon.hexagon_icon_195 {
-  background-position: -3px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_196 {
-  background-position: -52px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_197 {
-  background-position: -101px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_198 {
-  background-position: -150px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_199 {
-  background-position: -199px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_200 {
-  background-position: -248px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_201 {
-  background-position: -297px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_202 {
-  background-position: -346px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_203 {
-  background-position: -395px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_204 {
-  background-position: -444px -885px;
-}
-.M.hexagon_card_icon.hexagon_icon_205 {
-  background-position: -3px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_206 {
-  background-position: -52px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_207 {
-  background-position: -101px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_208 {
-  background-position: -150px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_209 {
-  background-position: -199px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_210 {
-  background-position: -248px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_211 {
-  background-position: -297px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_212 {
-  background-position: -346px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_213 {
-  background-position: -395px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_214 {
-  background-position: -444px -934px;
-}
-.M.hexagon_card_icon.hexagon_icon_215 {
-  background-position: -493px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_216 {
-  background-position: -542px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_217 {
-  background-position: -591px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_218 {
-  background-position: -640px -542px;
-}
-.M.hexagon_card_icon.hexagon_icon_219 {
-  background-position: -689px -542px;
-}
-
-.L.hexagon_card_icon.hexagon_icon_0 {
+.hexagon_card_icon.hexagon_icon_0.L {
   background-position: -8px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_1 {
+.hexagon_card_icon.hexagon_icon_1.M {
+  background-position: -52px -3px;
+}
+.hexagon_card_icon.hexagon_icon_1.L {
   background-position: -109px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_2 {
+.hexagon_card_icon.hexagon_icon_2.M {
+  background-position: -101px -3px;
+}
+.hexagon_card_icon.hexagon_icon_2.L {
   background-position: -210px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_3 {
+.hexagon_card_icon.hexagon_icon_3.M {
+  background-position: -150px -3px;
+}
+.hexagon_card_icon.hexagon_icon_3.L {
   background-position: -311px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_4 {
+.hexagon_card_icon.hexagon_icon_4.M {
+  background-position: -199px -3px;
+}
+.hexagon_card_icon.hexagon_icon_4.L {
   background-position: -412px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_5 {
+.hexagon_card_icon.hexagon_icon_5.M {
+  background-position: -248px -3px;
+}
+.hexagon_card_icon.hexagon_icon_5.L {
   background-position: -513px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_6 {
+.hexagon_card_icon.hexagon_icon_6.M {
+  background-position: -297px -3px;
+}
+.hexagon_card_icon.hexagon_icon_6.L {
   background-position: -614px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_7 {
+.hexagon_card_icon.hexagon_icon_7.M {
+  background-position: -346px -3px;
+}
+.hexagon_card_icon.hexagon_icon_7.L {
   background-position: -715px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_8 {
+.hexagon_card_icon.hexagon_icon_8.M {
+  background-position: -395px -3px;
+}
+.hexagon_card_icon.hexagon_icon_8.L {
   background-position: -816px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_9 {
+.hexagon_card_icon.hexagon_icon_9.M {
+  background-position: -444px -3px;
+}
+.hexagon_card_icon.hexagon_icon_9.L {
   background-position: -917px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_10 {
+.hexagon_card_icon.hexagon_icon_10.M {
+  background-position: -493px -3px;
+}
+.hexagon_card_icon.hexagon_icon_10.L {
   background-position: -1018px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_11 {
+.hexagon_card_icon.hexagon_icon_11.M {
+  background-position: -542px -3px;
+}
+.hexagon_card_icon.hexagon_icon_11.L {
   background-position: -1119px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_12 {
+.hexagon_card_icon.hexagon_icon_12.M {
+  background-position: -591px -3px;
+}
+.hexagon_card_icon.hexagon_icon_12.L {
   background-position: -1220px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_13 {
+.hexagon_card_icon.hexagon_icon_13.M {
+  background-position: -640px -3px;
+}
+.hexagon_card_icon.hexagon_icon_13.L {
   background-position: -1321px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_14 {
+.hexagon_card_icon.hexagon_icon_14.M {
+  background-position: -689px -3px;
+}
+.hexagon_card_icon.hexagon_icon_14.L {
   background-position: -1422px -8px;
 }
-.L.hexagon_card_icon.hexagon_icon_15 {
+.hexagon_card_icon.hexagon_icon_15.M {
+  background-position: -3px -52px;
+}
+.hexagon_card_icon.hexagon_icon_15.L {
   background-position: -8px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_16 {
+.hexagon_card_icon.hexagon_icon_16.M {
+  background-position: -52px -52px;
+}
+.hexagon_card_icon.hexagon_icon_16.L {
   background-position: -109px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_17 {
+.hexagon_card_icon.hexagon_icon_17.M {
+  background-position: -101px -52px;
+}
+.hexagon_card_icon.hexagon_icon_17.L {
   background-position: -210px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_18 {
+.hexagon_card_icon.hexagon_icon_18.M {
+  background-position: -150px -52px;
+}
+.hexagon_card_icon.hexagon_icon_18.L {
   background-position: -311px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_19 {
+.hexagon_card_icon.hexagon_icon_19.M {
+  background-position: -199px -52px;
+}
+.hexagon_card_icon.hexagon_icon_19.L {
   background-position: -412px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_20 {
+.hexagon_card_icon.hexagon_icon_20.M {
+  background-position: -248px -52px;
+}
+.hexagon_card_icon.hexagon_icon_20.L {
   background-position: -513px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_21 {
+.hexagon_card_icon.hexagon_icon_21.M {
+  background-position: -297px -52px;
+}
+.hexagon_card_icon.hexagon_icon_21.L {
   background-position: -614px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_22 {
+.hexagon_card_icon.hexagon_icon_22.M {
+  background-position: -346px -52px;
+}
+.hexagon_card_icon.hexagon_icon_22.L {
   background-position: -715px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_23 {
+.hexagon_card_icon.hexagon_icon_23.M {
+  background-position: -395px -52px;
+}
+.hexagon_card_icon.hexagon_icon_23.L {
   background-position: -816px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_24 {
+.hexagon_card_icon.hexagon_icon_24.M {
+  background-position: -444px -52px;
+}
+.hexagon_card_icon.hexagon_icon_24.L {
   background-position: -917px -109px;
 }
-.L.hexagon_card_icon.hexagon_icon_25 {
+.hexagon_card_icon.hexagon_icon_25.M {
+  background-position: -3px -101px;
+}
+.hexagon_card_icon.hexagon_icon_25.L {
   background-position: -8px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_26 {
+.hexagon_card_icon.hexagon_icon_26.M {
+  background-position: -52px -101px;
+}
+.hexagon_card_icon.hexagon_icon_26.L {
   background-position: -109px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_27 {
+.hexagon_card_icon.hexagon_icon_27.M {
+  background-position: -101px -101px;
+}
+.hexagon_card_icon.hexagon_icon_27.L {
   background-position: -210px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_28 {
+.hexagon_card_icon.hexagon_icon_28.M {
+  background-position: -150px -101px;
+}
+.hexagon_card_icon.hexagon_icon_28.L {
   background-position: -311px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_29 {
+.hexagon_card_icon.hexagon_icon_29.M {
+  background-position: -199px -101px;
+}
+.hexagon_card_icon.hexagon_icon_29.L {
   background-position: -412px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_30 {
+.hexagon_card_icon.hexagon_icon_30.M {
+  background-position: -248px -101px;
+}
+.hexagon_card_icon.hexagon_icon_30.L {
   background-position: -513px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_31 {
+.hexagon_card_icon.hexagon_icon_31.M {
+  background-position: -297px -101px;
+}
+.hexagon_card_icon.hexagon_icon_31.L {
   background-position: -614px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_32 {
+.hexagon_card_icon.hexagon_icon_32.M {
+  background-position: -346px -101px;
+}
+.hexagon_card_icon.hexagon_icon_32.L {
   background-position: -715px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_33 {
+.hexagon_card_icon.hexagon_icon_33.M {
+  background-position: -395px -101px;
+}
+.hexagon_card_icon.hexagon_icon_33.L {
   background-position: -816px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_34 {
+.hexagon_card_icon.hexagon_icon_34.M {
+  background-position: -444px -101px;
+}
+.hexagon_card_icon.hexagon_icon_34.L {
   background-position: -917px -210px;
 }
-.L.hexagon_card_icon.hexagon_icon_35 {
+.hexagon_card_icon.hexagon_icon_35.M {
+  background-position: -3px -150px;
+}
+.hexagon_card_icon.hexagon_icon_35.L {
   background-position: -8px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_36 {
+.hexagon_card_icon.hexagon_icon_36.M {
+  background-position: -52px -150px;
+}
+.hexagon_card_icon.hexagon_icon_36.L {
   background-position: -109px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_37 {
+.hexagon_card_icon.hexagon_icon_37.M {
+  background-position: -101px -150px;
+}
+.hexagon_card_icon.hexagon_icon_37.L {
   background-position: -210px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_38 {
+.hexagon_card_icon.hexagon_icon_38.M {
+  background-position: -150px -150px;
+}
+.hexagon_card_icon.hexagon_icon_38.L {
   background-position: -311px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_39 {
+.hexagon_card_icon.hexagon_icon_39.M {
+  background-position: -199px -150px;
+}
+.hexagon_card_icon.hexagon_icon_39.L {
   background-position: -412px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_40 {
+.hexagon_card_icon.hexagon_icon_40.M {
+  background-position: -248px -150px;
+}
+.hexagon_card_icon.hexagon_icon_40.L {
   background-position: -513px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_41 {
+.hexagon_card_icon.hexagon_icon_41.M {
+  background-position: -297px -150px;
+}
+.hexagon_card_icon.hexagon_icon_41.L {
   background-position: -614px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_42 {
+.hexagon_card_icon.hexagon_icon_42.M {
+  background-position: -346px -150px;
+}
+.hexagon_card_icon.hexagon_icon_42.L {
   background-position: -715px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_43 {
+.hexagon_card_icon.hexagon_icon_43.M {
+  background-position: -395px -150px;
+}
+.hexagon_card_icon.hexagon_icon_43.L {
   background-position: -816px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_44 {
+.hexagon_card_icon.hexagon_icon_44.M {
+  background-position: -444px -150px;
+}
+.hexagon_card_icon.hexagon_icon_44.L {
   background-position: -917px -311px;
 }
-.L.hexagon_card_icon.hexagon_icon_45 {
+.hexagon_card_icon.hexagon_icon_45.M {
+  background-position: -3px -199px;
+}
+.hexagon_card_icon.hexagon_icon_45.L {
   background-position: -8px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_46 {
+.hexagon_card_icon.hexagon_icon_46.M {
+  background-position: -52px -199px;
+}
+.hexagon_card_icon.hexagon_icon_46.L {
   background-position: -109px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_47 {
+.hexagon_card_icon.hexagon_icon_47.M {
+  background-position: -101px -199px;
+}
+.hexagon_card_icon.hexagon_icon_47.L {
   background-position: -210px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_48 {
+.hexagon_card_icon.hexagon_icon_48.M {
+  background-position: -150px -199px;
+}
+.hexagon_card_icon.hexagon_icon_48.L {
   background-position: -311px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_49 {
+.hexagon_card_icon.hexagon_icon_49.M {
+  background-position: -199px -199px;
+}
+.hexagon_card_icon.hexagon_icon_49.L {
   background-position: -412px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_50 {
+.hexagon_card_icon.hexagon_icon_50.M {
+  background-position: -248px -199px;
+}
+.hexagon_card_icon.hexagon_icon_50.L {
   background-position: -513px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_51 {
+.hexagon_card_icon.hexagon_icon_51.M {
+  background-position: -297px -199px;
+}
+.hexagon_card_icon.hexagon_icon_51.L {
   background-position: -614px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_52 {
+.hexagon_card_icon.hexagon_icon_52.M {
+  background-position: -346px -199px;
+}
+.hexagon_card_icon.hexagon_icon_52.L {
   background-position: -715px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_53 {
+.hexagon_card_icon.hexagon_icon_53.M {
+  background-position: -395px -199px;
+}
+.hexagon_card_icon.hexagon_icon_53.L {
   background-position: -816px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_54 {
+.hexagon_card_icon.hexagon_icon_54.M {
+  background-position: -444px -199px;
+}
+.hexagon_card_icon.hexagon_icon_54.L {
   background-position: -917px -412px;
 }
-.L.hexagon_card_icon.hexagon_icon_55 {
+.hexagon_card_icon.hexagon_icon_55.M {
+  background-position: -3px -248px;
+}
+.hexagon_card_icon.hexagon_icon_55.L {
   background-position: -8px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_56 {
+.hexagon_card_icon.hexagon_icon_56.M {
+  background-position: -52px -248px;
+}
+.hexagon_card_icon.hexagon_icon_56.L {
   background-position: -109px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_57 {
+.hexagon_card_icon.hexagon_icon_57.M {
+  background-position: -101px -248px;
+}
+.hexagon_card_icon.hexagon_icon_57.L {
   background-position: -210px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_58 {
+.hexagon_card_icon.hexagon_icon_58.M {
+  background-position: -150px -248px;
+}
+.hexagon_card_icon.hexagon_icon_58.L {
   background-position: -311px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_59 {
+.hexagon_card_icon.hexagon_icon_59.M {
+  background-position: -199px -248px;
+}
+.hexagon_card_icon.hexagon_icon_59.L {
   background-position: -412px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_60 {
+.hexagon_card_icon.hexagon_icon_60.M {
+  background-position: -248px -248px;
+}
+.hexagon_card_icon.hexagon_icon_60.L {
   background-position: -513px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_61 {
+.hexagon_card_icon.hexagon_icon_61.M {
+  background-position: -297px -248px;
+}
+.hexagon_card_icon.hexagon_icon_61.L {
   background-position: -614px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_62 {
+.hexagon_card_icon.hexagon_icon_62.M {
+  background-position: -346px -248px;
+}
+.hexagon_card_icon.hexagon_icon_62.L {
   background-position: -715px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_63 {
+.hexagon_card_icon.hexagon_icon_63.M {
+  background-position: -395px -248px;
+}
+.hexagon_card_icon.hexagon_icon_63.L {
   background-position: -816px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_64 {
+.hexagon_card_icon.hexagon_icon_64.M {
+  background-position: -444px -248px;
+}
+.hexagon_card_icon.hexagon_icon_64.L {
   background-position: -917px -513px;
 }
-.L.hexagon_card_icon.hexagon_icon_65 {
+.hexagon_card_icon.hexagon_icon_65.M {
+  background-position: -3px -297px;
+}
+.hexagon_card_icon.hexagon_icon_65.L {
   background-position: -8px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_66 {
+.hexagon_card_icon.hexagon_icon_66.M {
+  background-position: -52px -297px;
+}
+.hexagon_card_icon.hexagon_icon_66.L {
   background-position: -109px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_67 {
+.hexagon_card_icon.hexagon_icon_67.M {
+  background-position: -101px -297px;
+}
+.hexagon_card_icon.hexagon_icon_67.L {
   background-position: -210px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_68 {
+.hexagon_card_icon.hexagon_icon_68.M {
+  background-position: -150px -297px;
+}
+.hexagon_card_icon.hexagon_icon_68.L {
   background-position: -311px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_69 {
+.hexagon_card_icon.hexagon_icon_69.M {
+  background-position: -199px -297px;
+}
+.hexagon_card_icon.hexagon_icon_69.L {
   background-position: -412px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_70 {
+.hexagon_card_icon.hexagon_icon_70.M {
+  background-position: -248px -297px;
+}
+.hexagon_card_icon.hexagon_icon_70.L {
   background-position: -513px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_71 {
+.hexagon_card_icon.hexagon_icon_71.M {
+  background-position: -297px -297px;
+}
+.hexagon_card_icon.hexagon_icon_71.L {
   background-position: -614px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_72 {
+.hexagon_card_icon.hexagon_icon_72.M {
+  background-position: -346px -297px;
+}
+.hexagon_card_icon.hexagon_icon_72.L {
   background-position: -715px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_73 {
+.hexagon_card_icon.hexagon_icon_73.M {
+  background-position: -395px -297px;
+}
+.hexagon_card_icon.hexagon_icon_73.L {
   background-position: -816px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_74 {
+.hexagon_card_icon.hexagon_icon_74.M {
+  background-position: -444px -297px;
+}
+.hexagon_card_icon.hexagon_icon_74.L {
   background-position: -917px -614px;
 }
-.L.hexagon_card_icon.hexagon_icon_75 {
+.hexagon_card_icon.hexagon_icon_75.M {
+  background-position: -3px -346px;
+}
+.hexagon_card_icon.hexagon_icon_75.L {
   background-position: -8px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_76 {
+.hexagon_card_icon.hexagon_icon_76.M {
+  background-position: -52px -346px;
+}
+.hexagon_card_icon.hexagon_icon_76.L {
   background-position: -109px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_77 {
+.hexagon_card_icon.hexagon_icon_77.M {
+  background-position: -101px -346px;
+}
+.hexagon_card_icon.hexagon_icon_77.L {
   background-position: -210px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_78 {
+.hexagon_card_icon.hexagon_icon_78.M {
+  background-position: -150px -346px;
+}
+.hexagon_card_icon.hexagon_icon_78.L {
   background-position: -311px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_79 {
+.hexagon_card_icon.hexagon_icon_79.M {
+  background-position: -199px -346px;
+}
+.hexagon_card_icon.hexagon_icon_79.L {
   background-position: -412px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_80 {
+.hexagon_card_icon.hexagon_icon_80.M {
+  background-position: -248px -346px;
+}
+.hexagon_card_icon.hexagon_icon_80.L {
   background-position: -513px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_81 {
+.hexagon_card_icon.hexagon_icon_81.M {
+  background-position: -297px -346px;
+}
+.hexagon_card_icon.hexagon_icon_81.L {
   background-position: -614px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_82 {
+.hexagon_card_icon.hexagon_icon_82.M {
+  background-position: -346px -346px;
+}
+.hexagon_card_icon.hexagon_icon_82.L {
   background-position: -715px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_83 {
+.hexagon_card_icon.hexagon_icon_83.M {
+  background-position: -395px -346px;
+}
+.hexagon_card_icon.hexagon_icon_83.L {
   background-position: -816px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_84 {
+.hexagon_card_icon.hexagon_icon_84.M {
+  background-position: -444px -346px;
+}
+.hexagon_card_icon.hexagon_icon_84.L {
   background-position: -917px -715px;
 }
-.L.hexagon_card_icon.hexagon_icon_85 {
+.hexagon_card_icon.hexagon_icon_85.M {
+  background-position: -3px -395px;
+}
+.hexagon_card_icon.hexagon_icon_85.L {
   background-position: -8px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_86 {
+.hexagon_card_icon.hexagon_icon_86.M {
+  background-position: -52px -395px;
+}
+.hexagon_card_icon.hexagon_icon_86.L {
   background-position: -109px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_87 {
+.hexagon_card_icon.hexagon_icon_87.M {
+  background-position: -101px -395px;
+}
+.hexagon_card_icon.hexagon_icon_87.L {
   background-position: -210px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_88 {
+.hexagon_card_icon.hexagon_icon_88.M {
+  background-position: -150px -395px;
+}
+.hexagon_card_icon.hexagon_icon_88.L {
   background-position: -311px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_89 {
+.hexagon_card_icon.hexagon_icon_89.M {
+  background-position: -199px -395px;
+}
+.hexagon_card_icon.hexagon_icon_89.L {
   background-position: -412px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_90 {
+.hexagon_card_icon.hexagon_icon_90.M {
+  background-position: -248px -395px;
+}
+.hexagon_card_icon.hexagon_icon_90.L {
   background-position: -513px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_91 {
+.hexagon_card_icon.hexagon_icon_91.M {
+  background-position: -297px -395px;
+}
+.hexagon_card_icon.hexagon_icon_91.L {
   background-position: -614px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_92 {
+.hexagon_card_icon.hexagon_icon_92.M {
+  background-position: -346px -395px;
+}
+.hexagon_card_icon.hexagon_icon_92.L {
   background-position: -715px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_93 {
+.hexagon_card_icon.hexagon_icon_93.M {
+  background-position: -395px -395px;
+}
+.hexagon_card_icon.hexagon_icon_93.L {
   background-position: -816px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_94 {
+.hexagon_card_icon.hexagon_icon_94.M {
+  background-position: -444px -395px;
+}
+.hexagon_card_icon.hexagon_icon_94.L {
   background-position: -917px -816px;
 }
-.L.hexagon_card_icon.hexagon_icon_95 {
+.hexagon_card_icon.hexagon_icon_95.M {
+  background-position: -3px -444px;
+}
+.hexagon_card_icon.hexagon_icon_95.L {
   background-position: -8px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_96 {
+.hexagon_card_icon.hexagon_icon_96.M {
+  background-position: -52px -444px;
+}
+.hexagon_card_icon.hexagon_icon_96.L {
   background-position: -109px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_97 {
+.hexagon_card_icon.hexagon_icon_97.M {
+  background-position: -101px -444px;
+}
+.hexagon_card_icon.hexagon_icon_97.L {
   background-position: -210px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_98 {
+.hexagon_card_icon.hexagon_icon_98.M {
+  background-position: -150px -444px;
+}
+.hexagon_card_icon.hexagon_icon_98.L {
   background-position: -311px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_99 {
+.hexagon_card_icon.hexagon_icon_99.M {
+  background-position: -199px -444px;
+}
+.hexagon_card_icon.hexagon_icon_99.L {
   background-position: -412px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_100 {
+.hexagon_card_icon.hexagon_icon_100.M {
+  background-position: -248px -444px;
+}
+.hexagon_card_icon.hexagon_icon_100.L {
   background-position: -513px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_101 {
+.hexagon_card_icon.hexagon_icon_101.M {
+  background-position: -297px -444px;
+}
+.hexagon_card_icon.hexagon_icon_101.L {
   background-position: -614px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_102 {
+.hexagon_card_icon.hexagon_icon_102.M {
+  background-position: -346px -444px;
+}
+.hexagon_card_icon.hexagon_icon_102.L {
   background-position: -715px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_103 {
+.hexagon_card_icon.hexagon_icon_103.M {
+  background-position: -395px -444px;
+}
+.hexagon_card_icon.hexagon_icon_103.L {
   background-position: -816px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_104 {
+.hexagon_card_icon.hexagon_icon_104.M {
+  background-position: -444px -444px;
+}
+.hexagon_card_icon.hexagon_icon_104.L {
   background-position: -917px -917px;
 }
-.L.hexagon_card_icon.hexagon_icon_110 {
+.hexagon_card_icon.hexagon_icon_110.M {
+  background-position: -3px -493px;
+}
+.hexagon_card_icon.hexagon_icon_110.L {
   background-position: -8px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_111 {
+.hexagon_card_icon.hexagon_icon_111.M {
+  background-position: -52px -493px;
+}
+.hexagon_card_icon.hexagon_icon_111.L {
   background-position: -109px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_112 {
+.hexagon_card_icon.hexagon_icon_112.M {
+  background-position: -101px -493px;
+}
+.hexagon_card_icon.hexagon_icon_112.L {
   background-position: -210px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_113 {
+.hexagon_card_icon.hexagon_icon_113.M {
+  background-position: -150px -493px;
+}
+.hexagon_card_icon.hexagon_icon_113.L {
   background-position: -311px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_114 {
+.hexagon_card_icon.hexagon_icon_114.M {
+  background-position: -199px -493px;
+}
+.hexagon_card_icon.hexagon_icon_114.L {
   background-position: -412px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_115 {
+.hexagon_card_icon.hexagon_icon_115.M {
+  background-position: -248px -493px;
+}
+.hexagon_card_icon.hexagon_icon_115.L {
   background-position: -513px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_116 {
+.hexagon_card_icon.hexagon_icon_116.M {
+  background-position: -297px -493px;
+}
+.hexagon_card_icon.hexagon_icon_116.L {
   background-position: -614px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_117 {
+.hexagon_card_icon.hexagon_icon_117.M {
+  background-position: -346px -493px;
+}
+.hexagon_card_icon.hexagon_icon_117.L {
   background-position: -715px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_118 {
+.hexagon_card_icon.hexagon_icon_118.M {
+  background-position: -395px -493px;
+}
+.hexagon_card_icon.hexagon_icon_118.L {
   background-position: -816px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_119 {
+.hexagon_card_icon.hexagon_icon_119.M {
+  background-position: -444px -493px;
+}
+.hexagon_card_icon.hexagon_icon_119.L {
   background-position: -917px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_120 {
+.hexagon_card_icon.hexagon_icon_120.M {
+  background-position: -493px -493px;
+}
+.hexagon_card_icon.hexagon_icon_120.L {
   background-position: -1018px -1018px;
 }
-.L.hexagon_card_icon.hexagon_icon_121 {
-  background-position: -1119px -1018px;
+.hexagon_card_icon.hexagon_icon_121.M {
+  background-position: -542px -542px;
 }
-.L.hexagon_card_icon.hexagon_icon_122 {
-  background-position: -1220px -1018px;
-}
-.L.hexagon_card_icon.hexagon_icon_123 {
-  background-position: -1321px -1018px;
-}
-.L.hexagon_card_icon.hexagon_icon_124 {
-  background-position: -1422px -1018px;
-}
-.L.hexagon_card_icon.hexagon_icon_125 {
-  background-position: -8px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_126 {
-  background-position: -109px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_127 {
-  background-position: -210px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_128 {
-  background-position: -311px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_129 {
-  background-position: -412px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_130 {
-  background-position: -513px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_131 {
-  background-position: -614px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_132 {
-  background-position: -715px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_133 {
-  background-position: -816px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_134 {
-  background-position: -917px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_135 {
-  background-position: -8px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_136 {
-  background-position: -109px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_137 {
-  background-position: -210px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_138 {
-  background-position: -311px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_139 {
-  background-position: -412px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_140 {
-  background-position: -513px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_141 {
-  background-position: -614px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_142 {
-  background-position: -715px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_143 {
-  background-position: -816px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_144 {
-  background-position: -917px -1220px;
-}
-.L.hexagon_card_icon.hexagon_icon_145 {
-  background-position: -8px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_146 {
-  background-position: -109px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_147 {
-  background-position: -210px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_148 {
-  background-position: -311px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_149 {
-  background-position: -412px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_150 {
-  background-position: -513px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_151 {
-  background-position: -614px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_152 {
-  background-position: -715px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_153 {
-  background-position: -816px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_154 {
-  background-position: -917px -1321px;
-}
-.L.hexagon_card_icon.hexagon_icon_155 {
-  background-position: -8px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_156 {
-  background-position: -109px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_157 {
-  background-position: -210px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_158 {
-  background-position: -311px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_159 {
-  background-position: -412px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_160 {
-  background-position: -513px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_161 {
-  background-position: -614px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_162 {
-  background-position: -715px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_163 {
-  background-position: -816px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_164 {
-  background-position: -917px -1422px;
-}
-.L.hexagon_card_icon.hexagon_icon_165 {
-  background-position: -8px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_166 {
-  background-position: -109px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_167 {
-  background-position: -210px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_168 {
-  background-position: -311px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_169 {
-  background-position: -412px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_170 {
-  background-position: -513px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_171 {
-  background-position: -614px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_172 {
-  background-position: -715px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_173 {
-  background-position: -816px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_174 {
-  background-position: -917px -1523px;
-}
-.L.hexagon_card_icon.hexagon_icon_175 {
-  background-position: -8px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_176 {
-  background-position: -109px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_177 {
-  background-position: -210px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_178 {
-  background-position: -311px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_179 {
-  background-position: -412px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_180 {
-  background-position: -513px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_181 {
-  background-position: -614px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_182 {
-  background-position: -715px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_183 {
-  background-position: -816px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_184 {
-  background-position: -917px -1624px;
-}
-.L.hexagon_card_icon.hexagon_icon_185 {
-  background-position: -8px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_186 {
-  background-position: -109px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_187 {
-  background-position: -210px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_188 {
-  background-position: -311px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_189 {
-  background-position: -412px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_190 {
-  background-position: -513px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_191 {
-  background-position: -614px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_192 {
-  background-position: -715px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_193 {
-  background-position: -816px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_194 {
-  background-position: -917px -1725px;
-}
-.L.hexagon_card_icon.hexagon_icon_195 {
-  background-position: -8px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_196 {
-  background-position: -109px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_197 {
-  background-position: -210px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_198 {
-  background-position: -311px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_199 {
-  background-position: -412px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_200 {
-  background-position: -513px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_201 {
-  background-position: -614px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_202 {
-  background-position: -715px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_203 {
-  background-position: -816px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_204 {
-  background-position: -917px -1826px;
-}
-.L.hexagon_card_icon.hexagon_icon_205 {
-  background-position: -8px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_206 {
-  background-position: -109px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_207 {
-  background-position: -210px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_208 {
-  background-position: -311px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_209 {
-  background-position: -412px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_210 {
-  background-position: -513px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_211 {
-  background-position: -614px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_212 {
-  background-position: -715px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_213 {
-  background-position: -816px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_214 {
-  background-position: -917px -1927px;
-}
-.L.hexagon_card_icon.hexagon_icon_215 {
-  background-position: -1018px -1119px;
-}
-.L.hexagon_card_icon.hexagon_icon_216 {
+.hexagon_card_icon.hexagon_icon_121.L {
   background-position: -1119px -1119px;
 }
-.L.hexagon_card_icon.hexagon_icon_217 {
+.hexagon_card_icon.hexagon_icon_122.M {
+  background-position: -591px -542px;
+}
+.hexagon_card_icon.hexagon_icon_122.L {
   background-position: -1220px -1119px;
 }
-.L.hexagon_card_icon.hexagon_icon_218 {
+.hexagon_card_icon.hexagon_icon_123.M {
+  background-position: -640px -542px;
+}
+.hexagon_card_icon.hexagon_icon_123.L {
   background-position: -1321px -1119px;
 }
-.L.hexagon_card_icon.hexagon_icon_219 {
+.hexagon_card_icon.hexagon_icon_124.M {
+  background-position: -689px -542px;
+}
+.hexagon_card_icon.hexagon_icon_124.L {
+  background-position: -1422px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_125.M {
+  background-position: -3px -542px;
+}
+.hexagon_card_icon.hexagon_icon_125.L {
+  background-position: -8px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_126.M {
+  background-position: -52px -542px;
+}
+.hexagon_card_icon.hexagon_icon_126.L {
+  background-position: -109px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_127.M {
+  background-position: -101px -542px;
+}
+.hexagon_card_icon.hexagon_icon_127.L {
+  background-position: -210px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_128.M {
+  background-position: -150px -542px;
+}
+.hexagon_card_icon.hexagon_icon_128.L {
+  background-position: -311px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_129.M {
+  background-position: -199px -542px;
+}
+.hexagon_card_icon.hexagon_icon_129.L {
+  background-position: -412px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_130.M {
+  background-position: -248px -542px;
+}
+.hexagon_card_icon.hexagon_icon_130.L {
+  background-position: -513px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_131.M {
+  background-position: -297px -542px;
+}
+.hexagon_card_icon.hexagon_icon_131.L {
+  background-position: -614px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_132.M {
+  background-position: -346px -542px;
+}
+.hexagon_card_icon.hexagon_icon_132.L {
+  background-position: -715px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_133.M {
+  background-position: -395px -542px;
+}
+.hexagon_card_icon.hexagon_icon_133.L {
+  background-position: -816px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_134.M {
+  background-position: -444px -542px;
+}
+.hexagon_card_icon.hexagon_icon_134.L {
+  background-position: -917px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_135.M {
+  background-position: -3px -591px;
+}
+.hexagon_card_icon.hexagon_icon_135.L {
+  background-position: -8px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_136.M {
+  background-position: -52px -591px;
+}
+.hexagon_card_icon.hexagon_icon_136.L {
+  background-position: -109px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_137.M {
+  background-position: -101px -591px;
+}
+.hexagon_card_icon.hexagon_icon_137.L {
+  background-position: -210px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_138.M {
+  background-position: -150px -591px;
+}
+.hexagon_card_icon.hexagon_icon_138.L {
+  background-position: -311px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_139.M {
+  background-position: -199px -591px;
+}
+.hexagon_card_icon.hexagon_icon_139.L {
+  background-position: -412px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_140.M {
+  background-position: -248px -591px;
+}
+.hexagon_card_icon.hexagon_icon_140.L {
+  background-position: -513px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_141.M {
+  background-position: -297px -591px;
+}
+.hexagon_card_icon.hexagon_icon_141.L {
+  background-position: -614px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_142.M {
+  background-position: -346px -591px;
+}
+.hexagon_card_icon.hexagon_icon_142.L {
+  background-position: -715px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_143.M {
+  background-position: -395px -591px;
+}
+.hexagon_card_icon.hexagon_icon_143.L {
+  background-position: -816px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_144.M {
+  background-position: -444px -591px;
+}
+.hexagon_card_icon.hexagon_icon_144.L {
+  background-position: -917px -1220px;
+}
+.hexagon_card_icon.hexagon_icon_145.M {
+  background-position: -3px -640px;
+}
+.hexagon_card_icon.hexagon_icon_145.L {
+  background-position: -8px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_146.M {
+  background-position: -52px -640px;
+}
+.hexagon_card_icon.hexagon_icon_146.L {
+  background-position: -109px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_147.M {
+  background-position: -101px -640px;
+}
+.hexagon_card_icon.hexagon_icon_147.L {
+  background-position: -210px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_148.M {
+  background-position: -150px -640px;
+}
+.hexagon_card_icon.hexagon_icon_148.L {
+  background-position: -311px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_149.M {
+  background-position: -199px -640px;
+}
+.hexagon_card_icon.hexagon_icon_149.L {
+  background-position: -412px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_150.M {
+  background-position: -248px -640px;
+}
+.hexagon_card_icon.hexagon_icon_150.L {
+  background-position: -513px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_151.M {
+  background-position: -297px -640px;
+}
+.hexagon_card_icon.hexagon_icon_151.L {
+  background-position: -614px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_152.M {
+  background-position: -346px -640px;
+}
+.hexagon_card_icon.hexagon_icon_152.L {
+  background-position: -715px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_153.M {
+  background-position: -395px -640px;
+}
+.hexagon_card_icon.hexagon_icon_153.L {
+  background-position: -816px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_154.M {
+  background-position: -444px -640px;
+}
+.hexagon_card_icon.hexagon_icon_154.L {
+  background-position: -917px -1321px;
+}
+.hexagon_card_icon.hexagon_icon_155.M {
+  background-position: -3px -689px;
+}
+.hexagon_card_icon.hexagon_icon_155.L {
+  background-position: -8px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_156.M {
+  background-position: -52px -689px;
+}
+.hexagon_card_icon.hexagon_icon_156.L {
+  background-position: -109px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_157.M {
+  background-position: -101px -689px;
+}
+.hexagon_card_icon.hexagon_icon_157.L {
+  background-position: -210px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_158.M {
+  background-position: -150px -689px;
+}
+.hexagon_card_icon.hexagon_icon_158.L {
+  background-position: -311px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_159.M {
+  background-position: -199px -689px;
+}
+.hexagon_card_icon.hexagon_icon_159.L {
+  background-position: -412px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_160.M {
+  background-position: -248px -689px;
+}
+.hexagon_card_icon.hexagon_icon_160.L {
+  background-position: -513px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_161.M {
+  background-position: -297px -689px;
+}
+.hexagon_card_icon.hexagon_icon_161.L {
+  background-position: -614px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_162.M {
+  background-position: -346px -689px;
+}
+.hexagon_card_icon.hexagon_icon_162.L {
+  background-position: -715px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_163.M {
+  background-position: -395px -689px;
+}
+.hexagon_card_icon.hexagon_icon_163.L {
+  background-position: -816px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_164.M {
+  background-position: -444px -689px;
+}
+.hexagon_card_icon.hexagon_icon_164.L {
+  background-position: -917px -1422px;
+}
+.hexagon_card_icon.hexagon_icon_165.M {
+  background-position: -3px -738px;
+}
+.hexagon_card_icon.hexagon_icon_165.L {
+  background-position: -8px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_166.M {
+  background-position: -52px -738px;
+}
+.hexagon_card_icon.hexagon_icon_166.L {
+  background-position: -109px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_167.M {
+  background-position: -101px -738px;
+}
+.hexagon_card_icon.hexagon_icon_167.L {
+  background-position: -210px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_168.M {
+  background-position: -150px -738px;
+}
+.hexagon_card_icon.hexagon_icon_168.L {
+  background-position: -311px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_169.M {
+  background-position: -199px -738px;
+}
+.hexagon_card_icon.hexagon_icon_169.L {
+  background-position: -412px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_170.M {
+  background-position: -248px -738px;
+}
+.hexagon_card_icon.hexagon_icon_170.L {
+  background-position: -513px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_171.M {
+  background-position: -297px -738px;
+}
+.hexagon_card_icon.hexagon_icon_171.L {
+  background-position: -614px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_172.M {
+  background-position: -346px -738px;
+}
+.hexagon_card_icon.hexagon_icon_172.L {
+  background-position: -715px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_173.M {
+  background-position: -395px -738px;
+}
+.hexagon_card_icon.hexagon_icon_173.L {
+  background-position: -816px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_174.M {
+  background-position: -444px -738px;
+}
+.hexagon_card_icon.hexagon_icon_174.L {
+  background-position: -917px -1523px;
+}
+.hexagon_card_icon.hexagon_icon_175.M {
+  background-position: -3px -787px;
+}
+.hexagon_card_icon.hexagon_icon_175.L {
+  background-position: -8px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_176.M {
+  background-position: -52px -787px;
+}
+.hexagon_card_icon.hexagon_icon_176.L {
+  background-position: -109px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_177.M {
+  background-position: -101px -787px;
+}
+.hexagon_card_icon.hexagon_icon_177.L {
+  background-position: -210px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_178.M {
+  background-position: -150px -787px;
+}
+.hexagon_card_icon.hexagon_icon_178.L {
+  background-position: -311px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_179.M {
+  background-position: -199px -787px;
+}
+.hexagon_card_icon.hexagon_icon_179.L {
+  background-position: -412px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_180.M {
+  background-position: -248px -787px;
+}
+.hexagon_card_icon.hexagon_icon_180.L {
+  background-position: -513px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_181.M {
+  background-position: -297px -787px;
+}
+.hexagon_card_icon.hexagon_icon_181.L {
+  background-position: -614px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_182.M {
+  background-position: -346px -787px;
+}
+.hexagon_card_icon.hexagon_icon_182.L {
+  background-position: -715px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_183.M {
+  background-position: -395px -787px;
+}
+.hexagon_card_icon.hexagon_icon_183.L {
+  background-position: -816px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_184.M {
+  background-position: -444px -787px;
+}
+.hexagon_card_icon.hexagon_icon_184.L {
+  background-position: -917px -1624px;
+}
+.hexagon_card_icon.hexagon_icon_185.M {
+  background-position: -3px -836px;
+}
+.hexagon_card_icon.hexagon_icon_185.L {
+  background-position: -8px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_186.M {
+  background-position: -52px -836px;
+}
+.hexagon_card_icon.hexagon_icon_186.L {
+  background-position: -109px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_187.M {
+  background-position: -101px -836px;
+}
+.hexagon_card_icon.hexagon_icon_187.L {
+  background-position: -210px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_188.M {
+  background-position: -150px -836px;
+}
+.hexagon_card_icon.hexagon_icon_188.L {
+  background-position: -311px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_189.M {
+  background-position: -199px -836px;
+}
+.hexagon_card_icon.hexagon_icon_189.L {
+  background-position: -412px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_190.M {
+  background-position: -248px -836px;
+}
+.hexagon_card_icon.hexagon_icon_190.L {
+  background-position: -513px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_191.M {
+  background-position: -297px -836px;
+}
+.hexagon_card_icon.hexagon_icon_191.L {
+  background-position: -614px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_192.M {
+  background-position: -346px -836px;
+}
+.hexagon_card_icon.hexagon_icon_192.L {
+  background-position: -715px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_193.M {
+  background-position: -395px -836px;
+}
+.hexagon_card_icon.hexagon_icon_193.L {
+  background-position: -816px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_194.M {
+  background-position: -444px -836px;
+}
+.hexagon_card_icon.hexagon_icon_194.L {
+  background-position: -917px -1725px;
+}
+.hexagon_card_icon.hexagon_icon_195.M {
+  background-position: -3px -885px;
+}
+.hexagon_card_icon.hexagon_icon_195.L {
+  background-position: -8px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_196.M {
+  background-position: -52px -885px;
+}
+.hexagon_card_icon.hexagon_icon_196.L {
+  background-position: -109px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_197.M {
+  background-position: -101px -885px;
+}
+.hexagon_card_icon.hexagon_icon_197.L {
+  background-position: -210px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_198.M {
+  background-position: -150px -885px;
+}
+.hexagon_card_icon.hexagon_icon_198.L {
+  background-position: -311px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_199.M {
+  background-position: -199px -885px;
+}
+.hexagon_card_icon.hexagon_icon_199.L {
+  background-position: -412px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_200.M {
+  background-position: -248px -885px;
+}
+.hexagon_card_icon.hexagon_icon_200.L {
+  background-position: -513px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_201.M {
+  background-position: -297px -885px;
+}
+.hexagon_card_icon.hexagon_icon_201.L {
+  background-position: -614px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_202.M {
+  background-position: -346px -885px;
+}
+.hexagon_card_icon.hexagon_icon_202.L {
+  background-position: -715px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_203.M {
+  background-position: -395px -885px;
+}
+.hexagon_card_icon.hexagon_icon_203.L {
+  background-position: -816px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_204.M {
+  background-position: -444px -885px;
+}
+.hexagon_card_icon.hexagon_icon_204.L {
+  background-position: -917px -1826px;
+}
+.hexagon_card_icon.hexagon_icon_205.M {
+  background-position: -3px -934px;
+}
+.hexagon_card_icon.hexagon_icon_205.L {
+  background-position: -8px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_206.M {
+  background-position: -52px -934px;
+}
+.hexagon_card_icon.hexagon_icon_206.L {
+  background-position: -109px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_207.M {
+  background-position: -101px -934px;
+}
+.hexagon_card_icon.hexagon_icon_207.L {
+  background-position: -210px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_208.M {
+  background-position: -150px -934px;
+}
+.hexagon_card_icon.hexagon_icon_208.L {
+  background-position: -311px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_209.M {
+  background-position: -199px -934px;
+}
+.hexagon_card_icon.hexagon_icon_209.L {
+  background-position: -412px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_210.M {
+  background-position: -248px -934px;
+}
+.hexagon_card_icon.hexagon_icon_210.L {
+  background-position: -513px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_211.M {
+  background-position: -297px -934px;
+}
+.hexagon_card_icon.hexagon_icon_211.L {
+  background-position: -614px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_212.M {
+  background-position: -346px -934px;
+}
+.hexagon_card_icon.hexagon_icon_212.L {
+  background-position: -715px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_213.M {
+  background-position: -395px -934px;
+}
+.hexagon_card_icon.hexagon_icon_213.L {
+  background-position: -816px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_214.M {
+  background-position: -444px -934px;
+}
+.hexagon_card_icon.hexagon_icon_214.L {
+  background-position: -917px -1927px;
+}
+.hexagon_card_icon.hexagon_icon_215.M {
+  background-position: -493px -542px;
+}
+.hexagon_card_icon.hexagon_icon_215.L {
+  background-position: -1018px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_216.M {
+  background-position: -542px -542px;
+}
+.hexagon_card_icon.hexagon_icon_216.L {
+  background-position: -1119px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_217.M {
+  background-position: -591px -542px;
+}
+.hexagon_card_icon.hexagon_icon_217.L {
+  background-position: -1220px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_218.M {
+  background-position: -640px -542px;
+}
+.hexagon_card_icon.hexagon_icon_218.L {
+  background-position: -1321px -1119px;
+}
+.hexagon_card_icon.hexagon_icon_219.M {
+  background-position: -689px -542px;
+}
+.hexagon_card_icon.hexagon_icon_219.L {
   background-position: -1422px -1119px;
 }
 
