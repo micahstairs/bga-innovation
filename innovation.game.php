@@ -1979,32 +1979,32 @@ class Innovation extends Table
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
             // TODO(ARTIFACTS): We can simplify Self Service to use "board->none", guarded by release_version.
-            $message_for_player = clienttranslate('{You must} choose {number} other top {card} from your board');
-            $message_for_others = clienttranslate('{player must} choose {number} other top {card} from his board');            
+            $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from your board');
+            $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');            
         } else if ($targetable_players !== null) { // Used when several players can be targeted
             switch($location_from . '->' . $location_to) {
             case 'score->deck':
-                $message_for_player = clienttranslate('{You must} return {number} {card} from the score pile of {targetable_players}');
-                $message_for_others = clienttranslate('{player must} return {number} {card} from the score pile of {targetable_players}');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from the score pile of ${targetable_players}');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from the score pile of ${targetable_players}');
                 break;
             case 'board->deck':
-                $message_for_player = clienttranslate('{You must} return {number} top {card} from the board of {targetable_players}');
-                $message_for_others = clienttranslate('{player must} return {number} top {card} from the board of {targetable_players}');
+                $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from the board of ${targetable_players}');
+                $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from the board of ${targetable_players}');
                 break;
             case 'board->score':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from the board of {targetable_players} to your score pile');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from the board of {targetable_players} to his score pile');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from the board of ${targetable_players} to your score pile');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from the board of ${targetable_players} to his score pile');
                 break;
             case 'board->none':
                 if ($code === '134N1A') {
-                    $message_for_player = clienttranslate('{You must} choose {number} other top {card} from the board of {targetable_players}');
-                    $message_for_others = clienttranslate('{player must} choose {number} other top {card} from the board of {targetable_players}');
+                    $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from the board of ${targetable_players}');
+                    $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from the board of ${targetable_players}');
                 } else if ($code === '134N1+A' || $code === '134N1B') {
-                    $message_for_player = clienttranslate('{You must} choose a pile to splay left from the board of {targetable_players}');
-                    $message_for_others = clienttranslate('{player must} choose a pile to splay left from the board of {targetable_players}');
+                    $message_for_player = clienttranslate('${You_must} choose a pile to splay left from the board of ${targetable_players}');
+                    $message_for_others = clienttranslate('${player_must} choose a pile to splay left from the board of ${targetable_players}');
                 } else if ($code === '136N1B' || $code === '161N1A') {
-                    $message_for_player = clienttranslate('{You must} choose a top card to execute from the board of {targetable_players}');
-                    $message_for_others = clienttranslate('{player must} choose a top card to execute from the board of {targetable_players}');
+                    $message_for_player = clienttranslate('${You_must} choose a top card to execute from the board of ${targetable_players}');
+                    $message_for_others = clienttranslate('${player_must} choose a top card to execute from the board of ${targetable_players}');
                 } else {
                     // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -2019,112 +2019,112 @@ class Innovation extends Table
             switch($location_from . '->' . $location_to) { 
             case 'achievements->achievements':
                 if ($player_id_is_owner_from) {
-                    $message_for_player = clienttranslate('{You must} return {number} {card} to the available achievements');
-                    $message_for_others = clienttranslate('{player must} return {number} {card} to the available achievements');
+                    $message_for_player = clienttranslate('${You_must} return ${number} ${card} to the available achievements');
+                    $message_for_others = clienttranslate('${player_must} return ${number} ${card} to the available achievements');
                 } else {
-                    $message_for_player = clienttranslate('{You must} claim {number} {card} from the available achievements');
-                    $message_for_others = clienttranslate('{player must} claim {number} {card} from the available achievements');
+                    $message_for_player = clienttranslate('${You_must} claim ${number} ${card} from the available achievements');
+                    $message_for_others = clienttranslate('${player_must} claim ${number} ${card} from the available achievements');
                 }
                 break;
             case 'achievements->deck':
-                $message_for_player = clienttranslate('{You must} return {number} {card} from your achievements');
-                $message_for_others = clienttranslate('{player must} return {number} {card} from his achievements');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your achievements');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his achievements');
                 break;
             case 'hand->deck':
-                $message_for_player = clienttranslate('{You must} return {number} {card} from your hand');
-                $message_for_others = clienttranslate('{player must} return {number} {card} from his hand');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his hand');
                 break;
             case 'hand->board':
                 if ($bottom_to) {
-                    $message_for_player = clienttranslate('{You must} tuck {number} {card} from your hand');
-                    $message_for_others = clienttranslate('{player must} tuck {number} {card} from his hand');
+                    $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your hand');
+                    $message_for_others = clienttranslate('${player_must} tuck ${number} ${card} from his hand');
                 }
                 else {
-                    $message_for_player = clienttranslate('{You must} meld {number} {card} from your hand');
-                    $message_for_others = clienttranslate('{player must} meld {number} {card} from his hand');
+                    $message_for_player = clienttranslate('${You_must} meld ${number} ${card} from your hand');
+                    $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his hand');
                 }
                 break;
             case 'hand->score':
-                $message_for_player = clienttranslate('{You must} score {number} {card} from your hand');
-                $message_for_others = clienttranslate('{player must} score {number} {card} from his hand');
+                $message_for_player = clienttranslate('${You_must} score ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} score ${number} ${card} from his hand');
                 break;
             case 'hand->revealed':
-                $message_for_player = clienttranslate('{You must} reveal {number} {card} from your hand');
-                $message_for_others = clienttranslate('{player must} reveal {number} {card} from his hand');
+                $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his hand');
                 break;
             case 'hand->achievements':
-                $message_for_player = clienttranslate('{You must} achieve {number} {card} from your hand');
-                $message_for_others = clienttranslate('{player must} achieve {number} {card} from his hand');
+                $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} achieve ${number} ${card} from his hand');
                 break;
             case 'board->deck':
-                $message_for_player = clienttranslate('{You must} return {number} top {card} from your board');
-                $message_for_others = clienttranslate('{player must} return {number} top {card} from his board');
+                $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
                 break;
             case 'board->hand':
-                $message_for_player = clienttranslate('{You must} take back {number} top {card} from your board to your hand');
-                $message_for_others = clienttranslate('{player must} take back {number} top {card} from his board to his hand');
+                $message_for_player = clienttranslate('${You_must} take back ${number} top ${card} from your board to your hand');
+                $message_for_others = clienttranslate('${player_must} take back ${number} top ${card} from his board to his hand');
                 break;
             case 'board->score':
-                $message_for_player = clienttranslate('{You must} score {number} top {card} from your board');
-                $message_for_others = clienttranslate('{player must} score {number} top {card} from his board');
+                $message_for_player = clienttranslate('${You_must} score ${number} top ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} score ${number} top ${card} from his board');
                 break;
             case 'board->none':
-                $message_for_player = clienttranslate('{You must} choose {number} top {card} from your board');
-                $message_for_others = clienttranslate('{player must} choose {number} top {card} from his board');
+                $message_for_player = clienttranslate('${You_must} choose ${number} top ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} choose ${number} top ${card} from his board');
                 break;
             case 'board->achievements':
-                $message_for_player = clienttranslate('{You must} achieve {number} top {card} from your board');
-                $message_for_others = clienttranslate('{player must} achieve {number} top {card} from his board');
+                $message_for_player = clienttranslate('${You_must} achieve ${number} top ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} achieve ${number} top ${card} from his board');
                 break;
             case 'score->deck':
-                $message_for_player = clienttranslate('{You must} return {number} {card} from your score pile');
-                $message_for_others = clienttranslate('{player must} return {number} {card} from his score pile');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your score pile');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his score pile');
                 break;
             case 'score->hand':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your score pile to your hand');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his score pile to his hand');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your score pile to your hand');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his score pile to his hand');
                 break;
             case 'score->board':
                 if ($bottom_to) {
-                    $message_for_player = clienttranslate('{You must} tuck {number} {card} from your score pile');
-                    $message_for_others = clienttranslate('{player must} tucks {number} {card} from his score pile');
+                    $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your score pile');
+                    $message_for_others = clienttranslate('${player_must} tucks ${number} ${card} from his score pile');
                 }
                 else {
-                    $message_for_player = clienttranslate('{You must} meld {number} {card} from your score pile');
-                    $message_for_others = clienttranslate('{player must} meld {number} {card} from his score pile');
+                    $message_for_player = clienttranslate('${You_must} meld ${number} ${card} from your score pile');
+                    $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his score pile');
                 }
                 break;
             case 'score->achievements':
-                $message_for_player = clienttranslate('{You must} achieve {number} {card} from your score pile');
-                $message_for_others = clienttranslate('{player must} achieve {number} {card} from his score pile');
+                $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your score pile');
+                $message_for_others = clienttranslate('${player_must} achieve ${number} ${card} from his score pile');
                 break;
             case 'revealed->deck':
-                $message_for_player = clienttranslate('{You must} return {number} {card} you revealed');
-                $message_for_others = clienttranslate('{player must} return {number} {card} he revealed');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} you revealed');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} he revealed');
                 break;
             case 'revealed->board':
-                $message_for_player = clienttranslate('{You must} meld {number} {card} you revealed');
-                $message_for_others = clienttranslate('{player must} meld {number} {card} he revealed');
+                $message_for_player = clienttranslate('${You_must} meld ${number} ${card} you revealed');
+                $message_for_others = clienttranslate('${player_must} meld ${number} ${card} he revealed');
                 break;
             case 'revealed->score':
-                $message_for_player = clienttranslate('{You must} score {number} {card} you revealed');
-                $message_for_others = clienttranslate('{player must} score {number} {card} he revealed');
+                $message_for_player = clienttranslate('${You_must} score ${number} ${card} you revealed');
+                $message_for_others = clienttranslate('${player_must} score ${number} ${card} he revealed');
                 break;
             case 'revealed,hand->deck': // Alchemy, Physics
-                $message_for_player = clienttranslate('{You must} return {number} {card} you revealed and {number} {card} in your hand');
-                $message_for_others = clienttranslate('{player must} return {number} {card} he revealed and {number} {card} in his hand');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} you revealed and ${number} ${card} in your hand');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} he revealed and ${number} ${card} in his hand');
                 break;
             case 'revealed,score->deck':
-                $message_for_player = clienttranslate('{You must} return {number} {card} you revealed and {number} {card} from your score pile');
-                $message_for_others = clienttranslate('{player must} return {number} {card} he revealed and {number} {card} from his score pile');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} you revealed and ${number} ${card} from your score pile');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} he revealed and ${number} ${card} from his score pile');
                 break;
             case 'hand->revealed,deck': // Measurement
-                $message_for_player = clienttranslate('{You must} reveal and return {number} {card} from your hand');
-                $message_for_others = clienttranslate('{player must} reveal and return {number} {card} from his hand');
+                $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his hand');
                 break;
             case 'pile->deck': // Skyscrapers
-                $message_for_player = clienttranslate('{You must} return {number} {card} from your board');
-                $message_for_others = clienttranslate('{player must} return {number} {card} from his board');
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his board');
                 break;
             default:
                 // This should not happen
@@ -2132,13 +2132,41 @@ class Innovation extends Table
                 break;
             }
         }
-        $message_for_player = self::format($message_for_player, array('You must' => $you_must, 'number' => $number, 'card' => $cards, 'targetable_players' => $targetable_players));
-        $message_for_others = self::format($message_for_others, array('player must' => $player_must, 'number' => $number, 'card' => $cards, 'targetable_players' => $targetable_players));
-        
-        return array(
-            'message_for_player' => $message_for_player,
-            'message_for_others' => $message_for_others
-        );
+
+        return [
+            'message_for_player' => [
+                'i18n' => ['log'],
+                'log' => $message_for_player,
+                'args' => [
+                    'You_must' => [
+                        'i18n' => ['log'],
+                        'log' => $you_must,
+                        'args' => [
+                            'You' => 'You',
+                        ],
+                    ],
+                    'number' => $number,
+                    'card' => $cards,
+                    'targetable_players' => $targetable_players,
+                ],
+            ],
+            'message_for_others' => [
+                'i18n' => ['log'],
+                'log' => $message_for_others,
+                'args' => [
+                    'player_must' => [
+                        'i18n' => ['log'],
+                        'log' => $player_must,
+                        'args' => [
+                            'player_name' => $player_name,
+                        ],
+                    ],
+                    'number' => $number,
+                    'card' => $cards,
+                    'targetable_players' => $targetable_players,
+                ],
+            ],
+        ];
     }
     
     function notifyWithTwoPlayersInvolved($card, $transferInfo, $progressInfo) {
@@ -7230,158 +7258,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if ($can_pass || $can_stop) {
                 $you_must = clienttranslate('${You} may');
                 $player_must = clienttranslate('${player_name} may');
-            }
-            else {
+            } else {
                 $you_must = clienttranslate('${You} must');
                 $player_must = clienttranslate('${player_name} must');
             }
-        }
-        else {
+        } else {
             if ($can_pass || $can_stop) {
                 $you_must = clienttranslate('${You} still may');
                 $player_must = clienttranslate('${player_name} still may');
-            }
-            else {
+            } else {
                 $you_must = clienttranslate('${You} still must');
                 $player_must = clienttranslate('${player_name} still must');
             }
         }
         
-        // Number
-        if ($n_min > 800) {
-            $number = clienttranslate("all the");
-        }
-        else if ($n_max > 800) {
-            $number = clienttranslate("any number of");
-        }
-        else if ($n_min == $n_max) {
-            $number = self::getTranslatedNumber($n_min);    
-        }
-        else if ($n_min + 1 == $n_max) {
-            $number = self::getTranslatedNumber($n_min) . " " . clienttranslate("or") . " " . self::getTranslatedNumber($n_max);    
-        }
-        else {
-            $number = self::getTranslatedNumber($n_min) . " " . clienttranslate("to") . " " . self::getTranslatedNumber($n_max);
-        }
-        
+        // Number of cards
+        $number = self::getRecursivelyTranslatedNumberRange($n_min, $n_max);
         
         if ($splay_direction == -1) {
-            // Color of the cards
-            $selectable_colors = self::getGameStateValueAsArray('color_array');
-            $selectable_colors_in_clear = array();
-            for($i=0; $i<count($selectable_colors); $i++) {
-                $selectable_colors_in_clear[$i] = self::getColorInClear($selectable_colors[$i]);
-            }
-            switch (count($selectable_colors)) {
-            case 1: // Only one color can be selected
-                $colors = $selectable_colors_in_clear[0];
-                break;
-            case 2:
-                $colors = self::format(clienttranslate("{color_1} or {color_2}"),
-                                                    array(
-                                                        'color_1' => $selectable_colors_in_clear[0],
-                                                        'color_2' => $selectable_colors_in_clear[1]
-                                                    ));
-                break;
-            case 3:
-                $colors = self::format(clienttranslate("{color_1}, {color_2} or {color_3}"),
-                                                    array(
-                                                        'color_1' => $selectable_colors_in_clear[0],
-                                                        'color_2' => $selectable_colors_in_clear[1],
-                                                        'color_3' => $selectable_colors_in_clear[2],
-                                                    ));
-                break;
-            case 4: { // Any color can be selected but one
-                // Find the missing color
-                for ($color=0; $color < 5; $color++) {
-                    if (!in_array($color, $selectable_colors)) {
-                        $unselectable_color_in_clear = self::getColorInClear($color);
-                        break;
-                    }
-                }
-                $colors = self::format(clienttranslate("non-{color}"), array('color' => $unselectable_color_in_clear));
-                break;
-            }
-            default: // 5
-                break;
-            }
-            
-            if ($age_min == 1 && $age_max == 10) {
-                if (count($selectable_colors) < 5) {
-                    if ($with_icon > 0) {
-                        if ($n_max == 1) {
-                            $cards = self::format(clienttranslate("{color} card with a {icon}"), array('color' => $colors, 'icon' => '{[}'.$with_icon.'{]}'));
-                        } else {
-                            $cards = self::format(clienttranslate("{color} cards with a {icon}"), array('color' => $colors, 'icon' => '{[}'.$with_icon.'{]}'));
-                        }
-                    } else if ($without_icon > 0) {
-                        if ($n_max == 1) {
-                            $cards = self::format(clienttranslate("{color} card without a {icon}"), array('color' => $colors, 'icon' => '{[}'.$without_icon.'{]}'));
-                        } else {
-                            $cards = self::format(clienttranslate("{color} cards without a {icon}"), array('color' => $colors, 'icon' => '{[}'.$without_icon.'{]}'));
-                        }
-                    } else {
-                        if ($n_max == 1) {
-                            $cards = self::format(clienttranslate("{color} card"), array('color' => $colors));
-                        } else {
-                            $cards = self::format(clienttranslate("{color} cards"), array('color' => $colors));
-                        }
-                    }
-                } else {
-                    if ($with_icon > 0) {
-                        if ($n_max == 1) {
-                            $cards = self::format(clienttranslate("card with a {icon}"), array('icon' => '{[}'.$with_icon.'{]}'));
-                        } else {
-                            $cards = self::format(clienttranslate("cards with a {icon}"), array('icon' => '{[}'.$with_icon.'{]}'));
-                        }
-                    } else if ($without_icon > 0) {
-                        if ($n_max == 1) {
-                            $cards = self::format(clienttranslate("card without a {icon}"), array('icon' => '{[}'.$without_icon.'{]}'));
-                        } else {
-                            $cards = self::format(clienttranslate("cards without a {icon}"), array('icon' => '{[}'.$without_icon.'{]}'));
-                        }
-                    } else {
-                        if ($n_max == 1) {
-                            $cards = clienttranslate("card");
-                        } else {
-                            $cards = clienttranslate("cards");
-                        }
-                    }
-                }
-            } else {
-                if (count($selectable_colors) < 5) {
-                    $cards = self::format(clienttranslate("{color}") . " ", array('color' => $colors));
-                } else {
-                    $cards = '';
-                }
-                
-                if ($age_min == $age_max) {
-                    $cards .= "{<}" . $age_min . "{>}";
-                } else if ($age_min + 1 == $age_max) {
-                    if ($n_max == 1) {
-                        $cards .= "card of value {<}" . $age_min . "{>} " . clienttranslate("or") . " {<}" . $age_max . "{>}";
-                    } else {
-                        $cards .= "cards of value {<}" . $age_min . "{>} " . clienttranslate("or") . " {<}" . $age_max . "{>}";
-                    }
-                } else {
-                    if ($n_max == 1) {
-                        $cards .= "card of value {<}" . $age_min . "{>} " . clienttranslate("to") . " {<}" . $age_max . "{>}";
-                    } else {
-                        $cards .= "cards of value {<}" . $age_min . "{>} " . clienttranslate("to") . " {<}" . $age_max . "{>}";
-                    }
-                }
-                
-                if ($with_icon > 0) {
-                    $cards .= " " . self::format(clienttranslate("with a {icon}"), array('icon' => '{[}'.$with_icon.'{]}'));
-                } else if ($without_icon > 0) {
-                    $cards .= " " . self::format(clienttranslate("without a {icon}"), array('icon' => '{[}'.$without_icon.'{]}'));
-                }
-            }
-
-            if ($with_demand_effect === 1) {
-                $cards .= clienttranslate(" with a demand effect");
-            }
-            $cards = self::format($cards, self::getDelimiterMeanings($cards));
+            $cards = self::getRecursivelyTranslatedCardSelection($age_min, $age_max, $with_icon, $without_icon, $with_demand_effect);
         } else { // splay_direction <> -1
             $splayable_colors = self::getGameStateValueAsArray('color_array');
             $splayable_colors_in_clear = array();
@@ -7406,6 +7301,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
             }
         } else {
+            // TODO(#320): Fix the recursive translation.
             $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
             $splay_direction = null;
             $splay_direction_in_clear = null;
@@ -7414,8 +7310,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($special_type_of_choice == 0 && $splay_direction == null && $location_from == 'score') {
             if ($owner_from == $player_id) {
                 $must_show_score = true;
-            }
-            else if ($owner_from == -2) {
+            } else if ($owner_from == -2) {
                 $visible_cards = self::getVisibleSelectedCards($player_id);
                 $must_show_score = false;
                 foreach($visible_cards as $card) {
@@ -7424,12 +7319,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     }
                 }
-            }
-            else {
+            } else {
                 $must_show_score = false;
             }
-        }
-        else {
+        } else {
             $must_show_score = false;
         }
         
@@ -7460,6 +7353,123 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $args['i18n'][] = 'splay_direction_in_clear';
         
         return $args;
+    }
+
+    function getRecursivelyTranslatedNumberRange($n_min, $n_max) {
+        if ($n_min > 800) {
+            $number_log = clienttranslate("all the");
+        } else if ($n_max > 800) {
+            $number_log = clienttranslate("any number of");
+        } else if ($n_min == $n_max) {
+            $number_log = '${n_min}';
+        } else if ($n_min + 1 == $n_max) {
+            $number_log = '${n_min} or ${n_max}';
+        } else {
+            $number_log = '${n_min} to ${n_max}';
+        }
+        return [
+            'i18n' => ['log'],
+            'log' => $number_log,
+            'args' => [
+                'i18n' => ['n_min', 'n_max'],
+                'n_min' => self::getTranslatedNumber($n_min),
+                'n_max' => self::getTranslatedNumber($n_max),
+            ],
+        ];
+    }
+
+    function getRecursivelyTranslatedCardSelection($age_min, $age_max, $with_icon, $without_icon, $with_demand_effect) {
+        $card_args = array();
+
+        $selectable_colors = self::getGameStateValueAsArray('color_array');
+        if (count($selectable_colors) < 5) {
+            $colors = self::getRecursivelyTranslatedColorList($selectable_colors);
+            $card_log = clienttranslate('${color} ${cards}${of_age}${with_icon}${with_demand}');
+            $card_args['color'] = $colors;
+        } else {
+            $card_log = clienttranslate('${cards}${of_age}${with_icon}${with_demand}');
+        }
+        $card_args['cards'] = clienttranslate('card(s)');
+        $card_args['of_age'] = '';
+        $card_args['with_icon'] = '';
+        $card_args['with_demand'] = '';
+
+        // TODO(ARTIFACTS): Figure out if we need to make any changes here to handle Battleship Yamato properly.
+        if ($age_min != 1 || $age_max != 10) {
+            if ($age_min == $age_max) {
+                $of_age_log = clienttranslate(' of value ${<}${age_min}${>}');
+            } else if ($age_min + 1 == $age_max) {
+                $of_age_log = clienttranslate(' of value ${<}${age_min}${>} or ${<}${age_max}${>}');
+            } else {
+                $of_age_log = clienttranslate(' of value ${<}${age_min}${>} to ${<}${age_max}${>}');
+            }
+            $card_args['of_age'] = [
+                'i18n' => ['log'],
+                'log' => $of_age_log,
+                'args' => array_merge(self::getDelimiterMeanings($of_age_log), ['age_min' => $age_min, 'age_max' => $age_max]),
+            ];
+        }
+
+        if ($with_icon > 0) {
+            $with_icon_log = clienttranslate(' with a ${[}${icon}${]}');
+            $card_args['with_icon'] = [
+                'i18n' => ['log'],
+                'log' => $with_icon_log,
+                'args' => array_merge(self::getDelimiterMeanings($with_icon_log), ['icon' => $with_icon]),
+            ];
+        } else if ($without_icon > 0) {
+            $without_icon_log = clienttranslate(' without a ${[}${icon}${]}');
+            $card_args['without_icon'] = [
+                'i18n' => ['log'],
+                'log' => $without_icon_log,
+                'args' => array_merge(self::getDelimiterMeanings($without_icon_log), ['icon' => $without_icon]),
+            ];
+        }
+
+        if ($with_demand_effect == 1) {
+            $card_args['with_demand'] = clienttranslate(' with a demand effect');
+        }
+    
+        return ['i18n' => ['log'], 'log' => $card_log, 'args' => $card_args];
+    }
+
+    function getRecursivelyTranslatedColorList($colors) {
+        $color_log = "";
+        $color_args = array();
+        
+        for ($i = 0; $i < count($colors); $i++) {
+            $colors_in_clear[$i] = self::getColorInClear($colors[$i]);
+        }
+        switch (count($colors)) {
+            case 1: 
+                $color_log = '${color}';
+                $color_args['color'] = self::getColorInClear($colors[1]);
+                break;
+
+            case 2:
+                $color_log = '${color_1} or ${color_2}';
+                $color_args['color_1'] = self::getColorInClear($colors[0]);
+                $color_args['color_2'] = self::getColorInClear($colors[1]);
+                break;
+
+            case 3:
+                $color_log = '${color_1}, ${color_2} or ${color_3}';
+                $color_args['color_1'] = self::getColorInClear($colors[0]);
+                $color_args['color_2'] = self::getColorInClear($colors[1]);
+                $color_args['color_3'] = self::getColorInClear($colors[2]);
+                break;
+
+            case 4:
+                $color_log = 'non-${color}';
+                for ($color = 0; $color < 5; $color++) {
+                    if (!in_array($color, $colors)) {
+                        $color_args['color'] = self::getColorInClear($color);
+                        break;
+                    }
+                }
+                break;
+        }
+        return ['i18n' => ['log'], 'log' => $color_log, 'args' => $color_args];
     }
 
 //////////////////////////////////////////////////////////////////////////////
