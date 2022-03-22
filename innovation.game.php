@@ -2379,63 +2379,63 @@ class Innovation extends Table
         if ($player_id_is_owner_from) {
             switch($location_from . '->' . $location_to) {
             case 'hand->hand':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your hand to {opponent_name}\'s hand');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his hand to {your} hand');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his hand to {opponent_name}\'s hand');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your hand to ${opponent_name}\'s hand');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${your} hand');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${opponent_name}\'s hand');
                 break;
                 
             case 'hand->score':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your hand to {opponent_name}\'s score pile');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his hand to {your} score pile');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his hand to {opponent_name}\'s score pile');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your hand to ${opponent_name}\'s score pile');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${your} score pile');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${opponent_name}\'s score pile');
                 break;
                 
             case 'hand->achievements':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your hand to {opponent_name}\'s achievements');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his hand to {your} achievements');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his hand to {opponent_name}\'s achievements');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your hand to ${opponent_name}\'s achievements');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${your} achievements');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${opponent_name}\'s achievements');
                 break;              
                 
             case 'board->board':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from your board to {opponent_name}\'s board');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} board');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s board');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from your board to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${opponent_name}\'s board');
                 break;
             
             case 'board->hand':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from your board to {opponent_name}\'s hand');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} hand');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s hand');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from your board to ${opponent_name}\'s hand');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${your} hand');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${opponent_name}\'s hand');
                 break;
                 
             case 'board->score':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from your board to {opponent_name}\'s score pile');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} score pile');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s score pile');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from your board to ${opponent_name}\'s score pile');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${your} score pile');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${opponent_name}\'s score pile');
                 break;
 
             case 'board->achievements':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from your board to {opponent_name}\'s achievements');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from his board to {your} achievements');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from his board to {opponent_name}\'s achievements');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from your board to ${opponent_name}\'s achievements');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${your} achievements');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${opponent_name}\'s achievements');
                 break;
                 
             case 'score->score':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your score pile to {opponent_name}\'s score pile');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his score pile to {your} score pile');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his score pile to {opponent_name}\'s score pile');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your score pile to ${opponent_name}\'s score pile');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his score pile to ${your} score pile');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his score pile to ${opponent_name}\'s score pile');
                 break;
             
             case 'achievements->achievements':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} from your achievements to {opponent_name}\'s achievements');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} from his achievements to {your} achievements');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} from his achievements to {opponent_name}\'s achievements');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your achievements to ${opponent_name}\'s achievements');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his achievements to ${your} achievements');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his achievements to ${opponent_name}\'s achievements');
                 break;
 
             case 'revealed->board':
-                $message_for_player = clienttranslate('{You must} transfer {number} {card} to {opponent_name}\'s board');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} {card} to {your} board');
-                $message_for_others = clienttranslate('{player must} transfer {number} {card} to {opponent_name}\'s board');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} to ${opponent_name}\'s board');
                 break;
 
             default:
@@ -2447,21 +2447,21 @@ class Innovation extends Table
         else { // $player_id_is_owner_to
             switch($location_from . '->' . $location_to) {
             case 'board->board':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from {opponent_name}\'s board to your board');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from {your} board to his board');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from {opponent_name}\'s board to his board');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from {opponent_name}\'s board to your board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from ${your} board to his board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from {opponent_name}\'s board to his board');
                 break;
                 
             case 'board->hand':
-                $message_for_player = clienttranslate('{You must} transfer {number} top {card} from {opponent_name}\'s board to your hand');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} top {card} from {your} board to his hand');
-                $message_for_others = clienttranslate('{player must} transfer {number} top {card} from {opponent_name}\'s board to his hand');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from {opponent_name}\'s board to your hand');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from ${your} board to his hand');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from {opponent_name}\'s board to his hand');
                 break;
             
             case 'revealed->board': // Collaboration
-                $message_for_player = clienttranslate('{You must} transfer {number} revealed {card} to your board.');
-                $message_for_opponent = clienttranslate('{player must} transfer {number} revealed {card} to his board.');
-                $message_for_others = clienttranslate('{player must} transfer {number} revealed {card} to his board.');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} revealed ${card} to your board.');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
                 break;
             
             default:
@@ -2470,16 +2470,57 @@ class Innovation extends Table
                 break;
             }
         }
-        
-        $message_for_player = self::format($message_for_player, array('You must' => $you_must, 'number' => $number, 'card' => $cards, 'opponent_name' => $opponent_name));
-        $message_for_opponent = self::format($message_for_opponent, array('player must' => $player_must, 'number' => $number, 'card' => $cards, 'your' => $your));
-        $message_for_others = self::format($message_for_others, array('player must' => $player_must, 'number' => $number, 'card' => $cards, 'opponent_name' => $opponent_name));
-        
-        return array(
-            'message_for_player' => $message_for_player,
-            'message_for_opponent' => $message_for_opponent,
-            'message_for_others' => $message_for_others
-        );
+
+        return [
+            'message_for_player' => [
+                'i18n' => ['log'],
+                'log' => $message_for_player,
+                'args' => [
+                    'You_must' => [
+                        'i18n' => ['log'],
+                        'log' => $you_must,
+                        'args' => [
+                            'You' => 'You',
+                        ],
+                    ],
+                    'number' => $number,
+                    'card' => $cards,
+                    'opponent_name' => $opponent_name,
+                ],
+            ],
+            'message_for_opponent' => [
+                'i18n' => ['log'],
+                'log' => $message_for_opponent,
+                'args' => [
+                    'player_must' => [
+                        'i18n' => ['log'],
+                        'log' => $player_must,
+                        'args' => [
+                            'player_name' => $player_name,
+                        ],
+                    ],
+                    'number' => $number,
+                    'card' => $cards,
+                    'your' => $your,
+                ],
+            ],
+            'message_for_others' => [
+                'i18n' => ['log'],
+                'log' => $message_for_others,
+                'args' => [
+                    'player_must' => [
+                        'i18n' => ['log'],
+                        'log' => $player_must,
+                        'args' => [
+                            'player_name' => $player_name,
+                        ],
+                    ],
+                    'number' => $number,
+                    'card' => $cards,
+                    'opponent_name' => $opponent_name,
+                ],
+            ],
+        ];
     }
     
     function sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo) {     
