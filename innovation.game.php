@@ -7342,7 +7342,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
             }
         } else {
-            // TODO(#320): Fix the recursive translation.
             $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
             $splay_direction = null;
             $splay_direction_in_clear = null;
