@@ -697,7 +697,7 @@ function (dojo, declare) {
         onEnteringState: function (stateName, args) {
             console.log('Entering state: '+stateName)
             console.log(args)
-            
+
             if (this.just_setupped) { // Here, do things that have to be done on setup but that cannot be done inside the function
                 
                 for(var player_id in this.players) { // Displaying player BGA scores
@@ -2578,6 +2578,7 @@ function (dojo, declare) {
         },
         
         action_clickDogma : function(event) {
+            this.stopActionTimer();
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
@@ -2618,6 +2619,8 @@ function (dojo, declare) {
         },
 
         action_manuallyConfirmDogma : function(event) {
+            this.stopActionTimer();
+            this.deactivateClickEvents();
             var HTML_id = dojo.attr('dogma_confirm_button', 'html_id');
             this.action_confirmDogma(HTML_id);
         },
