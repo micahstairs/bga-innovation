@@ -9843,7 +9843,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     throw new EndOfGame();
                 }
                 foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
-                    $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'hand');
                 }
                 break;
@@ -10130,7 +10129,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Put them back in hand so the return order can be determined by the player
                 $cards = self::getCardsInLocation($player_id, 'revealed');
                 foreach ($cards as $card) {
-                    $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'hand');
                 }
                 
@@ -15730,7 +15728,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             if (!$artifact_found) {
                                 while (($top_card = self::getTopCardOnBoard($id, $returned_color)) !== null) {   
                                     // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
-                                    $top_card = self::getCardInfo($top_card['id']);
                                     self::transferCardFromTo($top_card, $player_id, 'score');
                                 }
                             }
@@ -15836,7 +15833,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Return revealed cards back to player's hand.
                     $cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($cards as $card) {
-                        $card = self::getCardInfo($card['id']);
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
                     break;
@@ -16038,7 +16034,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Put all cards back in hand
                     $cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($cards as $card) {
-                        $card = self::getCardInfo($card['id']);
                         self::transferCardFromTo($card, $player_id, 'hand');
                     }
                     break;
@@ -16492,7 +16487,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Put the rest of the cards of the same color back in the score pile (making it easier to isolate the selectable cards for future interactions)
                     $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($revealed_cards as $card) {
-                        $card = self::getCardInfo($card['id']);
                         if ($card['color'] == self::getGameStateValue('color_last_selected')) {
                             self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
                         } else {
