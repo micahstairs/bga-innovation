@@ -808,29 +808,19 @@ function (dojo, declare) {
                     var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
-                    this.on(cards_in_hand, 'onclick', 'action_clicForMeld');
+                    this.on(cards_in_hand, 'onclick', 'action_clickMeld');
 
                     // Artifact on display (meld action)
                     this.addTooltipWithMeldActionToMyArtifactOnDisplay();
                     var artifact_on_display = this.selectArtifactOnDisplay();
                     artifact_on_display.addClass("clickable");
-                    this.on(artifact_on_display, 'onclick', 'action_clicForMeld');
+                    this.on(artifact_on_display, 'onclick', 'action_clickMeld');
                     
                     // Cards on board (dogma action)
                     this.addTooltipsWithActionsToMyBoard(args.args._private.dogma_effect_info);
                     var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clickDogma');
-
-                    // Add cancel button
-                    this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
-                    dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
-                    dojo.addClass("dogma_cancel_button", 'bgabutton_red');
-                    dojo.addClass("dogma_cancel_button", 'hidden');
-
-                    // Add confirm button
-                    this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
-                    dojo.addClass("dogma_confirm_button", 'hidden');
                     
                     break;
                 case 'selectionMove':
@@ -1400,7 +1390,14 @@ function (dojo, declare) {
         },
 
         addTooltipsWithActionsToMyHand : function() {
-            this.addTooltipsWithActionsTo(this.selectMyCardsInHand(), this.createActionTextForMeld);
+            var cards = this.selectMyCardsInHand();
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            var self = this;
+            cards.forEach(function(card) {
+                var HTML_id = dojo.attr(card, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
+            });
         },
 
         addTooltipsWithActionsToMyBoard : function(dogma_effect_info) {
@@ -2558,23 +2555,68 @@ function (dojo, declare) {
            );
         },
         
-        action_clicForMeld : function(event) {
-            if(!this.checkAction('meld')){
+        action_clickMeld : function(event) {
+            this.stopActionTimer();
+            this.deactivateClickEvents();
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_name = dojo.attr(HTML_id, 'card_name');
+
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Meld ${card_name}?"), {'card_name' : _(card_name)});
+
+            // Add cancel button
+            this.addActionButton("meld_cancel_button", _("Cancel"), "action_cancelMeld");
+            dojo.removeClass("meld_cancel_button", 'bgabutton_blue');
+            dojo.addClass("meld_cancel_button", 'bgabutton_red');
+
+            // Add confirm button
+            this.addActionButton("meld_confirm_button", _("Confirm"), "action_manuallyConfirmMeld");
+
+            $("meld_confirm_button").innerHTML = _("Confirm");
+            dojo.attr('meld_confirm_button', 'html_id', HTML_id);
+
+            // When confirmation is disabled in game preferences, click the confirmation button instantly
+            if (this.prefs[101].value == 1) {
+                this.startActionTimer("meld_confirm_button", 0, this.action_confirmMeld, HTML_id);
+
+            // When confirmation is enabled in game preferences, Confirm automatically after a few seconds
+            } else {
+                this.startActionTimer("meld_confirm_button", 2, this.action_confirmMeld, HTML_id);
+            }
+        },
+
+        action_cancelMeld : function(event) {
+            this.stopActionTimer();
+            this.resurrectClickEvents(false);
+            dojo.destroy("meld_cancel_button");
+            dojo.destroy("meld_confirm_button");
+        },
+
+        action_manuallyConfirmMeld : function(event) {
+            this.stopActionTimer();
+            this.deactivateClickEvents();
+            var HTML_id = dojo.attr('meld_confirm_button', 'html_id');
+            this.action_confirmMeld(HTML_id);
+        },
+
+        action_confirmMeld : function(HTML_id) {
+            if (!this.checkAction('meld')) {
                 return;
             }
-            this.deactivateClickEvents();
-            
-            var HTML_id = this.getCardHTMLIdFromEvent(event);
+
+            dojo.destroy("meld_cancel_button");
+            dojo.destroy("meld_confirm_button");
+
             var card_id = this.getCardIdFromHTMLId(HTML_id);
-            
-            var self = this;
             this.ajaxcall("/innovation/innovation/meld.html",
-                            {
-                                lock: true,
-                                card_id: card_id
-                            },
-                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
-                        );
+                {
+                    lock: true,
+                    card_id: card_id
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
         },
         
         action_clickDogma : function(event) {
@@ -2585,37 +2627,39 @@ function (dojo, declare) {
             var no_effect = dojo.attr(HTML_id, 'no_effect');
             var card_name = dojo.attr(HTML_id, 'card_name');
 
-            console.log(this.prefs[100].value);
-            
             if (no_effect) {
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${card_name}? It will have no effect."), {'card_name' : _(card_name)});
             } else {
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${card_name}?"), {'card_name' : _(card_name)});
             }
 
+            // Add cancel button
+            this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
+            dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
+            dojo.addClass("dogma_cancel_button", 'bgabutton_red');
+
+            // Add confirm button
+            this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
+
             $("dogma_confirm_button").innerHTML = _("Confirm");
             dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
-
 
             if (no_effect) {
                 // If the card will not have an effect, force the player to manually click confirm
             } else if (this.prefs[100].value == 1) {
-                // Click the confirmation button instantly
+                // // When confirmation is disabled in game preferences, click the confirmation button instantly
                 this.startActionTimer("dogma_confirm_button", 0, this.action_confirmDogma, HTML_id);
             } else {
-                // Confirm automatically after a few seconds
+                // // When confirmation is enabled in game preferences, confirm automatically after a few seconds
                 this.startActionTimer("dogma_confirm_button", 2, this.action_confirmDogma, HTML_id);
             }
-
-            dojo.removeClass("dogma_cancel_button", 'hidden');
-            dojo.removeClass("dogma_confirm_button", 'hidden');
         },
 
         action_cancelDogma : function(event) {
             this.stopActionTimer();
-            this.resurrectClickEvents(true);
-            dojo.addClass("dogma_confirm_button", 'hidden');
-            dojo.addClass("dogma_cancel_button", 'hidden');
+            this.resurrectClickEvents(false);
+            dojo.destroy("dogma_cancel_button");
+            dojo.destroy("dogma_confirm_button");
         },
 
         action_manuallyConfirmDogma : function(event) {
@@ -2630,15 +2674,16 @@ function (dojo, declare) {
                 return;
             }
 
+            dojo.destroy("dogma_cancel_button");
+            dojo.destroy("dogma_confirm_button");
+
             var card_id = this.getCardIdFromHTMLId(HTML_id);
-            var self = this;
             this.ajaxcall("/innovation/innovation/dogma.html",
                 {
                     lock: true,
-                    player_id: self.player_id,
                     card_id: card_id
                 },
-                self,
+                this,
                 function(result) { },
                 function(is_error) { if (is_error) this.resurrectClickEvents(false); }
             );
