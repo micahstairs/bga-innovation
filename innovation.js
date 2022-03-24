@@ -1414,7 +1414,14 @@ function (dojo, declare) {
         },
 
         addTooltipWithMeldActionToMyArtifactOnDisplay : function() {
-            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplay(), this.createActionTextForMeld);
+            var cards = this.selectArtifactOnDisplay();
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            var self = this;
+            cards.forEach(function(card) {
+                var HTML_id = dojo.attr(card, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
+            });
         },
 
         addTooltipWithDogmaActionToMyArtifactOnDisplay : function(dogma_effect_info) {
@@ -2587,14 +2594,13 @@ function (dojo, declare) {
 
         action_cancelMeld : function(event) {
             this.stopActionTimer();
-            this.resurrectClickEvents(false);
+            this.resurrectClickEvents(true);
             dojo.destroy("meld_cancel_button");
             dojo.destroy("meld_confirm_button");
         },
 
         action_manuallyConfirmMeld : function(event) {
             this.stopActionTimer();
-            this.deactivateClickEvents();
             var HTML_id = dojo.attr('meld_confirm_button', 'html_id');
             this.action_confirmMeld(HTML_id);
         },
@@ -2657,14 +2663,13 @@ function (dojo, declare) {
 
         action_cancelDogma : function(event) {
             this.stopActionTimer();
-            this.resurrectClickEvents(false);
+            this.resurrectClickEvents(true);
             dojo.destroy("dogma_cancel_button");
             dojo.destroy("dogma_confirm_button");
         },
 
         action_manuallyConfirmDogma : function(event) {
             this.stopActionTimer();
-            this.deactivateClickEvents();
             var HTML_id = dojo.attr('dogma_confirm_button', 'html_id');
             this.action_confirmDogma(HTML_id);
         },
@@ -2685,7 +2690,7 @@ function (dojo, declare) {
                 },
                 this,
                 function(result) { },
-                function(is_error) { if (is_error) this.resurrectClickEvents(false); }
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
             );
         },
         
