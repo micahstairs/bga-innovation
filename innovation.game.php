@@ -9750,8 +9750,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "141C1":
                 // "I compel you to reveal all cards in your hand"
                 $cards = self::getCardsInLocation($player_id, 'hand');
-                // TODO(#326): Fix bug when there is more than one card being revealed.
+                
                 foreach ($cards as $card) {
+                    $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'revealed');
                 }
                 $step_max = 1;
@@ -9825,17 +9826,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 148, Artifacts age 4: Tortugas Galleon
             case "148C1":
-                $max_age = self::getMaxAgeInScore($player_id);
-                if ($max_age > 0) {
+                $card_ids = self::getIdsOfHighestCardsInLocation($player_id, 'score');
+                if (count($card_ids) > 0) {
                     // "I compel you to transfer all the highest cards from your score pile to my score pile!"
-                    $cards = self::getCardsInLocationKeyedByAge($player_id, 'score');
-                    $cards_to_transfer = $cards[$max_age];
-                    // TODO(#326): Fix front-end bug which occurs when this effect is triggered and more than one card is transfered.
-                    // It can be fixed using self::getIdsOfHighestCardsInLocation instead of the existing approach. See Statistics as an example.
-                    foreach ($cards_to_transfer as $card) {
+                    foreach ($card_ids as $card_id) {
+                        $card = self::getCardInfo($card_id);
                         self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
                     }
-                    self::setAuxiliaryValue($max_age);
+                    self::setAuxiliaryValue($card['age']);
                     $step_max = 1;
                 }
                 break;
@@ -9882,6 +9880,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // TODO(#105): Use a bulk reveal instead.
                 $cards = self::getCardsInHand($player_id);
                 foreach ($cards as $card) {
+                    $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'revealed');
                 }
             
@@ -10171,6 +10170,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $colors_in_hand = array(0, 0, 0, 0, 0);
                 foreach ($cards as $card) {
                     // TODO(#105): Instead of physically moving the cards, we should dump the list to the game log.
+                    $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'revealed');
                     $colors_in_hand[$card['color']] = 1;
                 }
@@ -10567,8 +10567,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $score_cards = self::getCardsInLocation($player_id, 'score');
                 if (count($score_cards) > 0) {
                     // TODO(#105): Instead of moving cards one at a time, we should instead reveal by printing out the cards to the game log.
-                    // Doing so will also fix #326.
                     foreach ($score_cards as $card) {
+                        $card = self::getCardInfo($card['id']);
                         self::transferCardFromTo($card, $player_id, 'revealed');
                     }
                     $step_max = 1;
@@ -13599,7 +13599,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $value_to_return = self::getAuxiliaryValue();
             $num_players_who_returned = 0;
             foreach (self::getAllActivePlayerIds() as $id) {
-                // TODO(#326): Fix bug when there is more than one card being returned from a specific score pile.
                 $score_pile = self::getCardsInLocation($id, 'score');
                 foreach ($score_pile as $card) {
                     if ($card['age'] == $value_to_return) {
@@ -15751,8 +15750,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $achievements_by_age = self::getCardsInLocationKeyedByAge(0, "achievements");
                     $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
                     foreach ($different_values_selected_so_far as $returned_age) {
-                        // TODO(#326): Fix bug when there is more than one card of a specific age being achieved.
                         foreach ($achievements_by_age[$returned_age] as $achievement) {
+                            $achievement = self::getCardInfo($achievement['id']); // refresh card info
                             self::transferCardFromTo($achievement, $player_id, 'achievements');
                         }
                     }
@@ -16063,6 +16062,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, 4, 'revealed');
                     }
                     foreach (self::getCardsInHand($player_id) as $card) {
+                        $card = self::getCardInfo($card['id']);
                         self::transferCardFromTo($card, $player_id, 'revealed');
                     }
                     
