@@ -9654,8 +9654,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "129N1":
                 // "If Holy Grail is a top card on your board, you win"
-                $card = self::getIfTopCardOnBoard(131);
-                if ($card !== null) {
+                $top_card = self::getTopCardOnBoard($player_id, 3); // top yellow card
+                if ($top_card !== null && $top_card['id'] == 131) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Holy Grail as a top card.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
