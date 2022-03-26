@@ -1,0 +1,1700 @@
+@use "sass:math";
+@import "../../../css/csslayer.css";
+
+
+/* codex for numbers and symbols
+ *
+ * **Icons**
+ * icon_0 - hex
+ * icon_1 - crowns
+ * icon_2 - leaves 
+ * icon_3 - bulbs 
+ * icon_4 - towers 
+ * icon_5 - factories 
+ * icon_6 - clocks
+ *
+ * **Colors**
+ * color_0 - blue
+ * color_1 - red
+ * color_2 - green
+ * color_3 - yellow
+ * color_4 - purple
+ */
+
+#main_area {
+    display: inline-block;
+    vertical-align: top;
+}
+.minor_information {
+    font-size: 0.8em;
+}
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+.log {
+    >.roundedbox {
+        &:empty {
+            margin: 0;
+            padding: 0;
+            height: 2px;
+            background-color: #ebd5bd;
+        }
+    }
+}
+#debug_card_list {
+    height: 30px;
+}
+#debug_draw, #debug_score, #debug_achieve, #debug_return, #debug_dig {
+    width: 100px;
+}
+.card_name {
+    font-weight: bold;
+    font-style: normal;
+    color: black;
+}
+.achievement_name {
+    font-weight: bold;
+    color: black;
+}
+.player.whiteblock {
+    border-width: 1px;
+    border-color: black;
+    border-radius: 20px;
+    border-style: solid;
+    padding: 5px;
+    position: relative;
+    >p {
+        >span {
+            font-weight: normal;
+        }
+    }
+    &:nth-last-of-type(n + 2) {
+        margin-bottom: 20px;
+    }
+    &:nth-last-of-type(1) {
+        margin-bottom: 0;
+    }
+}
+.display_container {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    width: 195px;
+    height: 165px;
+    margin-bottom: 5px;
+    >div {
+        height: inherit;
+        padding: 5px;
+        >p {
+            font-style: italic;
+            margin: 0;
+        }
+    }
+    .display {
+        top: 5px;
+        padding-bottom: 12px;
+    }
+}
+.hand_container {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    >div {
+        background-color: #ebd5bd;
+        padding: 5px;
+        padding-bottom: 12px;
+        >p {
+            font-style: italic;
+            margin: 0;
+        }
+    }
+    .hand {
+        top: 5px;
+    }
+}
+.revealed_container {
+    padding: 5px;
+    width: 182px;
+    margin: auto;
+}
+#display_button_bar {
+    height: 49px;
+}
+#change_display_mode_button {
+    display: inline-block;
+    font-size: 12px;
+    margin-left: 5px;
+    background-color: rgba(255,255,255,.5);
+    border-style: dotted;
+}
+#change_view_full_button {
+    display: inline-block;
+    font-size: 12px;
+    margin-left: 5px;
+    background-color: rgba(255,255,255,.5);
+    border-style: dotted;
+}
+.disabled {
+    color: grey !important;
+    border-color: grey;
+    &:hover {
+        color: grey !important;
+        border-color: grey;
+        cursor: auto;
+    }
+}
+.board {
+    min-height: 171px;
+    >p {
+        font-style: italic;
+        margin: 0;
+    }
+}
+.pile_container {
+    margin-right: 30px;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    display: inline-block;
+}
+.pile {
+    min-height: 126px;
+}
+.progress {
+    margin-top: 30px;
+}
+.score_container {
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    >p {
+        font-style: italic;
+        font-size: 0.8em;
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+        right: 3px;
+        height: 16px;
+        overflow-y: hidden;
+        text-align: right;
+    }
+}
+.achievement_container {
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    >p {
+        font-style: italic;
+        font-size: 0.8em;
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+        left: 3px;
+        height: 16px;
+        overflow-y: hidden;
+    }
+}
+.score {
+    display: inline-block;
+    margin-top: 18px;
+    display: inline-block;
+    height: 49px;
+}
+.achievements {
+    display: inline-block;
+    margin-top: 18px;
+    display: inline-block;
+    height: 49px;
+}
+.score_show_window {
+    text-decoration: underline;
+    font-weight: bold;
+    &:hover {
+        cursor: pointer;
+    }
+}
+.reference_card {
+    display: inline-block;
+    background-image: url('img/reference_cards.jpg');
+    position: relative;
+    &.M {
+        width: 560px;
+        height: 408px;
+        background-size: 570px auto;
+        &.side_1{
+            background-position: -2px -2px;
+        }
+        &.side_2 {
+            background-position: -2px -408px;
+        }
+    }
+    &.S {
+        width: 96px;
+        height: 69px;
+        background-size: 100px auto;
+        background-position: -2px -145px;
+    }
+}
+.reference_card_block {
+    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
+    position: absolute;
+
+    &.actions_header {
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+    &.actions_txt {
+        width: 450px;
+        height: 36px;
+        left: 55px;
+        top: 38px;
+    }
+    &.meld_title {
+        width: 143px;
+        height: 23px;
+        left: 55px;
+        top: 91px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.meld_parag {
+        width: 143px;
+        height: 94px;
+        left: 55px;
+        top: 114px;
+    }
+    &.draw_title {
+        width: 143px;
+        height: 23px;
+        left: 206px;
+        top: 91px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.draw_parag {
+        width: 143px;
+        height: 94px;
+        left: 206px;
+        top: 114px;
+    }
+    &.achieve_title {
+        width: 148px;
+        height: 23px;
+        left: 357px;
+        top: 91px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.achieve_parag {
+        width: 148px;
+        height: 94px;
+        left: 357px;
+        top: 114px;
+    }
+    &.dogma_title {
+        width: 450px;
+        height: 23px;
+        left: 55px;
+        top: 209px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.dogma_parag {
+        width: 450px;
+        height: 121px;
+        left: 55px;
+        top: 232px;
+    }
+    &.tuck_title {
+        width: 145px;
+        height: 23px;
+        left: 55px;
+        top: 40px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.tuck_parag {
+        width: 145px;
+        height: 72px;
+        left: 55px;
+        top: 63px;
+    }
+    &.return_title {
+        width: 145px;
+        height: 23px;
+        left: 206px;
+        top: 40px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.return_parag {
+        width: 145px;
+        height: 72px;
+        left: 206px;
+        top: 63px;
+    }
+    &.draw_and_x_title {
+        width: 148px;
+        height: 23px;
+        left: 357px;
+        top: 40px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.draw_and_x_parag {
+        width: 148px;
+        height: 72px;
+        left: 357px;
+        top: 63px;
+    }
+    &.splay_title {
+        width: 450px;
+        height: 23px;
+        left: 55px;
+        top: 145px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.splay_parag {
+        width: 341px;
+        height: 28px;
+        left: 55px;
+        top: 168px;
+    }
+    &.splayed_left_example {
+        width: 115px;
+        height: 14px;
+        left: 75px;
+        top: 262px;
+        text-align: center;
+        font-style: italic;
+    }
+    &.splayed_right_example {
+        width: 115px;
+        height: 14px;
+        left: 245px;
+        top: 262px;
+        text-align: center;
+        font-style: italic;
+    }
+    &.splayed_up_example {
+        width: 115px;
+        height: 14px;
+        left: 402px;
+        top: 262px;
+        text-align: center;
+        font-style: italic;
+    }
+    &.empty_piles_title {
+        width: 145px;
+        height: 23px;
+        left: 55px;
+        top: 286px;
+        text-align: center;
+        font-weight: bold;
+    }
+    &.empty_piles_parag {
+        width: 145px;
+        height: 57px;
+        left: 55px;
+        top: 309px;
+    }
+    &.icon_1_ages {
+        width: 50px;
+        height: 18px;
+        left: 316px;
+        top: 307px;
+    }
+    &.icon_2_ages {
+        width: 50px;
+        height: 18px;
+        left: 316px;
+        top: 330px;
+    }
+    &.icon_3_ages {
+        width: 50px;
+        height: 18px;
+        left: 316px;
+        top: 352px;
+    }
+    &.icon_4_ages {
+        width: 50px;
+        height: 18px;
+        left: 240px;
+        top: 307px;
+    }
+    &.icon_5_ages {
+        width: 50px;
+        height: 18px;
+        left: 240px;
+        top: 330px;
+    }
+    &.icon_6_ages {
+        width: 50px;
+        height: 18px;
+        left: 240px;
+        top: 352px;
+    }
+    &.colors_title {
+        width: 67px;
+        height: 18px;
+        left: 395px;
+        top: 284px;
+        font-weight: bold;
+    }
+    &.red_icon {
+        width: 47px;
+        height: 18px;
+        left: 414px;
+        top: 308px;
+    }
+    &.purple_icon {
+        width: 47px;
+        height: 18px;
+        left: 414px;
+        top: 329px;
+    }
+    &.blue_icon {
+        width: 47px;
+        height: 18px;
+        left: 414px;
+        top: 352px;
+    }
+    &.green_icon {
+        width: 47px;
+        height: 18px;
+        left: 485px;
+        top: 308px;
+    }
+    &.yellow_icon {
+        width: 39px;
+        height: 18px;
+        left: 485px;
+        top: 329px;
+    }
+}
+
+.player-board {
+    position: relative;
+}
+.action_card {
+    display: inline-block;
+    margin-left: 7px;
+    width: 57px;
+    height: 36px;
+    background-image: url('img/action_card.jpg');
+    background-size: 57px 36px;
+    background-position: -0px -0px;
+    position: relative;
+}
+.action_text {
+    position: absolute;
+    text-align: center;
+    line-height: 12px;
+    top: 7px;
+    width: 47px;
+    height: 29px;
+    font-weight: bold;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+#decks_and_available_achievements {
+    display: inline-block;
+    margin-left: 10px;
+    p {
+        margin-bottom: 5px;
+        margin-right: 5px;
+    }
+}
+#decks {
+    vertical-align: top;
+    margin-top: 30px;
+    width: 208.45px;
+}
+#available_relics_container {
+    vertical-align: top;
+    margin-top: 30px;
+    width: 208.45px;
+}
+#available_achievements_container {
+    vertical-align: top;
+    margin-top: 30px;
+    width: 208.45px;
+}
+#available_special_achievements_container {
+    vertical-align: top;
+    margin-top: 30px;
+    width: 208.45px;
+}
+.deck_set {
+    display: inline-block;
+    >.deck_pile {
+        display: flex;
+        height: 49px;
+        margin-bottom: 5px;
+        margin-right: 5px;
+
+        >.deck {
+            display: inline-block;
+            width: 80px;
+            height: 100%;
+        }
+        >.deck_count {
+            margin-right: 2px;
+            width: 20px;
+            display: flex;
+            align-items: center;
+        }
+    }
+}
+#relics {
+    margin-left: 45px;
+}
+#achievements {
+    margin-left: 45px;
+}
+#special_achievements {
+    margin-left: 20px;
+}
+.player {
+    >p {
+        font-weight: bold;
+    }
+}
+.text_left {
+    font-style: italic;
+    margin: 0;
+    margin-left: 20px;
+}
+.text_center {
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+}
+.two_lines {
+    top: -16px !important;
+    height: 32px !important;
+}
+.sep {
+    display: inline-block;
+    width: 23px;
+}
+.player_info {
+    margin-top: 5px;
+    margin-left: 36px;
+}
+.ressource_table {
+    display: inline-block;
+    margin-top: 5px;
+    
+    .ressource {
+        border-radius: 4px;
+        width: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #ffffff;
+    }
+    .ressource.with_border {
+        text-shadow: 1px 1px 2px black, 0 0 25px black, 0 0 5px black;
+    }
+    .ressource_1 {
+        background-color: #e7ab22;
+    }
+    .ressource_2 {
+        background-color: #153a1c;
+    }
+    .ressource_3 {
+        background-color: #913c97;
+    }
+    .ressource_4 {
+        background-color: #404446;
+    }
+    .ressource_5 {
+        background-color: #850e04;
+    }
+    .ressource_6 {
+        background-color: #14247f;
+    }
+}
+
+
+.equal {
+    color: #AAAAAA;
+}
+.more {
+    color: green;
+}
+.less {
+    color: red;
+}
+.card_age {
+    color: white;
+    text-align: center;
+    font-family: Tahoma, Arial, sans-serif;
+    font-weight: bold;
+    position: absolute;
+    &.M {
+        width: 14px;
+        height: 14px;
+        top: 4px;
+        line-height: 16px;
+    }
+    &.L {
+        width: 25px;
+        height: 25px;
+        top: 26px;
+        line-height: 14px;
+    }
+}
+.color_0 {
+    .card_age {
+        &.M {
+            right: 6.5px;
+        }
+        &.L {
+            right: 21px;
+        }
+    }
+}
+.color_1 {
+    .card_age {
+        &.M {
+            right: 6px;
+        }
+        &.L {
+            right: 21px;
+        }
+    }
+}
+.color_2 {
+    .card_age {
+        &.M {
+            right: 6.5px;
+        }
+        &.L {
+            right: 20px;
+        }
+    }
+}
+.color_3 {
+    .card_age {
+        &.M {
+            right: 6px;
+        }
+        &.L {
+            right: 22px;
+        }
+    }
+}
+.color_4 {
+    .card_age {
+        &.M {
+            right: 6.5px;
+        }
+        &.L {
+            right: 22px;
+        }
+    }
+}
+
+.card_title {
+    color: white;
+    font-family: Tahoma, Arial, sans-serif;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    &.M {
+        left: 54px;
+        top: 5px;
+        width: 93px;
+        height: 15px;
+    }
+    &.L {
+        left: 143px;
+        top: 18px;
+        width: 230px;
+        height: 37px;
+    }
+}
+.i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
+    font-weight: bold;
+}
+.card_effects {
+    position: absolute;
+}
+.effect_text {
+    font-family: Tahoma, Arial, sans-serif;
+    &.light {
+        color: black;
+    }
+    &.dark {
+        color: white;
+    }
+}
+.effect {
+    position: relative;
+    border-style: solid;
+    border-width: 1px;
+    padding-right: 1px;
+    padding-bottom: 1px;
+    
+    &.M {
+        &:nth-of-type(n+2) {
+            margin-top: 4px;
+        }
+        padding-left: 9px;
+        line-height: 8px;
+    }
+    &.L {
+        &:nth-of-type(n+2) {
+            margin-top: 10px;
+        }
+        padding-left: 19px;
+        line-height: 22px;
+    }
+}
+.card_effects {
+    &.M {
+        right: 7px;
+        top: 25px;
+        width: 120px;
+        height: 53px;
+
+        >.font_size_1, >.font_size_2, >.font_size_3, >.font_size_4, >.font_size_5 {
+            >.effect.M {
+                line-height: 5px;
+            }
+        }
+        >.font_size_6 {
+            >.effect.M {
+                line-height: 6px;
+            }
+        }
+        >.font_size_7 {
+            >.effect.M {
+                line-height: 7px;
+            }
+        }
+    }
+    &.L {
+        left: 135px;
+        top: 64px;
+        width: 295px;
+        height: 137px;
+    }
+}
+.effect.color_0 {
+    border-color: #0e2a50;
+    &.light {
+        background-color: #8bd2f1;
+    }
+    &.dark {
+        background-color: #0e2a50;
+    }
+}
+.effect.color_1 {
+    border-color: #5a090c;
+    &.light {
+        background-color: #f7c3d2;
+    }
+    &.dark {
+        background-color: #5a090c;
+    }
+}
+.effect.color_2 {
+    border-color: #122c18;
+    &.light {
+        background-color: #9dd19b;
+    }
+    &.dark {
+        background-color: #122c18;
+    }
+}
+.effect.color_3 {
+    border-color: #8b6a28;
+    &.light {
+        background-color: #f4f4be;
+    }
+    &.dark {
+        background-color: #8b6a28;
+    }
+}
+.effect.color_4 {
+    border-color: #220e40;
+    &.light {
+        background-color: #b4bcd8;
+    }
+    &.dark {
+        background-color: #220e40;
+    }
+}
+.current_effect {
+    box-shadow: 0px 0px 6px 2px #fff;
+    &.light {
+        background-color: rgb(255 255 255 / 80%) !important;
+    }
+    &.dark {
+        background-color: rgb(0 0 0 / 80%) !important;
+    }
+}
+.clickable {
+    box-shadow: 0 0 6px 3px rgb(27, 5, 154) !important;
+    &:hover {
+        cursor: pointer;
+    }
+}
+.selected {
+    box-shadow: 0 0 6px 3px rgb(178, 10, 10) !important;
+}
+.clickable_important {
+    box-shadow: 0 0 6px 3px rgb(178, 10, 10) !important;
+}
+.splay_indicator {
+    margin: auto;
+    margin-top: 5px;
+    width: 16px;
+    height: 16px;
+    &.splay_1,&.splay_2,&.splay_3 {
+        background-image: url('img/squares.png');
+    }
+    &.splay_1 {
+        background-position: -80px -0px;
+    }
+    &.splay_2 {
+        background-position: -96px -0px;
+    }
+    &.splay_3 {
+        background-position: -112px -0px;
+    }
+}
+
+.in_tooltip {
+    display: inline-block;
+    &.M {
+        vertical-align: bottom;
+    }
+    &.L {
+        vertical-align: text-bottom;
+    }
+    &.P {
+        vertical-align: middle;
+    }
+    &.basic  {
+        margin-right: 4px;
+    }
+}
+.tooltip {
+    td {
+        vertical-align: middle;
+    }
+    tr {
+        &:nth-of-type(2) {
+            >td {
+                padding-top: 10px;
+            }
+        }
+    }
+}
+.action {
+    * {
+        text-align: justify;
+        text-justify: distribute;
+    }
+    &.in_tooltip {
+        margin-top: 20px;
+        margin-right: 20px;
+        padding-left: 20px;
+        border-top: 1px solid #4871b6;
+    }
+}
+
+.warning {
+    color: red;
+}
+.recap_dogma {
+    li {
+        list-style-type: disc;
+    }
+}
+#logs {
+    .square {
+        vertical-align: top;
+        margin-top: 1px;
+    }
+}
+.bgabutton {
+    .square {
+        margin-top: 2px;
+        vertical-align: top;
+    }
+}
+.with_white_border {
+    border-right: 2px solid #ffffff;
+}
+.with_border {
+    border-right: 2px solid #ebd5bd;
+}
+.all_icons {
+    background-image: url('img/squares.png');
+    display: inline-block;
+    width: 114px;
+    height: 19px;
+    background-position: -0px -82px;
+}
+.dogma_symbol {
+    position: absolute;
+}
+.simple_stats {
+    height: 19px;
+}
+.square {
+    background-image: url('img/squares.png');
+    display: inline-block;
+    &.basic {
+        width: 16px;
+        height: 16px;
+        &.icon_score {
+            background-position: -0px -0px;
+            margin-top: 2px;
+            margin-left: 2px;
+        }
+        &.icon_hand {
+            background-position: -16px -0px;
+            vertical-align: top;
+            margin-top: 4px;
+            margin-left: 3px;
+        }
+        &.icon_age_indicator {
+            background-position: -64px -0px;
+            vertical-align: top;
+            margin-top: 4px;
+            margin-left: 4px;
+        }
+        &.icon_help {
+            background-position: -32px -0px;
+        }
+        &.icon_action {
+            background-position: -48px -0px;
+        }
+    }
+    &.N {
+        width: 14px;
+        height: 14px;
+        &.icon_1 {
+            background-position: -0px -16px;
+        }
+        &.icon_2 {
+            background-position: -14px -16px;
+        }
+        &.icon_3 {
+            background-position: -28px -16px;
+        }
+        &.icon_4 {
+            background-position: -42px -16px;
+        }
+        &.icon_5 {
+            background-position: -56px -16px;
+        }
+        &.icon_6 {
+            background-position: -70px -16px;
+        }
+        &.age_1 {
+            background-position: -0px -30px;
+        }
+        &.age_2 {
+            background-position: -14px -30px;
+        }
+        &.age_3 {
+            background-position: -28px -30px;
+        }
+        &.age_4 {
+            background-position: -42px -30px;
+        }
+        &.age_5 {
+            background-position: -56px -30px;
+        }
+        &.age_6 {
+            background-position: -70px -30px;
+        }
+        &.age_7 {
+            background-position: -84px -30px;
+        }
+        &.age_8 {
+            background-position: -98px -30px;
+        }
+        &.age_9 {
+            background-position: -112px -30px;
+        }
+        &.age_10 {
+            background-position: -126px -30px;
+        }
+    }
+    &.P {
+        width: 20px;
+        height: 20px;
+        background-image: url('img/resource_icons.jpg');
+        background-size: 133px auto;
+        &.icon_1 {
+            background-position: -1px -112px;
+        }
+        &.icon_2 {
+            background-position: -23px -112px;
+        }
+        &.icon_3 {
+            background-position: -45px -112px;
+        }
+        &.icon_4 {
+            background-position: -68px -112px;
+        }
+        &.icon_5 {
+            background-position: -90px -112px;
+        }
+        &.icon_6 {
+            background-position: -112px -112px;
+        }
+    }
+    &.M {
+        width: 9px;
+        height: 9px;
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+            width: 8px;
+            height: 8px;
+            background-image: url('img/resource_icons.jpg');
+            background-size: 50px auto;
+        }
+        &.icon_1 {
+            background-position-y: -42px;
+            background-position-x: -0px;
+        }
+        &.icon_2 {
+            background-position-y: -42px;
+            background-position-x: -8px;
+        }
+        &.icon_3 {
+            background-position-y: -42px;
+            background-position-x: -17px;
+        }
+        &.icon_4 {
+            background-position-y: -42px;
+            background-position-x: -25px;
+        }
+        &.icon_5 {
+            background-position-y: -42px;
+            background-position-x: -34px;
+        }
+        &.icon_6 {
+            background-position-y: -42px;
+            background-position-x: -42px;
+        }
+        &.age_1,&.age_2,&.age_3,&.age_4,&.age_5,&.age_6,&.age_7,&.age_8,&.age_9,&.age_10{
+            width: 8px;
+            height: 8px;
+            background-size: 80px, auto;
+        }
+        &.age_1{
+            background-position: -0px -93px;
+        }
+        &.age_2 {
+            background-position: -8px -93px;
+        }
+        &.age_3 {
+            background-position: -16px -93px;
+        }
+        &.age_4 {
+            background-position: -24px -93px;
+        }
+        &.age_5 {
+            background-position: -32px -93px;
+        }
+        &.age_6 {
+            background-position: -40px -93px;
+        }
+        &.age_7 {
+            background-position: -48px -93px;
+        }
+        &.age_8 {
+            background-position: -56px -93px;
+        }
+        &.age_9 {
+            background-position: -64px -93px;
+        }
+        &.age_10 {
+            background-position: -72px -93px;
+        }
+    }
+    &.L {
+        width: 19px;
+        height: 19px;
+        &.icon_1 {
+            background-position: -0px -82px;
+        }
+        &.icon_2 {
+            background-position: -19px -82px;
+        }
+        &.icon_3 {
+            background-position: -38px -82px;
+        }
+        &.icon_4 {
+            background-position: -57px -82px;
+        }
+        &.icon_5 {
+            background-position: -76px -82px;
+        }
+        &.icon_6 {
+            background-position: -95px -82px;
+        }
+        &.age_1 {
+            background-position: -0px -101px;
+        }
+        &.age_2 {
+            background-position: -19px -101px;
+        }
+        &.age_3 {
+            background-position: -38px -101px;
+        }
+        &.age_4 {
+            background-position: -57px -101px;
+        }
+        &.age_5 {
+            background-position: -76px -101px;
+        }
+        &.age_6 {
+            background-position: -95px -101px;
+        }
+        &.age_7 {
+            background-position: -114px -101px;
+        }
+        &.age_8 {
+            background-position: -133px -101px;
+        }
+        &.age_9 {
+            background-position: -152px -101px;
+        }
+        &.age_10 {
+            background-position: -171px -101px;
+        }
+    }
+}
+
+.dogma_symbol {
+    &.M {
+        left: -4px;
+        top: -4px;
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+            width: 10px;
+            height: 10px;
+            background-image: url('img/resource_icons.jpg');
+            background-size: 60px auto;
+        }
+        &.icon_1 {
+            background-position-x: -0px;
+        }
+        &.icon_2 {
+            background-position-x: -10px;
+        }
+        &.icon_3 {
+            background-position-x: -20px;
+        }
+        &.icon_4 {
+            background-position-x: -30px;
+        }
+        &.icon_5 {
+            background-position-x: -40px;
+        }
+        &.icon_6 {
+            background-position-x: -50px;
+        }
+        &.color_0 {
+            background-position-y: -0px;
+        }
+        &.color_1 {
+            background-position-y: -10px;
+        }
+        &.color_2 {
+            background-position-y: -20px;
+        }
+        &.color_3 {
+            background-position-y: -30px;
+        }
+        &.color_4 {
+            background-position-y: -40px;
+        }
+    }
+    &.L {
+        left: -4px;
+        top: -4px;
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+            width: 20px;
+            height: 20px;
+            background-image: url('img/resource_icons.jpg');
+            background-size: 120px auto;
+        }
+        &.icon_1 {
+            background-position-x: -0px;
+        }
+        &.icon_2 {
+            background-position-x: -20px;
+        }
+        &.icon_3 {
+            background-position-x: -40px;
+        }
+        &.icon_4 {
+            background-position-x: -60px;
+        }
+        &.icon_5 {
+            background-position-x: -80px;
+        }
+        &.icon_6 {
+            background-position-x: -100px;
+        }
+        &.color_0 {
+            background-position-y: -0px;
+        }
+        &.color_1 {
+            background-position-y: -20px;
+        }
+        &.color_2 {
+            background-position-y: -40px;
+        }
+        &.color_3 {
+            background-position-y: -60px;
+        }
+        &.color_4 {
+            background-position-y: -80px;
+        }
+    }
+}
+
+#publication_arrow_up, #publication_arrow_down{
+    position: absolute;
+    left: 0px;
+    font-weight: bolder;
+    font-size: 25px;
+    padding-bottom: 8px;
+}
+#publication_arrow_down {
+    top: 80px;
+}
+#publication_arrow_up{
+    top: 0px;
+}
+#publication_cancel {
+    margin-right: 10px;
+}
+.card {
+    display: inline-block;
+    background-image: url('img/card_backgrounds.jpg');
+    position: relative;
+    border: solid 1px #ffffff;
+    &.M {
+        width: 180px;
+        height: 124px;
+        background-size: 920px 128px;
+        border-radius: 6px;
+        box-shadow: 3px 3px grey;
+        &.color_0 {
+            background-position: -2px -2px;
+        }
+        &.color_1 {
+            background-position: -186px -2px;
+        }
+        &.color_2 {
+            background-position: -370px -2px;
+        }
+        &.color_3 {
+            background-position: -554px -2px;
+        }
+        &.color_4 {
+            background-position: -738px -2px;
+        }
+    }
+    &.L {
+        width: 456px;
+        height: 316px;
+        border-radius: 16px;
+        background-size: 2308px 323px;
+        box-shadow: 5px 5px grey;
+        &.color_0 {
+            background-position: -0px -2px;
+        }
+        &.color_1 {
+            background-position: -462px -2px;
+        }
+        &.color_2 {
+            background-position: -922px -2px;
+        }
+        &.color_3 {
+            background-position: -1387px -2px;
+        }
+        &.color_4 {
+            background-position: -1849px -2px;
+        }
+    }
+    &.S {
+        &.age_null {
+            background-image: url("img/special_achievements_landscape.jpg");
+            width: 45px;
+            height: 31px;
+            background-size: 232px, auto;
+            border-radius: 3px;
+        }
+        &.item_105 {
+            background-position: -1px -1px;
+        }
+        &.item_106 {
+            background-position: -47px -1px;
+        }
+        &.item_107 {
+            background-position: -93.5px -1px;
+        }
+        &.item_108 {
+            background-position: -140px -1px;
+        }
+        &.item_109 {
+            background-position: -186px -1px;
+        }
+    }
+}
+/* Locations where the square and hexagon icons go on each card 
+*
+*  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
+*  Square icons should be ~6% of the card width away from the top edge. it is currently 7px
+* 
+*  For the middle square icon it should be centered in the card. 180(card size)/2 - 36(icon size)/2 = 72
+*
+*  The Hex icons do not fill their entire box so we have to fudge some of the offsets
+*/
+
+/* Square card icons (most cards have 3 large resource icons on them) 
+*
+*  These properties of the square icon are directly related. Right now they are made to be 20% of the card width.
+*  { Background-size, width, height, background-position-x, background-position-y }
+*/
+.square_card_icon {
+    background-image: url('img/resource_icons.jpg');
+    position: absolute;
+    &.icon_null {
+        display: none;
+    }
+    &.M {
+        width: 36px;
+        background-size: 230px auto;
+        height: 36px;
+        &.icon_1 {
+            background-position-x: -1px;
+        }
+        &.icon_2 {
+            background-position-x: -39.5px;
+        }
+        &.icon_3 {
+            background-position-x: -78px;
+        }
+        &.icon_4 {
+            background-position-x: -116px;
+        }
+        &.icon_5 {
+            background-position-x: -154.5px;
+        }
+        &.icon_6 {
+            background-position-x: -192.5px;
+        }
+        &.color_0 {
+            background-position-y: -1px;
+        }
+        &.color_1 {
+            background-position-y: -39.5px;
+        }
+        &.color_2 {
+            background-position-y: -78px;
+        }
+        &.color_3 {
+            background-position-y: -116px;
+        }
+        &.color_4 {
+            background-position-y: -154.5px;
+        }
+        &.top_left_icon {
+            top: 7px;
+            left: 7px;
+        }
+        &.bottom_left_icon {
+            bottom: 7px;
+            left: 7px;
+        }
+        &.bottom_center_icon {
+            bottom: 7px;
+            left: 72px;
+        }
+        &.bottom_right_icon {
+            bottom: 7px;
+            right: 7px;
+        }
+    }
+    &.L {
+        width: 75px;
+        background-size: 470px auto;
+        height: 75px;
+        &.icon_1 {
+            background-position-x: -1.5px;
+        }
+        &.icon_2 {
+            background-position-x: -80px;
+        }
+        &.icon_3 {
+            background-position-x: -158.5px;
+        }
+        &.icon_4 {
+            background-position-x: -236.5px;
+        }
+        &.icon_5 {
+            background-position-x: -315.5px;
+        }
+        &.icon_6 {
+            background-position-x: -393.5px;
+        }
+        &.color_0 {
+            background-position-y: -1px;
+        }
+        &.color_1 {
+            background-position-y: -79.5px;
+        }
+        &.color_2 {
+            background-position-y: -158px;
+        }
+        &.color_3 {
+            background-position-y: -236px;
+        }
+        &.color_4 {
+            background-position-y: -315px;
+        }
+        &.top_left_icon {
+            top: 25px;
+            left: 30px;
+        }
+        &.bottom_left_icon {
+            bottom: 23px;
+            left: 30px;
+        }
+        &.bottom_center_icon {
+            bottom: 23px;
+            left: 195px;
+        }
+        &.bottom_right_icon {
+            bottom: 23px;
+            right: 26px;
+        }
+    }
+}
+
+/* Hexagon icons take up ~27 % of a real cards width. 
+*  Our cards will shoot for 25 % ->  M.45px
+*/
+.hexagon_card_icon {
+    background-image: url("img/hexagon_icons.png");
+    position: absolute;
+    &.M {
+        background-size: 735px, auto;
+        width: 45px;
+        height: 45px;
+        &.top_left_icon {
+            top: 2px;
+            left: 4px;
+        }
+        &.bottom_left_icon {
+            bottom: 1px;
+            left: 4px;
+        }
+        &.bottom_center_icon {
+            bottom: 1px;
+            left: 69px;
+        }
+        &.bottom_right_icon {
+            bottom: 1px;
+            right: 2px;
+        }
+    }
+    &.L {
+        background-size: 1511px, auto;
+        width: 90px;
+        height: 90px;
+        &.top_left_icon {
+            top: 17px;
+            left: 26px;
+        }
+        &.bottom_left_icon {
+            bottom: 11px;
+            left: 26px;
+        }
+        &.bottom_center_icon {
+            bottom: 11px;
+            left: 192px;
+        }
+        &.bottom_right_icon {
+            bottom: 11px;
+            right: 15px;
+        }
+    }
+}
+
+.recto {
+    display: inline-block;
+    position: relative;
+    border: solid 1px #ffffff;
+    box-shadow: -1px 1px grey;
+    border-radius: 3px;
+    &.S{
+        width: 31px;
+        height: 45px;
+        &.age_1,&.age_2,&.age_3,&.age_4,&.age_5,&.age_6,&.age_7,&.age_8,&.age_9,&.age_10{
+            background-image: url("img/card_backs_portrait.jpg");
+            background-size: 380px 256px;
+        }
+        &.age_1 {
+            background-position-x: -2px;
+        }
+        &.age_2 {
+            background-position-x: -36px;
+        }
+        &.age_3 {
+            background-position-x: -71px;
+        }
+        &.age_4 {
+            background-position-x: -105px;
+        }
+        &.age_5 {
+            background-position-x: -140px;
+        }
+        &.age_6 {
+            background-position-x: -174px;
+        }
+        &.age_7 {
+            background-position-x: -209px;
+        }
+        &.age_8 {
+            background-position-x: -243px;
+        }
+        &.age_9 {
+            background-position-x: -278px;
+        }
+        &.age_10 {
+            background-position-x: -312px;
+        }
+        &.type_0 {
+            background-position-y: -3px;
+        }
+        &.type_1 {
+            background-position-y: -54px;
+        }
+        &.type_2 {
+            background-position-y: -105px;
+        }
+        &.type_3 {
+            background-position-y: -156px;
+        }
+        &.type_4 {
+            background-position-y: -208px;
+        }
+        &.relic {
+            border: solid 1px transparent;
+            background-position-x: -347px;
+        }
+        &.age_null{
+            background-image: url("img/special_achievements_portrait.jpg");
+            background-size: 175px, auto;
+        }
+        &.item_105 {
+            background-position: -1px -1px;
+        }
+        &.item_106 {
+            background-position: -36px -1px;
+        }
+        &.item_107 {
+            background-position: -71px -1px;
+        }
+        &.item_108 {
+            background-position: -106px -1px;
+        }
+        &.item_109 {
+            background-position: -141px -1px;
+        }
+    }
+}
+
+/* Font sizes */
+$rem: 0.0625rem;
+@for $i from 1 through 30 {
+    .font_size_#{$i} {
+        font-size: $rem * $i;
+    }
+}
+
+/* hexagon card icons */
+
+$M_offset:        49;
+$M_x_position:     3;
+$M_y_position:     3;
+$L_offset:        101;
+$L_x_position:     8;
+$L_y_position:     8;
+
+.hexagon_card_icon {
+    // Base cards
+    @for $i from 0 through 104 {
+        @if $i <= 14 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+                }
+            }
+        }
+        @if $i > 14 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $L_offset}px;
+                }
+            }
+        }
+    }
+    // Artifact cards
+    @for $i from 110 through 214 {
+        @if $i <= 124 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i),11)))) * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i),11)))) * $L_offset}px;
+                }
+            }
+        }
+        @if $i > 124 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))) * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))) * $L_offset}px;
+                }
+            }
+        }
+    }
+    // Relic cards
+    // They are located on the age 2 line at the end of the Artifact cards, use those numbers for xy calcs
+    @for $i from 215 through 219 {
+        &.hexagon_icon_#{$i} {
+            &.M {
+                background-position: -#{$M_x_position + ($i + 5) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 100),10)))) * $M_offset}px;
+            }
+            &.L {
+                background-position: -#{$L_x_position + ($i + 5) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 100),10)))) * $L_offset}px;
+            }
+        }
+    }
+}
