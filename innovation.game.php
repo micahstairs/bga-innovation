@@ -9749,8 +9749,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 141, Artifacts age 3: Moylough Belt Shrine
             case "141C1":
                 // "I compel you to reveal all cards in your hand"
+                // TODO(https://github.com/micahstairs/bga-innovation/issues/304): Use bulk reveal mechanism.
                 $cards = self::getCardsInLocation($player_id, 'hand');
-                
                 foreach ($cards as $card) {
                     $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'revealed');
@@ -9877,24 +9877,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 153, Artifacts age 4: Cross of Coronado
             case "153N1":
                 // "Reveal your hand"
-                // TODO(#105): Use a bulk reveal instead.
-                $cards = self::getCardsInHand($player_id);
-                foreach ($cards as $card) {
-                    $card = self::getCardInfo($card['id']);
-                    self::transferCardFromTo($card, $player_id, 'revealed');
-                }
+                self::revealPlayerHand($player_id);
             
                 // "If you have exactly five cards and five colors in your hand, you win"
-                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'revealed');
+                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
                 if (count(array_diff($card_count_by_color, array(1))) == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
                     throw new EndOfGame();
-                }
-                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
-                    self::transferCardFromTo($card, $player_id, 'hand');
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have exactly five cards and five colors in your hand.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
                 break;
 
