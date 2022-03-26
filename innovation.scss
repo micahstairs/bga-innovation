@@ -618,15 +618,12 @@
 
 .equal {
 	color: #AAAAAA;
-	font-weight: bold;
 }
 .more {
 	color: green;
-	font-weight: bold;
 }
 .less {
 	color: red;
-	font-weight: bold;
 }
 .card_age {
 	color: white;
@@ -720,13 +717,7 @@
 		height: 37px;
 	}
 }
-.i_demand {
-	font-weight: bold;
-}
-.i_compel {
-	font-weight: bold;
-}
-.immediately {
+.i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
 	font-weight: bold;
 }
 .card_effects {
@@ -917,15 +908,9 @@
 		border-top: 1px solid #4871b6;
 	}
 }
-.possible_action {
-	font-weight: bold;
-}
+
 .warning {
 	color: red;
-	font-weight: bold;
-}
-.name_in_tooltip {
-	font-weight: bold;
 }
 .recap_dogma {
 	li {
@@ -1714,8 +1699,3 @@ $L_y_position: 	8;
 		}
 	}
 }
-
-
-// /* scss_generator code starts here */
-// /* anything below this will get blown away on rebuild */
-
