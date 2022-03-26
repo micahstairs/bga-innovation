@@ -10166,26 +10166,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 181, Artifacts age 7: Colt Paterson Revolver
             case "181C1":
                 // "I compel you to reveal your hand"
+                self::revealPlayerHand($player_id);
+
+                // Store list of colors in hand before the new card is drawn.
                 $cards = self::getCardsInHand($player_id);
                 $colors_in_hand = array(0, 0, 0, 0, 0);
                 foreach ($cards as $card) {
-                    // TODO(#105): Instead of physically moving the cards, we should dump the list to the game log.
-                    $card = self::getCardInfo($card['id']);
-                    self::transferCardFromTo($card, $player_id, 'revealed');
                     $colors_in_hand[$card['color']] = 1;
                 }
+
                 // "Draw a 7"
                 $new_card = self::executeDraw($player_id, 7);
-
-                // Put them back in hand so the return order can be determined by the player
-                $cards = self::getCardsInLocation($player_id, 'revealed');
-                foreach ($cards as $card) {
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                }
                 
                 // "If the color of the drawn card matches the color of any other cards in your hand"
                 if ($colors_in_hand[$new_card['color']] == 1) {
+                    self::notifyGeneralInfo(clienttranslate("The drawn card's color matches the color of another card in hand."));
                     $step_max = 2;
+                } else {
+                    self::notifyGeneralInfo(clienttranslate("The drawn card's color does not match the color of another card in hand."));
                 }
                 break;
                 
