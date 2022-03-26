@@ -7,11 +7,11 @@ In order to test changes to the game, you need to be able to copy the code out o
 #### Prerequisites
 - Create a BGA developer account on https://studio.boardgamearena.com/.
 - Create your own BGA Studio project for Innovation at https://studio.boardgamearena.com/studio. Make sure to suffix the new project name with your username (e.g. `InnovationJohnSmith`).
-- Optionally Install github desktop (https://desktop.github.com/) -> this is a simplier way of using git if you want to skip the commandline
+- Optionally Install github desktop (https://desktop.github.com/) -> this is a simpler way of using git if you want to skip the commandline
 - Clone this repository onto your computer (`git clone https://github.com/micahstairs/bga-innovation.git innovation`). You'll make your life easier if the directory is named `innovation` instead of `bga-innovation`.
 - Clone https://github.com/elaskavaia/bga-sharedcode onto your computer (`git clone https://github.com/elaskavaia/bga-sharedcode.git`).
 - Install PHP (https://windows.php.net/download#php-7.3).
-- Install SASS (https://sass-lang.com/install)
+- Install SASS (https://sass-lang.com/install) - only needed if you are going to make changes to the SCSS
 - Install VSCode (https://code.visualstudio.com/download)
 
 #### Setting up your branch
@@ -74,18 +74,18 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
 }
 ```
 - Sometimes you will have to run a manual push of your files and you can do that by using the command shortcut `Ctrl+Shift+P` and runing `SFTP: Sync Local -> Remote`
-- Install Run on Save extension (https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save)
-- Configure the Run on Save extention by clickin the Extensions tab in VSCode -> Gear icon on Run on Save -> Extension Settings -> Edit settings.json -> copy this into that file
-```
-"runOnSave.commands": [
-        {
-            "match": ".*\\.scss$",
-            "command": "sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
-            "runIn": "backend",
-            "runningStatusMessage": "Compiling ${fileBasename}",
-            "finishStatusMessage": "${fileBasename} compiled"
-        }
-    ]
-```
-- Every time you edit and save in the py generator or the scss file, it will compile into css read to be used.
+- If you are working with SCSS you should perform these steps
+    - Install Run on Save extension (https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save)
+    - Configure the Run on Save extention by clicking the Extensions tab in VSCode -> Gear icon on Run on Save -> Extension Settings -> Edit settings.json -> copy this into that file
+    ```
+    "runOnSave.commands": [
+            {
+                "match": ".*\\.scss$",
+                "command": "sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
+                "runIn": "backend",
+                "runningStatusMessage": "Compiling ${fileBasename}",
+                "finishStatusMessage": "${fileBasename} compiled"
+            }
+        ]
+    ```
  

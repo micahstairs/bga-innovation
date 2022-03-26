@@ -1506,7 +1506,6 @@
 
 /* Hexagon icons take up ~27 % of a real cards width. 
 *  Our cards will shoot for 25 % ->  M.45px
-*  If you ever change the background-size, you must edit the offset in css_generator.py
 */
 .hexagon_card_icon {
   background-image: url("img/hexagon_icons.png");
