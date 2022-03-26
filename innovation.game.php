@@ -1492,21 +1492,6 @@ class Innovation extends Table
         ));
     }
 
-    function getCardsInHand($player_id) {
-        return self::attachTextualInfoToList(self::getObjectListFromDB(self::format("
-            SELECT
-                *
-            FROM
-                card
-            WHERE
-                location = 'hand' AND
-                owner = {player_id}
-                
-        ",
-            array('player_id' => $player_id)
-        )));
-    }
-
     function deselectAllCards() {
         /**
         Deselect all cards.
@@ -1656,7 +1641,7 @@ class Innovation extends Table
         }
     }
 
-    function revealPlayerHand($player_id) {
+    function revealHand($player_id) {
         $cards = self::getCardsInHand($player_id);
         if (count($cards) == 0) {
             $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty hand.'), ['You' => 'You']);
@@ -1667,6 +1652,20 @@ class Innovation extends Table
         $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your hand: ${card_list}.'),
             array_merge($args, ['You' => 'You', 'cards' => $cards]));
         $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'cards' => $cards]));
+    }
+
+    function revealScorePile($player_id) {
+        $cards = self::getCardsInScorePile($player_id);
+        if (count($cards) == 0) {
+            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty score pile.'), ['You' => 'You']);
+            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty score pile.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
+            return;
+        }
+        $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
+        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your score pile: ${card_list}.'),
+            array_merge($args, ['You' => 'You', 'cards' => $cards]));
+        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his score pile: ${card_list}.'),
             array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'cards' => $cards]));
     }
 
@@ -3575,6 +3574,14 @@ class Innovation extends Table
             Get all the cards in a particular location, sorted by position.
         **/
         return self::attachTextualInfoToList(self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location));
+    }
+
+    function getCardsInHand($player_id) {
+        return self::getCardsInLocation($player_id, 'hand');
+    }
+
+    function getCardsInScorePile($player_id) {
+        return self::getCardsInLocation($player_id, 'score');
     }
 
     function countCardsInLocationKeyedByAge($owner, $location, $type=null, $is_relic=null) {
@@ -9877,7 +9884,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 153, Artifacts age 4: Cross of Coronado
             case "153N1":
                 // "Reveal your hand"
-                self::revealPlayerHand($player_id);
+                self::revealHand($player_id);
             
                 // "If you have exactly five cards and five colors in your hand, you win"
                 $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
@@ -10161,7 +10168,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 181, Artifacts age 7: Colt Paterson Revolver
             case "181C1":
                 // "I compel you to reveal your hand"
-                self::revealPlayerHand($player_id);
+                self::revealHand($player_id);
 
                 // Store list of colors in hand before the new card is drawn.
                 $cards = self::getCardsInHand($player_id);
@@ -10557,13 +10564,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 214, Artifacts age 10: Twister
             case "214C1":
                 // "I compel you to reveal your score pile"
-                $score_cards = self::getCardsInLocation($player_id, 'score');
-                if (count($score_cards) > 0) {
-                    // TODO(#105): Instead of moving cards one at a time, we should instead reveal by printing out the cards to the game log.
-                    foreach ($score_cards as $card) {
-                        $card = self::getCardInfo($card['id']);
-                        self::transferCardFromTo($card, $player_id, 'revealed');
-                    }
+                self::revealScorePile($player_id);
+                $colors = array();
+                foreach (self::getCardsInLocation($player_id, 'score') as $card) {
+                    $colors[] = $card['color'];
+                }
+                if (count($colors) > 0) {
+                    self::setAuxiliaryValueFromArray(array_unique($colors));
                     $step_max = 1;
                 }
                 break;
@@ -14892,16 +14899,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
        // id 214, Artifacts age 10: Twister
        case "214C1A":
-        // "Meld a card of that color from your score pile"
+        // "For each color, meld a card of that color from your score pile"
         $options = array(
             'player_id' => $player_id,
             'n' => 1,
             'can_pass' => false,
             
             'owner_from' => $player_id,
-            'location_from' => 'revealed',
+            'location_from' => 'score',
             'owner_to' => $player_id,
-            'location_to' => 'board'
+            'location_to' => 'board',
+
+            'color' => self::getAuxiliaryValueAsArray()
         );
         break;
 
@@ -15070,7 +15079,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     } else {
                         // Reveal hand to prove that they have no crowns.
-                        self::revealPlayerHand($player_id);
+                        self::revealHand($player_id);
                     }
                     break;
                 
@@ -16038,7 +16047,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     for ($i = 0; $i < 5; $i++) {
                         self::executeDraw($player_id, 4, 'hand');
                     }
-                    self::revealPlayerHand($player_id);
+                    self::revealHand($player_id);
                     
                     $chosen_color = self::getAuxiliaryValue2();
                     $cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
@@ -16506,13 +16515,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 214, Artifacts age 10: Twister
                 case "214C1A":
-                    // Put the rest of the cards of the same color back in the score pile (making it easier to isolate the selectable cards for future interactions)
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach ($revealed_cards as $card) {
-                        if ($card['color'] == self::getGameStateValue('color_last_selected')) {
-                            self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
-                        } else {
-                            // If at least one card is a different color, that means we will need to repeat this interation.
+                    if ($n > 0) {
+                        $selectable_colors = self::getAuxiliaryValueAsArray();
+                        $selectable_colors = array_diff($selectable_colors, [self::getGameStateValue('color_last_selected')]);
+
+                        // Repeat this interaction if there are more cards to meld
+                        if (count($selectable_colors) > 0) {
+                            self::setAuxiliaryValueFromArray($selectable_colors);
                             $step = 0;
                             self::setStep(0);
                         }
