@@ -13500,7 +13500,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "144N1C":
             // "Return a card from score pile of the returned card's color"
-            // TODO(ARTIFACTS): We should give other players partial information about the returned card (i.e. card color).
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
