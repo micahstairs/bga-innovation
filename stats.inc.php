@@ -153,20 +153,24 @@ $stats_type = array(
                     "name" => totranslate("Number of turns that an artifact on display was not used or returned"),
                     "type" => "int" ),
 
-        "dogma_actions_number_with_i_compel" => array("id"=> 28,
+        "dogma_actions_number_targeting_artifact_on_board" => array("id"=> 28,
+                    "name" => totranslate("Number of dogma actions targeting an artifact on your board"),
+                    "type" => "int" ),
+
+        "dogma_actions_number_with_i_compel" => array("id"=> 29,
                     "name" => totranslate("Number of dogma actions with an effective \"I compel\" effect"),
                     "type" => "int" ),
 
-        "i_compel_effects_number" => array("id"=> 29,
+        "i_compel_effects_number" => array("id"=> 30,
                     "name" => totranslate("Number of times the player has been forced to execute the \"I compel\" effect of an opponent's card"),
                     "type" => "int" ),
     
         // Artifacts + Relics specific
-        "relics_seized_number" => array("id"=> 30,
+        "relics_seized_number" => array("id"=> 31,
                     "name" => totranslate("Number of relics seized by player"),
                     "type" => "int" ),
 
-        "relics_stolen_number" => array("id"=> 31,
+        "relics_stolen_number" => array("id"=> 32,
                     "name" => totranslate("Number of relics stolen from player"),
                     "type" => "int" ),
                     

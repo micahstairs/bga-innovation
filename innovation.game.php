@@ -479,6 +479,8 @@ class Innovation extends Table
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
             self::initStat('player', 'free_action_pass_number', 0);
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/334): Increment this stat in the right spot in the code.
+            self::initStat('player', 'dogma_actions_number_targeting_artifact_on_board', 0);
             // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Increment this stat in the right spot in the code.
             self::initStat('player', 'dogma_actions_number_with_i_compel', 0);
             // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Increment this stat in the right spot in the code.
@@ -6215,6 +6217,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Stats
         self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'dogma_actions_number', $player_id);
+        if ($card['type'] == 1) {
+            self::incStat(1, 'dogma_actions_number_targeting_artifact_on_board', $player_id);
+        }
 
         self::setUpDogma($player_id, $card);
 
