@@ -150,6 +150,19 @@ class Innovation extends Table
             throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
+    function debug_meld($card_id) {
+        if (self::getGameStateValue('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        // The melding is being done in two steps because otherwise many of the transitions would not be supported.
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardInfo($card_id);
+        if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
+            self::debug_draw($card_id);
+            $card = self::getCardInfo($card_id);
+        }
+        self::transferCardFromTo($card, $player_id, 'board');
+    }
     function debug_score($card_id) {
         if (self::getGameStateValue('debug_mode') == 0) {
             return; // Not in debug mode
