@@ -466,9 +466,9 @@ class Innovation extends Table
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
             self::initStat('player', 'free_action_pass_number', 0);
-            // TODO(#202): Increment this stat in the right spot in the code.
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Increment this stat in the right spot in the code.
             self::initStat('player', 'dogma_actions_number_with_i_compel', 0);
-            // TODO(#202): Increment this stat in the right spot in the code.
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Increment this stat in the right spot in the code.
             self::initStat('player', 'i_compel_effects_number', 0);
             
             // Initialize Relic-specific statistics
@@ -1990,7 +1990,7 @@ class Innovation extends Table
     function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
-            // TODO(ARTIFACTS): We can simplify Self Service to use "board->none", guarded by release_version.
+            // TODO(LATER): We can simplify Self Service to use "board->none", guarded by release_version.
             $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from your board');
             $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');            
         } else if ($targetable_players !== null) { // Used when several players can be targeted
@@ -7769,7 +7769,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Stats
             $i_demand_effects = false;
             if (self::getGameStateValue('release_version') >= 1) {
-                // TODO(#202): Use featured_icon_count to increment sharing_effects_number and i_demand_effects_number stats.
+                // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Use featured_icon_count to increment sharing_effects_number and i_demand_effects_number stats.
             } else {
                 $executing_players = self::getExecutingPlayers();
                 foreach($executing_players as $player_id => $stronger_or_equal) {
@@ -13791,7 +13791,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => false,
                 
-                // TODO(#225): Allow player to pick an integer in 0-999 range instead of 1-10.
+                // TODO(https://github.com/micahstairs/bga-innovation/issues/225): Allow player to pick an integer in 0-999 range instead of 1-10.
                 'choose_value' => true
             );
             break;
@@ -13839,7 +13839,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "155N1B":
             // "and the lowest top card on your board"
-            // TODO(ARTIFACTS): Create new getMinAgeOnBoardTopCards function instead (based on getMaxAgeOnBoardTopCards).
+            // TODO(LATER): Create new getMinAgeOnBoardTopCards function instead (based on getMaxAgeOnBoardTopCards).
             $all_cards = self::getTopCardsOnBoard($player_id);
             $ages = array();
             foreach($all_cards as $card) {
