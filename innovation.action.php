@@ -66,6 +66,12 @@
         $this->game->debug_return($card_id);
         self::ajaxResponse();
     }
+    public function debug_topdeck() {            
+        self::setAjaxMode();
+        $card_id = self::getArg("card_id", AT_posint, true);
+        $this->game->debug_topdeck($card_id);
+        self::ajaxResponse();
+    }
     public function debug_dig() {            
         self::setAjaxMode();
         $card_id = self::getArg("card_id", AT_posint, true);

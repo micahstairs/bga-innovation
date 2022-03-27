@@ -183,6 +183,17 @@ function (dojo, declare) {
                 this, function (result) { }, function (is_error) {}
             );      
         },
+        debug_topdeck: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_topdeck.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
+                },
+                this, function (result) { }, function (is_error) {}
+            );      
+        },
         debug_dig: function () {
             var debug_card_list = document.getElementById("debug_card_list");
             self = this;
@@ -217,6 +228,7 @@ function (dojo, declare) {
                 if (gamedatas.artifacts_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML
                 }
+                main_area.innerHTML = "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>" + main_area.innerHTML
                 main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML
                 main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML
                 main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML
@@ -232,6 +244,7 @@ function (dojo, declare) {
                 dojo.connect($('debug_score'), 'onclick', this, 'debug_score');
                 dojo.connect($('debug_achieve'), 'onclick', this, 'debug_achieve');
                 dojo.connect($('debug_return'), 'onclick', this, 'debug_return');
+                dojo.connect($('debug_topdeck'), 'onclick', this, 'debug_topdeck');
                 if (gamedatas.artifacts_expansion_enabled) {
                     dojo.connect($('debug_dig'), 'onclick', this, 'debug_dig');
                 }
