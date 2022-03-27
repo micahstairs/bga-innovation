@@ -204,12 +204,12 @@ function (dojo, declare) {
             if (!this.isSpectator && gamedatas.debug_card_list) {
                 var main_area = $('main_area');
                 if (gamedatas.artifacts_expansion_enabled) {
-                    main_area.innerHTML = "<button id='debug_dig' class='action-button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML
+                    main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML
                 }
-                main_area.innerHTML = "<button id='debug_return' class='action-button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_achieve' class='action-button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_score' class='action-button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_draw' class='action-button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML
                 main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML
 
                 for (var id = 0; id < gamedatas.debug_card_list.length; id++) {

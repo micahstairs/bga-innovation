@@ -42,7 +42,7 @@
   height: 30px;
 }
 
-#debug_draw, #debug_score, #debug_achieve, #debug_return, #debug_dig {
+.debug_button {
   width: 100px;
 }
 
