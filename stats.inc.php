@@ -120,6 +120,7 @@ $stats_type = array(
                     "name" => totranslate("Number of claimed special achievements"),
                     "type" => "int" ),
                     
+        // Does not count the nested execution of any cards.
         "dogma_actions_number_with_i_demand" => array("id"=> 20,
                     "name" => totranslate("Number of dogma actions with an effective \"I demand\" effect"),
                     "type" => "int" ),
@@ -127,16 +128,19 @@ $stats_type = array(
         "dogma_actions_number_with_sharing" => array("id"=> 21,
                     "name" => totranslate("Number of dogma actions with an effective sharing"),
                     "type" => "int" ),
-                    
+
+        // Does not count the nested execution of any cards.
         "i_demand_effects_number" => array("id"=> 22,
                     "name" => totranslate("Number of times the player has effectivly executed the \"I demand\" effect of an opponent card"),
                     "type" => "int" ),
                     
+        // Does not count the nested execution of any cards.
         "sharing_effects_number" => array("id"=> 23,
                     "name" => totranslate("Number of times the player has effectivly shared the effects of an opponent card"),
                     "type" => "int" ),
         
-        // Artifacts-specific 
+        /* Artifacts-specific */
+
         "dig_events_number" => array("id"=> 24,
                     "name" => totranslate("Number of artifacts dug"),
                     "type" => "int" ),
@@ -153,19 +157,23 @@ $stats_type = array(
                     "name" => totranslate("Number of turns that an artifact on display was not used or returned"),
                     "type" => "int" ),
 
+        // Does not count the nested execution of any cards.
         "dogma_actions_number_targeting_artifact_on_board" => array("id"=> 28,
                     "name" => totranslate("Number of dogma actions targeting an artifact on your board"),
                     "type" => "int" ),
 
+        // Does not count the nested execution of any cards.
         "dogma_actions_number_with_i_compel" => array("id"=> 29,
                     "name" => totranslate("Number of dogma actions with an effective \"I compel\" effect"),
                     "type" => "int" ),
 
+        // Does not count the nested execution of any cards.
         "i_compel_effects_number" => array("id"=> 30,
                     "name" => totranslate("Number of times the player has been forced to execute the \"I compel\" effect of an opponent's card"),
                     "type" => "int" ),
     
-        // Artifacts + Relics specific
+        /* Artifacts + Relics specific */
+
         "relics_seized_number" => array("id"=> 31,
                     "name" => totranslate("Number of relics seized by player"),
                     "type" => "int" ),

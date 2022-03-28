@@ -479,11 +479,8 @@ class Innovation extends Table
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
             self::initStat('player', 'free_action_pass_number', 0);
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/334): Increment this stat in the right spot in the code.
             self::initStat('player', 'dogma_actions_number_targeting_artifact_on_board', 0);
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Increment this stat in the right spot in the code.
             self::initStat('player', 'dogma_actions_number_with_i_compel', 0);
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Increment this stat in the right spot in the code.
             self::initStat('player', 'i_compel_effects_number', 0);
             
             // Initialize Relic-specific statistics
@@ -3073,7 +3070,8 @@ class Innovation extends Table
         }
     }
     
-    function markExecutingPlayer($player_id) { // This function is used to mark a player when he executed a dogma card effect with true consequences
+    // This function is used to mark a player when he executed a dogma card effect with true consequences
+    function markExecutingPlayer($player_id) {
         self::DbQuery(self::format("
             UPDATE
                 player
@@ -7739,10 +7737,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $current_effect_type = self::getGameStateValue('current_effect_type');
             $card_id = self::getGameStateValue('dogma_card_id');
         }
+
+        $launcher_id = self::getGameStateValue('active_player');
         
         // Indicate the potential new (non-demand) dogma to come
         if ($current_effect_type == 0 || $current_effect_type == 2) { // There is only ever one "I demand" or "I compel" effect per card
             $current_effect_number = 1; // Switch on the first non-demand dogma, if exists
+
+            // Update statistics about I demand and I compel execution.
+            if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_nesting_index') == 0) {
+                $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
+                foreach ($affected_players as $player_id) {
+                    if ($current_effect_type == 0) {
+                        self::incStat(1, 'i_demand_effects_number', $player_id);
+                    } else {
+                        self::incStat(1, 'i_compel_effects_number', $player_id);
+                    }
+                }
+                if (count($affected_players) > 0) {
+                    if ($current_effect_type == 0) {
+                        self::incStat(1, 'dogma_actions_number_with_i_demand', $launcher_id);
+                    } else {
+                        self::incStat(1, 'dogma_actions_number_with_i_compel', $launcher_id);
+                    }
+                }
+                // Reset 'effects_had_impact' so that it can be re-used for non-demand effects.
+                self::DbQuery("UPDATE player SET effects_had_impact = FALSE");
+            }
         } else {
             if (self::getGameStateValue('release_version') >= 1) {
                 $current_effect_number = $nested_card_state['current_effect_number'] + 1; // Next non-demand dogma, if exists
@@ -7779,16 +7800,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($card, 0, 'deck');
                     self::giveExtraTime($launcher_id);
                 }
-            }
 
-            $sharing_bonus = self::getGameStateValue('sharing_bonus');
-            $launcher_id = self::getGameStateValue('active_player');
+                // Update statistics about which opponents shared in the non-demand effects
+                $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
+                foreach ($affected_players as $player_id) {
+                    if ($player_id != $launcher_id) {
+                        self::incStat(1, 'sharing_effects_number', $player_id);
+                    }
+                }
+            }
             
             // Stats
-            $i_demand_effects = false;
-            if (self::getGameStateValue('release_version') >= 1) {
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/202): Use featured_icon_count to increment sharing_effects_number and i_demand_effects_number stats.
-            } else {
+            if (self::getGameStateValue('release_version') < 1) {
+                $i_demand_effects = false;
                 $executing_players = self::getExecutingPlayers();
                 foreach($executing_players as $player_id => $stronger_or_equal) {
                     if ($player_id == $launcher_id) {
@@ -7802,17 +7826,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $i_demand_effects = true;
                     }
                 }
+                if ($i_demand_effects) {
+                    self::incStat(1, 'dogma_actions_number_with_i_demand', $launcher_id);
+                }
             }
 
-            if ($i_demand_effects) {
-                self::incStat(1, 'dogma_actions_number_with_i_demand', $launcher_id);
-            }
+            // Award the sharing bonus if needed
+            $sharing_bonus = self::getGameStateValue('sharing_bonus');
             if ($sharing_bonus == 1) {
                 self::incStat(1, 'dogma_actions_number_with_sharing', $launcher_id);
-            }
-            
-            // Award the sharing bonus if needed
-            if ($sharing_bonus == 1) {
                 self::notifyGeneralInfo('<span class="minor_information">${text}</span>', array('i18n'=>array('text'), 'text'=>clienttranslate('Sharing bonus.')));
                 $player_who_launched_the_dogma = self::getGameStateValue('active_player');
                 try {
