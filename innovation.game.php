@@ -10029,7 +10029,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "161N1":
                 // "If Gujin Tushu Jinsheng is on your board"
                 $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                if ($top_yellow_card['id'] == 161) {
+                if ($top_yellow_card !== null && $top_yellow_card['id'] == 161) {
                     $step_max = 1;
                 }
                 break;
