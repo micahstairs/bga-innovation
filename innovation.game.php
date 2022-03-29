@@ -3286,6 +3286,13 @@ class Innovation extends Table
     function getDemandEffect($id) {
         return $this->textual_card_infos[$id]['demand_effect_1'];
     }
+
+    function isCompelEffect($id) {
+        if (self::getGameStateValue('release_version') < 1) {
+            return false;
+        }
+        return $this->textual_card_infos[$id]['i_demand_effect_1_is_compel'];
+    }
     
     function attachTextualInfo($card) {
         if ($card === null) {
@@ -5794,9 +5801,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
             $nested_card_state = self::getCurrentNestedCardState();
             $nesting_index = self::getGameStateValue('current_nesting_index');
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            $has_i_demand = self::getDemandEffect($card['id']) !== null && !$card['i_demand_effect_1_is_compel'];
-            $has_i_compel = self::getDemandEffect($card['id']) !== null && $card['i_demand_effect_1_is_compel'];
+            $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
+            $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
@@ -6397,8 +6403,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if (self::getDemandEffect($card['id']) == null) {
             $current_effect_type = 1;
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        } else if (self::getGameStateValue('release_version') >= 1 && $card['i_demand_effect_1_is_compel']) {
+        } else if (self::isCompelEffect($card['id'])) {
             $current_effect_type = 2;
         } else {
             $current_effect_type = 0;
@@ -6815,8 +6820,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $dogma_effect_info['players_executing_i_demand_effects'] = [];
         $dogma_effect_info['players_executing_non_demand_effects'] = [];
 
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        if ($card['i_demand_effect_1_is_compel'] === true) {
+        if (self::isCompelEffect($card['id']) === true) {
             $dogma_effect_info['players_executing_i_compel_effects'] =
                 self::getObjectListFromDB(self::format("
                     SELECT
@@ -7810,8 +7814,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card = self::getCardInfo($card_id);
 
         // If there isn't another dogma effect on the card
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
+        if ($current_effect_number > 3 || self::getNonDemandEffect($card['id', $current_effect_number) === null) {
 
             if (self::getGameStateValue('release_version') >= 1) {
                 // Finish executing the card which triggered this one
@@ -10721,14 +10724,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::getCardInfo($nested_id_1);
                 $current_effect_number = self::getGameStateValue('nested_current_effect_number_1') + 1; // Next effect
                 
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-                if ($current_effect_number > 3 || $card['non_demand_effect_'.$current_effect_number] === null) {
+                if ($current_effect_number > 3 || self::getNonDemandEffect($card['id'], $current_effect_number) === null) {
                     // No card has more than 3 non-demand dogma => there is no more effect
                     // or the next non-demand-dogma effect is not defined
                     self::notifyGeneralInfo(clienttranslate("Card execution within dogma completed."));
                     self::popCardFromNestedDogmaStack();
-                }
-                else { // There is at least one effect the player can perform
+                } else { // There is at least one effect the player can perform
                     self::setGameStateValue('nested_current_effect_number_1', $current_effect_number);
                     // Continuation of exclusive execution
                     self::trace('interPlayerInvolvedTurn->playerInvolvedTurn');
