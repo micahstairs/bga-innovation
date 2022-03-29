@@ -1702,8 +1702,7 @@ class Innovation extends Table
             }
             $log = $log."<span class='square N age_".$card['age']."'></span> ";
             $log = $log.'<span id=\''.uniqid().'\'class=\'card_name card_id_'.$card['id'].'\'>${name_'.$i.'}</span>';
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            $args['name_'.$i] = $card['name'];
+            $args['name_'.$i] = self::getCardName($card['id']);
             $args['i18n'][] = 'name_'.$i;
         }
         return ['log' => $log, 'args'=> $args];
@@ -3274,6 +3273,10 @@ class Innovation extends Table
         }
         return self::attachTextualInfo($card);
     }
+
+    function getCardName($id) {
+        return $this->textual_card_infos[$id]['name'];
+    }
     
     function attachTextualInfo($card) {
         if ($card === null) {
@@ -3310,8 +3313,7 @@ class Innovation extends Table
         /**
             Returns true if card_1 comes before card_2 in English alphabetical order.
         **/
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        return strcasecmp($card_1['name'], $card_2['name']) < 0;
+        return strcasecmp(self::getCardName($card_1['id']), self::getCardName($card_2['id'])) < 0;
     }
     
     function getColorsOfRepeatedValueOfTopCardsOnBoard($player_id) {
@@ -5599,16 +5601,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $nesting_index = self::getGameStateValue('current_nesting_index');
             for ($i = 0; $i <= $nesting_index; $i++) {
                 $card = self::getCardInfo(self::getNestedCardState($i)['card_id']);
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-                $card_names['card_'.$i] = $card['name'];
+                $card_names['card_'.$i] = self::getCardName($card['id']);
                 $card_names['ref_player_'.$i] = $player_id;
                 $i18n[] = 'card_'.$i;
             }
         } else {
             $dogma_card_id = self::getGameStateValue('dogma_card_id');
             $dogma_card = self::getCardInfo($dogma_card_id);
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            $card_names['card_0'] = $dogma_card['name'];
+            $card_names['card_0'] = self::getCardName($dogma_card['id']);
             $card_names['ref_player_0'] = self::getGameStateValue('active_player');
             $i18n = array('card_0');
 
@@ -5620,9 +5620,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 $card = self::getCardInfo($nested_id);
-                
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-                $card_names['card_'.$j] = $card['name'];
+                $card_names['card_'.$j] = self::getCardName($card['id']);
                 $card_names['ref_player_'.$j] = $player_id;
                 $i18n[] = 'card_'.$j;
                 $j++;
@@ -6958,8 +6956,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         $card = self::getCardInfo($card_id);
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        $card_name = $card['name'];
+        $card_name = self::getCardName($card['id']);
         
         $can_pass = self::getGameStateValue('can_pass') == 1;
         $can_stop = self::getGameStateValue('n_min') <= 0;
@@ -7635,16 +7632,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         $player_id = $earliest_card['owner'];
         
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
+        $english_card_name = self::getCardName($earliest_card['id']);
         self::notifyPlayer($player_id, 'initialCardChosen', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
             'You' => 'You',
-            'english_name' => $earliest_card['name']
+            'english_name' => $english_card_name,
         ));
-
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded the first card in English alphabetical order (${english_name}): he plays first.'), array(
             'player_name' => self::getPlayerNameFromId($player_id),
-            'english_name' => $earliest_card['name']
+            'english_name' => $english_card_name,
         ));
         
         // Enter normal play loop
@@ -9573,17 +9568,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($top_card === null) {
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
                 } else if ($top_card !== null && self::comesAlphabeticallyBefore($top_card, $card)) { // "If you have a top card of the drawn card's color that comes before it in the alphabet"
-                    // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
                     self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} comes before ${english_name_2}.'), array(
-                        'english_name_1' => $top_card['name'],
-                        'english_name_2' => $card['name']
+                        'english_name_1' => self::getCardName($top_card['id']),
+                        'english_name_2' => self::getCardName($card['id']),
                     ));
                     $step_max = 1;
                 } else {
-                    // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
                     self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} does not come before ${english_name_2}.'), array(
-                        'english_name_1' => $top_card['name'],
-                        'english_name_2' => $card['name']
+                        'english_name_1' => self::getCardName($top_card['id']),
+                        'english_name_2' => self::getCardName($card['id']),
                     ));
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
                 }
