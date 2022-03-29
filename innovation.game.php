@@ -3284,7 +3284,7 @@ class Innovation extends Table
     }
 
     function getDemandEffect($id) {
-        return $this->textual_card_infos[$id]['demand_effect_1'];
+        return $this->textual_card_infos[$id]['i_demand_effect_1'];
     }
 
     function isCompelEffect($id) {
@@ -7814,7 +7814,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card = self::getCardInfo($card_id);
 
         // If there isn't another dogma effect on the card
-        if ($current_effect_number > 3 || self::getNonDemandEffect($card['id', $current_effect_number) === null) {
+        if ($current_effect_number > 3 || self::getNonDemandEffect($card['id'], $current_effect_number) === null) {
 
             if (self::getGameStateValue('release_version') >= 1) {
                 // Finish executing the card which triggered this one
