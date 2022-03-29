@@ -132,7 +132,7 @@ class Innovation extends Table
             self::applyDbUpgradeToAllDB($sql); 
         }
     }
-    
+
     //****** CODE FOR DEBUG MODE
     function debug_draw($card_id) {
         if (self::getGameStateValue('debug_mode') == 0) {
@@ -4572,13 +4572,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ));
             // I demand
             if ($dogma_effect_type == 0) {
-                $player_query = self::format("featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id}", array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count));
+                $player_query = self::format(
+                    "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
+                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                );
             // I compel
             } else if ($dogma_effect_type == 2) {
-                $player_query = self::format("featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id}", array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count));
+                $player_query = self::format(
+                    "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
+                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+                );
             // Non-demand
             } else {
-                $player_query = self::format("featured_icon_count >= {launcher_icon_count}", array('launcher_icon_count' => $launcher_icon_count));
+                $player_query = self::format(
+                    "featured_icon_count >= {launcher_icon_count}",
+                    array('launcher_icon_count' => $launcher_icon_count)
+                );
             }
         } else {
             if ($dogma_effect_type == 0) {
