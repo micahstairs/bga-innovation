@@ -223,21 +223,22 @@ function (dojo, declare) {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
-            if (!this.isSpectator && gamedatas.debug_card_list) {
+            if (!this.isSpectator && gamedatas.debug_mode) {
                 var main_area = $('main_area');
                 if (gamedatas.artifacts_expansion_enabled) {
-                    main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML
+                    main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
                 }
-                main_area.innerHTML = "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>" + main_area.innerHTML
-                main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML
-                main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML
+                main_area.innerHTML = "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML;
 
-                for (var id = 0; id < gamedatas.debug_card_list.length; id++) {
-                    $('debug_card_list').innerHTML += "<option value='card_'" + id + ">" + id + " - " + gamedatas.debug_card_list[id] + "</option>"
+                for (var id = 0; id < gamedatas.cards.length; id++) {
+                    var card = gamedatas.cards[id];
+                    $('debug_card_list').innerHTML += `<option value='card_${id}'> ${id} - ${card.name} (Age ${card.age})</option>`;
                 }
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
                 dojo.connect($('debug_meld'), 'onclick', this, 'debug_meld');

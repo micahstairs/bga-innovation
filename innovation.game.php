@@ -534,15 +534,7 @@ class Innovation extends Table
     protected function getAllDatas() {
         $result = array();
         
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use 'cards' instead of passing 'debug_card_list'.
-        $debug_mode = self::getGameStateValue('debug_mode') == 1;
-        if ($debug_mode) {
-            $name_list  = array();
-            foreach($this->textual_card_infos as $card) {
-                $name_list[] = $card['name'];
-            }
-            $result['debug_card_list'] = $name_list;
-        }
+        $result['debug_mode'] = self::getGameStateValue('debug_mode');
 
         $cards  = array();
         foreach (self::getStaticInfoOfAllCards() as $card) {
