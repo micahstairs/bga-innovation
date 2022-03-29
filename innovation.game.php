@@ -3278,6 +3278,10 @@ class Innovation extends Table
     function getAchievementCardName($id) {
         return $this->textual_card_infos[$id]['achievement_name'];
     }
+
+    function getNonDemandEffect($id, $effect_number) {
+        return $this->textual_card_infos[$id]['non_demand_effect_'.$effect_number];
+    }
     
     function attachTextualInfo($card) {
         if ($card === null) {
@@ -4561,8 +4565,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Information when in dogma **/
     function qualifyEffect($current_effect_type, $current_effect_number, $card) {
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        $unique_non_demand_effect = $card['non_demand_effect_2'] === null;
+        $unique_non_demand_effect = self::getNonDemandEffect($card['id'], 2) === null;
         
         return $current_effect_type == 0 ? clienttranslate('I demand effect') :
                ($current_effect_type == 2 ? clienttranslate('I compel effect') :
@@ -5742,8 +5745,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         if (self::getGameStateValue('release_version') >= 1) {
             $card_args = self::getNotificationArgsForCardList([$card]);
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            if ($card['non_demand_effect_1'] === null) {
+            if (self::getNonDemandEffect($card['id'], 1) === null) {
                 self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card_1} to execute.'), ['card_1' => $card_args, 'cards' => [$card]]);
                 return;
             }
@@ -5752,18 +5754,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card_1}.'),
                 ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_args, 'cards' => [$card]]);
         } else {
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            if ($card['non_demand_effect_1'] === null) { // There is no non-demand effect
+            if (self::getNonDemandEffect($card['id'], 1) === null) { // There is no non-demand effect
                 self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
                 // No exclusive execution: do nothing
                 return;
             }
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            if ($card['non_demand_effect_2'] !== null) { // There are 2 or 3 non-demand effects
+            if (self::getNonDemandEffect($card['id'], 2) !== null) { // There are 2 or 3 non-demand effects
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effects of this card.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effects of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                }
-            else { // There is a single non-demand effect
+            } else { // There is a single non-demand effect
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effect of this card.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effect of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
             }
@@ -6838,8 +6837,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        if ($card['non_demand_effect_1'] !== null) {
+        if (self::getNonDemandEffect($card['id'], 1) !== null) {
             $dogma_effect_info['players_executing_non_demand_effects'] =
                 self::getObjectListFromDB(self::format("
                         SELECT player_id FROM player WHERE player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
