@@ -2568,13 +2568,11 @@ class Innovation extends Table
             if ($card['age'] === null) {
                 // The player can see the front of the card because it is a special achievement
                 $notif_args_for_player['id'] = $card['id'];
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-                $notif_args_for_player['achievement_name'] = $card['achievement_name'];
+                $notif_args_for_player['achievement_name'] = self::getAchievementCardName($card['id']);
                 $notif_args_for_player['condition_for_claiming'] = $card['condition_for_claiming'];
                 $notif_args_for_player['alternative_condition_for_claiming'] = $card['alternative_condition_for_claiming'];
             } else {
                 // The player can't see the front of the card
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
                 $notif_args_for_player['achievement_name'] = self::getNormalAchievementName($card['age']);
             }
         } else {
@@ -2602,8 +2600,7 @@ class Innovation extends Table
             if ($card['age'] === null) {
                 // Other players can see the front of the card because it is a special achievement
                 $notif_args_for_others['id'] = $card['id'];
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-                $notif_args_for_others['achievement_name'] = $card['achievement_name'];
+                $notif_args_for_others['achievement_name'] = self::getAchievementCardName($card['id']);
                 $notif_args_for_others['condition_for_claiming'] = $card['condition_for_claiming'];
                 $notif_args_for_others['alternative_condition_for_claiming'] = $card['alternative_condition_for_claiming'];
             } else {
@@ -3276,6 +3273,10 @@ class Innovation extends Table
 
     function getCardName($id) {
         return $this->textual_card_infos[$id]['name'];
+    }
+
+    function getAchievementCardName($id) {
+        return $this->textual_card_infos[$id]['achievement_name'];
     }
     
     function attachTextualInfo($card) {
