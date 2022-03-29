@@ -534,6 +534,7 @@ class Innovation extends Table
     protected function getAllDatas() {
         $result = array();
         
+        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use 'cards' instead of passing 'debug_card_list'.
         $debug_mode = self::getGameStateValue('debug_mode') == 1;
         if ($debug_mode) {
             $name_list  = array();
@@ -542,6 +543,12 @@ class Innovation extends Table
             }
             $result['debug_card_list'] = $name_list;
         }
+
+        $cards  = array();
+        foreach (self::getStaticInfoOfAllCards() as $card) {
+            $cards[$card['id']] = $card;
+        }
+        $result['cards'] = $cards;
 
         $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') != 1;
         $result['relics_enabled'] = self::getGameStateValue('artifacts_mode') == 3;
@@ -556,6 +563,7 @@ class Innovation extends Table
         // Public information
 
         // Icon information for each card
+        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use 'cards' instead of passing 'card_icons'.
         $result['card_icons'] = self::getCollectionFromDb("SELECT id, spot_1, spot_2, spot_3, spot_4 FROM card");
 
         // Number of achievements needed to win
@@ -3245,6 +3253,18 @@ class Innovation extends Table
                 array('id' => $id)
         ));
         return self::attachTextualInfo($card);
+    }
+
+    function getStaticInfoOfAllCards() {
+        /**
+            Get all static information about all cards in the database.
+        **/
+        if (self::getGameStateValue('release_version') >= 1) {
+            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, is_relic FROM card");
+        } else {
+            $cards = self::getObjectListFromDB("SELECT id, 0 as type, age, age as faceup_age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, 0 as is_relic FROM card");
+        }
+        return self::attachTextualInfoToList($cards);
     }
     
     function getCardInfoFromPosition($owner, $location, $age, $position) {
