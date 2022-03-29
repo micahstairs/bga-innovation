@@ -3282,6 +3282,10 @@ class Innovation extends Table
     function getNonDemandEffect($id, $effect_number) {
         return $this->textual_card_infos[$id]['non_demand_effect_'.$effect_number];
     }
+
+    function getDemandEffect($id) {
+        return $this->textual_card_infos[$id]['demand_effect_1'];
+    }
     
     function attachTextualInfo($card) {
         if ($card === null) {
@@ -5791,8 +5795,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $nested_card_state = self::getCurrentNestedCardState();
             $nesting_index = self::getGameStateValue('current_nesting_index');
             // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-            $has_i_demand = $card['i_demand_effect_1'] !== null && !$card['i_demand_effect_1_is_compel'];
-            $has_i_compel = $card['i_demand_effect_1'] !== null && $card['i_demand_effect_1_is_compel'];
+            $has_i_demand = self::getDemandEffect($card['id']) !== null && !$card['i_demand_effect_1_is_compel'];
+            $has_i_compel = self::getDemandEffect($card['id']) !== null && $card['i_demand_effect_1_is_compel'];
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
@@ -6391,8 +6395,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } while ($player_no != $dogma_player_no);
         }
 
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        if ($card['i_demand_effect_1'] == null) {
+        if (self::getDemandEffect($card['id']) == null) {
             $current_effect_type = 1;
         // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
         } else if (self::getGameStateValue('release_version') >= 1 && $card['i_demand_effect_1_is_compel']) {
@@ -6824,8 +6827,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
                         AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
                 ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use textual_card_infos.
-        } else if ($card['i_demand_effect_1'] !== null) { 
+        } else if (self::getDemandEffect($card['id']) !== null) { 
             $dogma_effect_info['players_executing_i_demand_effects'] =
                 self::getObjectListFromDB(self::format("
                         SELECT
