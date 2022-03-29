@@ -536,6 +536,7 @@ class Innovation extends Table
         
         $result['debug_mode'] = self::getGameStateValue('debug_mode');
 
+        // Get static information about all cards
         $cards  = array();
         foreach (self::getStaticInfoOfAllCards() as $card) {
             $cards[$card['id']] = $card;
@@ -553,10 +554,6 @@ class Innovation extends Table
         $result['current_player_id'] = $current_player_id;
         
         // Public information
-
-        // Icon information for each card
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Use 'cards' instead of passing 'card_icons'.
-        $result['card_icons'] = self::getCollectionFromDb("SELECT id, spot_1, spot_2, spot_3, spot_4 FROM card");
 
         // Number of achievements needed to win
         $result['number_of_achievements_needed_to_win'] = self::getGameStateValue('number_of_achievements_needed_to_win');

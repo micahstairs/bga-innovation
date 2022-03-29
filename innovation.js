@@ -260,7 +260,7 @@ function (dojo, declare) {
             this.text_for_view_full = _("Resume normal view");
             
             // GENERAL INFO
-            this.card_icons = gamedatas.card_icons;
+            this.cards = gamedatas.cards;
             this.players = gamedatas.players; 
             this.number_of_achievements_needed_to_win = gamedatas.number_of_achievements_needed_to_win;
             
@@ -1978,11 +1978,11 @@ function (dojo, declare) {
         },
         
         writeOverCard : function(card, size) {
-            var icon_data = this.card_icons[card.id];
-            var icon1 = this.getIconDiv(card, icon_data['spot_1'], 'top_left_icon', size);
-            var icon2 = this.getIconDiv(card, icon_data['spot_2'], 'bottom_left_icon', size);
-            var icon3 = this.getIconDiv(card, icon_data['spot_3'], 'bottom_center_icon', size);
-            var icon4 = this.getIconDiv(card, icon_data['spot_4'], 'bottom_right_icon', size);
+            var card_data = this.cards[card.id];
+            var icon1 = this.getIconDiv(card, card_data['spot_1'], 'top_left_icon', size);
+            var icon2 = this.getIconDiv(card, card_data['spot_2'], 'bottom_left_icon', size);
+            var icon3 = this.getIconDiv(card, card_data['spot_3'], 'bottom_center_icon', size);
+            var icon4 = this.getIconDiv(card, card_data['spot_4'], 'bottom_right_icon', size);
 
             var card_age = this.createAdjustedContent(card.faceup_age, 'card_age', size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
