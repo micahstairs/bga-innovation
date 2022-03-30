@@ -10125,7 +10125,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 172, Artifacts age 6: Pride and Prejudice
             case "172N1":
-                // TODO(ARTIFACTS): Prevent this from throwing an error ("generated notifications are larger than 128k") when it draws out the remaining cards in the game.
                 do {
                     // "Draw and meld a 6"
                     $card = self::executeDraw($player_id, 6, 'board');
