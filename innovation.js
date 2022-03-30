@@ -101,8 +101,6 @@ function (dojo, declare) {
             
             this.players = null;
             
-            this.card_icons = {};
-            this.saved_cards = {};
             this.saved_HTML_cards = {};
             
             this.just_setupped = null;
@@ -669,6 +667,8 @@ function (dojo, declare) {
                     }
                 }, 100);
             }*/
+
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Add card tooltips to existing log messages.
             
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -1199,7 +1199,6 @@ function (dojo, declare) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
                 return;
             }
-            this.saved_cards[card.id] = card;
             this.addCustomTooltip(HTML_id, this.getTooltipForCard(card), "");
         },
 
@@ -1410,7 +1409,7 @@ function (dojo, declare) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
-                var card = self.saved_cards[id];
+                var card = self.cards[id];
                 var HTML_action = action_text_function(self, card, extra_param);
                 self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
             });
@@ -1423,7 +1422,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
+                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
             });
         },
 
@@ -1436,7 +1435,7 @@ function (dojo, declare) {
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var no_effect = dogma_effect_info[id].no_effect;
                 dojo.attr(HTML_id, 'no_effect', no_effect);
-                dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
+                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
             });
         },
 
@@ -1447,7 +1446,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.saved_cards[id].name);
+                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
             });
         },
 
@@ -1461,7 +1460,7 @@ function (dojo, declare) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
-                var card = self.saved_cards[id];
+                var card = self.cards[id];
                 
                 // Search for the name of the color in clear
                 for (var i=0; i<colors.length; i++) {
@@ -1484,7 +1483,7 @@ function (dojo, declare) {
             if (covered_card) {
                 var top_card = pile[pile.length - 1];
                 var top_card_id = self.getCardIdFromHTMLId(top_card.id);
-                var top_card = self.saved_cards[top_card_id];
+                var top_card = self.cards[top_card_id];
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
                     {
                         'age': self.square('N', 'age', top_card.age, 'in_log'),
@@ -1652,7 +1651,7 @@ function (dojo, declare) {
             for (var i=0; i<pile.length-1; i++) {
                 var pile_card = pile[i];
                 var pile_card_id = this.getCardIdFromHTMLId(pile_card.id);
-                var pile_card = this.saved_cards[pile_card_id];
+                var pile_card = this.cards[pile_card_id];
                 
                 // Remove ressources brought by the current splay
                 // TODO(CITIES): Account for more spots on the card.
@@ -1986,14 +1985,14 @@ function (dojo, declare) {
 
             var card_age = this.createAdjustedContent(card.faceup_age, 'card_age', size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
-            var title = _(card.name).toUpperCase();
+            var title = _(card_data.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
             
-            var i_demand_effect_1 = card.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
+            var i_demand_effect_1 = card_data.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
-            var non_demand_effect_1 = card.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_1) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
-            var non_demand_effect_2 = card.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
-            var non_demand_effect_3 = card.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
+            var non_demand_effect_1 = card_data.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_1) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
+            var non_demand_effect_2 = card_data.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
+            var non_demand_effect_3 = card_data.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
             var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
             
@@ -2008,12 +2007,13 @@ function (dojo, declare) {
         },
         
         getSpecialAchievementText : function(card) {
-            var achievement_name = _(card.achievement_name).toUpperCase();
+            var card_data = this.cards[card.id];
+            var achievement_name = _(card_data.achievement_name).toUpperCase();
             var is_monument = card.id == 106;
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
-            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
+            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
-            var div_alternative_condition_for_claiming = "</br><div>" + _(card.alternative_condition_for_claiming) + "</div>";
+            var div_alternative_condition_for_claiming = "</br><div>" + _(card_data.alternative_condition_for_claiming) + "</div>";
             
             return div_condition_for_claiming + div_alternative_condition_for_claiming;            
         },
@@ -2948,7 +2948,7 @@ function (dojo, declare) {
             var delta = arrow == $('publication_arrow_up') ? 1 : -1; // Change of position requested
             var HTML_id = dojo.getAttr(arrow.parentNode, 'id');
             var card_id = this.getCardIdFromHTMLId(HTML_id);
-            var color = this.saved_cards[card_id].color;
+            var color = this.cards[card_id].color;
             
             // Search position in zone
             var zone = this.zone.board[this.player_id][color];
@@ -3056,8 +3056,8 @@ function (dojo, declare) {
                 old_top_item = up ? other_item : item;
                 new_top_item = up ? item : other_item;
                 
-                old_top_card = this.saved_cards[this.getCardIdFromHTMLId(old_top_item.id)];
-                new_top_card = this.saved_cards[this.getCardIdFromHTMLId(new_top_item.id)];
+                old_top_card = this.cards[this.getCardIdFromHTMLId(old_top_item.id)];
+                new_top_card = this.cards[this.getCardIdFromHTMLId(new_top_item.id)];
                 
                 ressource_counts = {};
                 for(var icon=1; icon<=6; icon++) {
