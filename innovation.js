@@ -103,7 +103,7 @@ function (dojo, declare) {
             
             this.saved_HTML_cards = {};
             
-            this.just_setupped = null;
+            this.initializing = null;
             
             // Special flags used for Publication
             this.publication_permuted_zone = null;
@@ -667,15 +667,33 @@ function (dojo, declare) {
                     }
                 }, 100);
             }*/
-
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Add card tooltips to existing log messages.
             
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
             
-            this.just_setupped = true;
+            this.initializing = true;
             
             console.log("Ending game setup");
+        },
+
+        /* [Undocumented] Override BGA framework functions to call onLoadingComplete when loading is done */
+        setLoader(value, max) {
+            this.inherited(arguments);
+            if (!this.isLoadingComplete && value >= 100) {
+            this.isLoadingComplete = true;
+            this.onLoadingComplete();
+            }
+        },
+
+        onLoadingComplete() {
+            // Add card tooltips to existing game log messages
+            for (var i = 0; i < this.cards.length; i++) {
+                var card_id = this.cards[i].id;
+                var elements = dojo.query(".card_id_" + card_id);
+                if (elements.length > 0 && this.canShowCardTooltip(card_id)) {
+                    this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
+                }
+            }
         },
         
         ///////////////////////////////////////////////////
@@ -725,7 +743,7 @@ function (dojo, declare) {
             console.log('Entering state: '+stateName)
             console.log(args)
 
-            if (this.just_setupped) { // Here, do things that have to be done on setup but that cannot be done inside the function
+            if (this.initializing) { // Here, do things that have to be done on setup but that cannot be done inside the function
                 
                 for(var player_id in this.players) { // Displaying player BGA scores
                     this.scoreCtrl[player_id].setValue(this.players[player_id].player_score); // BGA score = number of claimed achievements
@@ -734,8 +752,8 @@ function (dojo, declare) {
                     this.addCustomTooltip('icon_point_' + player_id, tooltip_help, "");
                 }
                 
-                // Now the game is really truly setupped
-                this.just_setupped = false;
+                // Now the game is really truly set up
+                this.initializing = false;
             }
 
             // Things to do for all players
@@ -3365,11 +3383,8 @@ function (dojo, declare) {
             }
 
             // Add tooltip to game log
-            if (card.id !== undefined) {
-                // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
-                if (card.age !== null && card.id != 215 && card.id != 218 && card.id != 219) {
-                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
-                }
+            if (this.canShowCardTooltip(card.id)) {
+                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
             }
         },
 
@@ -3377,8 +3392,7 @@ function (dojo, declare) {
             // Add tooltips to game log
             for (var i = 0; i < notif.args.card_ids.length; i++) {
                 var card_id = notif.args.card_ids[i];
-                // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
-                if (this.cards[card_id].age !== null && card_id != 215 && card_id != 218 && card_id != 219) {
+                if (this.canShowCardTooltip(card_id)) {
                     this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
                 }
             }
@@ -3708,6 +3722,11 @@ function (dojo, declare) {
             }
             var arrow = '&rarr;';
             return cards.join(arrow);
+        },
+
+        canShowCardTooltip : function(card_id) {
+            // TODO(CITIES,ECHOES,FIGURES): Add tooltips for remaining relics once the cards are fully implemented.
+            return card_id !== undefined && this.cards[card_id].age !== null && card_id != 215 && card_id != 218 && card_id != 219;
         },
 
         // Returns true if the current player is a spectator or if the game is currently in replay mode
