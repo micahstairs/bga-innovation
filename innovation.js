@@ -1199,14 +1199,15 @@ function (dojo, declare) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
                 return;
             }
-            this.addCustomTooltip(HTML_id, this.getTooltipForCard(card), "");
+            this.addCustomTooltip(HTML_id, this.getTooltipForCard(card.id), "");
         },
 
-        getTooltipForCard : function(card) {
-            if (this.saved_HTML_cards[card.id] === undefined) {
-                this.saved_HTML_cards[card.id] = this.createCard(card.id, card.age, card.type, card.is_relic, "L card", card);
+        getTooltipForCard : function(card_id) {
+            if (this.saved_HTML_cards[card_id] === undefined) {
+                var card = this.cards[card_id];
+                this.saved_HTML_cards[card_id] = this.createCard(card_id, card.age, card.type, card.is_relic, "L card", card);
             }
-            return this.saved_HTML_cards[card.id];
+            return this.saved_HTML_cards[card_id];
         },
         
         addTooltipForStandardAchievement : function(card) {
@@ -3367,18 +3368,18 @@ function (dojo, declare) {
             if (card.id !== undefined) {
                 // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
                 if (card.age !== null && card.id != 215 && card.id != 218 && card.id != 219) {
-                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
                 }
             }
         },
 
         notif_logWithCardTooltips: function(notif) {
             // Add tooltips to game log
-            for (var i = 0; i < notif.args.cards.length; i++) {
-                var card = notif.args.cards[i];
+            for (var i = 0; i < notif.args.card_ids.length; i++) {
+                var card_id = notif.args.card_ids[i];
                 // TODO(CITIES,ECHOES,FIGURES): Allow tooltips for these relics once the cards are fully implemented.
-                if (card.age !== null && card.id != 215 && card.id != 218 && card.id != 219) {
-                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card), "");
+                if (this.cards[card_id].age !== null && card_id != 215 && card_id != 218 && card_id != 219) {
+                    this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
                 }
             }
         },

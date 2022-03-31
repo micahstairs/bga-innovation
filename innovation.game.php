@@ -1663,11 +1663,11 @@ class Innovation extends Table
             $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty hand.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
             return;
         }
-        $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
+        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
         $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your hand: ${card_list}.'),
-            array_merge($args, ['You' => 'You', 'cards' => $cards]));
+            array_merge($args, ['You' => 'You']));
         $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'cards' => $cards]));
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
 
     function revealScorePile($player_id) {
@@ -1677,11 +1677,11 @@ class Innovation extends Table
             $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty score pile.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
             return;
         }
-        $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
+        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
         $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your score pile: ${card_list}.'),
-            array_merge($args, ['You' => 'You', 'cards' => $cards]));
+            array_merge($args, ['You' => 'You']));
         $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his score pile: ${card_list}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id), 'cards' => $cards]));
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
 
     function getNotificationArgsForCardList($cards) {
@@ -3146,15 +3146,13 @@ class Innovation extends Table
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card_id);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card_id);
         
-        $card_arg = ['cards' => [$card], 'card' => self::getNotificationArgsForCardList(array($card))];
+        $card_arg = ['card_ids' => [$card_id], 'card' => self::getNotificationArgsForCardList(array($card))];
         self::notifyPlayer($player_id, 'logWithCardTooltips', $message_for_player, array_merge($card_arg, $delimiters_for_player, array(
             'You' => 'You',
-            'age' => $card['age'],
             'icon' => $card['dogma_icon'],
         )));
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', $message_for_others, array_merge($card_arg, $delimiters_for_others, array(
             'player_name' => self::getPlayerNameFromId($player_id),
-            'age' => $card['age'],
             'icon' => $card['dogma_icon'],
         ))); 
     }
@@ -3258,6 +3256,14 @@ class Innovation extends Table
             ",
                 array('owner' => $owner, 'location' => $location, 'age' => $age, 'position' => $position)
         ));
+    }
+
+    function getCardIds($cards) {
+        $card_ids = array();
+        foreach ($cards as $card) {
+            $card_ids[] = $card['id'];
+        }
+        return $card_ids;
     }
 
     function getCardName($id) {
@@ -5738,13 +5744,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $card_args = self::getNotificationArgsForCardList([$card]);
             if (self::getNonDemandEffect($card['id'], 1) === null) {
-                self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card_1} to execute.'), ['card_1' => $card_args, 'cards' => [$card]]);
+                self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
                 return;
             }
-            self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card_1}.'),
-                ['You' => 'You', 'card_1' => $card_args, 'cards' => [$card]]);
-            self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card_1}.'),
-                ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_args, 'cards' => [$card]]);
+            self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}.'),
+                ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
+            self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}.'),
+                ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
         } else {
             if (self::getNonDemandEffect($card['id'], 1) === null) { // There is no non-demand effect
                 self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
@@ -5770,9 +5776,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $initially_executed_card = self::getCardInfo(self::getNestedCardState(0)['card_id']);
         $icon = self::getIconSquare($initially_executed_card['dogma_icon']);
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
-            ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'cards' => [$current_card, $card], 'icon' => $icon]);
+            ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
-            ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'cards' => [$current_card, $card], 'icon' => $icon]);
+            ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
     
@@ -7801,7 +7807,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getGameStateValue('current_nesting_index') >= 1) {
                     $card_args = self::getNotificationArgsForCardList([$card]);
                     self::notifyAll('logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
-                        ['card_1' => $card_args, 'cards' => [$card]]);
+                        ['card_1' => $card_args, 'card_ids' => [$card_id]]);
                     
                     self::popCardFromNestedDogmaStack();
 
@@ -17072,11 +17078,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $this->notifyPlayer($id, 'log', clienttranslate('${You} reveal no cards.'), ['You' => 'You']);
                         $this->notifyAllPlayersBut($id, 'log', clienttranslate('${player_name} reveals no cards.'), ['player_name' => self::getPlayerNameFromId($id)]);
                     } else {
-                        $args = ['card_list' => self::getNotificationArgsForCardList($cards)];
+                        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
                         $this->notifyPlayer($id, 'logWithCardTooltips', clienttranslate('${You} reveal: ${card_list}.'),
-                            array_merge($args, ['You' => 'You', 'cards' => $cards]));
+                            array_merge($args, ['You' => 'You']));
                         $this->notifyAllPlayersBut($id, 'logWithCardTooltips', clienttranslate('${player_name} reveals: ${card_list}.'),
-                            array_merge($args, ['player_name' => self::getPlayerNameFromId($id), 'cards' => $cards]));
+                            array_merge($args, ['player_name' => self::getPlayerNameFromId($id)]));
                         if ($id == $player_id) {
                             $player_revealed_cards = true;
                         } else {
