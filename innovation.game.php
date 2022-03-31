@@ -3140,26 +3140,21 @@ class Innovation extends Table
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];
         
-        $message_for_player = clienttranslate('${You} activate the dogma of ${<}${age}${>} ${<<}${name}${>>} with ${[}${icon}${]} as featured icon.');
-        $message_for_others = clienttranslate('${player_name} activates the dogma of ${<}${age}${>} ${<<}${name}${>>} with ${[}${icon}${]} as featured icon.');
+        $message_for_player = clienttranslate('${You} activate the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+        $message_for_others = clienttranslate('${player_name} activates the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
         
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card_id);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card_id);
         
-        $card_name = self::getCardName($card_id);
-        // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Add card tooltips to these messages.
-        self::notifyPlayer($player_id, 'log', $message_for_player, array_merge($delimiters_for_player, array(
-            'i18n' => array('name'),
+        $card_arg = ['cards' => [$card], 'card' => self::getNotificationArgsForCardList(array($card))];
+        self::notifyPlayer($player_id, 'logWithCardTooltips', $message_for_player, array_merge($card_arg, $delimiters_for_player, array(
             'You' => 'You',
             'age' => $card['age'],
-            'name' => $card_name,
             'icon' => $card['dogma_icon'],
         )));
-        self::notifyAllPlayersBut($player_id, 'log', $message_for_others, array_merge($delimiters_for_others, array(
-            'i18n' => array('name'),
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', $message_for_others, array_merge($card_arg, $delimiters_for_others, array(
             'player_name' => self::getPlayerNameFromId($player_id),
             'age' => $card['age'],
-            'name' => $card_name,
             'icon' => $card['dogma_icon'],
         ))); 
     }
