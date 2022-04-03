@@ -373,13 +373,14 @@ class Innovation extends Table
                 INSERT INTO nested_card_execution (
                     nesting_index,
                     card_id,
+                    executing_as_if_on_card_id,
                     launcher_id,
                     current_player_id,
                     current_effect_type,
                     current_effect_number,
                     step,
                     step_max
-                ) VALUES (0, -1, -1, -1, -1, -1, -1, -1)");
+                ) VALUES (0, -1, -1, -1, -1, -1, -1, -1, -1)");
         } else {
             self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
             self::setGameStateInitialValue('dogma_card_id', -1);
@@ -5769,11 +5770,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function executeAllEffects($card) {
-        $current_card = self::getCardInfo(self::getCurrentNestedCardState()['card_id']);
+        $current_nested_state = self::getCurrentNestedCardState();
+        $current_card = self::getCardInfo($current_nested_state['card_id']);
         $card_1_args = self::getNotificationArgsForCardList([$current_card]);
         $card_2_args = self::getNotificationArgsForCardList([$card]);
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        $initially_executed_card = self::getCardInfo(self::getNestedCardState(0)['card_id']);
+        $initially_executed_card = self::getCardInfo($current_nested_state['executing_as_if_on_card_id']);
         $icon = self::getIconSquare($initially_executed_card['dogma_icon']);
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
@@ -5787,16 +5789,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
             $nested_card_state = self::getCurrentNestedCardState();
+            // Every card that says "execute the effects" also says "as if they were on this card"
+            if ($execute_demand_effects) {
+                $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
+            } else {
+                $as_if_on = $card['id'];
+            }
             $nesting_index = self::getGameStateValue('current_nesting_index');
             $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
             $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
-                    (nesting_index, card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
+                    (nesting_index, card_id, executing_as_if_on_card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
                 VALUES
-                    ({nesting_index}, {card_id}, {launcher_id}, {effect_type}, 1, -1, -1)
-            ", array('nesting_index' => $nesting_index + 1, 'card_id' => $card['id'], 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+                    ({nesting_index}, {card_id}, {as_if_on}, {launcher_id}, {effect_type}, 1, -1, -1)
+            ", array('nesting_index' => $nesting_index + 1, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -5825,7 +5833,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getObjectFromDB(
             self::format("
                 SELECT
-                    nesting_index, card_id, card_location, launcher_id, current_player_id, current_effect_type, current_effect_number, step, step_max, post_execution_index, auxiliary_value, auxiliary_value_2
+                    nesting_index,
+                    card_id,
+                    executing_as_if_on_card_id,
+                    card_location,
+                    launcher_id,
+                    current_player_id,
+                    current_effect_type,
+                    current_effect_number,
+                    step,
+                    step_max,
+                    post_execution_index,
+                    auxiliary_value,
+                    auxiliary_value_2
                 FROM
                     nested_card_execution
                 WHERE
@@ -6404,6 +6424,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         nested_card_execution
                     SET
                         card_id = {card_id},
+                        executing_as_if_on_card_id = {card_id},
                         card_location = '{card_location}',
                         launcher_id = {launcher_id},
                         current_effect_type = {effect_type},
@@ -7888,6 +7909,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         nested_card_execution
                     SET
                         card_id = -1,
+                        executing_as_if_on_card_id = -1,
                         launcher_id = -1,
                         card_location = NULL,
                         current_player_id = -1,
@@ -12812,7 +12834,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id, // Nothing is to be done with that card
                 'location_to' => 'board',
                 
-                'not_id' => 100 /* Not this card */
+                // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
+                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
             );       
             break;
         
@@ -13346,7 +13369,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'none',
 
                 'color' => array(4), // Purple
-                'not_id' => 134 // Cyrus Cylinder
+
+                // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
+                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
             );
             break;
 
@@ -14057,7 +14082,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
                 
-                'not_id' => 162 // Not this card
+                // Exclude the card currently being executed (it's possible for the effects of The Daily Courant to be executed as if it were on another card)
+                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
             );       
             break;      
             
