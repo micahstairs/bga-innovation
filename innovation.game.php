@@ -14068,11 +14068,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "162N1C":
-            // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
+            // "You may execute the effects of one of your other top cards as if they were on this card. Do not share them."
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
+                'can_pass' => true,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
