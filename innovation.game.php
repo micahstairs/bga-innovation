@@ -678,7 +678,7 @@ class Innovation extends Table
                 $action_number = self::getGameStateValue('current_action_number');
                 $result['action_number'] = $action_number;
                 $card = self::getArtifactOnDisplay($active_player);
-                if ($card !== null && $action_number == 0) {
+                if ($card !== null && $this->gamestate->state()['name'] == 'artifactPlayerTurn') {
                     $result['artifact_on_display_icons'] = array();
                     $result['artifact_on_display_icons']['resource_icon'] = $card['dogma_icon'];
                     $result['artifact_on_display_icons']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
