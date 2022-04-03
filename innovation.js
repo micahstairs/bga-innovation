@@ -2318,11 +2318,11 @@ function (dojo, declare) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
-                var x = (i % 3) * (w + 10);
+                var x = (i % 3) * (w + 5);
                 if (i >= 3) {
-                    x = x + ((w + 10) / 2);
+                    x = x + ((w + 5) / 2);
                 }
-                var y = parseInt(i / 3 ) * (h + 5);
+                var y = parseInt(i / 3) * (h + 5);
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h};
             }
@@ -2334,8 +2334,8 @@ function (dojo, declare) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
-                var x = parseInt(i / 3) * (w + 10)
-                var y = (i % 3 ) * (h + 5) 
+                var x = (i % 3) * (w + 5);
+                var y = parseInt(i / 3) * (h + 5);
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h}
             }
@@ -2347,8 +2347,8 @@ function (dojo, declare) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
-                var x = i * (w / 2 + 5)
-                var y = (i % 2) * (h + 5)
+                var x = i * (w / 2 + 5);
+                var y = (i % 2) * (h + 5);
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h}
             }
