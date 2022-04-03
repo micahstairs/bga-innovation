@@ -1694,7 +1694,7 @@ class Innovation extends Table
             if ($i > 0) {
                 $log = $log.', ';
             }
-            $log = $log."<span class='square N age_".$card['age']."'></span> ";
+            $log = $log."<span class='square N age age_".$card['age']."'>".$card['age']."</span> ";
             $log = $log.'<span id=\''.uniqid().'\'class=\'card_name card_id_'.$card['id'].'\'>${name_'.$i.'}</span>';
             $args['name_'.$i] = self::getCardName($card['id']);
             $args['i18n'][] = 'name_'.$i;
@@ -1707,8 +1707,8 @@ class Innovation extends Table
         
         // Delimiters for age icon
         if (strpos($text, '{<}') > -1) {
-            $delimiters['<'] = "<span class='square N age_";
-            $delimiters['>'] = "'></span>";
+            $delimiters['<'] = "<span class='square N age age_";
+            $delimiters['>'] = "'>\${age}</span>";
         }
 
         // Delimiters for card name
@@ -2543,7 +2543,6 @@ class Innovation extends Table
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
         $notif_args_for_player = array_merge($info, $delimiters_for_player);
         $notif_args_for_player['You'] = 'You';
-        
         // Visibility for involved player
         if (array_key_exists('<<', $delimiters_for_player)) {
             // The player can see the front of the card
@@ -2570,6 +2569,10 @@ class Innovation extends Table
             $notif_args_for_player['type'] = $card['type'];
             $notif_args_for_player['is_relic'] = $card['is_relic'];
         }
+        if (array_key_exists('>', $delimiters_for_player)) {
+            // replace ${age} with card age
+            $notif_args_for_player['>'] =str_replace("\${age}", $card['age'],$notif_args_for_player['>']);
+        }
         
         // Information to attach to others (other players and spectators)
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
@@ -2583,7 +2586,7 @@ class Innovation extends Table
             $notif_args_for_others['name'] = self::getCardName($card['id']);
             // TODO(LATER): We should stop sending the card's properties which aren't actually used.
             $notif_args_for_others = array_merge($notif_args_for_others, $card);
-        } else if (array_key_exists('<<<', $delimiters_for_player)) {
+        } else if (array_key_exists('<<<', $delimiters_for_others)) {
             $notif_args_for_others['i18n'] = array('achievement_name');
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
@@ -2601,6 +2604,10 @@ class Innovation extends Table
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
             $notif_args_for_others['is_relic'] = $card['is_relic'];
+        }
+        if (array_key_exists('>', $delimiters_for_others)) {
+            // replace ${age} with card age
+            $notif_args_for_others['>'] =str_replace("\${age}", $card['age'],$notif_args_for_others['>']);
         }
         
         self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
@@ -3130,7 +3137,7 @@ class Innovation extends Table
     }
     
     function getAgeSquare($age) {
-        return self::format("<span title='{age}' class='square N age_{age}'></span>", array('age' => $age));
+        return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
     }
     
     function notifyDogma($card) {
