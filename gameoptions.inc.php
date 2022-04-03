@@ -88,19 +88,43 @@ $game_options = array(
     ),
 
     102 => array(
-        'name' => totranslate('Artifacts expansion'),
+        'name' => totranslate('Artifacts of History expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
-            2 => array('name' => totranslate('Enable without Relics'), 'no_beginner' => true),
-            3 => array('name' => totranslate('Enable with Relics'), 'no_beginner' => true)
+            2 => array('name' => totranslate('Enable without Relics'), 'no_beginner' => true, 'tmdisplay' => totranslate('Artifacts Expansion')),
+            3 => array('name' => totranslate('Enable with Relics'), 'no_beginner' => true, 'tmdisplay' => totranslate('Artifacts Expansion with Relics'))
+        )
+    ),
+/* TODO: add cities and echoes expansion option when the time comes
+    103 => array(
+        'name' => totranslate('Cities of Destiny expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
         )
     ),
 
-    103 => array(
+    104 => array(
+        'name' => totranslate('Echoes of the Past expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Echoes Expansion'))
+        )
+    ),
+
+    105 => array(
+        'name' => totranslate('Figures in the Sand expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Figures Expansion'))
+        )
+    ),*/
+
+    110 => array(
         'name' => totranslate('Extra achievement to win'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
-            2 => array('name' => totranslate('Enable'), 'no_beginner' => true)
+            2 => array('name' => totranslate('Enable'), 'tmdisplay' => totranslate('Extra Achievement'), 'no_beginner' => true)
         )
     )
 );
