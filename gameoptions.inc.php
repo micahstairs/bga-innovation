@@ -61,22 +61,22 @@ $game_options = array(
         'startcondition' => array(
             1 => array(/* No special condition here */),
             2 => array(
-                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"')),
-                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"'))
+                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players')),
+                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players'))
             ),
             3 => array(
-                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"')),
-                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"'))
+                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players')),
+                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players'))
             ),
             4 => array(
-                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"')),
-                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"'))
+                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players')),
+                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players'))
             ),
             5 => array(
-                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"')),
-                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players, please switch back to "Classic Game"'))
+                array('type' => 'minplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players')),
+                array('type' => 'maxplayers', 'value' => 4, 'message' => totranslate('Team game is only available for 4 players'))
             )
-        )
+        ),
     ),
     
     101 => array(
@@ -85,6 +85,13 @@ $game_options = array(
             1 => array('name' => totranslate('Last edition')),
             2 => array('name' => totranslate('First edition'), 'tmdisplay' => totranslate('First edition')),
         ),
+        'startcondition' => array(
+            1 => array(/* No special condition here */),
+            2 => array(
+                /* TODO(CITIES,ECHOES,FIGURES): Add more conditions when other expansions are added. */
+                array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
+            ),
+        )
     ),
 
     102 => array(
@@ -95,7 +102,8 @@ $game_options = array(
             3 => array('name' => totranslate('Enable with Relics'), 'no_beginner' => true, 'tmdisplay' => totranslate('Artifacts Expansion with Relics'))
         )
     ),
-/* TODO: add cities and echoes expansion option when the time comes
+
+    /* TODO(CITIES,ECHOES,FIGURES): Add game options.
     103 => array(
         'name' => totranslate('Cities of Destiny expansion'),
         'values' => array(
