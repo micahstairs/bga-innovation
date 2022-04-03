@@ -117,7 +117,7 @@ class Innovation extends Table
             'game_type' => 100, // 1 for normal game, 2 for team game
             'game_rules' => 101, // 1 for last edition, 2 for first edition
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
-            'extra_achievement_to_win' => 103 // 1 for "Disabled", 2 for "Enabled"
+            'extra_achievement_to_win' => 110 // 1 for "Disabled", 2 for "Enabled"
         ));
     }
     
