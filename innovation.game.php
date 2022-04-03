@@ -2661,6 +2661,10 @@ class Innovation extends Table
             $notif_args_for_others['type'] = $card['type'];
             $notif_args_for_others['is_relic'] = $card['is_relic'];
         }
+        if (array_key_exists('>', $delimiters_for_others)) {
+            // replace ${age} with card age
+            $notif_args_for_player['>'] =str_replace("\${age}", $card['age'],$notif_args_for_others['>']);
+        }
         
         self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
         self::notifyPlayer($opponent_id, "transferedCard", $message_for_opponent, $notif_args_for_opponent);
