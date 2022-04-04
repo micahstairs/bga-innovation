@@ -1007,19 +1007,19 @@
   background-position-x: 0px;
 }
 .square.N.icon_2 {
-  background-position-x: 14px;
+  background-position-x: -14px;
 }
 .square.N.icon_3 {
-  background-position-x: 28px;
+  background-position-x: -28px;
 }
 .square.N.icon_4 {
-  background-position-x: 42px;
+  background-position-x: -42px;
 }
 .square.N.icon_5 {
-  background-position-x: 56px;
+  background-position-x: -56px;
 }
 .square.N.icon_6 {
-  background-position-x: 70px;
+  background-position-x: -70px;
 }
 .square.N.age_1 {
   background-position: 0px -30px;
@@ -1090,19 +1090,19 @@
   background-position-x: 0px;
 }
 .square.M.icon_2 {
-  background-position-x: 8px;
+  background-position-x: -8px;
 }
 .square.M.icon_3 {
-  background-position-x: 16px;
+  background-position-x: -16px;
 }
 .square.M.icon_4 {
-  background-position-x: 24px;
+  background-position-x: -24px;
 }
 .square.M.icon_5 {
-  background-position-x: 32px;
+  background-position-x: -32px;
 }
 .square.M.icon_6 {
-  background-position-x: 40px;
+  background-position-x: -40px;
 }
 .square.M.age_1, .square.M.age_2, .square.M.age_3, .square.M.age_4, .square.M.age_5, .square.M.age_6, .square.M.age_7, .square.M.age_8, .square.M.age_9, .square.M.age_10 {
   width: 8px;
@@ -1150,19 +1150,19 @@
   background-position-x: 0px;
 }
 .square.L.icon_2 {
-  background-position-x: 19px;
+  background-position-x: -19px;
 }
 .square.L.icon_3 {
-  background-position-x: 38px;
+  background-position-x: -38px;
 }
 .square.L.icon_4 {
-  background-position-x: 57px;
+  background-position-x: -57px;
 }
 .square.L.icon_5 {
-  background-position-x: 76px;
+  background-position-x: -76px;
 }
 .square.L.icon_6 {
-  background-position-x: 95px;
+  background-position-x: -95px;
 }
 .square.L.age_1 {
   background-position: 0px -101px;
@@ -1207,19 +1207,19 @@
   background-position-x: 0px;
 }
 .square.in_tooltip.icon_2 {
-  background-position-x: 14px;
+  background-position-x: -14px;
 }
 .square.in_tooltip.icon_3 {
-  background-position-x: 28px;
+  background-position-x: -28px;
 }
 .square.in_tooltip.icon_4 {
-  background-position-x: 42px;
+  background-position-x: -42px;
 }
 .square.in_tooltip.icon_5 {
-  background-position-x: 56px;
+  background-position-x: -56px;
 }
 .square.in_tooltip.icon_6 {
-  background-position-x: 70px;
+  background-position-x: -70px;
 }
 
 .dogma_symbol.M {

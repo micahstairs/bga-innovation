@@ -950,7 +950,7 @@
 }
 @mixin square-icon-x-position($number, $position) {
     &.icon_#{$number} {
-        background-position-x: $position;
+        background-position-x: -$position;
     }
 }
 @mixin generate-square-icon-x-position($min, $max, $increment) {
