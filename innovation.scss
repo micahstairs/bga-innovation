@@ -948,6 +948,17 @@
 .simple_stats {
     height: 19px;
 }
+@mixin square-icon-x-position($number, $position) {
+    &.icon_#{$number} {
+        background-position-x: $position;
+    }
+}
+@mixin generate-square-icon-x-position($min, $max, $increment) {
+    @for $i from $min through $max {
+        $position: ($increment * ($i - 1));
+        @include square-icon-x-position($i, $position)
+    }
+}
 .square {
     background-image: url('img/squares.png');
     display: inline-block;
@@ -981,24 +992,11 @@
     &.N {
         width: 14px;
         height: 14px;
-        &.icon_1 {
-            background-position: -0px -16px;
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+            background-position-y: -16px;
         }
-        &.icon_2 {
-            background-position: -14px -16px;
-        }
-        &.icon_3 {
-            background-position: -28px -16px;
-        }
-        &.icon_4 {
-            background-position: -42px -16px;
-        }
-        &.icon_5 {
-            background-position: -56px -16px;
-        }
-        &.icon_6 {
-            background-position: -70px -16px;
-        }
+        @include generate-square-icon-x-position(1, 6, 14px);
+        
         &.age_1 {
             background-position: -0px -30px;
         }
@@ -1035,6 +1033,7 @@
         height: 20px;
         background-image: url('img/resource_icons.jpg');
         background-size: 133px auto;
+        // TODO: convert to mixin generator, aka figure out why it starts at 1 and is inconsistant, probably the background size is off
         &.icon_1 {
             background-position: -1px -112px;
         }
@@ -1062,31 +1061,10 @@
             height: 8px;
             background-image: url('img/resource_icons.jpg');
             background-size: 50px auto;
-        }
-        &.icon_1 {
             background-position-y: -42px;
-            background-position-x: -0px;
         }
-        &.icon_2 {
-            background-position-y: -42px;
-            background-position-x: -8px;
-        }
-        &.icon_3 {
-            background-position-y: -42px;
-            background-position-x: -17px;
-        }
-        &.icon_4 {
-            background-position-y: -42px;
-            background-position-x: -25px;
-        }
-        &.icon_5 {
-            background-position-y: -42px;
-            background-position-x: -34px;
-        }
-        &.icon_6 {
-            background-position-y: -42px;
-            background-position-x: -42px;
-        }
+        @include generate-square-icon-x-position(1, 6, 8px);
+
         &.age_1,&.age_2,&.age_3,&.age_4,&.age_5,&.age_6,&.age_7,&.age_8,&.age_9,&.age_10{
             width: 8px;
             height: 8px;
@@ -1126,24 +1104,11 @@
     &.L {
         width: 19px;
         height: 19px;
-        &.icon_1 {
-            background-position: -0px -82px;
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+            background-position-y: -82px;
         }
-        &.icon_2 {
-            background-position: -19px -82px;
-        }
-        &.icon_3 {
-            background-position: -38px -82px;
-        }
-        &.icon_4 {
-            background-position: -57px -82px;
-        }
-        &.icon_5 {
-            background-position: -76px -82px;
-        }
-        &.icon_6 {
-            background-position: -95px -82px;
-        }
+        @include generate-square-icon-x-position(1, 6, 19px);
+
         &.age_1 {
             background-position: -0px -101px;
         }
@@ -1174,6 +1139,16 @@
         &.age_10 {
             background-position: -171px -101px;
         }
+    }
+    &.in_tooltip {
+        width: 13px;
+        height: 12px;
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+            background-image: url('img/resource_icons.jpg');
+            background-size: 83px auto;
+            background-position-y: -42px;
+        }
+        @include generate-square-icon-x-position(1, 6, 14px);
     }
 }
 
