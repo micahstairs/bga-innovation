@@ -81,6 +81,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
     "runOnSave.commands": [
             {
                 "match": ".*\\.scss$",
+                "notMatch": "variables.scss$",
                 "command": "sass ${file} ${fileDirname}/${fileBasenameNoExtension}.css",
                 "runIn": "backend",
                 "runningStatusMessage": "Compiling ${fileBasename}",

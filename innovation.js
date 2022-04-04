@@ -291,30 +291,39 @@ function (dojo, declare) {
             this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
             this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
             
+
+            // Add achievements to win to achievement container
+            for(var player_id in this.players) {
+                dojo.addClass('achievement_container_' + player_id, 'to_win_' + this.number_of_achievements_needed_to_win)
+            }
             // Setting the width of the score and achievement zones and the number of cards they can host
-            var required_width_achievements_in_line = (this.number_of_achievements_needed_to_win - 1) * this.delta.achievements.x +  this.card_dimensions['S recto'].width;
+            // var required_width_achievements_in_line = (this.number_of_achievements_needed_to_win - 1) * this.delta.achievements.x +  this.card_dimensions['S recto'].width;
+            var achievement_container_width = dojo.position('achievement_container_' + any_player_id).w
             var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
             var progress_width = dojo.position('progress_' + any_player_id).w;
-            var score_width = progress_width - required_width_achievements_in_line - 10 - reference_card_width;
-            if (score_width >= this.card_dimensions['S card'].width) { // There is enough space to host claimed achievements on a line
-                // Save the required space for achievements and adapt the score container
-                for(var player_id in this.players) {
-                    dojo.style('achievement_container_' + player_id, 'width', required_width_achievements_in_line + "px");
-                    dojo.style('score_container_' + player_id, 'width', score_width + "px");
-                }
-                this.num_cards_in_row.achievements = 6;
+            var score_width = progress_width - achievement_container_width - 10 - reference_card_width;
+            // if (score_width >= this.card_dimensions['S card'].width) { // There is enough space to host claimed achievements on a line
+            //     // Save the required space for achievements and adapt the score container
+            //     for(var player_id in this.players) {
+            //         dojo.style('achievement_container_' + player_id, 'width', required_width_achievements_in_line + "px");
+            //         dojo.style('score_container_' + player_id, 'width', score_width + "px");
+            //     }
+            console.log("MARK",achievement_container_width)
+            var num_of_achievments_per_row = achievement_container_width <= 140 ? 4 : this.number_of_achievements_needed_to_win; //LMF this will get more complicated if tablet is defined differently
+            
+                this.num_cards_in_row.achievements = num_of_achievments_per_row;
                 this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
-            }
-            else { // There is not enough space
-                // Set the score container to one card in a row and adapt the achievement container
-                var achievements_width = progress_width - 10 - reference_card_width - this.card_dimensions['S card'].width;
-                for(var player_id in this.players) {
-                    dojo.style('achievement_container_' + player_id, 'width', achievements_width + "px");
-                    dojo.style('score_container_' + player_id, 'width', this.card_dimensions['S card'].width + "px");
-                }
-                this.num_cards_in_row.achievements = parseInt((achievements_width + this.delta.achievements.x - this.card_dimensions['S card'].width) / (this.delta.achievements.x));
-                this.num_cards_in_row.score = 1;
-            }
+            // }
+            // else { // There is not enough space
+            //     // Set the score container to one card in a row and adapt the achievement container
+            //     var achievements_width = progress_width - 10 - reference_card_width - this.card_dimensions['S card'].width;
+            //     for(var player_id in this.players) {
+            //         dojo.style('achievement_container_' + player_id, 'width', achievements_width + "px");
+            //         dojo.style('score_container_' + player_id, 'width', this.card_dimensions['S card'].width + "px");
+            //     }
+            //     this.num_cards_in_row.achievements = parseInt((achievements_width + this.delta.achievements.x - this.card_dimensions['S card'].width) / (this.delta.achievements.x));
+            //     this.num_cards_in_row.score = 1;
+            // }
             
             // Defining the number of cards the window for score verso can host
             // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.

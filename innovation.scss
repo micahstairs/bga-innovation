@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "misc/variables" as v;
 @import "../../../css/csslayer.css";
 
 
@@ -20,6 +21,8 @@
  * color_3 - yellow
  * color_4 - purple
  */
+
+
 
 #main_area {
     display: inline-block;
@@ -159,9 +162,11 @@
     min-height: 126px;
 }
 .progress {
+    display: flex;
     margin-top: 30px;
 }
 .score_container {
+    flex-grow: 1;
     vertical-align: top;
     display: inline-block;
     position: relative;
@@ -177,10 +182,34 @@
         text-align: right;
     }
 }
+
+@mixin achievement-win-number($number) {
+	&.to_win_#{$number} {
+		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * $number;
+	}
+}
+@mixin generate_achievement_container_widths ($min, $max) {
+	@for $i from $min through $max {
+		@include achievement-win-number($i)
+	}
+}
+
 .achievement_container {
     vertical-align: top;
     display: inline-block;
     position: relative;
+    background-color: unset;
+	@media (max-width: v.$width_mobile) {
+		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
+		height: (v.$recto-S-height + v.$achievment-container-recto-S-height-Buffer) * 2;
+	}
+	@media (max-width: v.$width_tablet) {
+		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
+		height: (v.$recto-S-height + v.$achievment-container-recto-S-height-Buffer) * 2;
+	}
+	@media (min-width: (v.$width_tablet + 1)) {
+		@include generate_achievement_container_widths(4,11)
+	}
     >p {
         font-style: italic;
         font-size: 0.8em;
@@ -1481,6 +1510,7 @@
     }
 }
 
+
 .recto {
     display: inline-block;
     position: relative;
@@ -1488,8 +1518,8 @@
     box-shadow: -1px 1px grey;
     border-radius: 3px;
     &.S{
-        width: 31px;
-        height: 45px;
+        width: v.$recto-S-width;
+        height: v.$recto-S-height;
         &.age_1,&.age_2,&.age_3,&.age_4,&.age_5,&.age_6,&.age_7,&.age_8,&.age_9,&.age_10{
             background-image: url("img/card_backs_portrait.jpg");
             background-size: 380px 256px;
