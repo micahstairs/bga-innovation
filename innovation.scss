@@ -199,15 +199,11 @@
     display: inline-block;
     position: relative;
     background-color: unset;
-	@media (max-width: v.$width_mobile) {
-		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
-		height: (v.$recto-S-height + v.$achievment-container-recto-S-height-Buffer) * 2;
+    width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
+	@media (min-width: v.$width_tablet) {
+		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 5;
 	}
-	@media (max-width: v.$width_tablet) {
-		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
-		height: (v.$recto-S-height + v.$achievment-container-recto-S-height-Buffer) * 2;
-	}
-	@media (min-width: (v.$width_tablet + 1)) {
+	@media (min-width: v.$width_desktop) {
 		@include generate_achievement_container_widths(4,11)
 	}
     >p {

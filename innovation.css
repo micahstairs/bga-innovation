@@ -195,20 +195,14 @@
   display: inline-block;
   position: relative;
   background-color: unset;
+  width: 140px;
 }
-@media (max-width: 481px) {
+@media (min-width: 768px) {
   .achievement_container {
-    width: 140px;
-    height: 98px;
+    width: 175px;
   }
 }
-@media (max-width: 801px) {
-  .achievement_container {
-    width: 140px;
-    height: 98px;
-  }
-}
-@media (min-width: 802px) {
+@media (min-width: 992px) {
   .achievement_container.to_win_4 {
     width: 140px;
   }
