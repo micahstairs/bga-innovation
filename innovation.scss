@@ -1119,6 +1119,15 @@
 			}
 		}
     }
+    &.in_tooltip {
+        &.age {
+			@include square-age;
+			width: 14px;
+            height: 14px;
+			font-size: 12px;
+			line-height: 14px;
+        }
+    }
 }
 
 .dogma_symbol {

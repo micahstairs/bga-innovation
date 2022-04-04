@@ -1138,6 +1138,17 @@
   padding-right: 1px;
   padding-left: 1px;
 }
+.square.in_tooltip.age {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  text-align: center;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  line-height: 14px;
+}
 
 .dogma_symbol.M {
   left: -4px;
