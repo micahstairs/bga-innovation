@@ -1018,35 +1018,18 @@
 .square.N.icon_6 {
   background-position: -70px -16px;
 }
-.square.N.age_1 {
-  background-position: 0px -30px;
+.square.N.age {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  text-align: center;
+  font-size: 11px;
+  line-height: 16px;
 }
-.square.N.age_2 {
-  background-position: -14px -30px;
-}
-.square.N.age_3 {
-  background-position: -28px -30px;
-}
-.square.N.age_4 {
-  background-position: -42px -30px;
-}
-.square.N.age_5 {
-  background-position: -56px -30px;
-}
-.square.N.age_6 {
-  background-position: -70px -30px;
-}
-.square.N.age_7 {
-  background-position: -84px -30px;
-}
-.square.N.age_8 {
-  background-position: -98px -30px;
-}
-.square.N.age_9 {
-  background-position: -112px -30px;
-}
-.square.N.age_10 {
-  background-position: -126px -30px;
+.square.N.age.age_10, .square.N.age.age_11 {
+  padding-right: 1px;
+  padding-left: 1px;
 }
 .square.P {
   width: 20px;
@@ -1106,40 +1089,19 @@
   background-position-y: -42px;
   background-position-x: -42px;
 }
-.square.M.age_1, .square.M.age_2, .square.M.age_3, .square.M.age_4, .square.M.age_5, .square.M.age_6, .square.M.age_7, .square.M.age_8, .square.M.age_9, .square.M.age_10 {
+.square.M.age {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  text-align: center;
   width: 8px;
   height: 8px;
-  background-size: 80px, auto;
+  font-size: 6px;
+  line-height: 8px;
 }
-.square.M.age_1 {
-  background-position: 0px -93px;
-}
-.square.M.age_2 {
-  background-position: -8px -93px;
-}
-.square.M.age_3 {
-  background-position: -16px -93px;
-}
-.square.M.age_4 {
-  background-position: -24px -93px;
-}
-.square.M.age_5 {
-  background-position: -32px -93px;
-}
-.square.M.age_6 {
-  background-position: -40px -93px;
-}
-.square.M.age_7 {
-  background-position: -48px -93px;
-}
-.square.M.age_8 {
-  background-position: -56px -93px;
-}
-.square.M.age_9 {
-  background-position: -64px -93px;
-}
-.square.M.age_10 {
-  background-position: -72px -93px;
+.square.M.age.age_10 {
+  padding-right: 1px;
 }
 .square.L {
   width: 19px;
@@ -1163,35 +1125,29 @@
 .square.L.icon_6 {
   background-position: -95px -82px;
 }
-.square.L.age_1 {
-  background-position: 0px -101px;
+.square.L.age {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  text-align: center;
+  font-size: inherit;
+  line-height: 19px;
 }
-.square.L.age_2 {
-  background-position: -19px -101px;
+.square.L.age.age_10 {
+  padding-right: 1px;
+  padding-left: 1px;
 }
-.square.L.age_3 {
-  background-position: -38px -101px;
-}
-.square.L.age_4 {
-  background-position: -57px -101px;
-}
-.square.L.age_5 {
-  background-position: -76px -101px;
-}
-.square.L.age_6 {
-  background-position: -95px -101px;
-}
-.square.L.age_7 {
-  background-position: -114px -101px;
-}
-.square.L.age_8 {
-  background-position: -133px -101px;
-}
-.square.L.age_9 {
-  background-position: -152px -101px;
-}
-.square.L.age_10 {
-  background-position: -171px -101px;
+.square.in_tooltip.age {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  text-align: center;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  line-height: 14px;
 }
 
 .dogma_symbol.M {
