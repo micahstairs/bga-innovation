@@ -1003,24 +1003,6 @@
 .square.N.icon_1, .square.N.icon_2, .square.N.icon_3, .square.N.icon_4, .square.N.icon_5, .square.N.icon_6 {
   background-position-y: -16px;
 }
-.square.N.icon_1 {
-  background-position-x: 0px;
-}
-.square.N.icon_2 {
-  background-position-x: -14px;
-}
-.square.N.icon_3 {
-  background-position-x: -28px;
-}
-.square.N.icon_4 {
-  background-position-x: -42px;
-}
-.square.N.icon_5 {
-  background-position-x: -56px;
-}
-.square.N.icon_6 {
-  background-position-x: -70px;
-}
 .square.N.age {
   background-image: unset;
   background-color: black;
@@ -1069,24 +1051,6 @@
   background-size: 50px auto;
   background-position-y: -42px;
 }
-.square.M.icon_1 {
-  background-position-x: 0px;
-}
-.square.M.icon_2 {
-  background-position-x: -8px;
-}
-.square.M.icon_3 {
-  background-position-x: -16px;
-}
-.square.M.icon_4 {
-  background-position-x: -24px;
-}
-.square.M.icon_5 {
-  background-position-x: -32px;
-}
-.square.M.icon_6 {
-  background-position-x: -40px;
-}
 .square.M.age {
   background-image: unset;
   background-color: black;
@@ -1107,24 +1071,6 @@
 }
 .square.L.icon_1, .square.L.icon_2, .square.L.icon_3, .square.L.icon_4, .square.L.icon_5, .square.L.icon_6 {
   background-position-y: -82px;
-}
-.square.L.icon_1 {
-  background-position-x: 0px;
-}
-.square.L.icon_2 {
-  background-position-x: -19px;
-}
-.square.L.icon_3 {
-  background-position-x: -38px;
-}
-.square.L.icon_4 {
-  background-position-x: -57px;
-}
-.square.L.icon_5 {
-  background-position-x: -76px;
-}
-.square.L.icon_6 {
-  background-position-x: -95px;
 }
 .square.L.age {
   background-image: unset;
