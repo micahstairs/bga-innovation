@@ -1172,7 +1172,20 @@ function (dojo, declare) {
          */
 
         square : function(size, type, key, context = null) {
-            return "<span class='square " + size + " " + type + "_" + key + (context !== null ? " " + context : "") + "'></span>"
+            age = null, agetype = null;
+            if (type === 'age') {
+                age = key;
+                agetype = type;
+            }
+            ret = "<span class='square";
+            ret += " " + size;
+            ret += (agetype !== null ? " " + agetype: "");
+            ret += " " + type + "_" + key;
+            ret += (context !== null ? " " + context : "");
+            ret += "'>"
+            ret += (age !== null ? " " + age: "");
+            ret += "</span>";
+            return ret
         },
         
         all_icons : function(type) {
