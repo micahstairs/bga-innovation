@@ -1016,6 +1016,24 @@
   padding-right: 1px;
   padding-left: 1px;
 }
+.square.N.icon_1 {
+  background-position-x: 0px;
+}
+.square.N.icon_2 {
+  background-position-x: -14px;
+}
+.square.N.icon_3 {
+  background-position-x: -28px;
+}
+.square.N.icon_4 {
+  background-position-x: -42px;
+}
+.square.N.icon_5 {
+  background-position-x: -56px;
+}
+.square.N.icon_6 {
+  background-position-x: -70px;
+}
 .square.P {
   width: 20px;
   height: 20px;
@@ -1065,6 +1083,24 @@
 .square.M.age.age_10 {
   padding-right: 1px;
 }
+.square.M.icon_1 {
+  background-position-x: 0px;
+}
+.square.M.icon_2 {
+  background-position-x: -8px;
+}
+.square.M.icon_3 {
+  background-position-x: -16px;
+}
+.square.M.icon_4 {
+  background-position-x: -24px;
+}
+.square.M.icon_5 {
+  background-position-x: -32px;
+}
+.square.M.icon_6 {
+  background-position-x: -40px;
+}
 .square.L {
   width: 19px;
   height: 19px;
@@ -1084,6 +1120,24 @@
 .square.L.age.age_10 {
   padding-right: 1px;
   padding-left: 1px;
+}
+.square.L.icon_1 {
+  background-position-x: 0px;
+}
+.square.L.icon_2 {
+  background-position-x: -19px;
+}
+.square.L.icon_3 {
+  background-position-x: -38px;
+}
+.square.L.icon_4 {
+  background-position-x: -57px;
+}
+.square.L.icon_5 {
+  background-position-x: -76px;
+}
+.square.L.icon_6 {
+  background-position-x: -95px;
 }
 .square.in_tooltip.age {
   background-image: unset;
