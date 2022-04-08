@@ -1707,8 +1707,8 @@ class Innovation extends Table
         
         // Delimiters for age icon
         if (strpos($text, '{<}') > -1) {
-            $delimiters['<'] = "<span class='square N age age_";
-            $delimiters['>'] = "'>\${age}</span>";
+            $delimiters['<'] = "<span class='square N age age_".self::getCardInfo($card_id)['age']."'>";
+            $delimiters['>'] = "</span>";
         }
 
         // Delimiters for card name
@@ -2569,10 +2569,6 @@ class Innovation extends Table
             $notif_args_for_player['type'] = $card['type'];
             $notif_args_for_player['is_relic'] = $card['is_relic'];
         }
-        if (array_key_exists('>', $delimiters_for_player)) {
-            // replace ${age} with card age
-            $notif_args_for_player['>'] =str_replace("\${age}", $card['age'],$notif_args_for_player['>']);
-        }
         
         // Information to attach to others (other players and spectators)
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
@@ -2604,10 +2600,6 @@ class Innovation extends Table
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
             $notif_args_for_others['is_relic'] = $card['is_relic'];
-        }
-        if (array_key_exists('>', $delimiters_for_others)) {
-            // replace ${age} with card age
-            $notif_args_for_others['>'] =str_replace("\${age}", $card['age'],$notif_args_for_others['>']);
         }
         
         self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
@@ -2660,10 +2652,6 @@ class Innovation extends Table
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
             $notif_args_for_others['is_relic'] = $card['is_relic'];
-        }
-        if (array_key_exists('>', $delimiters_for_others)) {
-            // replace ${age} with card age
-            $notif_args_for_player['>'] =str_replace("\${age}", $card['age'],$notif_args_for_others['>']);
         }
         
         self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);

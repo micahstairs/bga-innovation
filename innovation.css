@@ -1035,23 +1035,8 @@
   width: 14px;
   height: 14px;
 }
-.square.N.icon_1 {
-  background-position: 0px -16px;
-}
-.square.N.icon_2 {
-  background-position: -14px -16px;
-}
-.square.N.icon_3 {
-  background-position: -28px -16px;
-}
-.square.N.icon_4 {
-  background-position: -42px -16px;
-}
-.square.N.icon_5 {
-  background-position: -56px -16px;
-}
-.square.N.icon_6 {
-  background-position: -70px -16px;
+.square.N.icon_1, .square.N.icon_2, .square.N.icon_3, .square.N.icon_4, .square.N.icon_5, .square.N.icon_6 {
+  background-position-y: -16px;
 }
 .square.N.age {
   background-image: unset;
@@ -1065,6 +1050,24 @@
 .square.N.age.age_10, .square.N.age.age_11 {
   padding-right: 1px;
   padding-left: 1px;
+}
+.square.N.icon_1 {
+  background-position-x: 0px;
+}
+.square.N.icon_2 {
+  background-position-x: -14px;
+}
+.square.N.icon_3 {
+  background-position-x: -28px;
+}
+.square.N.icon_4 {
+  background-position-x: -42px;
+}
+.square.N.icon_5 {
+  background-position-x: -56px;
+}
+.square.N.icon_6 {
+  background-position-x: -70px;
 }
 .square.P {
   width: 20px;
@@ -1099,30 +1102,7 @@
   height: 8px;
   background-image: url("img/resource_icons.jpg");
   background-size: 50px auto;
-}
-.square.M.icon_1 {
   background-position-y: -42px;
-  background-position-x: 0px;
-}
-.square.M.icon_2 {
-  background-position-y: -42px;
-  background-position-x: -8px;
-}
-.square.M.icon_3 {
-  background-position-y: -42px;
-  background-position-x: -17px;
-}
-.square.M.icon_4 {
-  background-position-y: -42px;
-  background-position-x: -25px;
-}
-.square.M.icon_5 {
-  background-position-y: -42px;
-  background-position-x: -34px;
-}
-.square.M.icon_6 {
-  background-position-y: -42px;
-  background-position-x: -42px;
 }
 .square.M.age {
   background-image: unset;
@@ -1138,27 +1118,30 @@
 .square.M.age.age_10 {
   padding-right: 1px;
 }
+.square.M.icon_1 {
+  background-position-x: 0px;
+}
+.square.M.icon_2 {
+  background-position-x: -8px;
+}
+.square.M.icon_3 {
+  background-position-x: -16px;
+}
+.square.M.icon_4 {
+  background-position-x: -24px;
+}
+.square.M.icon_5 {
+  background-position-x: -32px;
+}
+.square.M.icon_6 {
+  background-position-x: -40px;
+}
 .square.L {
   width: 19px;
   height: 19px;
 }
-.square.L.icon_1 {
-  background-position: 0px -82px;
-}
-.square.L.icon_2 {
-  background-position: -19px -82px;
-}
-.square.L.icon_3 {
-  background-position: -38px -82px;
-}
-.square.L.icon_4 {
-  background-position: -57px -82px;
-}
-.square.L.icon_5 {
-  background-position: -76px -82px;
-}
-.square.L.icon_6 {
-  background-position: -95px -82px;
+.square.L.icon_1, .square.L.icon_2, .square.L.icon_3, .square.L.icon_4, .square.L.icon_5, .square.L.icon_6 {
+  background-position-y: -82px;
 }
 .square.L.age {
   background-image: unset;
@@ -1172,6 +1155,62 @@
 .square.L.age.age_10 {
   padding-right: 1px;
   padding-left: 1px;
+}
+.square.L.icon_1 {
+  background-position-x: 0px;
+}
+.square.L.icon_2 {
+  background-position-x: -19px;
+}
+.square.L.icon_3 {
+  background-position-x: -38px;
+}
+.square.L.icon_4 {
+  background-position-x: -57px;
+}
+.square.L.icon_5 {
+  background-position-x: -76px;
+}
+.square.L.icon_6 {
+  background-position-x: -95px;
+}
+.square.in_tooltip.age {
+  background-image: unset;
+  background-color: black;
+  border: 1px solid white;
+  color: white;
+  text-align: center;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  line-height: 14px;
+}
+.square.in_tooltip {
+  width: 13px;
+  height: 12px;
+}
+.square.in_tooltip.icon_1, .square.in_tooltip.icon_2, .square.in_tooltip.icon_3, .square.in_tooltip.icon_4, .square.in_tooltip.icon_5, .square.in_tooltip.icon_6 {
+  background-image: url("img/resource_icons.jpg");
+  background-size: 83px auto;
+  background-position-y: -42px;
+}
+.square.in_tooltip.icon_1 {
+  background-position-x: 0px;
+}
+.square.in_tooltip.icon_2 {
+  background-position-x: -14px;
+}
+.square.in_tooltip.icon_3 {
+  background-position-x: -28px;
+}
+.square.in_tooltip.icon_4 {
+  background-position-x: -42px;
+}
+.square.in_tooltip.icon_5 {
+  background-position-x: -56px;
+}
+.square.in_tooltip.icon_6 {
+  background-position-x: -70px;
 }
 
 .dogma_symbol.M {
