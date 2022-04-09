@@ -1430,14 +1430,14 @@ function (dojo, declare) {
             this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
         },
 
-        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param) {
+        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param_1, extra_param_2) {
             var self = this;
             nodes.forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
                 var card = self.cards[id];
-                var HTML_action = action_text_function(self, card, extra_param);
+                var HTML_action = action_text_function(self, card, extra_param_1, extra_param_2);
                 self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
             });
         },
@@ -1455,7 +1455,7 @@ function (dojo, declare) {
 
         addTooltipsWithActionsToMyBoard : function(dogma_effect_info) {
             var cards = this.selectMyTopCardsEligibleForDogma();
-            this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info, 'board');
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
@@ -1478,7 +1478,7 @@ function (dojo, declare) {
         },
 
         addTooltipWithDogmaActionToMyArtifactOnDisplay : function(dogma_effect_info) {
-            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplayIfEligibleForDogma(), this.createActionTextForDogma, dogma_effect_info);
+            this.addTooltipsWithActionsTo(this.selectArtifactOnDisplayIfEligibleForDogma(), this.createActionTextForDogma, dogma_effect_info, 'display');
         },
         
         addTooltipsWithSplayingActionsToColorsOnMyBoard : function(colors, colors_in_clear, splay_direction, splay_direction_in_clear) {
@@ -1575,17 +1575,17 @@ function (dojo, declare) {
             return HTML_action;
         },
         
-        createActionTextForDogma : function(self, card, dogma_effect_info) {
+        createActionTextForDogma : function(self, card, dogma_effect_info, card_location) {
             var info = dogma_effect_info[card.id];
 
             // Use workaround to get this.player_id, since it is unfortunately not accessible from here.
             var player_panel = dojo.query(".player:nth-of-type(1)")[0];
             var player_id = dojo.attr(player_panel, 'id').substr(7);
 
-            on_display = card.location == 'display';
-            exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
-            exists_i_compel_effect = card.i_demand_effect_1_is_compel;
-            exists_non_demand_effect = card.non_demand_effect_1 !== null;
+            var on_display = card_location == 'display';
+            var exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
+            var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
+            var exists_non_demand_effect = card.non_demand_effect_1 !== null;
             
             if ((!exists_non_demand_effect)) {
                 if (exists_i_demand_effect && info.players_executing_i_demand_effects.length == 0) {
@@ -1596,7 +1596,7 @@ function (dojo, declare) {
                 }
             }
 
-            HTML_action = "<p class='possible_action'>";
+            var HTML_action = "<p class='possible_action'>";
             if (on_display) {
                 HTML_action += _("Click 'Dogma and Return' to execute the dogma effect(s) of this card.");
             } else {
@@ -3572,7 +3572,6 @@ function (dojo, declare) {
         },
 
         updateResourcesForArtifactOnDisplay: function(player_id, resource_icon, resource_count_delta) {
-            console.log(player_id + " " + resource_icon+ " " + resource_count_delta);
             if (resource_count_delta != 0) {
                 previous_value = this.counter.ressource_count[player_id][resource_icon].getValue();
                 this.counter.ressource_count[player_id][resource_icon].setValue(previous_value + resource_count_delta);
