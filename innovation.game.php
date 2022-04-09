@@ -1707,7 +1707,7 @@ class Innovation extends Table
         
         // Delimiters for age icon
         if (strpos($text, '{<}') > -1) {
-            $delimiters['<'] = "<span class='square N age age_".self::getCardInfo($card_id)['age']."'>";
+            $delimiters['<'] = "<span class='square N age'>";
             $delimiters['>'] = "</span>";
         }
 

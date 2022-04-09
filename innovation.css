@@ -1044,12 +1044,10 @@
   border: 1px solid white;
   color: white;
   text-align: center;
-  font-size: 11px;
-  line-height: 16px;
-}
-.square.N.age.age_10, .square.N.age.age_11 {
   padding-right: 1px;
   padding-left: 1px;
+  font-size: 11px;
+  line-height: 16px;
 }
 .square.N.icon_1 {
   background-position-x: 0px;
@@ -1110,13 +1108,12 @@
   border: 1px solid white;
   color: white;
   text-align: center;
+  padding-right: 1px;
+  padding-left: 1px;
   width: 8px;
   height: 8px;
   font-size: 6px;
   line-height: 8px;
-}
-.square.M.age.age_10 {
-  padding-right: 1px;
 }
 .square.M.icon_1 {
   background-position-x: 0px;
@@ -1149,12 +1146,10 @@
   border: 1px solid white;
   color: white;
   text-align: center;
-  font-size: inherit;
-  line-height: 19px;
-}
-.square.L.age.age_10 {
   padding-right: 1px;
   padding-left: 1px;
+  font-size: inherit;
+  line-height: 19px;
 }
 .square.L.icon_1 {
   background-position-x: 0px;
@@ -1180,6 +1175,8 @@
   border: 1px solid white;
   color: white;
   text-align: center;
+  padding-right: 1px;
+  padding-left: 1px;
   width: 14px;
   height: 14px;
   font-size: 12px;
