@@ -98,8 +98,18 @@ $game_options = array(
         'name' => totranslate('Artifacts of History expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
-            2 => array('name' => totranslate('Enable without Relics'), 'no_beginner' => true, 'tmdisplay' => totranslate('Artifacts Expansion')),
-            3 => array('name' => totranslate('Enable with Relics'), 'no_beginner' => true, 'tmdisplay' => totranslate('Artifacts Expansion with Relics'))
+            2 => array(
+                'name' => totranslate('Enable without Relics'),
+                'no_beginner' => true,
+                'beta' => true,
+                'tmdisplay' => totranslate('Artifacts Expansion'),
+            ),
+            3 => array(
+                'name' => totranslate('Enable with Relics'),
+                'no_beginner' => true,
+                'beta' => true,
+                'tmdisplay' => totranslate('Artifacts Expansion with Relics')
+            ),
         )
     ),
 
