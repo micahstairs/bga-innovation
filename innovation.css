@@ -168,10 +168,12 @@
 }
 
 .progress {
+  display: flex;
   margin-top: 30px;
 }
 
 .score_container {
+  flex-grow: 1;
   vertical-align: top;
   display: inline-block;
   position: relative;
@@ -192,6 +194,39 @@
   vertical-align: top;
   display: inline-block;
   position: relative;
+  background-color: unset;
+  width: 140px;
+}
+@media (min-width: 768px) {
+  .achievement_container {
+    width: 175px;
+  }
+}
+@media (min-width: 992px) {
+  .achievement_container.to_win_4 {
+    width: 140px;
+  }
+  .achievement_container.to_win_5 {
+    width: 175px;
+  }
+  .achievement_container.to_win_6 {
+    width: 210px;
+  }
+  .achievement_container.to_win_7 {
+    width: 245px;
+  }
+  .achievement_container.to_win_8 {
+    width: 280px;
+  }
+  .achievement_container.to_win_9 {
+    width: 315px;
+  }
+  .achievement_container.to_win_10 {
+    width: 350px;
+  }
+  .achievement_container.to_win_11 {
+    width: 385px;
+  }
 }
 .achievement_container > p {
   font-style: italic;
