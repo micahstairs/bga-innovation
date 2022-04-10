@@ -1607,10 +1607,10 @@ $L_y_position:     8;
         @if $i <= 124 {
             &.hexagon_icon_#{$i} {
                 &.M {
-                    background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i),11)))) * $M_offset}px;
+                    background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + 10 * $M_offset}px;
                 }
                 &.L {
-                    background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i),11)))) * $L_offset}px;
+                    background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + 10 * $L_offset}px;
                 }
             }
         }
