@@ -214,13 +214,11 @@ class Innovation extends Table
         $card = self::getCardInfo($card_id);
         if ($card['location'] == 'deck') {
             throw new BgaUserException("This card is already in the deck");
-        } else if ($card['location'] == 'achievements' && !$card['is_relic']) {
-            throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
             throw new BgaUserException("This card is already in the relics area");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || ($card['location'] == 'achievements' && $card['is_relic'])) {
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements') {
             try {
                 self::transferCardFromTo($card, 0, "deck");
             }
