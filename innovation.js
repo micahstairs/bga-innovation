@@ -221,7 +221,7 @@ function (dojo, declare) {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
-            if (!this.isSpectator && gamedatas.debug_mode) {
+            if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
                 if (gamedatas.artifacts_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
