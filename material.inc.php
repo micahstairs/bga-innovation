@@ -2289,10 +2289,10 @@ $this->textual_card_infos = array(
 227 => array('name' => clienttranslate('Memphis')),
 228 => array('name' => clienttranslate('Babylon')),
 229 => array('name' => clienttranslate('Uruk')),
-230 => array('name' => clienttranslate('Linzi')),
-231 => array('name' => clienttranslate('Damascus')),
+230 => array('name' => clienttranslate('Damascus')),
+231 => array('name' => clienttranslate('Linzi')),
 232 => array('name' => clienttranslate('Hattusa')),
-233 => array('name' => clienttranslate('Mohenjo-Daro')),
+233 => array('name' => clienttranslate('Mohenjo‑Daro')),
 234 => array('name' => clienttranslate('Ephesus')),
 
 /* Cities - Age 2 */
