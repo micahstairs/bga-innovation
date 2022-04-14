@@ -8068,7 +8068,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "4N1":
                 while(true) {
                     $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
-                    if (self::hasRessource($card, 4)) { // "If it as tower"
+                    if (self::hasRessource($card, 4)) { // "If it has a tower"
                         self::notifyGeneralInfo(clienttranslate('It has a ${tower}.'), array('tower' => $tower));
                         self::scoreCard($card, $player_id); // "Score it"
                         continue; // "Repeat this dogma effect"
@@ -8081,10 +8081,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 5, age 1: Oars
             case "5D1":
-                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                    self::setAuxiliaryValue(0);
+                if (self::getGameStateValue('release_version') >= 1) {
+                    do {
+                        $card_transfered = false;
+                        foreach (self::getCardsInHand($player_id) as $card) {
+                            // "I demand you transfer a card with a crown from your hand to my score pile"
+                            if (self::hasRessource($card, 1)) {
+                                self::transferCardFromTo($card, $launcher_id, 'score');
+                                self::executeDraw($player_id, 1); // "If you do, draw a 1"
+                                $card_transfered = true; // "and repeat this dogma effect"
+                                break;
+                            }
+                        }
+                    } while ($card_transfered && self::getGameStateValue('game_rules') == 1);
+                } else {
+                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                        self::setAuxiliaryValue(0);
+                    }
+                    $step_max = 1; // --> 1 interaction: see B
                 }
-                $step_max = 1; // --> 1 interaction: see B
                 break;
             
             case "5N1":
