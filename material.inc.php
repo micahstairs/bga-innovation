@@ -2412,7 +2412,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Legend'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${left arrow} on a color already splayed left.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${left_arrow} on a color already splayed left.'),
     'alternative_condition_for_claiming' => null),
 
 326 => array('name' => clienttranslate('Repute'),
@@ -2422,7 +2422,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Repute'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${right arrow} on a color already splayed right.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${right_arrow} on a color already splayed right.'),
     'alternative_condition_for_claiming' => null),
 
 327 => array('name' => clienttranslate('Fame'),
@@ -2432,7 +2432,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Fame'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${up arrow} on a color already splayed up.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${up_arrow} on a color already splayed up.'),
     'alternative_condition_for_claiming' => null),
 
 328 => array('name' => clienttranslate('Glory'),
