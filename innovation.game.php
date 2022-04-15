@@ -464,12 +464,13 @@ class Innovation extends Table
         self::initStat('player', 'i_demand_effects_number', 0);
         self::initStat('player', 'sharing_effects_number', 0);
         
-        // Remove cards from expansions that are not in use.
-        if (self::getGameStateValue('artifacts_mode') == 1) {
-            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE 110 <= id AND id <= 214");
-        }
-        if (self::getGameStateValue('artifacts_mode') != 3) {
-            self::DbQuery("UPDATE card SET location = 'removed', position = NULL WHERE is_relic");
+        // Add cards from expansions that are in use.
+        if (self::getGameStateValue('artifacts_mode') > 1) {
+            self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 110 <= id AND id <= 214");
+            
+            if (self::getGameStateValue('artifacts_mode') == 3) {
+                self::DbQuery("UPDATE card SET location = 'relics', position = NULL WHERE is_relic");
+            }
         }
 
         // Initialize Artifacts-specific statistics
@@ -510,8 +511,11 @@ class Innovation extends Table
 
         // Add information to the database about which cards have a demand.
         foreach ($this->textual_card_infos as $id => $card_info) {
-            if ($card_info['i_demand_effect_1'] !== null) {
-                self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
+            if (array_key_exists('i_demand_effect_1', $card_info))
+            {
+                if ($card_info['i_demand_effect_1'] !== null) {
+                    self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
+                }
             }
         }
 
@@ -1332,12 +1336,14 @@ class Innovation extends Table
         foreach ($cards as $card) {
             // 1 is used for hex icons, allowing it to be ignored in the product
             // TODO(CITIES): Revisit formula.
-            $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
-            $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
-                          ($icon_hash_key[$card['spot_2'] ?: 0]) *
-                          ($icon_hash_key[$card['spot_3'] ?: 0]) *
-                          ($icon_hash_key[$card['spot_4'] ?: 0]);
-            self::DbQuery(self::format("UPDATE card SET icon_hash = {hash_value} WHERE id = {id}", array('hash_value' => $hash_value, 'id' => $card['id'])));
+            if ($card['id'] < 220 && $card['id'] > 329) { // Exclude cities for now.  Cities can only match themselves and some research would need to be done to verify whether it is possible for any of them to match each other
+                $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
+                $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
+                              ($icon_hash_key[$card['spot_2'] ?: 0]) *
+                              ($icon_hash_key[$card['spot_3'] ?: 0]) *
+                              ($icon_hash_key[$card['spot_4'] ?: 0]);
+                self::DbQuery(self::format("UPDATE card SET icon_hash = {hash_value} WHERE id = {id}", array('hash_value' => $hash_value, 'id' => $card['id'])));
+            }
         }
     }
     
