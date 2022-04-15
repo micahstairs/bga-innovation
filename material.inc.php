@@ -2619,14 +2619,14 @@ $this->textual_card_infos = array(
 /* Echoes - Age 4 */       
     
 365 => array('name' => clienttranslate('Slide Rule'),
-'i_demand_effect_1' => null,
-'non_demand_effect_1' => clienttranslate('You may splay your yellow cards right.'),
-'non_demand_effect_2' => clienttranslate('Draw a card of value equal to the value of your lowest top card plus the number of colors you have splayed.'),
-'non_demand_effect_3' => null,
-'echo_effect_1' => null,
-'achievement_name' => null,
-'condition_for_claiming' => null,
-'alternative_condition_for_claiming' => null),    
+    'i_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('You may splay your yellow cards right.'),
+    'non_demand_effect_2' => clienttranslate('Draw a card of value equal to the value of your lowest top card plus the number of colors you have splayed.'),
+    'non_demand_effect_3' => null,
+    'echo_effect_1' => null,
+    'achievement_name' => null,
+    'condition_for_claiming' => null,
+    'alternative_condition_for_claiming' => null),    
 
 366 => array('name' => clienttranslate('Telescope'),
     'i_demand_effect_1' => null,
