@@ -608,11 +608,8 @@ class Innovation extends Table
 
         // Add information to the database about which cards have a demand.
         foreach ($this->textual_card_infos as $id => $card_info) {
-            if (array_key_exists('i_demand_effect_1', $card_info))
-            {
-                if ($card_info['i_demand_effect_1'] !== null) {
-                    self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
-                }
+            if (array_key_exists('i_demand_effect_1', $card_info) && $card_info['i_demand_effect_1'] !== null) {
+                self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
             }
         }
 
