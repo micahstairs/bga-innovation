@@ -3434,10 +3434,7 @@ class Innovation extends Table
     }
 
     function isCompelEffect($id) {
-        if (self::getGameStateValue('release_version') < 1) {
-            return false;
-        }
-        return $this->textual_card_infos[$id]['i_demand_effect_1_is_compel'];
+        return array_key_exists('i_demand_effect_1_is_compel', $this->textual_card_infos[$id]);
     }
     
     function attachTextualInfo($card) {
