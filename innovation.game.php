@@ -2039,8 +2039,13 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his achievements');
                 break;
             case 'hand->deck':
-                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand');
-                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his hand');
+                if ($bottom_to) {
+                    $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand');
+                    $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his hand');
+                } else {
+                    $message_for_player = clienttranslate('${You_must} topdeck ${number} ${card} from your hand');
+                    $message_for_others = clienttranslate('${player_must} topdeck ${number} ${card} from his hand');
+                }
                 break;
             case 'hand->board':
                 if ($bottom_to) {
