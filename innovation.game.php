@@ -111,7 +111,7 @@ class Innovation extends Table
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
-            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the pending Artifact expansion release)
+            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the Artifact expansion release)
             'debug_mode' => 99, // 0 for disabled, 1 for enabled
             
             'game_type' => 100, // 1 for normal game, 2 for team game
@@ -160,6 +160,53 @@ class Innovation extends Table
             foreach($players as $player_id => $player) {
                 self::updatePlayerRessourceCounts($player_id);
             }
+        }
+
+        if (self::getGameStateValue('release_version') == 0) {
+            self::initGameStateLabels(array(
+                'card_id_1' => 69,
+                'card_id_2' => 70,
+                'card_id_3' => 71,
+                'require_achievement_eligibility' => 72,
+                'has_demand_effect' => 73,
+                'has_splay_direction' => 74,
+                'owner_last_selected' => 75,
+                'type_array' => 76,
+                'age_array' => 77,
+                'player_array' => 78,
+                'icon_hash_1' => 79,
+                'icon_hash_2' => 80,
+                'icon_hash_3' => 81,
+                'icon_hash_4' => 82,
+                'icon_hash_5' => 83,
+                'enable_autoselection' => 84,
+                'relic_id' => 95,
+                'current_action_number' => 96,
+                'current_nesting_index' => 97,
+                'release_version' => 98,
+                'debug_mode' => 99
+            ));
+            self::setGameStateValue('card_id_1', -2);
+            self::setGameStateValue('card_id_2', -2);
+            self::setGameStateValue('card_id_3', -2);
+            self::setGameStateValue('require_achievement_eligibility', -1);
+            self::setGameStateValue('has_demand_effect', -1);
+            self::setGameStateValue('has_splay_direction', -1);
+            self::setGameStateValue('owner_last_selected', -1);
+            self::setGameStateValue('type_array', -1);
+            self::setGameStateValue('age_array', -1);
+            self::setGameStateValue('player_array', -1);
+            self::setGameStateValue('icon_hash_1', -1);
+            self::setGameStateValue('icon_hash_2', -1);
+            self::setGameStateValue('icon_hash_3', -1);
+            self::setGameStateValue('icon_hash_4', -1);
+            self::setGameStateValue('icon_hash_5', -1);
+            self::setGameStateValue('enable_autoselection', -1);
+            self::setGameStateValue('relic_id', -1);
+            self::setGameStateValue('current_action_number', -1);
+            self::setGameStateValue('current_nesting_index', -1);
+            self::setGameStateValue('release_version', 0);
+            self::setGameStateValue('debug_mode', 0);
         }
     }
 
