@@ -128,8 +128,29 @@ class Innovation extends Table
 
     function upgradeTableDb($from_version) {
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'type'"))) {
-            $sql = "ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';";
-            self::applyDbUpgradeToAllDB($sql); 
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'faceup_age'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `faceup_age` TINYINT UNSIGNED NOT NULL DEFAULT '0';");
+            // TODO(ARTIFACTS): The faceup_age column actually needs to be populated with proper values.
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'has_demand'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `has_demand` BOOLEAN NOT NULL DEFAULT FALSE;");
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'is_relic'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `is_relic` BOOLEAN NOT NULL DEFAULT FALSE;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'icon_hash'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `icon_hash` INT(32) UNSIGNED DEFAULT NULL;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `random` LIKE 'type'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_random ADD `type` TINYINT UNSIGNED;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'featured_icon_count'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'turn_order_ending_with_launcher'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL;"); 
         }
     }
 
