@@ -6569,13 +6569,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             case 'choose_value':
-                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
-                    self::throwInvalidChoiceException();
+                if (self::getGameStateValue('release_version') >= 1) {
+                    if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
+                        self::throwInvalidChoiceException();
+                    }
+                } else {
+                    if (!ctype_digit($choice) || $choice < 1 || $choice > 10) {
+                        self::throwInvalidChoiceException();
+                    }
                 }
                 break;
             case 'choose_color':
-                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
-                    self::throwInvalidChoiceException();
+                if (self::getGameStateValue('release_version') >= 1) {
+                    if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
+                        self::throwInvalidChoiceException();
+                    }
+                } else {
+                    if (!ctype_digit($choice) || $choice < 0 || $choice > 4) {
+                        self::throwInvalidChoiceException();
+                    }
                 }
                 break;
             case 'choose_two_colors':
@@ -6583,8 +6595,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::throwInvalidChoiceException();
                 }
                 $colors = self::getValueAsArray($choice);
-                if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
-                    self::throwInvalidChoiceException();
+                if (self::getGameStateValue('release_version') >= 1) {
+                    if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
+                        self::throwInvalidChoiceException();
+                    }
+                } else {
+                    if (count($colors) <> 2 || $colors[0] == $colors[1] || $colors[0] < 0 || $colors[0] > 4 || $colors[1] < 0 || $colors[1] > 4) {
+                        self::throwInvalidChoiceException();
+                    }
                 }
                 break;
             case 'choose_three_colors':
