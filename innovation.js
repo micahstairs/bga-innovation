@@ -2637,13 +2637,22 @@ function (dojo, declare) {
             dojo.attr('meld_confirm_button', 'html_id', HTML_id);
 
             // When confirmation is disabled in game preferences, click the confirmation button instantly
-            if (this.prefs[101].value == 1) {
-                this.startActionTimer("meld_confirm_button", 0, this.action_confirmMeld, HTML_id);
+            var wait_time = 0;
 
-            // When confirmation is enabled in game preferences, Confirm automatically after a few seconds
-            } else {
-                this.startActionTimer("meld_confirm_button", 2, this.action_confirmMeld, HTML_id);
+            // Short timer (3 seconds)
+            if (this.prefs[101].value == 2) {
+                wait_time = 2;
+            
+            // Medium timer (5 seconds)
+            } else if (this.prefs[101].value == 3) {
+                wait_time = 4;
+            
+            // Long timer (10 seconds)
+            } else if (this.prefs[101].value == 4) {
+                wait_time = 9;
             }
+            
+            this.startActionTimer("meld_confirm_button", wait_time, this.action_confirmMeld, HTML_id);
         },
 
         action_cancelMeld : function(event) {
@@ -2704,14 +2713,25 @@ function (dojo, declare) {
             $("dogma_confirm_button").innerHTML = _("Confirm");
             dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
 
-            if (no_effect) {
-                // If the card will not have an effect, force the player to manually click confirm
-            } else if (this.prefs[100].value == 1) {
-                // // When confirmation is disabled in game preferences, click the confirmation button instantly
-                this.startActionTimer("dogma_confirm_button", 0, this.action_confirmDogma, HTML_id);
-            } else {
-                // // When confirmation is enabled in game preferences, confirm automatically after a few seconds
-                this.startActionTimer("dogma_confirm_button", 2, this.action_confirmDogma, HTML_id);
+            // If the card will not have an effect, force the player to manually click confirm
+            if (!no_effect) {
+                // When confirmation is disabled in game preferences, click the confirmation button instantly
+                var wait_time = 0;
+
+                // Short timer (3 seconds)
+                if (this.prefs[100].value == 2) {
+                    wait_time = 2;
+                
+                // Medium timer (5 seconds)
+                } else if (this.prefs[100].value == 3) {
+                    wait_time = 4;
+                
+                // Long timer (10 seconds)
+                } else if (this.prefs[100].value == 4) {
+                    wait_time = 9;
+                }
+                
+                this.startActionTimer("dogma_confirm_button", wait_time, this.action_confirmDogma, HTML_id);
             }
         },
 

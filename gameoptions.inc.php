@@ -153,7 +153,9 @@ $game_preferences = array(
         'needReload' => true,
         'values' => array(
             1 => array('name' => totranslate('Disabled')),
-            2 => array('name' => totranslate('Enabled'))
+            2 => array('name' => totranslate('Enabled (short timer)')),
+            3 => array('name' => totranslate('Enabled (medium timer)')),
+            4 => array('name' => totranslate('Enabled (long timer)')),
         ),
         'default' => 1
     ),
@@ -162,7 +164,9 @@ $game_preferences = array(
         'needReload' => true,
         'values' => array(
             1 => array('name' => totranslate('Disabled')),
-            2 => array('name' => totranslate('Enabled'))
+            2 => array('name' => totranslate('Enabled (short timer)')),
+            3 => array('name' => totranslate('Enabled (medium timer)')),
+            4 => array('name' => totranslate('Enabled (long timer)')),
         ),
         'default' => 1
     )
