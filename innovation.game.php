@@ -130,9 +130,12 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'type'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'type'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
+        }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'faceup_age'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `faceup_age` TINYINT UNSIGNED NOT NULL DEFAULT '0';");
-            // TODO(ARTIFACTS): The faceup_age column actually needs to be populated with proper values.
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `faceup_age` TINYINT UNSIGNED DEFAULT NULL;");
+            self::DbQuery("UPDATE `card` SET `faceup_age` = `age`");
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'has_demand'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `has_demand` BOOLEAN NOT NULL DEFAULT FALSE;");
@@ -151,6 +154,12 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'turn_order_ending_with_launcher'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL;"); 
+        }
+        if ($from_version <= 2111030321) {
+            $players = self::getCollectionFromDb("SELECT player_id FROM player");
+            foreach($players as $player_id => $player) {
+                self::updatePlayerRessourceCounts($player_id);
+            }
         }
     }
 
@@ -4369,9 +4378,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ");
         
         self::DbQuery(self::format("
-            INSERT INTO card_with_top_card_indication
+            INSERT INTO card_with_top_card_indication (id, type, age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, owner, location, position, splay_direction, selected, is_top_card)
                 SELECT
-                    a.*,
+                a.id, a.type, a.age, a.color, a.spot_1, a.spot_2, a.spot_3, a.spot_4, a.dogma_icon, a.owner, a.location, a.position, a.splay_direction, a.selected,
                     (a.position = b.position_of_top_card) AS is_top_card
                 FROM
                     card AS a

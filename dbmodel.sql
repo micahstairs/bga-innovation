@@ -91,9 +91,23 @@ CREATE TABLE `base` (
  `icon` TINYINT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* TODO(LATER): See if there's any columns that we can remove from this table. */
 CREATE TABLE `card_with_top_card_indication` AS
 	SELECT
-		*
+		`id`,
+    `type`,
+    `age`,
+    `color`,
+    `spot_1`,
+    `spot_2`,
+    `spot_3`,
+    `spot_4`,
+    `dogma_icon`,
+    `owner`,
+    `location`,
+    `position`,
+    `splay_direction`,
+    `selected`
 	FROM
 		card
 	WHERE
