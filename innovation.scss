@@ -1553,7 +1553,16 @@
 
 /* Font sizes */
 $rem: 0.0625rem;
-@for $i from 1 through 30 {
+@for $i from 1 through 5 {
+    .font_size_#{$i} {
+        font-size: $rem * $i;
+        .effect .effect_text .square {
+            transform: scale(.75);
+            vertical-align: baseline;
+        }
+    }
+}
+@for $i from 6 through 30 {
     .font_size_#{$i} {
         font-size: $rem * $i;
     }

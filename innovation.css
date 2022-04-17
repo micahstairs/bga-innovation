@@ -1658,21 +1658,41 @@
 .font_size_1 {
   font-size: 0.0625rem;
 }
+.font_size_1 .effect .effect_text .square {
+  transform: scale(0.75);
+  vertical-align: baseline;
+}
 
 .font_size_2 {
   font-size: 0.125rem;
+}
+.font_size_2 .effect .effect_text .square {
+  transform: scale(0.75);
+  vertical-align: baseline;
 }
 
 .font_size_3 {
   font-size: 0.1875rem;
 }
+.font_size_3 .effect .effect_text .square {
+  transform: scale(0.75);
+  vertical-align: baseline;
+}
 
 .font_size_4 {
   font-size: 0.25rem;
 }
+.font_size_4 .effect .effect_text .square {
+  transform: scale(0.75);
+  vertical-align: baseline;
+}
 
 .font_size_5 {
   font-size: 0.3125rem;
+}
+.font_size_5 .effect .effect_text .square {
+  transform: scale(0.75);
+  vertical-align: baseline;
 }
 
 .font_size_6 {
