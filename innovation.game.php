@@ -10582,9 +10582,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::splayUp($player_id, $player_id, $color);
                     }
                 
-                // Otherwise we need to prompt the player to choose which 2 colors to splay up
+                // Otherwise we need to prompt the player to choose which colors to splay up
                 } else {
-                    $step_max = 2;
+                    $step_max = 1;
                 }
                 break;
 
@@ -14942,22 +14942,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 199, Artifacts age 9: Philips Compact Cassette
         case "199N1A":
-            // Splay up a color on your board
+            // "Splay up two colors on your board"
             $options = array(
                 'player_id' => $player_id,
-                // TODO(ARTIFACTS): We can probably remove part B of the interaction by changing 'n' to 2.
-                'n' => 1,
-                'can_pass' => false,
-                
-                'splay_direction' => 3
-            );
-            break;
-        
-        case "199N1B":
-            // Splay up another color on your board
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
+                'n' => 2,
                 'can_pass' => false,
                 
                 'splay_direction' => 3
