@@ -642,13 +642,13 @@
 
 
 .equal {
-    color: #AAAAAA;
+    color: #AAAAAA !important;
 }
 .more {
-    color: green;
+    color: green !important;
 }
 .less {
-    color: red;
+    color: red !important;
 }
 .card_age {
     color: white;
@@ -978,15 +978,14 @@
         background-position-x: -$position;
     }
 }
-@mixin generate-square-icon-x-position($min, $max, $increment) {
+@mixin generate-square-icon-x-position($min, $max, $start_offset, $increment) {
     @for $i from $min through $max {
-        $position: ($increment * ($i - 1));
+        $position: ($increment * ($i - 1)) + $start_offset;
         @include square-icon-x-position($i, $position)
     }
 }
 
 @mixin square-age {
-	background-image: unset;
 	background-color: black;
 	border: 1px solid white;
 	color: white;
@@ -995,8 +994,12 @@
 	padding-left: 1px;
 }
 
+@mixin icon-background {
+    background-image: url('img/resource_icons.jpg');
+}
+
 .square {
-    background-image: url('img/squares.png');
+    // background-image: url('img/squares.png');
     display: inline-block;
     &.basic {
         width: 16px;
@@ -1029,39 +1032,24 @@
         width: 14px;
         height: 14px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            background-position-y: -16px;
+            @include icon-background;
+            background-size: 92px auto;
+            background-position-y: -77px;
         }
         &.age {
 			@include square-age;
 			font-size: 11px;
 			line-height: 16px;
 		}
-        @include generate-square-icon-x-position(1, 6, 14px);
+        @include generate-square-icon-x-position(1, 6, 0, 15.5px);
     }
     &.P {
         width: 20px;
         height: 20px;
-        background-image: url('img/resource_icons.jpg');
+        @include icon-background;
         background-size: 133px auto;
-        // TODO: convert to mixin generator, aka figure out why it starts at 1 and is inconsistant, probably the background size is off
-        &.icon_1 {
-            background-position: -1px -112px;
-        }
-        &.icon_2 {
-            background-position: -23px -112px;
-        }
-        &.icon_3 {
-            background-position: -45px -112px;
-        }
-        &.icon_4 {
-            background-position: -68px -112px;
-        }
-        &.icon_5 {
-            background-position: -90px -112px;
-        }
-        &.icon_6 {
-            background-position: -112px -112px;
-        }
+        background-position-y: -112px;
+        @include generate-square-icon-x-position(1, 6, 1, 22.1px);
     }
     &.M {
         width: 9px;
@@ -1069,7 +1057,7 @@
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 8px;
             height: 8px;
-            background-image: url('img/resource_icons.jpg');
+            @include icon-background;
             background-size: 50px auto;
             background-position-y: -42px;
         }
@@ -1080,20 +1068,22 @@
 			font-size: 6px;
 			line-height: 8px;
 		}
-        @include generate-square-icon-x-position(1, 6, 8px);
+        @include generate-square-icon-x-position(1, 6, 0, 8.33px);
     }
     &.L {
         width: 19px;
         height: 19px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            background-position-y: -82px;
+            @include icon-background;
+            background-position-y: -114px;
+            background-size: 135px auto;
         }
         &.age {
 			@include square-age;
 			font-size: inherit;
 			line-height: 19px;
 		}
-        @include generate-square-icon-x-position(1, 6, 19px);
+        @include generate-square-icon-x-position(1, 6, 2, 22.25px);
     }
     &.in_tooltip {
         &.age {
@@ -1108,11 +1098,11 @@
         width: 13px;
         height: 12px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            background-image: url('img/resource_icons.jpg');
+            @include icon-background;
             background-size: 83px auto;
             background-position-y: -42px;
         }
-        @include generate-square-icon-x-position(1, 6, 14px);
+        @include generate-square-icon-x-position(1, 6, 0, 14px);
     }
 }
 
@@ -1123,7 +1113,7 @@
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 10px;
             height: 10px;
-            background-image: url('img/resource_icons.jpg');
+            @include icon-background;
             background-size: 60px auto;
         }
         &.icon_1 {
@@ -1166,7 +1156,7 @@
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 20px;
             height: 20px;
-            background-image: url('img/resource_icons.jpg');
+            @include icon-background;
             background-size: 120px auto;
         }
         &.icon_1 {
@@ -1311,7 +1301,7 @@
 *  { Background-size, width, height, background-position-x, background-position-y }
 */
 .square_card_icon {
-    background-image: url('img/resource_icons.jpg');
+    @include icon-background;
     position: absolute;
     &.icon_null {
         display: none;

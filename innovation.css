@@ -680,15 +680,15 @@
 }
 
 .equal {
-  color: #AAAAAA;
+  color: #AAAAAA !important;
 }
 
 .more {
-  color: green;
+  color: green !important;
 }
 
 .less {
-  color: red;
+  color: red !important;
 }
 
 .card_age {
@@ -1001,7 +1001,6 @@
 }
 
 .square {
-  background-image: url("img/squares.png");
   display: inline-block;
 }
 .square.basic {
@@ -1036,10 +1035,11 @@
   height: 14px;
 }
 .square.N.icon_1, .square.N.icon_2, .square.N.icon_3, .square.N.icon_4, .square.N.icon_5, .square.N.icon_6 {
-  background-position-y: -16px;
+  background-image: url("img/resource_icons.jpg");
+  background-size: 92px auto;
+  background-position-y: -77px;
 }
 .square.N.age {
-  background-image: unset;
   background-color: black;
   border: 1px solid white;
   color: white;
@@ -1053,43 +1053,44 @@
   background-position-x: 0px;
 }
 .square.N.icon_2 {
-  background-position-x: -14px;
+  background-position-x: -15.5px;
 }
 .square.N.icon_3 {
-  background-position-x: -28px;
+  background-position-x: -31px;
 }
 .square.N.icon_4 {
-  background-position-x: -42px;
+  background-position-x: -46.5px;
 }
 .square.N.icon_5 {
-  background-position-x: -56px;
+  background-position-x: -62px;
 }
 .square.N.icon_6 {
-  background-position-x: -70px;
+  background-position-x: -77.5px;
 }
 .square.P {
   width: 20px;
   height: 20px;
   background-image: url("img/resource_icons.jpg");
   background-size: 133px auto;
+  background-position-y: -112px;
 }
 .square.P.icon_1 {
-  background-position: -1px -112px;
+  background-position-x: -1px;
 }
 .square.P.icon_2 {
-  background-position: -23px -112px;
+  background-position-x: -23.1px;
 }
 .square.P.icon_3 {
-  background-position: -45px -112px;
+  background-position-x: -45.2px;
 }
 .square.P.icon_4 {
-  background-position: -68px -112px;
+  background-position-x: -67.3px;
 }
 .square.P.icon_5 {
-  background-position: -90px -112px;
+  background-position-x: -89.4px;
 }
 .square.P.icon_6 {
-  background-position: -112px -112px;
+  background-position-x: -111.5px;
 }
 .square.M {
   width: 9px;
@@ -1103,7 +1104,6 @@
   background-position-y: -42px;
 }
 .square.M.age {
-  background-image: unset;
   background-color: black;
   border: 1px solid white;
   color: white;
@@ -1119,29 +1119,30 @@
   background-position-x: 0px;
 }
 .square.M.icon_2 {
-  background-position-x: -8px;
+  background-position-x: -8.33px;
 }
 .square.M.icon_3 {
-  background-position-x: -16px;
+  background-position-x: -16.66px;
 }
 .square.M.icon_4 {
-  background-position-x: -24px;
+  background-position-x: -24.99px;
 }
 .square.M.icon_5 {
-  background-position-x: -32px;
+  background-position-x: -33.32px;
 }
 .square.M.icon_6 {
-  background-position-x: -40px;
+  background-position-x: -41.65px;
 }
 .square.L {
   width: 19px;
   height: 19px;
 }
 .square.L.icon_1, .square.L.icon_2, .square.L.icon_3, .square.L.icon_4, .square.L.icon_5, .square.L.icon_6 {
-  background-position-y: -82px;
+  background-image: url("img/resource_icons.jpg");
+  background-position-y: -114px;
+  background-size: 135px auto;
 }
 .square.L.age {
-  background-image: unset;
   background-color: black;
   border: 1px solid white;
   color: white;
@@ -1152,25 +1153,24 @@
   line-height: 19px;
 }
 .square.L.icon_1 {
-  background-position-x: 0px;
+  background-position-x: -2px;
 }
 .square.L.icon_2 {
-  background-position-x: -19px;
+  background-position-x: -24.25px;
 }
 .square.L.icon_3 {
-  background-position-x: -38px;
+  background-position-x: -46.5px;
 }
 .square.L.icon_4 {
-  background-position-x: -57px;
+  background-position-x: -68.75px;
 }
 .square.L.icon_5 {
-  background-position-x: -76px;
+  background-position-x: -91px;
 }
 .square.L.icon_6 {
-  background-position-x: -95px;
+  background-position-x: -113.25px;
 }
 .square.in_tooltip.age {
-  background-image: unset;
   background-color: black;
   border: 1px solid white;
   color: white;
