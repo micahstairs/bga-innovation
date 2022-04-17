@@ -2009,8 +2009,13 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} places ${<}${age}${>} ${<<}${name}${>>} in his hand.');
             break;
         case 'revealed->board':
-            $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>}.');
-            $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>}.');
+            if ($bottom_to) {
+                $message_for_player = clienttranslate('${You} tuck ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_others = clienttranslate('${player_name} tucks ${<}${age}${>} ${<<}${name}${>>}.');
+            } else {
+                $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>}.');
+            }
             break;
         case 'revealed->score':
             $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>}.');
@@ -14599,6 +14604,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "180C1B":
             // "Transfer all cards in your hand to my hand"
+            // TODO(ARTIFACTS): This should be automated instead of an interaction.
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
