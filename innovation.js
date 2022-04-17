@@ -1354,7 +1354,9 @@ function (dojo, declare) {
             var elementParent = $(tempParentId);
             var element = $(tempId);
             dojo.addClass(element, 'font_size_' + font_size);
-            
+            if (HTML_class === 'card_title') {
+                dojo.addClass(elementParent, HTML_class);
+            }
             var elementWidth;
             var elementParentWidth;
             var elementHeight;
@@ -1369,11 +1371,7 @@ function (dojo, declare) {
                 font_size -= 1;
                 dojo.removeClass(element, 'font_size_' + anc_font_size);
                 dojo.addClass(element, 'font_size_' + font_size);
-                if (HTML_class === 'card_title') {
-                    doesItFit = font_size > 1 && (elementHeight > elementParentHeight)
-                } else {
-                    doesItFit = font_size > 1 && (elementWidth > elementParentWidth || elementHeight > elementParentHeight)
-                }
+                doesItFit = font_size > 1 && (elementWidth > elementParentWidth || elementHeight > elementParentHeight)
 
             } while(doesItFit);
             
@@ -2011,7 +2009,7 @@ function (dojo, declare) {
             var card_age = this.createAdjustedContent(card.faceup_age, 'card_age', size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
             var title = _(card_data.name).toUpperCase();
-            var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30, 3);
+            var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30);
             
             var i_demand_effect_1 = card_data.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
