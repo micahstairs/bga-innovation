@@ -242,8 +242,8 @@ $machinestates = array(
 
     16 => array(
         "name" => "relicPlayerTurn",
-        "description" => clienttranslate('${actplayer} must choose whether to seize the relic'),
-        "descriptionmyturn" => clienttranslate('${You} must choose whether to:'),
+        "description" => clienttranslate('${actplayer} must choose whether to seize ${relic_name}'),
+        "descriptionmyturn" => clienttranslate('${You} must choose whether to seize ${relic_name}:'),
         "args" => "argRelicPlayerTurn",
         "type" => "activeplayer",
         "possibleactions" => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),

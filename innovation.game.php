@@ -6820,7 +6820,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return array(
             'can_seize_to_hand' => self::canSeizeRelicToHand($relic, $player_id),
             'can_seize_to_achievements' => self::canSeizeRelicToAchievements($relic, $player_id),
-            'relic_age' => $relic['age'],
+            'relic_id' => $relic['id'],
+            'relic_name' => self::getNotificationArgsForCardList(array($relic)),
         );
     }
 
