@@ -5428,6 +5428,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 SET
                     selected = TRUE
                 WHERE
+                    is_relic = FALSE AND
                     {condition_for_owner} AND
                     {condition_for_location} AND
                     {condition_for_age} AND
@@ -5465,6 +5466,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 SET
                     selected = TRUE
                 WHERE
+                    is_relic = FALSE AND
                     {condition_for_owner} AND
                     {condition_for_location} AND
                     {condition_for_age} AND
