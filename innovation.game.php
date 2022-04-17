@@ -1809,7 +1809,7 @@ class Innovation extends Table
 
     function getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step) {
         $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
-        // TODO(ARTIFACTS): Remove this hack since it's likely just masking another problem.
+        // TODO(LATER): Remove this hack since it's likely just masking another problem.
         if ($step >= 1 && $step <= 4) {
             $letter = $letters[$step];
         } else {
@@ -4579,7 +4579,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
-        // TODO(ARTIFACTS): Identify and fix the nested execution bug which makes this hack necessary.
+        // TODO(LATER): Identify and fix the nested execution bug which makes this hack necessary.
         if ($player_id == -1 || $player_id == null) {
             return "unknown";
         }
@@ -4588,7 +4588,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getPlayerColorFromId($player_id) {
-        // TODO(ARTIFACTS): Identify and fix the nested execution bug which makes this hack necessary.
+        // TODO(LATER): Identify and fix the nested execution bug which makes this hack necessary.
         if ($player_id == -1 || $player_id == null) {
             return "unknown";
         }
@@ -5956,7 +5956,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getCurrentPlayerUnderDogmaEffect() {
         if (self::getGameStateValue('release_version') >= 1) {
             $player_id = self::getCurrentNestedCardState()['current_player_id'];
-            // TODO(ARTIFACTS): Figure out why this workaround is necessary.
+            // TODO(LATER): Figure out why this workaround is necessary.
             if ($player_id == -1) {
                 return self::getGameStateValue('active_player');
             }
