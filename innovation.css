@@ -1072,24 +1072,25 @@
   height: 20px;
   background-image: url("img/resource_icons.jpg");
   background-size: 133px auto;
+  background-position-y: -112px;
 }
 .square.P.icon_1 {
-  background-position: -1px -112px;
+  background-position-x: -1px;
 }
 .square.P.icon_2 {
-  background-position: -23px -112px;
+  background-position-x: -23.1px;
 }
 .square.P.icon_3 {
-  background-position: -45px -112px;
+  background-position-x: -45.2px;
 }
 .square.P.icon_4 {
-  background-position: -68px -112px;
+  background-position-x: -67.3px;
 }
 .square.P.icon_5 {
-  background-position: -90px -112px;
+  background-position-x: -89.4px;
 }
 .square.P.icon_6 {
-  background-position: -112px -112px;
+  background-position-x: -111.5px;
 }
 .square.M {
   width: 9px;

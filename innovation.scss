@@ -1048,25 +1048,8 @@
         height: 20px;
         @include icon-background;
         background-size: 133px auto;
-        // TODO: convert to mixin generator, aka figure out why it starts at 1 and is inconsistant, probably the background size is off
-        &.icon_1 {
-            background-position: -1px -112px;
-        }
-        &.icon_2 {
-            background-position: -23px -112px;
-        }
-        &.icon_3 {
-            background-position: -45px -112px;
-        }
-        &.icon_4 {
-            background-position: -68px -112px;
-        }
-        &.icon_5 {
-            background-position: -90px -112px;
-        }
-        &.icon_6 {
-            background-position: -112px -112px;
-        }
+        background-position-y: -112px;
+        @include generate-square-icon-x-position(1, 6, 1, 22.1px);
     }
     &.M {
         width: 9px;
