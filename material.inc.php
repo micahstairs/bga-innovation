@@ -2256,6 +2256,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 // TODO(FIGURES): When implementing Figures, we need to transcribe this relic.
+// TODO(FIGURES): Make sure we read https://boardgamegeek.com/thread/1811482/article/27436133#27436133 when implementing this card.
 218 => array('name' => clienttranslate('Ching Shih'),
     'i_demand_effect_1' => null,
     'i_demand_effect_1_is_compel' => false,
