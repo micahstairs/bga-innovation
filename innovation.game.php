@@ -14309,8 +14309,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
+                'owner_to' => $player_id,
+                'location_to' => 'revealed'
             );
             break;
 
@@ -16418,6 +16418,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                         // "Splay right that color"
                         self::splayRight($player_id, $player_id, $color);
+                        
+                        // Return revealed card
+                        self::transferCardFromTo(self::getCardInfo(self::getGameStateValue('id_last_selected')), 0, 'deck');
                     }
                     break;
                     
