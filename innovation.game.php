@@ -8636,7 +8636,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "31N1":
-                $step_max = 2; // --> 2 interactions: see B
+                $has_card_with_tower = false;
+                foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
+                    if (self::hasRessource($card, 4 /* tower */)) {
+                        $has_card_with_tower = true;
+                        break;
+                    }
+                }
+                if (!$has_card_with_tower) {
+                    $step = 2; // Skip first interaction
+                    self::revealHand($player_id);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
+
+                }
+                $step_max = 2;
                 break;
                 
             // id 32, age 3: Medicine        
@@ -11533,11 +11547,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'score',
+                'location_to' => 'revealed,score',
                 
                 'with_icon' => 4, /* tower */
                 
-                'score_keyword' => true
+                'score_keyword' => true,
             );
             break;
           
@@ -17447,13 +17461,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 
             default:
                 if ($splay_direction == -1) {
-                    // Do the transfer as stated in B
                     if ($location_to == 'revealed,deck') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                        $card = self::getCardInfo($card['id']); // Update the card status
+                        $card = self::getCardInfo($card['id']); // Update the card's state
                         self::transferCardFromTo($card, 0, 'deck'); // Return
-                    }
-                    else {
+                    } else if ($location_to == 'revealed,score') {
+                        self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
+                        $card = self::getCardInfo($card['id']); // Update the card's state
+                        self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
+                    } else {
                         self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                     }
                 }
