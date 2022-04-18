@@ -965,6 +965,25 @@ class Innovation extends Table
         return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_eliminated = 0", true);
     }
 
+    function getActiveOpponentIds($player_id) {
+        return self::getObjectListFromDB(self::format("
+            SELECT
+                player_id
+            FROM
+                player
+            WHERE
+                player_eliminated = 0 AND
+                player_team <> (
+                    SELECT
+                        player_team
+                    FROM
+                        player
+                    WHERE
+                        player_id = {player_id}
+                )
+        ", array('player_id' => $player_id)), true);
+    }
+
     function getAllActivePlayers() {
         return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
     }
@@ -15589,21 +15608,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryValue($color); // Save the color of the revealed card
                         $revealed_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         
-                        $players = self::loadPlayersBasicInfos();
-                        foreach($players as $other_player_id => $player) {
-                            if ($other_player_id == $player_id || $other_player_id == self::getPlayerTeammate($player_id)) { // Ignore the player and his potential teammate
-                                continue;
-                            }
-                            $id_of_cards_in_hand = self::getIdsOfCardsInLocation($other_player_id, 'hand');
-                            $no_transfer = true;
-                            foreach($id_of_cards_in_hand as $id) {
+                        foreach (self::getActiveOpponentIds($player_id) as $other_player_id) {
+                            self::revealHand($other_player_id);
+                            $transfer = false;
+                            foreach (self::getIdsOfCardsInLocation($other_player_id, 'hand') as $id) {
                                 $card = self::getCardInfo($id);
                                 if ($card['color'] == $color) { // This card must be given to the player
                                     self::transferCardFromTo($card, $player_id, 'hand'); // "Take into your hand all cards of that color from all other player's hands"
-                                    $no_transfer = false;
+                                    $transfer = true;
                                 }
                             }
-                            if ($no_transfer) { // The player had no card of this color in his hand
+                            if (!$transfer) { // The player had no card of this color in his hand
                                 $color_in_clear = self::getColorInClear($color);
                                 self::notifyPlayer($other_player_id, 'log', clienttranslate('${You} have no ${colored} card in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
                                 self::notifyAllPlayersBut($other_player_id, 'log', clienttranslate('${player_name} has no ${colored} card in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($other_player_id), $other_player_id), 'colored' => $color_in_clear));
