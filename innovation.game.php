@@ -107,6 +107,7 @@ class Innovation extends Table
             'icon_hash_4' => 82,
             'icon_hash_5' => 83,
             'enable_autoselection' => 84,
+            'include_relics' => 85,
             
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -180,6 +181,7 @@ class Innovation extends Table
                 'icon_hash_4' => 82,
                 'icon_hash_5' => 83,
                 'enable_autoselection' => 84,
+                'include_relics' => 85,
                 'relic_id' => 95,
                 'current_action_number' => 96,
                 'current_nesting_index' => 97,
@@ -202,6 +204,7 @@ class Innovation extends Table
             self::setGameStateValue('icon_hash_4', -1);
             self::setGameStateValue('icon_hash_5', -1);
             self::setGameStateValue('enable_autoselection', -1);
+            self::setGameStateValue('include_relics', -1);
             self::setGameStateValue('relic_id', -1);
             self::setGameStateValue('current_action_number', -1);
             self::setGameStateValue('current_nesting_index', -1);
@@ -500,6 +503,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('icon_hash_4', -1); // icon hash of a card which is allowed to be selected, else -1
         self::setGameStateInitialValue('icon_hash_5', -1); // icon hash of a card which is allowed to be selected, else -1
         self::setGameStateInitialValue('enable_autoselection', -1); // 1 if cards are allowed to be autoselected during an interaction
+        self::setGameStateInitialValue('include_relics', -1); // 1 if relics cards are allowed to be selected during an interaction
         self::setGameStateInitialValue('can_pass', -1); // 1 if the player can pass else 0
         self::setGameStateInitialValue('n', -1); // Actual number of cards having being selected yet
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
@@ -5171,6 +5175,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('enable_autoselection', $rewritten_options)) {
             $rewritten_options['enable_autoselection'] = 1;
         }
+        if (!array_key_exists('include_relics', $rewritten_options)) {
+            $rewritten_options['include_relics'] = 1;
+        }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
             $rewritten_options['bottom_to'] = (array_key_exists('location_to', $rewritten_options) && $rewritten_options['location_to'] == 'deck');
         }
@@ -5223,6 +5230,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'has_demand_effect':
             case 'bottom_to':
             case 'enable_autoselection':
+            case 'include_relics':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
@@ -5414,6 +5422,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($not_id != -2) { // Used by cards like Fission and Self service
             $condition_for_excluding_id = self::format("AND id <> {not_id}", array('not_id' => $not_id));
         }
+
+        // Condition for including relic
+        $condition_for_including_relic = "";
+        $include_relics = self::getGameStateValue('include_relics');
+        if ($include_relics == 0) {
+            $condition_for_including_relic = "AND is_relic = FALSE";
+        }
         
         if (self::getGameStateValue('splay_direction') == -1 && $location_from == 'board') {
             // Only the active card can be selected
@@ -5428,7 +5443,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 SET
                     selected = TRUE
                 WHERE
-                    is_relic = FALSE AND
                     {condition_for_owner} AND
                     {condition_for_location} AND
                     {condition_for_age} AND
@@ -5442,6 +5456,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_splay}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
+                    {condition_for_including_relic}
             ",
                 array(
                     'condition_for_owner' => $condition_for_owner,
@@ -5455,7 +5470,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_icon_hash' => $condition_for_icon_hash,
                     'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
-                    'condition_for_excluding_id' => $condition_for_excluding_id
+                    'condition_for_excluding_id' => $condition_for_excluding_id,
+                    'condition_for_including_relic' => $condition_for_including_relic
                 )
             ));
         }
@@ -5466,7 +5482,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 SET
                     selected = TRUE
                 WHERE
-                    is_relic = FALSE AND
                     {condition_for_owner} AND
                     {condition_for_location} AND
                     {condition_for_age} AND
@@ -5479,6 +5494,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_splay}
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
+                    {condition_for_including_relic}
             ",
                 array(
                     'condition_for_owner' => $condition_for_owner,
@@ -5492,7 +5508,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_icon_hash' => $condition_for_icon_hash,
                     'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
-                    'condition_for_excluding_id' => $condition_for_excluding_id
+                    'condition_for_excluding_id' => $condition_for_excluding_id,
+                    'condition_for_including_relic' => $condition_for_including_relic
                 )
             ));
         }
@@ -8064,6 +8081,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setGameStateValue('icon_hash_4', -1);
             self::setGameStateValue('icon_hash_5', -1);
             self::setGameStateValue('enable_autoselection', -1);
+            self::setGameStateValue('include_relics', -1);
             self::setGameStateValue('can_pass', -1);
             self::setGameStateValue('n', -1);
             self::setGameStateValue('id_last_selected', -1);
@@ -14872,7 +14890,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'achievements',
                 'owner_to' => 0,
-                'location_to' => 'deck'                
+                'location_to' => 'deck',
+
+                'include_relics' => false,
             );
             break;
 
