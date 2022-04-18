@@ -9740,7 +9740,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 114, Artifacts age 1: Papyrus of Ani
             case "114N1":
-                $step_max = 1;
+                $number_of_purple_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[4];
+                if ($number_of_purple_cards == 0) {
+                    self::revealHand($player_id);
+                    $color_in_clear = self::getColorInClear(4);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} card in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} card in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+                } else {
+                    $step_max = 1;
+                }
                 break;
 
             // id 115, Artifacts age 1: Pavlovian Tusk
@@ -13091,10 +13099,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
 
-                'color' => array(4)
+                'color' => array(4),
             );
             break;
 
