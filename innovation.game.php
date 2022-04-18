@@ -8665,7 +8665,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 34, age 3: Feudalism        
             case "34D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $has_card_with_tower = false;
+                foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
+                    if (self::hasRessource($card, 4 /* tower */)) {
+                        $has_card_with_tower = true;
+                        break;
+                    }
+                }
+                if ($has_card_with_tower) {
+                    $step_max = 1;
+                } else {
+                    self::revealHand($player_id);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
+                }
                 break;
                 
             case "34N1":
