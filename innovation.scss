@@ -1131,21 +1131,6 @@
         box-shadow: 5px 5px grey;
         background-position-y: -2px;
         @include m.generate-color-x-position(0, 4, 0, 462px);
-        // &.color_0 {
-        //     background-position: -0px -2px;
-        // }
-        // &.color_1 {
-        //     background-position: -462px -2px;
-        // }
-        // &.color_2 {
-        //     background-position: -922px -2px;
-        // }
-        // &.color_3 {
-        //     background-position: -1387px -2px;
-        // }
-        // &.color_4 {
-        //     background-position: -1849px -2px;
-        // }
     }
     &.S {
         &.age_null {
