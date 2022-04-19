@@ -9790,8 +9790,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($number_of_purple_cards == 0) {
                     self::revealHand($player_id);
                     $color_in_clear = self::getColorInClear(4);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} card in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} card in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
                 } else {
                     $step_max = 1;
                 }
@@ -15620,8 +15620,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                             if (!$transfer) { // The player had no card of this color in his hand
                                 $color_in_clear = self::getColorInClear($color);
-                                self::notifyPlayer($other_player_id, 'log', clienttranslate('${You} have no ${colored} card in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                                self::notifyAllPlayersBut($other_player_id, 'log', clienttranslate('${player_name} has no ${colored} card in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($other_player_id), $other_player_id), 'colored' => $color_in_clear));
+                                self::notifyPlayer($other_player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
+                                self::notifyAllPlayersBut($other_player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($other_player_id), $other_player_id), 'colored' => $color_in_clear));
                             }
                         }
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Place back the card into player's hand
@@ -16253,6 +16253,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 4);
                     self::executeDraw($player_id, 4);
                     self::executeDraw($player_id, 4);
+
+                    $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[0];
+                    if ($number_of_blue_cards == 0) {
+                        self::revealHand($player_id);
+                        $color_in_clear = self::getColorInClear(0);
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+                        $step = $step + 1;
+                        self::incrementStep(1);
+                    }
                     break;
                     
                 // id 150, Artifacts age 4: Hunt-Lenox Globe
