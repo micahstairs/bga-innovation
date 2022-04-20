@@ -10434,8 +10434,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
-                
-                $step_max = 2;
+
+                $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[0];
+                if ($number_of_blue_cards == 0) {
+                    self::revealHand($player_id);
+                    $color_in_clear = self::getColorInClear(0);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+
+                    // "Transfer all cards in your hand to my hand"
+                    foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
+                        self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
+                    }
+                } else {
+                    $step_max = 1;
+                }
                 break;
 
             case "180N1":
@@ -14662,7 +14675,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "180C1A":
             // "Meld a blue card"
             $options = array(
-                'player_id' => $player_id,
+                'player_id' => $player_id,  
                 'n' => 1,
                 'can_pass' => false,
 
@@ -14671,24 +14684,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
 
-                'color' => array(0)
+                'color' => array(0),
             );
-
-            break;
-
-        case "180C1B":
-            // "Transfer all cards in your hand to my hand"
-            // TODO(ARTIFACTS): This should be automated instead of an interaction.
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand'
-            );
-
             break;
 
         // id 181, Artifacts age 7: Colt Paterson Revolver
@@ -16572,6 +16569,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Otherwise, return the melded card"
                     } else {
                         self::transferCardFromTo($card, 0, 'deck');
+                    }
+                    break;
+                
+                // id 180, Artifacts age 7: Hansen Writing Ball
+                case "180C1A":
+                    // "Transfer all cards in your hand to my hand"
+                    foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
+                        self::transferCardFromTo(self::getCardInfo($id), $launcher_id, 'hand');
                     }
                     break;
                              
