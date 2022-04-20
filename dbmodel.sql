@@ -9,29 +9,8 @@
 
 -- dbmodel.sql
 
--- This is the file where you are describing the database schema of your game
--- Basically, you just have to export from PhpMyAdmin your table structure and copy/paste
--- this export here.
--- Note that the database itself and the standard tables ("global", "stats", "gamelog" and "player") are
--- already created and must not be created here
-
 -- Note: The database schema is created from this file when the game starts. If you modify this file,
 --       you have to restart a game to see your changes in database.
-
--- Example 1: create a standard "card" table to be used with the "Deck" tools (see example game "hearts"):
-
--- CREATE TABLE IF NOT EXISTS `card` (
---   `card_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
---   `card_type` varchar(16) NOT NULL,
---   `card_type_arg` int(11) NOT NULL,
---   `card_location` varchar(16) NOT NULL,
---   `card_location_arg` int(11) NOT NULL,
---   PRIMARY KEY (`card_id`)
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
-
-
--- Example 2: add a custom field to the standard "player" table
--- ALTER TABLE `player` ADD `player_my_custom_field` INT UNSIGNED NOT NULL DEFAULT '0';
 
 /* New columns for table player */
 ALTER TABLE `player` ADD `player_team` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Team number (same for players in a same team)';
@@ -42,7 +21,11 @@ ALTER TABLE `player` ADD `player_icon_count_3` SMALLINT UNSIGNED NOT NULL DEFAUL
 ALTER TABLE `player` ADD `player_icon_count_4` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of towers on player board';
 ALTER TABLE `player` ADD `player_icon_count_5` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of factories on player board';
 ALTER TABLE `player` ADD `player_icon_count_6` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of clocks on player board';
+/* stronger_or_equal is deprecated */
 ALTER TABLE `player` ADD `stronger_or_equal` BOOLEAN DEFAULT NULL COMMENT 'When in dogma state, TRUE if the player can share the non-demand effects, FALSE if the player has to execute "I demand" effects';
+ALTER TABLE `player` ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Number of visible icons matching the featured icon at the start of the dogma effect';
+ALTER TABLE `player` ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Turn order ending with the player who launched the current dogma effect (these values will not necessarily be consecutive)';
+/* player_no_under_effect is deprecated */
 ALTER TABLE `player` ADD `player_no_under_effect` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Order of the player when he is concerned by an effect';
 ALTER TABLE `player` ADD `number_of_tucked_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has tucked during the turn of the current player';
 ALTER TABLE `player` ADD `number_of_scored_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has scored during the turn of the current player';
@@ -55,18 +38,21 @@ CREATE TABLE IF NOT EXISTS `card` (
   `id` SMALLINT UNSIGNED NOT NULL COMMENT '0-104 for base cards, 105-109 for base special achievements, 110-214 for artifact cards, 215-219 for relics',
   `type` TINYINT UNSIGNED NOT NULL COMMENT '0 for base, 1 for artifacts, 2 for cities, 3 for echoes, 4 for figures',
   `age` TINYINT UNSIGNED DEFAULT NULL COMMENT '1 to 10, NULL for a special achievement',
+  `faceup_age` TINYINT UNSIGNED DEFAULT NULL COMMENT 'The same as age, except Battleship Yamato is an 11 instead of 8 (dynamically populated)',
   `color` TINYINT UNSIGNED DEFAULT NULL COMMENT '0 (blue), 1 (red), 2 (green), 3 (yellow), 4 (purple) or NULL for a special achievement',
-  `spot_1` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on top-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
-  `spot_2` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
-  `spot_3` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-middle, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
-  `spot_4` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-right, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
-  `dogma_icon` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Feature icon for dogma, 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for a special achievement',
+  `spot_1` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on top-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for no icon (e.g. special achievement)',
+  `spot_2` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for no icon (e.g. special achievement)',
+  `spot_3` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-middle, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for no icon (e.g. special achievement)',
+  `spot_4` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-right, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for no icon (e.g. special achievement)',
+  `dogma_icon` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Feature icon for dogma, 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock) or NULL for no icon (e.g. special achievement)',
   `has_demand` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card has at least one demand effect (will be populated using data in material.inc.php file)',
+  `is_relic` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card is a relic',
   `owner` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Id of the player who owns the card or 0 if no owner',
   `location` VARCHAR(12) NOT NULL DEFAULT 'deck' COMMENT 'Hand, board, score, achievements, deck, display or revealed (achievements can be used both with owner = 0 (available achievement) or with a player as owner (the player has earned that achievement))',
   `position` TINYINT UNSIGNED DEFAULT 0 COMMENT 'Position in the given location. Bottom is zero (last card in deck), top is max. For hands, the cards are sorted by age before being sorted by position. For boards, the positions reflect the order in the color piles, 0 for the bottom card, maximum for active card.',
   `splay_direction` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Direction of the splay, 0 (no-splay), 1 (left), 2 (right), 3 (up) OR NULL if this card is not on board',
   `selected` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Temporary flag to indicate whether the card is selected by its owner or not',
+  `icon_hash` INT(32) UNSIGNED DEFAULT NULL COMMENT 'A column that is updated on game start with a calculated hash of the card icons. This is for icon comparisson purposes regardless of the icon position.',
   PRIMARY KEY(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -78,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
  `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
+ `execute_demand_effects` BOOLEAN DEFAULT TRUE COMMENT 'Whether demand effects should be executed',
  `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
  `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
  `step` TINYINT COMMENT 'The interaction that the card is on',
@@ -131,15 +118,15 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
 /* Insert relic cards */
 
-INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `location`, `position`) VALUES
+INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `is_relic`, `location`, `position`) VALUES
 
 /* TODO: When implementing Cities, add extra icons to this card */
-(215, 2, 3, 2, 3, 1, 1, 1, NULL, 'relics', 0),
-(216, 0, 4, 0, 5, 0, 3, 3, 3, 'relics', 1),
-(217, 1, 5, 4, 5, 3, 5, 0, 5, 'relics', 2),
-(218, 4, 6, 1, 6, 6, 0, 2, 6, 'relics', 3),
+(215, 2, 3, 2, 3, 1, 1, 1, NULL, TRUE, 'relics', 0),
+(216, 0, 4, 0, 5, 0, 3, 3, 3,    TRUE, 'relics', 1),
+(217, 1, 5, 4, 5, 3, 5, 0, 5,    TRUE, 'relics', 2),
+(218, 4, 6, 1, 6, 6, 0, 2, 6,    TRUE, 'relics', 3),
 /* TODO: When implementing Echoes, add Echo effect to this card */
-(219, 3, 7, 3, 0, 0, 2, 2, 2, 'relics', 4);
+(219, 3, 7, 3, 0, 0, 2, 2, 2,    TRUE, 'relics', 4);
 
 /* Insert normal cards */
 
@@ -284,7 +271,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (120, 1, 1, 3, 0, 1, 1, 1, 1),
 (121, 1, 1, 3, 0, 2, 2, 2, 2),
 (122, 1, 1, 4, 4, 4, 0, 4, 4),
-(123, 1, 1, 0, 4, 4, 4, 4, 4),
+(123, 1, 1, 4, 0, 4, 4, 4, 4),
 (124, 1, 1, 4, 0, 4, 3, 3, 3),
 
 /* Artifacts - Age 2 */
@@ -305,6 +292,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (138, 1, 3, 1, 0, 4, 4, 3, 4),
 (139, 1, 3, 2, 1, 1, 1, 0, 1),
 (140, 1, 3, 2, 1, 1, 0, 1, 1),
+(141, 1, 3, 3, 4, 2, 0, 4, 4),
 (142, 1, 3, 3, 1, 1, 1, 0, 1),
 (143, 1, 3, 4, 0, 2, 2, 2, 2),
 (144, 1, 3, 4, 2, 0, 2, 2, 2),
@@ -317,6 +305,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (149, 1, 4, 2, 3, 3, 3, 0, 3),
 (150, 1, 4, 2, 3, 3, 0, 3, 3),
 (151, 1, 4, 3, 2, 2, 0, 2, 2),
+(152, 1, 4, 3, 0, 1, 2, 2, 2),
 (153, 1, 4, 4, 1, 1, 0, 1, 1),
 (154, 1, 4, 4, 2, 0, 1, 2, 2),
 
@@ -349,17 +338,22 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (178, 1, 7, 1, 0, 6, 3, 3, 3),
 (179, 1, 7, 2, 1, 0, 1, 5, 1),
 (180, 1, 7, 2, 6, 2, 6, 0, 6),
+(181, 1, 7, 3, 5, 0, 5, 1, 5),
 (182, 1, 7, 3, 0, 5, 6, 6, 6),
+(183, 1, 7, 4, 2, 2, 2, 0, 2),
 (184, 1, 7, 4, 1, 1, 0, 2, 1),
 
 /* Artifacts - Age 8 */
 (185, 1, 8, 0, 3, 3, 3, 0, 3),
 (186, 1, 8, 0, 6, 0, 6, 6, 6),
 (187, 1, 8, 1, 0, 5, 5, 5, 5),
+(188, 1, 8, 1, NULL, 0, NULL, NULL, NULL),
 (189, 1, 8, 2, 1, 5, 1, 0, 1),
 (190, 1, 8, 2, 2, 1, 0, 1, 1),
 (191, 1, 8, 3, 2, 2, 2, 0, 2),
 (192, 1, 8, 3, 0, 6, 6, 3, 6),
+(193, 1, 8, 4, 0, 6, 6, 6, 6),
+(194, 1, 8, 4, 2, 2, 6, 0, 2),
 
 /* Artifacts - Age 9 */
 (195, 1, 9, 0, 6, 6, 5, 0, 6),
@@ -374,7 +368,10 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (204, 1, 9, 4, 1, 1, 1, 0, 1),
 
 /* Artifacts - Age 10 */
+(205, 1,10, 0, 0, 3, 3, 3, 3),
+(207, 1,10, 1, 5, 0, 5, 5, 5),
 (208, 1,10, 1, 6, 0, 6, 6, 6),
 (209, 1,10, 2, 1, 1, 0, 1, 1),
 (210, 1,10, 2, 6, 6, 6, 0, 6),
-(211, 1,10, 3, 0, 6, 2, 6, 6);
+(211, 1,10, 3, 0, 6, 2, 6, 6),
+(214, 1,10, 4, 0, 5, 5, 6, 5);
