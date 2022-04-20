@@ -915,13 +915,13 @@
   background-image: url("img/squares.png");
 }
 .splay_indicator.splay_1 {
-  background-position: -80px 0px;
+  background-position-x: -80px;
 }
 .splay_indicator.splay_2 {
-  background-position: -96px 0px;
+  background-position-x: -96px;
 }
 .splay_indicator.splay_3 {
-  background-position: -112px 0px;
+  background-position-x: -112px;
 }
 
 .in_tooltip {
@@ -1004,6 +1004,7 @@
   display: inline-block;
 }
 .square.basic {
+  background-image: url("img/squares.png");
   width: 16px;
   height: 16px;
 }
@@ -1329,21 +1330,22 @@
   background-size: 920px 128px;
   border-radius: 6px;
   box-shadow: 3px 3px grey;
+  background-position-y: -2px;
 }
 .card.M.color_0 {
-  background-position: -2px -2px;
+  background-position-x: -2px;
 }
 .card.M.color_1 {
-  background-position: -186px -2px;
+  background-position-x: -186px;
 }
 .card.M.color_2 {
-  background-position: -370px -2px;
+  background-position-x: -370px;
 }
 .card.M.color_3 {
-  background-position: -554px -2px;
+  background-position-x: -554px;
 }
 .card.M.color_4 {
-  background-position: -738px -2px;
+  background-position-x: -738px;
 }
 .card.L {
   width: 456px;
@@ -1351,21 +1353,22 @@
   border-radius: 16px;
   background-size: 2308px 323px;
   box-shadow: 5px 5px grey;
+  background-position-y: -2px;
 }
 .card.L.color_0 {
-  background-position: 0px -2px;
+  background-position-x: 0px;
 }
 .card.L.color_1 {
-  background-position: -462px -2px;
+  background-position-x: -462px;
 }
 .card.L.color_2 {
-  background-position: -922px -2px;
+  background-position-x: -924px;
 }
 .card.L.color_3 {
-  background-position: -1387px -2px;
+  background-position-x: -1386px;
 }
 .card.L.color_4 {
-  background-position: -1849px -2px;
+  background-position-x: -1848px;
 }
 .card.S.age_null {
   background-image: url("img/special_achievements_landscape.jpg");

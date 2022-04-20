@@ -1,5 +1,6 @@
 @use "sass:math";
 @use "misc/variables" as v;
+@use "misc/mixins" as m;
 @import "../../../css/csslayer.css";
 
 
@@ -183,16 +184,7 @@
     }
 }
 
-@mixin achievement-win-number($number) {
-	&.to_win_#{$number} {
-		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * $number;
-	}
-}
-@mixin generate_achievement_container_widths ($min, $max) {
-	@for $i from $min through $max {
-		@include achievement-win-number($i)
-	}
-}
+
 
 .achievement_container {
     vertical-align: top;
@@ -204,7 +196,7 @@
 		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 5;
 	}
 	@media (min-width: v.$width_desktop) {
-		@include generate_achievement_container_widths(4,11)
+		@include m.generate_achievement_container_widths(4,11)
 	}
     >p {
         font-style: italic;
@@ -881,19 +873,10 @@
     width: 16px;
     height: 16px;
     &.splay_1,&.splay_2,&.splay_3 {
-        background-image: url('img/squares.png');
+        @include m.squares-background;
     }
-    &.splay_1 {
-        background-position: -80px -0px;
-    }
-    &.splay_2 {
-        background-position: -96px -0px;
-    }
-    &.splay_3 {
-        background-position: -112px -0px;
-    }
+    @include m.generate-splay-x-position(1, 3, 80, 16px);
 }
-
 .in_tooltip {
     display: inline-block;
     &.M {
@@ -961,7 +944,7 @@
     border-right: 2px solid #ebd5bd;
 }
 .all_icons {
-    background-image: url('img/squares.png');
+    @include m.squares-background;
     display: inline-block;
     width: 114px;
     height: 19px;
@@ -973,35 +956,12 @@
 .simple_stats {
     height: 19px;
 }
-@mixin square-icon-x-position($number, $position) {
-    &.icon_#{$number} {
-        background-position-x: -$position;
-    }
-}
-@mixin generate-square-icon-x-position($min, $max, $start_offset, $increment) {
-    @for $i from $min through $max {
-        $position: ($increment * ($i - 1)) + $start_offset;
-        @include square-icon-x-position($i, $position)
-    }
-}
 
-@mixin square-age {
-	background-color: black;
-	border: 1px solid white;
-	color: white;
-	text-align: center;
-	padding-right: 1px;
-	padding-left: 1px;
-}
-
-@mixin icon-background {
-    background-image: url('img/resource_icons.jpg');
-}
 
 .square {
-    // background-image: url('img/squares.png');
     display: inline-block;
     &.basic {
+        @include m.squares-background;
         width: 16px;
         height: 16px;
         &.icon_score {
@@ -1032,24 +992,24 @@
         width: 14px;
         height: 14px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            @include icon-background;
+            @include m.icon-background;
             background-size: 92px auto;
             background-position-y: -77px;
         }
         &.age {
-			@include square-age;
+			@include m.square-age;
 			font-size: 11px;
 			line-height: 16px;
 		}
-        @include generate-square-icon-x-position(1, 6, 0, 15.5px);
+        @include m.generate-icon-x-position(1, 6, 0, 15.5px);
     }
     &.P {
         width: 20px;
         height: 20px;
-        @include icon-background;
+        @include m.icon-background;
         background-size: 133px auto;
         background-position-y: -112px;
-        @include generate-square-icon-x-position(1, 6, 1, 22.1px);
+        @include m.generate-icon-x-position(1, 6, 1, 22.1px);
     }
     &.M {
         width: 9px;
@@ -1057,37 +1017,37 @@
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 8px;
             height: 8px;
-            @include icon-background;
+            @include m.icon-background;
             background-size: 50px auto;
             background-position-y: -42px;
         }
 		&.age {
-			@include square-age;
+			@include m.square-age;
 			width: 8px;
             height: 8px;
 			font-size: 6px;
 			line-height: 8px;
 		}
-        @include generate-square-icon-x-position(1, 6, 0, 8.33px);
+        @include m.generate-icon-x-position(1, 6, 0, 8.33px);
     }
     &.L {
         width: 19px;
         height: 19px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            @include icon-background;
+            @include m.icon-background;
             background-position-y: -114px;
             background-size: 135px auto;
         }
         &.age {
-			@include square-age;
+			@include m.square-age;
 			font-size: inherit;
 			line-height: 19px;
 		}
-        @include generate-square-icon-x-position(1, 6, 2, 22.25px);
+        @include m.generate-icon-x-position(1, 6, 2, 22.25px);
     }
     &.in_tooltip {
         &.age {
-			@include square-age;
+			@include m.square-age;
 			width: 14px;
             height: 14px;
 			font-size: 12px;
@@ -1098,11 +1058,11 @@
         width: 13px;
         height: 12px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            @include icon-background;
+            @include m.icon-background;
             background-size: 83px auto;
             background-position-y: -42px;
         }
-        @include generate-square-icon-x-position(1, 6, 0, 14px);
+        @include m.generate-icon-x-position(1, 6, 0, 14px);
     }
 }
 
@@ -1113,42 +1073,11 @@
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 10px;
             height: 10px;
-            @include icon-background;
+            @include m.icon-background;
             background-size: 60px auto;
         }
-        &.icon_1 {
-            background-position-x: -0px;
-        }
-        &.icon_2 {
-            background-position-x: -10px;
-        }
-        &.icon_3 {
-            background-position-x: -20px;
-        }
-        &.icon_4 {
-            background-position-x: -30px;
-        }
-        &.icon_5 {
-            background-position-x: -40px;
-        }
-        &.icon_6 {
-            background-position-x: -50px;
-        }
-        &.color_0 {
-            background-position-y: -0px;
-        }
-        &.color_1 {
-            background-position-y: -10px;
-        }
-        &.color_2 {
-            background-position-y: -20px;
-        }
-        &.color_3 {
-            background-position-y: -30px;
-        }
-        &.color_4 {
-            background-position-y: -40px;
-        }
+        @include m.generate-icon-x-position(1, 6, 0, 10px);
+        @include m.generate-color-y-position(0, 4, 0, 10px);
     }
     &.L {
         left: -4px;
@@ -1156,42 +1085,11 @@
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 20px;
             height: 20px;
-            @include icon-background;
+            @include m.icon-background;
             background-size: 120px auto;
         }
-        &.icon_1 {
-            background-position-x: -0px;
-        }
-        &.icon_2 {
-            background-position-x: -20px;
-        }
-        &.icon_3 {
-            background-position-x: -40px;
-        }
-        &.icon_4 {
-            background-position-x: -60px;
-        }
-        &.icon_5 {
-            background-position-x: -80px;
-        }
-        &.icon_6 {
-            background-position-x: -100px;
-        }
-        &.color_0 {
-            background-position-y: -0px;
-        }
-        &.color_1 {
-            background-position-y: -20px;
-        }
-        &.color_2 {
-            background-position-y: -40px;
-        }
-        &.color_3 {
-            background-position-y: -60px;
-        }
-        &.color_4 {
-            background-position-y: -80px;
-        }
+        @include m.generate-icon-x-position(1, 6, 0, 20px);
+        @include m.generate-color-y-position(0, 4, 0, 20px);
     }
 }
 
@@ -1222,21 +1120,8 @@
         background-size: 920px 128px;
         border-radius: 6px;
         box-shadow: 3px 3px grey;
-        &.color_0 {
-            background-position: -2px -2px;
-        }
-        &.color_1 {
-            background-position: -186px -2px;
-        }
-        &.color_2 {
-            background-position: -370px -2px;
-        }
-        &.color_3 {
-            background-position: -554px -2px;
-        }
-        &.color_4 {
-            background-position: -738px -2px;
-        }
+        background-position-y: -2px;
+        @include m.generate-color-x-position(0, 4, 2, 184px);
     }
     &.L {
         width: 456px;
@@ -1244,21 +1129,8 @@
         border-radius: 16px;
         background-size: 2308px 323px;
         box-shadow: 5px 5px grey;
-        &.color_0 {
-            background-position: -0px -2px;
-        }
-        &.color_1 {
-            background-position: -462px -2px;
-        }
-        &.color_2 {
-            background-position: -922px -2px;
-        }
-        &.color_3 {
-            background-position: -1387px -2px;
-        }
-        &.color_4 {
-            background-position: -1849px -2px;
-        }
+        background-position-y: -2px;
+        @include m.generate-color-x-position(0, 4, 0, 462px);
     }
     &.S {
         &.age_null {
@@ -1301,7 +1173,7 @@
 *  { Background-size, width, height, background-position-x, background-position-y }
 */
 .square_card_icon {
-    @include icon-background;
+    @include m.icon-background;
     position: absolute;
     &.icon_null {
         display: none;
