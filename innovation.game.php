@@ -13844,8 +13844,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck'
             );
             break;
             
@@ -13857,7 +13857,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'can_pass' => false,
 
                 'owner_from' => $player_id,
-                'location_from' => 'hand',
+                'location_from' => 'revealed',
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
@@ -16208,7 +16208,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                         
                         if (!$matching_icon_on_card_1 && !$matching_icon_on_card_2) {
-                            // "If you cannot"
+                            // Reveal cards to prove that no icons matched with the previously returned card
+                            self::transferCardFromTo($card_1, $player_id, 'revealed');
+                            self::transferCardFromTo($card_2, $player_id, 'revealed');
+                            self::notifyGeneralInfo(clienttranslate('Neither card has a symbol in common with the returned card.'));
                             self::setStepMax(2);
                         } else {
                             // Skip to the third interaction
