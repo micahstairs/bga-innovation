@@ -16009,11 +16009,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Claim all achievements of value matching those [returned] cards, ignoring eligibility"
                     $achievements_by_age = self::getCardsInLocationKeyedByAge(0, "achievements");
                     $different_values_selected_so_far = self::getAuxiliaryValue2AsArray();
+                    $achievement_was_claimed = false;
                     foreach ($different_values_selected_so_far as $returned_age) {
                         foreach ($achievements_by_age[$returned_age] as $achievement) {
                             $achievement = self::getCardInfo($achievement['id']); // refresh card info
                             self::transferCardFromTo($achievement, $player_id, 'achievements');
+                            $achievement_was_claimed = true;
                         }
+                    }
+                    if (!$achievement_was_claimed) {
+                        self::notifyGeneralInfo(clienttranslate('There are no claimable achievements matching the returned values.'));
                     }
                     break;
                 
@@ -17283,8 +17288,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                $color_in_clear = self::getColorInClear($choice);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => $color_in_clear));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => $color_in_clear));
                 self::setAuxiliaryValue($choice);
 
                 // "Each player reveals all cards of that color from their hand"
@@ -17292,16 +17298,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $other_players_revealed_cards = false;
                 $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
                 foreach ($player_ids as $id) {
-                    $cards = self::getCardsInLocationKeyedByColor($id, 'hand')[$choice];
-                    if (count($cards) == 0) {
-                        $this->notifyPlayer($id, 'log', clienttranslate('${You} reveal no cards.'), ['You' => 'You']);
-                        $this->notifyAllPlayersBut($id, 'log', clienttranslate('${player_name} reveals no cards.'), ['player_name' => self::getPlayerNameFromId($id)]);
-                    } else {
-                        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
-                        $this->notifyPlayer($id, 'logWithCardTooltips', clienttranslate('${You} reveal: ${card_list}.'),
-                            array_merge($args, ['You' => 'You']));
-                        $this->notifyAllPlayersBut($id, 'logWithCardTooltips', clienttranslate('${player_name} reveals: ${card_list}.'),
-                            array_merge($args, ['player_name' => self::getPlayerNameFromId($id)]));
+                    self::revealHand($id);
+                    $num_cards = self::countCardsInLocationKeyedByColor($id, 'hand')[$choice];
+                    self::notifyPlayer($id, 'log', clienttranslate('${You} revealed ${n} ${color} card(s).'), array('i18n' => array('n', 'color'), 'You' => 'You', 'color' => $color_in_clear, 'n' => self::getTranslatedNumber($num_cards)));
+                    self::notifyAllPlayersBut($id, 'log', clienttranslate('${player_name} revealed ${n} ${color} card(s).'), array('i18n' => array('n', 'color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($id), $id), 'color' => $color_in_clear, 'n' => self::getTranslatedNumber($num_cards)));
+                    if ($num_cards > 0) {
                         if ($id == $player_id) {
                             $player_revealed_cards = true;
                         } else {
