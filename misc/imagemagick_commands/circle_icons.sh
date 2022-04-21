@@ -18,11 +18,11 @@ BOTTOM_LEFT_ELLIPSE="137,414 40,45 0,360"
 BOTTOM_CENTER_ELLIPSE="380,414 40,45 0,360"
 BOTTOM_RIGHT_ELLIPSE="615,414 40,45 0,360"
 
-
 # File paths/prefixes
 READ_PATH="../cards/Print_EchoesCards_front/Print_EchoesCards_front-"
 
 # Extracts shape from a base card and places in a colored border
+# Covers number with an ellipse based on circle background
 # arg1: input filename
 # arg2: position of shape in card
 # arg4: output filename
@@ -30,7 +30,8 @@ READ_PATH="../cards/Print_EchoesCards_front/Print_EchoesCards_front-"
 
 extract_circle()
 {
-    magick "${READ_PATH}$1.png" \( +clone -fill Black -colorize 100 -fill White -draw "circle ${2}" \) -alpha off -compose CopyOpacity -composite -trim +repage "temp/$3_circle.png"
+    magick "${READ_PATH}$1.png" \( +clone -fill Black -colorize 100 -fill White -draw "circle ${2}" \)  -alpha off -compose CopyOpacity -composite -trim +repage "temp/$3_circle.png"
+    magick "temp/$3_circle.png" -fill '%[pixel:p{105,75}]' -draw 'ellipse 80,80 35,45 0,360' "temp/$3_circle.png"
 }
 
 extract_ellipse()
@@ -47,34 +48,34 @@ extract_circle "059" "$BOTTOM_LEFT"  "3"
 extract_circle "003" "$BOTTOM_LEFT"  "4"
 extract_circle "022" "$BOTTOM_LEFT"  "5"
 
-# Extract numbers 1-11 
+# Extract numbers 1-11
 extract_ellipse "002" "$BOTTOM_RIGHT_ELLIPSE" "1"
 extract_ellipse "003" "$BOTTOM_LEFT_ELLIPSE"  "2"
-extract_ellipse "012" "$BOTTOM_CENTER_ELLIPSE"  "3"
-extract_ellipse "034" "$BOTTOM_CENTER_ELLIPSE"  "4"
-extract_ellipse "042" "$BOTTOM_LEFT_ELLIPSE"  "5"
+extract_ellipse "028" "$BOTTOM_RIGHT_ELLIPSE"  "3"
+extract_ellipse "037" "$BOTTOM_RIGHT_ELLIPSE"  "4"
+extract_ellipse "048" "$BOTTOM_RIGHT_ELLIPSE"  "5"
 extract_ellipse "054" "$BOTTOM_RIGHT_ELLIPSE"  "6"
 extract_ellipse "058" "$BOTTOM_RIGHT_ELLIPSE"  "7"
-extract_ellipse "078" "$TOP_LEFT_ELLIPSE"  "8"
-extract_ellipse "079" "$BOTTOM_CENTER_ELLIPSE"  "9"
+extract_ellipse "068" "$BOTTOM_RIGHT_ELLIPSE"  "8"
+extract_ellipse "086" "$BOTTOM_RIGHT_ELLIPSE"  "9"
 extract_ellipse "091" "$BOTTOM_RIGHT_ELLIPSE"  "10"
 extract_ellipse "104" "$BOTTOM_RIGHT_ELLIPSE"  "11"
 
 # Build row of circular bonus icons
 magick montage \
-  temp/{1..5}_circle.png \
-  -trim -tile 5x1 -geometry +5+5 -background 'none' temp/bonus_circles.png
+temp/{1..5}_circle.png \
+-trim -tile 5x1 -geometry +5+5 -background 'none' temp/bonus_circles.png
 
 # Build row of number ellipses
 magick montage \
-  temp/{1..11}_ellipse.png \
-  -trim -tile 11x1 -geometry +5+5 -background 'none' temp/bonus_numbers.png
+temp/{1..11}_ellipse.png \
+-trim -tile 11x1 -geometry +5+5 -background 'none' temp/bonus_numbers.png
 
 # Combine all images into a single spritesheet.
 magick montage \
-  temp/bonus_circles.png \
-  temp/bonus_numbers.png \
-  -tile 1x2 -geometry +0+0 -background 'none' ../../img/circle_icons.png
+temp/bonus_circles.png \
+temp/bonus_numbers.png \
+-tile 1x2 -geometry +0+0 -background 'none' ../../img/circle_icons.png
 
 echo "Cleaning up..."
 
