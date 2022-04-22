@@ -156,6 +156,18 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'turn_order_ending_with_launcher'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL;"); 
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'spot_5'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `spot_5` TINYINT UNSIGNED DEFAULT NULL;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'spot_6'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_5'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_5` TINYINT UNSIGNED DEFAULT NULL;"); 
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_6'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
+        }
         if ($from_version <= 2111030321) {
             $players = self::getCollectionFromDb("SELECT player_id FROM player");
             foreach($players as $player_id => $player) {
@@ -623,7 +635,10 @@ class Innovation extends Table
         // Get static information about all cards
         $cards  = array();
         foreach (self::getStaticInfoOfAllCards() as $card) {
-            $cards[$card['id']] = $card;
+            // TODO(CITIES): Remove this condition once the Cities cards are in the material.inc.php file.
+            if ($card['id'] < 220) {
+                $cards[$card['id']] = $card;
+            }
         }
         $result['cards'] = $cards;
 
@@ -3403,6 +3418,10 @@ class Innovation extends Table
         if ($card === null) {
             return null;
         }
+        // TODO(CITIES): Remove this once the Cities cards are in the material.inc.php file.
+        if ($card['id'] >= 220) {
+            return $card;
+        }
         $textual_infos = $this->textual_card_infos[$card['id']];
         if (self::getGameStateValue('game_rules') == 2) { // If we play the first edition of the game
             // Inverse the rules used for effects if there is any difference. Then, only the non-alt version wil be used.
@@ -4459,9 +4478,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ");
         
         self::DbQuery(self::format("
-            INSERT INTO card_with_top_card_indication (id, type, age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, owner, location, position, splay_direction, selected, is_top_card)
+            INSERT INTO card_with_top_card_indication (id, type, age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, owner, location, position, splay_direction, selected, is_top_card)
                 SELECT
-                a.id, a.type, a.age, a.color, a.spot_1, a.spot_2, a.spot_3, a.spot_4, a.dogma_icon, a.owner, a.location, a.position, a.splay_direction, a.selected,
+                a.id, a.type, a.age, a.color, a.spot_1, a.spot_2, a.spot_3, a.spot_4, a.spot_5, a.spot_6, a.dogma_icon, a.owner, a.location, a.position, a.splay_direction, a.selected,
                     (a.position = b.position_of_top_card) AS is_top_card
                 FROM
                     card AS a
@@ -4487,13 +4506,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             INSERT INTO icon_count
                 SELECT
                     a.icon,
-                    COALESCE(s1.count, 0) + COALESCE(s2.count, 0) + COALESCE(s3.count, 0) + COALESCE(s4.count, 0) AS count
+                    COALESCE(s1.count, 0) + COALESCE(s2.count, 0) + COALESCE(s3.count, 0) + COALESCE(s4.count, 0) + COALESCE(s5.count, 0) + COALESCE(s6.count, 0) AS count
                 FROM
                     base AS a
                     LEFT JOIN (SELECT spot_1, COUNT(spot_1) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 2 GROUP BY spot_1) AS s1 ON a.icon = s1.spot_1
                     LEFT JOIN (SELECT spot_2, COUNT(spot_2) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 2 OR splay_direction = 3 GROUP BY spot_2) AS s2 ON a.icon = s2.spot_2
                     LEFT JOIN (SELECT spot_3, COUNT(spot_3) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 3 GROUP BY spot_3) AS s3 ON a.icon = s3.spot_3
                     LEFT JOIN (SELECT spot_4, COUNT(spot_4) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 1 OR splay_direction = 3 GROUP BY spot_4) AS s4 ON a.icon = s4.spot_4
+                    LEFT JOIN (SELECT spot_5, COUNT(spot_5) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 1 OR splay_direction = 3 GROUP BY spot_5) AS s5 ON a.icon = s5.spot_5
+                    LEFT JOIN (SELECT spot_6, COUNT(spot_6) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE GROUP BY spot_6) AS s6 ON a.icon = s6.spot_6
         ");
         
         self::DbQuery(self::format("

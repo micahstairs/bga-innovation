@@ -104,6 +104,8 @@ CREATE TABLE `card_with_top_card_indication` AS
     `spot_2`,
     `spot_3`,
     `spot_4`,
+    `spot_5`,
+    `spot_6`,
     `dogma_icon`,
     `owner`,
     `location`,
