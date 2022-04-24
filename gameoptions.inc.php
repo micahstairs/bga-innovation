@@ -113,7 +113,6 @@ $game_options = array(
         )
     ),
 
-    /* TODO(CITIES,ECHOES,FIGURES): Add game options.
     103 => array(
         'name' => totranslate('Cities of Destiny expansion'),
         'values' => array(
@@ -130,6 +129,7 @@ $game_options = array(
         )
     ),
 
+    /* TODO(FIGURES): Add game options.
     105 => array(
         'name' => totranslate('Figures in the Sand expansion'),
         'values' => array(
