@@ -118,6 +118,8 @@ class Innovation extends Table
             'game_type' => 100, // 1 for normal game, 2 for team game
             'game_rules' => 101, // 1 for last edition, 2 for first edition
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
+            'cities_mode' => 103, // 1 for "Disabled", 2 for "Enabled"
+            'echoes_mode' => 104, // 1 for "Disabled", 2 for "Enabled"
             'extra_achievement_to_win' => 110 // 1 for "Disabled", 2 for "Enabled"
         ));
     }
@@ -432,6 +434,13 @@ class Innovation extends Table
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
 
+        if (self::getGameStateValue('cities_mode') == 2) {
+            self::incGameStateValue('number_of_achievements_needed_to_win', 1);
+        }
+        
+        if (self::getGameStateValue('echoes_mode') == 2) {
+            self::incGameStateValue('number_of_achievements_needed_to_win', 1);
+        }
         // Add extra achievement to win
         if (self::getGameStateValue('extra_achievement_to_win') == 2) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
@@ -566,6 +575,16 @@ class Innovation extends Table
             }
         }
 
+        if (self::getGameStateValue('cities_mode') == 2) {
+            self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
+            self::DbQuery("UPDATE card SET location = 'achievements', position = NULL WHERE 325 <= id AND id <= 329");
+        }
+
+        if (self::getGameStateValue('echoes_mode') == 2) {
+            self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
+            self::DbQuery("UPDATE card SET location = 'achievements', position = NULL WHERE 435 <= id AND id <= 439");
+        }
+        
         // Initialize Artifacts-specific statistics
         if (self::getGameStateValue('artifacts_mode') != 1) {
             self::initStat('player', 'dig_events_number', 0);
@@ -632,10 +651,7 @@ class Innovation extends Table
         // Get static information about all cards
         $cards  = array();
         foreach (self::getStaticInfoOfAllCards() as $card) {
-            // TODO(CITIES): Remove this condition once the Cities cards are in the material.inc.php file.
-            if ($card['id'] < 220) {
-                $cards[$card['id']] = $card;
-            }
+            $cards[$card['id']] = $card;
         }
         $result['cards'] = $cards;
 
@@ -959,10 +975,19 @@ class Innovation extends Table
 
     /** Returns the card types in use by the current game **/
     function getActiveCardTypes() {
-        // TODO(CITIES, ECHOES): This needs to be updated when expansions are added. Right now, the only time
-        // we use this is when we are playing with Artifacts, so if that's the case then both the Base and
-        // Artifacts card types are being used by the game.
-        return array(0, 1);
+        // TODO(FIGURES): This needs to be updated when added.
+        $active_types = array(0);
+        if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
+            $active_types[] = 1;
+        }
+        
+        if (self::getGameStateValue('cities_mode') == 2) {
+            $active_types[] = 2;
+        }
+         if (self::getGameStateValue('echoes_mode') == 2) {
+            $active_types[] = 3;
+        }
+        return $active_types;
     }
 
     function playerIdToPlayerNo($player_id) {
@@ -1503,6 +1528,12 @@ class Innovation extends Table
         ));
         
         self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
+        
+        if ($force_unsplay == 0) {
+            // Changing a splay results in a city being drawn.
+            self::executeDraw($player_id, getAgeToDrawIn($player_id), 'hand', false, 2);
+        }
+        
         self::recordThatChangeOccurred();
     }
     
@@ -3412,10 +3443,7 @@ class Innovation extends Table
         if ($card === null) {
             return null;
         }
-        // TODO(CITIES): Remove this once the Cities cards are in the material.inc.php file.
-        if ($card['id'] >= 220) {
-            return $card;
-        }
+        
         $textual_infos = $this->textual_card_infos[$card['id']];
         if (self::getGameStateValue('game_rules') == 2) { // If we play the first edition of the game
             // Inverse the rules used for effects if there is any difference. Then, only the non-alt version wil be used.
@@ -4143,15 +4171,109 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getMinOrMaxAgeInLocation($player_id, 'score', 'MAX');
     }
     
+    function getMaxBonusIconOnBoard($player_id) {
+        /**
+        Get the maximum visible bonus
+        **/
+        return max(self::boardVisibleBonuses($player_id));
+    }
+    
+    function boardPileVisibleBonuses($player_id, $color) {
+        /**
+        Get the bonus icon available on the board (0 = no bonuses)
+        **/
+        $visible_bonus_icons = array();
+        
+        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
+        $pile = $board[$color];
+        if (count($pile) == 0) { // No card of that color
+            return $visible_bonus_icons;
+        }
+        $top_card = $pile[count($pile)-1];
+        $visible_bonus_icons = self::getBonusIcons($top_card);
+        
+        $splay_direction = $top_card['splay_direction'];
+        if ($splay_direction == 0) { // Unsplayed
+            return $visible_bonus_icons;
+        }
+        // Since the stack is not unsplayed, it has at least two cards
+        for($i=0; $i<count($pile)-1; $i++) {
+            $card = $pile[$i];
+            if($splay_direction == 1) { // left
+                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111)
+                {
+                    $visible_bonus_icons[] = $card['spot_4'] - 100;
+                }
+                if ($card['spot_5'] >= 101 && $card['spot_5'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_5'] - 100;
+                }
+            }
+            elseif ($splay_direction == 2) { // right
+                if ($card['spot_1'] >= 101 && $card['spot_1'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_1'] - 100;
+                }
+                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_2'] - 100;
+                }
+            }
+            elseif ($splay_direction == 3) { // up
+                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_2'] - 100;
+                }
+                if ($card['spot_3'] >= 101 && $card['spot_3'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_3'] - 100;
+                }
+                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_4'] - 100;
+                }
+            }
+        }
+        return $visible_bonus_icons;
+    }
+
+    
+    function boardVisibleBonuses($player_id) {
+        $visible_bonus_icons = array();
+        
+        for($color=0; $color<5; $color++) {
+            $visible_bonus_icons[] = self::boardPileVisibleBonus($player_id, $color);
+        
+        }
+        return $visible_bonus_icons;
+    }
+
+    function getBonusIcons($card) {
+        $bonus_icons = array();
+        if ($card !== null) {
+            if ($card['spot_1'] >= 101 && $card['spot_1'] <= 111) {
+                $bonus_icons[] = $card['spot_1'] - 100;
+            }
+            if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                $bonus_icons[] = $card['spot_2'] - 100;
+            }
+            if ($card['spot_3'] >= 101 && $card['spot_3'] <= 111) {
+                $bonus_icons[] = $card['spot_3'] - 100;
+            }
+            if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111) {
+                $bonus_icons[] = $card['spot_4'] - 100;
+            }            
+            if ($card['spot_5'] >= 101 && $card['spot_5'] <= 111) {
+                $bonus_icons[] = $card['spot_5'] - 100;
+            }
+            if ($card['spot_6'] >= 101 && $card['spot_6'] <= 111) {
+                $bonus_icons[] = $card['spot_6'] - 100;
+            }
+        }
+        return $bonus_icons;
+    }
+    
     /** Information about card resources **/
     function hasRessource($card, $icon) {
-        // TODO(CITIES): Handle extra icons.
-        return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon);
+        return $card !== null && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon || $card['spot_5'] == $icon || $card['spot_6'] == $icon);
     }
     
     /* Count the number of a particular icon on the specified card */
     function countIconsOnCard($card, $icon) {
-        // TODO(CITIES): Handle extra icons.
         $icon_count = 0;
         if ($card['spot_1'] == $icon) {
             $icon_count++;
@@ -4163,6 +4285,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $icon_count++;
         }
         if ($card['spot_4'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_5'] == $icon) {
+            $icon_count++;
+        }
+        if ($card['spot_6'] == $icon) {
             $icon_count++;
         }
         return $icon_count;
@@ -4185,7 +4313,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Since the stack is not unsplayed, it has at least two cards
         for($i=0; $i<count($pile)-1; $i++) {
             $card = $pile[$i];
-            if($splay_direction == 1 && $card['spot_4'] == $icon || $splay_direction == 2 && ($card['spot_1'] == $icon || $card['spot_2'] == $icon) || $splay_direction == 3 && ($card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon)) {
+            if($splay_direction == 1 && $card['spot_4'] == $icon && $card['spot_5'] == $icon || 
+                    $splay_direction == 2 && ($card['spot_1'] == $icon || $card['spot_2'] == $icon) || 
+                    $splay_direction == 3 && ($card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon)) {
                 return true;
             }
         }
@@ -4344,7 +4474,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Add icons of the other cards.
-        // TODO(CITIES): Handle extra icons.
         for ($i = 0; $i < $pile_size - 1; $i++) {
             $card = $pile[$i];
             if ($splayed_right) {
@@ -4358,6 +4487,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             if ($splayed_left || $splayed_up) {
                 $count += $card['spot_4'] == $icon;
+            }
+            if ($splayed_left) {
+                $count += $card['spot_5'] == $icon;
             }
         }
         return $count;
@@ -4869,10 +5001,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function getPrintableStringForCardType($type) {
         switch($type) {
-        case 0:
-            return clienttranslate('Base');
-        case 1:
-            return clienttranslate('Artifacts');
+            case 0:
+                return clienttranslate('Base');
+            case 1:
+                return clienttranslate('Artifacts');
+            case 2:
+                return clienttranslate('Cities');
+            case 3:
+                return clienttranslate('Echoes');
         }
     }
     
@@ -4901,7 +5037,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // If the type isn't specified, then it is assumed we are drawing from the base cards.
         if ($type === null) {
-            $type = 0;
+            if (self::getGameStateValue('echoes_mode') == 2) {
+                if (self::countCardsInLocation($player_id, 'hand', 3) == 0) {
+                    $type = 3; // draw an echo card if no echo is currently in hand
+                }
+                else {
+                    $type = 0; // draw a base
+                }
+            } else {
+                $type = 0; // draw a base
+            }
+        }
+        elseif ($type == 2 && self::countCardsInLocation($player_id, 'hand', 2) > 0) {
+            return null; // do not draw a city if a city is already in hand
         }
         
         $card = self::getDeckTopCard($age_to_draw, $type);
@@ -5395,14 +5543,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join($type_array, ',').")";
         
         // Condition for icon
-        // TODO(CITIES): Update this to handle 6 icons.
         $with_icon = self::getGameStateValue('with_icon');
         $without_icon = self::getGameStateValue('without_icon');
         if ($with_icon > 0) {
-            $condition_for_icon = self::format("AND (spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon})", array('icon' => $with_icon));
+            $condition_for_icon = self::format("AND (spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon} OR spot_5 = {icon} OR spot_6 = {icon})", array('icon' => $with_icon));
         }
         else if ($without_icon > 0) {
-            $condition_for_icon = self::format("AND (spot_1 IS NULL OR spot_1 <> {icon}) AND (spot_2 IS NULL OR spot_2 <> {icon}) AND (spot_3 IS NULL OR spot_3 <> {icon}) AND (spot_4 IS NULL OR spot_4 <> {icon})", array('icon' => $without_icon));
+            $condition_for_icon = self::format("AND (spot_1 IS NULL OR spot_1 <> {icon}) AND (spot_2 IS NULL OR spot_2 <> {icon}) AND (spot_3 IS NULL OR spot_3 <> {icon}) AND (spot_4 IS NULL OR spot_4 <> {icon}) AND (spot_5 IS NULL OR spot_5 <> {icon}) AND (spot_6 IS NULL OR spot_6 <> {icon})", array('icon' => $without_icon));
         }
         else {
             $condition_for_icon = "";
@@ -6310,6 +6457,79 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
         
+        // 1.  Execute city icon effect.  
+        if ($card['type'] == 2) {
+            
+            $top_middle_icon = $card['spot_6'];
+            // These icons only occur in spot_6
+            if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
+                // Search icon
+                // Draw <age> and reveal cards of matching age.  Keep cards with icon matching the icon.
+                $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
+                $num_cards_to_reveal = min($card['age'], $deck_count[$card['age']]);
+                
+                if ($num_cards_to_reveal > 0) {
+                    for ($i=0; $i < $num_cards_to_reveal; $i++) { // cards are in the base pile
+                        self::executeDraw($player_id, $card['age'], 'revealed', false, 0); // draw a base card
+                    }
+                    $cards = self::getCardsInLocation($player_id, 'revealed');
+                    foreach ($cards as $card) { // cards are in the base pile
+                        if (self::hasRessource($card, $top_middle_icon)) {
+                            self::transferCardFromTo($card, $player_id, 'hand'); // matches get placed in hand
+                        }
+                        else {
+                            // TODO #403 : This return should be an interaction.  Right now, it is automated.
+                            self::transferCardFromTo($card, 0, 'deck'); // return the mismatching ones
+                        }
+                    }
+                }
+                else {
+                    // No eligible cards to reveal
+                }
+            }
+            
+            $icons_to_check = array($card['spot_6'], $card['spot_3']);
+            for ($i= 0; $i < 2; $i++) {
+                switch ($icons_to_check[$i]) {
+                    case 7: // plus icon.  Draw an age up.
+                        self::executeDraw($player_id, $card['age'] + 1);
+                        break;
+                    case 11:
+                        if ( self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
+                            // If already splayed left, then note the special achievement
+                            
+                        } else {
+                            self::splayLeft($player_id, $player_id, $card['color']);
+                        }
+                        break;
+                    case 12:
+                        if ( self::getCurrentSplayDirection($player_id, $card['color']) == 2) {
+                            // If already splayed right, then note the special achievement
+                            
+                        } else {
+                            self::splayRight($player_id, $player_id, $card['color']);
+                        }
+                        break;
+                    case 13:
+                        if ( self::getCurrentSplayDirection($player_id, $card['color']) == 3) {
+                            // If already splayed up, then note the special achievement
+                            
+                        } else {
+                            self::splayUp($player_id, $player_id, $card['color']);
+                        }
+                        break;
+                    // flags and fountains don't do anything on meld
+                }
+            }
+        }
+        
+        if (self::getGameStateValue('cities_mode') == 2) {
+            // If a new pile was started, then draw a city.
+            if (self::getTopCardOnBoard($player_id, $card['color']) == null) {
+                self::executeDraw($player_id, getAgeToDrawIn($player_id), 'hand', false, 2);
+            }
+        }
+        
         if (self::tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $card)) {
             self::trace('playerTurn->relicPlayerTurn');
             $this->gamestate->nextState('relicPlayerTurn');
@@ -6363,12 +6583,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function haveOverlappingHexagonIcons($card_1, $card_2) {
-        // TODO(CITIES): Expand expression to include the extra 2 spots.
         return
             ($card_1['spot_1'] === '0' && $card_2['spot_1'] === '0') || 
             ($card_1['spot_2'] === '0' && $card_2['spot_2'] === '0') || 
             ($card_1['spot_3'] === '0' && $card_2['spot_3'] === '0') ||
-            ($card_1['spot_4'] === '0' && $card_2['spot_4'] === '0');
+            ($card_1['spot_4'] === '0' && $card_2['spot_4'] === '0') || 
+            ($card_1['spot_5'] === '0' && $card_2['spot_5'] === '0') ||
+            ($card_1['spot_6'] === '0' && $card_2['spot_6'] === '0');
     }
 
     /* Returns null if there is no relic of the specified age */
@@ -6905,7 +7126,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return true;
             case 1:
                 return self::getGameStateValue('artifacts_mode') > 1;
-            // TODO(CITIES,ECHOES): Add other cases when we implement other expansions.
+            case 2:
+                return self::getGameStateValue('cities_mode') == 2;
+            case 3:
+                return self::getGameStateValue('echoes_mode') == 2;
+            // TODO(FIGURES): Add other cases when we implement other expansions.
             default:
                 return false;
         }
