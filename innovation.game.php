@@ -444,19 +444,19 @@ class Innovation extends Table
         self::setGameStateInitialValue('number_of_achievements_needed_to_win', $number_of_achievements_needed_to_win);
 
         // Add one required achievement for each expansion
-        if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
+        if (self::getGameStateValue('artifacts_mode') > 1) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
 
-        if (self::getGameStateValue('cities_mode') == 2) {
+        if (self::getGameStateValue('cities_mode') > 1) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
         
-        if (self::getGameStateValue('echoes_mode') == 2) {
+        if (self::getGameStateValue('echoes_mode') > 1) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
         // Add extra achievement to win
-        if (self::getGameStateValue('extra_achievement_to_win') == 2) {
+        if (self::getGameStateValue('extra_achievement_to_win') > 1) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
 
@@ -583,18 +583,17 @@ class Innovation extends Table
         // Add cards from expansions that are in use.
         if (self::getGameStateValue('artifacts_mode') > 1) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 110 <= id AND id <= 214");
-            
             if (self::getGameStateValue('artifacts_mode') == 3) {
                 self::DbQuery("UPDATE card SET location = 'relics', position = 0 WHERE is_relic");
             }
         }
 
-        if (self::getGameStateValue('cities_mode') == 2) {
+        if (self::getGameStateValue('cities_mode') > 1) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
             self::DbQuery("UPDATE card SET location = 'achievements', position = NULL WHERE 325 <= id AND id <= 329");
         }
 
-        if (self::getGameStateValue('echoes_mode') == 2) {
+        if (self::getGameStateValue('echoes_mode') > 1) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
             self::DbQuery("UPDATE card SET location = 'achievements', position = NULL WHERE 435 <= id AND id <= 439");
         }
@@ -989,18 +988,17 @@ class Innovation extends Table
 
     /** Returns the card types in use by the current game **/
     function getActiveCardTypes() {
-        // TODO(FIGURES): This needs to be updated when added.
         $active_types = array(0);
-        if (self::getGameStateValue('artifacts_mode') == 2 || self::getGameStateValue('artifacts_mode') == 3) {
+        if (self::getGameStateValue('artifacts_mode') > 0) {
             $active_types[] = 1;
         }
-        
-        if (self::getGameStateValue('cities_mode') == 2) {
+        if (self::getGameStateValue('cities_mode') > 0) {
             $active_types[] = 2;
         }
-         if (self::getGameStateValue('echoes_mode') == 2) {
+         if (self::getGameStateValue('echoes_mode') > 0) {
             $active_types[] = 3;
         }
+        // TODO(FIGURES): Update this when implementing the expansion.
         return $active_types;
     }
 
@@ -1543,9 +1541,9 @@ class Innovation extends Table
         
         self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
         
-        if ($force_unsplay == 0) {
-            // Changing a splay results in a city being drawn.
-            self::executeDraw($player_id, getAgeToDrawIn($player_id), 'hand', false, 2);
+        // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
+        if ($splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
         }
         
         self::recordThatChangeOccurred();
@@ -5074,21 +5072,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             throw new EndOfGame();
         }
 
-        // If the type isn't specified, then it is assumed we are drawing from the base cards.
+        // If the type isn't specified, then we are either drawing a Base or Echoes card.
         if ($type === null) {
-            if (self::getGameStateValue('echoes_mode') == 2) {
-                if (self::countCardsInLocation($player_id, 'hand', 3) == 0) {
-                    $type = 3; // draw an echo card if no echo is currently in hand
-                }
-                else {
-                    $type = 0; // draw a base
-                }
+            // Draw an Echoes card if none is currently in hand
+            if (self::getGameStateValue('echoes_mode') == 2 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0) {
+                $type = 3;
+            // Otherwise draw a base card
             } else {
-                $type = 0; // draw a base
+                $type = 0;
             }
-        }
-        elseif ($type == 2 && self::countCardsInLocation($player_id, 'hand', 2) > 0) {
-            return null; // do not draw a city if a city is already in hand
         }
         
         $card = self::getDeckTopCard($age_to_draw, $type);
@@ -6512,75 +6504,73 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
         
-        // 1.  Execute city icon effect.  
+        // Execute city's icon effect
         if ($card['type'] == 2) {
             
             $top_middle_icon = $card['spot_6'];
-            // These icons only occur in spot_6
+
+            // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
+            // top-midddle of the card, that means that it is a Search icon.
             if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
-                // Search icon
-                // Draw <age> and reveal cards of matching age.  Keep cards with icon matching the icon.
+                // Determine how many cards can be drawn.
                 $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
                 $num_cards_to_reveal = min($card['age'], $deck_count[$card['age']]);
                 
                 if ($num_cards_to_reveal > 0) {
-                    for ($i=0; $i < $num_cards_to_reveal; $i++) { // cards are in the base pile
-                        self::executeDraw($player_id, $card['age'], 'revealed', false, 0); // draw a base card
+                    for ($i = 0; $i < $num_cards_to_reveal; $i++) {
+                        self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
                     }
                     $cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach ($cards as $card) { // cards are in the base pile
+                    foreach ($cards as $card) {
+                        // Put matches in hand
                         if (self::hasRessource($card, $top_middle_icon)) {
-                            self::transferCardFromTo($card, $player_id, 'hand'); // matches get placed in hand
-                        }
-                        else {
-                            // TODO #403 : This return should be an interaction.  Right now, it is automated.
-                            self::transferCardFromTo($card, 0, 'deck'); // return the mismatching ones
+                            self::transferCardFromTo($card, $player_id, 'hand');
+                        // Return the ones which don't have a matching icon
+                        } else {
+                            // TODO(#403): This return should be an interaction so that the player can choose the order.
+                            self::transferCardFromTo($card, 0, 'deck');
                         }
                     }
-                }
-                else {
-                    // No eligible cards to reveal
+                } else {
+                    // TODO(CITIES): Log message about how there aren't any eligible cards to reveal.
                 }
             }
             
-            $icons_to_check = array($card['spot_6'], $card['spot_3']);
-            for ($i= 0; $i < 2; $i++) {
+            // NOTE: This logic relies on the (correct) assumption that the Plus/Arrow icons only appear in the top-middle or bottom-middle of cards.
+            $icons_to_check = array($card['spot_3'], $card['spot_6']);
+            for ($i = 0; $i < length($icons_to_check); $i++) {
                 switch ($icons_to_check[$i]) {
-                    case 7: // plus icon.  Draw an age up.
+                    case 7: // Plus: Draw a card of value one higher than the city's age
                         self::executeDraw($player_id, $card['age'] + 1);
                         break;
-                    case 11:
-                        if ( self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
-                            // If already splayed left, then note the special achievement
-                            
+                    case 11: // Left Arrow: Splay the city's color left
+                        if (self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
+                            // TODO(CITIES): Give the player a special achivement.
                         } else {
                             self::splayLeft($player_id, $player_id, $card['color']);
                         }
                         break;
-                    case 12:
+                    case 12: // Right Arrow: Splay the city's color right
                         if ( self::getCurrentSplayDirection($player_id, $card['color']) == 2) {
-                            // If already splayed right, then note the special achievement
-                            
+                            // TODO(CITIES): Give the player a special achivement.
                         } else {
                             self::splayRight($player_id, $player_id, $card['color']);
                         }
                         break;
-                    case 13:
+                    case 13: // Up Arrow: Splay the city's color up
                         if ( self::getCurrentSplayDirection($player_id, $card['color']) == 3) {
-                            // If already splayed up, then note the special achievement
-                            
+                            // TODO(CITIES): Give the player a special achivement.
                         } else {
                             self::splayUp($player_id, $player_id, $card['color']);
                         }
                         break;
-                    // flags and fountains don't do anything on meld
                 }
             }
         }
         
-        if (self::getGameStateValue('cities_mode') == 2) {
-            // If a new pile was started, then draw a city.
-            if (self::getTopCardOnBoard($player_id, $card['color']) == null) {
+        if (self::getGameStateValue('cities_mode') > 1) {
+            // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
+            if (self::getTopCardOnBoard($player_id, $card['color']) == null && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
                 self::executeDraw($player_id, getAgeToDrawIn($player_id), 'hand', false, 2);
             }
         }
@@ -7187,10 +7177,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 1:
                 return self::getGameStateValue('artifacts_mode') > 1;
             case 2:
-                return self::getGameStateValue('cities_mode') == 2;
+                return self::getGameStateValue('cities_mode') > 1;
             case 3:
-                return self::getGameStateValue('echoes_mode') == 2;
-            // TODO(FIGURES): Add other cases when we implement other expansions.
+                return self::getGameStateValue('echoes_mode') > 1;
+            // TODO(FIGURES): Add another case when we implement this expansion.
             default:
                 return false;
         }
