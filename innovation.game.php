@@ -658,8 +658,12 @@ class Innovation extends Table
         }
         $result['cards'] = $cards;
 
-        $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') != 1;
+        $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') > 1;
         $result['relics_enabled'] = self::getGameStateValue('artifacts_mode') == 3;
+        $result['cities_expansion_enabled'] = self::getGameStateValue('cities_mode') > 1;
+        $result['echoes_expansion_enabled'] = self::getGameStateValue('echoes_mode') > 1;
+        // TODO(FIGURES): Update this when the expansion is added.
+        $result['figures_expansion_enabled'] = false;
     
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return information visible by this player !!
         
@@ -694,7 +698,7 @@ class Innovation extends Table
         
         // Backs of the cards in hands
         $result['hand_counts'] = array();
-        for ($type = 0; $type <= 1; $type++) {
+        for ($type = 0; $type <= 4; $type++) {
             for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
                 foreach ($players as $player_id => $player) {
                     $result['hand_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'hand', $type, $is_relic);
@@ -704,7 +708,7 @@ class Innovation extends Table
 
         // Backs of the cards in score piles
         $result['score_counts'] = array();
-        for ($type = 0; $type <= 1; $type++) {
+        for ($type = 0; $type <= 4; $type++) {
             for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
                 foreach ($players as $player_id => $player) {
                     $result['score_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'score', $type, $is_relic);
@@ -749,7 +753,7 @@ class Innovation extends Table
         }
         
         // Remaining cards in deck
-        for ($type = 0; $type <= 1; $type++) {
+        for ($type = 0; $type <= 4; $type++) {
             $result['deck_counts'][$type] = self::countCardsInLocationKeyedByAge(0, 'deck', $type);
         }
         
