@@ -8272,6 +8272,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 self::transferCardFromTo($card, $launcher_id, 'score');
                                 self::executeDraw($player_id, 1); // "If you do, draw a 1"
                                 $card_transfered = true; // "and repeat this dogma effect"
+                                self::setAuxiliaryValue(1);
                                 break;
                             }
                         }
