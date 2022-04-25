@@ -650,7 +650,7 @@ class Innovation extends Table
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return information visible by this player !!
         
         // Get information about players
-        $players = self::getCollectionFromDb("SELECT player_id, player_score, player_team FROM player");
+        $players = self::getCollectionFromDb("SELECT player_id, player_score, player_team, player_eliminated FROM player");
         $result['players'] = $players;
         $result['current_player_id'] = $current_player_id;
         

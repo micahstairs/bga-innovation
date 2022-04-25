@@ -649,6 +649,14 @@ function (dojo, declare) {
                 // Highlight the current effect if visible
                 dojo.query(gamedatas.JSCardEffectQuery).addClass('current_effect');
             }
+
+            // Hide player's area if they have been eliminated from the game (e.g. Exxon Valdez)
+            for (var player_id in this.players) {
+                console.log(this.players[player_id].player_eliminated);
+                if (this.players[player_id].player_eliminated == 1) {
+                    dojo.byId('player_' + player_id).style.display = 'none';
+                }
+            }
             
             // Force refresh page on resize if width changes
             /*var window_width = dojo.window.getBox().w;
