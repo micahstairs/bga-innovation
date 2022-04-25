@@ -1111,7 +1111,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Empire'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have three or more icons of all six types: ${icons_1_to_6}'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Construction, from Age 2: Classical.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_2} Construction.')),
 
 106 => array('name' => clienttranslate('Monument'),
     'i_demand_effect_1' => null,
@@ -1121,7 +1121,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Monument'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck six or score six cards during a single turn.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Masonry, from Age 1: Prehistory.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Masonry.')),
 
 107 => array('name' => clienttranslate('Wonder'),
     'i_demand_effect_1' => null,
@@ -1131,7 +1131,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Wonder'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five colors on your board, and each is splayed either up or right.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Invention, from Age 4: Renaissance.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} Invention.')),
 
 108 => array('name' => clienttranslate('World'),
     'i_demand_effect_1' => null,
@@ -1141,7 +1141,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('World'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have twelve or more ${icon_6} on your board.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Translation, from Age 3: Medieval.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Translation.')),
 
 109 => array('name' => clienttranslate('Universe'),
     'i_demand_effect_1' => null,
@@ -1151,7 +1151,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Universe'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five top cards, and each is of value ${age_8} or higher.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Astronomy, from Age 5: Classical.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Astronomy.')),
 
 /* Artifacts - Age 1 */
 

@@ -652,7 +652,6 @@ function (dojo, declare) {
 
             // Hide player's area if they have been eliminated from the game (e.g. Exxon Valdez)
             for (var player_id in this.players) {
-                console.log(this.players[player_id].player_eliminated);
                 if (this.players[player_id].player_eliminated == 1) {
                     dojo.byId('player_' + player_id).style.display = 'none';
                 }
@@ -2044,7 +2043,7 @@ function (dojo, declare) {
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
             var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
-            var div_alternative_condition_for_claiming = "</br><div>" + _(card_data.alternative_condition_for_claiming) + "</div>";
+            var div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
             
             return div_condition_for_claiming + div_alternative_condition_for_claiming;            
         },

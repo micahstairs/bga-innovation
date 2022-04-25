@@ -4860,6 +4860,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
     }
     
+    // TODO(LATER): Figure out if we can safely remove this.
     function getNormalAchievementName($age) {
         switch($age) {
             case 1:
