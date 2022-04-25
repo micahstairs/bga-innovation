@@ -1460,6 +1460,14 @@
   bottom: 7px;
   right: 7px;
 }
+.square_card_icon.M.top_right_icon {
+  top: 7px;
+  right: 7px;
+}
+.square_card_icon.M.top_center_icon {
+  top: 7px;
+  left: 72px;
+}
 .square_card_icon.L {
   width: 75px;
   background-size: 470px auto;
