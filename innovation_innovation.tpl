@@ -76,6 +76,36 @@
                 <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
             <!-- END decks_group_4 -->
         </div>
+        <div id="deck_set_5" class="deck_set">
+            <!-- BEGIN decks_group_5 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_5 -->
+        </div>
+        <div id="deck_set_6" class="deck_set">
+            <!-- BEGIN decks_group_6 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_6 -->
+        </div>
+        <div id="deck_set_7" class="deck_set">
+            <!-- BEGIN decks_group_7 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_7 -->
+        </div>
+        <div id="deck_set_8" class="deck_set">
+            <!-- BEGIN decks_group_8 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_8 -->
+        </div>
+        <div id="deck_set_9" class="deck_set">
+            <!-- BEGIN decks_group_9 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_9 -->
+        </div>
+        <div id="deck_set_10" class="deck_set">
+            <!-- BEGIN decks_group_10 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_10 -->
+        </div>
     </div>
     <div id="available_relics_container">
         <p class="text_center"><!-- BEGIN available_relics -->{AVAILABLE_RELICS}<!-- END available_relics --></p>
