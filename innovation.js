@@ -398,19 +398,15 @@ function (dojo, declare) {
             }
             if (!gamedatas.artifacts_expansion_enabled) {
                 dojo.byId('deck_set_2').style.display = 'none';
-                dojo.byId('deck_set_7').style.display = 'none';
             }
             if (!gamedatas.cities_expansion_enabled) {
                 dojo.byId('deck_set_3').style.display = 'none';
-                dojo.byId('deck_set_8').style.display = 'none';
             }
             if (!gamedatas.echoes_expansion_enabled) {
                 dojo.byId('deck_set_4').style.display = 'none';
-                dojo.byId('deck_set_9').style.display = 'none';
             }
             if (!gamedatas.figures_expansion_enabled) {
                 dojo.byId('deck_set_5').style.display = 'none';
-                dojo.byId('deck_set_10').style.display = 'none';
             }
 
             // AVAILABLE RELICS
