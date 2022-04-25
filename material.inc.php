@@ -3339,7 +3339,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Wealth'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have eight or more bonuses visible on your board.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Palampore, from Age 5.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Palampore.')),
 
 436 => array('name' => clienttranslate('Destiny'),
     'i_demand_effect_1' => null,
@@ -3348,7 +3348,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Destiny'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have seven or more cards in your forecast.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Barometer, from Age 4.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} Barometer.')),
 
 437 => array('name' => clienttranslate('Heritage'),
     'i_demand_effect_1' => null,
@@ -3357,7 +3357,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Heritage'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have eight or more ${icon_0} visible in one color.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Loom, from Age 6.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_6} Loom.')),
 
 438 => array('name' => clienttranslate('History'),
     'i_demand_effect_1' => null,
@@ -3366,7 +3366,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('History'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have a color with four or more visible echo effects.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Photography, from Age 7.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_7} Photography.')),
 
 439 => array('name' => clienttranslate('Supremacy'),
     'i_demand_effect_1' => null,
@@ -3375,7 +3375,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('Supremacy'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via Novel, from Age 3.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Novel.')),
 
 );
 
