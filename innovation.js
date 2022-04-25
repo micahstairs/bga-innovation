@@ -379,7 +379,7 @@ function (dojo, declare) {
             
             // DECKS
             this.zone.deck = {};
-            for (var type = 0; type <= 1; type++) {
+            for (var type = 0; type <= 4; type++) {
                 this.zone.deck[type] = {};
                 for (var age = 1; age <= 10; age++) {
                     // Creation of the zone
@@ -398,7 +398,19 @@ function (dojo, declare) {
             }
             if (!gamedatas.artifacts_expansion_enabled) {
                 dojo.byId('deck_set_2').style.display = 'none';
+                dojo.byId('deck_set_7').style.display = 'none';
+            }
+            if (!gamedatas.cities_expansion_enabled) {
+                dojo.byId('deck_set_3').style.display = 'none';
+                dojo.byId('deck_set_8').style.display = 'none';
+            }
+            if (!gamedatas.echoes_expansion_enabled) {
                 dojo.byId('deck_set_4').style.display = 'none';
+                dojo.byId('deck_set_9').style.display = 'none';
+            }
+            if (!gamedatas.figures_expansion_enabled) {
+                dojo.byId('deck_set_5').style.display = 'none';
+                dojo.byId('deck_set_10').style.display = 'none';
             }
 
             // AVAILABLE RELICS
@@ -469,7 +481,7 @@ function (dojo, declare) {
                         this.addTooltipForCard(card);
                     }
                 } else {
-                    for (var type = 0; type <= 1; type++) {
+                    for (var type = 0; type <= 4; type++) {
                         for (var is_relic = 0; is_relic <= 1; is_relic++) {
                             for (var age = 1; age <= 10; age++) {
                                 var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
@@ -511,7 +523,7 @@ function (dojo, declare) {
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
                     
                 // Add cards to zone according to the current situation
-                for (var type = 0; type <= 1; type++) {
+                for (var type = 0; type <= 4; type++) {
                     for (var is_relic = 0; is_relic <= 1; is_relic++) {
                         var score_count = gamedatas.score_counts[player_id][type][is_relic];
                         for (var age = 1; age <= 10; age++) {
