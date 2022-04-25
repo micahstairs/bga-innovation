@@ -65,6 +65,12 @@
         $this->page->begin_block( "innovation_innovation", "decks_group_2" );
         $this->page->begin_block( "innovation_innovation", "decks_group_3" );
         $this->page->begin_block( "innovation_innovation", "decks_group_4" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_5" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_6" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_7" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_8" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_9" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_10" );
         $this->page->begin_block( "innovation_innovation", "decks" );
         $this->page->begin_block( "innovation_innovation", "available_relics" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
@@ -158,11 +164,29 @@
         for ($age = 1; $age <= 5; $age++) {
             $this->page->insert_block("decks_group_2", array("TYPE" => 1, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
-            $this->page->insert_block("decks_group_3", array("TYPE" => 0, "AGE" => $age));
+        for ($age = 1; $age <= 5; $age++) {
+            $this->page->insert_block("decks_group_3", array("TYPE" => 2, "AGE" => $age));
+        }
+        for ($age = 1; $age <= 5; $age++) {
+            $this->page->insert_block("decks_group_4", array("TYPE" => 3, "AGE" => $age));
+        }
+        for ($age = 1; $age <= 5; $age++) {
+            $this->page->insert_block("decks_group_5", array("TYPE" => 4, "AGE" => $age));
         }
         for ($age = 6; $age <= 10; $age++) {
-            $this->page->insert_block("decks_group_4", array("TYPE" => 1, "AGE" => $age));
+            $this->page->insert_block("decks_group_6", array("TYPE" => 0, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_7", array("TYPE" => 1, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_8", array("TYPE" => 2, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_9", array("TYPE" => 3, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_10", array("TYPE" => 4, "AGE" => $age));
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
         $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );
