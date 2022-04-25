@@ -2065,21 +2065,23 @@ function (dojo, declare) {
             var icon2 = this.getIconDiv(card, card_data['spot_2'], 'bottom_left_icon', size);
             var icon3 = this.getIconDiv(card, card_data['spot_3'], 'bottom_center_icon', size);
             var icon4 = this.getIconDiv(card, card_data['spot_4'], 'bottom_right_icon', size);
+            var icon5 = this.getIconDiv(card, card_data['spot_5'], 'top_right_icon', size);
+            var icon6 = this.getIconDiv(card, card_data['spot_6'], 'top_center_icon', size);
 
             var card_age = this.createAdjustedContent(card.faceup_age, 'card_age', size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
             var title = _(card_data.name).toUpperCase();
             var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30);
             
-            var i_demand_effect_1 = card_data.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
+            var i_demand_effect_1 = card_data.i_demand_effect_1 ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
-            var non_demand_effect_1 = card_data.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_1) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
-            var non_demand_effect_2 = card_data.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
-            var non_demand_effect_3 = card_data.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
+            var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
+            var non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
+            var non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
             var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 7 : 17);
             
-            return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
+            return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
         },
         
         getIconDiv: function (card, resource_icon_id, icon_location, size) {
