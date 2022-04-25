@@ -3408,9 +3408,9 @@ class Innovation extends Table
             Get all static information about all cards in the database.
         **/
         if (self::getGameStateValue('release_version') >= 1) {
-            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, is_relic FROM card");
+            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM card");
         } else {
-            $cards = self::getObjectListFromDB("SELECT id, 0 as type, age, age as faceup_age, color, spot_1, spot_2, spot_3, spot_4, dogma_icon, 0 as is_relic FROM card");
+            $cards = self::getObjectListFromDB("SELECT id, 0 as type, age, age as faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, 0 as is_relic FROM card");
         }
         return self::attachTextualInfoToList($cards);
     }
