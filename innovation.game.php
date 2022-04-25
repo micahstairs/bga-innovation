@@ -564,7 +564,7 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 110 <= id AND id <= 214");
             
             if (self::getGameStateValue('artifacts_mode') == 3) {
-                self::DbQuery("UPDATE card SET location = 'relics', position = NULL WHERE is_relic");
+                self::DbQuery("UPDATE card SET location = 'relics', position = 0 WHERE is_relic");
             }
         }
 
@@ -2193,6 +2193,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his hand');
                 break;
+            case 'hand->revealed,score':
+                $message_for_player = clienttranslate('${You_must} reveal and score ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} reveal and score ${number} ${card} from his hand');
+                break;
             case 'hand->achievements':
                 $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} achieve ${number} ${card} from his hand');
@@ -2220,6 +2224,10 @@ class Innovation extends Table
             case 'score->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your score pile');
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his score pile');
+                break;
+            case 'score->revealed,deck':
+                $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your score pile');
+                $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his score pile');
                 break;
             case 'score->hand':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your score pile to your hand');
