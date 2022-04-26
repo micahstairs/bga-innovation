@@ -7091,6 +7091,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // TODO(ARTIFACTS,ECHOES,FIGURES): Add cases for expansions.
         switch ($card['id']) {
 
+            /*** Basic cases involving empty hands and/or empty score piles **/
+
             case 1: // Tools
             case 9: // Agriculture
             case 13: // Code of Laws
@@ -7117,6 +7119,66 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 return true;
 
+            case 68: // Explosives
+                // This card has no effect if all players executing the demand have empty hands.
+                foreach ($i_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                        return false;
+                    }
+                }
+                return true;
+
+            case 71: // Refrigeration
+            case 72: // Sanitation
+                // These cards have no effect if all players have empty hands.
+                foreach (array_merge($non_demand_players, $i_demand_players) as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                        return false;
+                    }
+                }
+                return true;
+
+            case 33: // Education
+            case 56: // Encyclopedia
+                // The card has no effect if all players executing the non-demand have empty score piles.
+                foreach ($non_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'score') > 0) {
+                        return false;
+                    }
+                }
+                return true;
+            
+            case 76: // Rocketry
+            case 99: // Databases
+                // These cards have no effect if all players executing the demand have empty score piles.
+                foreach ($i_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'score') > 0) {
+                        return false;
+                    }
+                }
+                return true;
+
+            case 32: // Medicine
+                // The card has no effect if all players have empty score piles.
+                foreach (array_merge($non_demand_players, $i_demand_players) as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'score') > 0) {
+                        return false;
+                    }
+                }
+                return true;
+
+            case 21: // Canal Building
+            case 69: // Bicycle
+                // These cards have no effect if all players executing the non-demand have empty hands and empty score piles.
+                foreach ($non_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'hand') > 0 || self::countCardsInLocation($player_id, 'score') > 0) {
+                        return false;
+                    }
+                }
+                return true;
+
+            /*** Other cases (sorted by card ID) **/
+
             case 6: // Clothing
                 // The card has no effect if all players executing the non-demand have all 5 colors present on their board.
                 // TODO(#319): Implement this.
@@ -7142,11 +7204,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // TODO(#319): Extend this check to also capture the case where there are no 1s in the score pile of
                 // players executing the demand effect.
                 return !$i_demand_will_be_executed;
-            
-            case 21: // Canal Building
-                // The card has no effect if all players executing the non-demand have empty hands and empty score piles.
-                // TODO(#319): Implement this.
-                break;
 
             case 22: // Fermenting
                 // The card has no effect if no player executing the non-demand has leaves on their board.
@@ -7162,16 +7219,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 26: // Translation
                 // The card has no effect if all players executing the non-demand have empty score piles and the World
                 // achievement cannot be claimed.
-                // TODO(#319): Implement this.
-                break;
-
-            case 32: // Medicine
-                // The card has no effect if all score piles are empty.
-                // TODO(#319): Implement this.
-                break;
-
-            case 33: // Education
-                // The card has no effect if all players executing the non-demand have empty score piles.
                 // TODO(#319): Implement this.
                 break;
 
@@ -7202,48 +7249,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // TODO(#319): Implement this.
                 break;
 
-            case 56: // Encyclopedia
-                // The card has no effect if all players executing the non-demand have empty score piles.
-                // TODO(#319): Implement this.
-                break;
-
             case 62: // Vaccination
                 // TODO(#319): Extend this check to also capture the case where there are no cards in the score pile
                 // of any player executing the demand effect.
                 return !$i_demand_will_be_executed;
 
-            case 68: // Explosives
-                // This card has no effect if all players executing the demand have empty hands.
-                // TODO(#319): Implement this.
-                break;
-            
-            case 69: // Bicycle
-                // The card has no effect if all players executing the non-demand have empty hands and empty score piles.
-                // TODO(#319): Implement this.
-                break;
-
             case 70: // Electricity
                 // The card has no effect if all players executing the non-demand have factories on all their top cards.
-                // TODO(#319): Implement this.
-                break;
-
-            case 71: // Refrigeration
-                // This card has no effect unless at least one player has a non-empty hand.
-                // TODO(#319): Implement this.
-                break;
-
-            case 72: // Sanitation
-                // This card has no effect unless at least one player has a non-empty hand.
-                // TODO(#319): Implement this.
-                break;
-            
-            case 76: // Rocketry
-                // This card has no effect if all players executing the demand have empty score piles.
-                // TODO(#319): Implement this.
-                break;
-                
-            case 99: // Databases
-                // The card has no effect if all players executing the demand have empty score piles.
                 // TODO(#319): Implement this.
                 break;
         }
