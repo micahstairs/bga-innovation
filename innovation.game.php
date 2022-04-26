@@ -7147,7 +7147,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 return true;
-            
+        
+            case 41: // Anatomy
             case 76: // Rocketry
             case 99: // Databases
                 // These cards have no effect if all players executing the demand have empty score piles.
@@ -7181,82 +7182,77 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 6: // Clothing
                 // The card has no effect if all players executing the non-demand have all 5 colors present on their board.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 11: // Masonry
                 // The card has no effect if the launcher has no towers in their hand and all other players executing the non-demand have empty hands.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 12: // City States
                 // The card has no effect if no player executing the demand effect has at least 4 towers on their board.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 15: // Calendar
                 // The card has no effect if no player executing the non-demand effect has more cards in their score pile than their hand.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 20: // Mapmaking
                 // The non-demand has no effect unless the I demand is also executed.
-                // TODO(#319): Extend this check to also capture the case where there are no 1s in the score pile of
+                // TODO(LATER): Extend this check to also capture the case where there are no 1s in the score pile of
                 // players executing the demand effect.
                 return !$i_demand_will_be_executed;
 
             case 22: // Fermenting
                 // The card has no effect if no player executing the non-demand has leaves on their board.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 25: // Alchemy
                 // The card has no effect if all players executing the non-demand have empty hands and less than 3
                 // towers on their board.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 26: // Translation
                 // The card has no effect if all players executing the non-demand have empty score piles and the World
                 // achievement cannot be claimed.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 38: // Gunpowder
                 // The non-demand has no effect unless the I demand is also executed.
-                // TODO(#319): Extend this check to also capture the case where there are no top cards with a tower on the
+                // TODO(LATER): Extend this check to also capture the case where there are no top cards with a tower on the
                 // board of any player executing the demand effect.
                 return !$i_demand_will_be_executed;
 
             case 40: // Navigation
                 // The card has no effect unless a player executing the demand has a 2 or 3 in their score pile.
-                // TODO(#319): Implement this.
-                break;
-        
-            case 41: // Anatomy
-                // The card has no effect if all players executing the demand have empty score piles.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 48: // The Pirate Code
                 // The non-demand has no effect unless the I demand is also executed.
-                // TODO(#319): Extend this check to also capture the case where there are no 1s, 2s, 3s, or 4s in the
+                // TODO(LATER): Extend this check to also capture the case where there are no 1s, 2s, 3s, or 4s in the
                 // score pile of any player executing the demand effect.
                 return !$i_demand_will_be_executed;
 
             case 54: // Societies
                 // The card has no effect unless a player executing the demand has a top card with a lightbulb.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
 
             case 62: // Vaccination
-                // TODO(#319): Extend this check to also capture the case where there are no cards in the score pile
+                // TODO(LATER): Extend this check to also capture the case where there are no cards in the score pile
                 // of any player executing the demand effect.
                 return !$i_demand_will_be_executed;
 
             case 70: // Electricity
                 // The card has no effect if all players executing the non-demand have factories on all their top cards.
-                // TODO(#319): Implement this.
+                // TODO(LATER): Implement this.
                 break;
         }
 
