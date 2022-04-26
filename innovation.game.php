@@ -7110,8 +7110,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 97: // Miniaturization
             case 102: // Stem Cells
                 // These cards have no effect if all players executing the non-demand have empty hands.
-                // TODO(#319): Implement this.
-                break;
+                foreach ($non_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 6: // Clothing
                 // The card has no effect if all players executing the non-demand have all 5 colors present on their board.

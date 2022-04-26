@@ -1590,7 +1590,7 @@ function (dojo, declare) {
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             var exists_non_demand_effect = card.non_demand_effect_1 !== null;
             
-            if ((!dogma_effect_info.no_effect)) {
+            if (info.no_effect) {
                 return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
             }
 
