@@ -168,8 +168,10 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_6'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
-        // TODO(ARTIFACTS): This can be removed in May 2022. This is just to restore ongoing dev and alpha games.
+        // TODO(ARTIFACTS): The following line can be removed in May 2022. This is just to restore ongoing dev and alpha games.
         self::DbQuery("UPDATE card SET position = 0 WHERE is_relic AND location = 'relics' AND position IS NULL");
+        // TODO(ARTIFACTS): The following line can be removed in May 2022. This is just to restore ongoing alpha games.
+        self::calculateIconHashForAllCards();
         if ($from_version <= 2111030321) {
             $players = self::getCollectionFromDb("SELECT player_id FROM player");
             foreach($players as $player_id => $player) {
@@ -1453,7 +1455,7 @@ class Innovation extends Table
         foreach ($cards as $card) {
             // 1 is used for hex icons, allowing it to be ignored in the product
             // TODO(CITIES): Revisit formula.
-            if ($card['id'] < 220 && $card['id'] > 329) { // Exclude cities for now.  Cities can only match themselves and some research would need to be done to verify whether it is possible for any of them to match each other
+            if ($card['id'] < 220 || $card['id'] > 329) { // Exclude cities for now.  Cities can only match themselves and some research would need to be done to verify whether it is possible for any of them to match each other
                 $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
                 $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
                               ($icon_hash_key[$card['spot_2'] ?: 0]) *
@@ -3857,6 +3859,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     ), true);
 }
 
+    // TODO(ARTIACTS): Most call sites assume the player has at least one top card on their board. I think this is a
+    // safe assumption (since you can't execute a non-demand unless you have at least 1 icon on your board) but it
+    // would be better to handle the null case explicitly, especially if this is added to a demand effect sometime.
     function getTopCardsOnBoard($player_id) {
         /**
         Get all of the top cards on a player board, or null if the player has no cards on his board
