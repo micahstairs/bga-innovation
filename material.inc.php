@@ -2262,8 +2262,8 @@ $this->textual_card_infos = array(
 /* Echoes - Age 1 */
 
 330 => array('name' => clienttranslate('Dice'),
-    'i_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If the card has a bonus, draw and meld a card of value equal to its bonus.'),
-    'non_demand_effect_1' => null,
+    'i_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If the card has a bonus, draw and meld a card of value equal to its bonus.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'echo_effect_1' => null,
@@ -2282,8 +2282,8 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
     
 332 => array('name' => clienttranslate('Ruler'),
-    'i_demand_effect_1' => clienttranslate('No effect.'),
-    'non_demand_effect_1' => null,
+    'i_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('No effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'echo_effect_1' => clienttranslate('Draw a ${age_2}.'),
@@ -2312,8 +2312,8 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),    
 
 335 => array('name' => clienttranslate('Plumbing'),
-    'i_demand_effect_1' => clienttranslate('No effect.'),
-    'non_demand_effect_1' => null,
+    'i_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('No effect.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'echo_effect_1' => clienttranslate('Score a bottom card from your board.'),
