@@ -8457,6 +8457,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                         }
                     } while ($card_transfered && self::getGameStateValue('game_rules') == 1);
+                    // Reveal hand to prove that they have no crowns.
+                    self::revealHand($player_id);
                 } else {
                     if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                         self::setAuxiliaryValue(0);
