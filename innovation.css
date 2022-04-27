@@ -1577,6 +1577,14 @@
   bottom: 23px;
   right: 26px;
 }
+.square_card_icon.L.top_right_icon {
+  top: 25px;
+  right: 26px;
+}
+.square_card_icon.L.top_center_icon {
+  top: 25px;
+  left: 195px;
+}
 
 /* Hexagon icons take up ~27 % of a real cards width. 
 *  Our cards will shoot for 25 % ->  M.45px
