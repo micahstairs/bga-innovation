@@ -138,7 +138,14 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 (326, 2, 'removed', 16),
 (327, 2, 'removed', 17),
 (328, 2, 'removed', 18),
-(329, 2, 'removed', 19);
+(329, 2, 'removed', 19),
+
+/* Echoes special achievements */
+(435, 3, 'removed', 20),
+(436, 3, 'removed', 21),
+(437, 3, 'removed', 22),
+(438, 3, 'removed', 23),
+(439, 3, 'removed', 24);
 
 /* Insert relic cards */
 
@@ -405,7 +412,14 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (211, 1,10, 3, 0, 6, 2, 6, 6, 'removed'),
 (212, 1,10, 3, 2, 6, 0, 2, 2, 'removed'),
 (213, 1,10, 4, 0, 6, 6, 6, 6, 'removed'),
-(214, 1,10, 4, 0, 5, 5, 6, 5, 'removed');
+(214, 1,10, 4, 0, 5, 5, 6, 5, 'removed'),
+
+/* Echoes - Age 1 */
+(330, 3, 1, 0,  0,101,  1,  1, 1, 'removed'),
+(336, 3, 1, 2,  4,  4,  2,  0, 4, 'removed'),
+(340, 3, 1, 3,  4,  0,  4,101, 4, 'removed'),
+(344, 3, 1, 4,  0,  4,103,  4, 4, 'removed');
+
 
 /* Insert Cities cards */
 
@@ -522,7 +536,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (311, 2, 9, 3,   2,   6,   7,   6, 0,  13, 6, 'removed'),
 (312, 2, 9, 3, 109,   1, 109,   2, 0,   2, 2, 'removed'),
 (313, 2, 9, 4,   5,   6,   7,   5, 0,  13, 5, 'removed'),
-(314, 2, 9, 4,   2,   3,   7,   21, 0,  9, 2, 'removed'),
+(314, 2, 9, 4,   2,   3,   7,   2, 0,   9, 2, 'removed'),
 
 /* Cities - Age 10 */
 (315, 2,10, 0,   2,   2,  13,   3, 0,   9, 2, 'removed'),
