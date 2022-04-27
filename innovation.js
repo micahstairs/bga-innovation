@@ -2821,6 +2821,8 @@ function (dojo, declare) {
                                 owner: owner,
                                 location: location,
                                 age: age,
+                                type: type,
+                                is_relic: is_relic,
                                 position: position
                             },
                              this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}

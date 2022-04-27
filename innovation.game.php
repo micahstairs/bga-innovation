@@ -3383,14 +3383,20 @@ class Innovation extends Table
         return self::attachTextualInfoToList($cards);
     }
     
-    function getCardInfoFromPosition($owner, $location, $age, $position) {
+    function getCardInfoFromPosition($owner, $location, $age, $type, $is_relic, $position) {
         /**
             Get all information from the database about the card indicated by its position
         **/
         return self::getObjectFromDB(self::format("
-                SELECT * FROM card WHERE owner = {owner} AND location = '{location}' AND age = {age} AND position = {position}
+                SELECT * FROM card WHERE
+                    owner = {owner}
+                    AND location = '{location}'
+                    AND age = {age}
+                    AND type = {type}
+                    AND is_relic = {is_relic}
+                    AND position = {position}
             ",
-                array('owner' => $owner, 'location' => $location, 'age' => $age, 'position' => $position)
+                array('owner' => $owner, 'location' => $location, 'age' => $age, 'type' => $type, 'is_relic' => $is_relic, 'position' => $position)
         ));
     }
 
@@ -6636,7 +6642,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('interSelectionMove');
     }
     
-    function chooseRecto($owner, $location, $age, $position) {
+    function chooseRecto($owner, $location, $age, $type, $is_relic, $position) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('choose');
         $players = array_keys(self::loadPlayersBasicInfos());
@@ -6648,7 +6654,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
         
-        $card = self::getCardInfoFromPosition($owner, $location, $age, $position);
+        $card = self::getCardInfoFromPosition($owner, $location, $age, $type, $is_relic, $position);
         if ($card === null) {
             self::throwInvalidChoiceException();
         }
