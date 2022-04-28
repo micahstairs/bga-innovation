@@ -50,7 +50,7 @@
     height: 30px;
 }
 .debug_button {
-    width: 100px;
+    width: 150px;
 }
 .card_name {
     font-weight: bold;
@@ -177,10 +177,10 @@
         position: absolute;
         top: 0px;
         margin: 0px;
-        right: 3px;
+        left: 3px;
         height: 16px;
         overflow-y: hidden;
-        text-align: right;
+        text-align: left;
     }
 }
 
@@ -618,6 +618,7 @@
 .two_lines {
     top: -16px !important;
     height: 32px !important;
+    padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
 }
 .sep {
     display: inline-block;
