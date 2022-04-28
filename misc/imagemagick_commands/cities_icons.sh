@@ -6,7 +6,7 @@ mkdir temp
 # File paths/prefixes
 CARD_PATH="../cards/Print_CitiesCards_front/Print_CitiesCards_front-"
 CITIES_MASK_PATH="../cities_icons/cities_mask.png"
-SEARCH_MASK_PATH="../cities_icons/search_mask.png"
+SEARCH_MASK_PATH="../cities_icons/search_border_mask.png"
 
 # Extracts icon from top center position of a card using a mask
 # arg1: input filename
