@@ -807,10 +807,8 @@ class Innovation extends Table
         }
         
         // Private information
-        // My hand
         $result['my_hand'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'hand'));
-        
-        // My score
+        $result['my_forecast'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'forecast'));
         $result['my_score'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'score'));
         
         // My wish for splay
