@@ -212,6 +212,17 @@ function (dojo, declare) {
                 this, function (result) { }, function (is_error) {}
             );      
         },
+        debug_foreshadow: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_foreshadow.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.value
+                },
+                this, function (result) { }, function (is_error) {}
+            );      
+        },
         //******
                 
         /*
@@ -232,6 +243,9 @@ function (dojo, declare) {
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
+                if (gamedatas.echoes_expansion_enabled) {
+                    main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
+                }
                 if (gamedatas.artifacts_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
                 }
@@ -257,12 +271,15 @@ function (dojo, declare) {
                 if (gamedatas.artifacts_expansion_enabled) {
                     dojo.connect($('debug_dig'), 'onclick', this, 'debug_dig');
                 }
+                if (gamedatas.echoes_expansion_enabled) {
+                    dojo.connect($('debug_foreshadow'), 'onclick', this, 'debug_foreshadow');
+                }
 
             }
             //******
         
             this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
-            this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast pile (opponents cannot see this)") });
+            this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
             this.text_for_expanded_mode = _("Show compact");
             this.text_for_compact_mode = _("Show expanded");
             this.text_for_view_normal = _("Look at all cards in piles");
@@ -302,11 +319,11 @@ function (dojo, declare) {
             this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
             this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
             
-
             // Add achievements to win to achievement container and determin max cards per row for the achievement container
             for(var player_id in this.players) {
                 dojo.addClass('achievement_container_' + player_id, 'to_win_' + this.number_of_achievements_needed_to_win)
             }
+
             var achievement_container_width = dojo.position('achievement_container_' + any_player_id).w
             var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
             var progress_width = dojo.position('progress_' + any_player_id).w;
@@ -321,6 +338,15 @@ function (dojo, declare) {
             
             this.num_cards_in_row.achievements = num_of_achievments_per_row;
             this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
+            // TODO(ECHOES): Revise this logic to properly incorporate Forecast zone in the calculations.
+            this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
+
+            // Defining the number of cards the window for forecast verso can host
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
+            this.num_cards_in_row.my_forecast_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
+            if (this.num_cards_in_row.my_forecast_verso > 6) {
+                this.num_cards_in_row.my_forecast_verso = 6;
+            }
             
             // Defining the number of cards the window for score verso can host
             // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
@@ -521,6 +547,27 @@ function (dojo, declare) {
                     this.addTooltipForCard(card);
                 }
             }
+
+            // PLAYERS' FORECAST
+            this.zone.forecast = {};
+            for (var player_id in this.players) {
+                // Creation of the zone
+                this.zone.forecast[player_id] = this.createZone('forecast', player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
+                this.setPlacementRules(this.zone.forecast[player_id], left_to_right=true);
+                    
+                // Add cards to zone according to the current situation
+                for (var type = 0; type <= 4; type++) {
+                    for (var is_relic = 0; is_relic <= 1; is_relic++) {
+                        var forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
+                        for (var age = 1; age <= 10; age++) {
+                            var num_cards = forecast_count[age];
+                            for(var i = 0; i < num_cards; i++) {
+                                this.createAndAddToZone(this.zone.forecast[player_id], i, age, type, is_relic, null, dojo.body(), null);
+                            }
+                        }
+                    }
+                }
+            }
             
             // PLAYERS' SCORE
             this.zone.score = {};
@@ -597,9 +644,9 @@ function (dojo, declare) {
             
             if (!this.isSpectator) {
                 dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(click to look at the cards)') + '</span>';
+                dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
                 dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-                dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(click to look at the cards)') + '</span>';
+                dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
                 dojo.query('#progress_' + this.player_id + ' .achievement_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(${n} needed to win)').replace('${n}', gamedatas.number_of_achievements_needed_to_win) + '</span>';
             }
             
@@ -1935,6 +1982,7 @@ function (dojo, declare) {
                     return this.zone.relics[0];
                 case "hand":
                 case "display":
+                case "forecast":
                 case "score":
                 case "revealed":
                 case "achievements":
@@ -3380,6 +3428,17 @@ function (dojo, declare) {
         notif_transferedCard : function(notif) {
             var card = notif.args;
 
+            console.log(card);
+
+            // Special code for my forecast management
+            if (card.location_from == "forecast" && card.owner_from == this.player_id) {
+                // Remove the card from my forecast personal window
+                // NOTE: The button to look at the player's forecast is broken in archive mode.
+                if (!g_archive_mode) {
+                    this.removeFromZone(this.zone.my_forecast_verso, card.id, true, card.age, card.type, card.is_relic);
+                }
+            }
+
             // Special code for my score management
             if (card.location_from == "score" && card.owner_from == this.player_id) {
                 // Remove the card from my score personal window
@@ -3482,6 +3541,16 @@ function (dojo, declare) {
             }
 
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
+
+            // Special code for my forecast management
+            if (card.location_to == "forecast" && card.owner_to == this.player_id) {
+                // Add the card to my forecast personal window
+                // NOTE: The button to look at the player's forecast is broken in archive mode.
+                if (!g_archive_mode) {
+                    this.createAndAddToZone(this.zone.my_forecast_verso, card.position_to, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
+                }
+                visible_to = true;
+            }
             
             // Special code for my score management
             if (card.location_to == "score" && card.owner_to == this.player_id) {
@@ -3661,12 +3730,17 @@ function (dojo, declare) {
 
         notif_removedPlayer: function(notif) {
             var player_id = notif.args.player_to_remove;
+            // NOTE: The button to look at the player's forecast is broken in archive mode.
+            if (!g_archive_mode) {
+                this.zone.my_forecast_verso.removeAll();
+            }
             // NOTE: The button to look at the player's score pile is broken in archive mode.
             if (!g_archive_mode) {
                 this.zone.my_score_verso.removeAll();
             }
             this.zone.revealed[player_id].removeAll();
             this.zone.hand[player_id].removeAll();
+            this.zone.forecast[player_id].removeAll();
             this.zone.score[player_id].removeAll();
             this.zone.achievements[player_id].removeAll();
             this.zone.display[player_id].removeAll();
