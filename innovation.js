@@ -55,6 +55,8 @@ function (dojo, declare) {
             this.HTML_class.display = "M card";
             this.HTML_class.deck = "S recto";
             this.HTML_class.board = "M card";
+            this.HTML_class.forecast = "S recto";
+            this.HTML_class.my_forecast_verso = "M card";
             this.HTML_class.score = "S recto";
             this.HTML_class.my_score_verso = "M card";
             this.HTML_class.revealed = "M card";
@@ -68,6 +70,8 @@ function (dojo, declare) {
             this.num_cards_in_row.opponent_hand = null;
             this.num_cards_in_row.display = 1;
             this.num_cards_in_row.deck = 15;
+            this.num_cards_in_row.forecast = null;
+            this.num_cards_in_row.my_forecast_verso = null;
             this.num_cards_in_row.score = null;
             this.num_cards_in_row.my_score_verso = null;
             // For board, this.num_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
@@ -81,6 +85,8 @@ function (dojo, declare) {
             this.delta.opponent_hand = {"x": 35, "y": 49}; // + 2
             this.delta.display = {"x": 189, "y": 133}; // +7
             this.delta.deck = {"x": 3, "y": 3}; // overlap
+            this.delta.forecast = {"x": 35, "y": 49}; // + 2
+            this.delta.my_forecast_verso = {"x": 189, "y": 133}; // +7
             this.delta.score = {"x": 35, "y": 49}; // + 2
             this.delta.my_score_verso = {"x": 189, "y": 133}; // +7
             // For board, this.delta is not defined because it's managed by the splay system: the width is defined dynamically
@@ -256,6 +262,7 @@ function (dojo, declare) {
             //******
         
             this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
+            this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast pile (opponents cannot see this)") });
             this.text_for_expanded_mode = _("Show compact");
             this.text_for_compact_mode = _("Show expanded");
             this.text_for_view_normal = _("Look at all cards in piles");
@@ -535,21 +542,37 @@ function (dojo, declare) {
                     }
                 }
             }
+
+            // My forecast: create an extra zone to show the versos of the cards at will in a windows
+            if (!this.isSpectator) {
+                this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>Close</a>");
+                this.zone.my_forecast_verso = this.createZone('my_forecast_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
+                this.setPlacementRules(this.zone.my_forecast_verso, left_to_right=true);
+                for (var i = 0; i < gamedatas.my_forecast.length; i++) {
+                    var card = gamedatas.my_forecast[i];
+                    this.createAndAddToZone(this.zone.my_forecast_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
+                    // Add tooltip
+                    this.addTooltipForCard(card);
+                }
+                // Provide links to get access to that window and close it
+                dojo.connect($('forecast_text_' + this.player_id), 'onclick', this, 'click_display_forecast_window');
+                dojo.connect($('forecast_close_window'), 'onclick', this, 'click_close_forecast_window');
+            }
             
             // My score: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator) {
                 this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>Close</a>");
                 this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
-                for(var i=0; i<gamedatas.my_score.length; i++) {
+                for (var i = 0; i < gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
                     this.createAndAddToZone(this.zone.my_score_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
                     // Add tooltip
                     this.addTooltipForCard(card);
                 }
                 // Provide links to get access to that window and close it
-                dojo.connect($('score_text_' + this.player_id), 'onclick', this, 'clic_display_score_window');
-                dojo.connect($('score_close_window'), 'onclick', this, 'clic_close_score_window');
+                dojo.connect($('score_text_' + this.player_id), 'onclick', this, 'click_display_score_window');
+                dojo.connect($('score_close_window'), 'onclick', this, 'click_close_score_window');
             }
             
             // PLAYERS' ACHIEVEMENTS
@@ -573,6 +596,8 @@ function (dojo, declare) {
             }
             
             if (!this.isSpectator) {
+                dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
+                dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(click to look at the cards)') + '</span>';
                 dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
                 dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(click to look at the cards)') + '</span>';
                 dojo.query('#progress_' + this.player_id + ' .achievement_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(${n} needed to win)').replace('${n}', gamedatas.number_of_achievements_needed_to_win) + '</span>';
@@ -2098,13 +2123,15 @@ function (dojo, declare) {
                 new_location = location;
             }
 
-            var HTML_class = this.HTML_class[new_location]
-            var card_dimensions = this.card_dimensions[HTML_class]
+            var HTML_class = this.HTML_class[new_location];
+            var card_dimensions = this.card_dimensions[HTML_class];
             
             // Width of the zone
             var zone_width;
             if(new_location == 'board') {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
+            } else if (new_location == 'forecast') {
+                zone_width = dojo.position('forecast_container_' + owner).w;
             } else if (new_location == 'score') {
                 zone_width = dojo.position('score_container_' + owner).w;
             } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
@@ -2114,7 +2141,7 @@ function (dojo, declare) {
             }
             
             // Id of the container
-            if (location == "my_score_verso") {
+            if (location == "my_score_verso" || location == "my_forecast_verso") {
                 var div_id = location;
             } else {
                 var div_id = location + owner_string + type_string + age_string + color_string;
@@ -3236,12 +3263,20 @@ function (dojo, declare) {
             
             zone.updateDisplay();
         },
+
+        click_display_forecast_window : function() {
+            this.my_forecast_verso_window.show();
+        },
         
-        clic_display_score_window : function() {
+        click_close_forecast_window : function() {
+            this.my_forecast_verso_window.hide();
+        },
+        
+        click_display_score_window : function() {
             this.my_score_verso_window.show();
         },
         
-        clic_close_score_window : function() {
+        click_close_score_window : function() {
             this.my_score_verso_window.hide();
         },
         

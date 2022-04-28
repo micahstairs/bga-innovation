@@ -172,6 +172,24 @@
   margin-top: 30px;
 }
 
+.forecast_container {
+  flex-grow: 1;
+  vertical-align: top;
+  display: inline-block;
+  position: relative;
+}
+.forecast_container > p {
+  font-style: italic;
+  font-size: 0.8em;
+  position: absolute;
+  top: 0px;
+  margin: 0px;
+  right: 3px;
+  height: 16px;
+  overflow-y: hidden;
+  text-align: right;
+}
+
 .score_container {
   flex-grow: 1;
   vertical-align: top;
@@ -239,6 +257,13 @@
   overflow-y: hidden;
 }
 
+.forecast {
+  display: inline-block;
+  margin-top: 18px;
+  display: inline-block;
+  height: 49px;
+}
+
 .score {
   display: inline-block;
   margin-top: 18px;
@@ -251,6 +276,14 @@
   margin-top: 18px;
   display: inline-block;
   height: 49px;
+}
+
+.forecast_show_window {
+  text-decoration: underline;
+  font-weight: bold;
+}
+.forecast_show_window:hover {
+  cursor: pointer;
 }
 
 .score_show_window {
