@@ -84,6 +84,12 @@
         $this->game->debug_dig($card_id);
         self::ajaxResponse();
     }
+    public function debug_foreshadow() {            
+        self::setAjaxMode();
+        $card_id = self::getArg("card_id", AT_posint, true);
+        $this->game->debug_foreshadow($card_id);
+        self::ajaxResponse();
+    }
     //******
       
     public function initialMeld() {
