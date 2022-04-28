@@ -132,7 +132,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_draw.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function(result){}, function(is_error){},
             );
@@ -143,7 +143,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_meld.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function(result){}, function(is_error){},
             );
@@ -154,7 +154,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_score.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );
@@ -165,7 +165,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_achieve.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
@@ -176,7 +176,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_return.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
@@ -187,7 +187,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_topdeck.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
@@ -198,7 +198,7 @@ function (dojo, declare) {
             this.ajaxcall("/innovation/innovation/debug_dig.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
@@ -234,9 +234,10 @@ function (dojo, declare) {
                 main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML;
 
-                for (var id = 0; id < gamedatas.cards.length; id++) {
-                    var card = gamedatas.cards[id];
-                    $('debug_card_list').innerHTML += `<option value='card_${id}'> ${id} - ${card.name} (Age ${card.age})</option>`;
+                for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
+                    var key = Object.keys(gamedatas.cards)[i];
+                    var card = gamedatas.cards[key];
+                    $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
                 }
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
                 dojo.connect($('debug_meld'), 'onclick', this, 'debug_meld');
