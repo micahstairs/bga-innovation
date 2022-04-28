@@ -92,10 +92,12 @@
                                                     "R" => $rgb[0],
                                                     "G" => $rgb[1],
                                                     "B" => $rgb[2],
-                                                    "OPT_CLASS" => " class='score_show_window'",
+                                                    "OPT_FORECAST_CLASS" => " class='forecast_show_window'",
+                                                    "OPT_SCORE_CLASS" => " class='score_show_window'",
                                                     "HAND" => self::_("Hand"),
                                                     "DISPLAY" => self::_("Artifact on Display"),
-                                                    "SCORE_PILE" => self::_("Score pile"), 
+                                                    "FORECAST_PILE" => self::_("Forecast pile"),
+                                                    "SCORE_PILE" => self::_("Score pile"),
                                                     "ACHIEVEMENTS" => self::_("Achievements")
                                                     ) );
             // Opponents
@@ -145,7 +147,8 @@
                                         "R" => $rgb[0],
                                         "G" => $rgb[1],
                                         "B" => $rgb[2],
-                                        "OPT_CLASS" => "",
+                                        "OPT_FORECAST_CLASS" => "",
+                                        "OPT_SCORE_CLASS" => "",
                                         "HAND" => self::_("Hand"),
                                         "DISPLAY" => self::_("Artifact on Display"),
                                         "SCORE_PILE" => self::_("Score pile"),
