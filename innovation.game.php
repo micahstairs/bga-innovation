@@ -1582,7 +1582,7 @@ class Innovation extends Table
         self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
-        if ($splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+        if (self::getGameStateValue('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
             self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
         }
         
@@ -5180,6 +5180,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($type === null) {
             // Draw an Echoes card if none is currently in hand or drawn and revealed
             if (self::getGameStateValue('echoes_mode') == 2 &&
+                    self::countCardsInLocation($player_id, 'hand') > 0 &&
                     self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0 && 
                     self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
                 $type = 3;
@@ -11490,6 +11491,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, $bonuses[0], 'board');
                 }
                 break;
+
+            // id 333, Echoes age 1: Bangle
+            case "333N1":
+                //  "Draw and foreshadow a 3."
+                self::executeDraw($player_id, 3, 'forecast');
+                break;
+
+            case "333E1":
+                $step_max = 1;
+                break;
             
             // id 336, Echoes age 1: Comb
             case "336N1":
@@ -11533,6 +11544,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::scoreCard($card, $player_id);
                         }
                     }
+                }
+                break;
+
+            // id 342, Echoes age 1: Bell
+            case "342N1":
+                //  "Draw and foreshadow a 2."
+                self::executeDraw($player_id, 2, 'forecast');
+                break;
+
+            case "342E1":
+                if (self::getCardsInHand($player_id) > 0) {
+                    $step_max = 1;
                 }
                 break;
                 
@@ -15881,6 +15904,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck'
             );
             break;
+            
+        // id 333, Echoes age 1: Bangle
+        case "333E1A":
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                'bottom_to' => true,
+                
+                'color' => array(1)
+            );
+            break;
         
         // id 336, Echoes age 1: Comb
         case "336N1A":
@@ -15904,6 +15944,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
             );
+            break;
+        
+        // id 342, Echoes age 1: Bell
+        case "342E1A":
+            // "You may score a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'score_keyword' => true
+            );            
             break;
         
         default:
