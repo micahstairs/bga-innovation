@@ -178,7 +178,7 @@
   display: inline-block;
   position: relative;
 }
-.forecast_container > p {
+.forecast_container p {
   font-style: italic;
   font-size: 0.8em;
   position: absolute;
@@ -196,7 +196,7 @@
   display: inline-block;
   position: relative;
 }
-.score_container > p {
+.score_container p {
   font-style: italic;
   font-size: 0.8em;
   position: absolute;
