@@ -7099,7 +7099,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // - Services (93)
         // - Specialization (94)
 
-        // TODO(ARTIFACTS,ECHOES,FIGURES): Add cases for expansions.
+        // TODO(ECHOES,FIGURES): Add cases.
         switch ($card['id']) {
 
             /*** Basic cases involving empty hands and/or empty score piles **/
@@ -7122,6 +7122,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 92: // Suburbia
             case 97: // Miniaturization
             case 102: // Stem Cells
+            case 114: // Papyrus of Ani
+            case 120: // Lurgan Canoe
+            case 121: // Xianrendong Shards
+            case 130: // Baghdad Battery
+            case 131: // Holy Grail
+            case 136: // Charter of Liberties
+            case 139: // Philosopher's Stone
+            case 144: // Shroud of Turin
+            case 153: // Cross of Coronado
+            case 164: // Almira, Queen of the Castle
+            case 174: // Marcha Real
+            case 182: // Singer Model 27
+            case 216: // Complex Numbers
                 // These cards have no effect if all players executing the non-demand have empty hands.
                 foreach ($non_demand_players as $player_id) {
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
@@ -7151,6 +7164,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 33: // Education
             case 56: // Encyclopedia
+            case 146: // Delft Pocket Telescope
+            case 217: // Newton‑Wickins Telescope
                 // The card has no effect if all players executing the non-demand have empty score piles.
                 foreach ($non_demand_players as $player_id) {
                     if (self::countCardsInLocation($player_id, 'score') > 0) {
