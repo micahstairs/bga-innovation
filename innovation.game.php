@@ -371,6 +371,32 @@ class Innovation extends Table
             throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
+    function debug_foreshadow($card_id) {
+        if (self::getGameStateValue('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        $player_id = self::getCurrentPlayerId();
+        $card = self::getCardInfo($card_id);
+        if ($card['location'] == 'achievements') {
+            throw new BgaUserException("This card is used as an achievement");
+        } else if ($card['location'] == 'relics') {
+            throw new BgaUserException("This card is used as a relic");
+        } else if ($card['location'] == 'removed') {
+            throw new BgaUserException("This card is removed from the game");
+        } else if ($card['location'] == 'deck') {
+            try {
+                self::transferCardFromTo($card, $player_id, "forecast");
+            }
+            catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::debug_foreshadow');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        } else {
+            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+        }
+    }
     //******
     
     /*
@@ -706,6 +732,16 @@ class Innovation extends Table
             }
         }
 
+        // Backs of the cards in forecast piles
+        $result['forecast_counts'] = array();
+        for ($type = 0; $type <= 4; $type++) {
+            for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                foreach ($players as $player_id => $player) {
+                    $result['forecast_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'forecast', $type, $is_relic);
+                }
+            }
+        }
+
         // Backs of the cards in score piles
         $result['score_counts'] = array();
         for ($type = 0; $type <= 4; $type++) {
@@ -807,10 +843,8 @@ class Innovation extends Table
         }
         
         // Private information
-        // My hand
         $result['my_hand'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'hand'));
-        
-        // My score
+        $result['my_forecast'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'forecast'));
         $result['my_score'] = self::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'score'));
         
         // My wish for splay
@@ -1328,6 +1362,7 @@ class Innovation extends Table
             $filter_from .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
         case 'hand':
+        case 'forecast':
         case 'score':
         case 'relics':
             $filter_from .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
@@ -1346,6 +1381,7 @@ class Innovation extends Table
             $filter_to .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
         case 'hand':
+        case 'forecast':
         case 'score':
         case 'relics':
             $filter_to .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
@@ -1947,6 +1983,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} draw and meld ${<}${age}${>} ${<<}${name}${>>}.');
                 $message_for_others = clienttranslate('${player_name} draws and melds ${<}${age}${>} ${<<}${name}${>>}.');
             }
+            break;
+        case 'deck->forecast':
+            $message_for_player = clienttranslate('${You} draw and foreshadow ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} draws and foreshadows a ${<}${age}${>}.');
             break;
         case 'deck->score':
             $message_for_player = clienttranslate('${You} draw and score ${<}${age}${>} ${<<}${name}${>>}.');

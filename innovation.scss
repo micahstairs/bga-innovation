@@ -50,7 +50,7 @@
     height: 30px;
 }
 .debug_button {
-    width: 100px;
+    width: 150px;
 }
 .card_name {
     font-weight: bold;
@@ -166,12 +166,30 @@
     display: flex;
     margin-top: 30px;
 }
+.forecast_container {
+    flex-grow: 1;
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    p {
+        font-style: italic;
+        font-size: 0.8em;
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+        left: 3px;
+        height: 16px;
+        overflow-y: hidden;
+        text-align: left;
+    }
+}
+
 .score_container {
     flex-grow: 1;
     vertical-align: top;
     display: inline-block;
     position: relative;
-    >p {
+    p {
         font-style: italic;
         font-size: 0.8em;
         position: absolute;
@@ -183,8 +201,6 @@
         text-align: right;
     }
 }
-
-
 
 .achievement_container {
     vertical-align: top;
@@ -209,6 +225,12 @@
         overflow-y: hidden;
     }
 }
+.forecast {
+    display: inline-block;
+    margin-top: 18px;
+    display: inline-block;
+    height: 49px;
+}
 .score {
     display: inline-block;
     margin-top: 18px;
@@ -220,6 +242,13 @@
     margin-top: 18px;
     display: inline-block;
     height: 49px;
+}
+.forecast_show_window {
+    text-decoration: underline;
+    font-weight: bold;
+    &:hover {
+        cursor: pointer;
+    }
 }
 .score_show_window {
     text-decoration: underline;
@@ -589,6 +618,7 @@
 .two_lines {
     top: -16px !important;
     height: 32px !important;
+    padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
 }
 .sep {
     display: inline-block;
