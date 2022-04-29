@@ -5178,9 +5178,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // If the type isn't specified, then we are either drawing a Base or Echoes card.
         if ($type === null) {
-            // Draw an Echoes card if none is currently in hand or drawn and revealed
+            // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
             if (self::getGameStateValue('echoes_mode') == 2 &&
-                    self::countCardsInLocation($player_id, 'hand') > 0 &&
+                    (self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
                     self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0 && 
                     self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
                 $type = 3;
@@ -11494,7 +11494,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 333, Echoes age 1: Bangle
             case "333N1":
-                //  "Draw and foreshadow a 3."
+                //  "Draw and foreshadow a 3"
                 self::executeDraw($player_id, 3, 'forecast');
                 break;
 
@@ -15906,6 +15906,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         // id 333, Echoes age 1: Bangle
+        // TODO(ECHOES): Test this.
         case "333E1A":
             $options = array(
                 'player_id' => $player_id,
@@ -15918,7 +15919,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 'bottom_to' => true,
                 
-                'color' => array(1)
+                'color' => array(1),
             );
             break;
         
@@ -15948,7 +15949,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 342, Echoes age 1: Bell
         case "342E1A":
-            // "You may score a card from your hand."
+            // "You may score a card from your hand"
+            // TODO(ECHOES): Test this.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -15959,7 +15961,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
                 
-                'score_keyword' => true
+                'score_keyword' => true,
             );            
             break;
         
