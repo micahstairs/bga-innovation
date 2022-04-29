@@ -1329,7 +1329,7 @@ class Innovation extends Table
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false) {
 
         // Do not move the card at all.
         if ($location_to == 'none') {
@@ -1462,9 +1462,17 @@ class Innovation extends Table
 
         
         $transferInfo = array(
-            'owner_from' => $owner_from, 'location_from' => $location_from, 'position_from' => $position_from, 'splay_direction_from' => $splay_direction_from, 
-            'owner_to' => $owner_to, 'location_to' => $location_to, 'position_to' => $position_to, 'splay_direction_to' => $splay_direction_to, 
-            'bottom_to' => $bottom_to, 'score_keyword' => $score_keyword
+            'owner_from' => $owner_from,
+            'location_from' => $location_from,
+            'position_from' => $position_from,
+            'splay_direction_from' => $splay_direction_from, 
+            'owner_to' => $owner_to,
+            'location_to' => $location_to,
+            'position_to' => $position_to,
+            'splay_direction_to' => $splay_direction_to, 
+            'bottom_from' => $bottom_from,
+            'bottom_to' => $bottom_to,
+            'score_keyword' => $score_keyword,
         );
         
         // Update the current state of the card
@@ -1765,9 +1773,12 @@ class Innovation extends Table
         
         $progressInfo = array();
         // Update player progression if applicable
+        $no_players_involved = $owner_from == 0 && $owner_to == 0;
         $one_player_involved = $owner_from == 0 || $owner_to == 0 || $owner_from == $owner_to;
-              
-        if ($one_player_involved) { // One player involved
+        
+        if ($no_players_involved) {
+            self::notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo);
+        } else if ($one_player_involved) {
             $player_id = $owner_to == 0 ? $owner_from : $owner_to; // The player whom transfer will change something on the cards he owns
             $transferInfo['player_id'] = $player_id;
             
@@ -1794,8 +1805,7 @@ class Innovation extends Table
                 self::incrementFlagForMonument($player_id, 'number_of_scored_cards');
             }
             self::notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo);
-        }
-        else { // Two players involved
+        } else {
             $player_id = self::getActivePlayerId(); // $player_id == $owner_from or $owner_to. It is also the one from whom this action is originated
             if ($owner_from != 0 && $owner_to != 0) {
                 $opponent_id = $player_id == $owner_from ? $owner_to : $owner_from; // The other player involved in the action
@@ -1967,6 +1977,26 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
                 break;
         }
+    }
+
+    function notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo) {
+        $location_from = $transferInfo['location_from'];
+        $location_to = $transferInfo['location_to'];
+        $bottom_from = $transferInfo['bottom_from'];
+        $bottom_to = $transferInfo['bottom_to'];
+        $score_keyword = $transferInfo['score_keyword'];
+
+        switch($location_from . '->' . $location_to) {
+        case 'deck->achievements':
+            $message = clienttranslate('The bottom ${<}${age}${>} card is transfered to the available achievements.');
+            break;
+        default:
+            // This should not happen
+            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+            break;
+        }
+        
+        self::sendNotificationWithNoPlayersInvolved($message, $card, $transferInfo, $progressInfo);
     }
     
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo) {
@@ -2752,6 +2782,18 @@ class Innovation extends Table
                 ],
             ],
         ];
+    }
+
+    function sendNotificationWithNoPlayersInvolved($message, $card, $transferInfo, $progressInfo) {     
+        $info = array_merge($transferInfo, $progressInfo);
+        
+        $delimiters = self::getDelimiterMeanings($message, $card['id']);
+        $notif_args = array_merge($info, $delimiters);
+        $notif_args['age'] = $card['age'];
+        $notif_args['type'] = $card['type'];
+        $notif_args['is_relic'] = $card['is_relic'];
+        
+        self::notifyAllPlayers("transferedCard", $message, $notif_args);
     }
     
     function sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo) {     
@@ -3653,6 +3695,28 @@ class Innovation extends Table
                 type = {type} AND
                 age = {age} AND
                 position = (SELECT MAX(position) FROM card WHERE location = 'deck' AND type = {type} AND age = {age})
+        ",
+            array('type' => $type, 'age' => $age)
+        ));
+    }
+
+    function getDeckBottomCard($age, $type) {
+        /**
+            Get all information of the card to be taken from the bottom of the deck of the type and age indicated, which includes:
+                -intrisic properties,
+                -owner, location and position
+        **/
+        
+        return self::getObjectFromDB(self::format("
+            SELECT
+                *
+            FROM
+                card
+            WHERE
+                location = 'deck' AND
+                type = {type} AND
+                age = {age} AND
+                position = 0
         ",
             array('type' => $type, 'age' => $age)
         ));
@@ -5165,7 +5229,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null) {
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
         if ($age_to_draw > 10) {
@@ -5190,7 +5254,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
         
-        $card = self::getDeckTopCard($age_to_draw, $type);
+        if ($bottom_from) {
+            $card = self::getDeckBottomCard($age_to_draw, $type);
+        } else {
+            $card = self::getDeckTopCard($age_to_draw, $type);
+        }
 
         // If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
         // draw a base card of that value instead.
@@ -5199,7 +5267,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         try {
-            $card = self::transferCardFromTo($card, $player_id, $location_to, $bottom_to, $location_to == 'score');
+            $card = self::transferCardFromTo($card, $player_id, $location_to, $bottom_to, $location_to == 'score', $bottom_from);
         }
         catch (EndOfGame $e) {
             self::trace('EOG bubbled from self::executeDraw');
@@ -5516,6 +5584,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('include_relics', $rewritten_options)) {
             $rewritten_options['include_relics'] = 1;
         }
+        if (!array_key_exists('bottom_from', $rewritten_options)) {
+            $rewritten_options['bottom_from'] = false;
+        }
         if (!array_key_exists('bottom_to', $rewritten_options)) {
             $rewritten_options['bottom_to'] = (array_key_exists('location_to', $rewritten_options) && $rewritten_options['location_to'] == 'deck');
         }
@@ -5566,6 +5637,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'solid_constraint':
             case 'require_achievement_eligibility':
             case 'has_demand_effect':
+            case 'bottom_from':
             case 'bottom_to':
             case 'enable_autoselection':
             case 'include_relics':
