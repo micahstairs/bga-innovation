@@ -338,7 +338,7 @@ function (dojo, declare) {
             
             this.num_cards_in_row.achievements = num_of_achievments_per_row;
             this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
-            // TODO(ECHOES): Revise this logic to properly incorporate Forecast zone in the calculations.
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/422): Revise this logic to properly incorporate Forecast zone in the calculations.
             this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
 
             // Defining the number of cards the window for forecast verso can host
