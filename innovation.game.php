@@ -3015,7 +3015,7 @@ class Innovation extends Table
                 break;
                 
             case 435: // Wealth: A total of 8 or more visible bonus icons
-                $eligible = count(self::boardVisibleBonuses($player_id)) >= 8;
+                $eligible = count(self::getBoardVisibleBonuses($player_id)) >= 8;
                 break;
             case 436: // Destiny: A total of 7 or more cards in forecast
                 $eligible = self::countCardsInLocation($player_id, 'forecast') >= 7;
@@ -4378,10 +4378,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         /**
         Get the maximum visible bonus
         **/
-        return max(self::boardVisibleBonuses($player_id));
+        return max(self::getBoardVisibleBonuses($player_id));
     }
     
-    function boardPileVisibleBonuses($player_id, $color) {
+    function getBoardPileVisibleBonuses($player_id, $color) {
         /**
         Get the bonus icon available on the board (0 = no bonuses)
         **/
@@ -4435,11 +4435,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     
-    function boardVisibleBonuses($player_id) {
+    function getBoardVisibleBonuses($player_id) {
         $visible_bonus_icons = array();
         
         for($color=0; $color<5; $color++) {
-            $visible_bonus_icons[] = self::boardPileVisibleBonuses($player_id, $color);
+            $pile_vis_bonuses = self::getBoardPileVisibleBonuses($player_id, $color);
+            for($i = 0; $i < count($pile_vis_bonuses); $i++) {
+                $visible_bonus_icons[] = $pile_vis_bonuses[$i];
+            }
         
         }
         return $visible_bonus_icons;
@@ -8085,6 +8088,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('${You} must choose a color');
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
+
+            // id 346, Echoes age 2: Linguistics
+            case "346N1A":
+                $message_for_player = clienttranslate('Choose a value of a bonus icon on your board');
+                $message_for_others = clienttranslate('${player_name} must choose a value of a bonus icon on your board');
+                break;
+
+            case "346E1A":
+                $message_for_player = clienttranslate('${You} may make a choice');
+                $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
+                $options = array(
+                                array('value' => 1, 'text' => self::format(clienttranslate("Draw a {age}"), array('age' => self::getAgeSquare(3)))),
+                                array('value' => 0, 'text' => self::format(clienttranslate("Draw and foreshadow a {age}"), array('age' => self::getAgeSquare(4))))
+                );
+                break;
 				
             default:
                 // This should not happen
@@ -11646,6 +11664,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getCardsInHand($player_id) > 0) {
                     $step_max = 1;
                 }
+                break;
+            
+            // id 346, Echoes age 2: Linguistics
+            case "346N1":
+                $vis_bonuses = array_unique(self::getBoardVisibleBonuses($player_id));
+                if (count($vis_bonuses) > 1) {
+                    $step_max = 1; // --> 1 interaction: see B
+                }
+                elseif (count($vis_bonuses) == 1) {
+                    self::executeDraw($player_id, $vis_bonuses[0], 'hand');
+                }
+                // Otherwise no bonuses present so no choice to be made
+                break;
+
+            case "346E1":
+                $step_max = 1; // --> 1 interaction: see B
                 break;
                 
             default:
@@ -16118,7 +16152,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'score_keyword' => true,
             );            
             break;
-        
+            
+        // id 346, age 2: Linguistics          
+        case "346N1A":
+            // "Draw a card of value equal to a bonus on your board, if you have any."
+            $selectable_ages = array_unique(self::getboardVisibleBonuses($player_id));
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'choose_value' => true,
+                'age' => $selectable_ages
+            );
+            break;
+
+        case "346E1A":
+            // "Draw a 3 OR Draw and foreshadow a 4."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false, 
+                
+                'choose_yes_or_no' => true
+            );
+            break;
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -17760,6 +17817,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
+                // id 346, Echoes age 2: Linguistics
+                case "346N1A":
+                    // "Draw a card of value equal to a bonus on your board, if you have any."
+                    self::executeDraw($player_id, self::getAuxiliaryValue(), 'hand');
+                    break;
+
+                case "346E1A":
+                    // "Draw a card of value equal to a bonus on your board, if you have any."
+                    if (self::getAuxiliaryValue() == 1) {
+                        self::executeDraw($player_id, 3, 'hand');
+                    }
+                    else {
+                        self::executeDraw($player_id, 4, 'forecast');
+                    }
+                    break;                    
                 }
                 
             //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
@@ -18429,7 +18501,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
-                                
+
+            // id 346, Echoes age 2: Linguistics
+            case "346N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+            case "346E1A":
+                if ($choice == 1) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(3)));
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to foreshadow a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(4)));
+                }
+                self::setAuxiliaryValue($choice);
+                break;
+                
             default:
                 if ($splay_direction == -1) {
                     if ($location_to == 'revealed,deck') {
