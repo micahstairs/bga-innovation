@@ -8069,6 +8069,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 array('value' => 0, 'text' => self::format(clienttranslate("Draw and foreshadow a {age}"), array('age' => self::getAgeSquare(4))))
                 );
                 break;
+                
+            // id 434, Echoes age 10: Sudoku
+            case "434N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
 				
             default:
                 // This should not happen
@@ -11669,6 +11675,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, 3, 'board');
                 break;
   
+            // id 434, Echoes age 10: Sudoku
+            case "434N1":
+                $step_max = 1;
+                break;
+                
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
                 // the stack and there's nothing left to do.
@@ -16161,7 +16172,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'can_pass' => false,
 
                 'choose_value' => true,
-                'age' => $selectable_ages
+                'age' => $selectable_ages,
             );
             break;
 
@@ -16171,10 +16182,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'can_pass' => false, 
                 
-                'choose_yes_or_no' => true
+                'choose_yes_or_no' => true,
             );
             break;
             
+
+        // id 434, Echoes age 10: Sudoku
+        case "434N1A":
+            // "Draw and meld a card of any value."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+            );
+            break;
+
+        
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -17815,6 +17840,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryValue($n);
                     }
                     break;
+
+                // id 434, Echoes age 10: Sudoku
+                case "434N1A":
+                    // "Draw and meld a card of any value."
+                    $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'board');
+                    
+                    // "If you have at least nine different bonus values visible on your board, you win."
+                    $vis_bonuses = array_unique(self::getBoardVisibleBonuses($player_id));
+                    if (count($vis_bonuses) >= 9) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Sudoku');
+                        throw new EndOfGame();                
+                    }
+                    // "Execute each of the melded card's non-demand dogma effects. Do not share them."
+                    self::executeNonDemandEffects($card);
+                    break;
                     
                 // id 346, Echoes age 2: Linguistics
                 case "346N1A":
@@ -18516,6 +18559,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to foreshadow a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(4)));
                 }
+                self::setAuxiliaryValue($choice);
+                break;
+                
+            // id 434, Echoes age 10: Sudoku
+            case "434N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
