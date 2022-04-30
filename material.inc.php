@@ -2343,8 +2343,8 @@ $this->textual_card_infos = array(
 
 338 => array('name' => clienttranslate('Umbrella'),
     'i_demand_effect_1' => null,
-    'i_demand_effect_1_is_compel' => clienttranslate('Return any number of cards from your hand. Score two cards from your hand for every card you returned.'),
-    'non_demand_effect_1' => null,
+    'i_demand_effect_1_is_compel' => null,
+    'non_demand_effect_1' => clienttranslate('Return any number of cards from your hand. Score two cards from your hand for every card you returned.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'echo_effect_1' => clienttranslate('You may meld a card from your hand.'),
