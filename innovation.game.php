@@ -18,6 +18,7 @@
 
 
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
+require_once('modules/Utils/Strings.php');
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
@@ -32,7 +33,8 @@ class Innovation extends Table
         //  If your game has options (variants), you also have to associate here a label to
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
-        parent::__construct();self::initGameStateLabels(array(
+        parent::__construct();
+        self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
             'first_player_with_only_one_action' => 12,
@@ -3468,11 +3470,18 @@ class Innovation extends Table
         return $card_list;
     }
 
-    function comesAlphabeticallyBefore($card_1, $card_2) {
-        /**
-            Returns true if card_1 comes before card_2 in English alphabetical order.
-        **/
-        return strcasecmp(self::getCardName($card_1['id']), self::getCardName($card_2['id'])) < 0;
+    /**
+     * Returns true if card_1 comes before card_2 in English alphabetical order.
+     *
+     * @param array $card1
+     * @param array $card2
+     * @return bool
+     */
+    public function comesAlphabeticallyBefore($card1, $card2) : bool
+    {
+        $name1 = $this->getCardName($card1['id']);
+        $name2 = $this->getCardName($card2['id']);
+        return Utils\Strings::doesStringComeBefore($name1, $name2);
     }
     
     function getColorsOfRepeatedValueOfTopCardsOnBoard($player_id) {
@@ -17888,4 +17897,3 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ", array('player_id' => $player_id)));
     }
 }
-
