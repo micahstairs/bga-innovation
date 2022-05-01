@@ -17869,10 +17869,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'board');
                     
                     // "If you have at least nine different bonus values visible on your board, you win."
-                    $vis_bonuses = array_unique(self::getBoardVisibleBonuses($player_id));
-                    if (count($vis_bonuses) >= 9) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    if (count(array_unique(self::boardPileVisibleBonuses($player_id))) >= 9) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues visible on your board.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on their board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Sudoku');
                         throw new EndOfGame();                
