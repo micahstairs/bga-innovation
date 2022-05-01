@@ -11707,15 +11707,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 361, Echoes age 3: Deoderant
             case "361N1":
-                // "If you have a top card with a castle, draw and meld a 3. Otherwise, draw a 4."
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $have_castle = false;
-                foreach($top_cards as $card) {
+                // "If you have a top card with a tower, draw and meld a 3. Otherwise, draw a 4."
+                $has_tower = false;
+                foreach (self::getTopCardsOnBoard($player_id) as $card) {
                     if (self::hasRessource($card, 4) ) {
-                         $have_castle = true;
+                         $has_tower = true;
                     }
                 }
-                if ($have_castle) {
+                if ($has_tower) {
                     self::executeDraw($player_id, 3, 'board');
                 } else {
                     self::executeDraw($player_id, 4, 'hand');
