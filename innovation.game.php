@@ -3007,7 +3007,7 @@ class Innovation extends Table
                 break;
                 
             case 435: // Wealth: A total of 8 or more visible bonus icons
-                $eligible = count(self::getBoardVisibleBonuses($player_id)) >= 8;
+                $eligible = count(self::getVisibleBonusesOnBoard($player_id)) >= 8;
                 break;
             case 436: // Destiny: A total of 7 or more cards in forecast
                 $eligible = self::countCardsInLocation($player_id, 'forecast') >= 7;
@@ -4363,10 +4363,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         /**
         Get the maximum visible bonus
         **/
-        return max(self::getBoardVisibleBonuses($player_id));
+        return max(self::getVisibleBonusesOnBoard($player_id));
     }
     
-    function getBoardPileVisibleBonuses($player_id, $color) {
+    function getVisibleBonusesOnPile($player_id, $color) {
         /**
         Get the bonus icon available on the board (0 = no bonuses)
         **/
@@ -4420,15 +4420,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     
-    function getBoardVisibleBonuses($player_id) {
+    function getVisibleBonusesOnBoard($player_id) {
         $visible_bonus_icons = array();
         
-        for($color=0; $color<5; $color++) {
-            $pile_vis_bonuses = self::getBoardPileVisibleBonuses($player_id, $color);
-            for($i = 0; $i < count($pile_vis_bonuses); $i++) {
-                $visible_bonus_icons[] = $pile_vis_bonuses[$i];
-            }
-        
+        for ($color = 0; $color < 5; $color++) {
+            $visible_bonus_icons = array_merge($visible_bonus_icons, self::getVisibleBonusesOnPile($player_id, $color));
         }
         return $visible_bonus_icons;
     }
@@ -11638,7 +11634,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 346, Echoes age 2: Linguistics
             case "346N1":
-                $vis_bonuses = array_unique(self::getBoardVisibleBonuses($player_id));
+                $vis_bonuses = array_unique(self::getVisibleBonusesOnBoard($player_id));
                 if (count($vis_bonuses) > 1) {
                     $step_max = 1; // --> 1 interaction: see B
                 }
@@ -16138,7 +16134,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 346, age 2: Linguistics          
         case "346N1A":
             // "Draw a card of value equal to a bonus on your board, if you have any."
-            $selectable_ages = array_unique(self::getboardVisibleBonuses($player_id));
+            $selectable_ages = array_unique(self::getVisibleBonusesOnBoard($player_id));
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
