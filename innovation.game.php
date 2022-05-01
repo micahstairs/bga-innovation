@@ -11647,7 +11647,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346E1":
                 $step_max = 1; // --> 1 interaction: see B
                 break;
-                
+
+            // id 361, Echoes age 3: Deoderant
+            case "361N1":
+                // "If you have a top card with a tower, draw and meld a 3. Otherwise, draw a 4."
+                $has_tower = false;
+                foreach (self::getTopCardsOnBoard($player_id) as $card) {
+                    if (self::hasRessource($card, 4) ) {
+                         $has_tower = true;
+                    }
+                }
+                if ($has_tower) {
+                    self::executeDraw($player_id, 3, 'board');
+                } else {
+                    self::executeDraw($player_id, 4, 'hand');
+                }
+                break;
+ 
+            case "361E1":
+                // "Draw and meld a 3."
+                self::executeDraw($player_id, 3, 'board');
+                break;
+  
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
                 // the stack and there's nothing left to do.
