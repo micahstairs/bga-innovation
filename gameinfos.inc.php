@@ -1,6 +1,6 @@
 <?php
 
-$gameinfos = array( 
+$gameinfos = [
 
 // Game designer (or game designers, separated by commas)
 'designer' => 'Carl Chudyk',       
@@ -76,7 +76,19 @@ $gameinfos = array(
 // Games categories
 //  You can attribute any number of "tags" to your game.
 //  Each tag has a specific ID (ex: 22 for the category "Prototype", 101 for the tag "Science-fiction theme game")
-'tags' => array(3, 12, 20, 102, 106, 200, 207, 208, 209, 210),
+// @see https://en.doc.boardgamearena.com/Game_meta-information:_gameinfos.inc.php#Tags
+'tags' => [
+    3, // for regular players
+    12, // long game >30m
+    20, // awarded game
+    102, // historical
+    106, // building
+    200, // cards
+    207, // combos
+    208, // area majority
+    209, // race
+    210, // collection
+],
 
 // Favorite colors support
  'favorite_colors_support' => true,
@@ -97,4 +109,13 @@ $gameinfos = array(
     //  minimum possible value: 740
     'max' => null
 ),
-);
+
+    // Game presentation
+    // Short game presentation text that will appear on the game description page, structured as an array of paragraphs.
+    // Each paragraph must be wrapped with totranslate() for translation and should not contain html (plain text without formatting).
+    // A good length for this text is between 100 and 150 words (about 6 to 9 lines on a standard display)
+    'presentation' => [
+        totranslate("This game by Carl Chudyk is a journey through innovations from the stone age through modern times. Each player builds a civilization based on various technologies, ideas, and cultural advancements, all represented by cards. Each of these cards has a unique power which will allow further advancement, point scoring, or even attacking other civilizations. Be careful though, as other civilizations may be able to benefit from your ideas as well!"),
+        totranslate("To win, you must score achievements, which you can attain by amassing points or by meeting certain criteria with the innovations you have built. Plan your civilization well, and outmaneuver your opponents, and with some luck you will achieve victory!"),
+    ],
+];
