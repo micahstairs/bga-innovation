@@ -87,7 +87,7 @@ $gameinfos = [
     207, // combos
     208, // area majority
     209, // race
-    210 // collection
+    210, // collection
 ],
 
 // Favorite colors support
