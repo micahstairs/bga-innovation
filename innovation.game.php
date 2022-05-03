@@ -6795,12 +6795,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
     }
     
-    function getAchievementEligibility($player_id, $age) {
-        $cards = self::getCardsInLocationKeyedByAge($player_id, 'achievements');
-        
-        return (self::getPlayerScore($player_id) > (5 * count($cards[$age] + 1)));
-    }
-    
     /* Returns true if a relic is being seized */
     function tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $melded_card) {
         // The Artifacts expansion is not enabled.
@@ -11667,7 +11661,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($colors);
                 }
                 else {
-                    self::notifyGeneralInfo(clienttranslate('All faceup ages are identical.  No transfer will occur.'));
+                    self::notifyGeneralInfo(clienttranslate('All top cards had identical values, so no transfer will occur.'));
                 }
                 break;
 
@@ -16198,9 +16192,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        //
-        // Echoes Expansion
-        //        
         // id 331, Echoes age 1: Perfume
         case "331D1A":
             // "I demand you transfer a top card of different value from any top card on my board from your board to mine! "
