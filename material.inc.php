@@ -2078,7 +2078,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 219 => array('name' => clienttranslate('Safety Pin'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return all cards of value higher than ${age_6} from your hand! Draw a ${age_6}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all cards of value higher than ${age_6} from your hand! Draw a ${age_6}!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2272,7 +2272,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 331 => array('name' => clienttranslate('Perfume'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer a top card of different value from any top card on my board from your board to mine! If you do, draw and meld a card of equal value!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card of different value from any top card on my board from your board to mine! If you do, draw and meld a card of equal value!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2302,7 +2302,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 334 => array('name' => clienttranslate('Candles'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer a card with a ${icon_4} from your hand to my hand! If you do, draw a ${age_1}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_4} from your hand to my hand! If you do, draw a ${age_1}!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2393,7 +2393,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 343 => array('name' => clienttranslate('Flute'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return a card with a bonus from your hand!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return a card with a bonus from your hand!'),
     'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If it has a bonus, draw a ${age_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2435,7 +2435,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),  
 
 347 => array('name' => clienttranslate('Crossbow'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer a card with a bonus from your hand to my score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a bonus from your hand to my score pile!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2445,7 +2445,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),  
 
 348 => array('name' => clienttranslate('Horseshoes'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer a top card without a ${icon_4} or ${icon_5} from your board to my board! If you do, draw and meld a ${age_2}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card without a ${icon_4} or ${icon_5} from your board to my board! If you do, draw and meld a ${age_2}!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2537,7 +2537,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),    
 
 357 => array('name' => clienttranslate('Liquid Fire'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you draw a card of value equal to the highest bonus on your board! Transfer it to my forecast! If it is red, transfer all cards from your hand to my score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw a card of value equal to the highest bonus on your board! Transfer it to my forecast! If it is red, transfer all cards from your hand to my score pile!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2547,7 +2547,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 358 => array('name' => clienttranslate('Katana'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer two top cards with a ${icon_4} from your board to my score pile! If you transferred any, draw a card of value equal to the total number of ${icon_4} on those cards and transfer it to my forecast!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer two top cards with a ${icon_4} from your board to my score pile! If you transferred any, draw a card of value equal to the total number of ${icon_4} on those cards and transfer it to my forecast!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2567,7 +2567,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),   
 
 360 => array('name' => clienttranslate('Homing Pigeons'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return two cards from your score pile whose values each match at least one card in my hand!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return two cards from your score pile whose values each match at least one card in my hand!'),
     'non_demand_effect_1' => clienttranslate('You may splay your red or green cards left.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2639,7 +2639,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),       
 
 367 => array('name' => clienttranslate('Kobukson'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you you return all your top cards with a ${icon_4}! Draw and tuck a ${age_4}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you you return all your top cards with a ${icon_4}! Draw and tuck a ${age_4}!'),
     'non_demand_effect_1' => clienttranslate('For every two cards returned as a result of the demand, draw and tuck a {$age_4}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2649,7 +2649,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),      
     
 368 => array('name' => clienttranslate('Shuriken'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer a top non-red card with a ${icon_4} or ${icon_3} from your board to my board! If you do, draw a ${age_4}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_4} or ${icon_3} from your board to my board! If you do, draw a ${age_4}!'),
     'non_demand_effect_1' => clienttranslate('You may splay your purple cards right.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2699,7 +2699,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 373 => array('name' => clienttranslate('Clock'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you draw and reveal three ${age_10}s, total the number of ${icon_6} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal three ${age_10}s, total the number of ${icon_6} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2709,7 +2709,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),       
 
 374 => array('name' => clienttranslate('Toilet'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return all cards from your score pile of value matching the highest bonus on my board!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all cards from your score pile of value matching the highest bonus on my board!'),
     'non_demand_effect_1' => clienttranslate('You may return a card in your hand and draw a card of the same value.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2721,7 +2721,7 @@ $this->textual_card_infos = array(
 /* Echoes - Age 5 */    
 
 375 => array('name' => clienttranslate('Lightning Rod'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you draw and tuck a ${age_5}! Return your top card of the tucked card\'s color!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw and tuck a ${age_5}! Return your top card of the tucked card\'s color!'),
     'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_5}. You may return a top card from your board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2751,7 +2751,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null), 
   
 378 => array('name' => clienttranslate('Octant'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer a top non-red card with a ${icon_2} or ${icon_5} from your board to my board! If you do, draw and foreshadow a ${age_6}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_2} or ${icon_5} from your board to my board! If you do, draw and foreshadow a ${age_6}!'),
     'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_6}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2771,7 +2771,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),   
 
 380 => array('name' => clienttranslate('Seed Drill'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return a top card from your board of value less than ${age_3}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return a top card from your board of value less than ${age_3}!'),
     'non_demand_effect_1' => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2853,7 +2853,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null), 
 
 388 => array('name' => clienttranslate('Shrapnel'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you draw and tuck a ${age_6}! Transfer the top two cards of its color from your board to my score pile! Transfer the bottom card of its color from my board to your score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw and tuck a ${age_6}! Transfer the top two cards of its color from your board to my score pile! Transfer the bottom card of its color from my board to your score pile!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2873,7 +2873,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null), 
 
 390 => array('name' => clienttranslate('Steamboat'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you draw and reveal a ${age_6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine! If it is purple, keep it!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal a ${age_6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine! If it is purple, keep it!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2893,7 +2893,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),     
     
 392 => array('name' => clienttranslate('Morphine'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return all odd-valued cards in your hand! Draw a ${age_6}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all odd-valued cards in your hand! Draw a ${age_6}!'),
     'non_demand_effect_1' => clienttranslate('Draw a card of value one higher than the highest card returned due to the demand, if any were returned.'),
     'non_demand_effect_2' =>clienttranslate('You may splay your red cards right.'),
     'non_demand_effect_3' => null,
@@ -2903,7 +2903,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 393 => array('name' => clienttranslate('Indian Clubs'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return two cards from your score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return two cards from your score pile!'),
     'non_demand_effect_1' => clienttranslate('For every value of card you have in your score pile, score a card from your hand of that value.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2925,7 +2925,7 @@ $this->textual_card_infos = array(
 /* Echoes - age 7 */
 
 395 => array('name' => clienttranslate('Photography'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you take the highest top card from your board into your hand!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you take the highest top card from your board into your hand!'),
     'non_demand_effect_1' => clienttranslate('If you have at least three echo effects visible in one color, claim the History achievement.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -2945,7 +2945,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 397 => array('name' => clienttranslate('Machine Gun'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer all of your top cards with a bonus to my score pile! If you transfered any, draw a ${age_7}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer all of your top cards with a bonus to my score pile! If you transfered any, draw a ${age_7}!'),
     'non_demand_effect_1' => clienttranslate('Return all your top non-red cards.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3005,7 +3005,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 403 => array('name' => clienttranslate('Ice Cream'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you draw and meld a ${age_1}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw and meld a ${age_1}!'),
     'non_demand_effect_1' => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3047,7 +3047,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),    
     
 407 => array('name' => clienttranslate('Bandage'),
-    'i_demand_effect_1' => clienttranslate('{I demand} return the highest card in your score pile for which you do not have a card of matching value in your hand! Return a top card from your board with a ${icon_6}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} return the highest card in your score pile for which you do not have a card of matching value in your hand! Return a top card from your board with a ${icon_6}!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3057,7 +3057,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 408 => array('name' => clienttranslate('Parachute'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer all cards without a ${icon_6} from your hand to my hand!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer all cards without a ${icon_6} from your hand to my hand!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3087,7 +3087,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 411 => array('name' => clienttranslate('Air Conditioner'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return all cards from your score pile of value matching any of your top cards!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all cards from your score pile of value matching any of your top cards!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3159,7 +3159,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),    
     
 418 => array('name' => clienttranslate('Jet'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return your top card of the color I melded due to Jet\'s echo effect!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect!'),
     'non_demand_effect_1' => null,
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3189,7 +3189,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 421 => array('name' => clienttranslate('ATM'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer the highest top non-yellow card without a ${icon_1} from your board to my board!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer the highest top non-yellow card without a ${icon_1} from your board to my board!'),
     'non_demand_effect_1' => clienttranslate('You may splay your purple cards up.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3219,7 +3219,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 424 => array('name' => clienttranslate('Rock'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer your top green card to my hand! If Scissors is your new top green card, I win!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer your top green card to my hand! If Scissors is your new top green card, I win!'),
     'non_demand_effect_1' => clienttranslate('You may score a top card from your board. If Paper is your top green card, you win.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3251,7 +3251,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 427 => array('name' => clienttranslate('Camcorder'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you transfer all cards in your hand to my hand! Draw a ${age_9}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer all cards in your hand to my hand! Draw a ${age_9}!'),
     'non_demand_effect_1' => clienttranslate('Meld all ${age_9}s from your hand. Return all other cards from your hand. Draw three ${age_9}s.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3261,7 +3261,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),    
     
 428 => array('name' => clienttranslate('Social Networking'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you choose an icon type! Transfer all top cards without that icon from your board to my score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you choose an icon type! Transfer all top cards without that icon from your board to my score pile!'),
     'non_demand_effect_1' => clienttranslate('If you have fewer ${icon_5}, fewer ${icon_1}, and ${icon_4} than each other player, you win.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
@@ -3271,7 +3271,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 429 => array('name' => clienttranslate('GPS'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return all cards from your forecast!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all cards from your forecast!'),
     'non_demand_effect_1' => clienttranslate('Draw and foreshadow three ${age_10}s.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow cards up.'),
     'non_demand_effect_3' => null,
@@ -3281,7 +3281,7 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 430 => array('name' => clienttranslate('Flash Drive'),
-    'i_demand_effect_1' => clienttranslate('{I demand} you return four cards from your score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return four cards from your score pile!'),
     'non_demand_effect_1' => clienttranslate('Return a card from your score pile. If you do, you may splay any one color of your cards up.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
