@@ -7155,7 +7155,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 71: // Refrigeration
             case 72: // Sanitation
                 // These cards have no effect if all players have empty hands.
-                foreach (array_merge($non_demand_players, $i_demand_players) as $player_id) {
+                foreach (self::getAllActivePlayerIds() as $player_id) {
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
                         return false;
                     }
@@ -7175,7 +7175,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return true;
         
             case 41: // Anatomy
-            case 76: // Rocketry
             case 99: // Databases
                 // These cards have no effect if all players executing the demand have empty score piles.
                 foreach ($i_demand_players as $player_id) {
@@ -7186,8 +7185,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return true;
 
             case 32: // Medicine
+            case 76: // Rocketry
                 // The card has no effect if all players have empty score piles.
-                foreach (array_merge($non_demand_players, $i_demand_players) as $player_id) {
+                foreach (self::getAllActivePlayerIds() as $player_id) {
                     if (self::countCardsInLocation($player_id, 'score') > 0) {
                         return false;
                     }
