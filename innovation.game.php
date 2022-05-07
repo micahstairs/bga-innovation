@@ -13812,18 +13812,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "134N1B":
-            // Prompt player to pick a stack which to splay left. (no purple card to execute)
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none'
-            );
-            break;
-            
         case "134N1+A":
             // Prompt player to pick a stack which to splay left.
             $options = array(
@@ -13833,7 +13821,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
-                'location_to' => 'none'
+                'location_to' => 'none',
             );
             break;
             
@@ -16318,11 +16306,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 134, Artifacts age 2: Cyrus Cylinder
                 case "134N1A":
                     // "Execute its non-demand dogma effects"
-                    if ($n > 0) {
-                        self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
-                    }
-                    else {
-                        self::incrementStepMax(1); // still need to do the splay
+                    $card_id = self::getGameStateValue('id_last_selected');
+                    if ($n > 0 && self::getNonDemandEffect($card_id, 1) != null) {
+                        self::executeNonDemandEffects(self::getCardInfo($card_id));
+                    } else {
+                        self::incrementStepMax(1); // Still need to do the splay
                     }
                     break;
 
