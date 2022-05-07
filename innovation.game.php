@@ -116,6 +116,9 @@ class Innovation extends Table
             'icon_hash_5' => 83,
             'enable_autoselection' => 84,
             'include_relics' => 85,
+            'bottom_from' => 86,
+            'with_bonus' => 87,
+            'without_bonus' => 88,
             
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -204,6 +207,12 @@ class Innovation extends Table
                 'icon_hash_5' => 83,
                 'enable_autoselection' => 84,
                 'include_relics' => 85,
+                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
+                'bottom_from' => 86,
+                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
+                'with_bonus' => 87,
+                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
+                'without_bonus' => 88,
                 'relic_id' => 95,
                 'current_action_number' => 96,
                 'current_nesting_index' => 97,
@@ -227,6 +236,8 @@ class Innovation extends Table
             self::setGameStateValue('icon_hash_5', -1);
             self::setGameStateValue('enable_autoselection', -1);
             self::setGameStateValue('include_relics', -1);
+            self::setGameStateValue('with_bonus', -1);
+            self::setGameStateValue('without_bonus', -1);
             self::setGameStateValue('relic_id', -1);
             self::setGameStateValue('current_action_number', -1);
             self::setGameStateValue('current_nesting_index', -1);
@@ -578,6 +589,8 @@ class Innovation extends Table
         self::setGameStateInitialValue('icon_hash_5', -1); // icon hash of a card which is allowed to be selected, else -1
         self::setGameStateInitialValue('enable_autoselection', -1); // 1 if cards are allowed to be autoselected during an interaction
         self::setGameStateInitialValue('include_relics', -1); // 1 if relics cards are allowed to be selected during an interaction
+        self::setGameStateInitialValue('with_bonus', -1); // 1 if only cards with a bonus are allowed to be selected during an interaction
+        self::setGameStateInitialValue('without_bonus', -1); // 1 if only cards without a bonus are allowed to be selected during an interaction
         self::setGameStateInitialValue('can_pass', -1); // 1 if the player can pass else 0
         self::setGameStateInitialValue('n', -1); // Actual number of cards having being selected yet
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
@@ -5607,6 +5620,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('include_relics', $rewritten_options)) {
             $rewritten_options['include_relics'] = 1;
         }
+        if (!array_key_exists('with_bonus', $rewritten_options)) {
+            $rewritten_options['with_bonus'] = false;
+        }
+        if (!array_key_exists('without_bonus', $rewritten_options)) {
+            $rewritten_options['without_bonus'] = false;
+        }
         if (!array_key_exists('bottom_from', $rewritten_options)) {
             $rewritten_options['bottom_from'] = false;
         }
@@ -5664,6 +5683,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'bottom_to':
             case 'enable_autoselection':
             case 'include_relics':
+            case 'with_bonus':
+            case 'without_bonus':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
@@ -5861,6 +5882,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($include_relics == 0) {
             $condition_for_including_relic = "AND is_relic = FALSE";
         }
+
+        // Condition for including cards with at least one bonus icon
+        $condition_for_including_bonus = "";
+        $with_bonus = self::getGameStateValue('with_bonus');
+        if ($with_bonus == 1) {
+            $condition_for_including_bonus = "AND (spot_1 >= 101 OR spot_2 >= 101 OR spot_3 >= 101 OR spot_4 >= 101 OR spot_5 >= 101 OR spot_6 >= 101)";
+        }
+
+        // Condition for excluding cards with at least one bonus icon
+        $condition_for_excluding_bonus = "";
+        $without_bonus = self::getGameStateValue('without_bonus');
+        if ($without_bonus == 1) {
+            $condition_for_excluding_bonus = "AND (spot_1 IS NULL OR spot_1 < 101) AND (spot_2 IS NULL OR spot_2 < 101) AND (spot_3 IS NULL OR spot_3 < 101) AND (spot_4 IS NULL OR spot_4 < 101) AND (spot_5 IS NULL OR spot_5 < 101) AND (spot_6 IS NULL OR spot_6 < 101)";
+        }
         
         if (self::getGameStateValue('splay_direction') == -1 && $location_from == 'board') {
             // Only the active card can be selected
@@ -5889,6 +5924,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
                     {condition_for_including_relic}
+                    {condition_for_including_bonus}
+                    {condition_for_excluding_bonus}
             ",
                 array(
                     'condition_for_owner' => $condition_for_owner,
@@ -5903,7 +5940,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id,
-                    'condition_for_including_relic' => $condition_for_including_relic
+                    'condition_for_including_relic' => $condition_for_including_relic,
+                    'condition_for_including_bonus' => $condition_for_including_bonus,
+                    'condition_for_excluding_bonus' => $condition_for_excluding_bonus
                 )
             ));
         }
@@ -5927,6 +5966,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_requiring_id}
                     {condition_for_excluding_id}
                     {condition_for_including_relic}
+                    {condition_for_including_bonus}
+                    {condition_for_excluding_bonus}
             ",
                 array(
                     'condition_for_owner' => $condition_for_owner,
@@ -5941,7 +5982,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'condition_for_splay' => $condition_for_splay,
                     'condition_for_requiring_id' => $condition_for_requiring_id,
                     'condition_for_excluding_id' => $condition_for_excluding_id,
-                    'condition_for_including_relic' => $condition_for_including_relic
+                    'condition_for_including_relic' => $condition_for_including_relic,
+                    'condition_for_including_bonus' => $condition_for_including_bonus,
+                    'condition_for_excluding_bonus' => $condition_for_excluding_bonus
                 )
             ));
         }
