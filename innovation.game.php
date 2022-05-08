@@ -2842,7 +2842,7 @@ class Innovation extends Table
             $achievement = self::getCardInfo($achievement_id);
 
             // Check if it's already been claimed or if it's removed from the game.
-            if ($achievement['owner'] != 0 || $achievement['location'] = 'removed') {
+            if ($achievement['owner'] != 0 || $achievement['location'] == 'removed') {
                 continue;
             }
             
