@@ -1,6 +1,6 @@
 <?php
 
-namespace Innovation\Tests;
+namespace Unit;
 
 class GameInfosTest extends BaseTest
 {

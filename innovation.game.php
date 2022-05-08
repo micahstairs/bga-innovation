@@ -18,7 +18,7 @@
 
 
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
-require_once('modules/Utils/Strings.php');
+require_once('modules/Innovation/Utils/Strings.php');
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
@@ -3481,7 +3481,7 @@ class Innovation extends Table
     {
         $name1 = $this->getCardName($card1['id']);
         $name2 = $this->getCardName($card2['id']);
-        return Utils\Strings::doesStringComeBefore($name1, $name2);
+        return \Innovation\Utils\Strings::doesStringComeBefore($name1, $name2);
     }
     
     function getColorsOfRepeatedValueOfTopCardsOnBoard($player_id) {

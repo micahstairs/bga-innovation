@@ -1,6 +1,6 @@
 <?php
 
-namespace Innovation;
+namespace Helpers;
 
 trait TestHelpers
 {
