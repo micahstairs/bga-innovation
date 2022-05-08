@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         run: composer install -n --prefer-dist
       - name: Run Tests
-        run: ./vendor/bin/phpunit --coverage-text
+        run: env CI=1 ./vendor/bin/phpunit --coverage-text

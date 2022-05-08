@@ -26,6 +26,8 @@ class StringsTest extends BaseTest
             ['aaa', 'a11', false], # second numbers over letters
             ['A Big Card', 'ABC Card', false], # spaces _after_ letters
             ['Code of Laws', 'Pottery', true], # Real example
+            ['Sailing', 'São Paulo', true], # accents ignored
+            ['São Paulo', 'Satellites', true], # accents ignored
         ];
     }
 }

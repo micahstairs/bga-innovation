@@ -68,7 +68,8 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
         ".DS_Store",
         "misc/",
         "node_modules",
-        "package-lock.json"
+        "package-lock.json",
+        "vendor/"
     ],
     "syncOption": {
         "skipCreate": false,

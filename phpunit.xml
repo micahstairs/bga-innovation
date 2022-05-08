@@ -5,4 +5,7 @@
             <directory>tests/Unit</directory>
         </testsuite>
     </testsuites>
+    <php>
+        <env name="CI" value="0"/>
+    </php>
 </phpunit>
