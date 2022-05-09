@@ -15,7 +15,7 @@ $gameinfos = [
 'publisher' => 'Asmadi Games',
 
 // Url of game publisher website
-'publisher_website' => 'http://www.asmadigames.com/',   
+'publisher_website' => 'https://asmadigames.com/',
 
 // Board Game Geek ID of the publisher
 'publisher_bgg_id' => 5407,
@@ -23,9 +23,8 @@ $gameinfos = [
 // Board game geek if of the game
 'bgg_id' => 63888,
 
-
 // Players configuration that can be played (ex: 2 to 4 players)
-'players' => array(2, 3, 4),    
+'players' => [2, 3, 4],
 
 // Suggest players to play with this number of players. Must be null if there is no such advice, or if there is only one possible player configuration.
 'suggest_player_number' => null,

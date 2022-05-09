@@ -13,6 +13,9 @@ In order to test changes to the game, you need to be able to copy the code out o
 - Install PHP (https://windows.php.net/download#php-7.3).
 - Install SASS (https://sass-lang.com/install) - only needed if you are going to make changes to the SCSS
 - Install VSCode (https://code.visualstudio.com/download)
+- Install composer for PHP (https://getcomposer.org/)
+
+Once the project is checked out, run `composer install` to pull the dependencies (mainly for unit testing).
 
 #### Setting up your branch
 In order to submit changes to this repository you will need to eventually submit a pull request with your changes. This means you need to have your own local branch. Before running the following commands, make sure you are on the branch of this repository that you want to diverge from (e.g. `main-dev`) and that you have called `git pull` so that you have the latest changes.
@@ -65,7 +68,12 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
         ".DS_Store",
         "misc/",
         "node_modules",
-        "package-lock.json"
+        "package-lock.json",
+        "vendor/",
+        "composer.json",
+        "composer.lock",
+        "phpunit.xml",
+        "tests/"
     ],
     "syncOption": {
         "skipCreate": false,
@@ -90,3 +98,8 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
         ]
     ```
  
+## Testing
+
+We use [phpunit](https://phpunit.de/) for testing, and you can view those tests in the `tests/` folder.
+
+To run the tests, simply run: `./vendor/bin/phpunit`
