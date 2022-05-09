@@ -11833,7 +11833,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 }
                 break;
-            
+
+            // id 343, Echoes age 1: Flute
+            case "343E1":
+                $step_max = 1;
+                break;
+
+            case "343D1":
+                $step_max = 1;
+                break;
+
+            case "343N1":
+                //  "Draw and reveal a 1."
+                $card = self::executeDraw($player_id, 1, 'revealed');
+                self::transferCardFromTo($card, $player_id, 'hand');
+                if (count(self::getBonusIcons($card)) > 0) {
+                    // "If it has a bonus, draw a 1."
+                    self::executeDraw($player_id, 1, 'hand');
+                }
+                break;
+                
             // id 346, Echoes age 2: Linguistics
             case "346N1":
                 $vis_bonuses = array_unique(self::getVisibleBonusesOnBoard($player_id));
@@ -16556,6 +16575,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'score_keyword' => true,
             );            
             break;
+
+        // id 343, Echoes age 1: Flute
+        case "343E1A":
+            // "You may splay any one color of your cards"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'splay_direction' => 1 /* left */
+            );
+            break;
+
+        case "343D1A":
+            // "I demand you return a card with a bonus from your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'with_bonus' => true,
+            );            
+            break;
             
         // id 346, age 2: Linguistics          
         case "346N1A":
@@ -18385,6 +18432,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1); // select a card
                     }
                     break; 
+
+                // id 343, Echoes age 1: Flute
+                case "343D1A":
+                    if ($n == 0) {
+                        // No cards returned, so reveal hand.
+                        self::revealHand($player_id);
+                    }
+                    break;
                     
                 // id 346, Echoes age 2: Linguistics
                 case "346N1A":
