@@ -69,7 +69,11 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
         "misc/",
         "node_modules",
         "package-lock.json",
-        "vendor/"
+        "vendor/",
+        "composer.json",
+        "composer.lock",
+        "phpunit.xml",
+        "tests/"
     ],
     "syncOption": {
         "skipCreate": false,
