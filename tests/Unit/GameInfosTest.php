@@ -4,7 +4,7 @@ namespace Unit;
 
 class GameInfosTest extends BaseTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->config = $this->loadGameInfo();

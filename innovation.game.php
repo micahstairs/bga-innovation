@@ -18,13 +18,18 @@
 
 
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
+require_once('modules/Innovation/Utils/Arrays.php');
 require_once('modules/Innovation/Utils/Strings.php');
+require_once('modules/Innovation/GameState.php');
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
 
 class Innovation extends Table
 {
+    /** @var \Innovation\GameState An inverted control structure for accessing game state in a testable manner */
+    private \Innovation\GameState $innovationGameState;
+
     function __construct()
     {
         // Your global variables labels:
@@ -34,6 +39,7 @@ class Innovation extends Table
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
+        $this->innovationGameState = new \Innovation\GameState($this);
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -181,7 +187,7 @@ class Innovation extends Table
             }
         }
 
-        if (self::getGameStateValue('release_version') == 0) {
+        if ($this->innovationGameState->get('release_version') == 0) {
             self::initGameStateLabels(array(
                 'card_id_1' => 69,
                 'card_id_2' => 70,
@@ -427,7 +433,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('release_version', 1);
 
         // Init global values with their initial values
-        self::setGameStateValue('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
+        $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
         
         // Number of achievements needed to win: 6 with 2 players, 5 with 3 players, 4 with 4 players and 6 for team game
         $number_of_achievements_needed_to_win = $individual_game ? 8 - count($players) : 6;
