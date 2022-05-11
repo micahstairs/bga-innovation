@@ -66,6 +66,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
         ".vscode",
         ".git",
         ".DS_Store",
+        ".phpunit.result.cache",
         "misc/",
         "node_modules",
         "package-lock.json",
