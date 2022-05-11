@@ -2436,10 +2436,10 @@ $this->textual_card_infos = array(
 
 347 => array('name' => clienttranslate('Crossbow'),
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a bonus from your hand to my score pile!'),
-    'non_demand_effect_1' => null,
+    'non_demand_effect_1' => clienttranslate('Transfer a card from your hand to any other player\'s board.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
-    'echo_effect_1' => clienttranslate('Draw and foreshadow a ${age_2}.'),
+    'echo_effect_1' => null,
     'achievement_name' => null,
     'condition_for_claiming' => null,
     'alternative_condition_for_claiming' => null),  
