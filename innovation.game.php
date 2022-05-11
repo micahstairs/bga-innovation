@@ -1891,6 +1891,30 @@ class Innovation extends Table
             array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
 
+    // This function reveals cards that can possibly have a bonus.  It is meant to conceal
+    // cards that otherwise cannot fulfill a requirement of having a bonus.
+    function revealHandPossibleBonusOnly($player_id) {
+        $all_cards = self::getCardsInHand($player_id);
+        $cards = array();
+        foreach($all_cards as $card) {
+            // Only city, echoes and figures can have bonuses.  Artifacts and base cards cannot.
+            if ($card['type'] == 2 || $card['type'] == 3 || $card['type'] == 4) {
+                $cards[] = $card;
+            }
+        }
+        
+        if (count($cards) == 0) {
+            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal no cards that can have a bonus.'), ['You' => 'You']);
+            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveal no cards that can have a bonus.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
+            return;
+        }
+        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
+        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal cards that can have a bonus: ${card_list}.'),
+            array_merge($args, ['You' => 'You']));
+        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals cards that can have a bonus: ${card_list}.'),
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+    }
+    
     function revealScorePile($player_id) {
         $cards = self::getCardsInScorePile($player_id);
         if (count($cards) == 0) {
@@ -11927,6 +11951,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1; // --> 1 interaction: see B
                 break;
 
+            // id 347, Echoes age 2: Crossbow
+            case "347D1":
+                if (count(self::getCardsInHand($player_id)) > 0) {
+                    $step_max = 1; // --> 1 interaction: see B
+                }
+                break;
+
+            case "347N1":
+                if (count(self::getCardsInHand($player_id)) > 0) {
+                    $step_max = 1; // --> 1 interaction: see B
+                }
+                break;
+
             // id 348 Echoes age 2: Horseshoes
             case "348E1":
                 // "Draw and foreshadow a 2."
@@ -11954,6 +11991,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            // id 349, Echoes age 2: Glassblowing
+            case "349E1":
+                if (count(self::getCardsInHand($player_id)) > 0) {
+                    $step_max = 1; // --> 1 interaction: see B
+                }
+                break;
+
+            case "349N1":
+                $min_value = 0;
+                $cards = self::getTopCardsOnBoard($player_id);
+                foreach ($cards as $card) {
+                    if ($card['color'] != 2 && $min_value < $card['age']) {
+                        $min_value = $card['age'];
+                    }
+                }
+                // "Draw and foreshadow a card of value three higher than the lowest non-green top card on your board."
+                self::executeDraw($player_id, $min_value + 3, 'forecast');
+                break;
+                
+            // id 352, Echoes age 2: Watermill
+            case "352N1":
+                $step_max = 1;
+                break;
+
             // id 353 Echoes age 2: Pagoda
             case "353N1":
                 // "Draw and reveal a 3."
@@ -11973,6 +12034,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Otherwise, foreshadow the drawn card."
                     self::transferCardFromTo($revealed_card, $player_id, 'forecast');
                 }
+                break;
+
+            // id 354, Echoes age 2: Chaturanga
+            case "354N1":
+                $step_max = 1;
                 break;
                 
             // id 361, Echoes age 3: Deoderant
@@ -16675,6 +16741,37 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'choose_yes_or_no' => true,
             );
             break;
+        
+        // id 347, Echoes age 2: Crossbow
+        case "347D1A":
+            // "I demand you transfer a card with a bonus from your hand to my score pile!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score',
+
+                'with_bonus' => true,
+            );       
+            break;
+
+        case "347N1A":
+            // "Transfer a card from your hand to any other player's board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 'any other player',
+                'location_to' => 'board',
+            );       
+            break;
 
         // id 348, Echoes age 2: Horseshoes
         case "348D1A":
@@ -16691,6 +16788,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'board',
             );
+            break;
+
+        // id 349, Echoes age 2: Glassblowing
+        case "349E1A":
+            // "Score a card with a bonus from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'with_bonus' => true,
+            );       
             break;
         
         // id 351, age 2: Toothbrush          
@@ -16750,6 +16864,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'choose_yes_or_no' => true,
             );
+        
+        // id 352, Echoes age 2: Watermill
+        case "352N1A":
+            // "Tuck a card with a bonus from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'bottom_to' => true,
+
+                'with_bonus' => true,
+            );            
+            break;
+
+        case "352N1B":
+            // "you may return a card from your hand to repeat this dogma effect."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                );
+            break;
 
         // id 353 Echoes age 2: Pagoda
         case "353N1A":
@@ -16768,7 +16915,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'bottom_to' => true,
             );            
-            
+            break;
+
+        // id 354, Echoes age 2: Chaturanga
+        case "354N1A":
+            // "Meld a card with a bonus from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'with_bonus' => true,
+            );            
             break;
             
         // id 434, Echoes age 10: Sudoku
@@ -18512,12 +18675,50 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, 2, 'board');
                     }
                     break;
+
+                // id 349, Echoes age 2: Glassblowing
+                case "349E1A":
+                    if ($n == 0) {
+                        // Reveal a hand with no bonuses
+                        self::revealHandPossibleBonusOnly($player_id);
+                    }
+                    break;
                     
                 // 351, Echoes age 2: Toothbrush
                 case "351N2A":
                     // "you may transfer its bottom card to the available achievements"
                     if (self::getAuxiliaryValue() == 1) { // yes
                         self::executeDraw(0, /*age=*/ 2, 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
+                    }
+                    break;
+
+                // id 352, Echoes age 2: Watermill
+                case "352N1A":
+                    if ($n > 0) {
+                        // "If you do, draw a card of value equal to that card's bonus."
+                        $tucked_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        $bonuses = self::getBonusIcons($tucked_card);
+                        $card = self::executeDraw($player_id, $bonuses[0], 'hand');
+                        
+                        if (self::getBonusIcons($card) > 0) {
+                            // "If the drawn card also has a bonus"
+                            self::incrementStepMax(1); // Add optional repeatable step
+                        }
+                        else {
+                            self::incrementStep(2); // Stop the interactions
+                        }
+                            
+                    }
+                    else {
+                        // Reveal a hand with no bonuses
+                        self::revealHandPossibleBonusOnly($player_id);
+                    }
+                    break;
+
+                case "352N1B":
+                    if ($n > 0) {
+                        // card is returned, go back to step 1
+                        self::incrementStep(-2);
                     }
                     break;  
 
@@ -18528,6 +18729,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($card[0], $player_id, 'board');
                     break;
 
+                // id 354, Echoes age 2: Chaturanga
+                case "354N1A":
+                    if ($n > 0) {
+                        // "If you do, draw a two cards of value equal to that card's bonus."
+                        $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        $bonuses = self::getBonusIcons($melded_card);
+                        self::executeDraw($player_id, $bonuses[0], 'hand');
+                        self::executeDraw($player_id, $bonuses[0], 'hand');
+                    }
+                    else {
+                        // Reveal a hand with no bonuses
+                        self::revealHandPossibleBonusOnly($player_id);
+                        
+                        // "Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board."
+                        self::executeDraw($player_id, count(self::getTopCardsOnBoard($player_id)), 'forecast');
+                    }
+                    break;
+                    
                 // id 434, Echoes age 10: Sudoku
                 case "434N1A":
                     // "Draw and meld a card of any value."
