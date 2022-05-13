@@ -5250,6 +5250,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Execution of actions authorized by server **/
 
+    function executeDrawAndForeshadow($player_id, $age_min = null) {
+        return self::executeDraw($player_id, $age_min, 'forecast');
+    }
+
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
         return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
     }
@@ -8148,7 +8152,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_args_for_player['age'] = self::getAgeSquare(1);
                 $message_args_for_others['age'] = self::getAgeSquare(1);        
                 $message_for_player = clienttranslate('Do ${you} want to transfer the bottom ${age} to the available achievements?');
-                $message_for_others = clienttranslate('${player_name} needs to decide whether to move the bottom ${age} to the available achievements');
+                $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
                 
@@ -8183,7 +8187,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_args_for_player['age'] = self::getAgeSquare(2);
                 $message_args_for_others['age'] = self::getAgeSquare(2);        
                 $message_for_player = clienttranslate('Do ${you} want to transfer the bottom ${age} to the available achievements?');
-                $message_for_others = clienttranslate('${player_name} needs to decide whether to move the bottom ${age} to the available achievements');
+                $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
                 
@@ -11723,7 +11727,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 333, Echoes age 1: Bangle
             case "333N1":
                 //  "Draw and foreshadow a 3"
-                self::executeDraw($player_id, 3, 'forecast');
+                self::executeDrawAndForeshadow($player_id, 3);
                 break;
 
             case "333E1":
@@ -11795,7 +11799,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "339N1":
                 // "If the 1 deck has at least one card"
-                $deck_cards = self::countCardsInLocationKeyedByAge(0, 'deck', 0);
+                $deck_cards = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', /*type=*/ 0);
                 if ($deck_cards[1] > 0) {
                     $step_max = 1;
                 }
@@ -11851,7 +11855,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 342, Echoes age 1: Bell
             case "342N1":
                 //  "Draw and foreshadow a 2."
-                self::executeDraw($player_id, 2, 'forecast');
+                self::executeDrawAndForeshadow($player_id, 2);
                 break;
 
             case "342E1":
@@ -11879,11 +11883,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 348 Echoes age 2: Horseshoes
             case "348E1":
                 // "Draw and foreshadow a 2."
-                self::executeDraw($player_id, 2, 'forecast');
+                self::executeDrawAndForeshadow($player_id, 2);
                 break;
                 
             case "348D1":
-                // Find all colors with cards that don't have castles or factories
+                // Find all colors with cards that don't have towers or factories
                 $colors = array();
                 for ($color = 0; $color < 5; $color++) {
                     $player_top_card = self::getTopCardOnBoard($player_id, $color);
@@ -11897,9 +11901,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($colors) > 0) {
                     $step_max = 1;
                     self::setAuxiliaryValueFromArray($colors);
-                }
-                else {
-                    self::notifyGeneralInfo(clienttranslate('All top cards have ${icon_4} or ${icon_5}, so no transfer will occur.', array('icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5))));
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top cards ${color} cards with a ${icon_4} or ${icon_5}, so no transfer will occur.'), array('You' => 'You', 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All of ${player_name}\'s top cards have ${icon_4} or ${icon_5}, so no transfer will occur.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
                 }
                 break;
 
@@ -11916,8 +11920,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     // Reveal hand to confirm no matching cards are there.
                     self::revealHand($player_id);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${color} cards in your hand.'), array('You' => 'You', 'color' => self::getColorInClear($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${color} cards in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${color} cards in your hand.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${color} cards in his hand.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
                     
                     // "Otherwise, foreshadow the drawn card."
                     self::transferCardFromTo($revealed_card, $player_id, 'forecast');
@@ -11952,12 +11956,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "351N2":
+                // "If the 2 deck has at least one card"
                 $deck_cards = self::countCardsInLocationKeyedByAge(0, 'deck', 0);
                 if ($deck_cards[2] > 0) {
                     $step_max = 1;
                 }
                 break;
  
+            // id 361, Echoes age 3: Deoderant
             case "361E1":
                 // "Draw and meld a 3."
                 self::executeDraw($player_id, 3, 'board');
@@ -16594,7 +16600,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 348, Echoes age 2: Horseshoes
         case "348D1A":
-            // "I demand you transfer a top card without a castle or factory from your board to my board!"
+            // "I demand you transfer a top card without a tower or factory from your board to my board!"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -16605,7 +16611,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'board',
                 'owner_to' => $launcher_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
             );
             break;
         
@@ -16614,7 +16620,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Choose value to tuck.
             $ages = array();
             $cards = self::getCardsInLocationKeyedByAge($player_id, 'hand');
-            for ($age=1; $age < 11; $age++) {
+            for ($age = 1; $age <= 10; $age++) {
                 if (count($cards[$age]) > 0) {
                     $ages[] = $age;
                 }
@@ -16626,7 +16632,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'can_pass' => false,
                 
                 'choose_value' => true,
-                'age' => $ages
+                'age' => $ages,
             );
             break;
             
@@ -16669,7 +16675,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 353 Echoes age 2: Pagoda
         case "353N1A":
-            // "tuck the card from your hand "
+            // "tuck the card from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -18361,7 +18367,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "337N1B":
                     // "For each card returned,"
                     if (self::getAuxiliaryValue2() == 0) {
-                        self::executeDraw($player_id, 3, 'forecast');
+                        self::executeDrawAndForeshadow($player_id, 3);
                     }
                     else {
                         self::executeDraw($player_id, 2, 'board');
@@ -18384,9 +18390,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 339, Echoes age 1: Chopsticks
                 case "339N1A":
-                    // Transfer the bottom 1 to an achievement
+                    // "you may transfer its bottom card to the available achievements"
                     if (self::getAuxiliaryValue() == 1) { // yes
-                        self::executeDraw(0, 1, 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
+                        self::executeDraw(0, /*age=*/ 1, 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
                     }
                     break;  
 
@@ -18409,7 +18415,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (self::getAuxiliaryValue() == 1) {
                         self::executeDraw($player_id, 3, 'hand');
                     } else {
-                        self::executeDraw($player_id, 4, 'forecast');
+                        self::executeDrawAndForeshadow($player_id, 4);
                     }
                     break;  
 
@@ -18423,9 +18429,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // 351, Echoes age 2: Toothbrush
                 case "351N2A":
-                    // Transfer the bottom 2 to an achievement
+                    // "you may transfer its bottom card to the available achievements"
                     if (self::getAuxiliaryValue() == 1) { // yes
-                        self::executeDraw(0, 2, 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
+                        self::executeDraw(0, /*age=*/ 2, 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
                     }
                     break;  
 
