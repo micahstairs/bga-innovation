@@ -1893,28 +1893,37 @@ class Innovation extends Table
             array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
 
-    // This function reveals cards that can possibly have a bonus.  It is meant to conceal
-    // cards that otherwise cannot fulfill a requirement of having a bonus.
+    // This function reveals cards that can possibly have a bonus. It is meant to conceal
+    // cards that otherwise cannot fulfill the requirement of having a bonus.
     function revealHandPossibleBonusOnly($player_id) {
-        $all_cards = self::getCardsInHand($player_id);
-        $cards = array();
-        foreach($all_cards as $card) {
-            // Only city, echoes and figures can have bonuses.  Artifacts and base cards cannot.
+        $cards = self::getCardsInHand($player_id);
+        $cards_to_reveal = array();
+        foreach ($cards as $card) {
+            // Only Cities, Echoes and Figures cards can have bonuses. Artifacts and base cards cannot.
             if ($card['type'] == 2 || $card['type'] == 3 || $card['type'] == 4) {
-                $cards[] = $card;
+                $cards_to_reveal[] = $card;
             }
         }
-        
-        if (count($cards) == 0) {
-            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal no cards that can have a bonus.'), ['You' => 'You']);
-            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveal no cards that can have a bonus.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
-            return;
+
+        // To avoid cluttering the game log, only mention something if there's at least one Cities, Echoes, or Figures card in hand
+        if (count($cards_to_reveal) > 0) {
+            if (count($cards) == 0) {
+                $this->notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in hand from sets that contain bonuses.'), ['You' => 'You']);
+                $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in hand from sets that contain bonuses.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
+            } else if (count($cards_to_reveal) < count($cards)) {
+                $args = ['card_ids' => self::getCardIds($cards_to_reveal), 'card_list' => self::getNotificationArgsForCardList($cards_to_reveal)];
+                $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal: ${card_list}. All other cards in hand are from sets that do not contain any bonus icons.'),
+                    array_merge($args, ['You' => 'You']));
+                $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals: ${card_list}. All other cards in hand are from sets that do not contain any bonus icons.'),
+                    array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+            } else {
+                $args = ['card_ids' => self::getCardIds($cards_to_reveal), 'card_list' => self::getNotificationArgsForCardList($cards_to_reveal)];
+                $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your hand: ${card_list}.'),
+                    array_merge($args, ['You' => 'You']));
+                $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
+                    array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+            }
         }
-        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
-        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal cards that can have a bonus: ${card_list}.'),
-            array_merge($args, ['You' => 'You']));
-        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals cards that can have a bonus: ${card_list}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
     
     function revealScorePile($player_id) {
