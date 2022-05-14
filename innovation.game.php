@@ -3468,7 +3468,6 @@ class Innovation extends Table
         return array_merge($card, $textual_infos);
     }
     
-    // TODO(https://github.com/micahstairs/bga-innovation/issues/331): Remove most call sites.
     function attachTextualInfoToList($card_list) {
         foreach($card_list as &$card) {
             $card = self::attachTextualInfo($card);
@@ -14317,7 +14316,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => false,
                 
-                // TODO(https://github.com/micahstairs/bga-innovation/issues/225): Allow player to pick an integer in 0-999 range instead of 1-10.
+                // TODO(ARTIFACTS#225): Allow player to pick an integer in 0-999 range instead of 1-10.
                 'choose_value' => true
             );
             break;
@@ -15309,7 +15308,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 206, Artifacts age 10: Higgs Boson
         case "206N1A":
             // "Transfer all cards on your board to your score pile"
-            // TODO(ARTIFACTS): Do a bulk transfer (like Fission) instead of moving cards one at a time.
+            // TODO(ARTIFACTS#455): Do a bulk transfer (like Fission) instead of moving cards one at a time.
             $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
             for ($i = 0; $i < 5 ; $i++){
                 $pile = $piles[$i];
