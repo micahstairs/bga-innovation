@@ -4,7 +4,7 @@ namespace Unit;
 
 class GameTest extends BaseTest
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
     }

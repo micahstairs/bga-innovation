@@ -16,7 +16,7 @@
     "ext-pdo_mysql": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6.2.3",
+    "phpunit/phpunit": "^8.5",
     "dholmes/bga-workbench": "^0.2.1"
   },
   "scripts": {
