@@ -8272,8 +8272,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "359N1B":
-                $message_for_player = clienttranslate('${You} must make a choice with your top green card');
-                $message_for_others = clienttranslate('${player_name} must make a choice with his top green card');
+                $message_for_player = clienttranslate('${You} must choose what to do with your top green card');
+                $message_for_others = clienttranslate('${player_name} must choose what to do with his top green card');
                 $options = array(
                                 array('value' => 1, 'text' => self::format(clienttranslate("Return"))),
                                 array('value' => 0, 'text' => self::format(clienttranslate("Achieve")))
@@ -12100,7 +12100,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 355, Echoes age 3: Almanac
             case "355E1":
                 // "Draw and foreshadow a 4."
-                self::executeDraw($player_id, 4, 'forecast');
+                self::executeDrawAndForeshadow($player_id, 4);
                 break;
 
             case "355N1":
@@ -12115,9 +12115,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "356N1":
+                // "You may return three cards of equal value from your hand"
                 $cards_in_hand = self::getCardsInLocationKeyedByAge($player_id, 'hand');
                 $ages_with_3 = array();
-                for ($age = 1; $age < 11; $age++) {
+                for ($age = 1; $age <= 10; $age++) {
                     if (count($cards_in_hand[$age]) >= 3) {
                         $ages_with_3[] = $age;
                     }
@@ -12165,7 +12166,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 359, Echoes age 3: Charitable Trust
             case "359E1":
-                 $step_max = 1;
+                $step_max = 1;
                 break;
 
             case "359N1":
@@ -12176,7 +12177,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "360D1":
                 $cards_in_hand = self::getCardsInLocationKeyedByAge($launcher_id, 'hand');
                 $ages = array();
-                for ($age = 1; $age < 11; $age++) {
+                for ($age = 1; $age <= 10; $age++) {
                     if (count($cards_in_hand[$age]) > 0) {
                         $ages[] = $age;
                     }
@@ -12218,7 +12219,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 2;
                 break;
 
-			// id 363, Echoes age 3: Novel
+            // id 363, Echoes age 3: Novel
             case "363E1":
                 // "Draw a 3"
                 $card = self::executeDraw($player_id, 3, 'hand');
@@ -12254,10 +12255,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 if ($eligible) {
                     self::notifyPlayer($player_id, 'log', 
-                        clienttranslate('${You} have at least one non-purple top card and all top cards have at least one ${icon}.'), 
+                        clienttranslate('${You} have at least one non-purple top card and all your top cards have at least one ${icon}.'), 
                         array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
                     self::notifyAllPlayersBut($player_id, 'log', 
-                        clienttranslate('${player_name} has at least one non-purple top card and all top cards have at least one ${icon}.'), 
+                        clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon}.'), 
                         array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => self::getIconSquare($icon_match)));
                     // "claim the Supremacy achievement."
                     self::claimSpecialAchievement($player_id, 439);
@@ -17117,6 +17118,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "355N1A":
             // "You may return a card from your forecast with a bonus."
             // First reveal the card to prove that it has a bonus.
+            // TODO(ECHOES): Use 'revealed,deck' instead of 'revealed'. For base/Artifacts, we should use 'deck' since
+            // they can never have a bonus on them
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -17149,6 +17152,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "356N1A":
             // "You may return three cards of equal value from your hand."
             // First, select the value to return.
+            // TODO(ECHOES): This would be simpler if players directly chose one of the cards they want to return,
+            // instead of choosing a value first.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -17200,7 +17205,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'score',
 
-                'with_icon' => 4 /* tower */
+                'with_icon' => 4, /* tower */
             );
             break;
 
