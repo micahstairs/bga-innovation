@@ -39,7 +39,7 @@ extract_ellipse()
     magick "${READ_PATH}$1.png" \( +clone -fill Black -colorize 100 -fill White -draw "ellipse ${2}" \) -alpha off -compose CopyOpacity -composite -trim +repage "temp/$3_ellipse.png"
 }
 
-echo "Extracting echoes bonus icons..."
+echo "Extracting echoes circle icons..."
 
 # Extract blue, red, green, yellow, purple bonus circles
 extract_circle "013" "$BOTTOM_LEFT" "1"
@@ -75,7 +75,7 @@ temp/{1..11}_ellipse.png \
 magick montage \
 temp/bonus_circles.png \
 temp/bonus_numbers.png \
--tile 1x2 -geometry +0+0 -background 'none' ../../img/bonus_icons.png
+-tile 1x2 -geometry +0+0 -background 'none' ../../img/circle_icons.png
 
 echo "Cleaning up..."
 
