@@ -1947,7 +1947,9 @@ class Innovation extends Table
             if ($i > 0) {
                 $log = $log.', ';
             }
-            $log = $log."<span class='square N age age_".$card['age']."'>".$card['age']."</span> ";
+            if ($card['age'] != null) {
+                $log = $log."<span class='square N age age_".$card['age']."'>".$card['age']."</span> ";
+            }
             $log = $log.'<span id=\''.uniqid().'\'class=\'card_name card_id_'.$card['id'].'\'>${name_'.$i.'}</span>';
             $args['name_'.$i] = self::getCardName($card['id']);
             $args['i18n'][] = 'name_'.$i;
@@ -2542,7 +2544,7 @@ class Innovation extends Table
 
             case 'hand->forecast':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s forecast.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${your} forecast.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} forecast.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${opponent_name}\'s forecast.');
                 break;
                 
@@ -2633,7 +2635,7 @@ class Innovation extends Table
                 break;  
 
             case 'hand->forecast':
-                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} from ${opponent_name}\'s hand to your forecast.');
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your forecast.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his forecast.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his forecast.');
                 break;  
@@ -6062,7 +6064,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case 'removed':
             return 13;
         case 'forecast':
-            return 13;
+            return 14;
        default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -6873,18 +6875,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($achievement['owner'] == 0 && $achievement['location'] != 'removed') {
             self::transferCardFromTo($achievement, $player_id, 'achievements');
         } else {
-            $card_name = self::getCardName($achievement_id);
-            self::notifyPlayer($player_id, 'log', 
-                clienttranslate('${You} are eligible for the ${card_name} achievement but it has been claimed or removed.'), 
-                array('You' => 'You', 
-                'card_name' => $card_name)
-            );
-            self::notifyAllPlayersBut($player_id, 'log', 
-                clienttranslate('${player_name} is eligible for the ${card_name} achievement but it has been claimed or removed.'), 
-                array(
-                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 
-                    'card_name' => $card_name)
-            );
+            $card_args = self::getNotificationArgsForCardList([$achievement]);
+            self::notifyAll('logWithCardTooltips', clienttranslate('${card} has already been claimed.'), ['card' => $card_args, 'card_ids' => [$achievement_id]]);
         }
     }
     
