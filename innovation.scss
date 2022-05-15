@@ -1232,6 +1232,11 @@
         &.icon_6 {
             background-position-x: -192.5px;
         }
+        // TODO(ECHOES#355): Finish rendering Echo effect. This black box is a placeholder.
+        &.icon_10 {
+            background-color: black;
+            background-image: none;
+        }
         &.color_0 {
             background-position-y: -1px;
         }
