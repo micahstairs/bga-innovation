@@ -1518,6 +1518,10 @@
 .square_card_icon.M.icon_6 {
   background-position-x: -192.5px;
 }
+.square_card_icon.M.icon_10 {
+  background-color: black;
+  background-image: none;
+}
 .square_card_icon.M.color_0 {
   background-position-y: -1px;
 }
