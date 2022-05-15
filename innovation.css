@@ -1573,6 +1573,119 @@
   left: 195px;
 }
 
+.bonus_card_icon {
+  background-image: url("img/bonus_icons.png");
+  position: absolute;
+}
+.bonus_card_icon.M.bonus_value {
+  width: 20px;
+  height: 22px;
+  background-size: 230px auto;
+  background-position-y: -40px;
+}
+.bonus_card_icon.M.bonus_value.top_left_icon {
+  top: 15px;
+  left: 14px;
+}
+.bonus_card_icon.M.bonus_value.bottom_left_icon {
+  bottom: 12px;
+  left: 14px;
+}
+.bonus_card_icon.M.bonus_value.bottom_center_icon {
+  bottom: 12px;
+  left: 79px;
+}
+.bonus_card_icon.M.bonus_value.bottom_right_icon {
+  bottom: 12px;
+  right: 17px;
+}
+.bonus_card_icon.M.bonus_value.top_right_icon {
+  top: 15px;
+  right: 17px;
+}
+.bonus_card_icon.M.bonus_value.top_center_icon {
+  top: 15px;
+  left: 79px;
+}
+.bonus_card_icon.M.bonus_1 {
+  background-position-x: 1px;
+}
+.bonus_card_icon.M.bonus_2 {
+  background-position-x: -21px;
+}
+.bonus_card_icon.M.bonus_3 {
+  background-position-x: -41px;
+}
+.bonus_card_icon.M.bonus_4 {
+  background-position-x: -62px;
+}
+.bonus_card_icon.M.bonus_5 {
+  background-position-x: -83px;
+}
+.bonus_card_icon.M.bonus_6 {
+  background-position-x: -103px;
+}
+.bonus_card_icon.M.bonus_7 {
+  background-position-x: -124px;
+}
+.bonus_card_icon.M.bonus_8 {
+  background-position-x: -145px;
+}
+.bonus_card_icon.M.bonus_9 {
+  background-position-x: -166px;
+}
+.bonus_card_icon.M.bonus_10 {
+  background-position-x: -187px;
+}
+.bonus_card_icon.M.bonus_11 {
+  background-position-x: -208px;
+}
+.bonus_card_icon.M.bonus_color {
+  width: 36px;
+  height: 36px;
+  background-size: 230px auto;
+  background-position-y: -1px;
+}
+.bonus_card_icon.M.bonus_color.top_left_icon {
+  top: 7px;
+  left: 7px;
+}
+.bonus_card_icon.M.bonus_color.bottom_left_icon {
+  bottom: 7px;
+  left: 7px;
+}
+.bonus_card_icon.M.bonus_color.bottom_center_icon {
+  bottom: 7px;
+  left: 73px;
+}
+.bonus_card_icon.M.bonus_color.bottom_right_icon {
+  bottom: 7px;
+  right: 7px;
+}
+.bonus_card_icon.M.bonus_color.top_right_icon {
+  top: 7px;
+  right: 7px;
+}
+.bonus_card_icon.M.bonus_color.top_center_icon {
+  top: 7px;
+  left: 73px;
+}
+.bonus_card_icon.M.color_0 {
+  background-position-x: -1px;
+}
+.bonus_card_icon.M.color_1 {
+  background-position-x: -39px;
+}
+.bonus_card_icon.M.color_2 {
+  background-position-x: -77px;
+}
+.bonus_card_icon.M.color_3 {
+  background-position-x: -115px;
+}
+.bonus_card_icon.M.color_4 {
+  background-position-x: -153px;
+}
+
 /* Hexagon icons take up ~27 % of a real cards width. 
 *  Our cards will shoot for 25 % ->  M.45px
 */

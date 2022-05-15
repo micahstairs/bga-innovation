@@ -7,5 +7,7 @@ img/game_display2.jpg
 node_modules
 package-lock.json
 innovation.css.map
+misc/_mixins.css
+misc/_mixins.css.map
 vendor/
 .phpunit.result.cache
