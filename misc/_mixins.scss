@@ -47,6 +47,9 @@
 @mixin icon-background {
     background-image: url('img/resource_icons.jpg');
 }
+@mixin bonus-background {
+    background-image: url('img/bonus_icons.png');
+}
 @mixin squares-background {
     background-image: url('img/squares.png');
 }
