@@ -1236,8 +1236,8 @@
     }
     &.M {
         width: 36px;
-        background-size: 230px auto;
         height: 36px;
+        background-size: 230px auto;
         &.icon_1 {
             background-position-x: -1px;
         }
@@ -1256,6 +1256,13 @@
         &.icon_6 {
             background-position-x: -192.5px;
         }
+        &.icon_7 {
+            background-image: url("img/cities_special_icons.png");
+            width: 40px;
+            height: 40px;
+            background-position-x: -41px;
+        }
+        // cities_special_icons.png
         // TODO(ECHOES#355): Finish rendering Echo effect. This black box is a placeholder.
         &.icon_10 {
             background-color: black;
@@ -1361,6 +1368,85 @@
         &.top_center_icon {
             top: 25px;
             left: 195px;
+        }
+    }
+}
+
+.city_special_icon {
+    @include m.city-special-icon-background;
+    background-image: url("img/cities_special_icons.png");
+    position: absolute;
+    &.icon_null {
+        display: none;
+    }
+    &.M {
+        width: 40px;
+        height: 40px;
+        background-size: 230px auto;
+        &.icon_7 {
+            background-position-y: -1px;
+        }
+        &.icon_8 {
+            background-position-y: -83px;
+        }
+        &.icon_9 {
+            background-position-y: -124px;
+        }
+        &.icon_11, &.icon_12, &.icon_13 {
+            background-position-y: -42px;
+        }
+        &.icon_12 {
+            transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+        }
+        &.icon_13 {
+            transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+        }
+        &.color_0 {
+            background-position-x: -1px;
+        }
+        &.color_1 {
+            background-position-x: -42px;
+        }
+        &.color_2 {
+            background-position-x: -83px;
+        }
+        &.color_3 {
+            background-position-x: -124px;
+        }
+        &.color_4 {
+            background-position-x: -165px;
+        }
+        &.top_left_icon {
+            top: 5px;
+            left: 5px;
+        }
+        &.bottom_left_icon {
+            bottom: 5px;
+            left: 5px;
+        }
+        &.bottom_center_icon {
+            bottom: 5px;
+            left: 70px;
+        }
+        &.bottom_right_icon {
+            bottom: 5px;
+            right: 5px;
+        }
+        &.top_right_icon {
+            top: 5px;
+            right: 5px;
+        }
+        &.top_center_icon {
+            top: 5px;
+            left: 70px;
         }
     }
 }
