@@ -989,17 +989,19 @@
         }
     }
     &.N {
-        width: 14px;
-        height: 14px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             @include m.icon-background;
             background-size: 92px auto;
             background-position-y: -77px;
+            width: 14px;
+            height: 14px;
         }
         &.age {
 			@include m.square-age;
 			font-size: 11px;
-			line-height: 16px;
+			line-height: 12px;
+			width: 13px;
+			height: 12px;
 		}
         @include m.generate-icon-x-position(1, 6, 0, 15.5px);
     }
