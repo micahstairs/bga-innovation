@@ -1523,8 +1523,8 @@
 }
 .square_card_icon.M {
   width: 36px;
-  background-size: 230px auto;
   height: 36px;
+  background-size: 230px auto;
 }
 .square_card_icon.M.icon_1 {
   background-position-x: -1px;
@@ -1543,6 +1543,12 @@
 }
 .square_card_icon.M.icon_6 {
   background-position-x: -192.5px;
+}
+.square_card_icon.M.icon_7 {
+  background-image: url("img/cities_special_icons.png");
+  width: 40px;
+  height: 40px;
+  background-position-x: -41px;
 }
 .square_card_icon.M.icon_10 {
   background-color: black;
@@ -1648,6 +1654,85 @@
 .square_card_icon.L.top_center_icon {
   top: 25px;
   left: 195px;
+}
+
+.city_special_icon {
+  background-image: url("img/cities_special_icons.png");
+  background-image: url("img/cities_special_icons.png");
+  position: absolute;
+}
+.city_special_icon.icon_null {
+  display: none;
+}
+.city_special_icon.M {
+  width: 40px;
+  height: 40px;
+  background-size: 230px auto;
+}
+.city_special_icon.M.icon_7 {
+  background-position-y: -1px;
+}
+.city_special_icon.M.icon_8 {
+  background-position-y: -83px;
+}
+.city_special_icon.M.icon_9 {
+  background-position-y: -124px;
+}
+.city_special_icon.M.icon_11, .city_special_icon.M.icon_12, .city_special_icon.M.icon_13 {
+  background-position-y: -42px;
+}
+.city_special_icon.M.icon_12 {
+  transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+}
+.city_special_icon.M.icon_13 {
+  transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+}
+.city_special_icon.M.color_0 {
+  background-position-x: -1px;
+}
+.city_special_icon.M.color_1 {
+  background-position-x: -42px;
+}
+.city_special_icon.M.color_2 {
+  background-position-x: -83px;
+}
+.city_special_icon.M.color_3 {
+  background-position-x: -124px;
+}
+.city_special_icon.M.color_4 {
+  background-position-x: -165px;
+}
+.city_special_icon.M.top_left_icon {
+  top: 5px;
+  left: 5px;
+}
+.city_special_icon.M.bottom_left_icon {
+  bottom: 5px;
+  left: 5px;
+}
+.city_special_icon.M.bottom_center_icon {
+  bottom: 5px;
+  left: 70px;
+}
+.city_special_icon.M.bottom_right_icon {
+  bottom: 5px;
+  right: 5px;
+}
+.city_special_icon.M.top_right_icon {
+  top: 5px;
+  right: 5px;
+}
+.city_special_icon.M.top_center_icon {
+  top: 5px;
+  left: 70px;
 }
 
 .bonus_card_icon {
