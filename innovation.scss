@@ -1031,6 +1031,7 @@
 			line-height: 6px;
 			margin-top: -1px;
 			margin-bottom: -1px;
+			border-width: 0.5px;
 		}
 		.font_size_1 &.age, .font_size_2 &.age, .font_size_3 &.age, .font_size_4 &.age {
 			width: 4px;
@@ -1039,14 +1040,12 @@
 			line-height: 4px;
 			margin-top: 0px;
 			margin-bottom: 0px;
-			border: 0.5px solid white;
 		}
 		.font_size_5 &.age {
 			width: 5px;
 			height: 5px;
 			font-size: 4px;
 			line-height: 5px;
-			border: 0.5px solid white;
 		}
         @include m.generate-icon-x-position(1, 6, 0, 8.33px);
     }
