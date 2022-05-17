@@ -1107,10 +1107,28 @@
   border: 1px solid white;
   color: white;
   text-align: center;
-  width: 8px;
-  height: 8px;
-  font-size: 6px;
-  line-height: 8px;
+  width: 6px;
+  height: 6px;
+  font-size: 5px;
+  line-height: 6px;
+  margin-top: -1px;
+  margin-bottom: -1px;
+}
+.font_size_1 .square.M.age, .font_size_2 .square.M.age, .font_size_3 .square.M.age, .font_size_4 .square.M.age {
+  width: 4px;
+  height: 4px;
+  font-size: 3px;
+  line-height: 4px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  border: 0.5px solid white;
+}
+.font_size_5 .square.M.age {
+  width: 5px;
+  height: 5px;
+  font-size: 4px;
+  line-height: 5px;
+  border: 0.5px solid white;
 }
 .square.M.icon_1 {
   background-position-x: 0px;
