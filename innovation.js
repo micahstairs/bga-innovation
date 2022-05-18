@@ -1356,35 +1356,30 @@ function (dojo, declare) {
             dojo.place(div_title, dojo.body());
             
             // Determine the font-size between 1 and 30 which enables to fill the container without overflow
-            var font_size = font_max;
-            var anc_font_size;
             var elementParent = $(tempParentId);
             var element = $(tempId);
-            dojo.addClass(element, 'font_size_' + font_size);
             if (HTML_class === 'card_title') {
                 dojo.addClass(elementParent, HTML_class);
             }
-            var elementWidth;
-            var elementParentWidth;
-            var elementHeight;
-            var elementParentHeight;
-            var doesItFit;
-            do {
-                elementWidth = dojo.position(element).w + width_margin;
-                elementParentWidth = dojo.position(elementParent).w;
-                elementHeight = dojo.position(element).h + height_margin;
-                elementParentHeight = dojo.position(elementParent).h;
-                anc_font_size = font_size;
-                font_size -= 1;
-                dojo.removeClass(element, 'font_size_' + anc_font_size);
+            var font_size = font_max;
+            while (font_size >= 1) {
+                if (font_size < font_max) {
+                    dojo.removeClass(element, 'font_size_' + (font_size + 1));
+                }
                 dojo.addClass(element, 'font_size_' + font_size);
-                doesItFit = font_size > 1 && (elementWidth > elementParentWidth || elementHeight > elementParentHeight)
-
-            } while(doesItFit);
+                var elementWidth = dojo.position(element).w + width_margin;
+                var elementParentWidth = dojo.position(elementParent).w;
+                var elementHeight = dojo.position(element).h + height_margin;
+                var elementParentHeight = dojo.position(elementParent).h;
+                if (elementWidth <= elementParentWidth && elementHeight <= elementParentHeight) {
+                    break;
+                }
+                font_size--;
+            }
             
             // Destroy the piece of HTML used for determination
             dojo.destroy(elementParent);
-            
+
             // Create actual HTML which will be added in tooltip
             return "<div class='" + HTML_class + " " + size + "'><span class='font_size_" + font_size + "'>" + content + "</span></div>";            
         },
@@ -2019,7 +2014,7 @@ function (dojo, declare) {
             var non_demand_effect_2 = card_data.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
             var non_demand_effect_3 = card_data.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
-            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
+            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 7 : 17);
             
             return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
