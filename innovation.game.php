@@ -17127,13 +17127,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
 
-            // TODO(ARTIFACTS,ECHOES,FIGURES): Figure out if we need to make any updates to this logic.
+            // TODO(ECHOES,FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
-                // The player making the decision has hiddden information about the card(s) that other players do not have
+                // The player making the decision has hiddden information about the card(s) that other players do not have.
                 ($location_from == 'hand' || $location_from == 'score') &&
-                // All players can see the number of cards (even in hidden locations) so if there aren't any cards there it's obvious a selection can't be made
+                // All players can see the number of cards (even in hidden locations) so if there aren't any cards there
+                // it's obvious a selection can't be made.
                 self::countCardsInLocation($owner_from, $location_from) > 0 &&
-                // Player is forced to choose a card based on a hidden property (e.g. color or icons)
+                // Player is forced to choose a card based on a hidden property (e.g. color or icons). There are
+                // other hidden properties (has_demand_effect, icon_hash_X) that aren't included here because there
+                // are currently no cards where this would actually matter.
                 ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0);
             
             // There is no selectable card
