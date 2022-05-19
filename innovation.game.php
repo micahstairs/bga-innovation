@@ -15308,7 +15308,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 206, Artifacts age 10: Higgs Boson
         case "206N1A":
             // "Transfer all cards on your board to your score pile"
-            // TODO(ARTIFACTS#455): Do a bulk transfer (like Fission) instead of moving cards one at a time.
             $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
             for ($i = 0; $i < 5 ; $i++){
                 $pile = $piles[$i];
