@@ -1031,24 +1031,22 @@
 .square.basic.icon_action {
   background-position: -48px 0px;
 }
-.square.N {
-  width: 14px;
-  height: 14px;
-}
 .square.N.icon_1, .square.N.icon_2, .square.N.icon_3, .square.N.icon_4, .square.N.icon_5, .square.N.icon_6 {
   background-image: url("img/resource_icons.jpg");
   background-size: 92px auto;
   background-position-y: -77px;
+  width: 14px;
+  height: 14px;
 }
 .square.N.age {
   background-color: black;
   border: 1px solid white;
   color: white;
   text-align: center;
-  padding-right: 1px;
-  padding-left: 1px;
   font-size: 11px;
-  line-height: 16px;
+  line-height: 12px;
+  width: 13px;
+  height: 12px;
 }
 .square.N.icon_1 {
   background-position-x: 0px;
@@ -1109,8 +1107,6 @@
   border: 1px solid white;
   color: white;
   text-align: center;
-  padding-right: 1px;
-  padding-left: 1px;
   width: 8px;
   height: 8px;
   font-size: 6px;
@@ -1148,8 +1144,6 @@
   border: 1px solid white;
   color: white;
   text-align: center;
-  padding-right: 1px;
-  padding-left: 1px;
   font-size: inherit;
   line-height: 19px;
 }
@@ -1176,8 +1170,6 @@
   border: 1px solid white;
   color: white;
   text-align: center;
-  padding-right: 1px;
-  padding-left: 1px;
   width: 14px;
   height: 14px;
   font-size: 12px;
