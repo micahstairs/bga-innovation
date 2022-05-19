@@ -17129,20 +17129,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // TODO(ARTIFACTS,ECHOES,FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
-                ($splay_direction == -1 && ($can_pass || $n_min <= 0)) &&
+                // The player making the decision has hiddden information about the card(s) that other players do not have
                 ($location_from == 'hand' || $location_from == 'score') &&
+                // All players can see the number of cards (even in hidden locations) so if there aren't any cards there it's obvious a selection can't be made
                 self::countCardsInLocation($owner_from, $location_from) > 0 &&
+                // Player is forced to choose a card based on a hidden property (e.g. color or icons)
                 ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0);
             
             // There is no selectable card
             if ($selection_size == 0) {
                 
-                if ($selection_will_reveal_hidden_information) {
+                if (($splay_direction == -1 && ($can_pass || $n_min <= 0)) && $selection_will_reveal_hidden_information) {
                     // The player can pass or stop and the opponents can't know that the player has no eligible card
                     // This can happen for example in the Masonry effect
                     
                     // No automatic pass or stop: the only choice the player will have in client side is to pass/stop
-                    // This way the other players won't get the information that the player was compeled to pass/stop
+                    // This way the other players won't get the information that the player was forced to pass/stop
                     self::trace('preSelectionMove->selectionMove (player has to pass)');
                     $this->gamestate->nextState('selectionMove');
                     return;
@@ -17157,7 +17159,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // There is only one selectable card (and it must be chosen)
             } else if ($selection_size == 1
                     && $enable_autoselection
-                    && !$selection_will_reveal_hidden_information
+                    // Make sure choosing this card won't reveal hidden information (unless its the only card in that location)
+                    && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) == 1)
+                    // The player must choose at least one more card
                     && (($cards_chosen_so_far == 0 && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= 1))) {
                 // The player chooses the card automatically
                 $card = self::getSelectedCards()[0];
