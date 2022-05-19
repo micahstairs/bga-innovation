@@ -2606,15 +2606,15 @@ class Innovation extends Table
         else { // $player_id_is_owner_to
             switch($location_from . '->' . $location_to) {
             case 'board->board':
-                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from {opponent_name}\'s board to your board');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from ${opponent_name}\'s board to your board');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from ${your} board to his board');
-                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from {opponent_name}\'s board to his board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from ${opponent_name}\'s board to his board');
                 break;
                 
             case 'board->hand':
-                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from {opponent_name}\'s board to your hand');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from ${opponent_name}\'s board to your hand');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from ${your} board to his hand');
-                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from {opponent_name}\'s board to his hand');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from ${opponent_name}\'s board to his hand');
                 break;
             
             case 'revealed->board': // Collaboration
