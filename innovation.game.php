@@ -2138,6 +2138,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his hand.');
             break;
+        case 'hand->forecast':
+            $message_for_player = clienttranslate('${You} foreshadow ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+            $message_for_others = clienttranslate('${player_name} foreshadows a ${<}${age}${>} from his hand.');
+            break;
         case 'board->deck':
         case 'board->relics':
         case 'pile->deck': // Skyscrapers
@@ -2265,7 +2269,24 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
             }
             break;
-                
+        case 'forecast->deck':
+            if ($bottom_to) {
+                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+                $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his forecast.');
+            } else {
+                $message_for_player = clienttranslate('${You} topdeck ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+                $message_for_others = clienttranslate('${player_name} topdecks a ${<}${age}${>} from his forecast.');
+            }
+            break;
+        case 'forecast->achievements':
+            $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+            $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his forecast.');
+            break;
+        case 'forecast->revealed':
+            $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>}.');
+            break;
+            
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -2365,6 +2386,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} achieve ${number} ${card} from his hand');
                 break;
+            case 'hand->forecast':
+                $message_for_player = clienttranslate('${You_must} foreshadow ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} foreshadow ${number} ${card} from his hand');
+                break;
             case 'board->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
                 $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
@@ -2438,6 +2463,20 @@ class Innovation extends Table
             case 'pile->deck': // Skyscrapers
                 $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your board');
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his board');
+                break;
+            case 'forecast->deck':
+                if ($bottom_to) {
+                    $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your forecast');
+                    $message_for_others = clienttranslate('${player_must} returns ${number} ${card} from his forecast');
+                }
+                else {
+                    $message_for_player = clienttranslate('${You_must} topdeck ${number} ${card} from your forecast');
+                    $message_for_others = clienttranslate('${player_must} topdecks ${number} ${card} from his forecast');
+                }
+                break;
+            case 'forecast->revealed,deck':
+                $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your forecast');
+                $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his forecast');
                 break;
             default:
                 // This should not happen
@@ -4236,6 +4275,37 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ",
             array('player_id' => $player_id, 'splay_direction' => $splay_direction)
         ), true);
+    }
+
+    function getMinAgeOnBoardTopCards($player_id) {
+        /**
+        Get the age the player is in, that is to say, the minimum age that can be found on his board top cards
+        (0 if the player have no card on his board)
+        **/
+        
+        // Get the min of the age matching the position defined in the sub-request
+        return self::getUniqueValueFromDB(self::format("
+            SELECT
+                COALESCE(MIN(a.faceup_age), 0)
+            FROM
+                card AS a
+            LEFT JOIN
+                (SELECT
+                    color, MAX(position) AS position
+                FROM
+                    card
+                WHERE
+                    owner = {player_id} AND
+                    location = 'board'
+                GROUP BY
+                    color) AS b ON a.color = b.color
+            WHERE
+                a.owner = {player_id} AND
+                a.location = 'board' AND
+                a.position = b.position
+        ",
+            array('player_id' => $player_id)
+       ));
     }
 
     function getMaxAgeOnBoardTopCards($player_id) {
@@ -6115,6 +6185,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'relics';
         case 13:
             return 'removed';
+        case 14:
+            return 'forecast';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -8312,6 +8384,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 array('value' => 1, 'text' => self::format(clienttranslate("Return"))),
                                 array('value' => 0, 'text' => self::format(clienttranslate("Achieve")))
                 );
+                break;
+
+            // id 370, Echoes age 4: Globe
+            case "370N1A":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+                
+            // id 371, Echoes age 4: Barometer
+            case "371N1A":
+                $message_for_player = clienttranslate('Choose a value to draw and foreshadow');
+                $message_for_others = clienttranslate('${player_name} must choose a draw and foreshadow');
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -12278,7 +12362,196 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::claimSpecialAchievement($player_id, 439);
                 }
                 break;
-                                
+
+            // id 365, Echoes age 4: Slide Rule
+            case "365N1":
+                $step_max = 1;
+                break;
+
+            case "365N2":
+                // "Draw a card of value equal to the value of your lowest top card plus the number of colors you have splayed."
+                $age_to_draw = self::getMinAgeOnBoardTopCards($player_id);
+                for($color = 0; $color < 5 ; $color++) {
+                    if (self::getCurrentSplayDirection($player_id, $color) > 0) { // This color is splayed
+                        $age_to_draw++;
+                    }
+                }
+                $card = self::executeDraw($player_id, $age_to_draw, 'hand');
+                break;
+
+            // id 366, Echoes age 4: Telescope
+            case "366E1":
+                // "Draw and foreshadow a 5."
+                self::executeDraw($player_id, 5, 'forecast');
+                break;
+
+            case "366N1":
+                $step_max = 1;
+                break;
+
+            // id 367, Echoes age 4: Kobukson
+            case "367E1":
+                $step_max = 1;
+                break;
+
+            case "367D1":
+                self::setAuxiliaryValue(0);
+                $step_max = 1;
+                break;
+
+            case "367N1":
+                // "For every two cards returned as a result of the demand, draw and tuck a 4."
+                for ($tuck_cards = 0; $tuck_cards < self::getAuxiliaryValue() / 2; $tuck_cards++) {
+                    self::executeDraw($player_id, 4, 'board', /*bottom_to=*/true);
+                }
+                break;
+
+            // id 368, Echoes age 4: Shuriken
+            case "368D1":
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    if ($color != 1) { // non-red
+                        $top_card = self::getTopCardOnBoard($player_id, $color);
+                        if (self::hasRessource($top_card, 4) || self::hasRessource($top_card, 3) ){
+                            $color_array[] = $color; // has a castle or bulb
+                        }
+                    }
+                }
+                if (count($color_array) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($color_array);
+                }
+                break;
+
+            case "368N1":
+                $step_max = 1;
+                break;
+
+            // id 369, Echoes age 4: Chintz
+            case "369N1":
+                self::executeDraw($player_id, 4, 'hand');
+                break;
+
+            case "369N2":
+                if (self::countCardsInLocation($player_id, 'hand') == 1 ) {
+                    self::executeDraw($player_id, 4, 'hand');
+                    self::executeDraw($player_id, 4, 'score');
+                }
+                break;
+
+            // id 370, Echoes age 4: Globe
+            case "370N1":
+                $hand_cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    if (count($hand_cards[$color]) > 0) {
+                        $color_array[] = $color;
+                    }
+                }
+                if (count($color_array) > 0) {
+                    $step_max = 2;
+                    self::setAuxiliaryValueFromArray($color_array);
+                }
+                break;
+
+            // id 371, Echoes age 4: Barometer
+            case "371E1":
+                $step_max = 1;
+                break;
+
+            case "371N1":
+                // Determine what selections will be valid based on the visible bonuses.
+                $all_bonuses = array_unique(self::getVisibleBonusesOnBoard($player_id));
+                
+                if (count($all_bonuses) > 1) {
+                    $age_to_foreshadow = array();
+                    foreach ($all_bonuses as $bonus) {
+                        // TODO: The value here could be as high as 13 with a visible bonus of 11 which would end the game.
+                        // THis could be presented as a game-ending option like with Evolution.
+                        $age_to_foreshadow[] = $bonus + 2;
+                    }
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray(array_unique($age_to_foreshadow));
+                } elseif (count($all_bonuses) == 1) {
+                    self::executeDraw($player_id, $all_bonuses[0] + 2, 'forecast');
+                }
+                break;   
+
+            case "371N2":
+                $step_max = 1;
+                break;   
+
+            // id 372, Echoes age 4: Pencil
+            case "372E1":
+                self::executeDraw($player_id, 5, 'hand');
+                break;
+
+            case "372N1":
+                self::setGameStateValue('card_id_1', -1);
+                self::setGameStateValue('card_id_2', -1);
+                self::setGameStateValue('card_id_3', -1);
+                self::setAuxiliaryValue(0);
+                $step_max = 1;
+                break;
+
+            // id 373, Echoes age 4: Clock
+            case "373E1":
+                $max_stack = 0;
+                for ($color = 0; $color < 5; $color++) {
+                    $color_count = self::countVisibleCards($player_id, $color);
+                    if ($max_stack < $color_count) {
+                        $max_stack = $color_count;
+                    }
+                }
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    $color_count = self::countVisibleCards($player_id, $color);
+                    if ($color_count == $max_stack) {
+                        $color_array[] = $color;
+                    }
+                }
+                $step_max = 1;
+                self::setAuxiliaryValueFromArray($color_array);
+                break;
+
+            // id 374, Echoes age 4: Toilet
+            case "374E1":
+                // "Draw and tuck a 4."
+                self::executeDrawAndTuck($player_id, 4);
+                break;
+            
+            case "374D1":
+                $max_bonus = self::getMaxBonusIconOnBoard($launcher_id);
+                if ($max_bonus > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryValue($max_bonus);
+                } else {
+                    self::notifyPlayer($player_id, 'log', 
+                        clienttranslate('${You} have no bonuses on your board.'), 
+                        array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', 
+                        clienttranslate('${player_name} has no bonuses on their board.'), 
+                        array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+
+                }
+                break;
+
+            case "374N1":
+               $step_max = 1;
+                break;
+
+            case "373D1":
+                $total_clocks = 0;
+                // "I demand you draw and reveal three 10s"
+                for ($i = 1; $i <= 3; $i++) {
+                    $card = self::executeDraw($player_id, 10, 'revealed');
+                    // "total the number of clocks on them"
+                    $total_clocks = $total_clocks + self::countIconsOnCard($card, 6); // clocks
+                }
+                self::setAuxiliaryValue($total_clocks);
+                $step_max = 1;
+                break;
+                
             // id 434, Echoes age 10: Sudoku
             case "434N1":
                 $step_max = 1;
@@ -17133,8 +17406,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "355N1A":
             // "You may return a card from your forecast with a bonus."
             // First reveal the card to prove that it has a bonus.
-            // TODO(ECHOES): Use 'revealed,deck' instead of 'revealed'. For base/Artifacts, we should use 'deck' since
-            // they can never have a bonus on them
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -17143,7 +17414,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
                 'owner_to' => $player_id,
-                'location_to' => 'revealed',
+                'location_to' => 'revealed,deck',
 
                 'with_bonus' => true,
             );
@@ -17329,6 +17600,294 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'splay_direction' => 1 /* left */,
                 'color' => array(4) /* purple */
+            );
+            break;
+
+        // id 365, Echoes age 4: Slide Rule
+        case "365N1A":
+            // "You may splay your yellow cards right."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 2 /* right */,
+                'color' => array(3) /* yellow */
+            );
+            break;
+            
+        // id 366, Echoes age 4: Telescope
+        case "366N1A":
+            // "You may place a card from your forecast on top of its deck."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'forecast',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'bottom_to' => false, // put on top
+            );
+            break;
+
+        case "366N1B":
+            // "achieve a card from your forecast if you meet the requirements to do so."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'forecast',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+                
+                'require_achievement_eligibility' => true,
+            );
+            break;
+
+        // id 367, Echoes age 4: Kobukson
+        case "367E1A":
+            // "Splay left one color on any player's board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => 'any player',
+                'location_from' => 'board',
+                'location_to' => 'none',
+            );
+            break;
+
+        case "367D1A":
+            // "I demand you you return all your top cards with a tower"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'with_icon' => 4, /* tower */
+            );
+            break;
+
+        // id 368, Echoes age 4: Shuriken
+        case "368D1A":
+            // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+
+                'color' => self::getAuxiliaryValueAsArray(), 
+            );
+            break;
+
+        case "368N1A":
+            // "You may splay your purple cards right."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 2 /* right */,
+                'color' => array(4) /* purple */
+            );
+            break;
+
+        // id 370, Echoes age 4: Globe
+        case "370N1A":
+            // Choose color to return
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
+
+                'choose_color' => true,
+                'color' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        case "370N1B": 
+             $options = array(
+                'player_id' => $player_id,
+                'n_min' => 1,
+                'n_max' => 3,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array(self::getAuxiliaryValue()), 
+            );
+            break;
+
+        case "370N1C":
+            // "If you return one, splay any color left; two, right; three, up."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'splay_direction' => self::getAuxiliaryValue(),
+                'color' => array(0,1,2,3,4) /* any color */
+            );
+            break;
+
+        // id 371, Echoes age 4: Barometer
+        case "371E1A":
+             $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'forecast',
+                'owner_to' => $player_id,
+                'location_to' => 'hand',
+
+                'age' => 5, 
+            );
+            break;
+
+        case "371N1A":
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'choose_value' => true,
+                'age' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        case "371N2A":
+             $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'forecast',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;   
+
+        // id 372, Echoes age 4: Pencil
+        case "372N1A":
+            // "You may return up to three cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n_min' => 1,
+                'n_max' => 3,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );            
+            break;
+
+        case "372N1B":
+            // "Foreshadow one of them"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'forecast',
+                
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2,
+                'card_id_3' => $card_id_3,
+            );
+            
+            break;
+
+        case "372N1C":
+            // "return the rest of the drawn cards."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'card_id_1' => $card_id_1,
+                'card_id_2' => $card_id_2,
+                'card_id_3' => $card_id_3,
+            );
+            break;         
+            
+        // id 373, Echoes age 4: Clock
+        case "373E1A":
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 2,
+                'color' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        case "373D1A":
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'revealed',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        // id 374, Echoes age 4: Toilet            
+        case "374D1A":
+            // "I demand you return all cards from your score pile of value matching the highest bonus on my board!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'age' => self::getAuxiliaryValue(),
+            );
+            break;
+
+        case "374N1A":
+            // "'You may return a card in your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
             );
             break;
             
@@ -19139,8 +19698,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do, draw and score a card of value one higher than that bonus."
                     if ($n > 0) {
                         $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
-                        self::transferCardFromTo($card, 0, 'deck'); // after revealing the card, return it.
-                        
                         $bonuses = self::getBonusIcons($card);
                         self::executeDraw($player_id, $bonuses[0] + 1, 'score', false, true);
                     }
@@ -19200,10 +19757,98 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                 
-                // id 362, Echoes age 3: Sandpaper
+                // id 362, Echoes age 3: Sandpaper                   
                 case "362N1A":
                     for ($i = 0; $i < $n; $i++) {
                         self::executeDraw($player_id, 3, 'hand');
+                    }
+                    break;
+                    
+                // id 366, Echoes age 4: Telescope
+                case "366N1A":
+                    // "If you do,"
+                    if ($n > 0) {
+                        self::incrementStepMax(1);
+                    }
+                    break;
+                    
+                // id 367, Echoes age 4: Kobukson
+                case "367E1A":
+                    // "Splay left a color on any player's board"
+                    if ($n > 0) {
+                        $color = self::getGameStateValue('color_last_selected');
+                        $target_player_id = self::getGameStateValue('owner_last_selected');
+                        self::splayLeft($player_id, $target_player_id, $color);
+                    }
+                    break;
+                    
+                case "367D1A":
+                    //"Draw and tuck a 4!"
+                    self::executeDraw($player_id, 4, 'board', /*bottom_to=*/true);
+                    
+                    self::setAuxiliaryValue($n); // track the number of cards returned
+                    break;
+
+                // id 368, Echoes age 4: Shuriken
+                case "368D1A":
+                    // "If you do, draw a 4!"
+                    if ($n > 0) {
+                        self::executeDraw($player_id, 4, 'hand');
+                    }
+                    break;
+
+                // id 370, Echoes age 4: Globe
+                case "370N1B":
+                    // "If you do,"
+                    if ($n > 0) {
+                        self::incrementStepMax(1);
+                        
+                        self::setAuxiliaryValue($n); // determines the splay direction.  If $n=3: up, $n=2: right, $n=1: left
+                    }
+                    break;
+
+                case "370N1C":
+                    // "If you returned at least one card, draw and foreshadow a 6."
+                    self::executeDraw($player_id, 6, 'forecast');
+                    break;
+                
+                // id 372, Echoes age 4: Pencil
+                case "372N1A":
+                    // "If you do,"
+                    if($n > 0) {
+                        // "draw that many cards of value one higher than the highest card you returned."
+                        $max_age_returned = self::getAuxiliaryValue();
+                        for ($card_ctr = 1; $card_ctr <= $n; $card_ctr++) {
+                            $card = self::executeDraw($player_id, $max_age_returned + 1, 'hand');
+                            self::setGameStateValue('card_id_'.$card_ctr, $card['id']);
+                        }
+                        self::incrementStepMax(2); // Add interactions
+                    }
+                    break;
+                    
+                // id 373, Echoes age 4: Clock
+                case "373D1A":
+                    // "Transfer all cards of that value from your hand and score pile to my score pile!"
+                    $age_to_transfer = self::getAuxiliaryValue();
+                    
+                    // TODO(ECHOES): Do a bulk transfer (like Fission) instead of moving cards one at a time.
+            
+                    $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand')[$age_to_transfer];
+                    for ($i=0; $i < count($hand_cards); $i++){
+                        self::transferCardFromTo($hand_cards[$i], $launcher_id, 'score');
+                    }
+
+                    $score_cards = self::getCardsInLocationKeyedByAge($player_id, 'score')[$age_to_transfer];
+                    for ($i=0; $i < count($score_cards); $i++){
+                        self::transferCardFromTo($score_cards[$i], $launcher_id, 'score');
+                    }
+                    break;
+
+                // id 374, Echoes age 4: Toilet
+                case "374N1A":
+                    // "and draw a card of the same value."
+                    if ($n > 0) {
+                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'hand');
                     }
                     break;
                     
@@ -20004,6 +20649,43 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to achieve his top green card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
                 self::setAuxiliaryValue($choice);
+                break;
+
+            // id 370, Echoes age 4: Globe
+            case "370N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+            // id 371, Echoes age 4: Barometer
+            case "371N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                // "Draw and foreshadow a card of value two higher than a bonus on any board."
+                self::executeDraw($player_id, $choice, 'forecast');
+                break;
+                
+            case "371N2A":
+                $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                if ($card['color'] == 0) {
+                    self::transferCardFromTo($card, $player_id, 'revealed');
+                    $card = self::getCardInfo($card['id']);
+                    self::claimSpecialAchievement($player_id, 436); // claim Destiny
+                }
+                // Do the transfer
+                self::transferCardFromTo($card, 0, 'deck');
+                break;
+
+            // id 372, Echoes age 4: Pencil
+            case "372N1A":
+                $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                if ($card['age'] > self::getAuxiliaryValue()) {
+                    self::setAuxiliaryValue($card['age']); // track max age
+                }
+                
+                // Do the transfer
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                 break;
                 
             // id 434, Echoes age 10: Sudoku
