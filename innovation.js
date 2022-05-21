@@ -118,6 +118,9 @@ function (dojo, declare) {
             this.choose_three_colors = null;
             this.first_chosen_color = null;
             this.second_chosen_color = null;
+
+            // Special flag used by Mona Lisa
+            this.choose_integer = null;
             
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
@@ -871,8 +874,9 @@ function (dojo, declare) {
                     
                     break;
                 case 'selectionMove':
-                    this.choose_two_colors = args.args.special_type_of_choice == 5 /* choose_two_colors */;
-                    this.choose_three_colors = args.args.special_type_of_choice == 9 /* choose_three_colors */;
+                    this.choose_two_colors = args.args.special_type_of_choice == 5; // choose_two_colors
+                    this.choose_three_colors = args.args.special_type_of_choice == 9; // choose_three_colors
+                    this.choose_integer = args.args.special_type_of_choice == 11; // choose_non_negative_integer
                     if (args.args.special_type_of_choice == 0) {
                         // Allowed selected cards by the server
                         var visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
@@ -1023,15 +1027,28 @@ function (dojo, declare) {
                 case 'selectionMove':
                     var special_type_of_choice_with_buttons = args.special_type_of_choice != 0 && args.special_type_of_choice != 6 /* rearrange */;
                     var splay_choice = args.splay_direction !== null;
-                    if (special_type_of_choice_with_buttons) {
+                    if (args.special_type_of_choice == 11 /* choose_non_negative_integer */) {
+                        this.addActionButton("decrease_integers", "<<", "action_clickButtonToDecreaseIntegers");
+                        dojo.removeClass("decrease_integers", 'bgabutton_blue');
+                        dojo.addClass("decrease_integers", 'bgabutton_red');
+                        var default_integer = parseInt(args.default_integer);
+                        if (default_integer == 0) {
+                            dojo.byId('decrease_integers').style.display = 'none';
+                        }
+                        for (var i = 0; i < 6; i++) {
+                            this.addActionButton("choice_" + i, default_integer + i, "action_clicForChooseSpecialOption");
+                        }
+                        this.addActionButton("increase_integers", ">>", "action_clickButtonToIncreaseIntegers");
+                        dojo.removeClass("increase_integers", 'bgabutton_blue');
+                        dojo.addClass("increase_integers", 'bgabutton_red');
+                    } else if (special_type_of_choice_with_buttons) {
                         // Add a button for each available options
                         for(var i=0; i<args.options.length; i++) {
                             var option = args.options[i];
                             this.addActionButton("choice_" + option.value, _(option.text), "action_clicForChooseSpecialOption")
                         }
                         var last_button = "choice_" + args.options[args.options.length-1].value;
-                    }
-                    else if (splay_choice) {
+                    } else if (splay_choice) {
                         // Add button for splaying choices
                         for (var i=0; i<args.splayable_colors.length; i++) {
                             if (i > 0) {
@@ -2828,6 +2845,38 @@ function (dojo, declare) {
                              this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );
         },
+
+        action_clickButtonToDecreaseIntegers : function(event) {
+            if (!this.checkAction('choose')) {
+                return;
+            }
+            var current_lowest_integer = parseInt(document.getElementById("choice_0").text);
+            if (current_lowest_integer > 0) {
+                for (var i = 0; i < 6; i++) {
+                    document.getElementById("choice_" + i).text = current_lowest_integer - 1 + i;
+                }
+                if (current_lowest_integer == 1) {
+                    dojo.byId('decrease_integers').style.display = 'none';
+                }
+                dojo.byId('increase_integers').style.display = 'inline-block';
+            }
+        },
+
+        action_clickButtonToIncreaseIntegers : function(event) {
+            if (!this.checkAction('choose')) {
+                return;
+            }
+            var current_lowest_integer = parseInt(document.getElementById("choice_0").text);
+            if (current_lowest_integer < 995) {
+                for (var i = 0; i < 6; i++) {
+                    document.getElementById("choice_" + i).text = current_lowest_integer + 1 + i;
+                }
+                dojo.byId('decrease_integers').style.display = 'inline-block';
+                if (current_lowest_integer == 994) {
+                    dojo.byId('increase_integers').style.display = 'none';
+                }
+            }
+        },
         
         action_clicForChooseSpecialOption : function(event) {
             if(!this.checkAction('choose')){
@@ -2848,9 +2897,7 @@ function (dojo, declare) {
                 }
                 choice = Math.pow(2,this.first_chosen_color) + Math.pow(2,choice); // Set choice as encoded value for the array of the two chosen colors
                 this.first_chosen_color = null;
-            }
-
-           if (this.choose_three_colors) {
+            } else if (this.choose_three_colors) {
                 if (this.first_chosen_color === null) {
                     this.first_chosen_color = choice;
                     dojo.destroy(event.target); // Destroy the button
@@ -2870,6 +2917,8 @@ function (dojo, declare) {
                 choice = Math.pow(2,this.second_chosen_color) + Math.pow(2,this.first_chosen_color) + Math.pow(2,choice); // Set choice as encoded value for the array of the three chosen colors
                 this.first_chosen_color = null;
                 this.second_chosen_color = null;
+            } else if (this.choose_integer) {
+                choice = parseInt(document.getElementById(HTML_id).text);
             }
            
             this.deactivateClickEvents();
