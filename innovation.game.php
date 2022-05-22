@@ -5121,7 +5121,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function setSelectionRange($options) {
         // TODO(LATER): Deprecate and remove 'choose_opponent' and 'choose_opponent_with_fewer_points' and use 'choose_player' instead.
-        $possible_special_types_of_choice = array('choose_opponent', 'choose_opponent_with_fewer_points', 'choose_value', 'choose_color', 'choose_two_colors', 'choose_three_colors', 'choose_player', 'choose_rearrange', 'choose_yes_or_no', 'choose_type');
+        $possible_special_types_of_choice = [
+            'choose_opponent',
+            'choose_opponent_with_fewer_points',
+            'choose_value',
+            'choose_color',
+            'choose_two_colors',
+            'choose_three_colors',
+            'choose_player',
+            'choose_rearrange',
+            'choose_yes_or_no',
+            'choose_type',
+            'choose_non_negative_integer',
+        ];
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
@@ -5692,10 +5704,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 7;
         case 'choose_type':
             return 8;
-       case 'choose_three_colors':
+        case 'choose_three_colors':
             return 9;
         case 'choose_player':
             return 10;
+        case 'choose_non_negative_integer':
+            return 11;
         }
     }
     
@@ -5721,6 +5735,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'choose_three_colors';
         case 10:
             return 'choose_player';
+        case 11:
+            return 'choose_non_negative_integer';
         }
     }
     
@@ -6733,6 +6749,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 break;
+            case 'choose_non_negative_integer':
+                if (!ctype_digit($choice) || $choice < 0 || $choice > 1000) {
+                    self::throwInvalidChoiceException();
+                }
+                break;
             case 'choose_color':
                 if (self::getGameStateValue('release_version') >= 1) {
                     if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
@@ -7417,6 +7438,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $options[] = array('value' => $age, 'text' => self::getAgeSquare($age));
                 }
                 break;
+            case 'choose_non_negative_integer':
+                // Nothing
+                $options = null;
+                break;
             case 'choose_color':
             case 'choose_two_colors':
             case 'choose_three_colors':
@@ -7589,13 +7614,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
  
             // id 152, Artifacts age 5: Mona Lisa
             case "152N1A":
-                $message_for_player = clienttranslate('Choose a number');
-                $message_for_others = clienttranslate('${player_name} must choose a number');
+                $message_for_player = clienttranslate('Choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
                 
             case "152N1B":
-                $message_for_player = clienttranslate('Choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
+                $message_for_player = clienttranslate('Choose a number');
+                $message_for_others = clienttranslate('${player_name} must choose a number');
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
@@ -7690,6 +7715,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'message_for_others' => array('i18n' => array('log'), 'log' => $message_for_others, 'args' => $message_args_for_others),
                 'player_name' => $player_name
             ), $card_names);
+
+            if ($special_type_of_choice == 11 /* choose_non_negative_integer */) {
+                $args['default_integer'] = self::getAuxiliaryValue(); 
+            }
             
             return $args;
         }
@@ -14309,26 +14338,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         // id 152, Artifacts age 4: Mona Lisa
-        case "152N1A":    
-            // "Choose a number"
+        case "152N1A":
+            // Choose a color
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                // TODO(ARTIFACTS#225): Allow player to pick an integer in 0-999 range instead of 1-10.
-                'choose_value' => true
+                'choose_color' => true,
             );
             break;
 
         case "152N1B":
-            // "and a color"
+            // Help the UI pick a reasonable default for the integer selection
+            $chosen_color = self::getAuxiliaryValue2();
+            $cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
+            self::setAuxiliaryValue(count($cards[$chosen_color]));
+
+            // Choose a number
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
-                'choose_color' => true
+                'choose_non_negative_integer' => true,
             );
             break;
 
@@ -14341,7 +14374,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => 0,
-                'location_to' => 'deck'
+                'location_to' => 'deck',
             );
             break;
             
@@ -17630,15 +17663,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 152, Artifacts age 5: Mona Lisa
             case "152N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the number ${n}.'), array('You' => 'You', 'n' => $choice));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the number ${n}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $choice));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            case "152N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue2($choice);
+                break;
+
+            case "152N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the number ${n}.'), array('You' => 'You', 'n' => $choice));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the number ${n}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $choice));
+                self::setAuxiliaryValue($choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
