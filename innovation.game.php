@@ -7060,6 +7060,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     WHERE
                         {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
                         AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
+                        AND player_eliminated = 0
                 ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         } else if (self::getDemandEffect($card['id']) !== null) { 
             $dogma_effect_info['players_executing_i_demand_effects'] =
@@ -7071,12 +7072,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         WHERE
                             {col} < {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
                             AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
+                            AND player_eliminated = 0
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
         if (self::getNonDemandEffect($card['id'], 1) !== null) {
             $dogma_effect_info['players_executing_non_demand_effects'] =
                 self::getObjectListFromDB(self::format("
-                        SELECT player_id FROM player WHERE player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                        SELECT
+                            player_id
+                        FROM
+                            player
+                        WHERE
+                            player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                            AND player_eliminated = 0
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
 
