@@ -2174,6 +2174,7 @@ function (dojo, declare) {
                 this.createAndAddToZone(zone_to, card.position_to, card.age, card.type, card.is_relic, id_to, this.getCardHTMLId(id_from, card.age, card.type, card.is_relic, zone_from.HTML_class), card);
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
             }
+            this.updateDeckOpacities();
         },
         
         addToZone: function (zone, id, position, age, type, is_relic) {
@@ -2246,6 +2247,8 @@ function (dojo, declare) {
                     dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
                 }
             }
+
+            this.updateDeckOpacities();
         },
         
         removeFromZone: function (zone, id, destroy, age, type, is_relic) {
@@ -2294,6 +2297,8 @@ function (dojo, declare) {
                     dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
                 }
             }
+
+            this.updateDeckOpacities();
         },
         
         shrinkZoneForNoneOrUpSplay : function(zone) {
@@ -2348,6 +2353,19 @@ function (dojo, declare) {
                 var y = parseInt(i / 3) * (h + 5);
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h};
+            }
+        },
+
+        // Reduce opacity of expansion decks if the accompanying base deck is empty.
+        updateDeckOpacities : function() {
+            for (var a = 1; a <= 10; a++) {
+                var opacity = document.getElementById(`deck_0_${a}`).childElementCount > 0 ? 1.0 : 0.35;
+                for (var t = 1; t <= 4; t++) {
+                    var deck = document.getElementById(`deck_${t}_${a}`);
+                    if (deck != null) {
+                        deck.parentElement.style.opacity = opacity;
+                    }
+                }
             }
         },
         
