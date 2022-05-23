@@ -12387,8 +12387,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "367N1":
                 // "For every two cards returned as a result of the demand, draw and tuck a 4."
-                for ($tuck_cards = 0; $tuck_cards < self::getAuxiliaryValue() / 2; $tuck_cards++) {
-                    self::executeDraw($player_id, 4, 'board', /*bottom_to=*/true);
+                $num_cards_to_draw_and_tuck =  self::getAuxiliaryValue() / 2;
+                for ($i = 0; $i < $num_cards_to_draw_and_tuck; $i++) {
+                    self::executeDrawAndTuck($player_id, 4);
                 }
                 break;
 
@@ -12399,7 +12400,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($color != 1) { // non-red
                         $top_card = self::getTopCardOnBoard($player_id, $color);
                         if (self::hasRessource($top_card, 4) || self::hasRessource($top_card, 3) ){
-                            $color_array[] = $color; // has a castle or bulb
+                            $color_array[] = $color; // has a tower or bulb
                         }
                     }
                 }
@@ -12457,8 +12458,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($all_bonuses) > 1) {
                     $age_to_foreshadow = array();
                     foreach ($all_bonuses as $bonus) {
-                        // TODO: The value here could be as high as 13 with a visible bonus of 11 which would end the game.
-                        // THis could be presented as a game-ending option like with Evolution.
+                        // TODO(ECHOES#472): The value here could be as high as 13 with a visible bonus of 11
+                        // which would end the game. This could be presented as a game-ending option like with Evolution.
                         $age_to_foreshadow[] = $bonus + 2;
                     }
                     $step_max = 1;
@@ -12521,7 +12522,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         clienttranslate('${You} have no bonuses on your board.'), 
                         array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', 
-                        clienttranslate('${player_name} has no bonuses on their board.'), 
+                        clienttranslate('${player_name} has no bonuses on his board.'), 
                         array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
 
                 }
@@ -19804,7 +19805,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 case "367D1A":
                     //"Draw and tuck a 4!"
-                    self::executeDraw($player_id, 4, 'board', /*bottom_to=*/true);
+                    self::executeDrawAndTuck($player_id, 4);
                     
                     self::setAuxiliaryValue($n); // track the number of cards returned
                     break;
@@ -19829,7 +19830,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 case "370N1C":
                     // "If you returned at least one card, draw and foreshadow a 6."
-                    self::executeDraw($player_id, 6, 'forecast');
+                    self::executeDrawAndForeshadow($player_id, 6);
                     break;
 
                 // id 371, Echoes age 4: Barometer
@@ -19848,9 +19849,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if($n > 0) {
                         // "draw that many cards of value one higher than the highest card you returned."
                         $max_age_returned = self::getAuxiliaryValue();
-                        for ($card_ctr = 1; $card_ctr <= $n; $card_ctr++) {
+                        for ($i = 1; $i <= $n; $i++) {
                             $card = self::executeDraw($player_id, $max_age_returned + 1, 'hand');
-                            self::setGameStateValue('card_id_'.$card_ctr, $card['id']);
+                            self::setGameStateValue('card_id_'.$i, $card['id']);
                         }
                         self::incrementStepMax(2); // Add interactions
                     }
@@ -19861,15 +19862,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer all cards of that value from your hand and score pile to my score pile!"
                     $age_to_transfer = self::getAuxiliaryValue();
                     
-                    // TODO(ECHOES): Do a bulk transfer (like Fission) instead of moving cards one at a time.
-            
                     $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand')[$age_to_transfer];
-                    for ($i=0; $i < count($hand_cards); $i++){
+                    for ($i = 0; $i < count($hand_cards); $i++) {
+                        // TODO(ECHOES): There is a bug here. The card's state may be stale, leading to UI bugs.
                         self::transferCardFromTo($hand_cards[$i], $launcher_id, 'score');
                     }
 
                     $score_cards = self::getCardsInLocationKeyedByAge($player_id, 'score')[$age_to_transfer];
-                    for ($i=0; $i < count($score_cards); $i++){
+                    for ($i = 0; $i < count($score_cards); $i++) {
+                        // TODO(ECHOES): There is a bug here. The card's state may be stale, leading to UI bugs.
                         self::transferCardFromTo($score_cards[$i], $launcher_id, 'score');
                     }
                     break;
