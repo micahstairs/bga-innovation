@@ -7933,7 +7933,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_args['with_icon'] = '';
         $card_args['with_demand'] = '';
 
-        // TODO(ARTIFACTS): Figure out if we need to make any changes here to handle Battleship Yamato properly.
         if ($age_min != 1 || $age_max != 10) {
             if ($age_min == $age_max) {
                 $of_age_log = clienttranslate(' of value ${<}${age_min}${>}');
