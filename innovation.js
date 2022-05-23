@@ -1054,7 +1054,7 @@ function (dojo, declare) {
                             if (i > 0) {
                                 dojo.place("<span class='extra_text'> ,</span>", "splay_" + args.splayable_colors[i-1], "after")
                             }
-                            this.addActionButton("splay_" + args.splayable_colors[i], dojo.string.substitute(_("Splay your ${cards} ${direction}"), {'cards': args.splayable_colors_in_clear[i], 'direction': args.splay_direction_in_clear}), "action_clicForSplay")
+                            this.addActionButton("splay_" + args.splayable_colors[i], dojo.string.substitute(_("Splay your ${cards} ${direction}"), {'cards': _(args.splayable_colors_in_clear[i]), 'direction': _(args.splay_direction_in_clear)}), "action_clicForSplay")
                         }
                         var last_button = "splay_" + args.splayable_colors[args.splayable_colors.length-1];
                     }

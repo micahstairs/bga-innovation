@@ -7836,7 +7836,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'message_for_player' => ['i18n' => ['log'], 'log' => $you_must, 'args' => ['You' => 'You']],
                     'message_for_others' => ['i18n' => ['log'], 'log' => $player_must, 'args' => ['player_name' => $player_name]],
                     'splayable_colors' => $splayable_colors,
-                    'splayable_colors_in_clear' => $splayable_colors_in_clear
+                    'splayable_colors_in_clear' => $splayable_colors_in_clear,
                 ];
                 $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
             }
@@ -7890,6 +7890,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $args['i18n'][] = 'card_name';
         $args['i18n'][] = 'splay_direction_in_clear';
+        $args['i18n'][] = 'splayable_colors_in_clear';
         
         return $args;
     }
@@ -10663,11 +10664,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 //  "Draw and score a card of value equal to the number of cards of that color visible on your board"
                 $visible_card_count = self::countVisibleCards($player_id, $card['color']);
                 self::notifyPlayer($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${your} board.'), array(
+                    'i18n' => array('color'),
                     'number' => $visible_card_count,
                     'color' => self::getColorInClear($card['color']),
                     'your' => 'your')
                 );
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${player_name}\'s board.'), array(
+                    'i18n' => array('color'),
                     'number' => $visible_card_count,
                     'color' => self::getColorInClear($card['color']),
                     'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id))
@@ -10863,10 +10866,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (count($player_ids) == 1) {
                         $single_player_id = $player_ids[0];
                         self::notifyPlayer($single_player_id, 'log', clienttranslate('${You} have the highest top ${color} card.'), array(
+                            'i18n' => array('color'),
                             'You' => 'You',
                             'color' => self::getColorInClear($color)
                         )); 
                         self::notifyAllPlayersBut($single_player_id, 'log', clienttranslate('${player_name} has the highest top ${color} card.'), array(
+                            'i18n' => array('color'),
                             'player_name' => self::getColoredText(self::getPlayerNameFromId($single_player_id), $single_player_id),
                             'color' => self::getColorInClear($color)
                         ));
