@@ -176,10 +176,6 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_6'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
-        // TODO(ARTIFACTS): The following line can be removed in May 2022. This is just to restore ongoing dev and alpha games.
-        self::DbQuery("UPDATE card SET position = 0 WHERE is_relic AND location = 'relics' AND position IS NULL");
-        // TODO(ARTIFACTS): The following line can be removed in May 2022. This is just to restore ongoing alpha games.
-        self::calculateIconHashForAllCards();
         if ($from_version <= 2111030321) {
             $players = self::getCollectionFromDb("SELECT player_id FROM player");
             foreach($players as $player_id => $player) {
