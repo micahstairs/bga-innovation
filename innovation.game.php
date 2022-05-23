@@ -12474,8 +12474,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "371N1":
-                // Determine what selections will be valid based on the visible bonuses.
-                $all_bonuses = array_unique(self::getVisibleBonusesOnBoard($player_id));
+                // Determine what selections will be valid based on the visible bonuses on all boards.
+                $all_player_ids = self::getAllActivePlayerIds();
+                $all_bonuses = array();
+                foreach($all_player_ids as $this_player_id) {
+                    $all_bonuses = array_merge($all_bonuses, self::getVisibleBonusesOnBoard($this_player_id));
+                }
+                $all_bonuses = array_unique($all_bonuses); // only need one selection per visible bonus value
                 
                 if (count($all_bonuses) > 1) {
                     $age_to_foreshadow = array();
@@ -17764,7 +17769,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 371, Echoes age 4: Barometer
         case "371E1A":
-             $options = array(
+            // "Transfer a 5 from your forecast to your hand."
+            $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
@@ -17779,6 +17785,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "371N1A":
+            // "Draw and foreshadow a card of value two higher than a bonus on any board."
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -17790,14 +17797,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "371N2A":
-             $options = array(
+            // "If any were blue,"
+            $options = array(
                 'player_id' => $player_id,
+                'n' => 1,
                 'can_pass' => true,
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
+                
+                'color' => array(0), /* blue */
+            );
+            break;   
+
+        case "371N2B":
+            // "return all cards in your forecast."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'forecast',
                 'owner_to' => 0,
-                'location_to' => 'deck',
+                'location_to' => 'deck',                
             );
             break;   
 
@@ -19838,7 +19862,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you returned at least one card, draw and foreshadow a 6."
                     self::executeDraw($player_id, 6, 'forecast');
                     break;
-                
+
+                // id 371, Echoes age 4: Barometer
+                case "371N2A":
+                    // "if a blue card is returned"
+                    if ($n > 0) {
+                        // Claim the destiny achievement
+                        self::claimSpecialAchievement($player_id, 436);
+                        self::incrementStepMax(1); // Return the rest of the forecast
+                    }
+                    break;
+                    
                 // id 372, Echoes age 4: Pencil
                 case "372N1A":
                     // "If you do,"
@@ -20691,17 +20725,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
                 // "Draw and foreshadow a card of value two higher than a bonus on any board."
                 self::executeDraw($player_id, $choice, 'forecast');
-                break;
-                
-            case "371N2A":
-                $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
-                if ($card['color'] == 0) {
-                    self::transferCardFromTo($card, $player_id, 'revealed');
-                    $card = self::getCardInfo($card['id']);
-                    self::claimSpecialAchievement($player_id, 436); // claim Destiny
-                }
-                // Do the transfer
-                self::transferCardFromTo($card, 0, 'deck');
                 break;
 
             // id 372, Echoes age 4: Pencil
