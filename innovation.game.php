@@ -13878,8 +13878,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
-            $hand_count = self::countCardsInLocation($player_id, 'hand');
-            self::setAuxiliaryValue($hand_count);
             // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
@@ -16317,7 +16315,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 }
                             }
                             
-                            // TODO(ARTIFACTS): Add logging here for both cases (artifact is found and artifact is not found).
                             if (!$artifact_found) {
                                 while (($top_card = self::getTopCardOnBoard($id, $returned_color)) !== null) {   
                                     // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
@@ -16381,8 +16378,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 135, Artifacts age 3: Dunhuang Star Chart
                 case "135N1A":
                     // "Draw a card of value equal to the number of cards returned"
-                    // TODO(ARTIFACTS): See if we can use $n instead of setting the auxiliary value.
-                    self::executeDraw($player_id, self::getAuxiliaryValue());
+                    self::executeDraw($player_id, $n);
                 	break;
 
                 // id 136, Artifacts age 3: Charter of Liberties
