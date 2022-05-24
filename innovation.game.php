@@ -672,7 +672,7 @@ class Innovation extends Table
         $result['number_of_achievements_needed_to_win'] = self::getGameStateValue('number_of_achievements_needed_to_win');
         
         // All boards
-        $result['board'] = self::getAllBoards($players);
+        $result['board'] = self::getBoards(self::getAllPlayerIds());
         
         // Splay state for stacks on board
         $result['board_splay_directions'] = array();
@@ -3723,9 +3723,9 @@ class Innovation extends Table
         return $cards[0];
     }
     
-    function getAllBoards($players) {
+    function getBoards($player_ids) {
         $result = array();
-        foreach($players as $player_id => $player) {
+        foreach ($player_ids as $player_id) {
             $result[$player_id] = self::getCardsInLocationKeyedByColor($player_id, 'board');
         }
         return $result;
@@ -5064,7 +5064,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Get list of the all top cards on the board.
         $top_cards_to_remove = array();
-        $player_ids = self::getAllPlayerIds();
+        $player_ids = self::getAllActivePlayerIds();
         foreach ($player_ids as $player_id) {
             $top_cards_to_remove = array_merge($top_cards_to_remove, self::getTopCardsOnBoard($player_id));
         }
@@ -8549,19 +8549,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Score a 1 for each color present on your board not present on any other player board"
                 // Compute the number of specific colors
                 $number_to_be_scored = 0;
-                $players = self::loadPlayersBasicInfos();
-                $boards = self::getAllBoards($players);
+                $boards = self::getBoards(self::getAllActivePlayerIds());
                 for ($color = 0; $color < 5; $color++) { // Evaluate each color
                     if (count($boards[$player_id][$color]) == 0) { // The player does not have this color => no point
                         continue;
                     }
                     // The player has this color, do opponents have?
                     $color_on_opponent_board = false;
-                    foreach($players as $other_player_id => $player) {
-                        if ($other_player_id == $player_id || $other_player_id == self::getPlayerTeammate($player_id)) {
-                            continue; // Skip the player being evaluated and his teammate
-                        }
-                        if (count($boards[$other_player_id][$color]) > 0) { // This opponent has this color => no point
+                    foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                        if (count($boards[$opponent_id][$color]) > 0) { // This opponent has this color => no point
                             $color_on_opponent_board = true;
                             break;
                         }
@@ -8679,9 +8675,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "17N1":
-                $boards = self::getAllBoards(self::loadPlayersBasicInfos());
+                $boards = self::getBoards(self::getAllActivePlayerIds());
                 $eligible = true;
-                foreach($boards as $current_id => $board) {
+                foreach ($boards as $current_id => $board) {
                     if ($current_id == self::getPlayerTeammate($player_id)) { // Ignore teammate
                         continue;
                     }
@@ -9752,15 +9748,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "100N2":
-                $players = self::loadPlayersBasicInfos();
                 $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
                 $most_achievements = true;
-                foreach ($players as $other_player_id => $player) {
-                    if ($other_player_id == $player_id || $other_player_id == self::getPlayerTeammate($player_id)) {
-                        continue; // Skip the player being evaluated and his teammate
-                    }
-                    
-                    if (self::getPlayerNumberOfAchievements($other_player_id) >= $number_of_achievements) {
+                foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                    if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
                         $most_achievements = false;
                     }
                 }
@@ -9928,30 +9919,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "103N2":
-                $players = self::loadPlayersBasicInfos();
-                $software_found = false;
-                foreach ($players as $any_player_id => $player) {
-                    $top_blue_card = self::getTopCardOnBoard($any_player_id, 0 /* blue: color of Software*/);
-                    if ($top_blue_card !== null && $top_blue_card['id'] == 96 /* Software */) {
-                        $software_found = true;
-                        break;
-                    }
-                }
-                
-                $robotics_found = false;
-                foreach ($players as $any_player_id => $player) {
-                    $top_red_card = self::getTopCardOnBoard($any_player_id, 1 /* red: color of Robotics*/);
-                    if ($top_red_card !==null && $top_red_card['id'] == 98 /* Robotics */) {
-                        $robotics_found = true;
-                        break;
-                    }
-                }
-                
-                if ($software_found && $robotics_found) { // "If Robotics and Software are top cards on any board"
+                if (self::isTopBoardCard(self::getCardInfo(96)) && self::isTopBoardCard(self::getCardInfo(98))) { // "If Robotics and Software are top cards on any board"
                     self::notifyGeneralInfo(clienttranslate('Robotics and Software are both visible as top cards.'));
                     
                     $min_score = 9999;
-                    foreach($players as $any_player_id => $player) {
+                    foreach(self::getAllActivePlayerIds() as $any_player_id) {
                         $score = self::getPlayerScore($any_player_id);
                         if ($score < $min_score) {
                             $min_score = $score;
@@ -11087,10 +11059,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "If you have the most cards in your score pile, you win"
                 $win_condition_met = true;
                 $cards_in_my_score_pile = self::countCardsInLocation($player_id, 'score');
-                $players = self::loadPlayersBasicInfos();
-                foreach ($players as $id => $player) {
+                foreach (self::getAllActivePlayerIds() as $id) {
                     if ($player_id != $id && self::countCardsInLocation($id, 'score') >= $cards_in_my_score_pile) {
                         $win_condition_met = false;
+                        break;
                     }
                 }
                 if ($win_condition_met) {
@@ -16073,19 +16045,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if (self::getAuxiliaryValue() == 1) { // "If you tucked at least one purple card"
                             self::notifyGeneralInfo(clienttranslate('At least one purple card has been tucked.'));
                             
-                            $players = self::loadPlayersBasicInfos();
-                            foreach($players as $other_player_id => $player) {
-                                if ($other_player_id == $player_id || $other_player_id == self::getPlayerTeammate($player_id)) {
-                                    continue; // Skip the active player and his teammate
-                                }
-                                $ids_of_lowest_cards_in_hand = self::getIdsOfLowestCardsInLocation($other_player_id, 'hand');
-                                foreach($ids_of_lowest_cards_in_hand as $card_id) {
+                            foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                                $ids_of_lowest_cards_in_hand = self::getIdsOfLowestCardsInLocation($opponent_id, 'hand');
+                                foreach ($ids_of_lowest_cards_in_hand as $card_id) {
                                     $card = self::getCardInfo($card_id);
-                                    self::transferCardFromTo($card, $player_id, 'hand'); // "Take all the lowest cards in each other player's hand to your hand" 
+                                    self::transferCardFromTo($card, $player_id, 'hand'); // "Take all the lowest cards in each other opponent's hand into your hand" 
                                 }
                             }
-                        }
-                        else {
+                        } else {
                             self::notifyGeneralInfo(clienttranslate('No purple card has been tucked.'));
                         }
                     }
@@ -16143,12 +16110,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $color = self::getGameStateValue('color_last_selected');
                         $revealed_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         
-                        $players = self::loadPlayersBasicInfos();
-                        foreach($players as $other_player_id => $player) { // "From all other players' boards"
-                            if ($other_player_id == $player_id || $other_player_id == self::getPlayerTeammate($player_id)) { // Ignore the player and his potential teammate
-                                continue;
-                            }
-                            $top_card = self::getTopCardOnBoard($other_player_id, $color);
+                        foreach (self::getActiveOpponentIds($player_id) as $opponent_id) { // "From all other opponents' boards"
+                            $top_card = self::getTopCardOnBoard($opponent_id, $color);
                             if ($top_card !== null) { // If the opponent has indeed a top card of that color on his board
                                 self::transferCardFromTo($top_card, $player_id, 'hand'); // "Take into your hand the top card of that color"
                             }
