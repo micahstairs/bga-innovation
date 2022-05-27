@@ -1302,11 +1302,11 @@
             height: 40px;
             background-position-x: -41px;
         }
-        // cities_special_icons.png
-        // TODO(ECHOES#355): Finish rendering Echo effect. This black box is a placeholder.
+        // TODO(ECHOES#355): Finish rendering Echo effect. This box is a placeholder.
         &.icon_10 {
-            background-color: black;
+            background-color: white;
             background-image: none;
+            text-align: center;
         }
         &.color_0 {
             background-position-y: -1px;

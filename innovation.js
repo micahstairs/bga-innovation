@@ -2168,6 +2168,10 @@ function (dojo, declare) {
             if (resource_icon_id <= 6) {
                 return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
             }
+            if (resource_icon_id == 10) {
+                var card_data = this.cards[card.id];
+                return this.createAdjustedContent(this.parseForRichedText(_(card_data.echo_effect_1), size), 'square_card_icon ' + size + ' ' + icon_location + ' icon_' + resource_icon_id, size, size == 'M' ? 11 : 30);
+            }
             if (resource_icon_id >= 101) {
                 return '<div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_color color_' + card.color + '"></div><div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_value bonus_' + (resource_icon_id - 100) + '"></div>';
             }
