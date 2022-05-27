@@ -66,14 +66,21 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
  `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
- `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
- `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
+ `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel, 3=echo',
+ `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (but can be higher for echo effects)',
  `step` TINYINT COMMENT 'The interaction that the card is on',
  `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
  `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the effect has not triggered another card, 1 means the effect already triggered another card and resumed executing this effect',
  `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
  `auxiliary_value_2` INT DEFAULT -1 COMMENT 'A second auxiliary value used by certain card implementations',
   PRIMARY KEY(`nesting_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table used to manage the execution of echo effects */
+CREATE TABLE IF NOT EXISTS `echo_execution` (
+ `execution_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of when the echo effect should be executed (an index of 1 is used for the final card to be executed, and higher indicies are used for cards buried deeper)',
+ `card_id` SMALLINT COMMENT 'the ID of the card',
+  PRIMARY KEY(`execution_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
