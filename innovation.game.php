@@ -2033,6 +2033,9 @@ class Innovation extends Table
             case 2:
                 // I compel
                 return "C";
+            case 3:
+                // Echo
+                return "E";
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
@@ -3739,6 +3742,13 @@ class Innovation extends Table
     function isCompelEffect($id) {
         return array_key_exists('i_demand_effect_1_is_compel', $this->textual_card_infos[$id]);
     }
+
+    function getEchoEffect($id) {
+        if (array_key_exists('echo_effect_1', $this->textual_card_infos[$id]) && $this->textual_card_infos[$id]['echo_effect_1'] !== null) {
+            return $this->textual_card_infos[$id]['echo_effect_1'];
+        }
+        return null;
+    }
     
     function attachTextualInfo($card) {
         if ($card === null) {
@@ -4540,10 +4550,54 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         **/
         return max(self::getVisibleBonusesOnBoard($player_id));
     }
+
+    // TODO(ECHOES#359): Make sure there isn't a bug here for situations involving nested execution.
+    function getCardsWithVisibleEchoEffects($player_id, $dogma_card) {
+        /**
+        Gets the list of cards with visible echo effects given a specific card being executed (from top to bottom)
+        **/
+
+        $color = $dogma_card['color'];
+        $pile = self::getCardsInLocationKeyedByColor($player_id, 'board')[$color];
+
+        // Handle the case when the card being executed isn't even in the pile (e.g. Artifact on display)
+        if ($dogma_card['location'] != 'board') {
+            $pile[] = $dogma_card;
+        }
+
+        $visible_echo_effects = array();
+
+        for ($i = count($pile) - 1; $i >= 0; $i--) {
+            $card = $pile[$i];
+            $splay_direction = $card['splay_direction'];
+
+            $has_visible_echo_efffect = false;
+            if ($card['location'] != 'board' || ($i == count($pile) - 1 && self::countIconsOnCard($card, 10 /* echo effect */) > 0)) {
+                $has_visible_echo_efffect = true;
+            } else if ($splay_direction == 1) { // left
+                $has_visible_echo_efffect = $card['spot_4'] == 10 || $card['spot_5'] == 10;
+            } else if ($splay_direction == 2) { // right
+                $has_visible_echo_efffect = $card['spot_1'] == 10 || $card['spot_2'] == 10;
+            } else if ($splay_direction == 3) { // up
+                $has_visible_echo_efffect = $card['spot_2'] == 10 || $card['spot_3'] == 10 || $card['spot_4'] == 10;
+            }
+
+            if ($has_visible_echo_efffect) {
+                $visible_echo_effects[] = $card['id'];
+            }
+
+            // Skip covered up cards
+            if ($card['location'] == 'board' && $splay_direction == 0) {
+                break;
+            }    
+        }
+
+        return $visible_echo_effects;
+    }
     
     function getVisibleBonusesOnPile($player_id, $color) {
         /**
-        Get the bonus icon available on the board (0 = no bonuses)
+        Gets the list of bonus icons visible on a specific pile
         **/
         $visible_bonus_icons = array();
         
@@ -5197,9 +5251,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         return $current_effect_type == 0 ? clienttranslate('I demand effect') :
                ($current_effect_type == 2 ? clienttranslate('I compel effect') :
+               ($current_effect_type == 3 ? clienttranslate('echo effect') :
                ($unique_non_demand_effect ? clienttranslate('non-demand effect') :
                ($current_effect_number == 1 ? clienttranslate('1<sup>st</sup> non-demand effect') :
-               ($current_effect_number == 2 ? clienttranslate('2<sup>nd</sup> non-demand effect') : clienttranslate('3<sup>rd</sup> non-demand effect')))));
+               ($current_effect_number == 2 ? clienttranslate('2<sup>nd</sup> non-demand effect') : clienttranslate('3<sup>rd</sup> non-demand effect'))))));
     }
                                   
     function getFirstPlayerUnderEffect($dogma_effect_type, $launcher_id) {
@@ -6518,6 +6573,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
             $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
             $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
+            // TODO(ECHOES#359): Execute echo effects (only when execute_demand_effects=true).
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
                     (nesting_index, card_id, executing_as_if_on_card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
@@ -7208,12 +7264,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } while ($player_no != $dogma_player_no);
         }
 
-        if (self::getDemandEffect($card['id']) == null) {
-            $current_effect_type = 1;
+        $visible_echo_effects = self::getCardsWithVisibleEchoEffects($player_id, $card);
+        if (!empty($visible_echo_effects)) {
+            $current_effect_type = 3; // echo
+            for ($i = count($visible_echo_effects); $i >= 1; $i--) {
+                self::DbQuery(self::format("
+                    INSERT INTO echo_execution
+                        (execution_index, card_id)
+                    VALUES
+                        ({execution_index}, {card_id})
+                ", array('execution_index' => $i, 'card_id' => $visible_echo_effects[$i - 1])));
+            }
+        } else if (self::getDemandEffect($card['id']) == null) {
+            $current_effect_type = 1; // non-demand
         } else if (self::isCompelEffect($card['id'])) {
-            $current_effect_type = 2;
+            $current_effect_type = 2; // I compel
         } else {
-            $current_effect_type = 0;
+            $current_effect_type = 0; // I demand
         }
         
         // Write info in global variables to prepare the first effect
@@ -7652,7 +7719,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $resource_column = 'player_icon_count_' . $dogma_icon;
         $extra_icons = $is_on_display ? self::countIconsOnCard($card, $dogma_icon) : 0;
 
-        // TODO(ECHOES): Update this with the players executing echo effects.
+        // TODO(ECHOES#359): Update this with the players executing echo effects.
         $dogma_effect_info['players_executing_i_compel_effects'] = [];
         $dogma_effect_info['players_executing_i_demand_effects'] = [];
         $dogma_effect_info['players_executing_non_demand_effects'] = [];
@@ -7713,7 +7780,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $i_demand_will_be_executed = count($i_demand_players) > 0;
         $non_demand_will_be_executed = count($non_demand_players) > 0;
 
-        // TODO(ECHOES): Update this with the players executing echo effects.
+        // TODO(ECHOES#359): Update this with the players executing echo effects.
         if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed) {
             return true;
         }
