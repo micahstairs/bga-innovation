@@ -6806,8 +6806,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
-        // TODO(ECHOES): Triggers all applicable Echo effects.
-
         self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));        
         self::incStat(1, 'free_action_dogma_number', $player_id);
         
@@ -9014,30 +9012,49 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $nested_card_state = self::getCurrentNestedCardState();
             $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
+            $previous_effect_type = $nested_card_state['current_effect_type'];
         } else {
-            $current_effect_type = self::getGameStateValue('current_effect_type');
+            $previous_effect_type = self::getGameStateValue('current_effect_type');
             $card_id = self::getGameStateValue('dogma_card_id');
         }
 
         $launcher_id = self::getGameStateValue('active_player');
-        
-        // Indicate the potential new (non-demand) dogma to come
-        if ($current_effect_type == 0 || $current_effect_type == 2) { // There is only ever one "I demand" or "I compel" effect per card
-            $current_effect_number = 1; // Switch on the first non-demand dogma, if exists
+        if ($previous_effect_type == 3) { // echo effect
+            $previous_effect_number = $nested_card_state['current_effect_number'];
+            self::DbQuery(self::format("DELETE FROM echo_execution WHERE execution_index = {execution_index}", array('execution_index' => $previous_effect_number)));
+            
+            if ($previous_effect_number > 1) {
+                // Move to next echo effect
+                $next_effect_number = $previous_effect_number - 1;
+                $next_effect_type = 3;
+            } else {
+                // The last echo effect is complete, so move onto the next non-echo effect
+                $next_effect_number = 1;
+                if (self::getDemandEffect($card_id) == null) {
+                    $next_effect_type = 1; // non-demand
+                } else if (self::isCompelEffect($card_id)) {
+                    $next_effect_type = 2; // I compel
+                } else {
+                    $next_effect_type = 0; // I demand
+                }
+            }
+            
+        } else if ($previous_effect_type == 0 || $previous_effect_type == 2) { // There is only ever one "I demand" or "I compel" effect per card
+            $next_effect_type = 1;
+            $next_effect_number = 1;
 
             // Update statistics about I demand and I compel execution.
             if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_nesting_index') == 0) {
                 $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
                 foreach ($affected_players as $player_id) {
-                    if ($current_effect_type == 0) {
+                    if ($previous_effect_type == 0) {
                         self::incStat(1, 'i_demand_effects_number', $player_id);
                     } else {
                         self::incStat(1, 'i_compel_effects_number', $player_id);
                     }
                 }
                 if (count($affected_players) > 0) {
-                    if ($current_effect_type == 0) {
+                    if ($previous_effect_type == 0) {
                         self::incStat(1, 'dogma_actions_number_with_i_demand', $launcher_id);
                     } else {
                         self::incStat(1, 'dogma_actions_number_with_i_compel', $launcher_id);
@@ -9047,17 +9064,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::DbQuery("UPDATE player SET effects_had_impact = FALSE");
             }
         } else {
+            // Next non-demand effect, if it exists
+            $next_effect_type = 1;
             if (self::getGameStateValue('release_version') >= 1) {
-                $current_effect_number = $nested_card_state['current_effect_number'] + 1; // Next non-demand dogma, if exists
+                $next_effect_number = $nested_card_state['current_effect_number'] + 1;
             } else {
-                $current_effect_number = self::getGameStateValue('current_effect_number') + 1; // Next non-demand dogma, if exists
+                $next_effect_number = self::getGameStateValue('current_effect_number') + 1;
             }
         }
         
         $card = self::getCardInfo($card_id);
 
         // If there isn't another dogma effect on the card
-        if ($current_effect_number > 3 || self::getNonDemandEffect($card['id'], $current_effect_number) === null) {
+        if ($next_effect_type == 1 && ($next_effect_number > 3 || self::getNonDemandEffect($card['id'], $next_effect_number) === null)) {
 
             if (self::getGameStateValue('release_version') >= 1) {
                 // Finish executing the card which triggered this one
@@ -9220,11 +9239,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // There is another (non-demand) effect to perform
         if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('current_effect_type', 1);
-            self::updateCurrentNestedCardState('current_effect_number', $current_effect_number);
+            self::updateCurrentNestedCardState('current_effect_number', $next_effect_number);
+            self::updateCurrentNestedCardState('current_effect_type', $next_effect_type);
         } else {
             self::setGameStateValue('current_effect_type', 1);
-            self::setGameStateValue('current_effect_number', $current_effect_number);
+            self::setGameStateValue('current_effect_number', $next_effect_number);
         }
         
         // Jump to this effect
@@ -12054,10 +12073,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "334E1":
                 // "If every other player has a higher score than you, draw a 3."
-                $player_ids = self::getActivePlayerIds();
                 $player_score = self::getPlayerScore($player_id);
                 $min_score = true;
-                foreach ($player_ids as $p_id) {
+                foreach (self::getActiveOpponentIds($player_id) as $p_id) {
                     if ($player_id != $p_id && $player_score >= self::getPlayerScore($p_id)) {
                         $min_score = false;
                     }
@@ -12112,12 +12130,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 if ($num_cards[1] > 0) {
                     $score_a_2 = true;
-                    foreach (self::getActivePlayerIds($player_id) as $any_player_id) {
-                        if ($player_id !== $any_player_id) {
-                            $num_other_cards = self::countCardsInLocationKeyedByAge($any_player_id, 'hand');
-                            if ($num_cards[1] <= $num_other_cards[1]) {
-                                $score_a_2 = false;
-                            }
+                    foreach (self::getActiveOpponentIds($player_id) as $any_player_id) {
+                        $num_other_cards = self::countCardsInLocationKeyedByAge($any_player_id, 'hand');
+                        if ($num_cards[1] <= $num_other_cards[1]) {
+                            $score_a_2 = false;
                         }
                     }
                     
