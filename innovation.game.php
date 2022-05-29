@@ -8398,6 +8398,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a draw and foreshadow');
                 break;
                 
+            // id 379, Echoes age 5: Palampore
+            case "379N1A":
+                $message_for_player = clienttranslate('Choose a value to draw and score');
+                $message_for_others = clienttranslate('${player_name} must choose a draw and score');
+                break;
+
+            // id 380, Echoes age 5: Seed Drill
+            case "380N1A":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
+                
+            case "380N1B":
+                $age_value = self::getAuxiliaryValue2();
+                $message_args_for_player['age'] = self::getAgeSquare($age_value);
+                $message_args_for_others['age'] = self::getAgeSquare($age_value);        
+                $message_for_player = clienttranslate('Do ${you} want to transfer the bottom ${age} to the available achievements?');
+                $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
+                $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
+                break;
+
+            // id 381, Echoes age 5: Pressure Cooker
+            case "381N1B":
+                $message_for_player = clienttranslate('Choose a value to draw');
+                $message_for_others = clienttranslate('${player_name} must choose a draw');
+                break;
+
+            // id 383, Echoes age 5: Piano
+            case "383E1A":
+                $message_for_player = clienttranslate('Choose a value to draw');
+                $message_for_others = clienttranslate('${player_name} must choose a draw');
+                break;
+                
             // id 434, Echoes age 10: Sudoku
             case "434N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -12556,6 +12589,196 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 self::setAuxiliaryValue($total_clocks);
                 $step_max = 1;
+                break;
+
+            // id 375, Echoes age 5: Lightning Rod
+            case "375E1":
+                // "Draw and tuck a 5."
+                self::executeDrawAndTuck($player_id, 5);
+                break;
+
+            case "375D1":
+                // "I demand you draw and tuck a 5!"
+                $card = self::executeDrawAndTuck($player_id, 5);
+                $top_card = self::getTopCardOnBoard($player_id, $card['color']);
+                // "Return your top card of the tucked card's color!"
+                self::transferCardFromTo($top_card, 0, 'deck'); 
+                break;            
+                
+            case "375N1":
+                // "Draw and tuck a 5."
+                self::executeDrawAndTuck($player_id, 5);
+                $step_max = 1;
+                break;
+
+            // id 376, Echoes age 5: Thermometer
+            case "376E1":
+                // "Meld your bottom green card. Maintain its splay."
+                $bottom_card = self::getBottomCardOnBoard($player_id, 2);
+                if ($bottom_card != null) {
+                    self::transferCardFromTo($bottom_card, $player_id, 'board');
+                }
+                break;
+
+            case "376N1":
+                do {
+                    // "Draw and meld a card of value one higher than the value of your top yellow card."
+                    $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
+                    if ($top_yellow_card != null) {
+                        $age_to_draw = $top_yellow_card['faceup_age'] + 1;
+                    }
+                    else {
+                        $age_to_draw = 1; // No yellow card means melding a 1
+                    }
+                    $card = self::executeDraw($player_id, $age_to_draw, 'board');
+                } while ($card['color'] == 3); // "If the melded card is yellow, repeat this dogma effect."
+                break;
+
+            // id 377, Echoes age 5: Coke
+            case "377E1":
+                // "Draw and tuck a 4."
+                self::executeDrawAndTuck($player_id, 4);
+                break;
+
+            case "377N1":
+                // "Draw and reveal a 6."
+                $keep_going = true;
+                while ($keep_going) {
+                    $card = self::executeDraw($player_id, 6, 'revealed');
+                    if (!self::hasRessource($card, 5)) {
+                        $keep_going = false;
+                        // "Otherwise, foreshadow it."
+                        self::transferCardFromTo($card, $player_id, 'forecast');
+                    }
+                    else {
+                        // "If it has a factory, meld it"
+                        self::transferCardFromTo($card, $player_id, 'board');
+                    }
+                } // "and repeat this dogma effect"
+                break;
+
+            // id 378, Echoes age 5: Octant
+            case "378D1":
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    if ($color != 1) { // non-red
+                        $top_card = self::getTopCardOnBoard($player_id, $color);
+                        if (self::hasRessource($top_card, 2) || self::hasRessource($top_card, 5) ){
+                            $color_array[] = $color; // has a leaf or factory
+                        }
+                    }
+                }
+                if (count($color_array) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($color_array);
+                }
+                break;
+
+            case "378N1":
+                // Draw and foreshadow a 6."
+                self::executeDrawAndForeshadow($player_id, 6);
+                break;
+                
+                
+            // id 379, Echoes age 5: Palampore
+            case "379N1":
+                $all_bonuses = self::getVisibleBonusesOnBoard($player_id);
+                $repeat_bonus = array(0,0,0,0,0,0,0,0,0,0,0);
+                foreach ($all_bonuses as $bonus) {
+                    $repeat_bonus[$bonus - 1]++;
+                }
+                $bonus_select = array();
+                for ($bonus = 0; $bonus < 11; $bonus++) {
+                    if ($repeat_bonus[$bonus] > 1) {
+                        $bonus_select[] = $bonus + 1;
+                    }
+                }
+                if (count($bonus_select) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($bonus_select);
+                }
+                break;
+                
+            case "379N2":
+                $step_max = 1;
+                break;
+
+            case "379N3":
+                // "If you have six or more bonuses on your board, claim the Wealth achievement."
+                if (count(self::getVisibleBonusesOnBoard($player_id)) > 5) {
+                    self::claimSpecialAchievement($player_id, 435);
+                }
+                break;
+
+            // id 380, Echoes age 5: Seed Drill
+            case "380D1":
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    $top_card = self::getTopCardOnBoard($player_id, $color);
+                    if ($top_card != null && $top_card['faceup_age'] < 3 ){
+                        $color_array[] = $color; // less than 3
+                    }
+                    
+                }
+                if (count($color_array) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($color_array);
+                }
+                break;
+
+            case "380N1":
+                $step_max = 1;
+                break;
+
+            // id 381, Echoes age 5: Pressure Cooker
+            case "381N1":
+                $step_max = 1;
+                break;  
+
+            // id 382, Echoes age 5: Stove
+            case "382E1":
+                $step_max = 1;
+                break;  
+
+            case "382N1":
+                // "Draw and tuck a 4."
+                $tucked_card = self::executeDrawAndTuck($player_id, 4);
+                $top_card = self::getTopCardOnBoard($player_id, $tucked_card['color']);
+                // "If your top card of the tucked card's color has value less than 4, draw and score a 4."
+                if ($top_card['faceup_age'] < 4) {
+                    self::executeDraw($player_id, 4, 'score');
+                }
+                break; 
+
+            case "382N2":
+                $step_max = 1;
+                break; 
+
+            // id 383, Echoes age 5: Piano
+            case "383E1":
+                // Check for unique hand values across all players
+                $age_array = array();
+                foreach (self::getAllPlayerIds() as $this_player_id) {
+                    foreach(self::getCardsInHand($this_player_id) as $card) {
+                        $age_array[] = $card['faceup_age'];
+                    }
+                }
+                if (count($age_array) > 0) { // at least one card was found
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($age_array);
+                }
+                break;
+
+            case "383N1":
+                // Get all top ages.  If they are unique, go to the first interaction
+                $age_array = array();
+                foreach(self::getTopCardsOnBoard($player_id) as $card) {
+                    $age_array[] = $card['faceup_age'];
+                }
+                if (count(array_unique($age_array)) == 5) { // 5 unique values
+                    $step_max = 1;
+                    self::setAuxiliaryValue(self::getValueFromBase16Array($age_array));
+                }
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -17915,6 +18138,185 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
             );
             break;
+
+        // id 375, Echoes age 5: Lightning Rod
+        case "375N1A":
+            // "You may return a top card from your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        // id 378, Echoes age 5: Octant
+        case "378D1A":
+            // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+
+                'color' => self::getAuxiliaryValueAsArray(), 
+            );
+            break;
+
+        // id 379, Echoes age 5: Palampore
+        case "379N1A":
+            // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
+            // TODO(ECHOES): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'choose_value' => true,
+                'age' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        case "379N2A":
+            // "You may splay your purple cards right."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 2 /* right */,
+                'color' => array(4) /* purple */
+            );
+            break;
+
+        // id 380, Echoes age 5: Seed Drill
+        case "380D1A":
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => self::getAuxiliaryValueAsArray(), 
+            );
+            break;
+
+        case "380N1A":
+            // "Choose the 3, 4, or 5 deck."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+                'age' => array(3,4,5),
+            );
+            break;
+
+        case "380N1B":
+            // "you may transfer its bottom card to the available achievements."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false, 
+                
+                'choose_yes_or_no' => true,
+            );
+            break;
+
+        // id 381, Echoes age 5: Pressure Cooker
+        case "381N1A":
+            // "Return all cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "381N1B":
+            // "For each top card on your board with a bonus, draw a card of value equal to that bonus"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+                'age' => array_unique(self::getBase16ArrayFromValue(self::getAuxiliaryValue())),
+            );
+            break;
+
+        // id 382, Echoes age 5: Stove
+        case "382E1A":
+            // "Score a top card from your board without a factory."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'score_keyword' => true,
+                
+                'without_icon' => 5, /* factory */
+            );
+            break;
+
+        case "382N2A":
+            // "You may splay your green cards right."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 2 /* right */,
+                'color' => array(2) /* green */
+            );
+            break;
+
+        // id 383, Echoes age 5: Piano
+        case "383E1A":
+            // "Draw a card of a value present in any player's hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+                'age' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        case "383N1A":
+            // "If you have five top cards, each with a different value, return five cards from your score pile "
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 5,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
             
         // id 434, Echoes age 10: Sudoku
         case "434N1A":
@@ -19886,6 +20288,102 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'hand');
                     }
                     break;
+
+                // id 378, Echoes age 5: Octant
+                case "378D1A":
+                    // "If you do, draw and foreshadow a 6!"
+                    if ($n > 0) {
+                        self::executeDrawAndForeshadow($player_id, 6);
+                    }
+                    break;
+
+                // id 379, Echoes age 5: Palampore
+                case "379N1A":
+                    self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
+                    break;
+
+                // id 380, Echoes age 5: Seed Drill
+                case "380N1A":
+                    // "If there is at least one card in that deck"
+                    $cards_to_draw_from = self::getCardsInLocationKeyedByAge(0, 'deck');
+                    if (count($cards_to_draw_from[self::getAuxiliaryValue2()]) > 0) {
+                        self::incrementStepMax(1);
+                    }
+                    break;
+
+                case "380N1B":
+                    // "you may transfer its bottom card to the available achievements"
+                    if (self::getAuxiliaryValue() == 1) { // yes
+                        self::executeDraw(0, /*age=*/ self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
+                    }
+                    break;
+
+                // id 381, Echoes age 5: Pressure Cooker
+                case "381N1A":
+                    $bonus_array = array();
+                    for ($color = 0; $color < 5; $color++) {
+                        $top_card = self::getTopCardOnBoard($player_id, $color);
+                        $bonuses = self::getBonusIcons($top_card);
+                        if (count($bonuses) > 0) {
+                            $bonus_array[] = $bonuses[0];
+                        }
+                    }
+                    
+                    if (count(array_unique($bonus_array)) == 1) {
+                        // multiple identical bonuses
+                        for ($i=0; $i < count($bonus_array); $i++) {
+                            self::executeDraw($player_id, $bonus_array[0], 'hand');
+                        }
+                    } elseif (count($bonus_array) > 1) {
+                        // multiple bonuses, but different
+                        self::setStepMax(2);
+                        self::setAuxiliaryValue(self::getValueFromBase16Array($bonus_array));
+                    }
+                    break;
+                    
+                case "381N1B":
+                    $curr_bonuses = self::getBase16ArrayFromValue(self::getAuxiliaryValue());
+                    $this_bonus = self::getAuxiliaryValue2();
+                    
+                    self::executeDraw($player_id, $this_bonus, 'hand');
+                    
+                    $found = false;
+                    $next_bonuses = array();
+                    for ($i=0; $i < count($curr_bonuses); $i++) {
+                        if ($this_bonus == $curr_bonuses[$i] && $found == false){
+                            $found = true;
+                        }
+                        else {
+                            $next_bonuses[] = $curr_bonuses[$i];
+                        }
+                    }
+
+                    if (count(array_unique($next_bonuses)) == 1) {
+                        // identical bonuses
+                        for ($i=0; $i < count($next_bonuses); $i++) {
+                            self::executeDraw($player_id, $next_bonuses[0], 'hand');
+                        }
+                    } elseif (count($next_bonuses) > 1) {
+                        // multiple bonuses left, but different
+                        self::setAuxiliaryValue(self::getValueFromBase16Array($next_bonuses));
+                        $step--; self::incrementStep(-1); // repeat until no bonuses remain
+                    }
+                    break;
+
+                // id 383, Echoes age 5: Piano
+                case "383E1A":
+                    self::executeDraw($player_id, self::getAuxiliaryValue2(), 'hand');
+                    break;
+
+                case "383N1A":
+                    // "and then draw and score a card of each of your top card's values in ascending order."
+                    $top_card_values = self::getBase16ArrayFromValue(self::getAuxiliaryValue());
+                    sort($top_card_values);
+                    
+                    foreach ($top_card_values as $sorted_value) {
+                        self::executeDraw($player_id, $sorted_value, 'score');
+                    }
+                    break;
                     
                 // id 434, Echoes age 10: Sudoku
                 case "434N1A":
@@ -20710,6 +21208,46 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // Do the transfer
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                break;
+
+            // id 379, Echoes age 5: Palampore
+            case "379N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+            // id 380, Echoes age 5: Seed Drill
+            case "380N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue2($choice);
+                break;
+
+            case "380N1B":
+                $age_value = self::getAuxiliaryValue2();
+                if ($choice == 1) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                }
+                self::setAuxiliaryValue($choice);
+                break;
+
+            // id 381, Echoes age 5: Pressure Cooker
+            case "381N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue2($choice);
+                break;
+
+            // id 383, Echoes age 5: Piano
+            case "383E1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue2($choice);
                 break;
                 
             // id 434, Echoes age 10: Sudoku
