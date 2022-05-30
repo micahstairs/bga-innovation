@@ -1496,8 +1496,9 @@
   background-position-x: -41px;
 }
 .square_card_icon.M.icon_10 {
-  background-color: black;
+  background-color: white;
   background-image: none;
+  text-align: center;
 }
 .square_card_icon.M.color_0 {
   background-position-y: -1px;
