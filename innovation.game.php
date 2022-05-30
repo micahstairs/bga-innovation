@@ -7269,6 +7269,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $visible_echo_effects = self::getCardsWithVisibleEchoEffects($player_id, $card);
         if (!empty($visible_echo_effects)) {
             $current_effect_type = 3; // echo
+            $current_effect_number = count($visible_echo_effects);
             for ($i = count($visible_echo_effects); $i >= 1; $i--) {
                 self::DbQuery(self::format("
                     INSERT INTO echo_execution
@@ -7279,10 +7280,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         } else if (self::getDemandEffect($card['id']) == null) {
             $current_effect_type = 1; // non-demand
+            $current_effect_number = 1;
         } else if (self::isCompelEffect($card['id'])) {
             $current_effect_type = 2; // I compel
+            $current_effect_number = 1;
         } else {
             $current_effect_type = 0; // I demand
+            $current_effect_number = 1;
         }
         
         // Write info in global variables to prepare the first effect
@@ -7298,11 +7302,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         card_location = '{card_location}',
                         launcher_id = {launcher_id},
                         current_effect_type = {effect_type},
-                        current_effect_number = 1,
+                        current_effect_number = {effect_number},
                         post_execution_index = 0
                     WHERE
                         nesting_index = 0",
-                    array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type))
+                    array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number))
             );
         } else {
             self::setGameStateValue('dogma_card_id', $card['id']);
@@ -8378,7 +8382,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             // id 335, Echoes age 1: Plumbing
-            case "335N1A":
+            case "335E1A":
                 $message_for_player = clienttranslate('${You} must choose a color to score a bottom card');
                 $message_for_others = clienttranslate('${player_name} must choose a color to score a bottom card');
                 break;
@@ -9265,6 +9269,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+            }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
             $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
@@ -13021,6 +13029,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+            }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
             $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
@@ -17291,7 +17303,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         // id 335, Echoes age 1: Plumbing
-        case "189E1A":
+        case "335E1A":
             // "Score a bottom card from your board."
             $color_array = array();
             for ($color = 0; $color < 5; $color++) {
@@ -17300,6 +17312,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $color_array[] = $color;
                 }
             }
+            // TODO(ECHOES): Skip the interaction if there are no cards on this board.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -18474,6 +18487,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+            }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
             $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
@@ -20055,10 +20072,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 335, Echoes age 1: Plumbing
                 case "335E1A":
-                    if ($n > 0) {
-                        $card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                        self::transferCardFromTo($card, $player_id, 'score', /*bottom_to*/false, /*score_keyword*/true);
-                    }
+                    $card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
+                    self::transferCardFromTo($card, $player_id, 'score', /*bottom_to*/false, /*score_keyword*/true);
                     break;
                 
                 // id 336, Echoes age 1: Comb
@@ -21175,7 +21190,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             // id 335, Echoes age 1: Plumbing
-            case "335N1A":
+            case "335E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
