@@ -2019,6 +2019,10 @@ class Innovation extends Table
         } else {
             $post_execution_indicator = '';
         }
+        // Echo effects are sometimes executed on cards other than the card being dogma'd
+        if ($current_effect_type == 3) {
+            $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+        }
         return $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $post_execution_indicator;
     }
 
@@ -6330,9 +6334,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 1) {
             $nested_card_state = self::getCurrentNestedCardState();
             $card_id = $nested_card_state['card_id'];
-            $card = self::getCardInfo($card_id);
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+            }
+            $card = self::getCardInfo($card_id);
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
             $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1;
@@ -6377,8 +6385,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $i18n = array();
             $nesting_index = self::getGameStateValue('current_nesting_index');
             for ($i = 0; $i <= $nesting_index; $i++) {
-                $card = self::getCardInfo(self::getNestedCardState($i)['card_id']);
-                $card_names['card_'.$i] = self::getCardName($card['id']);
+                $nested_card_state = self::getNestedCardState($i);
+                $current_effect_type = $nested_card_state['current_effect_type'];
+                $current_effect_number = $nested_card_state['current_effect_number'];
+                $card_id = $nested_card_state['card_id'];
+                // Echo effects are sometimes executed on cards other than the card being dogma'd
+                if ($current_effect_type == 3) {
+                    $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+                }
+                $card = self::getCardInfo($card_id);
+                $card_names['card_'.$i] = self::getCardName($card_id);
                 $card_names['ref_player_'.$i] = $player_id;
                 $i18n[] = 'card_'.$i;
             }
@@ -6413,6 +6429,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getJSCardEffectQuery($card, $effect_type, $effect_number) {
+        // TODO(ECHOES#359): Update this to account for echo effects (which are sometimes triggered on other cars)
         return self::getJSCardId($card) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
 
@@ -8977,8 +8994,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Search for the first player who will undergo/share the effects, if any
         $launcher_id = self::getLauncherId();
         if (self::getGameStateValue('release_version') >= 1) {
-            // Non-demand effects are not shared with other players.
-            $first_player = $nested_card_state['nesting_index'] > 0 && $current_effect_type == 1 ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
+            // During nested execution echo/non-demand effects are not shared with other players.
+            $first_player = $nested_card_state['nesting_index'] > 0 && ($current_effect_type == 1 || $current_effect_type == 3) ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
         } else {
             $first_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
         }
@@ -9274,6 +9291,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if ($nested_card_state['post_execution_index'] == 0) {
                 $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
                 self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
+            } else {
+                // TODO(LATER): Consider adding something to the log which says that an effect is resuming.
             }
         } else {
             $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
@@ -9295,9 +9314,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             switch($code) {
             // The first number is the id of the card
             // D1 means the first (and single) I demand effect
+            // C1 means the first (and single) I compel effect
             // N1 means the first non-demand effect
             // N2 means the second non-demand effect
             // N3 means the third non-demand effect
+            // E1 means the first (and single) echo effect
             
             // Setting the $step_max variable means there is interaction needed with the player
             
@@ -13042,9 +13063,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         switch($code) {
         // The first number is the id of the card
         // D1 means the first (and single) I demand effect
+        // C1 means the first (and single) I compel effect
         // N1 means the first non-demand effect
         // N2 means the second non-demand effect
         // N3 means the third non-demand effect
+        // E1 means the first (and single) echo effect
         
         // The letter indicates the step : A for the first one, B for the second
         
@@ -18493,9 +18516,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 switch($code) {
                 // The first number is the id of the card
                 // D1 means the first (and single) I demand effect
+                // C1 means the first (and single) I compel effect
                 // N1 means the first non-demand effect
                 // N2 means the second non-demand effect
                 // N3 means the third non-demand effect
+                // E1 means the first (and single) echo effect
                 
                 // The letter indicates the step : A for the first one, B for the second
                 
@@ -20682,9 +20707,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             switch($code) {
             // The first number is the id of the card
             // D1 means the first (and single) I demand effect
+            // C1 means the first (and single) I compel effect
             // N1 means the first non-demand effect
             // N2 means the second non-demand effect
             // N3 means the third non-demand effect
+            // E1 means the first (and single) echo effect
             
             // The letter indicates the step : A for the first one, B for the second
             
