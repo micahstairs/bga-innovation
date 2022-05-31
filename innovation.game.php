@@ -2022,6 +2022,7 @@ class Innovation extends Table
         // Echo effects are sometimes executed on cards other than the card being dogma'd
         if ($current_effect_type == 3) {
             $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+            $current_effect_number = 1;
         }
         return $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $post_execution_indicator;
     }
