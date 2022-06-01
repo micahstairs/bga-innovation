@@ -2294,6 +2294,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>}.');
             break;
+        case 'forecast->hand':
+            $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} ${<<}${name}${>>} from your forecast to your hand.');
+            $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from your forecast to your hand.');
+            break;
             
         default:
             // This should not happen
@@ -2328,7 +2332,7 @@ class Innovation extends Table
                 if ($code === '134N1A') {
                     $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from the board of ${targetable_players}');
                     $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from the board of ${targetable_players}');
-                } else if ($code === '134N1+A' || $code === '134N1B') {
+                } else if ($code === '134N1+A' || $code === '134N1B' || $code === '367E1A') {
                     $message_for_player = clienttranslate('${You_must} choose a pile to splay left from the board of ${targetable_players}');
                     $message_for_others = clienttranslate('${player_must} choose a pile to splay left from the board of ${targetable_players}');
                 } else if ($code === '136N1B' || $code === '161N1A') {
@@ -7688,14 +7692,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $unclaimed_achievements = self::getCardsInLocation(0, 'achievements');
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
         $player_score = self::getPlayerScore($player_id);
+        $claimed_achievements = self::getCardsInLocation($player_id, 'achievements');
+        
         $claimable_ages = array();
         foreach ($unclaimed_achievements as $achievement) {
             $age = $achievement['age'];
             if ($age === null) { // Special achievement
                 continue;
             }
+            $multiplier = 1;
+            foreach ($claimed_achievements as $repeat_achievement) {
+                if ($repeat_achievement['age'] == $age && $repeat_achievement['is_relic'] == 0) { // don't include relics
+                    $multiplier++; // for every matching age achievement, the multiplier goes up by 1.  
+                }
+            }
             // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
-            if ($age <= $age_max && $player_score >= 5*$age) {
+            if ($age <= $age_max && $player_score >= 5*$age*$multiplier) {
                 $claimable_ages[] = $age;
             }
         }
@@ -8466,8 +8478,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('${You} must choose what to do with your top green card');
                 $message_for_others = clienttranslate('${player_name} must choose what to do with his top green card');
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Return"))),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Achieve")))
+                                array('value' => 1, 'text' => self::format(clienttranslate("Return"), array())),
+                                array('value' => 0, 'text' => self::format(clienttranslate("Achieve"), array()))
                 );
                 break;
 
@@ -12278,10 +12290,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "349N1":
-                $min_value = 0;
+                $min_value = 10;
                 $cards = self::getTopCardsOnBoard($player_id);
                 foreach ($cards as $card) {
-                    if ($card['color'] != 2 && $min_value < $card['age']) {
+                    if ($card['color'] != 2 && $min_value > $card['age']) {
                         $min_value = $card['age'];
                     }
                 }
@@ -12291,9 +12303,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 351, Echoes age 2: Toothbrush
             case "351E1":
-                if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                    $step_max = 1;
+                $ages = array();
+                $cards = self::getCardsInLocationKeyedByAge($player_id, 'hand');
+                for ($age = 1; $age <= 10; $age++) {
+                    if (count($cards[$age]) > 0) {
+                        $ages[] = $age;
+                    }
                 }
+            
+                if (count($ages) > 1) {
+                    $step_max = 2;
+                    self::setAuxiliaryValueFromArray($ages);
+                }
+                elseif (count($ages) == 1) {
+                    $step_max = 2;
+                    $step = 2; // no need to choose
+                    self::setAuxiliaryValue($ages[0]); 
+                }
+                
                 break;
 
             case "351N1":
@@ -12646,17 +12673,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 373, Echoes age 4: Clock
             case "373E1":
+                // Find stacks with maximum cards
                 $max_stack = 0;
+                $card_cnt = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 for ($color = 0; $color < 5; $color++) {
-                    $color_count = self::countVisibleCards($player_id, $color);
-                    if ($max_stack < $color_count) {
-                        $max_stack = $color_count;
+                    if ($max_stack < $card_cnt[$color]) {
+                        $max_stack = $card_cnt[$color];
                     }
                 }
                 $color_array = array();
                 for ($color = 0; $color < 5; $color++) {
-                    $color_count = self::countVisibleCards($player_id, $color);
-                    if ($color_count == $max_stack) {
+                    if ($card_cnt[$color] == $max_stack) {
                         $color_array[] = $color;
                     }
                 }
@@ -12870,14 +12897,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Check for unique hand values across all players
                 $age_array = array();
                 foreach (self::getAllPlayerIds() as $this_player_id) {
-                    foreach(self::getCardsInHand($this_player_id) as $card) {
-                        $age_array[] = $card['faceup_age'];
+                    $count_cards = self::countCardsInLocationKeyedByAge($this_player_id, 'hand');
+                    
+                    for ($age=1;$age < 11; $age++) {
+                        if ($count_cards[$age] > 0) {
+                            $age_array[] = $age;
+                        }
                     }
                 }
-                if (count($age_array) > 0) { // at least one card was found
+                $age_array = array_unique($age_array);
+                if (count($age_array) > 1) { // at least two different cards were found
                     $step_max = 1;
                     self::setAuxiliaryValueFromArray($age_array);
                 }
+                else if (count($age_array) == 1) {
+                    // Draw the card if there is only one choice
+                    self::executeDraw($player_id, $age_array[0], 'hand');
+                }
+                    
                 break;
 
             case "383N1":
@@ -17624,22 +17661,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 351, age 2: Toothbrush          
         case "351E1A":
-            // Choose value to tuck.
-            $ages = array();
-            $cards = self::getCardsInLocationKeyedByAge($player_id, 'hand');
-            for ($age = 1; $age <= 10; $age++) {
-                if (count($cards[$age]) > 0) {
-                    $ages[] = $age;
-                }
-            }
-            
+            // Choose value to tuck.           
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
                 
                 'choose_value' => true,
-                'age' => $ages,
+                'age' => self::getAuxiliaryValueAsArray(),
             );
             break;
             
@@ -17679,7 +17708,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'choose_yes_or_no' => true,
             );
-        
+            break;
+            
         // id 352, Echoes age 2: Watermill
         case "352N1A":
             // "Tuck a card with a bonus from your hand."
@@ -20280,12 +20310,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValue($card['id']);
                     break;
 
-                case "359E1A":
+                case "359N1A":
                     // "If you do, "
                     if ($n > 0) {
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
                         if ($top_green_card != null) {
-                            if (self::isEligibleToAchieveCard($player_id, $top_green_card['age'])) {
+                            $claimable_ages = self::getClaimableAges($player_id);
+                            if (in_array($top_green_card['faceup_age'], $claimable_ages)) {
                                 self::incrementStepMax(1); // need to choose between returning and achieving
                             } else {
                                 // If not eligible, then return green if present
@@ -20392,13 +20423,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand')[$age_to_transfer];
                     for ($i = 0; $i < count($hand_cards); $i++) {
-                        // TODO(ECHOES): There is a bug here. The card's state may be stale, leading to UI bugs.
+                        $hand_cards[$i] = self::getCardInfo($hand_cards[$i]['id']);
                         self::transferCardFromTo($hand_cards[$i], $launcher_id, 'score');
                     }
 
                     $score_cards = self::getCardsInLocationKeyedByAge($player_id, 'score')[$age_to_transfer];
                     for ($i = 0; $i < count($score_cards); $i++) {
-                        // TODO(ECHOES): There is a bug here. The card's state may be stale, leading to UI bugs.
+                        $score_cards[$i] = self::getCardInfo($score_cards[$i]['id']);
                         self::transferCardFromTo($score_cards[$i], $launcher_id, 'score');
                     }
                     break;
