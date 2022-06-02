@@ -3490,11 +3490,9 @@ class Innovation extends Table
             return;
         }
         
-        // Check if this change triggers a sharing bonus
+        // A sharing bonus is triggered if an opponent was affected by a non-demand or echo effect
         $player_who_launched_the_dogma = self::getGameStateValue('active_player');
-        if ($current_effect_type == 1 && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {
-            // This transfer took place during a non-demand effect, another player (not in the same team) sharing this effect
-            // There is a sharing bonus
+        if (($current_effect_type == 1 || $current_effect_type == 3) && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {
             self::setGameStateValue('sharing_bonus', 1);
         }
     }
