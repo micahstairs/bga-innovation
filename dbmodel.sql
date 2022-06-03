@@ -326,7 +326,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (134, 1, 2, 4, 0, 3, 3, 4, 3, 'removed'),
 
 /* Artifacts - Age 3 */
-(135, 1, 3, 0, 3, 3, 3, 0, 3, 'removed'),
+(135, 1, 3, 0, 3, 3, 0, 3, 3, 'removed'),
 (136, 1, 3, 0, 3, 3, 0, 4, 3, 'removed'),
 (137, 1, 3, 1, 1, 0, 4, 4, 4, 'removed'),
 (138, 1, 3, 1, 0, 4, 4, 3, 4, 'removed'),
@@ -351,9 +351,9 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 
 /* Artifacts - Age 5 */
 (155, 1, 5, 0, 3, 5, 3, 0, 3, 'removed'),
-(156, 1, 5, 0, 3, 3, 3, 0, 3, 'removed'),
+(156, 1, 5, 0, 3, 3, 0, 3, 3, 'removed'),
 (157, 1, 5, 1, 0, 2, 3, 3, 3, 'removed'),
-(158, 1, 5, 1, 5, 0, 5, 5, 5, 'removed'),
+(158, 1, 5, 1, 5, 5, 0, 5, 5, 'removed'),
 (159, 1, 5, 2, 5, 0, 5, 1, 5, 'removed'),
 (160, 1, 5, 2, 1, 0, 5, 1, 1, 'removed'),
 (161, 1, 5, 3, 3, 1, 0, 3, 3, 'removed'),
