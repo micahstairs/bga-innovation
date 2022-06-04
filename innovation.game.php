@@ -13491,7 +13491,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'score',
+                'location_to' => 'revealed,score',
 
                 'score_keyword' => true
             );
