@@ -14731,6 +14731,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "170N1B":
+            // Reveal score pile to prove to other players that they are returning the correct cards.
+            self::revealScorePile($player_id);
             // "Return all cards of the drawn card's color from your score pile"
             $options = array(
                 'player_id' => $player_id,
@@ -14741,7 +14743,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'color' => array(self::getAuxiliaryValue())
+                'color' => array(self::getAuxiliaryValue()),
             );
             break;
 
