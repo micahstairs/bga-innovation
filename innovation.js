@@ -413,6 +413,9 @@ function (dojo, declare) {
                 for (var i = 0; i < gamedatas.unclaimed_relics.length; i++) {
                     var relic = gamedatas.unclaimed_relics[i];
                     this.createAndAddToZone(this.zone.relics["0"], i, relic.age, relic.type, relic.is_relic, null, dojo.body(), null);
+                    if (this.canShowCardTooltip(relic['id'])) {
+                        this.addTooltipForCard(relic);
+                    }
                 }
             } else {
                 dojo.byId('available_relics_container').style.display = 'none';
@@ -478,6 +481,13 @@ function (dojo, declare) {
                                 var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
                                 for (var i = 0; i < num_cards; i++) {
                                     this.createAndAddToZone(zone, i, age, type, is_relic, null, dojo.body(), null);
+                                    if (is_relic) {
+                                        // Construct card object so that we can add a tooltip to the relic
+                                        var relic = {'location': 'hand', 'owner': player_id, 'type': type, 'age': age, 'is_relic': is_relic, 'id': 212 + age};
+                                        if (this.canShowCardTooltip(relic['id'])) {
+                                            this.addTooltipForCard(relic);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -521,6 +531,13 @@ function (dojo, declare) {
                             var num_cards = score_count[age];
                             for(var i = 0; i < num_cards; i++) {
                                 this.createAndAddToZone(this.zone.score[player_id], i, age, type, is_relic, null, dojo.body(), null);
+                                if (is_relic) {
+                                    // Construct card object so that we can add a tooltip to the relic
+                                    var relic = {'location': 'hand', 'owner': player_id, 'type': type, 'age': age, 'is_relic': is_relic, 'id': 212 + age};
+                                    if (this.canShowCardTooltip(relic['id'])) {
+                                        this.addTooltipForCard(relic);
+                                    }
+                                }
                             }
                         }
                     }
@@ -553,13 +570,16 @@ function (dojo, declare) {
                 var achievements = gamedatas.claimed_achievements[player_id];
                 for(var i = 0; i < achievements.length; i++){
                     var achievement = achievements[i];
-                    if (achievement.age !== null) { // Normal achievement
-                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, achievement.type, achievement.is_relic, null, dojo.body(), null);
-                    }
-                    else {
+                    if (achievement.age == null) { // Special achievement
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                         this.addTooltipForCard(achievement);
-                    }    
+                    } else {
+                        // Normal achievement or relic
+                        this.createAndAddToZone(this.zone.achievements[player_id], i, achievement.age, achievement.type, achievement.is_relic, null, dojo.body(), null);
+                        if (achievement.is_relic && this.canShowCardTooltip(achievement.id)) {
+                            this.addTooltipForCard(achievement);
+                        }
+                    } 
                 }
             }
             
@@ -1912,6 +1932,11 @@ function (dojo, declare) {
         },
         
         getCardIdFromPosition : function(zone, position, age, type, is_relic) {
+            // For relics we use the real IDs (since there is only one of each age)
+            if (is_relic) {
+                return 212 + parseInt(age);
+            }
+
             if (!zone.grouped_by_age_type_and_is_relic) {
                 return this.getCardIdFromHTMLId(zone.items[position].id);
             }
@@ -2145,8 +2170,13 @@ function (dojo, declare) {
                 // Recto
                 visible_card = false;
                 
+                // For relics we use the real IDs (since there is only one of each age)
+                if (is_relic) {
+                    id = 212 + parseInt(age);
                 // Create a new id based only on the visible properties of the card
-                id = this.uniqueIdForCard(age, type, is_relic); 
+                } else {
+                    id = this.uniqueIdForCard(age, type, is_relic); 
+                }
             } else {
                 // verso
                 if (zone.owner != 0 && zone['location'] == 'achievements') {
@@ -2167,7 +2197,7 @@ function (dojo, declare) {
             if (card.location_from == "board" && card.location_to == "board" && card.owner_from == card.owner_to) {
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
                 this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
-            } else if (id_from == id_to && card.age !== null) {
+            } else if (id_from == id_to && card.age !== null && zone_from.HTML_class == zone_to.HTML_class) {
                 this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
             } else {
@@ -3349,6 +3379,10 @@ function (dojo, declare) {
         notif_transferedCard : function(notif) {
             var card = notif.args;
 
+            if (parseInt(card.is_relic) == 1) {
+                card.id = 212 + parseInt(card.age);
+            }
+
             // Special code for my score management
             if (card.location_from == "score" && card.owner_from == this.player_id) {
                 // Remove the card from my score personal window
@@ -3364,7 +3398,7 @@ function (dojo, declare) {
             var visible_from = this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
             // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
             var visible_to = zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-            
+
             var id_from;
             var id_to;
             if (visible_from) {
@@ -3463,7 +3497,7 @@ function (dojo, declare) {
             }
             
             // Add tooltip to card
-            if (visible_to) {
+            if ((visible_to || card.is_relic) && this.canShowCardTooltip(card.id)) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
