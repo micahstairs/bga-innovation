@@ -48,6 +48,12 @@
         $this->game->debug_meld($card_id);
         self::ajaxResponse();
     }
+    public function debug_tuck() {            
+        self::setAjaxMode();
+        $card_id = self::getArg("card_id", AT_posint, true);
+        $this->game->debug_tuck($card_id);
+        self::ajaxResponse();
+    }
     public function debug_score() {            
         self::setAjaxMode();
         $card_id = self::getArg("card_id", AT_posint, true);
