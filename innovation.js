@@ -151,6 +151,17 @@ function (dojo, declare) {
                 this, function(result){}, function(is_error){},
             );
         },
+        debug_tuck: function() {
+            var debug_card_list = document.getElementById("debug_card_list");
+            self = this;
+            this.ajaxcall("/innovation/innovation/debug_tuck.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.selectedIndex
+                },
+                this, function(result){}, function(is_error){},
+            );
+        },
         debug_score: function () {
             var debug_card_list = document.getElementById("debug_card_list");
             self = this;
@@ -233,6 +244,7 @@ function (dojo, declare) {
                 main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML;
                 main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML;
@@ -243,6 +255,7 @@ function (dojo, declare) {
                 }
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
                 dojo.connect($('debug_meld'), 'onclick', this, 'debug_meld');
+                dojo.connect($('debug_tuck'), 'onclick', this, 'debug_tuck');
                 dojo.connect($('debug_score'), 'onclick', this, 'debug_score');
                 dojo.connect($('debug_achieve'), 'onclick', this, 'debug_achieve');
                 dojo.connect($('debug_return'), 'onclick', this, 'debug_return');
