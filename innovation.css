@@ -1637,59 +1637,6 @@
   width: 31px;
   height: 45px;
 }
-.recto.S.age_1, .recto.S.age_2, .recto.S.age_3, .recto.S.age_4, .recto.S.age_5, .recto.S.age_6, .recto.S.age_7, .recto.S.age_8, .recto.S.age_9, .recto.S.age_10 {
-  background-image: url("img/card_backs_portrait.jpg");
-  background-size: 380px 256px;
-}
-.recto.S.age_1 {
-  background-position-x: -2px;
-}
-.recto.S.age_2 {
-  background-position-x: -36px;
-}
-.recto.S.age_3 {
-  background-position-x: -71px;
-}
-.recto.S.age_4 {
-  background-position-x: -105px;
-}
-.recto.S.age_5 {
-  background-position-x: -140px;
-}
-.recto.S.age_6 {
-  background-position-x: -174px;
-}
-.recto.S.age_7 {
-  background-position-x: -209px;
-}
-.recto.S.age_8 {
-  background-position-x: -243px;
-}
-.recto.S.age_9 {
-  background-position-x: -278px;
-}
-.recto.S.age_10 {
-  background-position-x: -312px;
-}
-.recto.S.type_0 {
-  background-position-y: -3px;
-}
-.recto.S.type_1 {
-  background-position-y: -54px;
-}
-.recto.S.type_2 {
-  background-position-y: -105px;
-}
-.recto.S.type_3 {
-  background-position-y: -156px;
-}
-.recto.S.type_4 {
-  background-position-y: -208px;
-}
-.recto.S.relic {
-  border: solid 1px transparent;
-  background-position-x: -347px;
-}
 .recto.S.age_null {
   background-image: url("img/special_achievements_portrait.jpg");
   background-size: 175px, auto;
@@ -1708,6 +1655,88 @@
 }
 .recto.S.item_109 {
   background-position: -141px -1px;
+}
+.recto.S.default_card_back.age_1, .recto.S.default_card_back.age_2, .recto.S.default_card_back.age_3, .recto.S.default_card_back.age_4, .recto.S.default_card_back.age_5, .recto.S.default_card_back.age_6, .recto.S.default_card_back.age_7, .recto.S.default_card_back.age_8, .recto.S.default_card_back.age_9, .recto.S.default_card_back.age_10 {
+  background-image: url("img/card_backs_portrait.jpg");
+  background-size: 380px 256px;
+}
+.recto.S.default_card_back.age_1 {
+  background-position-x: -2px;
+}
+.recto.S.default_card_back.age_2 {
+  background-position-x: -36px;
+}
+.recto.S.default_card_back.age_3 {
+  background-position-x: -71px;
+}
+.recto.S.default_card_back.age_4 {
+  background-position-x: -105px;
+}
+.recto.S.default_card_back.age_5 {
+  background-position-x: -140px;
+}
+.recto.S.default_card_back.age_6 {
+  background-position-x: -174px;
+}
+.recto.S.default_card_back.age_7 {
+  background-position-x: -209px;
+}
+.recto.S.default_card_back.age_8 {
+  background-position-x: -243px;
+}
+.recto.S.default_card_back.age_9 {
+  background-position-x: -278px;
+}
+.recto.S.default_card_back.age_10 {
+  background-position-x: -312px;
+}
+.recto.S.default_card_back.type_0 {
+  background-position-y: -3px;
+}
+.recto.S.default_card_back.type_1 {
+  background-position-y: -54px;
+}
+.recto.S.default_card_back.type_2 {
+  background-position-y: -105px;
+}
+.recto.S.default_card_back.type_3 {
+  background-position-y: -156px;
+}
+.recto.S.default_card_back.type_4 {
+  background-position-y: -208px;
+}
+.recto.S.default_card_back.relic {
+  border: solid 1px transparent;
+  background-position-x: -347px;
+}
+.recto.S.card_back_text {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 20px;
+  font-weight: bold;
+  font-family: system-ui;
+}
+.recto.S.simplified_card_back {
+  line-height: 45px;
+  text-align: center;
+}
+.recto.S.simplified_card_back.type_0 {
+  background-color: #f0d68c;
+}
+.recto.S.simplified_card_back.type_1 {
+  background-color: #be97ff;
+}
+.recto.S.simplified_card_back.type_2 {
+  background-color: #ff9fe5;
+}
+.recto.S.simplified_card_back.type_3 {
+  background-color: #3ce8ff;
+}
+.recto.S.simplified_card_back.type_4 {
+  background-color: #16eb54;
+}
+.recto.S.simplified_card_back.relic {
+  box-shadow: inset 0px 0px 0px 5px #000;
 }
 
 /* Font sizes */
