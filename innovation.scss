@@ -1025,7 +1025,7 @@
             margin-top: -1px;
             margin-bottom: -1px;
             line-height: 4px;
-            .font_size_7 & {
+            .font_size_7 &, .font_size_8 & {
                 width: 8px;
                 height: 8px;
             }
@@ -1035,7 +1035,7 @@
             background-position-y: -21px;
             @include m.generate-icon-x-position(1, 6, 0, 4.1666667px);
         }
-        .font_size_7 & {
+        .font_size_7 &, .font_size_8 & {
             background-size: 50px auto;
             background-position-y: -42px;
             border: none; // At this size, it looks better without a border since there's a white border from the image.
@@ -1043,7 +1043,8 @@
         }
 		&.age {
 			@include m.square-age;
-			border-width: 0.5px;
+            border: none;
+			box-shadow: 0 0 3px white inset;
 		}
 		.font_size_1 &.age, .font_size_2 &.age, .font_size_3 &.age, .font_size_4 &.age {
 			width: 4px;
@@ -1063,7 +1064,7 @@
 			font-size: 5px;
 			line-height: 6px;
 		}
-		.font_size_7 &.age {
+		.font_size_7 &.age, .font_size_8 &.age {
 			width: 8px;
 			height: 8px;
 			font-size: 7px;
