@@ -1016,21 +1016,59 @@
     &.M {
         width: 9px;
         height: 9px;
+        vertical-align: middle;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
-            width: 8px;
-            height: 8px;
+            width: 4px;
+            height: 4px;
             @include m.icon-background;
+            border: 0.25px solid black;
+            margin-top: -1px;
+            margin-bottom: -1px;
+            line-height: 4px;
+            .font_size_7 & {
+                width: 8px;
+                height: 8px;
+            }
+        }
+        .font_size_1 &, .font_size_2 &, .font_size_3 &, .font_size_4 &, .font_size_5 &, .font_size_6 & {
+            background-size: 25px auto;
+            background-position-y: -21px;
+            @include m.generate-icon-x-position(1, 6, 0, 4.1666667px);
+        }
+        .font_size_7 & {
             background-size: 50px auto;
             background-position-y: -42px;
+            border: none; // At this size, it looks better without a border since there's a white border from the image.
+            @include m.generate-icon-x-position(1, 6, 0, 8.3333333px);
         }
 		&.age {
 			@include m.square-age;
+			border-width: 0.5px;
+		}
+		.font_size_1 &.age, .font_size_2 &.age, .font_size_3 &.age, .font_size_4 &.age {
+			width: 4px;
+			height: 4px;
+			font-size: 3px;
+			line-height: 4px;
+		}
+		.font_size_5 &.age {
+			width: 5px;
+			height: 5px;
+			font-size: 4px;
+			line-height: 5px;
+		}
+		.font_size_6 &.age {
+			width: 6px;
+			height: 6px;
+			font-size: 5px;
+			line-height: 6px;
+		}
+		.font_size_7 &.age {
 			width: 8px;
-            height: 8px;
-			font-size: 6px;
+			height: 8px;
+			font-size: 7px;
 			line-height: 8px;
 		}
-        @include m.generate-icon-x-position(1, 6, 0, 8.33px);
     }
     &.L {
         width: 19px;
