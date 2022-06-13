@@ -2774,19 +2774,19 @@ class Innovation extends Table
             case 'score->score':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to your score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to his score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile  to his score pile.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his score pile.');
                 break;
 
             case 'score->hand':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to your hand.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to his hand.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile  to his hand.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his hand.');
                 break;
 
             case 'hand->score':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand  to his score pile.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his score pile.');
                 break;
                 
             default:
@@ -8573,19 +8573,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 399, Echoes age 7: Jeans
             case "399N1A":
-                $message_for_player = clienttranslate('Choose a first value to draw');
+                $message_for_player = clienttranslate('Choose the first value to draw');
                 $message_for_others = clienttranslate('${player_name} must choose a value to draw');
                 break;
 
             case "399N1B":
-                $message_for_player = clienttranslate('Choose a second value to draw');
-                $message_for_others = clienttranslate('${player_name} must choose a second value to draw');
+                $message_for_player = clienttranslate('Choose the second value to draw');
+                $message_for_others = clienttranslate('${player_name} must choose a value to draw');
                 break;
 
             // id 400, Echoes age 7: Telegraph
             case "400N1A":
-                $message_for_player = clienttranslate('${You} may choose another player to match the splay on their board:');
-                $message_for_others = clienttranslate('${player_name} may choose another player to match the splay on their board');
+                $message_for_player = clienttranslate('${You} may choose another player to match a splayed pile on their board:');
+                $message_for_others = clienttranslate('${player_name} may choose another player to match a splayed pile on their board');
                 break;
 
             case "400N1B":
@@ -8619,8 +8619,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 402, Echoes age 7: Fertilizer
             case "402N2A":
-                $message_for_player = clienttranslate('Choose a value to foreshadow');
-                $message_for_others = clienttranslate('${player_name} must choose a value to foreshadow');
+                $message_for_player = clienttranslate('Choose a value to draw and foreshadow');
+                $message_for_others = clienttranslate('${player_name} must choose a value to draw and foreshadow');
                 break;
 
             // id 403, Echoes age 7: Ice Cream
@@ -13218,14 +13218,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 397, Echoes age 7: Machine Gun
             case "397E1":
                 // "If you have five top cards, draw and score a 7."
-                $has_5_topcards = true;
-                for ($color = 0; $color < 5 ; $color++) {
-                    $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($top_card == null) {
-                        $has_5_topcards = false;
-                    }
-                }
-                if ($has_5_topcards) {
+                if (count(self::getTopCardsOnBoard($player_id)) == 5) {
                     self::executeDraw($player_id, 7, 'score');
                 }
                 break;
@@ -13336,7 +13329,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "404N2":
-                // "If the <music_note> for Bell, Flute, Piano, and Saxophone are visible anywhere"
+                // "If the music note for Bell, Flute, Piano, and Saxophone are visible anywhere"
+                // TODO(ECHOES): Fix the bug here. We shouldn't assume that Saxophone is still a top card by the time this
+                // is executed. It's harder to reason about and future expansions could easily break this assumption (e.g. Figures).
                 $cards_to_draw = 1; // saxophone is a top card
                 
                 // Check Bell
@@ -13356,15 +13351,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($cards_to_draw == 4) {
                     // "you win"
+                    // TODO(ECHOES): Update these log statements with the music note icon.
                     self::notifyPlayer($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Saxophone');
                     throw new EndOfGame();
-                }
-                else {
-                    // "Otherwise, draw a 7 for each ${music_note} that is visible."
-                    for ($i = 1; $i <= $cards_to_draw; $i++) {
+                } else {
+                    // "Otherwise, draw a 7 for each music note that is visible."
+                    for ($i = 0; $i < $cards_to_draw; $i++) {
                         self::executeDraw($player_id, 7, 'hand');
                     }
                 }
@@ -19065,6 +19060,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "395D1A":
             // "I demand you take the highest top card from your board into your hand!"
+            // TOOD(ECHOES): Test that this behaves correctly with Battleship Yamato.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -21561,6 +21557,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         $all_players = self::getAllActivePlayerIds();
                         foreach ($all_players as $player) {
+                            // TODO(ECHOES): This looks like a bug. I think it's supposed to apply to the player executing the effect too.
                             if ($player != $player_id) {
                                 $cards = self::getCardsInLocationKeyedByAge($player, 'score')[$age_to_transfer];
                                 for ($i = 0; $i < count($cards); $i++) {
@@ -22509,6 +22506,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "401N1B":
+                // TODO(ECHOES): Improve the wording of these messages by including the age number (e.g. "You choose to transfer the 7's from all other score piles")
                 if ($choice == 0) { // Score piles                    
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer from score piles.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer from score piles.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
@@ -22524,7 +22522,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
                 // "Draw and foreshadow a card of any value."
-                self::executeDraw($player_id, $choice, 'forecast');
+                self::executeDrawAndForeshadow($player_id, $choice);
                 break;
 
             // id 403, Echoes age 7: Ice Cream
@@ -22541,7 +22539,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
