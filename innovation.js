@@ -2026,7 +2026,7 @@ function (dojo, declare) {
         
         getCardIdFromPosition : function(zone, position, age, type, is_relic) {
             // For relics we use the real IDs (since there is only one of each age)
-            if (is_relic) {
+            if (parseInt(is_relic) == 1) {
                 return 212 + parseInt(age);
             }
 
@@ -2278,7 +2278,7 @@ function (dojo, declare) {
                 visible_card = false;
                 
                 // For relics we use the real IDs (since there is only one of each age)
-                if (is_relic) {
+                if (parseInt(is_relic) == 1) {
                     id = 212 + parseInt(age);
                 // Create a new id based only on the visible properties of the card
                 } else {
