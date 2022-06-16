@@ -6093,7 +6093,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             return $player_id;
         } else {
-            return self::getGameStateValue('current_player_under_dogma_effect');
+            $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+            if ($player_id == -1) {
+                return self::getGameStateValue('active_player');
+            }
+            return $player_id;
         }
     }
     
