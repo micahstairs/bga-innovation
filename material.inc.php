@@ -1613,8 +1613,8 @@ $this->textual_card_infos = array(
 ),    
     
 407 => array('name' => clienttranslate('Bandage'),
-    'i_demand_effect_1' => clienttranslate('${I demand} return the highest card in your score pile for which you do not have a card of matching value in your hand! Return a top card from your board with a ${icon_6}!'),
-    'echo_effect_1' => clienttranslate('Meld a card from hand with a ${icon_2.'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return the highest card in your score pile for which you do not have a card of matching value in your hand! Return a top card from your board with a ${icon_6}!'),
+    'echo_effect_1' => clienttranslate('Meld a card from hand with a ${icon_2}.'),
     ),
 
 408 => array('name' => clienttranslate('Parachute'),

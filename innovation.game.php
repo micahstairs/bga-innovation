@@ -2783,6 +2783,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his hand.');
                 break;
 
+            case 'score->achievements':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to your achievements.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to his achievements.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his achievements.');
+                break;
+
             case 'hand->score':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his score pile.');
@@ -2887,6 +2893,18 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} transfer ${number} revealed ${card} to your board.');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
+                break;
+                
+            case 'score->board':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                break;
+
+            case 'score->achievements':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to your achievement');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} achievements');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s achievements');
                 break;
             
             default:
@@ -8637,6 +8655,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
+
+            // id 406, Echoes age 8: X-ray
+            case "406N1A":
+                $message_for_player = clienttranslate('Choose a value to foreshadow');
+                $message_for_others = clienttranslate('${player_name} must choose a value to foreshadow');
+                break;
+                
+            // id 414, Echoes age 8: Television
+            case "414N1A":
+                $message_for_player = clienttranslate('${You} must choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
+
+            case "414N1B":
+                $message_for_player = clienttranslate('${You} must choose an opponent:');
+                $message_for_others = clienttranslate('${player_name} must choose an opponent');
+                break;
                 
             // id 434, Echoes age 10: Sudoku
             case "434N1A":
@@ -13330,9 +13365,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "404N2":
                 // "If the music note for Bell, Flute, Piano, and Saxophone are visible anywhere"
-                // TODO(ECHOES): Fix the bug here. We shouldn't assume that Saxophone is still a top card by the time this
-                // is executed. It's harder to reason about and future expansions could easily break this assumption (e.g. Figures).
-                $cards_to_draw = 1; // saxophone is a top card
+                $cards_to_draw = 0;
                 
                 // Check Bell
                 $bell_card = self::getCardInfo(342);
@@ -13349,6 +13382,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getIfTopCardOnBoard(383) || ($piano_card['location'] == 'board' && $piano_card['splay_direction'] == 3)) { // up only
                     $cards_to_draw++;
                 }
+                // check saxophone
+                $sax_card = self::getCardInfo(404);
+                if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] == 3)) { // up only
+                    $cards_to_draw++;
+                }
                 if ($cards_to_draw == 4) {
                     // "you win"
                     // TODO(ECHOES): Update these log statements with the music note icon.
@@ -13363,6 +13401,126 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, 7, 'hand');
                     }
                 }
+                break;
+
+            // id 406, Echoes age 8: X-Ray
+            case "406E1":
+                // "Draw and tuck an 8."
+                self::executeDrawAndTuck($player_id, 8);
+                break;
+
+            case "406N1":
+                // "For every three leaves on your board,"
+                $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
+                $num_foreshadows = self::intDivision($number_of_leaves, 3);
+                
+                if ($num_foreshadows > 0) {
+                    self::setAuxiliaryValue($num_foreshadows);
+                    $step_max = 1;
+                }
+                break;
+
+            case "406N2":
+                $step_max = 1;
+                break;      
+
+            // id 407, Echoes age 8: Bandage
+            case "407E1":
+                $step_max = 1;
+                break;
+
+            case "407D1":
+                $max_score_card_no_pile_card = -1;
+                $score_card_cnt = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                $board_cards = self::getTopCardsOnBoard($player_id);
+                for ($age = 10; $age >= 1; $age--) {
+                    if ($score_card_cnt[$age] > 0) {
+                        // Find a matching value on board once the biggest value has been found
+                        $found = false;
+                        foreach ($board_cards as $card) {
+                            if ($card['age'] == $age) {
+                                $found = true;
+                            }
+                        }
+                        if ($found == false) {
+                            $max_score_card_no_pile_card = $age;
+                            break;
+                        }
+                    }
+                }
+                if ($max_score_card_no_pile_card > 0) {
+                    self::setAuxiliaryValue($max_score_card_no_pile_card);
+                }
+                else {
+                    // No card to return so skip that step
+                    $step = 2;
+                }
+                $step_max = 2;
+                break;
+
+            // id 408, Echoes age 8: Parachute
+            case "408D1":
+                // "I demand you transfer all cards without a clock from your hand to my hand!"
+                $hand_cards = self::getCardsInLocation($player_id, 'hand');
+                foreach ($hand_cards as $card) {
+                    $card = self::getCardInfo($card['id']);
+                    if (!self::hasRessource($card, 6)) {
+                        self::transferCardFromTo($card, $launcher_id, 'hand');
+                    }
+                }
+                break;
+
+            // id 409, Echoes age 8: Nylon
+            case "409N1":
+                // "Draw and tuck an 8 for every three factories on your board."
+                do {
+                    $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5);
+                    $num_tucks = self::intDivision($number_of_factories, 3);
+
+                    $green_tucked = false;
+                    for ($i = 1; $i <= $num_tucks; $i++) {
+                        $card = self::executeDrawAndTuck($player_id, 8);
+                        if ($card['color'] == 2) {
+                            // "If any of the tucked cards were green, repeat this dogma effect."
+                            $green_tucked = true;
+                        }
+                    }
+                } while ($green_tucked);
+                break;
+            
+            case "409N2":
+                $step_max = 1;
+                break;
+
+            // id 410, Echoes age 8: Sliced Bread
+            case "410E1":
+                $step_max = 1;
+                break;
+
+            case "410N1":
+                $step_max = 1;
+                break;
+
+            // id 412, Echoes age 8: Tractor
+            case "412E1":
+                // "Draw a 7."
+                self::executeDraw($player_id, 7, 'hand');
+                break;
+
+            case "412N1":
+                // "Draw and score a 7. Draw a 7."
+                self::executeDraw($player_id, 7, 'score');
+                self::executeDraw($player_id, 7, 'hand');
+                break;
+
+            // id 414, Echoes age 8: Television
+            case "414E1":
+                // "Draw and meld an 8."
+                self::executeDraw($player_id, 8, 'board');
+                break;
+                
+            case "414N1":
+                $step_max = 3;
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -19370,6 +19528,179 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(4) /* purple */
             );
             break;  
+
+        // id 406, Echoes age 8: X-Ray
+        case "406N1A":
+            // "draw and foreshadow a card of any value."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+            );
+            break;
+
+        case "406N2A":
+            // "You may splay your yellow cards up."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 3 /* up */,
+                'color' => array(3) /* yellow */
+            );
+            break; 
+
+        // id 407, Echoes age 8: Bandage
+        case "407E1A":
+            // "Meld a card from hand with a leaf"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'with_icon' => 2, /* leaf */
+            );
+            break;
+
+        case "407D1A":
+            // "I demand you return the highest card in your score pile 
+            // for which you do not have a card of matching value in your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'age' => self::getAuxiliaryValue(),
+            );
+            break;
+
+        case "407D1B":
+            // "Return a top card from your board with a clock!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'with_icon' => 6,
+            );
+            break;
+
+        // id 409, Echoes age 8: Nylon
+        case "409N2A":
+            // "You may splay your red cards up."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 3 /* up */,
+                'color' => array(1) /* red */
+            );
+            break; 
+
+        // id 410, Echoes age 8: Sliced Bread
+        case "410E1A":
+            // "Return all cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;         
+
+        case "410N1A":
+            // "Return a card from your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;     
+            
+        // id 414, Echoes age 8: Television
+        case "414N1A":
+            // "Choose a value "
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+            );
+            break;  
+            
+        case "414N1B":
+            // "and an opponent."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_opponent' => true,
+            );
+            break;
+
+        case "414N1C":
+            // "Transfer a card of that value from their score pile to their board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => self::getAuxiliaryValue2(),
+                'location_from' => 'score',
+                'owner_to' => self::getAuxiliaryValue2(),
+                'location_to' => 'board',
+                
+                'age' => self::getAuxiliaryValue(),
+            );
+            break;
+
+        case "414N1D":
+            // "If they have an achievement of the same value, achieve (if eligible) 
+            // a card of that value from their score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => self::getAuxiliaryValue2(),
+                'location_from' => 'score',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+                
+                'age' => self::getAuxiliaryValue(),
+                
+                'require_achievement_eligibility' => true,
+            );
+            break;
             
         // id 434, Echoes age 10: Sudoku
         case "434N1A":
@@ -21557,14 +21888,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         $all_players = self::getAllActivePlayerIds();
                         foreach ($all_players as $player) {
-                            // TODO(ECHOES): This looks like a bug. I think it's supposed to apply to the player executing the effect too.
-                            if ($player != $player_id) {
-                                $cards = self::getCardsInLocationKeyedByAge($player, 'score')[$age_to_transfer];
-                                for ($i = 0; $i < count($cards); $i++) {
-                                    $cards[$i] = self::getCardInfo($cards[$i]['id']);
-                                    self::transferCardFromTo($cards[$i], $player_id, 'hand');
-                                }
+                            $cards = self::getCardsInLocationKeyedByAge($player, 'score')[$age_to_transfer];
+                            for ($i = 0; $i < count($cards); $i++) {
+                                $cards[$i] = self::getCardInfo($cards[$i]['id']);
+                                self::transferCardFromTo($cards[$i], $player_id, 'hand');
                             }
+                            
                         }
                     }
                     break;                
@@ -21584,7 +21913,42 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw(0, /*age=*/ self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
                     }
                     break;
-                    
+
+                // id 406, Echoes age 8: X-ray
+                case "406N1A":
+                    self::executeDraw($player_id, self::getAuxiliaryValue2(), 'forecast');
+                    $cards_left = self::getAuxiliaryValue() - 1;
+                    if ($cards_left > 0) {
+                        self::setAuxiliaryValue($cards_left);
+                        self::incrementStep(-1);
+                        $step--;
+                    }
+                    break;            
+
+                // id 410, Echoes age 8: Sliced Bread
+                case "410E1A":
+                    self::executeDraw($player_id, 8, 'hand');
+                    self::executeDraw($player_id, 8, 'hand');
+                    break;            
+
+                case "410N1A":
+                    // "Draw and score two cards of value one less than the value of the card returned."
+                    $value_to_score = 1;
+                    if ($n > 0) {
+                        $value_to_score = self::getGameStateValue('age_last_selected') - 1;
+                    }
+                    self::executeDraw($player_id, $value_to_score, 'score');
+                    self::executeDraw($player_id, $value_to_score, 'score');
+                    break;     
+                
+                // id 414, Echoes age 8: Television
+                case "414N1C":
+                    if ($n > 0) {
+                        // check for achievement match
+                        self::incrementStepMax(1);
+                    }
+                    break;
+                
                 // id 434, Echoes age 10: Sudoku
                 case "434N1A":
                     // "Draw and meld a card of any value."
@@ -22532,6 +22896,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue2($choice);
                 break;
 
+            // id 406, Echoes age 8: X-ray
+            case "406N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue2($choice);
+                break;
+                
             case "403N1B":
                 $age_value = self::getAuxiliaryValue2();
                 if ($choice == 1) {
@@ -22542,6 +22913,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
                 }
                 self::setAuxiliaryValue($choice);
+                break;
+
+            // id 414, Echoes age 8: Television
+            case "414N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+                
+            case "414N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the player ${player_choice}.'), 
+                    array('You' => 'You', 
+                    'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the player ${player_choice}.'), 
+                    array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+                    'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                self::setAuxiliaryValue2($choice);
                 break;
                 
             // id 434, Echoes age 10: Sudoku
