@@ -16998,7 +16998,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do neither, I win"
                     if ($n == 0) {
                         self::notifyGeneralInfo(clienttranslate('Neither transfer took place.'));
-                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::setGameStateValue('winner_by_dogma', $launcher_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Velcro Shoes');
                         throw new EndOfGame();
                     }
