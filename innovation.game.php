@@ -2902,7 +2902,7 @@ class Innovation extends Table
                 break;
 
             case 'score->achievements':
-                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to your achievement');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to your achievements');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s achievements');
                 break;
