@@ -1141,7 +1141,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_3' => null,
     'achievement_name' => clienttranslate('World'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have twelve or more ${icon_6} on your board.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Translation.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Translation.')),
 
 109 => array('name' => clienttranslate('Universe'),
     'i_demand_effect_1' => null,
