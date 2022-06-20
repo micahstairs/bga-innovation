@@ -13372,24 +13372,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getIfTopCardOnBoard(342) || ($bell_card['location'] == 'board' && $bell_card['splay_direction'] >= 2)) { // up or right
                     $cards_to_draw++;
                 }
-                // check flute
+                // Check Flute
                 $flute_card = self::getCardInfo(343);
                 if (self::getIfTopCardOnBoard(343) || ($flute_card['location'] == 'board' && $flute_card['splay_direction'] >= 2)) { // up or right
                     $cards_to_draw++;
                 }                
-                // check piano
+                // Check Piano
                 $piano_card = self::getCardInfo(383);
                 if (self::getIfTopCardOnBoard(383) || ($piano_card['location'] == 'board' && $piano_card['splay_direction'] == 3)) { // up only
                     $cards_to_draw++;
                 }
-                // check saxophone
+                // Check Saxophone
                 $sax_card = self::getCardInfo(404);
                 if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] == 3)) { // up only
                     $cards_to_draw++;
                 }
                 if ($cards_to_draw == 4) {
                     // "you win"
-                    // TODO(ECHOES): Update these log statements with the music note icon.
+                    // TODO(ECHOES): Update these log statements to include the music note icon.
                     self::notifyPlayer($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
@@ -13430,8 +13430,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "407D1":
+                // "I demand you return the highest card in your score pile for which you do not have a card of matching value in your hand"
                 $max_score_card_no_pile_card = -1;
                 $score_card_cnt = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                // TODO(ECHOES): It looks like there's a major bug here. We are looking for matches on the board instead of in hand.
                 $board_cards = self::getTopCardsOnBoard($player_id);
                 for ($age = 10; $age >= 1; $age--) {
                     if ($score_card_cnt[$age] > 0) {
@@ -13450,8 +13452,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($max_score_card_no_pile_card > 0) {
                     self::setAuxiliaryValue($max_score_card_no_pile_card);
-                }
-                else {
+                } else {
                     // No card to return so skip that step
                     $step = 2;
                 }
@@ -13461,8 +13462,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 408, Echoes age 8: Parachute
             case "408D1":
                 // "I demand you transfer all cards without a clock from your hand to my hand!"
-                $hand_cards = self::getCardsInLocation($player_id, 'hand');
-                foreach ($hand_cards as $card) {
+                foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
                     $card = self::getCardInfo($card['id']);
                     if (!self::hasRessource($card, 6)) {
                         self::transferCardFromTo($card, $launcher_id, 'hand');
