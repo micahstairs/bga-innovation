@@ -7142,24 +7142,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // - Feudalism (34): The card has no effect if all players executing the demand have empty hands and no player executing the non-demand has a yellow/purple pile that can be splayed left.
         // 
         // Here are a list of cards which may or may not make sense to eventually add a check for, but are non-trivial to implement.
-        // - Compass (29)
-        // - Paper (30)
-        // - Printing Press (36)
-        // - Invention (39)
-        // - Enterprise (43)
-        // - Reformation (44)
-        // - Banking (49)
-        // - Statistics (51)
-        // - Industrialization (57)
-        // - Metric System (60)
-        // - Emancipation (64)
-        // - Flight (77)
-        // - Mobility (78)
-        // - Mass Media (80)
-        // - Skyscrapers (82)
-        // - Composites (87)
-        // - Services (93)
-        // - Specialization (94)
+        // - Compass: id 29
+        // - Paper: id 30
+        // - Printing Press: id 36
+        // - Invention: id 39
+        // - Enterprise: id 43
+        // - Reformation: id 44
+        // - Banking: id 49
+        // - Statistics: id 51
+        // - Industrialization: id 57
+        // - Metric System: id 60
+        // - Emancipation: id 64
+        // - Flight: id 77
+        // - Mobility: id 78
+        // - Mass Media: id 80
+        // - Skyscrapers: id 82
+        // - Composites: id 87
+        // - Services: id 93
+        // - Specialization: id 94
 
         // TODO(ECHOES,FIGURES): Add cases.
         switch ($card['id']) {
