@@ -7981,7 +7981,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ];
         } else if ($without_icon > 0) {
             $without_icon_log = clienttranslate(' without a ${[}${icon}${]}');
-            $card_args['without_icon'] = [
+            $card_args['with_icon'] = [
                 'i18n' => ['log'],
                 'log' => $without_icon_log,
                 'args' => array_merge(self::getDelimiterMeanings($without_icon_log), ['icon' => $without_icon]),
