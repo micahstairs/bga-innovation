@@ -4171,21 +4171,21 @@ class Innovation extends Table
 
     function countCardsInLocationKeyedByAge($owner, $location, $type=null, $is_relic=null) {
         /**
-            Count all the cards in a particular location, keyed by age, then sorted by position.
+            Count all the cards in a particular location, keyed by age.
         **/
         return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, 'age', $type, $is_relic);
     }
 
     function countCardsInLocationKeyedByColor($owner, $location) {
         /**
-            Count all the cards in a particular location, keyed by color, then sorted by position.
+            Count all the cards in a particular location, keyed by color.
         **/
         return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, 'color');
     }
     
     function countCardsInLocation($owner, $location, $type=null) {
         /**
-            Count all the cards in a particular location, sorted by position.
+            Count all the cards in a particular location.
         **/
         return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, /*key=*/ null, $type);
     }
@@ -13443,22 +13443,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "407D1":
                 // "I demand you return the highest card in your score pile for which you do not have a card of matching value in your hand"
-                $max_score_card_no_hand_card = -1;
-                $score_card_cnt = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                $hand_card_cnts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
+                $step_max = 2;
+                $score_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                $hand_counts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
                 for ($age = 10; $age >= 1; $age--) {
-                    if ($score_card_cnt[$age] > 0 && $hand_card_cnts[$age] == 0) {
-                        $max_score_card_no_hand_card = $age;
-                        break;
+                    if ($score_counts[$age] > 0 && $hand_counts[$age] == 0) {
+                        self::setAuxiliaryValue($age);
+                        break 2;
                     }
                 }
-                if ($max_score_card_no_hand_card > 0) {
-                    self::setAuxiliaryValue($max_score_card_no_hand_card);
-                } else {
-                    // No card to return so skip that step
-                    $step = 2;
-                }
-                $step_max = 2;
+                // No card to return so skip that step
+                $step = 2;
                 break;
 
             // id 408, Echoes age 8: Parachute
@@ -13551,6 +13546,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "419N2":
+                // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
+                // TODO(ECHOES): There's multiple bugs here. Battleship Yamato's faceup age is 11, which breaks an
+                // assumption that this code currently has. Also, purple is being exlcuded in the for loop. I propose
+                // rewriting this using the countCardsInLocationKeyedByColor function and using an if statement instead
+                // of a for loop.
                 $lowest_card_age = 11;
                 for ($color = 0; $color < 4; $color++) {
                     if ($color != 2) {
@@ -13603,7 +13603,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "For each visible bonus on your board, draw and tuck a card of that value, in ascending order."
                 $bonuses = self::getVisibleBonusesOnBoard($player_id);
                 sort($bonuses); // put in ascending order
-                foreach($bonuses as $bonus) {
+                foreach ($bonuses as $bonus) {
                     self::executeDrawAndTuck($player_id, $bonus);
                 }
                 break;
@@ -13618,10 +13618,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeNonDemandEffects(self::getCardInfo(self::getAuxiliaryValue()));
                 break;
 
-/* TODO(ECHOES) Select bottom card needs to be enabled
-            case "423N2":
-                $step_max = 1;
-                break; */
+            // TODO(ECHOES): Select bottom card needs to be enabled.
+            // case "423N2":
+            //     $step_max = 1;
+            //    break;
                 
             // id 424, Echoes age 9: Rock
             case "424D1":
@@ -19868,8 +19868,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => 3 /* up */,
-                'color' => array(2) /* red */
+                'splay_direction' => 3, // up
+                'color' => array(2), // green
             );
             break; 
 
@@ -19910,8 +19910,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => 3 /* up */,
-                'color' => array(4) /* purple */
+                'splay_direction' => 3, // up
+                'color' => array(4), // purple
             );
             break; 
 
@@ -22280,29 +22280,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "424D1A":
                     // "If Scissors is your new top green card, I win!"
                     $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    if ($top_green_card !== null) {
-                        if ($top_green_card['id'] == 350) {
-                            self::notifyPlayer($launcher_id, 'log', clienttranslate('Scissors is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                            self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('Scissors is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                            self::setGameStateValue('winner_by_dogma', $launcher_id);
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
-                            throw new EndOfGame();
-                        }
+                    if ($top_green_card !== null && $top_green_card['id'] == 350) {
+                        // TODO(ECHOES): Make the card name a parameter so that we ensure that the card name is translated consistently, and to minimize the number of translations.
+                        self::notifyPlayer($launcher_id, 'log', clienttranslate('Scissors is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('Scissors is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $launcher_id);
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
+                        throw new EndOfGame();
                     }
                     break;
 
                 case "424N1A":
                     // "If Paper is your top green card, you win."
                     $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    if ($top_green_card !== null) {
-                        if ($top_green_card['id'] == 30) {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('Paper is a top card on your board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Paper is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                            self::setGameStateValue('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
-                            throw new EndOfGame();
-                            
-                        }                        
+                    if ($top_green_card !== null && $top_green_card['id'] == 30) {
+                        // TODO(ECHOES): Make the card name a parameter so that we ensure that the card name is translated consistently, and to minimize the number of translations.
+                        self::notifyPlayer($player_id, 'log', clienttranslate('Paper is a top card on your board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Paper is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
+                        throw new EndOfGame();
                     }
                     break;
                     
