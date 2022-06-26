@@ -746,6 +746,12 @@
   right: 22px;
 }
 
+.card_type {
+  padding-top: 10px;
+  font-style: italic;
+  text-align: center;
+}
+
 .card_title {
   color: white;
   font-family: Tahoma, Arial, sans-serif;

@@ -2047,8 +2047,18 @@ function (dojo, declare) {
             } else {
                 var HTML_inside = this.writeOverCard(card, size);
             }
-            
-            return "<div id='" + HTML_id + "' class='" + HTML_class + "'>" + HTML_inside + "</div>";
+
+            var card_type = "";
+            if (size == 'L') {
+                // TODO(ECHOES,CITIES,FIGURES): Update this.
+                if (type == 0) {
+                    card_type = "<div class='card_type'>This card is from the base game.</div>";
+                } else {
+                    card_type = "<div class='card_type'>This card is from Artifacts of the Past.</div>";
+                }
+            }
+
+            return "<div id='" + HTML_id + "' class='" + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
         },
         
         writeOverCard : function(card, size) {
