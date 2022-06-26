@@ -2410,7 +2410,6 @@ function (dojo, declare) {
                     }
                 }
             }, 2000);
-            
         },
         
         setPlacementRulesForAchievements : function() {
