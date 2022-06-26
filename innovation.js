@@ -2396,15 +2396,21 @@ function (dojo, declare) {
 
         // Reduce opacity of expansion decks if the accompanying base deck is empty.
         updateDeckOpacities : function() {
-            for (var a = 1; a <= 10; a++) {
-                var opacity = document.getElementById(`deck_0_${a}`).childElementCount > 0 ? 1.0 : 0.35;
-                for (var t = 1; t <= 4; t++) {
-                    var deck = document.getElementById(`deck_${t}_${a}`);
-                    if (deck != null) {
-                        deck.parentElement.style.opacity = opacity;
+            // NOTE: We delay this by 2 seconds in order to give enough time for the cards move around. If
+            // we discover that this is buggy or if we want to build a less hacky solution, we should pass
+            // data from the server side instead of calculating the deck sizes using childElementCount.
+            setTimeout(function () {
+                for (var a = 1; a <= 10; a++) {
+                    var opacity = document.getElementById(`deck_0_${a}`).childElementCount > 0 ? 1.0 : 0.35;
+                    for (var t = 1; t <= 4; t++) {
+                        var deck = document.getElementById(`deck_${t}_${a}`);
+                        if (deck != null) {
+                            deck.parentElement.style.opacity = opacity;
+                        }
                     }
                 }
-            }
+            }, 2000);
+            
         },
         
         setPlacementRulesForAchievements : function() {
