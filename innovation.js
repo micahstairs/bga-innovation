@@ -2042,8 +2042,14 @@ function (dojo, declare) {
             var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
-            if (card === null ) {
-                var HTML_inside = '';
+            var simplififed_graphics_enabled = this.prefs[110].value == 2;
+
+            if (card === null) {
+                if (age === null || !simplififed_graphics_enabled) {
+                    var HTML_inside = '';
+                } else {
+                    var HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
+                }
             } else {
                 var HTML_inside = this.writeOverCard(card, size);
             }
@@ -2058,7 +2064,8 @@ function (dojo, declare) {
                 }
             }
 
-            return "<div id='" + HTML_id + "' class='" + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
+            var graphics_class = simplififed_graphics_enabled ? "simplified_card_back" : "default_card_back";
+            return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
         },
         
         writeOverCard : function(card, size) {
