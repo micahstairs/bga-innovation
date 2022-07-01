@@ -440,12 +440,7 @@ class Innovation extends Table
 
         // Indicate that this production game was created after the Artifacts expansion was released
         // TODO(CITIES,ECHOES,FIGURES): Update this before releasing future expansions.
-        if (self::getGameStateValue('artifacts_mode') == 1) {
-            // TODO(ARTIFACTS#456): Remove this once we've done an extended test in alpha.
-            self::setGameStateInitialValue('release_version', 0);
-        } else {
-            self::setGameStateInitialValue('release_version', 1);
-        }
+        self::setGameStateInitialValue('release_version', 1);
 
         // Init global values with their initial values
         $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
