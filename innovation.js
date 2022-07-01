@@ -2180,10 +2180,10 @@ function (dojo, declare) {
         
         getSpecialAchievementText : function(card) {
             var card_data = this.cards[card.id];
-            var achievement_name = _(card_data.achievement_name).toUpperCase();
+            var name = _(card_data.name).toUpperCase();
             var is_monument = card.id == 106;
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
-            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
+            var div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
             var div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
             

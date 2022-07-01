@@ -1990,7 +1990,7 @@ class Innovation extends Table
 
         // Delimiters for achievement name
         if (strpos($text, '{<<<}') > -1) {
-            $delimiters['<<<'] = "<span class='achievement_name'>";
+            $delimiters['<<<'] = "<span class='card_name'>";
             $delimiters['>>>'] = "</span>";
         }
 
@@ -2282,12 +2282,12 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his achievements.');
             break;
         case 'achievements->achievements': // That is: unclaimed achievement to achievement claimed by player
-            if ($card['age'] === null) { // Special achivement
-                $message_for_player = clienttranslate('${You} achieve ${<<<}${achievement_name}${>>>}.');
-                $message_for_others = clienttranslate('${player_name} achieves ${<<<}${achievement_name}${>>>}.');
-            } else { // Age achivement
-                $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
-                $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<<}(${achievement_name})${>>>}.');
+            if ($card['age'] === null) { // Special achievement
+                $message_for_player = clienttranslate('${You} achieve ${<<<}${name}${>>>}.');
+                $message_for_others = clienttranslate('${player_name} achieves ${<<<}${name}${>>>}.');
+            } else { // Age achievement
+                $message_for_player = clienttranslate('${You} achieve a ${<}${age}${>}.');
+                $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
         case 'forecast->deck':
@@ -2996,17 +2996,14 @@ class Innovation extends Table
             // TODO(LATER): We should stop sending the card's properties which aren't actually used.
             $notif_args_for_player = array_merge($notif_args_for_player, $card);
         } else if (array_key_exists('<<<', $delimiters_for_player)) {
-            $notif_args_for_player['i18n'] = array('achievement_name');
+            $notif_args_for_player['i18n'] = array('name');
             $notif_args_for_player['age'] = $card['age'];
             $notif_args_for_player['type'] = $card['type'];
             $notif_args_for_player['is_relic'] = $card['is_relic'];
+            // The player can see the front of the card because it is a special achievement
             if ($card['age'] === null) {
-                // The player can see the front of the card because it is a special achievement
                 $notif_args_for_player['id'] = $card['id'];
-                $notif_args_for_player['achievement_name'] = self::getAchievementCardName($card['id']);
-            } else {
-                // The player can't see the front of the card
-                $notif_args_for_player['achievement_name'] = self::getNormalAchievementName($card['age']);
+                $notif_args_for_player['name'] = self::getCardName($card['id']);
             }
         } else {
             // The player can't see the front of the card
@@ -3028,17 +3025,14 @@ class Innovation extends Table
             // TODO(LATER): We should stop sending the card's properties which aren't actually used.
             $notif_args_for_others = array_merge($notif_args_for_others, $card);
         } else if (array_key_exists('<<<', $delimiters_for_others)) {
-            $notif_args_for_others['i18n'] = array('achievement_name');
+            $notif_args_for_others['i18n'] = array('name');
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
             $notif_args_for_others['is_relic'] = $card['is_relic'];
+            // Other players can see the front of the card because it is a special achievement
             if ($card['age'] === null) {
-                // Other players can see the front of the card because it is a special achievement
                 $notif_args_for_others['id'] = $card['id'];
-                $notif_args_for_others['achievement_name'] = self::getAchievementCardName($card['id']);
-            } else {
-                // Other players can't see the front of the card
-                $notif_args_for_others['achievement_name'] = self::getNormalAchievementName($card['age']);
+                $notif_args_for_others['name'] = self::getCardName($card['id']);
             }
         } else {
             // Other players can't see the front of the card
@@ -3767,10 +3761,6 @@ class Innovation extends Table
 
     function getCardName($id) {
         return $this->textual_card_infos[$id]['name'];
-    }
-
-    function getAchievementCardName($id) {
-        return $this->textual_card_infos[$id]['achievement_name'];
     }
 
     function getNonDemandEffect($id, $effect_number) {
@@ -5453,30 +5443,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
     }
     
-    // TODO(LATER): Figure out if we can safely remove this.
-    function getNormalAchievementName($age) {
-        switch($age) {
-            case 1:
-                return clienttranslate('Prehistory');
-            case 2:
-                return clienttranslate('Classical');
-            case 3:
-                return clienttranslate('Medieval');
-            case 4:
-                return clienttranslate('Renaissance');
-            case 5:
-                return clienttranslate('Exploration');
-            case 6:
-                return clienttranslate('Enlightenment');
-            case 7:
-                return clienttranslate('Romance');
-            case 8:
-                return clienttranslate('Modern');
-            case 9:
-                return clienttranslate('Postmodern');
-        }
-    }
-
     function getPrintableStringForCardType($type) {
         switch($type) {
             case 0:
