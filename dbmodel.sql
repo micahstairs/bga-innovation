@@ -458,6 +458,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (361, 3, 3, 3,  1, 10,  1,  0, 1, 'removed'),
 (362, 3, 3, 3,  1,  1,  0,  2, 1, 'removed'),
 (363, 3, 3, 4,  0,103,  1, 10, 1, 'removed'),
+(364, 3, 3, 4,  0,103, 10,  4, 4, 'removed'),
 
 /* Echoes - Age 4 */
 (365, 3, 4, 0,  3,  3,  3,  0, 3, 'removed'),
