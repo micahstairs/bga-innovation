@@ -527,27 +527,22 @@ $this->textual_card_infos = array(
 /* Special achievements */
 
 105 => array('name' => clienttranslate('Empire'),
-    'achievement_name' => clienttranslate('Empire'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have three or more icons of all six types: ${icons_1_to_6}'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_2} Construction.')),
 
 106 => array('name' => clienttranslate('Monument'),
-    'achievement_name' => clienttranslate('Monument'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck six or score six cards during a single turn.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Masonry.')),
 
 107 => array('name' => clienttranslate('Wonder'),
-    'achievement_name' => clienttranslate('Wonder'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five colors on your board, and each is splayed either up or right.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} Invention.')),
 
 108 => array('name' => clienttranslate('World'),
-    'achievement_name' => clienttranslate('World'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have twelve or more ${icon_6} on your board.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Translation.')),
 
 109 => array('name' => clienttranslate('Universe'),
-    'achievement_name' => clienttranslate('Universe'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five top cards, and each is of value ${age_8} or higher.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Astronomy.')),
 
@@ -1183,27 +1178,22 @@ $this->textual_card_infos = array(
 /* Cities Special achievements */
 
 325 => array('name' => clienttranslate('Legend'),
-    'achievement_name' => clienttranslate('Legend'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${left_arrow} on a color already splayed left.'),
 ),
 
 326 => array('name' => clienttranslate('Repute'),
-    'achievement_name' => clienttranslate('Repute'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${right_arrow} on a color already splayed right.'),
 ),
 
 327 => array('name' => clienttranslate('Fame'),
-    'achievement_name' => clienttranslate('Fame'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${up_arrow} on a color already splayed up.'),
 ),
 
 328 => array('name' => clienttranslate('Glory'),
-    'achievement_name' => clienttranslate('Glory'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${flag}.'),
 ),
 
 329 => array('name' => clienttranslate('Victory'),
-    'achievement_name' => clienttranslate('Victory'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${fountain}.'),
 ),
     
@@ -1758,27 +1748,22 @@ $this->textual_card_infos = array(
 /* Echoes - Special achievements */
 
 435 => array('name' => clienttranslate('Wealth'),
-    'achievement_name' => clienttranslate('Wealth'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have eight or more bonuses visible on your board.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Palampore.')),
 
 436 => array('name' => clienttranslate('Destiny'),
-    'achievement_name' => clienttranslate('Destiny'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have seven or more cards in your forecast.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} Barometer.')),
 
 437 => array('name' => clienttranslate('Heritage'),
-    'achievement_name' => clienttranslate('Heritage'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have eight or more ${icon_0} visible in one color.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_6} Loom.')),
 
 438 => array('name' => clienttranslate('History'),
-    'achievement_name' => clienttranslate('History'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have a color with four or more visible echo effects.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_7} Photography.')),
 
 439 => array('name' => clienttranslate('Supremacy'),
-    'achievement_name' => clienttranslate('Supremacy'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Novel.')),
 
