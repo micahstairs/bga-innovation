@@ -1792,6 +1792,13 @@ class Innovation extends Table
                 $end_of_game = true;
             }
         }
+
+        try {
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ true);
+        } catch(EndOfGame $e) {
+            $end_of_game = true;
+        }
+
         if ($end_of_game) {
             self::trace('EOG bubbled from self::updateGameSituation');
             throw $e; // Re-throw exception to higher level
@@ -2828,7 +2835,12 @@ class Innovation extends Table
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         }
 
-        $current_player_no =  self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
+        if ($current_player_id < 0) {
+            // Pick an arbitrary player if it's not anyone's turn (e.g. initial meld)
+            $current_player_no = 1;
+        } else {
+            $current_player_no = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
+        }
 
         $player_ids = [];
         for ($i = 0; $i < $num_players; $i++) {
@@ -2841,19 +2853,19 @@ class Innovation extends Table
     }
 
     /** Checks to see if any players are eligible for special achievements. **/
-    function checkForSpecialAchievements() {
+    function checkForSpecialAchievements($onlyImmediateAchievements) {
         // "In the rare case that two players simultaneously become eligible to claim a special achievement,
         // the tie is broken in turn order going clockwise, with the current player winning ties."
         // https://boardgamegeek.com/thread/2710666/simultaneous-special-achievements-tiebreaker
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
-            self::checkForSpecialAchievementsForPlayer($player_id);
+            self::checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements);
         }
     }
     
     /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
-    function checkForSpecialAchievementsForPlayer($player_id) {
+    function checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements) {
         // TODO(CITIES,ECHOES): Update this once there are other special achievements to test for.
-        $achievements_to_test = array(105, 106, 107, 108, 109);
+        $achievements_to_test = $onlyImmediateAchievements ? array(106) : array(105, 106, 107, 108, 109);
         $end_of_game = false;
         
         foreach ($achievements_to_test as $achievement_id) {
@@ -6374,7 +6386,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::transferCardFromTo($card, $card['owner'], 'board');
         
         try {
-            self::checkForSpecialAchievements();
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::meld');
@@ -11226,7 +11238,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Code executed when there is no exclusive execution to handle, or when it's over
 
         try {
-            self::checkForSpecialAchievements();
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::stInterPlayerInvolvedTurn');
