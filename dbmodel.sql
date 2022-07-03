@@ -83,6 +83,14 @@ CREATE TABLE IF NOT EXISTS `echo_execution` (
   PRIMARY KEY(`execution_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Table used to store a table-based auxiliary array (some card implementations require storing lots of integers) */
+CREATE TABLE IF NOT EXISTS `auxiliary_value_table` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
+ `array_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The 1-based index of the array (the 0th index is used as a header to indicate the array size)',
+ `value` INT COMMENT 'the auxiliary value',
+  PRIMARY KEY(`nesting_index`, `array_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
 CREATE TABLE IF NOT EXISTS `random` (
  `id` SMALLINT UNSIGNED NOT NULL,
