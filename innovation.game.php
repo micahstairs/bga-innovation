@@ -6540,6 +6540,66 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getAuxiliaryValue2AsArray() {
         return self::getValueAsArray(self::getAuxiliaryValue2());
     }
+
+    function setAuxiliaryArray($array) {
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+
+        // Remove the old array (if it exists)
+        self::DbQuery(self::format("DELETE FROM auxiliary_value_table WHERE nesting_index = {nesting_index}", array('nesting_index' => $nesting_index)));
+
+        // Write array size
+        self::DbQuery(self::format("
+                INSERT INTO auxiliary_value_table
+                    (nesting_index, array_index, value)
+                VALUES
+                    ({nesting_index}, 0, {array_size})
+            ", array('nesting_index' => $nesting_index, 'array_size' => count($array))));
+
+        // Write array values
+        for ($i = 1; $i <= count($array); $i++) {
+            self::DbQuery(self::format("
+                INSERT INTO auxiliary_value_table
+                    (nesting_index, array_index, value)
+                VALUES
+                    ({nesting_index}, {array_index}, {value})
+            ", array('nesting_index' => $nesting_index, 'array_index' => $i, 'value' => $array[$i - 1])));
+        }
+    }
+
+    function getAuxiliaryArray() {
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+        
+        // Get array size
+        $array_size = self::getUniqueValueFromDB(self::format("
+            SELECT
+                value
+            FROM
+                auxiliary_value_table
+            WHERE
+                nesting_index = {nesting_index} AND
+                array_index = 0
+        ",
+            array('nesting_index' => $nesting_index)
+       ));
+            
+        // Get array values
+        $array = array();
+        for ($i = 1; $i <= $array_size; $i++) {
+            $array[] = self::getUniqueValueFromDB(self::format("
+                SELECT
+                    value
+                FROM
+                    auxiliary_value_table
+                WHERE
+                    nesting_index = {nesting_index} AND
+                    array_index = {array_index}
+            ",
+                array('nesting_index' => $nesting_index, 'array_index' => $i)
+            ));
+        }
+
+        return $array;
+    }
     
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {

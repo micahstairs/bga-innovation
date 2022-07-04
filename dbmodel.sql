@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS `card` (
 
 /* Table used to manage the execution of nested effects */
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
- `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
  `card_id` SMALLINT COMMENT '-1 means no card',
  `executing_as_if_on_card_id` SMALLINT COMMENT '-1 means no card',
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
@@ -81,6 +81,14 @@ CREATE TABLE IF NOT EXISTS `echo_execution` (
  `execution_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of when the echo effect should be executed (an index of 1 is used for the final card to be executed, and higher indicies are used for cards buried deeper)',
  `card_id` SMALLINT COMMENT 'the ID of the card',
   PRIMARY KEY(`execution_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table used to store a table-based auxiliary array (some card implementations require storing lots of integers) */
+CREATE TABLE IF NOT EXISTS `auxiliary_value_table` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
+ `array_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The 1-based index of the array (the 0th index is used as a header to indicate the array size)',
+ `value` INT COMMENT 'the auxiliary value',
+  PRIMARY KEY(`nesting_index`, `array_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
