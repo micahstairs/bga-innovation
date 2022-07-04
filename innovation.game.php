@@ -8541,26 +8541,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 364, Echoes age 3: Sunglasses
             case "364N1A":
+                // TODO(ECHOES): Are we sure this is a "must"?
                 $message_for_player = clienttranslate('${You} must choose what to do with your splayed piles');
                 $message_for_others = clienttranslate('${player_name} must choose what to do with his splayed piles');
                 
                 $splay_direction = self::getCurrentSplayDirection($player_id, 4);
                 if ($splay_direction > 0) {
                     $options = array(
-                                    array('value' => 1, 'text' => self::format(clienttranslate("Splay your purple cards in the direction one of your other cards is splayed"), array())),
-                                    array('value' => 0, 'text' => self::format(clienttranslate("Splay one of your non-purple colors {splay_direction}"), array('splay_direction' => self::getSplayDirectionInClear($splay_direction))))
+                                    array('value' => 1, 'text' => clienttranslate("Splay your purple cards in the direction one of your other piles is splayed")),
+                                    array('value' => 0, 'text' => self::format(clienttranslate("Splay one of your non-purple piles {splay_direction}"), array('splay_direction' => self::getSplayDirectionInClear($splay_direction)))),
                     );
                 } else {
                     $options = array(
-                                    array('value' => 1, 'text' => self::format(clienttranslate("Splay your purple cards in the direction one of your other cards is splayed"), array())),
-                                    array('value' => 0, 'text' => self::format(clienttranslate("Unsplay one of your non-purple colors"), array()))
+                                    array('value' => 1, 'text' => clienttranslate("Splay your purple cards in the direction one of your other piles is splayed")),
+                                    array('value' => 0, 'text' => clienttranslate("Unsplay one of your non-purple piles")),
                     );
                 }
                 break;
                 
             case "364N1B":
-                $message_for_player = clienttranslate('${You} must choose a color for purple to match splay');
-                $message_for_others = clienttranslate('${player_name} must choose a color to for purple to match splay');
+                // TODO(ECHOES): Are we sure this is a "must"?
+                $message_for_player = clienttranslate('${You} must choose a color and splay your purple cards in the same direction');
+                $message_for_others = clienttranslate('${player_name} must choose a color and splay his purple cards in the same direction');
                 break;
                 
             // id 370, Echoes age 4: Globe
@@ -12718,8 +12720,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 364, Echoes age 3: Sunglasses
             case "364E1":
+                // "Score a card from your hand of a color you have splayed"
                 $color_array = array();
-                for ($color = 0; $color < 4; $color++) {
+                for ($color = 0; $color < 5; $color++) {
                     if (self::getCurrentSplayDirection($player_id, $color) > 0) {
                         $color_array[] = $color;
                     }
@@ -12735,30 +12738,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // The criteria for continuing is the following:
                 //  1.  One purple card must be on the board (otherwise no splays can change)
                 //  2.  At least one non-purple card must exist on the board
-                //  3.  At least one different splay
-                $color_array = array();
-                
-                $keep_going = true;
+                //  3.  At least one different splay        
                 $top_purple_card = self::getTopCardOnBoard($player_id, 4);
                 if ($top_purple_card === null) {
                     // Need at least one purple card for the choice to have an effect.
-                    $keep_going = false;
                     self::notifyPlayer($player_id, 'log', 
                         clienttranslate('${You} do not have a top purple top card.'), 
                         array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', 
                         clienttranslate('${player_name} does not have a purple card.'), 
                         array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));                    
+                    break;
                 } else {
                     $non_purple_card = false;
                     $same_splay_direction = true;
-                    $pile_splay = $top_purple_card['splay_direction'];
-                    for ($color = 0; $color < 4; $color++) {
+                    $purple_splay = $top_purple_card['splay_direction'];
+                    $color_array = array();
+                    for ($color = 0; $color < 4; $color++) { // non-purple
                         $top_card = self::getTopCardOnBoard($player_id, $color);
                         if ($top_card !== null) {
                             $non_purple_card = true;
                              
-                            if ($top_card['splay_direction'] != $pile_splay) {
+                            if ($top_card['splay_direction'] != $purple_splay) {
                                 $same_splay_direction = false;
                             }
                             $color_array[] = $color;
@@ -12766,28 +12767,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     
                     if ($non_purple_card == false) {
-                        $keep_going = false;
                         self::notifyPlayer($player_id, 'log', 
-                            clienttranslate('${You} do not have a non-purple top card.'), 
+                            clienttranslate('${You} do not have a top non-purple card.'), 
                             array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', 
-                            clienttranslate('${player_name} does not have a non-purple card.'), 
+                            clienttranslate('${player_name} does not have a top non-purple card.'), 
                             array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    } else if ($same_splay_direction) {
+                        self::notifyPlayer($player_id, 'log', 
+                            clienttranslate('All of ${your} piles are already splayed the same direction.'), 
+                            array('your' => 'your'));
+                        self::notifyAllPlayersBut($player_id, 'log', 
+                            clienttranslate('All of ${player_name}\'s piles are already splayed the same direction.'), 
+                            array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    } else {
+                        $step_max = 2;
+                        self::setAuxiliaryValue2FromArray($color_array); // For color selection later
                     }
-                    if ($same_splay_direction) {
-                        $keep_going = false;
-                        self::notifyPlayer($player_id, 'log', 
-                            clienttranslate('${You} do not have a different splay on your board.'), 
-                            array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', 
-                            clienttranslate('${player_name} does not have a different splay on their board.'), 
-                            array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                    }                    
-                }
-                
-                if ($keep_going) {
-                    $step_max = 2;
-                    self::setAuxiliaryValue2FromArray($color_array); // For color selection later
                 }
                 break;
                 
@@ -18818,7 +18814,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "364N1B":
-            // Choose a color to for purple to match
+            // Choose a color for purple to match
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false, 
@@ -18829,14 +18825,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "364N1C":
-            // Choose a color to change to match purple's splay
+            // Choose a color for purple's splay to match
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
 
                 'splay_direction' => self::getCurrentSplayDirection($player_id, 4),
-                'color' => self::getAuxiliaryValue2AsArray(), /* non-purple */
+                'color' => self::getAuxiliaryValue2AsArray(), // non-purple
             );
             break;
 
@@ -22044,11 +22040,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "364N1A":
-                    if (self::getAuxiliaryValue() == 1) {
-                        // change a purple splay
-                        // The assumption is that this path will be taken
-                    } else {
-                        // choose another color's splay
+                    // Decide whether to go to the 2nd or 3rd interaction based on player's choice
+                    if (self::getAuxiliaryValue() != 1) {
                         self::incrementStepMax(1);
                         self::incrementStep(1); $step++;
                     }
@@ -23293,11 +23286,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "364N1A":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay your purple cards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to his purple cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay his purple cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 } else {
                     $splay_direction = self::getCurrentSplayDirection($player_id, 4);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay your non-purple card pile ${splay_direction}.'), array('You' => 'You', 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay a non-purple card pile ${splay_direction}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay a non-purple pile ${splay_direction}.'), array('You' => 'You', 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay a non-purple pile ${splay_direction}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
