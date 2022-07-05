@@ -3539,6 +3539,11 @@ function (dojo, declare) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
+            } else if (card.location_to == 'achievements' && card.age === null) {
+                card.owner = card.owner_to;
+                card['location'] = card.location_to;
+                card.position = card.position_to;
+                this.addTooltipForCard(card);
             }
 
             // Add tooltip to game log
