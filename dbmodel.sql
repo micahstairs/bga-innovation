@@ -170,8 +170,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (216, 0, 4, 0, 5, 0, 3, 3, NULL, NULL, 3, TRUE, 'removed'),
 (217, 1, 5, 4, 5, 3, 5, 0, NULL, NULL, 5, TRUE, 'removed'),
 (218, 4, 6, 1, 6, 6, 0, 2, NULL, NULL, 6, TRUE, 'removed'),
-/* TODO(ECHOES): Add Echo effect to this card */
-(219, 3, 7, 3, 0, 0, 2, 2, NULL, NULL, 2, TRUE, 'removed');
+(219, 3, 7, 3, 0,10, 2, 2, NULL, NULL, 2, TRUE, 'removed');
 
 /* Insert normal cards */
 
