@@ -1558,7 +1558,7 @@ class Innovation extends Table
         
         foreach ($cards as $card) {
             // TODO(CITIES,ECHOES): Revisit this.
-            if ($card['id'] < 220 || $card['id'] > 440) {
+            if ($card['id'] < 215 || $card['id'] > 440 || $card['id'] == 216 || $card['id'] == 217) {
                 // 1 is used for hex icons, allowing it to be ignored in the product
                 $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
                 $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
@@ -12220,6 +12220,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 219, Relic age 7: Safety Pin
+            case "219E1":
+                // Draw and score a 7."
+                self::executeDraw($player_id, 7, 'score');
+                break;
+
+            case "219D1":
+                $step_max = 1;
+                break;
+                
             // id 330, Echoes age 1: Dice
             case "330N1":
                 // "Draw and reveal a 1"
@@ -18112,6 +18122,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck'
             );
             break;
+
+        // id 219, Relic age 7: Safety Pin
+        case "219D1A":
+            // "I demand you return all cards of value higher than 6 from your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'age_min' => 7,
+            );
+            break;
             
         // id 331, Echoes age 1: Perfume
         case "331D1A":
@@ -21788,6 +21814,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $player_id, 'deck');
                         }
                     }
+                    break;
+
+                // id 219, Relic age 7: Safety Pin
+                case "219D1A":
+                    // "Draw a 6!"
+                    self::executeDraw($player_id, 6, 'hand');
                     break;
                     
                 // id 331, Echoes age 1: Perfume
