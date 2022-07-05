@@ -479,12 +479,7 @@ class Innovation extends Table
 
         // Indicate that this production game was created after the Artifacts expansion was released
         // TODO(CITIES,ECHOES,FIGURES): Update this before releasing future expansions.
-        if (self::getGameStateValue('artifacts_mode') == 1) {
-            // TODO(ARTIFACTS#456): Remove this once we've done an extended test in alpha.
-            self::setGameStateInitialValue('release_version', 0);
-        } else {
-            self::setGameStateInitialValue('release_version', 1);
-        }
+        self::setGameStateInitialValue('release_version', 1);
 
         // Init global values with their initial values
         $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
@@ -1886,6 +1881,13 @@ class Innovation extends Table
                 $end_of_game = true;
             }
         }
+
+        try {
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ true);
+        } catch(EndOfGame $e) {
+            $end_of_game = true;
+        }
+
         if ($end_of_game) {
             self::trace('EOG bubbled from self::updateGameSituation');
             throw $e; // Re-throw exception to higher level
@@ -2743,9 +2745,9 @@ class Innovation extends Table
                 break;
                 
             case 'revealed->board': // Collaboration
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board.');
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your board');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board');
                 break;
                 
             case 'revealed->achievements':
@@ -3108,7 +3110,12 @@ class Innovation extends Table
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         }
 
-        $current_player_no =  self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
+        if ($current_player_id < 0) {
+            // Pick an arbitrary player if it's not anyone's turn (e.g. initial meld)
+            $current_player_no = 1;
+        } else {
+            $current_player_no = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
+        }
 
         $player_ids = [];
         for ($i = 0; $i < $num_players; $i++) {
@@ -3121,22 +3128,22 @@ class Innovation extends Table
     }
 
     /** Checks to see if any players are eligible for special achievements. **/
-    function checkForSpecialAchievements() {
+    function checkForSpecialAchievements($onlyImmediateAchievements) {
         // "In the rare case that two players simultaneously become eligible to claim a special achievement,
         // the tie is broken in turn order going clockwise, with the current player winning ties."
         // https://boardgamegeek.com/thread/2710666/simultaneous-special-achievements-tiebreaker
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
-            self::checkForSpecialAchievementsForPlayer($player_id);
+            self::checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements);
         }
     }
     
     /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
-    function checkForSpecialAchievementsForPlayer($player_id) {
-        $achievements_to_test = array(105, 106, 107, 108, 109);
+    function checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements) {
+        // TODO(CITIES,FIGURES): Update this once there are other special achievements to test for.
+        $achievements_to_test = $onlyImmediateAchievements ? array(106) : array(105, 106, 107, 108, 109);
         if (self::getGameStateValue('echoes_mode') > 1) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
-
         $end_of_game = false;
         
         foreach ($achievements_to_test as $achievement_id) {
@@ -6743,7 +6750,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             return $player_id;
         } else {
-            return self::getGameStateValue('current_player_under_dogma_effect');
+            $player_id = self::getGameStateValue('current_player_under_dogma_effect');
+            if ($player_id == -1) {
+                return self::getGameStateValue('active_player');
+            }
+            return $player_id;
         }
     }
     
@@ -7023,7 +7034,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::transferCardFromTo($card, $card['owner'], 'board');
         
         try {
-            self::checkForSpecialAchievements();
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::meld');
@@ -7895,24 +7906,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // - Feudalism (34): The card has no effect if all players executing the demand have empty hands and no player executing the non-demand has a yellow/purple pile that can be splayed left.
         // 
         // Here are a list of cards which may or may not make sense to eventually add a check for, but are non-trivial to implement.
-        // - Compass (29)
-        // - Paper (30)
-        // - Printing Press (36)
-        // - Invention (39)
-        // - Enterprise (43)
-        // - Reformation (44)
-        // - Banking (49)
-        // - Statistics (51)
-        // - Industrialization (57)
-        // - Metric System (60)
-        // - Emancipation (64)
-        // - Flight (77)
-        // - Mobility (78)
-        // - Mass Media (80)
-        // - Skyscrapers (82)
-        // - Composites (87)
-        // - Services (93)
-        // - Specialization (94)
+        // - Compass: id 29
+        // - Paper: id 30
+        // - Printing Press: id 36
+        // - Invention: id 39
+        // - Enterprise: id 43
+        // - Reformation: id 44
+        // - Banking: id 49
+        // - Statistics: id 51
+        // - Industrialization: id 57
+        // - Metric System: id 60
+        // - Emancipation: id 64
+        // - Flight: id 77
+        // - Mobility: id 78
+        // - Mass Media: id 80
+        // - Skyscrapers: id 82
+        // - Composites: id 87
+        // - Services: id 93
+        // - Specialization: id 94
 
         // TODO(ECHOES,FIGURES): Add cases.
         switch ($card['id']) {
@@ -9005,7 +9016,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ];
         } else if ($without_icon > 0) {
             $without_icon_log = clienttranslate(' without a ${[}${icon}${]}');
-            $card_args['without_icon'] = [
+            $card_args['with_icon'] = [
                 'i18n' => ['log'],
                 'log' => $without_icon_log,
                 'args' => array_merge(self::getDelimiterMeanings($without_icon_log), ['icon' => $without_icon]),
@@ -13834,7 +13845,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Code executed when there is no exclusive execution to handle, or when it's over
 
         try {
-            self::checkForSpecialAchievements();
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::stInterPlayerInvolvedTurn');
@@ -21702,7 +21713,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do neither, I win"
                     if ($n == 0) {
                         self::notifyGeneralInfo(clienttranslate('Neither transfer took place.'));
-                        self::setGameStateValue('winner_by_dogma', $player_id);
+                        self::setGameStateValue('winner_by_dogma', $launcher_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Velcro Shoes');
                         throw new EndOfGame();
                     }

@@ -527,7 +527,7 @@ $this->textual_card_infos = array(
 /* Special achievements */
 
 105 => array('name' => clienttranslate('Empire'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have three or more icons of all six types: ${icons_1_to_6}'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement if you have three or more icons of all six types: ${icons_1_to_6}'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_2} Construction.')),
 
 106 => array('name' => clienttranslate('Monument'),
@@ -535,15 +535,15 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Masonry.')),
 
 107 => array('name' => clienttranslate('Wonder'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five colors on your board, and each is splayed either up or right.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement if you have five colors on your board, and each is splayed either up or right.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} Invention.')),
 
 108 => array('name' => clienttranslate('World'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have twelve or more ${icon_6} on your board.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement if you have twelve or more ${icon_6} on your board.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Translation.')),
 
 109 => array('name' => clienttranslate('Universe'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five top cards, and each is of value ${age_8} or higher.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement if you have five top cards, and each is of value ${age_8} or higher.'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Astronomy.')),
 
 /* Artifacts - Age 1 */

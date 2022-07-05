@@ -755,7 +755,11 @@
         }
     }
 }
-
+.card_type {
+    padding-top: 10px;
+    font-style: italic;
+    text-align: center;
+}
 .card_title {
     color: white;
     font-family: Tahoma, Arial, sans-serif;
@@ -1680,60 +1684,7 @@
     &.S{
         width: v.$recto-S-width;
         height: v.$recto-S-height;
-        &.age_1,&.age_2,&.age_3,&.age_4,&.age_5,&.age_6,&.age_7,&.age_8,&.age_9,&.age_10{
-            background-image: url("img/card_backs_portrait.jpg");
-            background-size: 380px 256px;
-        }
-        &.age_1 {
-            background-position-x: -2px;
-        }
-        &.age_2 {
-            background-position-x: -36px;
-        }
-        &.age_3 {
-            background-position-x: -71px;
-        }
-        &.age_4 {
-            background-position-x: -105px;
-        }
-        &.age_5 {
-            background-position-x: -140px;
-        }
-        &.age_6 {
-            background-position-x: -174px;
-        }
-        &.age_7 {
-            background-position-x: -209px;
-        }
-        &.age_8 {
-            background-position-x: -243px;
-        }
-        &.age_9 {
-            background-position-x: -278px;
-        }
-        &.age_10 {
-            background-position-x: -312px;
-        }
-        &.type_0 {
-            background-position-y: -3px;
-        }
-        &.type_1 {
-            background-position-y: -54px;
-        }
-        &.type_2 {
-            background-position-y: -105px;
-        }
-        &.type_3 {
-            background-position-y: -156px;
-        }
-        &.type_4 {
-            background-position-y: -208px;
-        }
-        &.relic {
-            border: solid 1px transparent;
-            background-position-x: -347px;
-        }
-        &.age_null{
+        &.age_null {
             background-image: url("img/special_achievements_portrait.jpg");
             background-size: 175px, auto;
         }
@@ -1751,6 +1702,90 @@
         }
         &.item_109 {
             background-position: -141px -1px;
+        }
+        &.default_card_back {
+            &.age_1, &.age_2, &.age_3, &.age_4, &.age_5, &.age_6, &.age_7, &.age_8, &.age_9, &.age_10 {
+                background-image: url("img/card_backs_portrait.jpg");
+                background-size: 380px 256px;
+            }
+            &.age_1 {
+                background-position-x: -2px;
+            }
+            &.age_2 {
+                background-position-x: -36px;
+            }
+            &.age_3 {
+                background-position-x: -71px;
+            }
+            &.age_4 {
+                background-position-x: -105px;
+            }
+            &.age_5 {
+                background-position-x: -140px;
+            }
+            &.age_6 {
+                background-position-x: -174px;
+            }
+            &.age_7 {
+                background-position-x: -209px;
+            }
+            &.age_8 {
+                background-position-x: -243px;
+            }
+            &.age_9 {
+                background-position-x: -278px;
+            }
+            &.age_10 {
+                background-position-x: -312px;
+            }
+            &.type_0 {
+                background-position-y: -3px;
+            }
+            &.type_1 {
+                background-position-y: -54px;
+            }
+            &.type_2 {
+                background-position-y: -105px;
+            }
+            &.type_3 {
+                background-position-y: -156px;
+            }
+            &.type_4 {
+                background-position-y: -208px;
+            }
+            &.relic {
+                border: solid 1px transparent;
+                background-position-x: -347px;
+            }
+        }
+        &.card_back_text {
+            display: inline-block;
+            vertical-align: middle;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: system-ui;
+        }
+        &.simplified_card_back {
+            line-height: v.$recto-S-height;
+            text-align: center;
+            &.type_0 {
+                background-color: #f0d68c;
+            }
+            &.type_1 {
+                background-color: #be97ff;
+            }
+            &.type_2 {
+                background-color: #ff9fe5;
+            }
+            &.type_3 {
+                background-color: #3ce8ff;
+            }
+            &.type_4 {
+                background-color: #16eb54;
+            }
+            &.relic {
+                box-shadow: inset 0px 0px 0px 5px #000;
+            }
         }
     }
 }

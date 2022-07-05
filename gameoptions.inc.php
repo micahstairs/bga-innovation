@@ -169,5 +169,14 @@ $game_preferences = array(
             4 => array('name' => totranslate('Enabled (long timer)')),
         ),
         'default' => 1
+    ),
+    110 => array(
+        'name' => totranslate('Simplified graphics'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('Disabled')),
+            2 => array('name' => totranslate('Enabled')),
+        ),
+        'default' => 1
     )
 );

@@ -2127,13 +2127,30 @@ function (dojo, declare) {
             var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
-            if (card === null ) {
-                var HTML_inside = '';
+            var simplififed_graphics_enabled = this.prefs[110].value == 2;
+
+            if (card === null) {
+                if (age === null || !simplififed_graphics_enabled) {
+                    var HTML_inside = '';
+                } else {
+                    var HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
+                }
             } else {
                 var HTML_inside = this.writeOverCard(card, size);
             }
-            
-            return "<div id='" + HTML_id + "' class='" + HTML_class + "'>" + HTML_inside + "</div>";
+
+            var card_type = "";
+            if (size == 'L') {
+                // TODO(ECHOES,CITIES,FIGURES): Update this.
+                if (type == 0) {
+                    card_type = "<div class='card_type'>This card is from the base game.</div>";
+                } else {
+                    card_type = "<div class='card_type'>This card is from Artifacts of History.</div>";
+                }
+            }
+
+            var graphics_class = simplififed_graphics_enabled ? "simplified_card_back" : "default_card_back";
+            return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
         },
         
         writeOverCard : function(card, size) {
@@ -2495,15 +2512,20 @@ function (dojo, declare) {
 
         // Reduce opacity of expansion decks if the accompanying base deck is empty.
         updateDeckOpacities : function() {
-            for (var a = 1; a <= 10; a++) {
-                var opacity = document.getElementById(`deck_0_${a}`).childElementCount > 0 ? 1.0 : 0.35;
-                for (var t = 1; t <= 4; t++) {
-                    var deck = document.getElementById(`deck_${t}_${a}`);
-                    if (deck != null) {
-                        deck.parentElement.style.opacity = opacity;
+            // NOTE: We delay this by 2 seconds in order to give enough time for the cards move around. If
+            // we discover that this is buggy or if we want to build a less hacky solution, we should pass
+            // data from the server side instead of calculating the deck sizes using childElementCount.
+            setTimeout(function () {
+                for (var a = 1; a <= 10; a++) {
+                    var opacity = document.getElementById(`deck_0_${a}`).childElementCount > 0 ? 1.0 : 0.35;
+                    for (var t = 1; t <= 4; t++) {
+                        var deck = document.getElementById(`deck_${t}_${a}`);
+                        if (deck != null) {
+                            deck.parentElement.style.opacity = opacity;
+                        }
                     }
                 }
-            }
+            }, 2000);
         },
         
         setPlacementRulesForAchievements : function() {
@@ -3643,6 +3665,11 @@ function (dojo, declare) {
                 card.owner = card.owner_to;
                 card['location'] = card.location_to;
                 card.position = card.position_to;
+            } else if (card.location_to == 'achievements' && card.age === null) {
+                card.owner = card.owner_to;
+                card['location'] = card.location_to;
+                card.position = card.position_to;
+                this.addTooltipForCard(card);
             }
 
             // Add tooltip to game log
