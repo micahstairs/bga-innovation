@@ -2060,7 +2060,7 @@ function (dojo, declare) {
                 if (type == 0) {
                     card_type = "<div class='card_type'>This card is from the base game.</div>";
                 } else {
-                    card_type = "<div class='card_type'>This card is from Artifacts of History.</div>";
+                    card_type = "<div class='card_type'>This card is from the Artifacts of History expansion.</div>";
                 }
             }
 
