@@ -7766,7 +7766,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $location_from = self::decodeLocation(self::getGameStateValue("location_from"));
             $owner_to = self::getGameStateValue("owner_to");
             $location_to = self::decodeLocation(self::getGameStateValue("location_to"));
-            $bottom_to = self::getGameStateValue("bottom_to");
+            // TODO(LATER): Remove this since it's only needed to migrate game during the release of Artifacts.
+            if (self::getGameStateValue('release_version') == 0 && $location_to == 'deck') {
+                $bottom_to = true;
+            } else {
+                $bottom_to = self::getGameStateValue("bottom_to");
+            }
             $age_min = self::getGameStateValue("age_min");
             $age_max = self::getGameStateValue("age_max");
             $with_icon = self::getGameStateValue("with_icon");
