@@ -12478,7 +12478,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 345, Echoes age 2: Lever
             case "345E1":
-                // "Draw two 2."
+                // "Draw two 2s"
                 self::executeDraw($player_id, 2, 'hand');
                 self::executeDraw($player_id, 2, 'hand');
                 break;
@@ -12487,8 +12487,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Need at least one card in hand
                 if (self::countCardsInLocation($player_id, 'hand') > 0) {
                     // Start with counts of 0 for each age
-                    self::setAuxiliaryArray(array(0,0,0,0,0,0,0,0,0,0,0));
-                    $step_max = 1; // --> 1 interaction: see B
+                    self::setAuxiliaryArray(array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+                    $step_max = 1;
                 }
                 break;
                 
@@ -18471,7 +18471,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 345, age 2: Lever          
         case "345N1A":
-            // "You may return any number of cards from your hand."
+            // "You may return any number of cards from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n_min' => 1,
@@ -18487,7 +18487,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "345N1B":
             $ages_to_draw = self::getAuxiliaryArray();
             $age_array = array();
-            for ($age = 1; $age < 12; $age++) { // could draw an 11 here
+            for ($age = 1; $age <= 11; $age++) { // It's possible to draw an 11
                 if ($ages_to_draw[$age - 1] > 0) {
                     $age_array[] = $age;
                 }
@@ -21997,15 +21997,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 345, Echoes age 2: Lever
                 case "345N1A":
-                    if ($n > 1) { // if two cards were returned, then the second part is possible
-                        // "For every two cards of matching value returned, draw a card of value one higher."
+                    if ($n >= 2) { // If at least two cards were returned, then the second part is possible
+                        // "For every two cards of matching value returned, draw a card of value one higher"
                         $age_count_array = self::getAuxiliaryArray();
-                        $age_draw_count_array = array(0,0,0,0,0,0,0,0,0,0,0);
-                        for ($age = 1; $age < 11; $age++) {
+                        $age_draw_count_array = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                        for ($age = 1; $age <= 11; $age++) {
                             // Calculate how many of each age to draw by dividing the age below it by 2
                             $age_draw_count_array[$age] = self::intDivision($age_count_array[$age - 1], 2);
                             if ($age_draw_count_array[$age] > 0) {
-                                self::setStepMax(2); // Drawing is now possible.
+                                self::setStepMax(2); // Drawing is now possible
                             }
                         }
                         self::setAuxiliaryArray($age_draw_count_array);
@@ -23378,12 +23378,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 345, Echoes age 2: Lever
             case "345N1A":
-                // Track the age of cards returned.
+                // Track the age of cards returned
                 $age_counts = self::getAuxiliaryArray();
                 $age_counts[$card['age'] - 1]++;
                 self::setAuxiliaryArray($age_counts);
 
-                // Do the transfer as stated in B (return)
+                // Do the transfer (return)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                 break;
 
