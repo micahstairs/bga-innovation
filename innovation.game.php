@@ -8534,6 +8534,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a color');
                 break;
 
+            // id 345, Echoes age 2: Lever
+            case "345N1B":
+                $message_for_player = clienttranslate('Choose a value to draw');
+                $message_for_others = clienttranslate('${player_name} must choose a value to draw');
+                break;
+
             // id 346, Echoes age 2: Linguistics
             case "346N1A":
                 $message_for_player = clienttranslate('Choose a value of a bonus icon on your board');
@@ -12467,6 +12473,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count(self::getBonusIcons($card)) > 0) {
                     // "If it has a bonus, draw a 1."
                     self::executeDraw($player_id, 1, 'hand');
+                }
+                break;
+
+            // id 345, Echoes age 2: Lever
+            case "345E1":
+                // "Draw two 2s"
+                self::executeDraw($player_id, 2, 'hand');
+                self::executeDraw($player_id, 2, 'hand');
+                break;
+            
+            case "345N1":
+                // Need at least one card in hand
+                if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                    // Start with counts of 0 for each age
+                    self::setAuxiliaryArray(array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+                    $step_max = 1;
                 }
                 break;
                 
@@ -18405,7 +18427,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 342, Echoes age 1: Bell
         case "342E1A":
             // "You may score a card from your hand"
-            // TODO(ECHOES): Test this.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -18446,6 +18467,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'with_bonus' => true,
             );            
+            break;
+
+        // id 345, age 2: Lever          
+        case "345N1A":
+            // "You may return any number of cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n_min' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "345N1B":
+            $ages_to_draw = self::getAuxiliaryArray();
+            $age_array = array();
+            for ($age = 1; $age <= 11; $age++) { // It's possible to draw an 11
+                if ($ages_to_draw[$age - 1] > 0) {
+                    $age_array[] = $age;
+                }
+            }
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'choose_value' => true,
+                'age' => $age_array,
+            );
             break;
             
         // id 346, age 2: Linguistics          
@@ -21941,6 +21995,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
+                // id 345, Echoes age 2: Lever
+                case "345N1A":
+                    if ($n >= 2) { // If at least two cards were returned, then the second part is possible
+                        // "For every two cards of matching value returned, draw a card of value one higher"
+                        $age_count_array = self::getAuxiliaryArray();
+                        $age_draw_count_array = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+                        for ($age = 1; $age <= 11; $age++) {
+                            // Calculate how many of each age to draw by dividing the age below it by 2
+                            $age_draw_count_array[$age] = self::intDivision($age_count_array[$age - 1], 2);
+                            if ($age_draw_count_array[$age] > 0) {
+                                self::setStepMax(2); // Drawing is now possible
+                            }
+                        }
+                        self::setAuxiliaryArray($age_draw_count_array);
+                    }
+                    break;
+
+                case "345N1B":
+                    // Determine if the draw should happen again
+                    $keep_going = false;
+                    $age_count_array = self::getAuxiliaryArray();
+                    for ($age = 1; $age < 12; $age++) {
+                        if ($age_count_array[$age - 1] > 0) {
+                            $keep_going = true;
+                        }
+                    }
+                    self::setAuxiliaryArray($age_count_array);
+                    
+                    if ($keep_going) {
+                        self::incrementStep(-1); $step--;
+                    }
+                    break;
+                
                 // id 346, Echoes age 2: Linguistics
                 case "346N1A":
                     // "Draw a card of value equal to a bonus on your board, if you have any."
@@ -23287,6 +23374,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
+                break;
+
+            // id 345, Echoes age 2: Lever
+            case "345N1A":
+                // Track the age of cards returned
+                $age_counts = self::getAuxiliaryArray();
+                $age_counts[$card['age'] - 1]++;
+                self::setAuxiliaryArray($age_counts);
+
+                // Do the transfer (return)
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                break;
+
+            case "345N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                $age_counts = self::getAuxiliaryArray();
+                $age_counts[$choice - 1]--; // there has to be at least one entry for this value
+                self::setAuxiliaryArray($age_counts);
+                
+                // Draw the card of the selected age
+                self::executeDraw($player_id, $choice, 'hand');
                 break;
 
             // id 346, Echoes age 2: Linguistics
