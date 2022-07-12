@@ -8636,7 +8636,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 379, Echoes age 5: Palampore
             case "379N1A":
                 $message_for_player = clienttranslate('Choose a value to draw and score');
-                $message_for_others = clienttranslate('${player_name} must choose a draw and score');
+                $message_for_others = clienttranslate('${player_name} must choose a value to draw and score');
                 break;
 
             // id 380, Echoes age 5: Seed Drill
@@ -8770,8 +8770,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 432, Echoes age 10: MP3
             case "432N2A":
-                $message_for_player = clienttranslate('Choose a value to score');
-                $message_for_others = clienttranslate('${player_name} must choose a value to score');
+                $message_for_player = clienttranslate('Choose a value to draw and score');
+                $message_for_others = clienttranslate('${player_name} must choose a value to draw and score');
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -13832,9 +13832,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "429N1":
                 // "Draw and foreshadow three 10s."
-                self::executeDraw($player_id, 10, 'forecast');
-                self::executeDraw($player_id, 10, 'forecast');
-                self::executeDraw($player_id, 10, 'forecast');
+                self::executeDrawAndForeshadow($player_id, 10);
+                self::executeDrawAndForeshadow($player_id, 10);
+                self::executeDrawAndForeshadow($player_id, 10);
                 break;
 
             case "429N2":
@@ -13854,7 +13854,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "431N1":
                 // "Draw a 10 for every two clocks on your board."
                 $num_cards = self::intDivision(self::getPlayerSingleRessourceCount($player_id, 6), 2);
-                for ($card_ctr = 0; $card_ctr < $num_cards; $card_ctr++) {
+                for ($i = 0; $i < $num_cards; $i++) {
                     self::executeDraw($player_id, 10, 'hand');
                 }
                 break;
