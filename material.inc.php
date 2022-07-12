@@ -1728,7 +1728,7 @@ $this->textual_card_infos = array(
 431 => array('name' => clienttranslate('Cell Phone'),
     'non_demand_effect_1' => clienttranslate('Draw a ${age_10} for every two ${icon_6} on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your green cards up.'),
-    'non_demand_effect_3' => clienttranslate('You may tuck any number of cards with ${icon_6} from your hand, splaying up each color you tucked into.'),
+    'non_demand_effect_3' => clienttranslate('You may tuck any number of cards with a ${icon_6} from your hand, splaying up each color you tucked into.'),
 ),   
 
 432 => array('name' => clienttranslate('MP3'),
