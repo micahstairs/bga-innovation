@@ -120,6 +120,7 @@ class Innovation extends Table
             'with_bonus' => 87,
             'without_bonus' => 88,
             
+            'melded_card_id' => 95, // ID of the card which was melded
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
@@ -188,6 +189,10 @@ class Innovation extends Table
             }
         }
 
+        if ($this->innovationGameState->get('release_version') == 1) {
+            self::initGameStateLabels(array('melded_card_id' => 94));
+            self::setGameStateValue('melded_card_id', -1);
+        }
         if ($this->innovationGameState->get('release_version') == 0) {
             self::initGameStateLabels(array(
                 'card_id_1' => 69,
@@ -606,8 +611,9 @@ class Innovation extends Table
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
 
-        // Flag specific to seizing Relics
+        // Flags specific to the meld action
         self::setGameStateInitialValue('relic_id', -1);
+        self::setGameStateInitialValue('melded_card_id', -1);
         
         // Init game statistics
         self::initStat('table', 'turns_number', 0);
@@ -7060,6 +7066,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->gamestate->nextState('justBeforeGameEnd');
             return;
         }
+
+        self::setGameStateValue('melded_card_id', $card['id']);
         
         // Execute city's icon effect
         if ($card['type'] == 2) {
@@ -7131,15 +7139,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', false, 2);
             }
         }
-        
-        if (self::tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $card)) {
-            self::trace('playerTurn->relicPlayerTurn');
+
+        self::trace('playerTurn->digArtifact');
+        $this->gamestate->nextState('digArtifact');
+    }
+
+    function stDigArtifact() {
+        $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
+        if (self::tryToDigArtifactAndSeizeRelic($melded_card)) {
+            self::trace('digArtifact->relicPlayerTurn');
             $this->gamestate->nextState('relicPlayerTurn');
             return;
         }
-        
-        // End of player action
-        self::trace('playerTurn->interPlayerTurn (meld)');
+        self::trace('digArtifact->interPlayerTurn');
         $this->gamestate->nextState('interPlayerTurn');
     }
 
@@ -7154,10 +7166,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /* Returns true if a relic is being seized */
-    function tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $melded_card) {
+    function tryToDigArtifactAndSeizeRelic($melded_card) {
         // The Artifacts expansion is not enabled.
         if (self::getGameStateValue('artifacts_mode') <= 1) {
             return false;
+        }
+
+        $player_id = $melded_card['owner'];
+        $pile = self::getCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
+        if (count($pile) >= 2) {
+            $previous_top_card = $pile[count($pile) - 2];
+        } else {
+            $previous_top_card = null;
         }
 
         // An Artifact is already on display.

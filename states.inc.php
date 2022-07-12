@@ -93,7 +93,9 @@ $machinestates = array(
         "transitions" => array(
             "interPlayerTurn" => 5,
             "dogmaEffect" => 6,
+            // TODO(LATER): Remove this transition since it now comes from the new digArtifact state.
             "relicPlayerTurn" => 16,
+            "digArtifact" => 17,
             "justBeforeGameEnd" => 98
         )
     ),
@@ -220,15 +222,6 @@ $machinestates = array(
             "justBeforeGameEnd" => 98
         )
     ),
-    
-    98 => array(
-        "name" => "justBeforeGameEnd",
-        "description" => clienttranslate('Finishing the game...'),
-        "type" => "game",
-        "action" => "stJustBeforeGameEnd",
-        "updateGameProgression" => true,
-        "transitions" => array("" => 99)
-    ),
 
     15 => array(
         "name" => "artifactPlayerTurn",
@@ -248,6 +241,28 @@ $machinestates = array(
         "type" => "activeplayer",
         "possibleactions" => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),
         "transitions" => array("interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
+    ),
+
+    17 => array(
+        "name" => "digArtifact",
+        "description" => clienttranslate('Finalising the player action...'),
+        "type" => "game",
+        "action" => "stDigArtifact",
+        "transitions" => array(
+            // TODO(ECHOES): Remove this transition and replace with 'promoteCard'.
+            "interPlayerTurn" => 5,
+            "relicPlayerTurn" => 16,
+            "justBeforeGameEnd" => 98,
+        ),
+    ),
+    
+    98 => array(
+        "name" => "justBeforeGameEnd",
+        "description" => clienttranslate('Finishing the game...'),
+        "type" => "game",
+        "action" => "stJustBeforeGameEnd",
+        "updateGameProgression" => true,
+        "transitions" => array("" => 99)
     ),
    
     // Final state.
