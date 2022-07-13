@@ -207,6 +207,7 @@ class Innovation extends Table
                 'current_nesting_index' => 97,
                 'release_version' => 98,
                 'debug_mode' => 99,
+                // TODO(ECHOES,CITIES,FIGURES): Make sure to initialize the new game options.
                 'artifacts_mode' => 102,
             ));
             self::setGameStateValue('card_id_1', -2);
