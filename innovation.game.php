@@ -589,7 +589,7 @@ class Innovation extends Table
         }
 
         // Initialize Artifacts-specific statistics
-        if (self::getGameStateValue('artifacts_mode') != 1) {
+        if (self::getGameStateValue('artifacts_mode') > 1) {
             self::initStat('player', 'dig_events_number', 0);
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
@@ -664,7 +664,7 @@ class Innovation extends Table
         }
         $result['cards'] = $cards;
 
-        $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') != 1;
+        $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') > 1;
         $result['relics_enabled'] = self::getGameStateValue('artifacts_mode') == 3;
     
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return information visible by this player !!
@@ -6409,7 +6409,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /* Returns true if a relic is being seized */
     function tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $melded_card) {
         // The Artifacts expansion is not enabled.
-        if (self::getGameStateValue('artifacts_mode') == 1) {
+        if (self::getGameStateValue('artifacts_mode') <= 1) {
             return false;
         }
 
