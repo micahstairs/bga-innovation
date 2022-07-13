@@ -206,7 +206,8 @@ class Innovation extends Table
                 'current_action_number' => 96,
                 'current_nesting_index' => 97,
                 'release_version' => 98,
-                'debug_mode' => 99
+                'debug_mode' => 99,
+                'artifacts_mode' => 102,
             ));
             self::setGameStateValue('card_id_1', -2);
             self::setGameStateValue('card_id_2', -2);
