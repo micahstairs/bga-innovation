@@ -3204,14 +3204,7 @@ class Innovation extends Table
                     }
                 }
                 break;
-                
-            case 328: // Glory: Tuck a card with a flag
-                $eligible = false;
-                break;
-            case 329: // Victory: Tuck a card with a fountain
-                $eligible = false;
-                break;
-                
+                                
             case 435: // Wealth: A total of 8 or more visible bonus icons
                 $eligible = count(self::getVisibleBonusesOnBoard($player_id)) >= 8;
                 break;
@@ -4750,22 +4743,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /* Count the number of a particular icon on the specified card */
     function countIconsOnCard($card, $icon) {
         $icon_count = 0;
-        if ($card['spot_1'] == $icon) {
+        if ($card['spot_1'] !== null && $card['spot_1'] == $icon) {
             $icon_count++;
         }
-        if ($card['spot_2'] == $icon) {
+        if ($card['spot_2'] !== null && $card['spot_2'] == $icon) {
             $icon_count++;
         }
-        if ($card['spot_3'] == $icon) {
+        if ($card['spot_3'] !== null && $card['spot_3'] == $icon) {
             $icon_count++;
         }
-        if ($card['spot_4'] == $icon) {
+        if ($card['spot_4'] !== null && $card['spot_4'] == $icon) {
             $icon_count++;
         }
-        if ($card['spot_5'] == $icon) {
+        if ($card['spot_5'] !== null && $card['spot_5'] == $icon) {
             $icon_count++;
         }
-        if ($card['spot_6'] == $icon) {
+        if ($card['spot_6'] !== null && $card['spot_6'] == $icon) {
             $icon_count++;
         }
         return $icon_count;
