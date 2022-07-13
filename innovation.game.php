@@ -230,6 +230,7 @@ class Innovation extends Table
             self::setGameStateValue('current_nesting_index', -1);
             self::setGameStateValue('release_version', 0);
             self::setGameStateValue('debug_mode', 0);
+            self::setGameStateValue('artifacts_mode', 1);
         }
     }
 
