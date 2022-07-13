@@ -5706,7 +5706,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'removed';
         default:
             // This should not happen
-            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
+            if (self::getGameStateValue('release_version') >= 1) {
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
+            }
             break;
         }
     }
