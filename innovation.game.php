@@ -3755,7 +3755,7 @@ class Innovation extends Table
     }
 
     function isTopBoardCard($card) {
-        if ($card['position'] == null) {
+        if ($card['position'] == null || $card['location'] != 'board') {
             return false;
         }
         $number_of_cards_above = self::getUniqueValueFromDB(self::format("
@@ -3765,10 +3765,10 @@ class Innovation extends Table
                     card
                 WHERE
                     owner = {owner} AND
-                    location = '{location}' AND
+                    location = 'board' AND
                     color = {color} AND
                     position > {position}",
-                array('owner' => $card['owner'], 'location' => $card['location'], 'color' => $card['color'], 'position' => $card['position'])
+                array('owner' => $card['owner'], 'color' => $card['color'], 'position' => $card['position'])
         ));
         return $number_of_cards_above == 0;
     }
