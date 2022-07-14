@@ -10,7 +10,7 @@ In order to test changes to the game, you need to be able to copy the code out o
 - Optionally Install github desktop (https://desktop.github.com/) -> this is a simpler way of using git if you want to skip the commandline
 - Clone this repository onto your computer (`git clone https://github.com/micahstairs/bga-innovation.git innovation`). You'll make your life easier if the directory is named `innovation` instead of `bga-innovation`.
 - Clone https://github.com/elaskavaia/bga-sharedcode onto your computer (`git clone https://github.com/elaskavaia/bga-sharedcode.git`).
-- Install PHP (https://windows.php.net/download#php-7.3).
+- Install PHP (https://www.php.net/manual/en/install.php) (requires php 7)
 - Install SASS (https://sass-lang.com/install) - only needed if you are going to make changes to the SCSS
 - Install VSCode (https://code.visualstudio.com/download)
 - Install composer for PHP (https://getcomposer.org/)
