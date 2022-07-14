@@ -51,7 +51,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
 
 #### Setting up VSCode
 - Install the SFTP extension (https://marketplace.visualstudio.com/items?itemName=liximomo.sftp)
-- Set up your `sftp.json` by using the command shortuct `Ctrl+Shift+P` and runing `SFTP: config`. Paste the following, replacing `johnsmith` and `password` as appropriate.
+- Set up your `sftp.json` by using the command shortuct `Ctrl+Shift+P` and running `SFTP: config`. Paste the following, replacing `johnsmith` and `password` as appropriate.
 ```
 {
     "name": "BGA",
