@@ -1412,7 +1412,7 @@ function (dojo, declare) {
                 dojo.addClass(elementParent, HTML_class);
             }
             var font_size = font_max;
-            while (font_size >= 1) {
+            while (font_size >= 2) {
                 if (font_size < font_max) {
                     dojo.removeClass(element, 'font_size_' + (font_size + 1));
                 }
