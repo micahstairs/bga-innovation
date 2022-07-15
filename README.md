@@ -51,7 +51,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
 
 #### Setting up VSCode
 - Install the SFTP extension (https://marketplace.visualstudio.com/items?itemName=liximomo.sftp)
-- Set up your `sftp.json` by using the command shortuct `Ctrl+Shift+P` and running `SFTP: config`. Paste the following, replacing `johnsmith` and `password` as appropriate.
+- Set up your `sftp.json` by using the command shortuct `Ctrl+Shift+P` and running `SFTP: config`. Paste the following, replacing `johnsmith` and `password` (SFTP password, _not_ BoardGameArena password) as appropriate.
 ```
 {
     "name": "BGA",
@@ -83,6 +83,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
 }
 ```
 - Sometimes you will have to run a manual push of your files and you can do that by using the command shortcut `Ctrl+Shift+P` and runing `SFTP: Sync Local -> Remote`
+- macOS users [may encounter issues](https://github.com/liximomo/vscode-sftp/issues/18) due to ssh-keychain not correctly being used for SFTP. This can be fixed by adding `"agent": "$SSH_AUTH_SOCK"` or directly linking the relevant private key path,  `"privateKeyPath": "/path/to/private/ssh/key"`
 - If you are working with SCSS you should perform these steps
     - Install Run on Save extension (https://marketplace.visualstudio.com/items?itemName=pucelle.run-on-save)
     - Configure the Run on Save extention by clicking the Extensions tab in VSCode -> Gear icon on Run on Save -> Extension Settings -> Edit settings.json -> copy this into that file
