@@ -22871,8 +22871,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;     
                 // id 413, Echoes age 8: Crossword
                 case "413N1A":
-                    if(array_sum(self::getAuxiliaryArray()) <= 0) {
+                    if(array_sum(self::getAuxiliaryArray()) > 0) {
+                        $step--;
+                        self::incrementStep(-1);
+                    } else {
                         $step++;
+                        self::incrementStep(1);
                     }
                     break;
                 // id 414, Echoes age 8: Television
