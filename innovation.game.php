@@ -8036,6 +8036,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 return true;
 
+            case 413: // Crossword
+                // These cards have no effect if all players executing the non-demand have no bonuses on their boards.
+                foreach($non_demand_players as $player_id) {
+                    if(count(self::getVisibleBonusesOnBoard($player_id)) > 0) {
+                        return false;
+                    }
+                }
+                return true;
+
             /*** Other cases (sorted by card ID) **/
 
             case 6: // Clothing
@@ -13697,15 +13706,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $vis_bonuses = self::getVisibleBonusesOnBoard($player_id);
                 $num_bonuses = count($vis_bonuses);
                 // if no bonuses visible, nothing happens
-                if($num_bonuses > 0) {
+                if($num_bonuses > 1) {
                     $bonus_counts = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
                     foreach ($vis_bonuses as $bonus) {
                         $bonus_counts[$bonus - 1]++;
                     }
                     
-                    $step = 1;
                     $step_max = 2;
                     self::setAuxiliaryArray($bonus_counts);
+                } else if($num_bonuses == 1) {
+                    $drawn = $vis_bonuses[0];
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} draw a ${age} matching your bonus.'), array('You' => 'You', 'age' => self::getAgeSquare($drawn)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} draws a ${age} matching his bonus.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($drawn)));
+                    self::executeDraw($player_id, $drawn, 'hand');
                 }
                 break;
             // id 414, Echoes age 8: Television
