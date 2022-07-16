@@ -1768,4 +1768,3 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Novel.')),
 
 );
-
