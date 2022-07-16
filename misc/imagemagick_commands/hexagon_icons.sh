@@ -2,7 +2,6 @@
 
 # Setup
 mkdir temp
-
 ### BASE ###
 
 # Coordinates for hexagons
@@ -23,6 +22,14 @@ PURPLE_BORDER="../card_icon_borders/purple_hexagon_icon_border.png"
 READ_PATH="../cards/Print_BaseCards_front/Print_BaseCards_front-"
 FILE_SUFFIX="_base.png"
 
+# Tints a color
+function tint_image() {
+    local img_path=${1}
+    local tint_color=${2} # e.g. green
+    local tint_intensity=${3} # out of 200
+    magick $img_path -fill $tint_color -tint $tint_intensity $img_path
+}
+
 # Extracts hexagon from a base card and places in a colored border
 # arg1: input filename
 # arg2: position of hexagon in card
@@ -33,6 +40,12 @@ extract_hexagon()
 {
     magick "${READ_PATH}$1.png" \( +clone -fill Black -colorize 100 -fill White -draw "polygon ${2}" \) -alpha off -compose CopyOpacity -composite -trim +repage "temp/$4${FILE_SUFFIX}"
     magick convert -gravity center $3 "temp/$4${FILE_SUFFIX}" -composite "temp/$4${FILE_SUFFIX}"
+    
+    #tint only green hexes
+    if [[ "${3}" == "${GREEN_BORDER}" ]]; then
+        tint_image "temp/$4${FILE_SUFFIX}" green 30
+    fi
+    
 }
 
 echo "Extracting Base hexagon icons..."

@@ -18,6 +18,15 @@ extract_icon()
     magick convert "${CARD_PATH}$1.png" "$2" -compose CopyOpacity -composite -trim +repage "temp/$3_cities.png"
 }
 
+# Tints a color
+function tint_image() {
+    local img_path=${1}
+    local tint_color=${2} # e.g. green
+    local tint_intensity=${3} # out of 200
+    magick $img_path -fill $tint_color -tint $tint_intensity $img_path
+}
+
+
 # Extract blue, red, green, yellow, purple plus icons
 extract_icon "016" "$CITIES_MASK_PATH" "000"
 extract_icon "015" "$CITIES_MASK_PATH" "001"
@@ -52,6 +61,11 @@ extract_icon "013" "$SEARCH_MASK_PATH" "021"
 extract_icon "004" "$SEARCH_MASK_PATH" "022"
 extract_icon "007" "$SEARCH_MASK_PATH" "023"
 extract_icon "010" "$SEARCH_MASK_PATH" "024"
+
+# Tint green images
+for i in {"002","007","012"}; do
+    tint_image "temp/${i}_cities.png" green 30
+done
 
 # Build cities spritesheet, 5x5
 magick montage \
