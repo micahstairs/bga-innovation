@@ -1378,7 +1378,8 @@ $this->textual_card_infos = array(
     'alternative_condition_for_claiming' => null),
 
 132 => array('name' => clienttranslate('Terracotta Army'),
-    'i_demand_effect_1' => clienttranslate('${I compel} you to return a top card with no ${icon_4}!'),
+    // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
+    'i_demand_effect_1' => clienttranslate('${I compel} you to return a top card on your board with no ${icon_4}!'),
     'i_demand_effect_1_is_compel' => true,
     'non_demand_effect_1' => clienttranslate('Score a card from your hand with no ${icon_4}.'),
     'non_demand_effect_2' => null,
@@ -1574,7 +1575,8 @@ $this->textual_card_infos = array(
 151 => array('name' => clienttranslate('Moses'),
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
     'i_demand_effect_1_is_compel' => true,
-    'non_demand_effect_1' => clienttranslate('Score a top card with a ${icon_1}.'),
+    // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
+    'non_demand_effect_1' => clienttranslate('Score a top card on your board with a ${icon_1}.'),
     'non_demand_effect_2' => null,
     'non_demand_effect_3' => null,
     'achievement_name' => null,

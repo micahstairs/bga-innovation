@@ -13822,7 +13822,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 132, Artifacts age 2: Terracotta Army
         case "132C1A":
-            // "I compel you to return a top card with no tower"
+            // "I compel you to return a top card on your board with no tower"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -14338,7 +14338,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 151, Artifacts age 4: Moses
         case "151N1A":    
-            // "Score a top card with a crown"
+            // "Score a top card on your board with a crown"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
