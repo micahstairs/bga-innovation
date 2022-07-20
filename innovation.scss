@@ -1164,6 +1164,9 @@
     background-image: url('img/card_backgrounds.jpg');
     position: relative;
     border: solid 1px #ffffff;
+    &.simplified {
+        background-image: url('img/simplified_card_backgrounds.jpg');
+    }
     &.M {
         width: 180px;
         height: 124px;
