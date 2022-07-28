@@ -249,11 +249,32 @@ $machinestates = array(
         "type" => "game",
         "action" => "stDigArtifact",
         "transitions" => array(
-            // TODO(ECHOES): Remove this transition and replace with 'promoteCard'.
-            "interPlayerTurn" => 5,
             "relicPlayerTurn" => 16,
+            "promoteCard" => 18,
             "justBeforeGameEnd" => 98,
         ),
+    ),
+
+    18 => array(
+        "name" => "promoteCard",
+        "description" => clienttranslate('Finalising the player action...'),
+        "type" => "game",
+        "action" => "stPromoteCard",
+        "transitions" => array(
+            "interPlayerTurn" => 5,
+            "promoteCardPlayerTurn" => 19,
+            "justBeforeGameEnd" => 98,
+        ),
+    ),
+
+    19 => array(
+        "name" => "promoteCardPlayerTurn",
+        "description" => clienttranslate('${actplayer} may choose a card to promote'),
+        "descriptionmyturn" => clienttranslate('${You} may choose a card to promote:'),
+        "args" => "argPromoteCardPlayerTurn",
+        "type" => "activeplayer",
+        "possibleactions" => array(),
+        "transitions" => array("interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
     ),
     
     98 => array(

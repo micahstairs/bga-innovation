@@ -7151,7 +7151,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->gamestate->nextState('relicPlayerTurn');
             return;
         }
-        self::trace('digArtifact->interPlayerTurn');
+        self::trace('digArtifact->promoteCard');
+        $this->gamestate->nextState('promoteCard');
+    }
+
+    function stPromoteCard() {
+        $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
+        
+        if (self::getGameStateValue('echoes_mode') > 1) {
+            $card_counts = self::countCardsInLocationKeyedByAge($melded_card['owner'], 'forecast');
+            for ($age = 1; $age <= $melded_card['age']; $age++) {
+                if ($card_counts[$age] > 0) {
+                    self::trace('promoteCard->promoteCardPlayerTurn');
+                    $this->gamestate->nextState('promoteCardPlayerTurn');
+                    return;
+                }
+            }
+        }
+
+        self::trace('promoteCard->interPlayerTurn');
         $this->gamestate->nextState('interPlayerTurn');
     }
 
