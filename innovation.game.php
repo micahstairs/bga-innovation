@@ -9448,7 +9448,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 69, age 7: Bicycle
             case "69N1":
-                $step_max = 1; // --> 1 interaction: see B
+                if (self::countCardsInLocation($player_id, 'hand') > 0 || self::countCardsInLocation($player_id, 'score') > 0) {
+                    $step_max = 1;
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards to exchange.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                }
                 break;
             
             // id 70, age 7: Electricity
