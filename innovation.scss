@@ -645,7 +645,7 @@
 .card_age {
     color: white;
     text-align: center;
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: Times New Roman;
     font-weight: bold;
     position: absolute;
     &.M {
@@ -718,7 +718,7 @@
 }
 .card_title {
     color: white;
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: Times New Roman;
     position: absolute;
     display: flex;
     justify-content: center;
@@ -745,7 +745,7 @@
     position: absolute;
 }
 .effect_text {
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
     &.light {
         color: black;
     }
