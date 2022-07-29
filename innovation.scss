@@ -1499,10 +1499,9 @@
 }
 
 /* Font sizes */
-$rem: 0.0625rem;
 @for $i from 1 through 30 {
     .font_size_#{$i} {
-        font-size: $rem * $i;
+        font-size: #{$i}px;
     }
 }
 
