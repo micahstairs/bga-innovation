@@ -804,7 +804,7 @@
   line-height: 8px;
 }
 .effect.M:nth-of-type(n+2) {
-  margin-top: 4px;
+  margin-top: 2px;
 }
 .effect.L {
   padding-left: 19px;
@@ -815,9 +815,9 @@
 }
 
 .card_effects.M {
-  right: 7px;
+  right: 2px;
   top: 25px;
-  width: 120px;
+  width: 129px;
   height: 53px;
 }
 .card_effects.M > .font_size_1 > .effect.M, .card_effects.M > .font_size_2 > .effect.M, .card_effects.M > .font_size_3 > .effect.M, .card_effects.M > .font_size_4 > .effect.M, .card_effects.M > .font_size_5 > .effect.M {
@@ -830,9 +830,9 @@
   line-height: 7px;
 }
 .card_effects.L {
-  left: 135px;
+  left: 120px;
   top: 64px;
-  width: 295px;
+  width: 325px;
   height: 137px;
 }
 
@@ -1265,8 +1265,8 @@
 }
 
 .dogma_symbol.M {
-  left: -4px;
-  top: -4px;
+  left: -3px;
+  top: -1px;
 }
 .dogma_symbol.M.icon_1, .dogma_symbol.M.icon_2, .dogma_symbol.M.icon_3, .dogma_symbol.M.icon_4, .dogma_symbol.M.icon_5, .dogma_symbol.M.icon_6 {
   width: 10px;
