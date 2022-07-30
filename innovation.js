@@ -2086,7 +2086,7 @@ function (dojo, declare) {
             var non_demand_effect_2 = card_data.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
             var non_demand_effect_3 = card_data.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
-            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 7 : 17);
+            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
             
             return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
         },
