@@ -816,9 +816,9 @@
 
 .card_effects.M {
   right: 2px;
-  top: 25px;
+  top: 23px;
   width: 129px;
-  height: 53px;
+  height: 56px;
 }
 .card_effects.M > .font_size_1 > .effect.M, .card_effects.M > .font_size_2 > .effect.M, .card_effects.M > .font_size_3 > .effect.M, .card_effects.M > .font_size_4 > .effect.M, .card_effects.M > .font_size_5 > .effect.M {
   line-height: 5px;
@@ -830,10 +830,10 @@
   line-height: 7px;
 }
 .card_effects.L {
-  left: 120px;
-  top: 64px;
-  width: 325px;
-  height: 137px;
+  left: 116px;
+  top: 63px;
+  width: 334px;
+  height: 151px;
 }
 
 .effect.color_0 {
