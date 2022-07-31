@@ -861,7 +861,7 @@ class Innovation extends Table
         $weight = 0;
         $total_weight = 0;
         
-        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck');
+        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
         for($age=1; $age<=10; $age++) {
             $n = $number_of_cards_in_decks[$age];
             switch($age) {
