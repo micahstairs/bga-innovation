@@ -692,7 +692,7 @@
 }
 
 .card_age {
-  color: white;
+  color: #e8e8e8;
   text-align: center;
   font-family: Times New Roman;
   font-weight: bold;
@@ -753,7 +753,7 @@
 }
 
 .card_title {
-  color: white;
+  color: #e8e8e8;
   font-family: Times New Roman;
   position: absolute;
   display: flex;
@@ -789,7 +789,7 @@
   color: black;
 }
 .effect_text.dark {
-  color: white;
+  color: #e8e8e8;
 }
 
 .effect {

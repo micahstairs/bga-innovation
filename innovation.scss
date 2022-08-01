@@ -643,7 +643,7 @@
     color: red !important;
 }
 .card_age {
-    color: white;
+    color: #e8e8e8;
     text-align: center;
     font-family: Times New Roman;
     font-weight: bold;
@@ -717,7 +717,7 @@
     text-align: center;
 }
 .card_title {
-    color: white;
+    color: #e8e8e8;
     font-family: Times New Roman;
     position: absolute;
     display: flex;
@@ -750,7 +750,7 @@
         color: black;
     }
     &.dark {
-        color: white;
+        color: #e8e8e8;
     }
 }
 .effect {
