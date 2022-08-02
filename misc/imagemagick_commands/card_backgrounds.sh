@@ -26,12 +26,12 @@ for color in {blue,red,green,yellow,purple}; do
     cp ../card_backgrounds/${color}_cities.png temp/${color}_cities.png # copy cities to temp
 done
 
-tint_image temp/blue.png white 50
-tint_image temp/blue_cities.png white 50
+tint_image temp/blue.png white 70
+tint_image temp/blue_cities.png white 80
 tint_image temp/green.png green 30
 tint_image temp/green_cities.png green 30
-tint_image temp/yellow.png '#8b6a28' 5
-tint_image temp/yellow_cities.png '#8b6a28' 5
+tint_image temp/yellow.png '#8b6a28' 50
+tint_image temp/yellow_cities.png '#8b6a28' 50
 
 # Build base card background spritesheet
 magick montage temp/{blue,red,green,yellow,purple}.png \
