@@ -20546,7 +20546,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         //[BB]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         
         // There wasn't an interaction needed in this step after all
-        if ($options == null) {
+        if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0)) {
             // The last step has been completed, so it's the end of the turn for the player involved
             if ($step == self::getStepMax()) {
                 self::trace('interactionStep->interPlayerInvolvedTurn');
@@ -23473,12 +23473,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $first_card = self::getCardInfo(self::getAuxiliaryValue());
                     $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                     self::transferCardFromTo($second_card, $player_id, 'board');
-                    if ($first_card['type'] !== $second_card['type'] &&
-                        $first_card['color'] == $second_card['color']) {
-                        // "Draw and score five 2s"
-                        for ($i = 1; $i <= 5; $i++) {
-                            self::executeDraw($player_id, 2, 'score');
+                    if ($first_card['type'] !== $second_card['type']) {
+                        if ($first_card['color'] == $second_card['color']) {
+                            // "Draw and score five 2s"
+                            for ($i = 1; $i <= 5; $i++) {
+                                self::executeDraw($player_id, 2, 'score');
+                            }
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose different colors.'), array('i18n' => array('color'), 'You' => 'You'));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose different colors.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         }
+                    } else {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose cards from the same card set.'), array('i18n' => array('color'), 'You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));                      
                     }
                 }
                 break;
