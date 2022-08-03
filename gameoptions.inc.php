@@ -179,12 +179,21 @@ $game_preferences = array(
         'default' => 1
     ),
     110 => array(
-        'name' => totranslate('Simplified graphics'),
+        'name' => totranslate('Simplified card backs'),
         'needReload' => true,
         'values' => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled')),
         ),
-        'default' => 1
-    )
+        'default' => 1,
+    ),
+    111 => array(
+        'name' => totranslate('Card appearance'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('First edition')),
+            2 => array('name' => totranslate('Third edition')),
+        ),
+        'default' => 2,
+    ),
 );

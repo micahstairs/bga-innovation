@@ -2008,12 +2008,16 @@ function (dojo, declare) {
         },
         
         getCardHTMLClass : function(id, age, type, is_relic, card, zone_HTML_class) {
+            var simplified_card_layout = this.prefs[111].value == 1;
             classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
             if (parseInt(is_relic)) {
                 classes.push("relic");
             }
             if (card !== null) {
                 classes.push("color_" + card.color);
+            }
+            if (simplified_card_layout) {
+                classes.push("simplified");
             }
             return classes.join(" ");
         },
@@ -2042,10 +2046,10 @@ function (dojo, declare) {
             var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
-            var simplififed_graphics_enabled = this.prefs[110].value == 2;
+            var simplified_card_back = this.prefs[110].value == 2;
 
             if (card === null) {
-                if (age === null || !simplififed_graphics_enabled) {
+                if (age === null || !simplified_card_back) {
                     var HTML_inside = '';
                 } else {
                     var HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
@@ -2064,7 +2068,7 @@ function (dojo, declare) {
                 }
             }
 
-            var graphics_class = simplififed_graphics_enabled ? "simplified_card_back" : "default_card_back";
+            var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
             return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
         },
         
