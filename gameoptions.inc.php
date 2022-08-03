@@ -188,7 +188,7 @@ $game_preferences = array(
         'default' => 1,
     ),
     111 => array(
-        'name' => totranslate('Card layout'),
+        'name' => totranslate('Card appearance'),
         'needReload' => true,
         'values' => array(
             1 => array('name' => totranslate('First edition')),
