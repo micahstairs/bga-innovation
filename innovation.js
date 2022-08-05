@@ -2062,9 +2062,9 @@ function (dojo, declare) {
             if (size == 'L') {
                 // TODO(ECHOES,CITIES,FIGURES): Update this.
                 if (type == 0) {
-                    card_type = "<div class='card_type'>This card is from the base game.</div>";
+                    card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
                 } else {
-                    card_type = "<div class='card_type'>This card is from the Artifacts of History expansion.</div>";
+                    card_type = "<div class='card_type'>" + _("This card is from the Artifacts of History expansion.") + "</div>";
                 }
             }
 
