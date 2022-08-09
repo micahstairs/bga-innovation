@@ -15684,6 +15684,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::revealHand($player_id);
                     }
                     break;
+
+                // id 6, age 1: Clothing
+                case "6N1A":
+                    if ($n == 0) { // "If you don't"
+                        $hand_count = self::countCardsInLocation($player_id, 'hand');
+                        if ($hand_count > 0) { // at least one card in hand
+                            // fewer than 5 top cards
+                            $board = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                            for ($color = 0; $color < 5; $color++) {
+                                if ($board[$color] == 0) {
+                                    self::revealHand($player_id); // prove that the missing color(s) aren't in hand
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    break;
                 
                 // id 9, age 1: Agriculture
                 case "9N1A":
