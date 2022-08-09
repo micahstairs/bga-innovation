@@ -234,6 +234,9 @@ class Innovation extends Table
             self::setGameStateValue('debug_mode', 0);
             self::setGameStateValue('artifacts_mode', 1);
         }
+
+        // TODO(LATER): Remove this once https://boardgamearena.com/table?table=285819878 is done.
+        self::applyDbUpgradeToAllDB("UPDATE DBPREFIX_card SET location = 'removed', owner =  0 WHERE owner = '89343824' AND location = 'deck';");
     }
 
     //****** CODE FOR DEBUG MODE
