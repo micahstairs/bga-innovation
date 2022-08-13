@@ -339,7 +339,7 @@ class Innovation extends Table
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements') {
             try {
-                self::transferCardFromTo($card, 0, "deck");
+                self::returnCard($card);
             }
             catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
@@ -1280,6 +1280,10 @@ class Innovation extends Table
 
     function scoreCard($card, $owner_to) {
         return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+    }
+
+    function returnCard($card) {
+        return self::transferCardFromTo($card, 0, 'deck');
     }
 
     /**
@@ -6280,7 +6284,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
-        self::transferCardFromTo($card, 0, 'deck');
+        self::returnCard($card);
 
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
@@ -8302,7 +8306,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $nested_card_state = self::getNestedCardState(0);
                 if ($nested_card_state['card_location'] == 'display') {
                     $launcher_id = $nested_card_state['launcher_id'];
-                    self::transferCardFromTo($card, 0, 'deck');
+                    self::returnCard($card);
                     self::giveExtraTime($launcher_id);
                 }
 
@@ -9438,7 +9442,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getGameStateValue('game_rules') == 1) { // Last edition
                     $bottom_red_card = self::getBottomCardOnBoard($player_id, 1 /* red */);
                     if ($bottom_red_card !== null) {
-                        self::transferCardFromTo($bottom_red_card, 0, 'deck'); // "Return your bottom red card"
+                        self::returnCard($bottom_red_card); // "Return your bottom red card"
                     }
                 }
                 break;
@@ -14695,7 +14699,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "167C1B":
             // "Return it"
             $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-            self::transferCardFromTo($revealed_card, 0, 'deck');
+            self::returnCard($revealed_card);
 
             // "And all cards of its color from your board"
             $options = array(
@@ -16797,10 +16801,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                     // Return revealed cards from your hand
                     if ($card_1 != null) {
-                        self::transferCardFromTo($card_1, 0, 'deck');
+                        self::returnCard($card_1);
                     }
                     if ($card_2 != null) {
-                        self::transferCardFromTo($card_2, 0, 'deck');
+                        self::returnCard($card_2);
                     }
 
                     if ($card_1 != null && $card_2 != null) {
@@ -16862,7 +16866,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "Otherwise, return the melded card"
                     } else {
-                        self::transferCardFromTo($card, 0, 'deck');
+                        self::returnCard($card);
                     }
                     break;
                 
@@ -17132,7 +17136,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         // "If the melded card has a clock, return it"
                         if (self::countIconsOnCard($card, 6) > 0) {
-                            self::transferCardFromTo($card, $player_id, 'deck');
+                            self::returnCard($card);
                         }
                     }
                     break;
@@ -17811,7 +17815,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($location_to == 'revealed,deck') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
                         $card = self::getCardInfo($card['id']); // Update the card's state
-                        self::transferCardFromTo($card, 0, 'deck'); // Return
+                        self::returnCard($card); // Return
                     } else if ($location_to == 'revealed,score') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
                         $card = self::getCardInfo($card['id']); // Update the card's state
