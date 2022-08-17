@@ -1078,7 +1078,8 @@ function (dojo, declare) {
                         // Add a button for each available options
                         for(var i=0; i<args.options.length; i++) {
                             var option = args.options[i];
-                            this.addActionButton("choice_" + option.value, _(option.text), "action_clicForChooseSpecialOption")
+                            // NOTE: The option.age substitution is only used by the Evolution dogma
+                            this.addActionButton("choice_" + option.value, dojo.string.substitute(_(option.text), {'age': option.age}), "action_clicForChooseSpecialOption")
                         }
                         var last_button = "choice_" + args.options[args.options.length-1].value;
                     } else if (splay_choice) {

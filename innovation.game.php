@@ -7581,14 +7581,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "65N1A":
                 $message_for_player = clienttranslate('${You} may make a choice');
                 $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
-                $age_to_draw_for_score = self::getAgeToDrawIn($player_id, 8);
+                $age_to_score = self::getAgeToDrawIn($player_id, 8);
                 $age_to_draw = self::getAgeToDrawIn($player_id, self::getMaxAgeInScore($player_id) + 1);
-                $options = array(
-                                array('value' => 1, 'text' => $age_to_draw_for_score <= 10 ? self::format(clienttranslate("Draw and score a {age}, then return a card from your score pile"), array('age' => self::getAgeSquare($age_to_draw_for_score)))
-                                                                                            : self::format(clienttranslate("Finish the game (attempt to draw above {age_10})"), array('age_10' => self::getAgeSquare(10)))),
-                                array('value' => 0, 'text' => $age_to_draw <= 10 ? self::format(clienttranslate("Draw a {age}"), array('age' => self::getAgeSquare($age_to_draw)))
-                                                                                            : self::format(clienttranslate("Finish the game (attempt to draw above {age_10})"), array('age_10' => self::getAgeSquare(10))))
-                );
+                $options = [
+                    ['value' => 1, 'text' => $age_to_score <= 10 ? clienttranslate('Draw and score a ${age}, then return a card from your score pile') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_score)],
+                    ['value' => 0, 'text' => $age_to_draw <= 10 ? clienttranslate('Draw a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_draw)],
+                ];
                 break;
             
             // id 66, age 7: Publications
