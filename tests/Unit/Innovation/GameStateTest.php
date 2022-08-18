@@ -97,4 +97,18 @@ class GameStateTest extends BaseTest
         $this->state->setFromArray('test', $input);
         $this->assertEquals($input, $this->state->getAsArray('test'));
     }
+
+    public function testUsingFirstEditionRules_firstEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
+
+        $this->assertTrue($this->state->usingFirstEditionRules());
+    }
+
+    public function testUsingFirstEditionRules_thirdEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(1);
+
+        $this->assertFalse($this->state->usingFirstEditionRules());
+    }
 }
