@@ -7348,8 +7348,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return !$i_demand_will_be_executed;
 
             case 54: // Societies
-                // The card has no effect unless a player executing the demand has a top card with a lightbulb.
-                // TODO(LATER): Implement this.
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    // This card has no effect if no players executing the demand have a top non-purple card with a lightbulb.
+                    for ($color = 0; $color < 4; $color++) {
+                        foreach ($i_demand_players as $player_id) {
+                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
+                            if (self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                } else {
+                    // This card has no effect if no players executing the demand have a top card with a lightbulb
+                    // higher than the executor's top card of the same color.
+                    for ($color = 0; $color < 5; $color++) {
+                        $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
+                        foreach ($i_demand_players as $player_id) {
+                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
+                            if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                                continue;
+                            }
+                            if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }
                 break;
 
             case 62: // Vaccination
