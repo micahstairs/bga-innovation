@@ -669,9 +669,9 @@
     color: red !important;
 }
 .card_age {
-    color: white;
+    color: #e8e8e8;
     text-align: center;
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: Times New Roman;
     font-weight: bold;
     position: absolute;
     &.M {
@@ -761,8 +761,8 @@
     text-align: center;
 }
 .card_title {
-    color: white;
-    font-family: Tahoma, Arial, sans-serif;
+    color: #e8e8e8;
+    font-family: Times New Roman;
     position: absolute;
     display: flex;
     justify-content: center;
@@ -794,12 +794,12 @@
     position: absolute;
 }
 .effect_text {
-    font-family: Tahoma, Arial, sans-serif;
+    font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
     &.light {
         color: black;
     }
     &.dark {
-        color: white;
+        color: #e8e8e8;
     }
 }
 .effect {
@@ -811,7 +811,7 @@
     
     &.M {
         &:nth-of-type(n+2) {
-            margin-top: 4px;
+            margin-top: 2px;
         }
         padding-left: 9px;
         line-height: 8px;
@@ -826,10 +826,10 @@
 }
 .card_effects {
     &.M {
-        right: 7px;
-        top: 25px;
-        width: 120px;
-        height: 53px;
+        right: 2px;
+        top: 23px;
+        width: 129px;
+        height: 56px;
 
         >.font_size_1, >.font_size_2, >.font_size_3, >.font_size_4, >.font_size_5 {
             >.effect.M {
@@ -848,16 +848,16 @@
         }
     }
     &.L {
-        left: 135px;
-        top: 64px;
-        width: 295px;
-        height: 137px;
+        left: 116px;
+        top: 63px;
+        width: 334px;
+        height: 151px;
     }
 }
 .effect.color_0 {
     border-color: #0e2a50;
     &.light {
-        background-color: #8bd2f1;
+        background-color: #b2def2;
     }
     &.dark {
         background-color: #0e2a50;
@@ -1078,7 +1078,7 @@
             margin-top: -1px;
             margin-bottom: -1px;
             line-height: 4px;
-            .font_size_7 & {
+            .font_size_7 &, .font_size_8 & {
                 width: 8px;
                 height: 8px;
             }
@@ -1088,7 +1088,7 @@
             background-position-y: -21px;
             @include m.generate-icon-x-position(1, 6, 0, 4.1666667px);
         }
-        .font_size_7 & {
+        .font_size_7 &, .font_size_8 & {
             background-size: 50px auto;
             background-position-y: -42px;
             border: none; // At this size, it looks better without a border since there's a white border from the image.
@@ -1121,6 +1121,12 @@
 			height: 8px;
 			font-size: 7px;
 			line-height: 8px;
+		}
+        .font_size_8 &.age {
+			width: 9px;
+			height: 9px;
+			font-size: 8px;
+			line-height: 9px;
 		}
     }
     &.L {
@@ -1161,8 +1167,8 @@
 
 .dogma_symbol {
     &.M {
-        left: -4px;
-        top: -4px;
+        left: -3px;
+        top: -1px;
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 10px;
             height: 10px;
@@ -1210,6 +1216,9 @@
     }
     position: relative;
     border: solid 1px #ffffff;
+    &.simplified {
+        background-image: url('img/simplified_card_backgrounds.jpg');
+    }
     &.M {
         width: 180px;
         height: 124px;
@@ -1791,10 +1800,9 @@
 }
 
 /* Font sizes */
-$rem: 0.0625rem;
 @for $i from 1 through 30 {
     .font_size_#{$i} {
-        font-size: $rem * $i;
+        font-size: #{$i}px;
     }
 }
 

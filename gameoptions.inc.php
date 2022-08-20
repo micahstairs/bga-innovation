@@ -141,8 +141,16 @@ $game_options = array(
     110 => array(
         'name' => totranslate('Extra achievement to win'),
         'values' => array(
-            1 => array('name' => totranslate('Disable')),
-            2 => array('name' => totranslate('Enable'), 'tmdisplay' => totranslate('Extra Achievement'), 'no_beginner' => true)
+            1 => array(
+                'name' => totranslate('Disable'),
+                'description' => totranslate('An extra achievement will still be added to the win requirement for each enabled expansion'),
+            ),
+            2 => array(
+                'name' => totranslate('Enable'),
+                'tmdisplay' => totranslate('Extra Achievement'),
+                'description' => totranslate('An extra achievement will be added to the win requirement (in addition to an achievement being added for each enabled expansion)'),
+                'no_beginner' => true,
+            ),
         )
     )
 );
@@ -171,12 +179,21 @@ $game_preferences = array(
         'default' => 1
     ),
     110 => array(
-        'name' => totranslate('Simplified graphics'),
+        'name' => totranslate('Simplified card backs'),
         'needReload' => true,
         'values' => array(
             1 => array('name' => totranslate('Disabled')),
             2 => array('name' => totranslate('Enabled')),
         ),
-        'default' => 1
-    )
+        'default' => 1,
+    ),
+    111 => array(
+        'name' => totranslate('Card appearance'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('First edition')),
+            2 => array('name' => totranslate('Third edition')),
+        ),
+        'default' => 2,
+    ),
 );

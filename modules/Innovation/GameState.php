@@ -76,4 +76,12 @@ class GameState
     {
         return Arrays::getValueAsArray($this->get($key));
     }
+
+    /**
+     * @return bool
+     */
+    public function usingFirstEditionRules()
+    {
+        return $this->get('game_rules') == 2;
+    }
 }

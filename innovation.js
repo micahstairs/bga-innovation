@@ -638,7 +638,7 @@ function (dojo, declare) {
             
             // My score: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator) {
-                this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>Close</a>");
+                this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
                 this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
                 for (var i = 0; i < gamedatas.my_score.length; i++) {
@@ -1159,7 +1159,8 @@ function (dojo, declare) {
                         // Add a button for each available options
                         for(var i=0; i<args.options.length; i++) {
                             var option = args.options[i];
-                            this.addActionButton("choice_" + option.value, _(option.text), "action_clicForChooseSpecialOption")
+                            // NOTE: The option.age substitution is only used by the Evolution dogma
+                            this.addActionButton("choice_" + option.value, dojo.string.substitute(_(option.text), {'age': option.age}), "action_clicForChooseSpecialOption")
                         }
                         var last_button = "choice_" + args.options[args.options.length-1].value;
                     } else if (splay_choice) {
@@ -1493,7 +1494,7 @@ function (dojo, declare) {
                 dojo.addClass(elementParent, HTML_class);
             }
             var font_size = font_max;
-            while (font_size >= 1) {
+            while (font_size >= 2) {
                 if (font_size < font_max) {
                     dojo.removeClass(element, 'font_size_' + (font_size + 1));
                 }
@@ -2093,12 +2094,16 @@ function (dojo, declare) {
         },
         
         getCardHTMLClass : function(id, age, type, is_relic, card, zone_HTML_class) {
+            var simplified_card_layout = this.prefs[111].value == 1;
             classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
             if (parseInt(is_relic)) {
                 classes.push("relic");
             }
             if (card !== null) {
                 classes.push("color_" + card.color);
+            }
+            if (simplified_card_layout) {
+                classes.push("simplified");
             }
             return classes.join(" ");
         },
@@ -2127,10 +2132,10 @@ function (dojo, declare) {
             var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
-            var simplififed_graphics_enabled = this.prefs[110].value == 2;
+            var simplified_card_back = this.prefs[110].value == 2;
 
             if (card === null) {
-                if (age === null || !simplififed_graphics_enabled) {
+                if (age === null || !simplified_card_back) {
                     var HTML_inside = '';
                 } else {
                     var HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
@@ -2143,13 +2148,13 @@ function (dojo, declare) {
             if (size == 'L') {
                 // TODO(ECHOES,CITIES,FIGURES): Update this.
                 if (type == 0) {
-                    card_type = "<div class='card_type'>This card is from the base game.</div>";
+                    card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
                 } else {
-                    card_type = "<div class='card_type'>This card is from Artifacts of History.</div>";
+                    card_type = "<div class='card_type'>" + _("This card is from the Artifacts of History expansion.") + "</div>";
                 }
             }
 
-            var graphics_class = simplififed_graphics_enabled ? "simplified_card_back" : "default_card_back";
+            var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
             return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
         },
         
@@ -2173,7 +2178,7 @@ function (dojo, declare) {
             var non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
             var non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
-            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 7 : 17);
+            var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
             
             return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
         },

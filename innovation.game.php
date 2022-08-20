@@ -217,7 +217,9 @@ class Innovation extends Table
                 'current_action_number' => 96,
                 'current_nesting_index' => 97,
                 'release_version' => 98,
-                'debug_mode' => 99
+                'debug_mode' => 99,
+                // TODO(ECHOES,CITIES,FIGURES): Make sure to initialize the new game options.
+                'artifacts_mode' => 102,
             ));
             self::setGameStateValue('card_id_1', -2);
             self::setGameStateValue('card_id_2', -2);
@@ -243,7 +245,11 @@ class Innovation extends Table
             self::setGameStateValue('current_nesting_index', -1);
             self::setGameStateValue('release_version', 0);
             self::setGameStateValue('debug_mode', 0);
+            self::setGameStateValue('artifacts_mode', 1);
         }
+
+        // TODO(LATER): Remove this once https://boardgamearena.com/table?table=285819878 is done.
+        self::applyDbUpgradeToAllDB("UPDATE DBPREFIX_card SET location = 'removed', owner =  0 WHERE owner = '89343824' AND location = 'deck';");
     }
 
     //****** CODE FOR DEBUG MODE
@@ -346,7 +352,7 @@ class Innovation extends Table
             throw new BgaUserException("This card is removed from the game");
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements') {
             try {
-                self::transferCardFromTo($card, 0, "deck");
+                self::returnCard($card);
             }
             catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
@@ -646,7 +652,7 @@ class Innovation extends Table
         }
         
         // Initialize Artifacts-specific statistics
-        if (self::getGameStateValue('artifacts_mode') != 1) {
+        if (self::getGameStateValue('artifacts_mode') > 1) {
             self::initStat('player', 'dig_events_number', 0);
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
@@ -921,7 +927,7 @@ class Innovation extends Table
         $weight = 0;
         $total_weight = 0;
         
-        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck');
+        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
         for($age=1; $age<=10; $age++) {
             $n = $number_of_cards_in_decks[$age];
             switch($age) {
@@ -1345,6 +1351,10 @@ class Innovation extends Table
 
     function scoreCard($card, $owner_to) {
         return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+    }
+
+    function returnCard($card) {
+        return self::transferCardFromTo($card, 0, 'deck');
     }
 
     /**
@@ -4110,7 +4120,7 @@ class Innovation extends Table
     }
 
     function isTopBoardCard($card) {
-        if ($card['position'] == null) {
+        if ($card['position'] == null || $card['location'] != 'board') {
             return false;
         }
         $number_of_cards_above = self::getUniqueValueFromDB(self::format("
@@ -4120,10 +4130,10 @@ class Innovation extends Table
                     card
                 WHERE
                     owner = {owner} AND
-                    location = '{location}' AND
+                    location = 'board' AND
                     color = {color} AND
                     position > {position}",
-                array('owner' => $card['owner'], 'location' => $card['location'], 'color' => $card['color'], 'position' => $card['position'])
+                array('owner' => $card['owner'], 'color' => $card['color'], 'position' => $card['position'])
         ));
         return $number_of_cards_above == 0;
     }
@@ -6285,7 +6295,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'forecast';
         default:
             // This should not happen
-            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
+            if (self::getGameStateValue('release_version') >= 1) {
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
+            }
             break;
         }
     }
@@ -6926,7 +6938,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
-        self::transferCardFromTo($card, 0, 'deck');
+        self::returnCard($card);
 
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
@@ -7144,7 +7156,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /* Returns true if a relic is being seized */
     function tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $melded_card) {
         // The Artifacts expansion is not enabled.
-        if (self::getGameStateValue('artifacts_mode') == 1) {
+        if (self::getGameStateValue('artifacts_mode') <= 1) {
             return false;
         }
 
@@ -8099,8 +8111,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return !$i_demand_will_be_executed;
 
             case 54: // Societies
-                // The card has no effect unless a player executing the demand has a top card with a lightbulb.
-                // TODO(LATER): Implement this.
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    // This card has no effect if no players executing the demand have a top non-purple card with a lightbulb.
+                    for ($color = 0; $color < 4; $color++) {
+                        foreach ($i_demand_players as $player_id) {
+                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
+                            if (self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                } else {
+                    // This card has no effect if no players executing the demand have a top card with a lightbulb
+                    // higher than the executor's top card of the same color.
+                    for ($color = 0; $color < 5; $color++) {
+                        $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
+                        foreach ($i_demand_players as $player_id) {
+                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
+                            if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                                continue;
+                            }
+                            if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
+                                return false;
+                            }
+                        }
+                    }
+                    return true;
+                }
                 break;
 
             case 62: // Vaccination
@@ -8332,14 +8370,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "65N1A":
                 $message_for_player = clienttranslate('${You} may make a choice');
                 $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
-                $age_to_draw_for_score = self::getAgeToDrawIn($player_id, 8);
+                $age_to_score = self::getAgeToDrawIn($player_id, 8);
                 $age_to_draw = self::getAgeToDrawIn($player_id, self::getMaxAgeInScore($player_id) + 1);
-                $options = array(
-                                array('value' => 1, 'text' => $age_to_draw_for_score <= 10 ? self::format(clienttranslate("Draw and score a {age}, then return a card from your score pile"), array('age' => self::getAgeSquare($age_to_draw_for_score)))
-                                                                                            : self::format(clienttranslate("Finish the game (attempt to draw above {age_10})"), array('age_10' => self::getAgeSquare(10)))),
-                                array('value' => 0, 'text' => $age_to_draw <= 10 ? self::format(clienttranslate("Draw a {age}"), array('age' => self::getAgeSquare($age_to_draw)))
-                                                                                            : self::format(clienttranslate("Finish the game (attempt to draw above {age_10})"), array('age_10' => self::getAgeSquare(10))))
-                );
+                $options = [
+                    ['value' => 1, 'text' => $age_to_score <= 10 ? clienttranslate('Draw and score a ${age}, then return a card from your score pile') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_score)],
+                    ['value' => 0, 'text' => $age_to_draw <= 10 ? clienttranslate('Draw a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_draw)],
+                ];
                 break;
             
             // id 66, age 7: Publications
@@ -8812,7 +8848,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $location_from = self::decodeLocation(self::getGameStateValue("location_from"));
             $owner_to = self::getGameStateValue("owner_to");
             $location_to = self::decodeLocation(self::getGameStateValue("location_to"));
-            $bottom_to = self::getGameStateValue("bottom_to");
+            // TODO(LATER): Remove this since it's only needed to migrate game during the release of Artifacts.
+            if (self::getGameStateValue('release_version') == 0 && $location_to == 'deck') {
+                $bottom_to = true;
+            } else {
+                $bottom_to = self::getGameStateValue("bottom_to");
+            }
             $age_min = self::getGameStateValue("age_min");
             $age_max = self::getGameStateValue("age_max");
             $with_icon = self::getGameStateValue("with_icon");
@@ -9356,7 +9397,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $nested_card_state = self::getNestedCardState(0);
                 if ($nested_card_state['card_location'] == 'display') {
                     $launcher_id = $nested_card_state['launcher_id'];
-                    self::transferCardFromTo($card, 0, 'deck');
+                    self::returnCard($card);
                     self::giveExtraTime($launcher_id);
                 }
 
@@ -10501,7 +10542,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getGameStateValue('game_rules') == 1) { // Last edition
                     $bottom_red_card = self::getBottomCardOnBoard($player_id, 1 /* red */);
                     if ($bottom_red_card !== null) {
-                        self::transferCardFromTo($bottom_red_card, 0, 'deck'); // "Return your bottom red card"
+                        self::returnCard($bottom_red_card); // "Return your bottom red card"
                     }
                 }
                 break;
@@ -10514,7 +10555,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 69, age 7: Bicycle
             case "69N1":
-                $step_max = 1; // --> 1 interaction: see B
+                if (self::countCardsInLocation($player_id, 'hand') > 0 || self::countCardsInLocation($player_id, 'score') > 0) {
+                    $step_max = 1;
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards to exchange.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                }
                 break;
             
             // id 70, age 7: Electricity
@@ -16525,7 +16571,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 132, Artifacts age 2: Terracotta Army
         case "132C1A":
-            // "I compel you to return a top card with no tower"
+            // "I compel you to return a top card on your board with no tower"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -17041,7 +17087,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 151, Artifacts age 4: Moses
         case "151N1A":    
-            // "Score a top card with a crown"
+            // "Score a top card on your board with a crown"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -17390,7 +17436,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "167C1B":
             // "Return it"
             $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-            self::transferCardFromTo($revealed_card, 0, 'deck');
+            self::returnCard($revealed_card);
 
             // "And all cards of its color from your board"
             $options = array(
@@ -20546,7 +20592,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         //[BB]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         
         // There wasn't an interaction needed in this step after all
-        if ($options == null) {
+        if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0)) {
             // The last step has been completed, so it's the end of the turn for the player involved
             if ($step == self::getStepMax()) {
                 self::trace('interactionStep->interPlayerInvolvedTurn');
@@ -20659,6 +20705,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     } else {
                         // Reveal hand to prove that they have no crowns.
                         self::revealHand($player_id);
+                    }
+                    break;
+
+                // id 6, age 1: Clothing
+                case "6N1A":
+                    if ($n == 0) { // "If you don't"
+                        // Only reveal hand if there is at least one card in hand and fewer than 5 top cards
+                        $hand_count = self::countCardsInLocation($player_id, 'hand');
+                        if ($hand_count > 0) {
+                            $pile_sizes = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                            for ($color = 0; $color < 5; $color++) {
+                                if ($pile_sizes[$color] == 0) {
+                                    self::revealHand($player_id);
+                                    break;
+                                }
+                            }
+                        }
                     }
                     break;
                 
@@ -21802,10 +21865,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                     // Return revealed cards from your hand
                     if ($card_1 != null) {
-                        self::transferCardFromTo($card_1, 0, 'deck');
+                        self::returnCard($card_1);
                     }
                     if ($card_2 != null) {
-                        self::transferCardFromTo($card_2, 0, 'deck');
+                        self::returnCard($card_2);
                     }
 
                     if ($card_1 != null && $card_2 != null) {
@@ -21867,7 +21930,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "Otherwise, return the melded card"
                     } else {
-                        self::transferCardFromTo($card, 0, 'deck');
+                        self::returnCard($card);
                     }
                     break;
                 
@@ -22137,7 +22200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         // "If the melded card has a clock, return it"
                         if (self::countIconsOnCard($card, 6) > 0) {
-                            self::transferCardFromTo($card, $player_id, 'deck');
+                            self::returnCard($card);
                         }
                     }
                     break;
@@ -23473,11 +23536,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $first_card = self::getCardInfo(self::getAuxiliaryValue());
                     $second_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                     self::transferCardFromTo($second_card, $player_id, 'board');
-                    if ($first_card['type'] !== $second_card['type'] &&
-                        $first_card['color'] == $second_card['color']) {
-                        // "Draw and score five 2s"
-                        for ($i = 1; $i <= 5; $i++) {
-                            self::executeDraw($player_id, 2, 'score');
+                    if ($first_card['type'] == $second_card['type']) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose cards from the same card set.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    } else {
+                        if ($first_card['color'] == $second_card['color']) {
+                            // "Draw and score five 2s"
+                            for ($i = 1; $i <= 5; $i++) {
+                                self::executeDraw($player_id, 2, 'score');
+                            }
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose different colors.'), array('You' => 'You'));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose different colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         }
                     }
                 }
@@ -23996,7 +24066,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($location_to == 'revealed,deck') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
                         $card = self::getCardInfo($card['id']); // Update the card's state
-                        self::transferCardFromTo($card, 0, 'deck'); // Return
+                        self::returnCard($card); // Return
                     } else if ($location_to == 'revealed,score') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
                         $card = self::getCardInfo($card['id']); // Update the card's state
