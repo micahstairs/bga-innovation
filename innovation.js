@@ -1265,12 +1265,12 @@ function (dojo, declare) {
             return HTML;
         },
         
-        addCustomTooltip : function(nodeId, help_HTML, action_HTML, delay = undefined) {
-            this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), delay);
+        addCustomTooltip : function(nodeId, help_HTML, action_HTML) {
+            this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), 0);
         },
         
-        addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML, delay = undefined) {
-            this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), delay);
+        addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML) {
+            this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), 0);
         },
         
         addTooltipForCard : function(card) {
