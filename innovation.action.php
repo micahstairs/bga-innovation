@@ -169,6 +169,45 @@
         
         self::ajaxResponse();
     }
+
+    public function passPromoteCard() {
+        self::setAjaxMode();
+        
+        // Call passPromoteCard from game logic
+        $this->game->passPromoteCard();
+        
+        self::ajaxResponse();
+    }
+
+    public function promoteCard() {
+        self::setAjaxMode();
+
+        // Retrieve arguments
+        $card_id = self::getArg("card_id", AT_posint, true);
+        
+        // Call promoteCard from game logic
+        $this->game->promoteCard($card_id);
+        
+        self::ajaxResponse();
+    }
+
+    public function passDogmaPromotedCard() {
+        self::setAjaxMode();
+        
+        // Call passDogmaPromotedCard from game logic
+        $this->game->passDogmaPromotedCard();
+        
+        self::ajaxResponse();
+    }
+
+    public function dogmaPromotedCard() {
+        self::setAjaxMode();
+        
+        // Call dogmaPromotedCard from game logic
+        $this->game->dogmaPromotedCard();
+        
+        self::ajaxResponse();
+    }
     
     public function achieve() {
         self::setAjaxMode();

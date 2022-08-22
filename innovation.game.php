@@ -2149,6 +2149,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his display.');
             break;
+        case 'forecast->board':
+            $message_for_player = clienttranslate('${You} promote ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+            $message_for_others = clienttranslate('${player_name} promotes ${<}${age}${>} ${<<}${name}${>>} from his forecast.');
+            break;
         case 'hand->deck':
             if ($bottom_to) {
                 $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
@@ -6971,6 +6975,60 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         self::incStat(1, 'free_action_pass_number', $player_id);
     }
+
+    function passPromoteCard() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('passPromoteCard');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to promote a card from your forecast.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to promote a card from his forecast.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        self::trace('promoteCardPlayerTurn->interPlayerTurn (passPromoteCard)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function promoteCard($card_id) {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('promoteCard');
+
+        // TODO(ECHOES#363): Validate chosen card.
+
+        self::setGameStateValue('melded_card_id', $card_id);
+        $card = self::getCardInfo($card_id);
+
+        $player_id = self::getCurrentPlayerId();
+        self::transferCardFromTo($card, $player_id, "board");
+
+        self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
+        $this->gamestate->nextState('promoteDogmaPlayerTurn');
+    }
+
+    function passDogmaPromotedCard() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('passDogmaPromotedCard');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to dogma your promoted card.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to dogma his promoted card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        self::trace('promoteDogmaPlayerTurn->interPlayerTurn (passDogmaPromotedCard)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function dogmaPromotedCard() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('dogmaPromotedCard');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to dogma your promoted card.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to dogma his promoted card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        self::setUpDogma($player_id, self::getCardInfo(self::getGameStateValue('melded_card_id')));
+
+        self::trace('promoteDogmaPlayerTurn->dogmaEffect (dogmaPromotedCard)');
+        $this->gamestate->nextState('dogmaEffect');
+    }
     
     function achieve($age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
@@ -7816,6 +7874,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 )
             )
         );
+    }
+
+    function argPromoteCardPlayerTurn() {
+        return [
+            '_private' => [
+                'active' => [ // "Active" player only
+                    
+                ]
+            ]
+        ];
+    }
+
+    function argDogmaPromotedCardPlayerTurn() {
+        return [
+            '_private' => [
+                'active' => [ // "Active" player only
+                    
+                ]
+            ]
+        ];
     }
 
     function argPlayerTurn() {

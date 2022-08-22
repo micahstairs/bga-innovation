@@ -269,12 +269,30 @@ $machinestates = array(
 
     19 => array(
         "name" => "promoteCardPlayerTurn",
-        "description" => clienttranslate('${actplayer} may choose a card to promote'),
-        "descriptionmyturn" => clienttranslate('${You} may choose a card to promote:'),
+        "description" => clienttranslate('${actplayer} may choose a card to promote from his forecast'),
+        "descriptionmyturn" => clienttranslate('${You} may choose a card to promote from your forecast'),
         "args" => "argPromoteCardPlayerTurn",
         "type" => "activeplayer",
-        "possibleactions" => array(),
-        "transitions" => array("interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
+        "possibleactions" => ["passPromoteCard", "promoteCard"],
+        "transitions" => [
+            "interPlayerTurn" => 5,
+            "promoteDogmaPlayerTurn" => 20,
+            "justBeforeGameEnd" => 98,
+        ],
+    ),
+
+    20 => array(
+        "name" => "dogmaPromotedPlayerTurn",
+        "description" => clienttranslate('${actplayer} may choose to dogma the promoted card'),
+        "descriptionmyturn" => clienttranslate('${You} may choose to dogma the promoted card'),
+        "args" => "argDogmaPromotedCardPlayerTurn",
+        "type" => "activeplayer",
+        "possibleactions" => ["passDogmaPromotedCard", "dogmaPromotedCard"],
+        "transitions" => [
+            "interPlayerTurn" => 5,
+            "dogmaEffect" => 6,
+            "justBeforeGameEnd" => 98,
+        ],
     ),
     
     98 => array(
