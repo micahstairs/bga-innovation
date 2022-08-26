@@ -191,6 +191,23 @@
         self::ajaxResponse();
     }
 
+    public function promoteCardBack() {
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        $owner = self::getArg("owner", AT_posint, true);
+        $location = self::getArg("location", AT_alphanum, true);
+        $age = self::getArg("age", AT_posint, true);
+        $type = self::getArg("type", AT_posint, true);
+        $is_relic = self::getArg("is_relic", AT_posint, true);
+        $position = self::getArg("position", AT_posint, true);
+        
+        // Call promoteCardBack from game logic
+        $this->game->promoteCardBack($owner, $location, $age, $type, $is_relic, $position);
+        
+        self::ajaxResponse();
+    }
+
     public function passDogmaPromotedCard() {
         self::setAjaxMode();
         

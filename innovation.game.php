@@ -6992,17 +6992,35 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('promoteCard');
 
-        // TODO(ECHOES#363): Validate chosen card.
-
-        self::setGameStateValue('melded_card_id', $card_id);
-        $card = self::getCardInfo($card_id);
-
+        $originally_melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
+        $promoted_card = self::getCardInfo($card_id);
         $player_id = self::getCurrentPlayerId();
-        self::transferCardFromTo($card, $player_id, "board");
+
+        if ($promoted_card === null || $promoted_card['owner'] != $player_id || $promoted_card['location'] != 'forecast') {
+            self::throwInvalidChoiceException();
+        }
+        if ($promoted_card['age'] > $originally_melded_card['age']) {
+            self::throwInvalidChoiceException();
+        }
+
+        self::transferCardFromTo($promoted_card, $player_id, "board");
+        self::setGameStateValue('melded_card_id', $card_id);
 
         self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
         $this->gamestate->nextState('promoteDogmaPlayerTurn');
     }
+
+    function promoteCardBack($owner, $location, $age, $type, $is_relic, $position) {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('promoteCard');
+
+        $card = self::getCardInfoFromPosition($owner, $location, $age, $type, $is_relic, $position);
+        if ($card === null) {
+            self::throwInvalidChoiceException();
+        }
+        self::promoteCard($card['id']);
+    }
+
 
     function passDogmaPromotedCard() {
         // Check that this is the player's turn and that it is a "possible action" at this game state
@@ -7878,11 +7896,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function argPromoteCardPlayerTurn() {
         return [
-            '_private' => [
-                'active' => [ // "Active" player only
-                    
-                ]
-            ]
+            "max_age_to_promote" => self::getCardInfo(self::getGameStateValue('melded_card_id'))['age'],
         ];
     }
 

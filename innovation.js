@@ -954,10 +954,16 @@ function (dojo, declare) {
                     break;    
                 case 'promoteCardPlayerTurn':
                     this.my_forecast_verso_window.show();
-                    this.addTooltipsWithActionsToMyForecast();
-                    var cards_in_hand = this.selectMyCardsInForecast();
-                    cards_in_hand.addClass("clickable");
-                    this.on(cards_in_hand, 'onclick', 'action_clickForPromote');
+                    var max_age_to_promote = parseInt(args.args.max_age_to_promote);
+                    // Make it possible to click or hover on the front of the cards in the forecast
+                    this.addTooltipsWithActionsToMyForecast(max_age_to_promote);
+                    var cards_in_forecast = this.selectMyCardsInForecast(max_age_to_promote);
+                    cards_in_forecast.addClass("clickable");
+                    this.on(cards_in_forecast, 'onclick', 'action_clickForPromote');
+                    // Make it possible to click the backs of the cards in the forecast
+                    var card_backs_in_forecast = this.selectMyCardBacksInForecast(max_age_to_promote);
+                    card_backs_in_forecast.addClass("clickable");
+                    this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
                     break;
                 case 'dogmaPromotedCardPlayerTurn':
                     // TODO(ECHOES#363): Make card selectable and clickable.
@@ -1606,8 +1612,8 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipsWithActionsToMyForecast : function() {
-            var cards = this.selectMyCardsInForecast();
+        addTooltipsWithActionsToMyForecast : function(max_age_to_promote) {
+            var cards = this.selectMyCardsInForecast(max_age_to_promote);
             this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
             var self = this;
             cards.forEach(function(card) {
@@ -1909,8 +1915,20 @@ function (dojo, declare) {
             return dojo.query("#hand_" + this.player_id + " > .card");
         },
 
-        selectMyCardsInForecast : function() {
-            return dojo.query("#my_forecast_verso > .card");
+        selectMyCardsInForecast : function(max_age_to_promote) {
+            var queries = []
+            for (var age = 1; age <= max_age_to_promote; age++) {
+                queries.push("#my_forecast_verso > .age_" + age);
+            }
+            return dojo.query(queries.join(","));
+        },
+
+        selectMyCardBacksInForecast : function(max_age_to_promote) {
+            var queries = []
+            for (var age = 1; age <= max_age_to_promote; age++) {
+                queries.push("#forecast_" + this.player_id + " > .age_" + age);
+            }
+            return dojo.query(queries.join(","));
         },
 
         selectArtifactOnDisplay : function() {
@@ -2834,6 +2852,36 @@ function (dojo, declare) {
                 {
                     lock: true,
                     card_id: card_id
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickCardBackForPromote : function(event) {
+            if (!this.checkAction('promoteCard')) {
+                return;
+            }
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            var age = this.getCardAgeFromHTMLId(HTML_id);
+            var type = this.getCardTypeFromHTMLId(HTML_id);
+            var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+            var owner = this.player_id;
+            var location = 'forecast';
+            var zone = this.getZone(location, owner, null, age);
+            var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+            this.ajaxcall("/innovation/innovation/promoteCardBack.html",
+                {
+                    lock: true,
+                    owner: owner,
+                    location: location,
+                    age: age,
+                    type: type,
+                    is_relic: is_relic,
+                    position: position
                 },
                 this,
                 function(result) { },
