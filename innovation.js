@@ -1266,11 +1266,13 @@ function (dojo, declare) {
         },
         
         addCustomTooltip : function(nodeId, help_HTML, action_HTML) {
-            this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), 0);
+            // TODO(LATER): Pass 0 instead of undefined when using a desktop so that tooltips are faster.
+            this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), undefined);
         },
         
         addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML) {
-            this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), 0);
+            // TODO(LATER): Pass 0 instead of undefined when using a desktop so that tooltips are faster.
+            this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), undefined);
         },
         
         addTooltipForCard : function(card) {
