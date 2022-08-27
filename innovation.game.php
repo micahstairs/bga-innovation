@@ -7902,11 +7902,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function argDogmaPromotedCardPlayerTurn() {
         return [
-            '_private' => [
-                'active' => [ // "Active" player only
-                    
-                ]
-            ]
+            "promoted_card_id" => self::getGameStateValue('melded_card_id'),
         ];
     }
 

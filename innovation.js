@@ -965,8 +965,12 @@ function (dojo, declare) {
                     card_backs_in_forecast.addClass("clickable");
                     this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
                     break;
-                case 'dogmaPromotedCardPlayerTurn':
-                    // TODO(ECHOES#363): Make card selectable and clickable.
+                case 'dogmaPromotedPlayerTurn':
+                    // TODO(ECHOES): Add special case for Battleship Yamato.
+                    var card_id = parseInt(args.args.promoted_card_id);
+                    var promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
+                    promoted_card.addClass("clickable");
+                    this.on(promoted_card, 'onclick', 'action_clickForDogmaPromoted');
                     break;
                 case 'playerTurn':
                     // Claimable achievements (achieve action)
