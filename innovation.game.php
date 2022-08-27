@@ -9473,8 +9473,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 68, age 7: Explosives
             case "68D1":
+
+                // Automate selection if the player has no more than 3 cards in hand
+                $cards = self::getCardsInLocation($player_id, 'hand');
+                if (count($cards) >= 1 && count($cards) <= 3) {
+                    foreach ($cards as $card) {
+                        $card = self::getCardInfo($card['id']);
+                        self::transferCardFromTo($card, $launcher_id, 'hand');
+                    }
+                    // "If you transferred any, and then have no card in hand, draw a 7"
+                    self::executeDraw($player_id, 7);
+                    break;
+                }
+
                 self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
-                $step_max = 3; // --> 3 interactions: see B
+
+                // Only log "No card matches the criteria of the effect" once instead of 3 times
+                if (count($cards) == 0) {
+                    $step_max = 3;
+                    $step = 3;
+                    break;
+                }
+
+                $step_max = 3;
                 break;
             
             // id 69, age 7: Bicycle
