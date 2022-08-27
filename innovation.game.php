@@ -120,7 +120,7 @@ class Innovation extends Table
             'with_bonus' => 87,
             'without_bonus' => 88,
             
-            'melded_card_id' => 95, // ID of the card which was melded
+            'melded_card_id' => 94, // ID of the card which was melded
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
