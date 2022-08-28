@@ -17217,6 +17217,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $enable_autoselection = self::getGameStateValue('enable_autoselection') == 1;
             $owner_from = self::getGameStateValue('owner_from');
             $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
+            $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
@@ -17253,21 +17254,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->gamestate->nextState('interInteractionStep');
                 return;
 
-            // There is only one selectable card (and it must be chosen)
-            } else if ($selection_size == 1
-                    && $enable_autoselection
-                    // Make sure choosing this card won't reveal hidden information (unless its the only card in that location)
-                    && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) == 1)
-                    // The player must choose at least one more card
-                    && (($cards_chosen_so_far == 0 && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= 1))) {
-                // The player chooses the card automatically
+            // All selectable cards must be chosen
+            } else if ($enable_autoselection
+                    // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)
+                    && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) <= $selection_size)
+                    // The player must choose at least all of the selectable cards
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    // If there's more than one selectable card, only automate the choices if the order does not matter
+                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck'))) {
+                // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
                 self::setGameStateValue('id_last_selected', $card['id']);
                 self::unmarkAsSelected($card['id']);
                 self::setGameStateValue('can_pass', 0);
 
-                self::trace('preSelectionMove->interSelectionMove (only one card)');
+                self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             
