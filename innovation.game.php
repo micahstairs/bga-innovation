@@ -516,7 +516,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('splay_direction', -1);
         
         // Flags used to describe the range of the selection the player in dogma must take (yet -1 as default value since there are not currently in use)
-        self::setGameStateInitialValue('special_type_of_choice', -1); // Indicate the type of choice the player faces. 0 for choosing a card or a color for splay, 1 for choosing an opponent, 2 for choising an opponent with fewer points, 3 for choosing a value, 4 for choosing between yes or no
+        self::setGameStateInitialValue('special_type_of_choice', -1); // Indicate the type of choice the player faces. See encodeSpecialTypeOfChoice() for possible values.
         self::setGameStateInitialValue('choice', -1); // Numeric choice when the player has to make a special choice (-2 if the player passed)
         self::setGameStateInitialValue('n_min', -1); // Minimal number of cards to be chosen (999 stands for all possible)
         self::setGameStateInitialValue('n_max', -1); // Maximal number of cards to be chosen (999 stands for no limit)
@@ -17207,7 +17207,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stPreSelectionMove() {
-        if (self::getGameStateValue('special_type_of_choice') == 0) {
+        $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
+
+        if ($special_type_of_choice == 0) {
             $selection_size = self::countSelectedCards();
             $cards_chosen_so_far = self::getGameStateValue('n');
             $n_min = self::getGameStateValue('n_min');
@@ -17289,7 +17291,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else if ($n_max < 800 && $selection_size < $n_max) {
                 self::setGameStateValue('n_max', $selection_size);
             }
+        } else if ($special_type_of_choice == 10) { // choose_player
+            $player_array = self::getGameStateValueAsArray('player_array');
+            // Automatically choose the player if there's only one option
+            if (count($player_array) == 1) {
+                self::setGameStateValue('choice', self::playerNoToPlayerId($player_array[0]));
+                self::trace('preSelectionMove->interSelectionMove (only one player)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
         }
+
         // Let the player make his choice
         self::trace('preSelectionMove->selectionMove');
         $this->gamestate->nextState('selectionMove');
