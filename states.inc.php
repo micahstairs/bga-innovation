@@ -93,7 +93,9 @@ $machinestates = array(
         "transitions" => array(
             "interPlayerTurn" => 5,
             "dogmaEffect" => 6,
+            // TODO(LATER): Remove this transition since it now comes from the new digArtifact state.
             "relicPlayerTurn" => 16,
+            "digArtifact" => 17,
             "justBeforeGameEnd" => 98
         )
     ),
@@ -220,15 +222,6 @@ $machinestates = array(
             "justBeforeGameEnd" => 98
         )
     ),
-    
-    98 => array(
-        "name" => "justBeforeGameEnd",
-        "description" => clienttranslate('Finishing the game...'),
-        "type" => "game",
-        "action" => "stJustBeforeGameEnd",
-        "updateGameProgression" => true,
-        "transitions" => array("" => 99)
-    ),
 
     15 => array(
         "name" => "artifactPlayerTurn",
@@ -248,6 +241,67 @@ $machinestates = array(
         "type" => "activeplayer",
         "possibleactions" => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),
         "transitions" => array("interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
+    ),
+
+    17 => array(
+        "name" => "digArtifact",
+        "description" => clienttranslate('Finalising the player action...'),
+        "type" => "game",
+        "action" => "stDigArtifact",
+        "transitions" => array(
+            "relicPlayerTurn" => 16,
+            "promoteCard" => 18,
+            "justBeforeGameEnd" => 98,
+        ),
+    ),
+
+    18 => array(
+        "name" => "promoteCard",
+        "description" => clienttranslate('Finalising the player action...'),
+        "type" => "game",
+        "action" => "stPromoteCard",
+        "transitions" => array(
+            "interPlayerTurn" => 5,
+            "promoteCardPlayerTurn" => 19,
+            "justBeforeGameEnd" => 98,
+        ),
+    ),
+
+    19 => array(
+        "name" => "promoteCardPlayerTurn",
+        "description" => clienttranslate('${actplayer} may choose a card to promote from his forecast'),
+        "descriptionmyturn" => clienttranslate('${You} may choose a card to promote from your forecast'),
+        "args" => "argPromoteCardPlayerTurn",
+        "type" => "activeplayer",
+        "possibleactions" => ["passPromoteCard", "promoteCard", "promoteCardBack"],
+        "transitions" => [
+            "interPlayerTurn" => 5,
+            "promoteDogmaPlayerTurn" => 20,
+            "justBeforeGameEnd" => 98,
+        ],
+    ),
+
+    20 => array(
+        "name" => "dogmaPromotedPlayerTurn",
+        "description" => clienttranslate('${actplayer} may choose to dogma the promoted card'),
+        "descriptionmyturn" => clienttranslate('${You} may choose to dogma the promoted card'),
+        "args" => "argDogmaPromotedCardPlayerTurn",
+        "type" => "activeplayer",
+        "possibleactions" => ["passDogmaPromotedCard", "dogmaPromotedCard"],
+        "transitions" => [
+            "interPlayerTurn" => 5,
+            "dogmaEffect" => 6,
+            "justBeforeGameEnd" => 98,
+        ],
+    ),
+    
+    98 => array(
+        "name" => "justBeforeGameEnd",
+        "description" => clienttranslate('Finishing the game...'),
+        "type" => "game",
+        "action" => "stJustBeforeGameEnd",
+        "updateGameProgression" => true,
+        "transitions" => array("" => 99)
     ),
    
     // Final state.

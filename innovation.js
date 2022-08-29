@@ -951,6 +951,26 @@ function (dojo, declare) {
                     break;
                 case 'artifactPlayerTurn':
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay(args.args._private.dogma_effect_info);
+                    break;    
+                case 'promoteCardPlayerTurn':
+                    this.my_forecast_verso_window.show();
+                    var max_age_to_promote = parseInt(args.args.max_age_to_promote);
+                    // Make it possible to click or hover on the front of the cards in the forecast
+                    this.addTooltipsWithActionsToMyForecast(max_age_to_promote);
+                    var cards_in_forecast = this.selectMyCardsInForecast(max_age_to_promote);
+                    cards_in_forecast.addClass("clickable");
+                    this.on(cards_in_forecast, 'onclick', 'action_clickForPromote');
+                    // Make it possible to click the backs of the cards in the forecast
+                    var card_backs_in_forecast = this.selectMyCardBacksInForecast(max_age_to_promote);
+                    card_backs_in_forecast.addClass("clickable");
+                    this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
+                    break;
+                case 'dogmaPromotedPlayerTurn':
+                    // TODO(ECHOES): Add special case for Battleship Yamato.
+                    var card_id = parseInt(args.args.promoted_card_id);
+                    var promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
+                    promoted_card.addClass("clickable");
+                    this.on(promoted_card, 'onclick', 'action_clickForDogmaPromoted');
                     break;
                 case 'playerTurn':
                     // Claimable achievements (achieve action)
@@ -1082,6 +1102,9 @@ function (dojo, declare) {
                 // I was supposed to play
                 
                 switch (stateName) {
+                case 'promoteCardPlayerTurn':
+                    this.my_forecast_verso_window.hide();
+                    break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
                     this.addTooltipsWithoutActionsToMyBoard();
@@ -1118,6 +1141,13 @@ function (dojo, declare) {
                     }
                     this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
                     this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
+                    break;
+                case 'promoteCardPlayerTurn':
+                    this.addActionButton("pass_promote", _("Pass"), "action_clickForPassPromote");
+                    break;
+                case 'dogmaPromotedPlayerTurn':
+                    this.addActionButton("dogma_promoted", _("Dogma"), "action_clickForDogmaPromoted");
+                    this.addActionButton("pass_dogma_promoted", _("Pass"), "action_clickForPassDogmaPromoted");
                     break;
                 case 'playerTurn':
                     // Red buttons for claimable_achievements
@@ -1586,6 +1616,17 @@ function (dojo, declare) {
             });
         },
 
+        addTooltipsWithActionsToMyForecast : function(max_age_to_promote) {
+            var cards = this.selectMyCardsInForecast(max_age_to_promote);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            var self = this;
+            cards.forEach(function(card) {
+                var HTML_id = dojo.attr(card, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+            });
+        },
+
         addTooltipsWithActionsToMyBoard : function(dogma_effect_info) {
             var cards = this.selectMyTopCardsEligibleForDogma();
             this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info, 'board');
@@ -1876,6 +1917,22 @@ function (dojo, declare) {
         
         selectMyCardsInHand : function() {
             return dojo.query("#hand_" + this.player_id + " > .card");
+        },
+
+        selectMyCardsInForecast : function(max_age_to_promote) {
+            var queries = []
+            for (var age = 1; age <= max_age_to_promote; age++) {
+                queries.push("#my_forecast_verso > .age_" + age);
+            }
+            return dojo.query(queries.join(","));
+        },
+
+        selectMyCardBacksInForecast : function(max_age_to_promote) {
+            var queries = []
+            for (var age = 1; age <= max_age_to_promote; age++) {
+                queries.push("#forecast_" + this.player_id + " > .age_" + age);
+            }
+            return dojo.query(queries.join(","));
         },
 
         selectArtifactOnDisplay : function() {
@@ -2767,6 +2824,96 @@ function (dojo, declare) {
             this.deactivateClickEvents();
             var self = this;
             this.ajaxcall("/innovation/innovation/passArtifactOnDisplay.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clickForPassPromote : function() {
+            if (!this.checkAction('passPromoteCard')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/passPromoteCard.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clickForPromote : function(event) {
+            if (!this.checkAction('promoteCard')) {
+                return;
+            }
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            this.ajaxcall("/innovation/innovation/promoteCard.html",
+                {
+                    lock: true,
+                    card_id: card_id
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickCardBackForPromote : function(event) {
+            if (!this.checkAction('promoteCard')) {
+                return;
+            }
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            var age = this.getCardAgeFromHTMLId(HTML_id);
+            var type = this.getCardTypeFromHTMLId(HTML_id);
+            var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+            var owner = this.player_id;
+            var location = 'forecast';
+            var zone = this.getZone(location, owner, null, age);
+            var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+            this.ajaxcall("/innovation/innovation/promoteCardBack.html",
+                {
+                    lock: true,
+                    owner: owner,
+                    location: location,
+                    age: age,
+                    type: type,
+                    is_relic: is_relic,
+                    position: position
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickForPassDogmaPromoted : function() {
+            if (!this.checkAction('passDogmaPromotedCard')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/passDogmaPromotedCard.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clickForDogmaPromoted : function() {
+            if (!this.checkAction('dogmaPromotedCard')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/dogmaPromotedCard.html",
                             {
                                 lock: true
                             },

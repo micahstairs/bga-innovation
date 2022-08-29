@@ -120,6 +120,7 @@ class Innovation extends Table
             'with_bonus' => 87,
             'without_bonus' => 88,
             
+            'melded_card_id' => 94, // ID of the card which was melded
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
@@ -188,6 +189,10 @@ class Innovation extends Table
             }
         }
 
+        if ($this->innovationGameState->get('release_version') == 1) {
+            self::initGameStateLabels(array('melded_card_id' => 94));
+            self::setGameStateValue('melded_card_id', -1);
+        }
         if ($this->innovationGameState->get('release_version') == 0) {
             self::initGameStateLabels(array(
                 'card_id_1' => 69,
@@ -606,8 +611,9 @@ class Innovation extends Table
         // Flags specific to some dogmas
         self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
 
-        // Flag specific to seizing Relics
+        // Flags specific to the meld action
         self::setGameStateInitialValue('relic_id', -1);
+        self::setGameStateInitialValue('melded_card_id', -1);
         
         // Init game statistics
         self::initStat('table', 'turns_number', 0);
@@ -2142,6 +2148,10 @@ class Innovation extends Table
         case 'display->relics': // Shouldn't be possible, but just in case.
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his display.');
+            break;
+        case 'forecast->board':
+            $message_for_player = clienttranslate('${You} promote ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+            $message_for_others = clienttranslate('${player_name} promotes ${<}${age}${>} ${<<}${name}${>>} from his forecast.');
             break;
         case 'hand->deck':
             if ($bottom_to) {
@@ -6965,6 +6975,78 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         self::incStat(1, 'free_action_pass_number', $player_id);
     }
+
+    function passPromoteCard() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('passPromoteCard');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to promote a card from your forecast.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to promote a card from his forecast.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        self::trace('promoteCardPlayerTurn->interPlayerTurn (passPromoteCard)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function promoteCard($card_id) {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('promoteCard');
+
+        $originally_melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
+        $promoted_card = self::getCardInfo($card_id);
+        $player_id = self::getCurrentPlayerId();
+
+        if ($promoted_card === null || $promoted_card['owner'] != $player_id || $promoted_card['location'] != 'forecast') {
+            self::throwInvalidChoiceException();
+        }
+        if ($promoted_card['age'] > $originally_melded_card['age']) {
+            self::throwInvalidChoiceException();
+        }
+
+        self::transferCardFromTo($promoted_card, $player_id, "board");
+        self::setGameStateValue('melded_card_id', $card_id);
+
+        self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
+        $this->gamestate->nextState('promoteDogmaPlayerTurn');
+    }
+
+    function promoteCardBack($owner, $location, $age, $type, $is_relic, $position) {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('promoteCard');
+
+        $card = self::getCardInfoFromPosition($owner, $location, $age, $type, $is_relic, $position);
+        if ($card === null) {
+            self::throwInvalidChoiceException();
+        }
+        self::promoteCard($card['id']);
+    }
+
+
+    function passDogmaPromotedCard() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('passDogmaPromotedCard');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to dogma your promoted card.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to dogma his promoted card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        self::trace('promoteDogmaPlayerTurn->interPlayerTurn (passDogmaPromotedCard)');
+        $this->gamestate->nextState('interPlayerTurn');
+    }
+
+    function dogmaPromotedCard() {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('dogmaPromotedCard');
+
+        $player_id = self::getCurrentPlayerId();
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to dogma your promoted card.'), array('You' => 'You'));    
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to dogma his promoted card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+
+        self::setUpDogma($player_id, self::getCardInfo(self::getGameStateValue('melded_card_id')));
+
+        self::trace('promoteDogmaPlayerTurn->dogmaEffect (dogmaPromotedCard)');
+        $this->gamestate->nextState('dogmaEffect');
+    }
     
     function achieve($age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
@@ -7060,6 +7142,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->gamestate->nextState('justBeforeGameEnd');
             return;
         }
+
+        self::setGameStateValue('melded_card_id', $card['id']);
         
         // Execute city's icon effect
         if ($card['type'] == 2) {
@@ -7131,15 +7215,37 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', false, 2);
             }
         }
-        
-        if (self::tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $card)) {
-            self::trace('playerTurn->relicPlayerTurn');
+
+        self::trace('playerTurn->digArtifact');
+        $this->gamestate->nextState('digArtifact');
+    }
+
+    function stDigArtifact() {
+        $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
+        if (self::tryToDigArtifactAndSeizeRelic($melded_card)) {
+            self::trace('digArtifact->relicPlayerTurn');
             $this->gamestate->nextState('relicPlayerTurn');
             return;
         }
+        self::trace('digArtifact->promoteCard');
+        $this->gamestate->nextState('promoteCard');
+    }
+
+    function stPromoteCard() {
+        $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
         
-        // End of player action
-        self::trace('playerTurn->interPlayerTurn (meld)');
+        if (self::getGameStateValue('echoes_mode') > 1) {
+            $card_counts = self::countCardsInLocationKeyedByAge($melded_card['owner'], 'forecast');
+            for ($age = 1; $age <= $melded_card['age']; $age++) {
+                if ($card_counts[$age] > 0) {
+                    self::trace('promoteCard->promoteCardPlayerTurn');
+                    $this->gamestate->nextState('promoteCardPlayerTurn');
+                    return;
+                }
+            }
+        }
+
+        self::trace('promoteCard->interPlayerTurn');
         $this->gamestate->nextState('interPlayerTurn');
     }
 
@@ -7154,10 +7260,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /* Returns true if a relic is being seized */
-    function tryToDigArtifactAndSeizeRelic($player_id, $previous_top_card, $melded_card) {
+    function tryToDigArtifactAndSeizeRelic($melded_card) {
         // The Artifacts expansion is not enabled.
         if (self::getGameStateValue('artifacts_mode') <= 1) {
             return false;
+        }
+
+        $player_id = $melded_card['owner'];
+        $pile = self::getCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
+        if (count($pile) >= 2) {
+            $previous_top_card = $pile[count($pile) - 2];
+        } else {
+            $previous_top_card = null;
         }
 
         // An Artifact is already on display.
@@ -7778,6 +7892,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 )
             )
         );
+    }
+
+    function argPromoteCardPlayerTurn() {
+        return [
+            "max_age_to_promote" => self::getCardInfo(self::getGameStateValue('melded_card_id'))['age'],
+        ];
+    }
+
+    function argDogmaPromotedCardPlayerTurn() {
+        return [
+            "promoted_card_id" => self::getGameStateValue('melded_card_id'),
+        ];
     }
 
     function argPlayerTurn() {
