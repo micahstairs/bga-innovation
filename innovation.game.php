@@ -7307,6 +7307,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // TODO(LATER): Implement this.
                 break;
 
+            case 17: // Construction
+                // This demand always has an effect
+                if ($i_demand_will_be_executed) {
+                    return false;
+                }
+
+                // The card has no effect if the Empire achievement was already awarded.
+                if (self::getCardInfo(105)['owner'] != 0) {
+                    return true;
+                }
+
+                // The card has no effect unless one of the players executing the non-demand effect is the only player with 5 top cards.
+                $boards = self::getBoards(self::getAllActivePlayerIds());
+                $num_players_with_five_top_cards = 0;
+                $non_demand_player_has_five_top_cards = false;
+                foreach ($boards as $player_id => $board) {
+                    $number_of_top_cards = 0;
+                    for ($color = 0; $color < 5; $color++) {
+                        if (count($board[$color]) > 0) {
+                            $number_of_top_cards++;
+                        }
+                    }
+                    if ($number_of_top_cards == 5) { // This player is the active player and has not 5 top cards, or he is an opponent who has 5 top cards
+                        $num_players_with_five_top_cards += 1;
+                        if (in_array($player_id, $non_demand_players)) {
+                            $non_demand_player_has_five_top_cards = true;
+                        }
+                    }
+                }
+                if ($num_players_with_five_top_cards != 1 || !$non_demand_player_has_five_top_cards) {
+                    return true;
+                }
+                break;
+
             case 20: // Mapmaking
                 // The non-demand has no effect unless the I demand is also executed.
                 // TODO(LATER): Extend this check to also capture the case where there are no 1s in the score pile of
