@@ -7329,7 +7329,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $number_of_top_cards++;
                         }
                     }
-                    if ($number_of_top_cards == 5) { // This player is the active player and has not 5 top cards, or he is an opponent who has 5 top cards
+                    if ($number_of_top_cards == 5) {
                         $num_players_with_five_top_cards += 1;
                         if (in_array($player_id, $non_demand_players)) {
                             $non_demand_player_has_five_top_cards = true;
