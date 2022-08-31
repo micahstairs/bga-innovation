@@ -17267,6 +17267,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function stPreSelectionMove() {
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
+        $can_pass = self::getGameStateValue('can_pass') == 1;
 
         if ($special_type_of_choice == 0) {
             $selection_size = self::countSelectedCards();
@@ -17274,7 +17275,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $n_min = self::getGameStateValue('n_min');
             $n_max = self::getGameStateValue('n_max');
             $splay_direction = self::getGameStateValue('splay_direction');
-            $can_pass = self::getGameStateValue('can_pass') == 1;
             $enable_autoselection = self::getGameStateValue('enable_autoselection') == 1;
             $owner_from = self::getGameStateValue('owner_from');
             $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
@@ -17354,8 +17354,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         } else if ($special_type_of_choice == 10) { // choose_player
             $player_array = self::getGameStateValueAsArray('player_array');
-            // Automatically choose the player if there's only one option
-            if (count($player_array) == 1) {
+            // Automatically choose the player if there's only one option (and passing isn't allowed)
+            if (count($player_array) == 1 && !$can_pass) {
                 self::setGameStateValue('choice', self::playerNoToPlayerId($player_array[0]));
                 self::trace('preSelectionMove->interSelectionMove (only one player)');
                 $this->gamestate->nextState('interSelectionMove');
