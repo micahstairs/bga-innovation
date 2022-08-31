@@ -9474,28 +9474,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 68, age 7: Explosives
             case "68D1":
 
-                // Automate selection if the player has no more than 3 cards in hand
-                $cards = self::getCardsInLocation($player_id, 'hand');
-                if (count($cards) >= 1 && count($cards) <= 3) {
-                    foreach ($cards as $card) {
-                        $card = self::getCardInfo($card['id']);
-                        self::transferCardFromTo($card, $launcher_id, 'hand');
+                // Automate taking as many highest cards as possible
+                $num_cards_in_hand = self::countCardsInLocation($player_id, 'hand');
+                $cards_by_age = self::getCardsInLocationKeyedByAge($player_id, 'hand');
+                $num_cards_left_to_transfer = 3;
+                for ($age = 10; $age >= 1; $age--) {
+                    if (count($cards_by_age[$age]) <= $num_cards_left_to_transfer) {
+                        foreach ($cards_by_age[$age] as $card) {
+                            $card = self::getCardInfo($card['id']);
+                            self::transferCardFromTo($card, $launcher_id, 'hand');
+                            $num_cards_left_to_transfer--;
+                            $num_cards_in_hand--;
+                        }
+                    } else {
+                        break;
                     }
-                    // "If you transferred any, and then have no card in hand, draw a 7"
-                    self::executeDraw($player_id, 7);
-                    break;
                 }
 
-                self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
-
-                // Only log "No card matches the criteria of the effect" once instead of 3 times
-                if (count($cards) == 0) {
+                $num_cards_which_will_be_transferred = min($num_cards_left_to_transfer, $num_cards_in_hand);
+                if ($num_cards_which_will_be_transferred > 0) {
+                    // TODO(LATER): Remove the use of the auxilary value.
+                    self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
+                    $step = 4 - $num_cards_which_will_be_transferred;
                     $step_max = 3;
-                    $step = 3;
-                    break;
                 }
-
-                $step_max = 3;
                 break;
             
             // id 69, age 7: Bicycle
@@ -16014,12 +16016,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 68, age 7: Explosives
                 case "68D1A":
+                    // TODO(LATER): Remove the use of the auxilary value.
                     if ($n > 0) {
                         self::setAuxiliaryValue(1);  // Flag that at least one card has been transfered
                     }
                     break;
                     
                 case "68D1C":
+                    // TODO(LATER): Remove the use of the auxilary value.
                     if (self::getAuxiliaryValue() == 1 && self::countCardsInLocation($player_id, 'hand') == 0) { // "If you transferred any, and then have no cards in hand"
                         self::executeDraw($player_id, 7); // "Draw a 7"
                     }
