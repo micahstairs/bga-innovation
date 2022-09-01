@@ -8031,8 +8031,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $colors = self::getRecursivelyTranslatedColorList($selectable_colors);
             $card_log = clienttranslate('${color} ${cards}${of_age}${with_icon}${with_demand}');
             $card_args['color'] = $colors;
+            $card_args['i18n'] = ['color', 'cards', 'of_age', 'with_icon', 'with_demand'];
         } else {
             $card_log = clienttranslate('${cards}${of_age}${with_icon}${with_demand}');
+            $card_args['i18n'] = ['cards', 'of_age', 'with_icon', 'with_demand'];
         }
         $card_args['cards'] = clienttranslate('card(s)');
         $card_args['of_age'] = '';
