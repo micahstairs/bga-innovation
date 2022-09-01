@@ -729,7 +729,7 @@ function (dojo, declare) {
                 var card_id = this.cards[i].id;
                 // For some reason, after a page refresh, each entry in the game log is located in two diffferent
                 // spots on the page, meaning that each span holding a card name no longer has a unique ID (since
-                // it appears exactly twice), BGA's framework to add a tooltip requires that it has a unique ID.
+                // it appears exactly twice), and BGA's framework to add a tooltip requires that it has a unique ID.
                 // The workaround here is to first remove the extra IDs, before trying to add the tooltips.
                 dojo.query("#chatbar .card_id_" + card_id).removeAttr('id');
                 var elements = dojo.query(".card_id_" + card_id);
