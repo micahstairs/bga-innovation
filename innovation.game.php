@@ -14258,7 +14258,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'revealed',
 
                 'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2
+                'card_id_2' => $card_id_2,
+
+                'enable_autoselection' => false, // Automating this always reveals hidden info
             );
             break;
 
