@@ -7982,6 +7982,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'splay_direction' => $splay_direction,
             'splay_direction_in_clear' => $splay_direction_in_clear,
             'color_pile' => $splay_direction === null && $location_from == 'pile' ? self::getGameStateValueAsArray('color_array')[0] : null,
+            'card_interaction' => $code,
+            'num_cards_already_chosen' => $n,
             
             // Private info
             '_private' => array(
