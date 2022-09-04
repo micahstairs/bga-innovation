@@ -16970,6 +16970,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "Otherwise, return the melded card"
                     } else {
+                        $card = self::getCardInfo($card['id']); // We need to refetch the card, otherwise its splayed state may be stale
                         self::returnCard($card);
                     }
                     break;
