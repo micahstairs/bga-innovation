@@ -569,6 +569,7 @@ $this->textual_card_infos = array(
 ),
 
 114 => array('name' => clienttranslate('Papyrus of Ani'),
+    // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
     'non_demand_effect_1' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non‑demand dogma effects. Do not share them.'),
 ),
 
@@ -601,7 +602,8 @@ $this->textual_card_infos = array(
 ),
 
 121 => array('name' => clienttranslate('Xianrendong Shards'),
-    'non_demand_effect_1' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If the scored cards were the same color, draw three ${age_1}s.'),
+    // NOTE: Carl clarified the intended wording of this card in https://boardgamegeek.com/thread/2913636/xianrendong-shards-when-less-2-cards-are-scored.
+    'non_demand_effect_1' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If you score two cards of the same color, draw three ${age_1}s.'),
 ),
 
 122 => array('name' => clienttranslate('Mask of Warka'),
@@ -623,7 +625,8 @@ $this->textual_card_infos = array(
 ),
 
 126 => array('name' => clienttranslate('Rosetta Stone'),
-    'non_demand_effect_1' => clienttranslate('Choose a card type. Draw two ${age_2}s of that type. Meld one and transfer the other to an opponent\'s board.'),
+    // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
+    'non_demand_effect_1' => clienttranslate('Choose a card set. Draw two ${age_2}s from that set. Meld one and transfer the other to an opponent\'s board.'),
 ),
 
 127 => array('name' => clienttranslate('Chronicle of Zuo'),
@@ -643,7 +646,8 @@ $this->textual_card_infos = array(
 ),
 
 130 => array('name' => clienttranslate('Baghdad Battery'),
-    'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are of different types, draw and score five ${age_2}s.'),
+    // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
+    'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are from different sets, draw and score five ${age_2}s.'),
 ),
 
 131 => array('name' => clienttranslate('Holy Grail'),

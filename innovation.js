@@ -808,6 +808,11 @@ function (dojo, declare) {
             // Add card tooltips to existing game log messages
             for (var i = 0; i < this.cards.length; i++) {
                 var card_id = this.cards[i].id;
+                // For some reason, after a page refresh, each entry in the game log is located in two diffferent
+                // spots on the page, meaning that each span holding a card name no longer has a unique ID (since
+                // it appears exactly twice), and BGA's framework to add a tooltip requires that it has a unique ID.
+                // The workaround here is to first remove the extra IDs, before trying to add the tooltips.
+                dojo.query("#chatbar .card_id_" + card_id).removeAttr('id');
                 var elements = dojo.query(".card_id_" + card_id);
                 if (elements.length > 0 && this.canShowCardTooltip(card_id)) {
                     this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
@@ -1376,12 +1381,14 @@ function (dojo, declare) {
             return HTML;
         },
         
-        addCustomTooltip : function(nodeId, help_HTML, action_HTML, delay = undefined) {
-            this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), delay);
+        addCustomTooltip : function(nodeId, help_HTML, action_HTML) {
+            // TODO(LATER): Pass 0 instead of undefined when using a desktop so that tooltips are faster.
+            this.addTooltipHtml(nodeId, this.shapeTooltip(help_HTML, action_HTML), undefined);
         },
         
-        addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML, delay = undefined) {
-            this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), delay);
+        addCustomTooltipToClass : function(cssClass, help_HTML, action_HTML) {
+            // TODO(LATER): Pass 0 instead of undefined when using a desktop so that tooltips are faster.
+            this.addTooltipHtmlToClass(cssClass, this.shapeTooltip(help_HTML, action_HTML), undefined);
         },
         
         addTooltipForCard : function(card) {

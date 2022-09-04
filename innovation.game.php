@@ -567,7 +567,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('splay_direction', -1);
         
         // Flags used to describe the range of the selection the player in dogma must take (yet -1 as default value since there are not currently in use)
-        self::setGameStateInitialValue('special_type_of_choice', -1); // Indicate the type of choice the player faces. 0 for choosing a card or a color for splay, 1 for choosing an opponent, 2 for choising an opponent with fewer points, 3 for choosing a value, 4 for choosing between yes or no
+        self::setGameStateInitialValue('special_type_of_choice', -1); // Indicate the type of choice the player faces. See encodeSpecialTypeOfChoice() for possible values.
         self::setGameStateInitialValue('choice', -1); // Numeric choice when the player has to make a special choice (-2 if the player passed)
         self::setGameStateInitialValue('n_min', -1); // Minimal number of cards to be chosen (999 stands for all possible)
         self::setGameStateInitialValue('n_max', -1); // Maximal number of cards to be chosen (999 stands for no limit)
@@ -7912,7 +7912,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'i18n' => array('qualified_action'),
             'action_number' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') || self::getGameStateValue('has_second_action') ? 1 : 2,
 
-            'qualified_action' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') ? clienttranslate('an action') :
+            'qualified_action' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') ? clienttranslate('a single action') :
                                   (self::getGameStateValue('has_second_action') ? clienttranslate('a first action') : clienttranslate('a second action')),
             'age_to_draw' => self::getAgeToDrawIn($player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
@@ -8194,6 +8194,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 15: // Calendar
                 // The card has no effect if no player executing the non-demand effect has more cards in their score pile than their hand.
                 // TODO(LATER): Implement this.
+                break;
+
+            case 17: // Construction
+                // This demand always has an effect
+                if ($i_demand_will_be_executed) {
+                    return false;
+                }
+
+                // The card has no effect if the Empire achievement was already awarded.
+                if (self::getCardInfo(105)['owner'] != 0) {
+                    return true;
+                }
+
+                // The card has no effect unless one of the players executing the non-demand effect is the only player with 5 top cards.
+                $boards = self::getBoards(self::getAllActivePlayerIds());
+                $num_players_with_five_top_cards = 0;
+                $non_demand_player_has_five_top_cards = false;
+                foreach ($boards as $player_id => $board) {
+                    $number_of_top_cards = 0;
+                    for ($color = 0; $color < 5; $color++) {
+                        if (count($board[$color]) > 0) {
+                            $number_of_top_cards++;
+                        }
+                    }
+                    if ($number_of_top_cards == 5) {
+                        $num_players_with_five_top_cards += 1;
+                        if (in_array($player_id, $non_demand_players)) {
+                            $non_demand_player_has_five_top_cards = true;
+                        }
+                    }
+                }
+                if ($num_players_with_five_top_cards != 1 || !$non_demand_player_has_five_top_cards) {
+                    return true;
+                }
                 break;
 
             case 20: // Mapmaking
@@ -9169,8 +9203,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $colors = self::getRecursivelyTranslatedColorList($selectable_colors);
             $card_log = clienttranslate('${color} ${cards}${of_age}${with_icon}${with_demand}');
             $card_args['color'] = $colors;
+            $card_args['i18n'] = ['color', 'cards', 'of_age', 'with_icon', 'with_demand'];
         } else {
             $card_log = clienttranslate('${cards}${of_age}${with_icon}${with_demand}');
+            $card_args['i18n'] = ['cards', 'of_age', 'with_icon', 'with_demand'];
         }
         $card_args['cards'] = clienttranslate('card(s)');
         $card_args['of_age'] = '';
@@ -10675,8 +10711,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 68, age 7: Explosives
             case "68D1":
-                self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
-                $step_max = 3; // --> 3 interactions: see B
+
+                // Automate taking as many highest cards as possible
+                $num_cards_in_hand = self::countCardsInLocation($player_id, 'hand');
+                $cards_by_age = self::getCardsInLocationKeyedByAge($player_id, 'hand');
+                $num_cards_left_to_transfer = 3;
+                for ($age = 10; $age >= 1; $age--) {
+                    if (count($cards_by_age[$age]) <= $num_cards_left_to_transfer) {
+                        foreach ($cards_by_age[$age] as $card) {
+                            $card = self::getCardInfo($card['id']);
+                            self::transferCardFromTo($card, $launcher_id, 'hand');
+                            $num_cards_left_to_transfer--;
+                            $num_cards_in_hand--;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                $num_cards_which_will_be_transferred = min($num_cards_left_to_transfer, $num_cards_in_hand);
+                if ($num_cards_which_will_be_transferred > 0) {
+                    // TODO(LATER): Remove the use of the auxilary value.
+                    self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
+                    $step = 4 - $num_cards_which_will_be_transferred;
+                    $step_max = 3;
+                }
                 break;
             
             // id 69, age 7: Bicycle
@@ -17038,7 +17097,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'revealed',
 
                 'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2
+                'card_id_2' => $card_id_2,
+
+                'enable_autoselection' => false, // Automating this always reveals hidden info
             );
             break;
 
@@ -21142,12 +21203,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 68, age 7: Explosives
                 case "68D1A":
+                    // TODO(LATER): Remove the use of the auxilary value.
                     if ($n > 0) {
                         self::setAuxiliaryValue(1);  // Flag that at least one card has been transfered
                     }
                     break;
                     
                 case "68D1C":
+                    // TODO(LATER): Remove the use of the auxilary value.
                     if (self::getAuxiliaryValue() == 1 && self::countCardsInLocation($player_id, 'hand') == 0) { // "If you transferred any, and then have no cards in hand"
                         self::executeDraw($player_id, 7); // "Draw a 7"
                     }
@@ -23161,16 +23224,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stPreSelectionMove() {
-        if (self::getGameStateValue('special_type_of_choice') == 0) {
+        $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
+        $can_pass = self::getGameStateValue('can_pass') == 1;
+
+        if ($special_type_of_choice == 0) {
             $selection_size = self::countSelectedCards();
             $cards_chosen_so_far = self::getGameStateValue('n');
             $n_min = self::getGameStateValue('n_min');
             $n_max = self::getGameStateValue('n_max');
             $splay_direction = self::getGameStateValue('splay_direction');
-            $can_pass = self::getGameStateValue('can_pass') == 1;
             $enable_autoselection = self::getGameStateValue('enable_autoselection') == 1;
             $owner_from = self::getGameStateValue('owner_from');
             $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
+            $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
@@ -23207,21 +23273,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->gamestate->nextState('interInteractionStep');
                 return;
 
-            // There is only one selectable card (and it must be chosen)
-            } else if ($selection_size == 1
-                    && $enable_autoselection
-                    // Make sure choosing this card won't reveal hidden information (unless its the only card in that location)
-                    && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) == 1)
-                    // The player must choose at least one more card
-                    && (($cards_chosen_so_far == 0 && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= 1))) {
-                // The player chooses the card automatically
+            // All selectable cards must be chosen
+            } else if ($enable_autoselection
+                    // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)
+                    && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) <= $selection_size)
+                    // The player must choose at least all of the selectable cards
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    // If there's more than one selectable card, only automate the choices if the order does not matter
+                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck'))) {
+                // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
                 self::setGameStateValue('id_last_selected', $card['id']);
                 self::unmarkAsSelected($card['id']);
                 self::setGameStateValue('can_pass', 0);
 
-                self::trace('preSelectionMove->interSelectionMove (only one card)');
+                self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             
@@ -23243,7 +23310,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else if ($n_max < 800 && $selection_size < $n_max) {
                 self::setGameStateValue('n_max', $selection_size);
             }
+        } else if ($special_type_of_choice == 10) { // choose_player
+            $player_array = self::getGameStateValueAsArray('player_array');
+            // Automatically choose the player if there's only one option (and passing isn't allowed)
+            if (count($player_array) == 1 && !$can_pass) {
+                self::setGameStateValue('choice', self::playerNoToPlayerId($player_array[0]));
+                self::trace('preSelectionMove->interSelectionMove (only one player)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
         }
+
         // Let the player make his choice
         self::trace('preSelectionMove->selectionMove');
         $this->gamestate->nextState('selectionMove');
