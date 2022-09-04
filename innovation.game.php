@@ -119,6 +119,7 @@ class Innovation extends Table
             'bottom_from' => 86,
             'with_bonus' => 87,
             'without_bonus' => 88,
+            'card_ids_are_in_auxiliary_array' => 89,
             
             'melded_card_id' => 94, // ID of the card which was melded
             'relic_id' => 95, // ID of the relic which may be seized
@@ -218,6 +219,8 @@ class Innovation extends Table
                 'with_bonus' => 87,
                 // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
                 'without_bonus' => 88,
+                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
+                'card_ids_are_in_auxiliary_array' => 89,
                 'relic_id' => 95,
                 'current_action_number' => 96,
                 'current_nesting_index' => 97,
@@ -245,6 +248,7 @@ class Innovation extends Table
             self::setGameStateValue('include_relics', -1);
             self::setGameStateValue('with_bonus', -1);
             self::setGameStateValue('without_bonus', -1);
+            self::setGameStateValue('card_ids_are_in_auxiliary_array', -1);
             self::setGameStateValue('relic_id', -1);
             self::setGameStateValue('current_action_number', -1);
             self::setGameStateValue('current_nesting_index', -1);
@@ -597,6 +601,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('include_relics', -1); // 1 if relics cards are allowed to be selected during an interaction
         self::setGameStateInitialValue('with_bonus', -1); // 1 if only cards with a bonus are allowed to be selected during an interaction
         self::setGameStateInitialValue('without_bonus', -1); // 1 if only cards without a bonus are allowed to be selected during an interaction
+        self::setGameStateInitialValue('card_ids_are_in_auxiliary_array', -1); // 1 if only cards whose ID are in the auxiliary array are allowed to be selected during an interaction
         self::setGameStateInitialValue('can_pass', -1); // 1 if the player can pass else 0
         self::setGameStateInitialValue('n', -1); // Actual number of cards having being selected yet
         self::setGameStateInitialValue('id_last_selected', -1); // Id of the last selected card
@@ -5866,6 +5871,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('without_bonus', $rewritten_options)) {
             $rewritten_options['without_bonus'] = false;
         }
+        if (!array_key_exists('card_ids_are_in_auxiliary_array', $rewritten_options)) {
+            $rewritten_options['card_ids_are_in_auxiliary_array'] = false;
+        }
         if (!array_key_exists('bottom_from', $rewritten_options)) {
             $rewritten_options['bottom_from'] = false;
         }
@@ -5925,6 +5933,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'include_relics':
             case 'with_bonus':
             case 'without_bonus':
+            case 'card_ids_are_in_auxiliary_array':
                 $value = $value ? 1 : 0;
                 break;
             case 'location_from':
@@ -6098,15 +6107,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Condition for requiring ID
         $condition_for_requiring_id = "";
-        $card_id_1 = self::getGameStateValue('card_id_1');
-        $card_id_2 = self::getGameStateValue('card_id_2');
-        $card_id_3 = self::getGameStateValue('card_id_3');
-        if ($card_id_3 != -2) {
-            $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2}, {card_id_3})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2, 'card_id_3' => $card_id_3));
-        } else if ($card_id_2 != -2) {
-            $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2));
-        } else if ($card_id_1 != -2) {
-            $condition_for_requiring_id = self::format("AND id IN ({card_id_1})", array('card_id_1' => $card_id_1));
+        $card_ids_are_in_auxiliary_array = self::getGameStateValue('card_ids_are_in_auxiliary_array');
+        if ($card_ids_are_in_auxiliary_array == 1) {
+            $card_ids = self::getAuxiliaryArray();
+            $condition_for_requiring_id = "AND id IN (";
+            $first_id = true;
+            foreach ($card_ids as $card_id) {
+                if ($first_id) {
+                    $first_id = false;
+                } else {
+                    $condition_for_requiring_id .= ", ";
+                }
+                $condition_for_requiring_id .= "$card_id";
+            }
+            $condition_for_requiring_id .= ")";
+        } else {
+            $card_id_1 = self::getGameStateValue('card_id_1');
+            $card_id_2 = self::getGameStateValue('card_id_2');
+            $card_id_3 = self::getGameStateValue('card_id_3');
+            if ($card_id_3 != -2) {
+                $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2}, {card_id_3})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2, 'card_id_3' => $card_id_3));
+            } else if ($card_id_2 != -2) {
+                $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2));
+            } else if ($card_id_1 != -2) {
+                $condition_for_requiring_id = self::format("AND id IN ({card_id_1})", array('card_id_1' => $card_id_1));
+            }
         }
 
         // Condition for excluding ID
@@ -23223,6 +23248,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('interactionStep');
     }
     
+    // TODO(ECHOES): Take card_ids_are_in_auxiliary_array into consideration for automation.
     function stPreSelectionMove() {
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         $can_pass = self::getGameStateValue('can_pass') == 1;
