@@ -9530,9 +9530,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $num_cards_which_will_be_transferred = min($num_cards_left_to_transfer, $num_cards_in_hand);
                 if ($num_cards_which_will_be_transferred > 0) {
                     // TODO(LATER): Remove the use of the auxilary value.
-                    self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
+                    // Flag to indicate if the player has transfered a card or not
+                    if ($num_cards_left_to_transfer == 3) {
+                        self::setAuxiliaryValue(0);
+                    } else {
+                        self::setAuxiliaryValue(1);
+                    }
                     $step = 4 - $num_cards_which_will_be_transferred;
                     $step_max = 3;
+                
+                // "If you transferred any, and then have no cards in hand"
+                } else if ($num_cards_left_to_transfer < 3 && $num_cards_in_hand == 0) {
+                    self::executeDraw($player_id, 7); // "Draw a 7"
                 }
                 break;
             
