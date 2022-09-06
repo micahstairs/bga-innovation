@@ -5725,6 +5725,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'choose_yes_or_no',
             'choose_type',
             'choose_non_negative_integer',
+            'choose_icon_type',
         ];
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
@@ -6361,6 +6362,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 10;
         case 'choose_non_negative_integer':
             return 11;
+        case 'choose_icon_type':
+            return 12;
         }
     }
     
@@ -6388,6 +6391,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'choose_player';
         case 11:
             return 'choose_non_negative_integer';
+        case 12:
+            return 'choose_icon_type';
         }
     }
     
@@ -7803,6 +7808,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::throwInvalidChoiceException();
                 }
                 break;
+            case 'choose_icon_type':
+                if (!ctype_digit($choice) || $choice < 1 || $choice > 6) {
+                    self::throwInvalidChoiceException();
+                }
             default:
                 break;
         }
@@ -8494,6 +8503,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array();
                 foreach (self::getGameStateValueAsArray('type_array') as $type) {
                     $options[] = array('value' => $type, 'text' => self::getPrintableStringForCardType($type));
+                }
+                break;
+            case 'choose_icon_type':
+                $options = array();
+                for ($i = 1; $i <= 6; $i++) {
+                    $options[] = array('value' => $i, 'text' => self::getIconSquare($i));
                 }
                 break;
             default:
