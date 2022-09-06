@@ -2210,11 +2210,20 @@ function (dojo, declare) {
 
             var card_type = "";
             if (size == 'L') {
-                // TODO(ECHOES,CITIES,FIGURES): Update this.
-                if (type == 0) {
-                    card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
-                } else {
-                    card_type = "<div class='card_type'>" + _("This card is from the Artifacts of History expansion.") + "</div>";
+                // TODO(FIGURES): Update this.
+                switch (parseInt(type)) {
+                    case 0:
+                        card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
+                        break;
+                    case 1:
+                        card_type = "<div class='card_type'>" + _("This card is from the Artifacts of History expansion.") + "</div>";
+                        break;
+                    case 2:
+                        card_type = "<div class='card_type'>" + _("This card is from the Cities of Destiny expansion.") + "</div>";
+                        break;
+                    case 3:
+                        card_type = "<div class='card_type'>" + _("This card is from the Echoes of the Past expansion.") + "</div>";
+                        break;
                 }
             }
 
