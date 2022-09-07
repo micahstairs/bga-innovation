@@ -2616,8 +2616,8 @@ function (dojo, declare) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
-                var x = i * (w / 2 + 5);
-                var y = (i % 2) * (h + 5);
+                var x = (i % 5) * (w / 2 + 5);
+                var y = (i % 5 % 2) * (h + 5) + parseInt(i / 5) * 2 * (h + 5);
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h}
             }
