@@ -1245,20 +1245,29 @@
             background-size: 232px, auto;
             border-radius: 3px;
         }
-        &.item_105 {
-            background-position: -1px -1px;
+        &.item_105, &.item_106, &.item_107, &.item_108, &.item_109 {
+            background-position-y: -1px;
         }
-        &.item_106 {
-            background-position: -47px -1px;
+        &.item_325, &.item_326, &.item_327, &.item_328, &.item_329 {
+            background-position-y: -37px;
         }
-        &.item_107 {
-            background-position: -93.5px -1px;
+        &.item_435, &.item_436, &.item_437, &.item_438, &.item_439 {
+            background-position-y: -73px;
         }
-        &.item_108 {
-            background-position: -140px -1px;
+        &.item_105, &.item_325, &.item_435 {
+            background-position-x: -1px;
         }
-        &.item_109 {
-            background-position: -186px -1px;
+        &.item_106, &.item_326, &.item_436 {
+            background-position-x: -47px;
+        }
+        &.item_107, &.item_327, &.item_437 {
+            background-position-x: -93.5px;
+        }
+        &.item_108, &.item_328, &.item_438 {
+            background-position-x: -140px;
+        }
+        &.item_109, &.item_329, &.item_439 {
+            background-position-x: -186px;
         }
     }
 }
