@@ -2616,6 +2616,9 @@ function (dojo, declare) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
+                // TODO(ECHOES): We should change the layout/ordering of the special achievements a
+                // bit more. When someone claims a special achievement, the remaining cards move
+                // are re-arranged in a pretty chatotic manner.
                 var x = (i % 5) * (w / 2 + 5);
                 var y = (i % 5 % 2) * (h + 5) + parseInt(i / 5) * 2 * (h + 5);
                 
