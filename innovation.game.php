@@ -8997,6 +8997,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
+            // id 428, Echoes age 10: Social Networking
+            case "428D1A":
+                $message_for_player = clienttranslate('Choose an icon');
+                $message_for_others = clienttranslate('${player_name} must choose an icon');
+                break;
+
             // id 432, Echoes age 10: MP3
             case "432N2A":
                 $message_for_player = clienttranslate('Choose a value to draw and score');
@@ -14087,6 +14093,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "427N1":
                 $step_max = 2;
+                break;
+
+            // id 428, Echoes age 10: Social Networking
+            case "428D1":
+                $step_max = 2;
+                break;
+
+            case "428N1":
+                // "If you have fewer factories, fewer crowns, and towers than each other player, you win."
+                $min_factories = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_5) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
+                $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
+                $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id} AND player_eliminated = 0",  array('player_id' => $player_id)));
+                
+                $this_player_icon_counts = self::getPlayerResourceCounts($player_id);
+                
+                if ($this_player_icon_counts[5] < $min_factories &&
+                    $this_player_icon_counts[1] < $min_crowns && 
+                    $this_player_icon_counts[4] < $min_towers) {
+                
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the fewest ${factory}, ${crown}, and ${tower}.'), array('You' => 'You', 'factory' => $factory, 'crown' => $crown, 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the fewest ${factory}, ${crown}, and ${tower}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'factory' => $factory, 'crown' => $crown, 'tower' => $tower));
+                    self::setGameStateValue('winner_by_dogma', $player_id);
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Social Networking');
+                    throw new EndOfGame();
+                }
                 break;
 
             // id 429, Echoes age 10: GPS
@@ -20657,6 +20688,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              );
             break;
 
+        // id 428, Echoes age 10: Social Networking
+        case "428D1A":
+            // "I demand you choose an icon type!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'choose_icon_type' => true,
+             );
+            break;
+
+        case "428D1B":
+            // "Transfer all top cards without that icon from your board to my score pile!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score',
+                
+                'without_icon' => self::getAuxiliaryValue(),
+             );
+            break;
+
         // id 429, Echoes age 10: GPS
         case "429D1A":
             // "I demand you return all cards from your forecast!"
@@ -24279,6 +24336,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "423E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+            // id 428, Echoes age 10: Social Networking
+            case "428D1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the icon ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the icon ${icon}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => self::getIconSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
