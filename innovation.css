@@ -1494,20 +1494,29 @@
   background-size: 232px, auto;
   border-radius: 3px;
 }
-.card.S.item_105 {
-  background-position: -1px -1px;
+.card.S.item_105, .card.S.item_106, .card.S.item_107, .card.S.item_108, .card.S.item_109 {
+  background-position-y: -1px;
 }
-.card.S.item_106 {
-  background-position: -47px -1px;
+.card.S.item_325, .card.S.item_326, .card.S.item_327, .card.S.item_328, .card.S.item_329 {
+  background-position-y: -37px;
 }
-.card.S.item_107 {
-  background-position: -93.5px -1px;
+.card.S.item_435, .card.S.item_436, .card.S.item_437, .card.S.item_438, .card.S.item_439 {
+  background-position-y: -73px;
 }
-.card.S.item_108 {
-  background-position: -140px -1px;
+.card.S.item_105, .card.S.item_325, .card.S.item_435 {
+  background-position-x: -1px;
 }
-.card.S.item_109 {
-  background-position: -186px -1px;
+.card.S.item_106, .card.S.item_326, .card.S.item_436 {
+  background-position-x: -47px;
+}
+.card.S.item_107, .card.S.item_327, .card.S.item_437 {
+  background-position-x: -93.5px;
+}
+.card.S.item_108, .card.S.item_328, .card.S.item_438 {
+  background-position-x: -140px;
+}
+.card.S.item_109, .card.S.item_329, .card.S.item_439 {
+  background-position-x: -186px;
 }
 
 /* Locations where the square and hexagon icons go on each card 

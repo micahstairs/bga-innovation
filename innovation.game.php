@@ -654,12 +654,12 @@ class Innovation extends Table
 
         if (self::getGameStateValue('cities_mode') > 1) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
-            self::DbQuery("UPDATE card SET location = 'achievements', position = 0 WHERE 325 <= id AND id <= 329");
+            self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
         }
 
         if (self::getGameStateValue('echoes_mode') > 1) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
-            self::DbQuery("UPDATE card SET location = 'achievements', position = 0 WHERE 435 <= id AND id <= 439");
+            self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
         }
         
         // Initialize Artifacts-specific statistics
