@@ -522,7 +522,7 @@ extract_hexagon	"083"	"$BOTTOM_LEFT"	"$PURPLE_BORDER"	"084"
 # Age 9
 extract_hexagon	"094"	"$BOTTOM_LEFT"	"$BLUE_BORDER"	"085"
 extract_hexagon	"095"	"$BOTTOM_CENTER"	"$BLUE_BORDER"	"086"
-extract_hexagon	"090"	"$BOTTOM_CENTER"	"$RED_BORDER"	"087"
+extract_hexagon	"090"	"$BOTTOM_RIGHT"	"$RED_BORDER"	"087"
 extract_hexagon	"091"	"$TOP_LEFT"	"$RED_BORDER"	"088"
 extract_hexagon	"088"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"089"
 extract_hexagon	"089"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"090"
