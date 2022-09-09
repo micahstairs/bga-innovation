@@ -16479,6 +16479,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         // "Splay that color left"
                         self::splayLeft($player_id, $player_id, self::getGameStateValue('color_last_selected')); 
+                    } else {
+                        self::revealHand($player_id);
                     }
                     break;
 
