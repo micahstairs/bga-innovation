@@ -13990,16 +13990,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 419, Echoes age 9: Email
+            // id 419, Echoes age 9: Credit Card
             case "419E1":
-                self::executeDrawAndForeshadow($player_id, 10);
-                break;
-
-            case "419N1":
+                // "Draw and foreshadow a 9."
                 self::executeDrawAndForeshadow($player_id, 9);
                 break;
 
+            case "419N1":
+                $step_max = 1;
+                break;
+
             case "419N2":
+                $step_max = 1;
+                break;
+
+            // id 420, Echoes age 9: Email
+            case "420E1":
+                self::executeDrawAndForeshadow($player_id, 10);
+                break;
+
+            case "420N1":
+                self::executeDrawAndForeshadow($player_id, 9);
+                break;
+
+            case "420N2":
                 // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
                 // TODO(ECHOES): There's multiple bugs here. Battleship Yamato's faceup age is 11, which breaks an
                 // assumption that this code currently has. Also, purple is being exlcuded in the for loop. I propose
@@ -14019,20 +14033,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($lowest_card_age < 11) { // non-green card exists
                     $step_max = 1;
                 }
-                break;
-
-            // id 420, Echoes age 9: Credit Card
-            case "420E1":
-                // "Draw and foreshadow a 9."
-                self::executeDrawAndForeshadow($player_id, 9);
-                break;
-
-            case "420N1":
-                $step_max = 1;
-                break;
-
-            case "420N2":
-                $step_max = 1;
                 break;
 
             // id 421, Echoes age 9: ATM
@@ -20475,27 +20475,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
             );
             break;
-
-        // id 419, Echoes age 9: Email
-        case "419N2A":
-            // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'location_to' => 'none',
-                
-                'age' => self::getAuxiliaryValue(), // lowest age
-                
-                'color' => array(0,1,3,4), // non-green
-            );
-            break;
-
-        // id 420, Echoes age 9: Credit Card
-        case "420N1A":
+        
+        // id 419, Echoes age 9: Credit Card
+        case "419N1A":
             // "You may take a top non-green card from your board into your hand."
             $options = array(
                 'player_id' => $player_id,
@@ -20511,7 +20493,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        case "420N2A":
+        case "419N2A":
             // "You may splay your green cards up."
             $options = array(
                 'player_id' => $player_id,
@@ -20522,6 +20504,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2), // green
             );
             break; 
+
+        // id 420, Echoes age 9: Email
+        case "420N2A":
+            // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'location_to' => 'none',
+                
+                'age' => self::getAuxiliaryValue(), // lowest age
+                
+                'color' => array(0,1,3,4), // non-green
+            );
+            break;
 
         // id 421, Echoes age 9: ATM
         case "421E1A":
@@ -23193,18 +23193,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryValue(1); // flag that a card was melded
                     }
                     break;
-
-                // id 419, Echoes age 9: Email
-                case "419N2A":
-                    if ($n > 0) {
-                        self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
-                    }
-                    break;
                     
-                // id 420, Echoes age 9: Credit Card
-                case "420N1A":
+                // id 419, Echoes age 9: Credit Card
+                case "419N1A":
                     if ($n > 0) { // "if you do, draw and score a card of equal value."
                         self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'score');
+                    }
+                    break;
+
+                // id 420, Echoes age 9: Email
+                case "420N2A":
+                    if ($n > 0) {
+                        self::executeNonDemandEffects(self::getCardInfo(self::getGameStateValue('id_last_selected')));
                     }
                     break;
                     

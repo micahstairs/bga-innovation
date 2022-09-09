@@ -1666,16 +1666,16 @@ $this->textual_card_infos = array(
     'echo_effect_1' => clienttranslate('Meld a card from your hand.'),
 ),
 
-419 => array('name' => clienttranslate('Email'),
-    'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_9}.'),
-    'non_demand_effect_2' => clienttranslate('Execute all non-demand dogma effects on your lowest non-green top card. Do not share them.'),
-    'echo_effect_1' => clienttranslate('Draw and foreshadow a ${age_10}.'),
-),
-
-420 => array('name' => clienttranslate('Credit Card'),
+419 => array('name' => clienttranslate('Credit Card'),
     'non_demand_effect_1' => clienttranslate('You may take a top non-green card from your board into your hand. If you do, draw and score a card of equal value.'),
     'non_demand_effect_2' => clienttranslate('You may splay your green cards up.'),
     'echo_effect_1' => clienttranslate('Draw and foreshadow a ${age_9}.'),
+),
+
+420 => array('name' => clienttranslate('Email'),
+    'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_9}.'),
+    'non_demand_effect_2' => clienttranslate('Execute all non-demand dogma effects on your lowest non-green top card. Do not share them.'),
+    'echo_effect_1' => clienttranslate('Draw and foreshadow a ${age_10}.'),
 ),
 
 421 => array('name' => clienttranslate('ATM'),
