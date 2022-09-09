@@ -1915,4 +1915,29 @@ $L_y_position:     8;
             }
         }
     }
+    // Echo cards
+    @for $i from 330 through 434 {
+        @if $i <= 344 {
+            &.hexagon_icon_#{$i} {
+                background-image: url("img/hexagon_icons_echoes.png");
+                &.M {
+                    background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+                }
+            }
+        }
+        @if $i >= 345 {
+            &.hexagon_icon_#{$i} {
+                background-image: url("img/hexagon_icons_echoes.png");
+                &.M {
+                    background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
+                }
+            }
+        }
+    }
 }
