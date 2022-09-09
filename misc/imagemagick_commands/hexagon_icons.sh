@@ -620,27 +620,19 @@ echo "Building Echoes spritesheet..."
 # Create Echoes hexes in 11x rows, with 11th-15th icons in the 11th column
 magick montage \
 temp/00{0..9}_echoes.png \
-temp/010_echoes.png \
-temp/0{15..24}_echoes.png \
-temp/011_echoes.png \
-temp/0{25..34}_echoes.png \
-temp/012_echoes.png \
-temp/0{35..44}_echoes.png \
-temp/013_echoes.png \
-temp/0{45..54}_echoes.png \
-temp/014_echoes.png \
--trim -tile 11x5 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_11x.png
+temp/0{10..14}_echoes.png \
+-trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_15x.png
 
-# Do remaining 5 rows just as 10x rows
+# Do remaining 9 rows just as 10x rows
 
 magick montage \
-temp/0{55..99}_echoes.png \
+temp/0{15..99}_echoes.png \
 temp/{100..104}_echoes.png \
--trim -tile 10x5 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_10x.png
+-trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_10x.png
 
 # Combine all images into a single spritesheet.
 magick montage \
-temp/echoes_hexagons_11x.png \
+temp/echoes_hexagons_15x.png \
 temp/echoes_hexagons_10x.png \
 -tile 1x2 -geometry +0+0 -background 'none' ../../img/hexagon_icons_echoes.png
 
