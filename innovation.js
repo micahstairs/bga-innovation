@@ -936,7 +936,7 @@ function (dojo, declare) {
                             var age_3s_in_hand = dojo.query("#hand_" + this.player_id + " > .card.age_3");
                             this.off(age_3s_in_hand, 'onclick', 'action_clicForChoose');
                             this.on(age_3s_in_hand, 'onclick', 'action_clickForChooseFront');
-                            var warning = _("Are you sure you want to return a ${age_3} as part of the first non-demand effect? This won't allow you to draw three cards.").replace("${age_3}", this.square('N', 'age', 3));
+                            var warning = _("Are you sure you want to return a ${age_3}? This won't allow you to draw three cards.").replace("${age_3}", this.square('N', 'age', 3));
                             age_3s_in_hand.forEach(function(card) {
                                 dojo.attr(card, 'warning', warning);
                             });
