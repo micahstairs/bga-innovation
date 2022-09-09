@@ -24341,8 +24341,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 428, Echoes age 10: Social Networking
             case "428D1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the icon ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the icon ${icon}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => self::getIconSquare($choice)));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${icon}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => self::getIconSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
