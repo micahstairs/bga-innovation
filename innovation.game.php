@@ -8092,12 +8092,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 1: 
                 $color_log = '${color}';
                 $color_args['color'] = self::getColorInClear($colors[0]);
+                $color_args['i18n'] = ['color'];
                 break;
 
             case 2:
                 $color_log = '${color_1} or ${color_2}';
                 $color_args['color_1'] = self::getColorInClear($colors[0]);
                 $color_args['color_2'] = self::getColorInClear($colors[1]);
+                $color_args['i18n'] = ['color_1', 'color_2'];
                 break;
 
             case 3:
@@ -8105,6 +8107,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color_args['color_1'] = self::getColorInClear($colors[0]);
                 $color_args['color_2'] = self::getColorInClear($colors[1]);
                 $color_args['color_3'] = self::getColorInClear($colors[2]);
+                $color_args['i18n'] = ['color_1', 'color_2', 'color_3'];
                 break;
 
             case 4:
@@ -8115,6 +8118,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     }
                 }
+                $color_args['i18n'] = ['color'];
                 break;
         }
         return ['i18n' => ['log'], 'log' => $color_log, 'args' => $color_args];
