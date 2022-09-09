@@ -17006,6 +17006,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1);
                     }
                     break;
+                
+                case "182N1B":
+                    // Reveal remaining score pile to prove that no more cards can be tucked
+                    self::revealScorePile($player_id);
+                    break;
 
                 // id 183, Artifacts age 7: Roundhay Garden Scene
                 case "183N1A":
