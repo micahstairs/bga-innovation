@@ -16489,6 +16489,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1);
                     }
                     break;
+
+                // id 132, Artifacts age 2: Terracotta Army
+                case "132N1A":
+                    // if you don't
+                    if ($n == 0) {
+                        // Reveal hand to prove to others that they didn't have any cards without a tower
+                        self::revealHand($player_id);
+                    }
+                    break;
                 
                 // id 134, Artifacts age 2: Cyrus Cylinder
                 case "134N1A":
