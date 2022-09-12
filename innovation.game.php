@@ -7342,10 +7342,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case 20: // Mapmaking
-                // The non-demand has no effect unless the I demand is also executed.
-                // TODO(LATER): Extend this check to also capture the case where there are no 1s in the score pile of
-                // players executing the demand effect.
-                return !$i_demand_will_be_executed;
+                // This card has no effect unless at least one player executing the demand has a 1 in their score pile.
+                foreach ($i_demand_players as $player_id) {
+                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    if ($num_cards_in_score_pile[1] > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 22: // Fermenting
                 // The card has no effect if no player executing the non-demand has leaves on their board.
@@ -7372,14 +7376,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 40: // Navigation
                 // The card has no effect unless a player executing the demand has a 2 or 3 in their score pile.
-                // TODO(LATER): Implement this.
-                break;
+                foreach ($i_demand_players as $player_id) {
+                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    if ($num_cards_in_score_pile[2] > 0 || $num_cards_in_score_pile[3] > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 48: // The Pirate Code
-                // The non-demand has no effect unless the I demand is also executed.
-                // TODO(LATER): Extend this check to also capture the case where there are no 1s, 2s, 3s, or 4s in the
-                // score pile of any player executing the demand effect.
-                return !$i_demand_will_be_executed;
+                // The card has no effect unless a player executing the demand has a 1, 2, 3, or 4 in their score pile.
+                foreach ($i_demand_players as $player_id) {
+                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    if ($num_cards_in_score_pile[1] > 0 || $num_cards_in_score_pile[2] > 0 || $num_cards_in_score_pile[3] > 0 || $num_cards_in_score_pile[4] > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 54: // Societies
                 if ($this->innovationGameState->usingFirstEditionRules()) {
