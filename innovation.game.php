@@ -14179,8 +14179,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck'
             );
             break;
 
@@ -14209,8 +14209,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
 
                 'color' => array(self::getGameStateValue('color_last_selected'))
             );
@@ -16620,7 +16620,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 case "144N1C":
                     // "If you did all three"
-                    if ($n > 0 && self::getAuxiliaryValue() == 2) {
+                    if ($n == 0) {
+                        // Reveal score pile to prove that no cards of the specified color could have been returned
+                        self::revealScorePile($player_id);
+                    } else if ($n > 0 && self::getAuxiliaryValue() == 2) {
                         self::incrementStepMax(1);
                     }
                     break;
