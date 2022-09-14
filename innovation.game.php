@@ -17462,7 +17462,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             WHERE
                 selected AND b.size = 1
             ORDER BY
-                a.age, a.type, a.is_relic, a.position, a.location
+                a.location, a.age, a.type, a.is_relic, a.position
             LIMIT 1
         ");
     }
