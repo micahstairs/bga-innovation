@@ -22870,6 +22870,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
                         if ($top_green_card != null) {
+                            // TODO(ECHOES): Fix the bug here (same as Hot Air Balloon).
                             $claimable_ages = self::getClaimableAges($player_id);
                             if (in_array($top_green_card['faceup_age'], $claimable_ages)) {
                                 self::incrementStepMax(1); // need to choose between returning and achieving
