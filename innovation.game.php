@@ -8270,10 +8270,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case 20: // Mapmaking
-                // The non-demand has no effect unless the I demand is also executed.
-                // TODO(LATER): Extend this check to also capture the case where there are no 1s in the score pile of
-                // players executing the demand effect.
-                return !$i_demand_will_be_executed;
+                // This card has no effect unless at least one player executing the demand has a 1 in their score pile.
+                foreach ($i_demand_players as $player_id) {
+                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    if ($num_cards_in_score_pile[1] > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 22: // Fermenting
                 // The card has no effect if no player executing the non-demand has leaves on their board.
@@ -8300,14 +8304,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 40: // Navigation
                 // The card has no effect unless a player executing the demand has a 2 or 3 in their score pile.
-                // TODO(LATER): Implement this.
-                break;
+                foreach ($i_demand_players as $player_id) {
+                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    if ($num_cards_in_score_pile[2] > 0 || $num_cards_in_score_pile[3] > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 48: // The Pirate Code
-                // The non-demand has no effect unless the I demand is also executed.
-                // TODO(LATER): Extend this check to also capture the case where there are no 1s, 2s, 3s, or 4s in the
-                // score pile of any player executing the demand effect.
-                return !$i_demand_will_be_executed;
+                // The card has no effect unless a player executing the demand has a 1, 2, 3, or 4 in their score pile.
+                foreach ($i_demand_players as $player_id) {
+                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    if ($num_cards_in_score_pile[1] > 0 || $num_cards_in_score_pile[2] > 0 || $num_cards_in_score_pile[3] > 0 || $num_cards_in_score_pile[4] > 0) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 54: // Societies
                 if ($this->innovationGameState->usingFirstEditionRules()) {
@@ -9205,6 +9218,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'splay_direction' => $splay_direction,
             'splay_direction_in_clear' => $splay_direction_in_clear,
             'color_pile' => $splay_direction === null && $location_from == 'pile' ? self::getGameStateValueAsArray('color_array')[0] : null,
+            'card_interaction' => $code,
+            'num_cards_already_chosen' => $n,
             
             // Private info
             '_private' => array(
@@ -9313,12 +9328,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 1: 
                 $color_log = '${color}';
                 $color_args['color'] = self::getColorInClear($colors[0]);
+                $color_args['i18n'] = ['color'];
                 break;
 
             case 2:
                 $color_log = '${color_1} or ${color_2}';
                 $color_args['color_1'] = self::getColorInClear($colors[0]);
                 $color_args['color_2'] = self::getColorInClear($colors[1]);
+                $color_args['i18n'] = ['color_1', 'color_2'];
                 break;
 
             case 3:
@@ -9326,6 +9343,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color_args['color_1'] = self::getColorInClear($colors[0]);
                 $color_args['color_2'] = self::getColorInClear($colors[1]);
                 $color_args['color_3'] = self::getColorInClear($colors[2]);
+                $color_args['i18n'] = ['color_1', 'color_2', 'color_3'];
                 break;
 
             case 4:
@@ -9336,6 +9354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     }
                 }
+                $color_args['i18n'] = ['color'];
                 break;
         }
         return ['i18n' => ['log'], 'log' => $color_log, 'args' => $color_args];
@@ -10783,9 +10802,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $num_cards_which_will_be_transferred = min($num_cards_left_to_transfer, $num_cards_in_hand);
                 if ($num_cards_which_will_be_transferred > 0) {
                     // TODO(LATER): Remove the use of the auxilary value.
-                    self::setAuxiliaryValue(0); // Flag to indicate if the player has transfered a card or not
+                    // Flag to indicate if the player has transfered a card or not
+                    if ($num_cards_left_to_transfer == 3) {
+                        self::setAuxiliaryValue(0);
+                    } else {
+                        self::setAuxiliaryValue(1);
+                    }
                     $step = 4 - $num_cards_which_will_be_transferred;
                     $step_max = 3;
+                
+                // "If you transferred any, and then have no cards in hand"
+                } else if ($num_cards_left_to_transfer < 3 && $num_cards_in_hand == 0) {
+                    self::executeDraw($player_id, 7); // "Draw a 7"
                 }
                 break;
             
@@ -12122,7 +12150,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
 
                 // "Draw a 7"
-                $new_card = self::executeDraw($player_id, 7);
+                if (count($cards) > 0) {
+                    // If the player has other cards in hand, we need to reveal the card first in order to prove to other players
+                    // whether the card matched the color of another card in hand.
+                    $new_card = self::transferCardFromTo(self::executeDraw($player_id, 7, 'revealed'), $player_id, 'hand');
+                } else {
+                    $new_card = self::executeDraw($player_id, 7);
+                }
                 
                 // "If the color of the drawn card matches the color of any other cards in your hand"
                 if ($colors_in_hand[$new_card['color']] == 1) {
@@ -17110,8 +17144,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck'
             );
             break;
 
@@ -17140,8 +17174,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
 
                 'color' => array(self::getGameStateValue('color_last_selected'))
             );
@@ -21818,6 +21852,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         // "Splay that color left"
                         self::splayLeft($player_id, $player_id, self::getGameStateValue('color_last_selected')); 
+                    } else {
+                        self::revealHand($player_id);
                     }
                     break;
 
@@ -21826,6 +21862,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // if you do
                     if ($n > 0) {
                         self::incrementStepMax(1);
+                    }
+                    break;
+
+                // id 132, Artifacts age 2: Terracotta Army
+                case "132N1A":
+                    // if you don't
+                    if ($n == 0) {
+                        // Reveal hand to prove to others that they didn't have any cards without a tower
+                        self::revealHand($player_id);
                     }
                     break;
                 
@@ -21929,7 +21974,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 case "144N1C":
                     // "If you did all three"
-                    if ($n > 0 && self::getAuxiliaryValue() == 2) {
+                    if ($n == 0) {
+                        // Reveal score pile to prove that no cards of the specified color could have been returned
+                        self::revealScorePile($player_id);
+                    } else if ($n > 0 && self::getAuxiliaryValue() == 2) {
                         self::incrementStepMax(1);
                     }
                     break;
@@ -22324,6 +22372,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "Otherwise, return the melded card"
                     } else {
+                        $card = self::getCardInfo($card['id']); // We need to refetch the card, otherwise its splayed state may be stale
                         self::returnCard($card);
                     }
                     break;
@@ -22343,6 +22392,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::splayUp($player_id, $player_id, self::getGameStateValue('color_last_selected'));
                         self::incrementStepMax(1);
                     }
+                    break;
+                
+                case "182N1B":
+                    // Reveal remaining score pile to prove that no more cards can be tucked
+                    self::revealScorePile($player_id);
                     break;
 
                 // id 183, Artifacts age 7: Roundhay Garden Scene

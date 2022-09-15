@@ -1031,6 +1031,17 @@ function (dojo, declare) {
                             selectable_rectos.addClass("clickable");
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
                         }
+                        // Add special warning to Tools to prevent the player from accidentally returning a 3 in the first
+                        // part of the interaction in an attempt to draw 3 cards.
+                        if (args.args.card_interaction == "1N1A" && parseInt(args.args.num_cards_already_chosen) == 0) {
+                            var age_3s_in_hand = dojo.query("#hand_" + this.player_id + " > .card.age_3");
+                            this.off(age_3s_in_hand, 'onclick', 'action_clicForChoose');
+                            this.on(age_3s_in_hand, 'onclick', 'action_clickForChooseFront');
+                            var warning = _("Are you sure you want to return a ${age_3}? This won't allow you to draw three cards.").replace("${age_3}", this.square('N', 'age', 3));
+                            age_3s_in_hand.forEach(function(card) {
+                                dojo.attr(card, 'warning', warning);
+                            });
+                        }
                     }
                     else if (args.args.special_type_of_choice == 6 /* rearrange */) {
                         this.off(dojo.query('#change_display_mode_button'), 'onclick');
@@ -3134,18 +3145,47 @@ function (dojo, declare) {
                 function(is_error) { if (is_error) this.resurrectClickEvents(true); }
             );
         },
-        
-        action_clicForChoose : function(event) {
-            if(!this.checkAction('choose')){
-                return;
-            }
-            if (this.color_pile !== null) { // Special code where a stack needed to be selected
-                var zone = this.zone.board[this.player_id][this.color_pile];
-                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
-            }
+
+        action_clickForChooseFront : function(event) {
+            this.stopActionTimer();
             this.deactivateClickEvents();
             
             var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var warning = dojo.attr(HTML_id, 'warning');
+
+            $('pagemaintitletext').innerHTML = warning;
+
+            // Add cancel button
+            this.addActionButton("choose_front_cancel_button", _("Cancel"), "action_cancelChooseFront");
+            dojo.removeClass("choose_front_cancel_button", 'bgabutton_blue');
+            dojo.addClass("choose_front_cancel_button", 'bgabutton_red');
+
+            // Add confirm button
+            this.addActionButton("choose_front_confirm_button", _("Confirm"), "action_manuallyConfirmChooseFront");
+            $("choose_front_confirm_button").innerHTML = _("Confirm");
+            dojo.attr('choose_front_confirm_button', 'html_id', HTML_id);
+
+            // TODO(LATER): If the card doesn't have a warning, add a confirmation button with a countdown timer.
+        },
+
+        action_cancelChooseFront : function(event) {
+            this.stopActionTimer();
+            this.resurrectClickEvents(true);
+            dojo.destroy("choose_front_cancel_button");
+            dojo.destroy("choose_front_confirm_button");
+        },
+
+        action_manuallyConfirmChooseFront : function(event) {
+            this.stopActionTimer();
+            var HTML_id = dojo.attr('choose_front_confirm_button', 'html_id');
+            this.action_confirmChooseFront(HTML_id);
+        },
+
+        action_confirmChooseFront : function(HTML_id) {
+            if(!this.checkAction('choose')){
+                return;
+            }
+            
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             
             var self = this;
@@ -3156,6 +3196,18 @@ function (dojo, declare) {
                             },
                              this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );
+        },
+        
+        // TODO(LATER): Remove this once we have a personal preference for confirming card choices.
+        action_clicForChoose : function(event) {
+            if (this.color_pile !== null) { // Special code where a stack needed to be selected
+                var zone = this.zone.board[this.player_id][this.color_pile];
+                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+            }
+            this.deactivateClickEvents();
+            
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            this.action_confirmChooseFront(HTML_id);
         },
         
         action_clicForChooseRecto : function(event) {
