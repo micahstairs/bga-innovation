@@ -13604,26 +13604,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "389N1":
-                // Need to collect a list of cards that are achievable.
+                // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
                 $card_id_list = array();
                 foreach (self::getAllActivePlayerIds() as $any_player_id) {
                     if ($player_id != $any_player_id) {
                         $top_cards = self::getTopCardsOnBoard($any_player_id);
                         $achievement_age_counts = self::countCardsInLocationKeyedByAge($any_player_id, 'achievements');
                         foreach ($top_cards as $card) {
-                            
                             if ($achievement_age_counts[$card['faceup_age']] > 0) {
                                 $card_id_list[] = $card['id'];
                             }
                         }
                     }
-                }                
-                self::notifyPlayer($player_id, 'log', clienttranslate('Value : ${value}.'), array('value' => $card_id_list));
+                }
                 if (count($card_id_list) > 0) {
                     self::setAuxiliaryArray($card_id_list);
                     $step_max = 1;
                 } else {
-                    // If none are achievable, then just meld a 7.
+                    // "Otherwise, draw and meld a 7"
                     self::executeDraw($player_id, 7, 'board');
                 }
                 break;
@@ -13905,7 +13903,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 405, Echoes age 8:Radio Telescope
+            // id 405, Echoes age 8: Radio Telescope
             case "405N1":
                 // "For every two bulbs on your board, draw a 9."
                 $number_of_bulbs = self::getPlayerSingleRessourceCount($player_id, 3);
@@ -13913,7 +13911,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 if ($cards_to_draw > 0) {
                     $card_array = array();
-                    for($i = 0; $i < $cards_to_draw; $i++) {
+                    for ($i = 0; $i < $cards_to_draw; $i++) {
                         $card = self::executeDraw($player_id, 9, 'hand');
                         $card_array[] = $card['id'];
                     }
@@ -19948,8 +19946,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 389 Echoes age 6: Hot Air Balloon
         case "389N1A":
             // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
-            // TODO: The require achievements flag doesn't work if the matching numbered achievement is no longer available from
-            // the achievements pile.
+            // TODO(ECHOES): The require achievements flag doesn't work if the matching numbered achievement is no longer
+            // available from the achievements pile.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -20384,7 +20382,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "405N1B":
-            // " and return the rest."
+            // "and return the rest"
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => false,
@@ -23146,14 +23144,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
                 // id 389, Echoes age 6: Hot Air Balloon
                 case "389N1A":
-                    // " If you do, draw and foreshadow a card of equal value to the card returned."
-                    if ($n > 0) { // If you do, transfer your top green card to that player's board.
+                    // "If you do, transfer your top green card to that player's board."
+                    if ($n > 0) {
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        $last_owner = self::getGameStateValue('owner_last_selected');
-                        self::transferCardFromTo($top_green_card, $last_owner, 'board');
-                    }
-                    else {
-                        // "Otherwise, draw and meld a 7."
+                        if ($top_green_card != null) {
+                            $last_owner = self::getGameStateValue('owner_last_selected');
+                            self::transferCardFromTo($top_green_card, $last_owner, 'board');
+                        }
+                     // "Otherwise, draw and meld a 7."
+                    } else {
                         self::executeDraw($player_id, 7, 'board');
                     }
                     break;
@@ -23279,16 +23278,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 405, Echoes age 8: Radio Telescope
                 case "405N1A":
                     if ($n > 0) { // If a card was melded
-                        // Remove selected card from the list so it can't be returned.
+                        // Remove selected card from the list so it isn't returned.
                         $selected_card_id = self::getGameStateValue('id_last_selected');
                         $card_list = self::getAuxiliaryArray();
                         $new_card_list = array_diff($card_list, array($selected_card_id));
                         self::setAuxiliaryArray($new_card_list);
                         
-                        // "If you meld AI due to this dogma effect, you win."
+                        // "If you meld A. I. due to this dogma effect, you win."
                         if ($selected_card_id == 103) { // A. I.
-                           self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded AI.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded AI.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);
                             self::trace('EOG bubbled from self::stInterInteractionStep Radio Telescope');
                             throw new EndOfGame();
