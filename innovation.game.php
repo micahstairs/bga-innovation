@@ -4067,7 +4067,7 @@ class Innovation extends Table
         $opt_order_by = $count ? "" : "ORDER BY position";
         $getFromDB = $count ? 'getUniqueValueFromDB' : 'getObjectListFromDB'; // If we count, we want to get an unique value, else, we want to get a list of cards
         $type_condition = $type === null ? "" : self::format("type = {type} AND", array('type' => $type));
-        $is_relic_condition = $is_relic === null ? "" : self::format("is_relic = {is_relic} AND", array('is_relic' => $is_relic));
+        $is_relic_condition = $is_relic === null ? "" : self::format("is_relic = {is_relic} AND", array('is_relic' => ($is_relic ? 'TRUE' : 'FALSE')));
                                                                     
         if ($key == 'age') {
             $num_min = 1;
@@ -6040,7 +6040,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Condition for age because of achievement eligibility
         $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         if (self::getGameStateValue('require_achievement_eligibility') == 1) {
-            $claimable_ages = self::getClaimableAges($player_id);
+            $claimable_ages = self::getClaimableAgesIgnoringAvailability($player_id);
             if (count($claimable_ages) == 0) {
                 // Avoid calling a SQL query with 'age IN ()' in it since it isn't correct syntax.
                 $claimable_ages[] = -1;
@@ -7963,26 +7963,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         );
     }
 
+    /** Returns the ages that are currently claimable from the standard achievements pile */
     function getClaimableAges($player_id) {
-        $unclaimed_achievements = self::getCardsInLocation(0, 'achievements');
+        $claimable_ages = array();
+        $unclaimed_achievement_count = self::countCardsInLocationKeyedByAge(0, 'achievements');
+        foreach (self::getClaimableAgesIgnoringAvailability($player_id) as $age) {
+            if ($unclaimed_achievement_count[$age] > 0) {
+                $claimable_ages[] = $age;
+            }
+        }
+        return $claimable_ages;
+    }
+
+    /** Returns the ages that would be claimable (ignoring whether they actually exist in the standard achievements pile) */
+    function getClaimableAgesIgnoringAvailability($player_id) {
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
         $player_score = self::getPlayerScore($player_id);
-        $claimed_achievements = self::getCardsInLocation($player_id, 'achievements');
+        $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
         
         $claimable_ages = array();
-        foreach ($unclaimed_achievements as $achievement) {
-            $age = $achievement['age'];
-            if ($age === null) { // Special achievement
-                continue;
-            }
-            $multiplier = 1;
-            foreach ($claimed_achievements as $repeat_achievement) {
-                if ($repeat_achievement['age'] == $age && $repeat_achievement['is_relic'] == 0) { // don't include relics
-                    $multiplier++; // for every matching age achievement, the multiplier goes up by 1.  
-                }
-            }
+        for ($age = 1; $age <= 10; $age++) {
             // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
-            if ($age <= $age_max && $player_score >= 5*$age*$multiplier) {
+            if ($age <= $age_max && $player_score >= 5 * $age * ($claimed_achievement_count[$age] + 1)) {
                 $claimable_ages[] = $age;
             }
         }
@@ -13641,13 +13643,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
                 $card_id_list = array();
                 foreach (self::getAllActivePlayerIds() as $any_player_id) {
-                    if ($player_id != $any_player_id) {
-                        $top_cards = self::getTopCardsOnBoard($any_player_id);
-                        $achievement_age_counts = self::countCardsInLocationKeyedByAge($any_player_id, 'achievements');
-                        foreach ($top_cards as $card) {
-                            if ($achievement_age_counts[$card['faceup_age']] > 0) {
-                                $card_id_list[] = $card['id'];
-                            }
+                    $top_cards = self::getTopCardsOnBoard($any_player_id);
+                    $achievement_age_counts = self::countCardsInLocationKeyedByAge($any_player_id, 'achievements', $type=null, $is_relic=false);
+                    foreach ($top_cards as $card) {
+                        if ($achievement_age_counts[$card['faceup_age']] > 0) {
+                            $card_id_list[] = $card['id'];
                         }
                     }
                 }
@@ -22924,8 +22924,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
                         if ($top_green_card != null) {
-                            // TODO(ECHOES): Fix the bug here (same as Hot Air Balloon).
-                            $claimable_ages = self::getClaimableAges($player_id);
+                            $claimable_ages = self::getClaimableAgesIgnoringAvailability($player_id);
                             if (in_array($top_green_card['faceup_age'], $claimable_ages)) {
                                 self::incrementStepMax(1); // need to choose between returning and achieving
                             } else {
