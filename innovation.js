@@ -1032,7 +1032,6 @@ function (dojo, declare) {
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
                         }
                         if (args.args._private.show_all_cards_on_board) {
-                            console.log("here!");
                             for (var color = 0; color < 5; color++) {
                                 var zone = this.zone.board[this.player_id][color];
                                 this.setSplayMode(zone, zone.splay_direction, full_visible=true);
