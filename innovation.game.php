@@ -2361,7 +2361,7 @@ class Innovation extends Table
         self::sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo);
     }
     
-    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
+    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
             // TODO(LATER): We can simplify Self Service to use "board->none", guarded by release_version.
@@ -2468,8 +2468,13 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} take back ${number} top ${card} from his board to his hand');
                 break;
             case 'board->score':
-                $message_for_player = clienttranslate('${You_must} score ${number} top ${card} from your board');
-                $message_for_others = clienttranslate('${player_must} score ${number} top ${card} from his board');
+                if ($bottom_from == 1) {
+                    $message_for_player = clienttranslate('${You_must} score ${number} bottom ${card} from your board');
+                    $message_for_others = clienttranslate('${player_must} score ${number} bottom ${card} from his board');
+                } else {
+                    $message_for_player = clienttranslate('${You_must} score ${number} top ${card} from your board');
+                    $message_for_others = clienttranslate('${player_must} score ${number} top ${card} from his board');
+                }
                 break;
             case 'board->none':
                 $message_for_player = clienttranslate('${You_must} choose ${number} top ${card} from your board');
@@ -6168,12 +6173,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         if (self::getGameStateValue('splay_direction') == -1 && $location_from == 'board') {
-            // Only the active card can be selected
             self::DbQuery(self::format("
                 UPDATE
                     card
                 LEFT JOIN
-                    (SELECT owner AS joined_owner, color AS joined_color, MAX(position) AS position_of_active_card FROM card WHERE location = 'board' GROUP BY owner, color) AS joined
+                    (SELECT owner AS joined_owner, color AS joined_color, {position} AS position_to_select FROM card WHERE location = 'board' GROUP BY owner, color) AS joined
                     ON
                         owner = joined_owner AND
                         color = joined_color
@@ -6185,7 +6189,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_age} AND
                     {condition_for_claimable_ages} AND
                     {condition_for_demand_effect} AND
-                    position = position_of_active_card AND
+                    position = position_to_select AND
                     {condition_for_color}
                     {condition_for_type}
                     {condition_for_icon}
@@ -6198,6 +6202,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_excluding_bonus}
             ",
                 array(
+                    'position' => self::getGameStateValue('bottom_from') == 1 ? '0' : 'MAX(position)',
                     'condition_for_owner' => $condition_for_owner,
                     'condition_for_location' => $condition_for_location,
                     'condition_for_age' => $condition_for_age,
@@ -8743,12 +8748,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-
-            // id 335, Echoes age 1: Plumbing
-            case "335E1A":
-                $message_for_player = clienttranslate('${You} must choose a color to score a bottom card');
-                $message_for_others = clienttranslate('${player_name} must choose a color to score a bottom card');
-                break;
                 
             // id 336, Echoes age 1: Comb
             case "336N1A":
@@ -9070,6 +9069,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $owner_from = self::getGameStateValue("owner_from");
         if ($splay_direction == -1) {
             $location_from = self::decodeLocation(self::getGameStateValue("location_from"));
+            $bottom_from = self::getGameStateValue("bottom_from");
             $owner_to = self::getGameStateValue("owner_to");
             $location_to = self::decodeLocation(self::getGameStateValue("location_to"));
             // TODO(LATER): Remove this since it's only needed to migrate game during the release of Artifacts.
@@ -9169,7 +9169,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Creation of the message
         if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4) {
             if ($splay_direction == -1) {
-                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
+                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
                 $splay_direction_in_clear = null;
             } else {
@@ -9226,7 +9226,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'active' => array( // "Active" player only
                     "visible_selectable_cards" => self::getVisibleSelectedCards($player_id),
                     "selectable_rectos" => self::getSelectableRectos($player_id), // Most of the time, the player choose among versos he can see this array is empty so this array is empty except for few dogma effects
-                    "must_show_score" => $must_show_score
+                    "must_show_score" => $must_show_score,
+                    "show_all_cards_on_board" => $location_from == 'board' && $bottom_from == 1,
                 )
             ))
         );
@@ -18698,21 +18699,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 335, Echoes age 1: Plumbing
         case "335E1A":
             // "Score a bottom card from your board."
-            $color_array = array();
-            for ($color = 0; $color < 5; $color++) {
-                $card = self::getBottomCardOnBoard($player_id, $color);
-                if ($card !== null) {
-                    $color_array[] = $color;
-                }
-            }
-            // TODO(ECHOES): Skip the interaction if there are no cards on this board.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => false,
 
-                'choose_color' => true,
-                'color' =>  $color_array,
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'bottom_from' => true,
             );            
             break;
 
@@ -22675,12 +22672,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 335, Echoes age 1: Plumbing
-                case "335E1A":
-                    $card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                    self::transferCardFromTo($card, $player_id, 'score', /*bottom_to*/false, /*score_keyword*/true);
-                    break;
-                
                 // id 336, Echoes age 1: Comb
                 case "336N1A":
                     // "Then draw and reveal five 1s"
@@ -24175,13 +24166,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 335, Echoes age 1: Plumbing
-            case "335E1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 

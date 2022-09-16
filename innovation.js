@@ -1031,6 +1031,13 @@ function (dojo, declare) {
                             selectable_rectos.addClass("clickable");
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
                         }
+                        if (args.args._private.show_all_cards_on_board) {
+                            console.log("here!");
+                            for (var color = 0; color < 5; color++) {
+                                var zone = this.zone.board[this.player_id][color];
+                                this.setSplayMode(zone, zone.splay_direction, full_visible=true);
+                            }
+                        }
                         // Add special warning to Tools to prevent the player from accidentally returning a 3 in the first
                         // part of the interaction in an attempt to draw 3 cards.
                         if (args.args.card_interaction == "1N1A" && parseInt(args.args.num_cards_already_chosen) == 0) {
@@ -3182,8 +3189,13 @@ function (dojo, declare) {
         },
 
         action_confirmChooseFront : function(HTML_id) {
-            if(!this.checkAction('choose')){
+            if (!this.checkAction('choose')){
                 return;
+            }
+            // If the piles were forcibly made visible, collapse them
+            for (var color = 0; color < 5; color++) {
+                var zone = this.zone.board[this.player_id][color];
+                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
             }
             
             var card_id = this.getCardIdFromHTMLId(HTML_id);
@@ -3200,10 +3212,6 @@ function (dojo, declare) {
         
         // TODO(LATER): Remove this once we have a personal preference for confirming card choices.
         action_clicForChoose : function(event) {
-            if (this.color_pile !== null) { // Special code where a stack needed to be selected
-                var zone = this.zone.board[this.player_id][this.color_pile];
-                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
-            }
             this.deactivateClickEvents();
             
             var HTML_id = this.getCardHTMLIdFromEvent(event);
