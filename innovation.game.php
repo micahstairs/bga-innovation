@@ -13611,6 +13611,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 387, Echoes age 6: Loom
+            case "387E1":
+                $step_max = 1;
+                break;
+                
+            case "387N1":
+                $card_ages = array();
+                $score_cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                $count = 0;
+                for ($age = 1; $age <= 10; $age++) {
+                    if ($score_cards[$age] > 0) {
+                        $count++;
+                    }
+                }
+                
+                if ($count >= 2) {
+                    $step_max = 2;
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two different values in your score pile.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                }
+                break;
+            
+            case "387N2":
+                // "If you have five or more hexes visible on your board in one color, claim the Heritage achievement."
+                for ($color = 0; $color < 5 ; $color++) {
+                    if (self::countVisibleIconsInPile($player_id, 0 /* empty hex */, $color) >= 5) {
+                        self::claimSpecialAchievement($player_id, 437);
+                        break;
+                    }
+                }
+                
+                break;
+                
             // id 388, Echoes age 6: Shrapnel
             case "388D1":
                 // "I demand you draw and tuck a 6!"
@@ -13725,6 +13759,55 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 392, Echoes age 6: Morphine
+            case "392E1":
+                // Get list of odd-valued cards in hand
+                $odd_card_ids = array();
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if ($card['age'] % 2 == 1) {
+                        $odd_card_ids[] = $card['id'];
+                    }
+                }
+                if (count($odd_card_ids) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryArray($odd_card_ids);
+                }
+                
+                // Initialize the auxiliary value before the demand begins
+                self::setAuxiliaryValue(0);
+                break;
+
+            case "392D1":
+                $odd_card_ids = array();
+                $max_value = self::getAuxiliaryValue();
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if ($card['age'] % 2 == 1) {
+                        $odd_card_ids[] = $card['id'];
+                        $max_value = max($card['age'], $max_value);
+                    }
+                }
+                self::setAuxiliaryValue($max_value);
+                
+                if (count($odd_card_ids) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryArray($odd_card_ids);
+                } else {
+                    self::executeDraw($player_id, 6, 'hand');
+                }
+                break;
+
+            case "392N1":
+                // "Draw a card of value one higher than the highest card returned due to the demand, if any were returned."
+                $max_value_returned = self::getAuxiliaryValue();
+                if ($max_value_returned > 0) {
+                    self::executeDraw($player_id, $max_value_returned + 1, 'hand');
+                }
+                break;
+
+            case "392N2":
+                $step_max = 1;
+                break;
+                
             // id 393, Echoes age 6: Indian Clubs
             case "393D1":
                 $step_max = 1;
@@ -19998,6 +20081,53 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 387 Echoes age 6: Loom
+        case "387E1A":
+            // "Score your lowest top card."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'age' => self::getMinAgeOnBoardTopCards($player_id),
+            );
+            break;
+
+        case "387N1A":
+            // "You may return two cards of different value from your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "387N1B":
+            // "You may return two cards of different value from your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+            
         // id 390 Echoes age 6: Steamboat
         case "390D1A":
             // "transfer two cards from your score pile to mine!"
@@ -20026,6 +20156,50 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 392 Echoes age 6: Morphine
+        case "392E1A":
+            // "Score an odd-valued card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "392D1A":
+            // "I demand you return all odd-valued cards in your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+            
+        case "392N2A":
+            // "You may splay your red cards right."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 2 /* right */,
+                'color' => array(1), /* red */
+            );
+            break;
+            
         // id 393, Echoes age 6: Indian Clubs
         case "393D1A":
             // "I demand you return two cards from your score pile!"
@@ -23195,6 +23369,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryValue(-1);
                     }
                     break;
+
+                // id 387, Echoes age 6: Loom
+                case "387N1A":
+                    if ($n > 0) { // card returned
+                        $selectable_card_ids = array();
+                        foreach (self::getCardsInLocation($player_id, 'score') as $card) {
+                            if (self::getGameStateValue('age_last_selected') != $card['age']) {
+                                $selectable_card_ids[] = $card['id'];
+                            }
+                        }
+                        self::setAuxiliaryArray($selectable_card_ids);
+                    }
+                    break;
+
+                case "387N1B":
+                    if ($n > 0) { // "If you do"
+                        // "draw and tuck three 6s."
+                        self::executeDrawAndTuck($player_id, 6);
+                        self::executeDrawAndTuck($player_id, 6);
+                        self::executeDrawAndTuck($player_id, 6);
+                    }
+                    break;
     
                 // id 389, Echoes age 6: Hot Air Balloon
                 case "389N1A":
@@ -23205,10 +23401,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $last_owner = self::getGameStateValue('owner_last_selected');
                             self::transferCardFromTo($top_green_card, $last_owner, 'board');
                         }
-                     // "Otherwise, draw and meld a 7."
+                        // "Otherwise, draw and meld a 7."
                     } else {
                         self::executeDraw($player_id, 7, 'board');
                     }
+                    break;
+                    
+                // id 392, Echoes age 6: Morphine
+                case "392D1A":
+                    // "Draw a 6!"
+                    self::executeDraw($player_id, 6, 'hand');
                     break;
                     
                 // id 393, Echoes age 6: Indian Clubs
