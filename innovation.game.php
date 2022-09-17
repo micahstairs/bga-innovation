@@ -1820,8 +1820,8 @@ class Innovation extends Table
         $bottom_to = $transferInfo['bottom_to'];
         $age = $card['age'];
         
-        $score_from_update = $location_from == 'score';
-        $score_to_update = $location_to == 'score';
+        $score_from_update = $location_from == 'score' || $location_from == 'board';
+        $score_to_update = $location_to == 'score' || $location_to == 'board';
         
         $max_age_on_board_from_update = $location_from == 'board';
         $max_age_on_board_to_update = $location_to == 'board';
@@ -1838,10 +1838,10 @@ class Innovation extends Table
             $transferInfo['player_id'] = $player_id;
             
             if ($score_from_update) {
-                $progressInfo['new_score'] = self::updatePlayerScore($owner_from, -$age);
+                $progressInfo['new_score'] = self::updatePlayerScore($owner_from);
             }
             if ($score_to_update) {
-                $progressInfo['new_score'] = self::updatePlayerScore($owner_to, $age);
+                $progressInfo['new_score'] = self::updatePlayerScore($owner_to);
             }
             if ($max_age_on_board_from_update || $max_age_on_board_to_update) {
                 $max_age_on_board = self::getMaxAgeOnBoardTopCards($player_id);
@@ -1873,10 +1873,10 @@ class Innovation extends Table
             $transferInfo['opponent_id'] = $opponent_id;
             
             if ($score_from_update) {
-                $progressInfo['new_score_from'] = self::updatePlayerScore($owner_from, -$age);
+                $progressInfo['new_score_from'] = self::updatePlayerScore($owner_from);
             }
             if ($score_to_update) {
-                $progressInfo['new_score_to'] = self::updatePlayerScore($owner_to, $age);
+                $progressInfo['new_score_to'] = self::updatePlayerScore($owner_to);
             }
             
             if ($location_from == 'board') {
@@ -4634,7 +4634,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         /**
         Get the maximum visible bonus
         **/
-        return max(self::getVisibleBonusesOnBoard($player_id));
+        $visible_bonus_icons = self::getVisibleBonusesOnBoard($player_id);
+        return count($visible_bonus_icons) == 0 ? 0 : max($visible_bonus_icons);
     }
 
     // TODO(ECHOES#359): Make sure there isn't a bug here for situations involving nested execution.
@@ -4931,22 +4932,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
        ));
     }
     
-    function updatePlayerScore($player_id, $delta) {
+    function updatePlayerScore($player_id) {
+        $score = 0;
+        foreach (self::getCardsInLocation($player_id, 'score') as $card) {
+            $score += $card['age'];
+        }
+        $num_visible_bonus_icons = count(self::getVisibleBonusesOnBoard($player_id));
+        if ($num_visible_bonus_icons > 0) {
+            $score += self::getMaxBonusIconOnBoard($player_id) + $num_visible_bonus_icons - 1;
+        }
         self::DBQuery(self::format("
             UPDATE
                 player
             SET
-                player_innovation_score = player_innovation_score + {delta}
+                player_innovation_score = {score}
             WHERE
                 player_id = {player_id}
         ",
-            array('player_id' => $player_id, 'delta' => $delta)
+            array('player_id' => $player_id, 'score' => $score)
         ));
-        
-        // Stats
-        self::incStat($delta, 'score', $player_id);
-        
-        return self::getPlayerScore($player_id);
+        self::setStat($score, 'score', $player_id);
+        return $score;
     }
     
     // Returns the icon count for a particular color on a player's board (also works for hexagon icons if icon=0)
