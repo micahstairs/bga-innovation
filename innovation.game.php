@@ -13620,18 +13620,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card_ages = array();
                 $score_cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
                 $count = 0;
-                for ($age = 1; $age < 11; $age++) {
+                for ($age = 1; $age <= 10; $age++) {
                     if ($score_cards[$age] > 0) {
                         $count++;
                     }
                 }
                 
-                if ($count > 1 ) { // more than 1 unique age
+                if ($count >= 2) {
                     $step_max = 2;
                 } else {
-                    // Action will not be performed because there aren't two unique ages in score pile.
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two different values in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in their score pile.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
                 break;
             
@@ -13639,7 +13638,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "If you have five or more hexes visible on your board in one color, claim the Heritage achievement."
                 for ($color = 0; $color < 5 ; $color++) {
                     if (self::countVisibleIconsInPile($player_id, 0 /* empty hex */, $color) >= 5) {
-                        self::claimSpecialAchievement($owner_to, 437);
+                        self::claimSpecialAchievement($player_id, 437);
                         break;
                     }
                 }
@@ -13762,15 +13761,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 392, Echoes age 6: Morphine
             case "392E1":
+                // Get list of odd-valued cards in hand
                 $odd_card_ids = array();
-                $hand_cards = self::getCardsInHand($player_id);
-                foreach($hand_cards as $card) {
-                    if ($card['age'] == 1 || 
-                        $card['age'] == 3 || 
-                        $card['age'] == 5 || 
-                        $card['age'] == 7 || 
-                        $card['age'] == 9) {
-                            
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if ($card['age'] % 2 == 1) {
                         $odd_card_ids[] = $card['id'];
                     }
                 }
@@ -13779,21 +13773,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryArray($odd_card_ids);
                 }
                 
+                // Initialize the auxiliary value before the demand begins
                 self::setAuxiliaryValue(0);
                 break;
 
             case "392D1":
                 $odd_card_ids = array();
-                $hand_cards = self::getCardsInHand($player_id);
                 $max_value = self::getAuxiliaryValue();
-                
-                foreach($hand_cards as $card) {
-                    if ($card['age'] == 1 || 
-                        $card['age'] == 3 || 
-                        $card['age'] == 5 || 
-                        $card['age'] == 7 || 
-                        $card['age'] == 9) {
-                            
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if ($card['age'] % 2 == 1) {
                         $odd_card_ids[] = $card['id'];
                         $max_value = max($card['age'], $max_value);
                     }
@@ -13803,15 +13791,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($odd_card_ids) > 0) {
                     $step_max = 1;
                     self::setAuxiliaryArray($odd_card_ids);
-                }
-                else {
+                } else {
                     self::executeDraw($player_id, 6, 'hand');
                 }
                 break;
 
             case "392N1":
+                // "Draw a card of value one higher than the highest card returned due to the demand, if any were returned."
                 $max_value_returned = self::getAuxiliaryValue();
-                if ($max_value_returned > 0) { // if any returned
+                if ($max_value_returned > 0) {
                     self::executeDraw($player_id, $max_value_returned + 1, 'hand');
                 }
                 break;
@@ -20201,14 +20189,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "392N2A":
-            // "You may splay your blue cards right."
+            // "You may splay your red cards right."
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => true,
 
                 'splay_direction' => 2 /* right */,
-                'color' => array(1) /* red */
+                'color' => array(1), /* red */
             );
             break;
             
@@ -23385,15 +23373,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 387, Echoes age 6: Loom
                 case "387N1A":
                     if ($n > 0) { // card returned
-                        $all_diff_value_cards = array();
-                        $score_cards = self::getCardsInLocation($player_id, 'score');
-                        
-                        foreach($score_cards as $card) {
+                        $selectable_card_ids = array();
+                        foreach (self::getCardsInLocation($player_id, 'score') as $card) {
                             if (self::getGameStateValue('age_last_selected') != $card['age']) {
-                                $all_diff_value_cards[] = $card['id'];
+                                $selectable_card_ids[] = $card['id'];
                             }
                         }
-                        self::setAuxiliaryArray($all_diff_value_cards);
+                        self::setAuxiliaryArray($selectable_card_ids);
                     }
                     break;
 
