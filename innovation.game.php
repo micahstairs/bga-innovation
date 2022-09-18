@@ -9235,7 +9235,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     "visible_selectable_cards" => self::getVisibleSelectedCards($player_id),
                     "selectable_rectos" => self::getSelectableRectos($player_id), // Most of the time, the player choose among versos he can see this array is empty so this array is empty except for few dogma effects
                     "must_show_score" => $must_show_score,
-                    "show_all_cards_on_board" => $location_from == 'board' && $bottom_from == 1,
+                    "show_all_cards_on_board" => $special_type_of_choice == 0 && $splay_direction == null && $location_from == 'board' && $bottom_from == 1,
                 )
             ))
         );
