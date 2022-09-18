@@ -888,6 +888,31 @@
   height: 151px;
 }
 
+.echo_effect {
+  border-style: solid;
+  border-width: 1px;
+}
+.echo_effect.color_0 {
+  background-color: #b2def2;
+  border-color: #0e2a50;
+}
+.echo_effect.color_1 {
+  background-color: #f7c3d2;
+  border-color: #5a090c;
+}
+.echo_effect.color_2 {
+  background-color: #9dd19b;
+  border-color: #122c18;
+}
+.echo_effect.color_3 {
+  background-color: #f4f4be;
+  border-color: #8b6a28;
+}
+.echo_effect.color_4 {
+  background-color: #b4bcd8;
+  border-color: #220e40;
+}
+
 .effect.color_0 {
   border-color: #0e2a50;
 }
@@ -1163,7 +1188,7 @@
   margin-bottom: -1px;
   line-height: 4px;
 }
-.font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1, .font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2, .font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3, .font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4, .font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5, .font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6 {
+.font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1, .font_size_9 .square.M.icon_1, .font_size_10 .square.M.icon_1, .font_size_11 .square.M.icon_1, .font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2, .font_size_9 .square.M.icon_2, .font_size_10 .square.M.icon_2, .font_size_11 .square.M.icon_2, .font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3, .font_size_9 .square.M.icon_3, .font_size_10 .square.M.icon_3, .font_size_11 .square.M.icon_3, .font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4, .font_size_9 .square.M.icon_4, .font_size_10 .square.M.icon_4, .font_size_11 .square.M.icon_4, .font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5, .font_size_9 .square.M.icon_5, .font_size_10 .square.M.icon_5, .font_size_11 .square.M.icon_5, .font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6, .font_size_9 .square.M.icon_6, .font_size_10 .square.M.icon_6, .font_size_11 .square.M.icon_6 {
   width: 8px;
   height: 8px;
 }
@@ -1189,27 +1214,27 @@
 .font_size_1 .square.M.icon_6, .font_size_2 .square.M.icon_6, .font_size_3 .square.M.icon_6, .font_size_4 .square.M.icon_6, .font_size_5 .square.M.icon_6, .font_size_6 .square.M.icon_6 {
   background-position-x: -20.8333335px;
 }
-.font_size_7 .square.M, .font_size_8 .square.M {
+.font_size_7 .square.M, .font_size_8 .square.M, .font_size_9 .square.M, .font_size_10 .square.M, .font_size_11 .square.M {
   background-size: 50px auto;
   background-position-y: -42px;
   border: none;
 }
-.font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1 {
+.font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1, .font_size_9 .square.M.icon_1, .font_size_10 .square.M.icon_1, .font_size_11 .square.M.icon_1 {
   background-position-x: 0px;
 }
-.font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2 {
+.font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2, .font_size_9 .square.M.icon_2, .font_size_10 .square.M.icon_2, .font_size_11 .square.M.icon_2 {
   background-position-x: -8.3333333px;
 }
-.font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3 {
+.font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3, .font_size_9 .square.M.icon_3, .font_size_10 .square.M.icon_3, .font_size_11 .square.M.icon_3 {
   background-position-x: -16.6666666px;
 }
-.font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4 {
+.font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4, .font_size_9 .square.M.icon_4, .font_size_10 .square.M.icon_4, .font_size_11 .square.M.icon_4 {
   background-position-x: -24.9999999px;
 }
-.font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5 {
+.font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5, .font_size_9 .square.M.icon_5, .font_size_10 .square.M.icon_5, .font_size_11 .square.M.icon_5 {
   background-position-x: -33.3333332px;
 }
-.font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6 {
+.font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6, .font_size_9 .square.M.icon_6, .font_size_10 .square.M.icon_6, .font_size_11 .square.M.icon_6 {
   background-position-x: -41.6666665px;
 }
 .square.M.age {
@@ -1243,7 +1268,7 @@
   font-size: 7px;
   line-height: 8px;
 }
-.font_size_8 .square.M.age {
+.font_size_8 .square.M.age, .font_size_9 .square.M.age, .font_size_10 .square.M.age, .font_size_11 .square.M.age {
   width: 9px;
   height: 9px;
   font-size: 8px;
@@ -1570,8 +1595,12 @@
   background-position-x: -41px;
 }
 .square_card_icon.M.icon_10 {
-  background-color: white;
   background-image: none;
+}
+.square_card_icon.M.icon_10 > span {
+  padding: 1px;
+  display: table-cell;
+  vertical-align: middle;
   text-align: center;
 }
 .square_card_icon.M.color_0 {

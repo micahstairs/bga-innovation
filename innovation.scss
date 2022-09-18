@@ -854,6 +854,30 @@
         height: 151px;
     }
 }
+.echo_effect {
+    border-style: solid;
+    border-width: 1px;
+    &.color_0 {
+        background-color: #b2def2;
+        border-color: #0e2a50;
+    }
+    &.color_1 {
+        background-color: #f7c3d2;
+        border-color: #5a090c;
+    }
+    &.color_2 {
+        background-color: #9dd19b;
+        border-color: #122c18;
+    }
+    &.color_3 {
+        background-color: #f4f4be;
+        border-color: #8b6a28;
+    }
+    &.color_4 {
+        background-color: #b4bcd8;
+        border-color: #220e40;
+    }
+}
 .effect.color_0 {
     border-color: #0e2a50;
     &.light {
@@ -1078,7 +1102,7 @@
             margin-top: -1px;
             margin-bottom: -1px;
             line-height: 4px;
-            .font_size_7 &, .font_size_8 & {
+            .font_size_7 &, .font_size_8 &, .font_size_9 &, .font_size_10 &, .font_size_11 & {
                 width: 8px;
                 height: 8px;
             }
@@ -1088,7 +1112,7 @@
             background-position-y: -21px;
             @include m.generate-icon-x-position(1, 6, 0, 4.1666667px);
         }
-        .font_size_7 &, .font_size_8 & {
+        .font_size_7 &, .font_size_8 &, .font_size_9 &, .font_size_10 &, .font_size_11 & {
             background-size: 50px auto;
             background-position-y: -42px;
             border: none; // At this size, it looks better without a border since there's a white border from the image.
@@ -1122,7 +1146,7 @@
 			font-size: 7px;
 			line-height: 8px;
 		}
-        .font_size_8 &.age {
+        .font_size_8 &.age, .font_size_9 &.age, .font_size_10 &.age, .font_size_11 &.age {
 			width: 9px;
 			height: 9px;
 			font-size: 8px;
@@ -1320,11 +1344,16 @@
             height: 40px;
             background-position-x: -41px;
         }
-        // TODO(ECHOES#355): Finish rendering Echo effect. This box is a placeholder.
         &.icon_10 {
-            background-color: white;
             background-image: none;
-            text-align: center;
+            // The following line will be added dynamically via JavaScript:
+            // display: table;
+            & > span {
+                padding: 1px;
+                display: table-cell;
+                vertical-align: middle;
+                text-align: center;
+            }
         }
         &.color_0 {
             background-position-y: -1px;
