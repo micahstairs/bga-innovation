@@ -4413,7 +4413,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $splayed_up = $top_card['splay_direction'] == 3;
 
         // If unsplayed, only return the count of the icons on the top card
-        if ($unsplayed == 0) {
+        if ($unsplayed) {
             return $count;
         }
         
