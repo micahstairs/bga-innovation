@@ -854,6 +854,30 @@
         height: 151px;
     }
 }
+.echo_effect {
+    border-style: solid;
+    border-width: 1px;
+    &.color_0 {
+        background-color: #b2def2;
+        border-color: #0e2a50;
+    }
+    &.color_1 {
+        background-color: #f7c3d2;
+        border-color: #5a090c;
+    }
+    &.color_2 {
+        background-color: #9dd19b;
+        border-color: #122c18;
+    }
+    &.color_3 {
+        background-color: #f4f4be;
+        border-color: #8b6a28;
+    }
+    &.color_4 {
+        background-color: #b4bcd8;
+        border-color: #220e40;
+    }
+}
 .effect.color_0 {
     border-color: #0e2a50;
     &.light {
@@ -1320,13 +1344,12 @@
             height: 40px;
             background-position-x: -41px;
         }
-        // TODO(ECHOES#355): Finish rendering Echo effect. This box is a placeholder.
         &.icon_10 {
-            background-color: white;
             background-image: none;
             // The following line will be added dynamically via JavaScript:
             // display: table;
             & > span {
+                padding: 1px;
                 display: table-cell;
                 vertical-align: middle;
                 text-align: center;

@@ -888,6 +888,31 @@
   height: 151px;
 }
 
+.echo_effect {
+  border-style: solid;
+  border-width: 1px;
+}
+.echo_effect.color_0 {
+  background-color: #b2def2;
+  border-color: #0e2a50;
+}
+.echo_effect.color_1 {
+  background-color: #f7c3d2;
+  border-color: #5a090c;
+}
+.echo_effect.color_2 {
+  background-color: #9dd19b;
+  border-color: #122c18;
+}
+.echo_effect.color_3 {
+  background-color: #f4f4be;
+  border-color: #8b6a28;
+}
+.echo_effect.color_4 {
+  background-color: #b4bcd8;
+  border-color: #220e40;
+}
+
 .effect.color_0 {
   border-color: #0e2a50;
 }
@@ -1570,10 +1595,10 @@
   background-position-x: -41px;
 }
 .square_card_icon.M.icon_10 {
-  background-color: white;
   background-image: none;
 }
 .square_card_icon.M.icon_10 > span {
+  padding: 1px;
   display: table-cell;
   vertical-align: middle;
   text-align: center;
