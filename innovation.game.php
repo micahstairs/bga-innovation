@@ -6520,7 +6520,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getJSCardEffectQuery($card, $effect_type, $effect_number) {
-        // TODO(ECHOES#359): Update this to account for echo effects (which are sometimes triggered on other cars)
+        if ($effect_type == 3) {
+            return self::getJSCardId($card) . " .echo_effect";
+        }
         return self::getJSCardId($card) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
 
