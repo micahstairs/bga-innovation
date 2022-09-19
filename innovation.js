@@ -763,7 +763,6 @@ function (dojo, declare) {
             
             // CURRENT DOGMA CARD EFFECT
             if (gamedatas.JSCardEffectQuery !== null) {
-                console.log(gamedatas.JSCardEffectQuery);
                 // Highlight the current effect if visible
                 dojo.query(gamedatas.JSCardEffectQuery).addClass('current_effect');
             }
