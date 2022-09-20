@@ -1249,7 +1249,7 @@ $this->textual_card_infos = array(
 
 339 => array('name' => clienttranslate('Chopsticks'),
     'non_demand_effect_1' => clienttranslate('If the ${age_1} deck has at least one card, you may transfer its bottom card to the available achievements.'),
-    'echo_effect_1' => clienttranslate('Draw a ${age_1}'),
+    'echo_effect_1' => clienttranslate('Draw a ${age_1}.'),
 ),
 
 340 => array('name' => clienttranslate('Noodles'),
