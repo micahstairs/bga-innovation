@@ -1280,7 +1280,7 @@ $this->textual_card_infos = array(
 
 345 => array('name' => clienttranslate('Lever'),
     'non_demand_effect_1' => clienttranslate('You may return any number of cards from your hand. For every two cards of matching value returned, draw a card of value one higher.'),
-    'echo_effect_1' => clienttranslate('Draw two ${age_2}.'),
+    'echo_effect_1' => clienttranslate('Draw two ${age_2}s.'),
 ),  
 
 346 => array('name' => clienttranslate('Linguistics'),
@@ -1599,7 +1599,7 @@ $this->textual_card_infos = array(
 /* Echoes - Age 8 */
 
 405 => array('name' => clienttranslate('Radio Telescope'),
-    'non_demand_effect_1' => clienttranslate('For every two ${icon_3} on your board, draw a ${age_9}. Meld one of the cards drawn and return the rest. If you meld AI due to this dogma effect, you win.'),
+    'non_demand_effect_1' => clienttranslate('For every two ${icon_3} on your board, draw a ${age_9}. Meld one of the cards drawn and return the rest. If you meld A. I. due to this dogma effect, you win.'),
 ),
 
 406 => array('name' => clienttranslate('X-Ray'),
