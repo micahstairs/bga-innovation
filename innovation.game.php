@@ -3185,9 +3185,9 @@ class Innovation extends Table
     
     /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
     function checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements) {
-        // TODO(CITIES,FIGURES): Update this once there are other special achievements to test for.
+        // TODO(FIGURES): Update this once there are other special achievements to test for.
         $achievements_to_test = $onlyImmediateAchievements ? array(106) : array(105, 106, 107, 108, 109);
-        if (self::getGameStateValue('echoes_mode') > 1) {
+        if (self::getGameStateValue('echoes_mode') > 1 && !$onlyImmediateAchievements) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
         $end_of_game = false;
@@ -7233,21 +7233,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     case 11: // Left Arrow: Splay the city's color left
                         if (self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
-                            self::claimSpecialAchievement($player_id, 325);
+                            self::claimSpecialAchievement($player_id, 325); // Legend
                         } else {
                             self::splayLeft($player_id, $player_id, $card['color']);
                         }
                         break;
                     case 12: // Right Arrow: Splay the city's color right
                         if ( self::getCurrentSplayDirection($player_id, $card['color']) == 2) {
-                            self::claimSpecialAchievement($player_id, 326);
+                            self::claimSpecialAchievement($player_id, 326); // Repute
                         } else {
                             self::splayRight($player_id, $player_id, $card['color']);
                         }
                         break;
                     case 13: // Up Arrow: Splay the city's color up
                         if ( self::getCurrentSplayDirection($player_id, $card['color']) == 3) {
-                            self::claimSpecialAchievement($player_id, 327);
+                            self::claimSpecialAchievement($player_id, 327); // Fame
                         } else {
                             self::splayUp($player_id, $player_id, $card['color']);
                         }
