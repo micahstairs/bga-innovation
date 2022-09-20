@@ -2282,7 +2282,7 @@ function (dojo, declare) {
             }
             if (resource_icon_id == 10) {
                 var card_data = this.cards[card.id];
-                var div = this.createAdjustedContent(this.parseForRichedText(_(card_data.echo_effect_1), size), 'echo_effect color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + resource_icon_id, size, size == 'M' ? 11 : 30);
+                var div = this.createAdjustedContent(this.parseForRichedText(_(card_data.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + resource_icon_id, size, size == 'M' ? 11 : 30);
                 // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
                 return div.replace("div class", "div style=\"display: table;\" class");
             }
