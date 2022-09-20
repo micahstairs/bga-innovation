@@ -183,17 +183,28 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_6'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
-        if ($from_version <= 2111030321) {
-            $players = self::getCollectionFromDb("SELECT player_id FROM player");
-            foreach($players as $player_id => $player) {
-                self::updatePlayerRessourceCounts($player_id);
-            }
-        }
 
+        // TODDO(ECHOES): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            self::initGameStateLabels(array('melded_card_id' => 94));
+            // TODDO(ECHOES): Make sure newly added global variables get added here.
+            self::initGameStateLabels(array(
+                'bottom_from' => 86,
+                'with_bonus' => 87,
+                'without_bonus' => 88,
+                'card_ids_are_in_auxiliary_array' => 89,
+                'melded_card_id' => 94,
+                'cities_mode' => 103,
+                'echoes_mode' => 104,
+            ));
+            self::setGameStateValue('bottom_from', -1);
+            self::setGameStateValue('with_bonus', -1);
+            self::setGameStateValue('without_bonus', -1);
+            self::setGameStateValue('card_ids_are_in_auxiliary_array', -1);
             self::setGameStateValue('melded_card_id', -1);
+            self::setGameStateValue('cities_mode', 1);
+            self::setGameStateValue('echoes_mode', 1);
         }
+        // TODO(LATER): Remove this.
         if ($this->innovationGameState->get('release_version') == 0) {
             self::initGameStateLabels(array(
                 'card_id_1' => 69,
@@ -213,20 +224,11 @@ class Innovation extends Table
                 'icon_hash_5' => 83,
                 'enable_autoselection' => 84,
                 'include_relics' => 85,
-                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
-                'bottom_from' => 86,
-                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
-                'with_bonus' => 87,
-                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
-                'without_bonus' => 88,
-                // TODDO(ECHOES): Move this later once we have a better idea of what need to need to do to migrate ongoing games.
-                'card_ids_are_in_auxiliary_array' => 89,
                 'relic_id' => 95,
                 'current_action_number' => 96,
                 'current_nesting_index' => 97,
                 'release_version' => 98,
                 'debug_mode' => 99,
-                // TODO(ECHOES,CITIES,FIGURES): Make sure to initialize the new game options.
                 'artifacts_mode' => 102,
             ));
             self::setGameStateValue('card_id_1', -2);
@@ -256,9 +258,6 @@ class Innovation extends Table
             self::setGameStateValue('debug_mode', 0);
             self::setGameStateValue('artifacts_mode', 1);
         }
-
-        // TODO(LATER): Remove this once https://boardgamearena.com/table?table=285819878 is done.
-        self::applyDbUpgradeToAllDB("UPDATE DBPREFIX_card SET location = 'removed', owner =  0 WHERE owner = '89343824' AND location = 'deck';");
     }
 
     //****** CODE FOR DEBUG MODE
@@ -492,9 +491,9 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
-        // Indicate that this production game was created after the Artifacts expansion was released
-        // TODO(CITIES,ECHOES,FIGURES): Update this before releasing future expansions.
-        self::setGameStateInitialValue('release_version', 1);
+        // Indicate that this production game was created after the Cities and Echoes expansions were released
+        // TODO(FIGURES): Update this before releasing future expansions.
+        self::setGameStateInitialValue('release_version', 2);
 
         // Init global values with their initial values
         $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
@@ -8121,7 +8120,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // - Services: id 93
         // - Specialization: id 94
 
-        // TODO(ECHOES,FIGURES): Add cases.
+        // TODO(ECHOES#597,FIGURES): Add cases.
         switch ($card['id']) {
 
             /*** Basic cases involving empty hands and/or empty score piles **/
@@ -18751,7 +18750,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         // id 333, Echoes age 1: Bangle
-        // TODO(ECHOES): Test this.
         case "333E1A":
             $options = array(
                 'player_id' => $player_id,
@@ -23733,7 +23731,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
 
-            // TODO(ECHOES,FIGURES): Figure out if we need to make any updates to this logic.
+            // TODO(ECHOES,FIGURES): Figure out if we need to make any updates to this logic (e.g. with_bonus).
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
                 ($location_from == 'hand' || $location_from == 'score') &&
