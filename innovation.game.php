@@ -2394,6 +2394,9 @@ class Innovation extends Table
                 } else if ($code === '136N1B' || $code === '161N1A') {
                     $message_for_player = clienttranslate('${You_must} choose a top card to execute from the board of ${targetable_players}');
                     $message_for_others = clienttranslate('${player_must} choose a top card to execute from the board of ${targetable_players}');
+                } else if ($code === '417N1A') {
+                    $message_for_player = clienttranslate('${You_must} choose a top card to transfer from the board of ${targetable_players} to their score pile');
+                    $message_for_others = clienttranslate('${player_must} choose a top card to transfer from the board of ${targetable_players} to their score pile');
                 } else {
                     // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -13035,16 +13038,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 360, Echoes age 3: Homing Pigeons
             case "360D1":
-                $cards_in_hand = self::getCardsInLocationKeyedByAge($launcher_id, 'hand');
-                $ages = array();
-                for ($age = 1; $age <= 10; $age++) {
-                    if (count($cards_in_hand[$age]) > 0) {
-                        $ages[] = $age;
+                $cards_in_hand_cnt = self::getCardsInLocationKeyedByAge($launcher_id, 'hand');
+                $score_cards = self::getCardsInLocation($player_id, 'score');
+                
+                $card_ids_to_return = array();
+                foreach ($score_cards as $card) {
+                    if ($cards_in_hand_cnt[$card['age']] > 0) {
+                        $card_ids_to_return[] = $card['id'];
                     }
                 }
-                if (count($ages) > 0) {
+                
+                if (count($card_ids) > 0) {
                     $step_max = 1;
-                    self::setAuxiliaryValueFromArray($ages); // store ages for later
+                    self::setAuxiliaryArray($card_ids_to_return); // store ids for later
                 }
                 break;
 
@@ -14132,6 +14138,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 411, Echoes age 8: Air Conditioner
+            case "411E1":
+                $step_max = 1;
+                break;
+
+            case "411D1":
+                // Find all top cards
+                $top_cards = self::countCardsInLocationKeyedByAge($player_id, 'board');
+                $score_cards = self::getCardsInLocation($player_id, 'score');
+                
+                $card_ids_to_return = array();
+                foreach ($score_cards as $card) {
+                    if ($top_cards[$card['age']] > 0) {
+                        $card_ids_to_return[] = $card['id'];
+                    }
+                }
+                
+                if (count($card_ids_to_return) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryArray($card_ids_to_return);
+                }
+                break;
+
             // id 412, Echoes age 8: Tractor
             case "412E1":
                 // "Draw a 7."
@@ -14154,6 +14183,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 3;
                 break;
 
+            // id 417, Echoes age 9: Helicopter
+            case "417N1":
+                $step_max = 2;
+                break;
+                
             // id 418, Echoes age 9: Jet
             case "418E1":
                 self::setAuxiliaryValue(-1);
@@ -19397,7 +19431,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age_array' => self::getAuxiliaryValueAsArray(),
+                'card_ids_are_in_auxiliary_array' => true,
             );
             break;
 
@@ -20722,6 +20756,38 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;     
             
+        // id 411, Echoes age 8: Air Conditioner
+        case "411E1A":
+            // "You may score a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'score_keyword' => true,
+            );
+            break;
+
+        case "411D1A":
+            // "I demand you return all cards from your score pile of value matching any of your top cards!"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+            
         // id 414, Echoes age 8: Television
         case "414N1A":
             // "Choose a value "
@@ -20779,7 +20845,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'require_achievement_eligibility' => true,
             );
             break;
-        
+
+        // id 417, Echoes age 9: Helicopter
+        case "417N1A":
+            // "Transfer a top card other than Helicopter from any player's board to its owner's score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => 'any player',
+                'location_from' => 'board',
+                'location_to' => 'none',
+                
+                'not_id' => 417, // helicopter
+            );
+            break;
+
+        case "417N1B":
+            // "You may return a card from your hand which shares an icon with the transferred card."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+            
         // id 418, Echoes age 9: Jet
         case "418E1A":
             // "Meld a card from your hand."
@@ -23581,6 +23679,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 417, Echoes age 9: Helicopter
+                case "417N1A":
+                    if ($n > 0) {
+                        $transferred_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                        self::transferCardFromTo($transferred_card, self::getGameStateValue('owner_last_selected'), 'score', false, /*score_keyword*/false);
+                        
+                        // Need to fill the auxarray with all eligible cards in hand.
+                        // If none are available, skip the last interaction.
+                        $eligible_cards = array();
+                        $hand_cards = self::getCardsInHand($player_id);
+                        if (count($hand_cards) > 0) {
+                            foreach ($hand_cards as $card) {
+                                for ($icon = 1; $icon <= 6; $icon++) {
+                                    if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
+                                        $eligible_cards[] = $card['id'];
+                                        break; // only 1 icon needs to be common
+                                    }
+                                }
+                            }
+                            self::setAuxiliaryArray($eligible_cards);
+                        } else {
+                            self::setStepMax(1); // none left to return
+                        }
+                    }
+                    break;
+
+                case "417N1B":
+                    // "If you do, repeat this dogma effect."
+                    if ($n > 0) {
+                        $step = 0; self::setStep(0); // go back to the first interaction
+                    }
+                    break;
+                    
                 // id 418, Echoes age 9: Jet
                 case "418E1A":
                     if ($n > 0) {
