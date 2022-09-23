@@ -1809,6 +1809,8 @@ function (dojo, declare) {
                 }
                 return players.join(', ');
             };
+
+            // TODO(ECHOES): Consider mentioning echo effect executions.
             
             if (exists_i_demand_effect) {
                 if (info.players_executing_i_demand_effects.length == 0) {

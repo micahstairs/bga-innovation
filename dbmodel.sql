@@ -78,9 +78,10 @@ CREATE TABLE IF NOT EXISTS `nested_card_execution` (
 
 /* Table used to manage the execution of echo effects */
 CREATE TABLE IF NOT EXISTS `echo_execution` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
  `execution_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of when the echo effect should be executed (an index of 1 is used for the final card to be executed, and higher indicies are used for cards buried deeper)',
  `card_id` SMALLINT COMMENT 'the ID of the card',
-  PRIMARY KEY(`execution_index`)
+  PRIMARY KEY(`nesting_index`, `execution_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Table used to store a table-based auxiliary array (some card implementations require storing lots of integers) */

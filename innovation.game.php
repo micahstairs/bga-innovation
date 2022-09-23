@@ -2050,13 +2050,17 @@ class Innovation extends Table
 
     function getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) {
         if (self::getGameStateValue('release_version') >= 1) {
-            $post_execution_indicator = self::getCurrentNestedCardState()['post_execution_index'] == 0 ? '' : '+';
+            $nested_card_state = self::getCurrentNestedCardState();
+            $post_execution_indicator = $nested_card_state['post_execution_index'] == 0 ? '' : '+';
         } else {
             $post_execution_indicator = '';
         }
         // Echo effects are sometimes executed on cards other than the card being dogma'd
         if ($current_effect_type == 3) {
-            $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+            $nesting_index = $nested_card_state['nesting_index'];
+            $card_id = self::getUniqueValueFromDB(
+                self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                    array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             $current_effect_number = 1;
         }
         return $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $post_execution_indicator;
@@ -6428,7 +6432,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $current_effect_number = $nested_card_state['current_effect_number'];
             // Echo effects are sometimes executed on cards other than the card being dogma'd
             if ($current_effect_type == 3) {
-                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
             $card = self::getCardInfo($card_id);
         } else {
@@ -6481,7 +6488,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card_id = $nested_card_state['card_id'];
                 // Echo effects are sometimes executed on cards other than the card being dogma'd
                 if ($current_effect_type == 3) {
-                    $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+                    $nesting_index = $nested_card_state['nesting_index'];
+                    $card_id = self::getUniqueValueFromDB(
+                        self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                            array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
                 }
                 $card = self::getCardInfo($card_id);
                 $card_names['card_'.$i] = self::getCardName($card_id);
@@ -6739,17 +6749,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else {
                 $as_if_on = $card['id'];
             }
-            $nesting_index = self::getGameStateValue('current_nesting_index');
+            $next_nesting_index = self::getGameStateValue('current_nesting_index') + 1;
             $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
             $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
-            $effect_type = $execute_demand_effects ? ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1)) : 1;
-            // TODO(ECHOES#359): Execute echo effects (only when execute_demand_effects=true).
+            $has_echo_effect = self::getEchoEffect($card['id']) !== null;
+            $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : 1;
+            if ($effect_type == 3) {
+                self::DbQuery(self::format("
+                        INSERT INTO echo_execution
+                            (nesting_index, execution_index, card_id)
+                        VALUES
+                            ({nesting_index}, 1, {card_id})
+                    ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'])));
+            }
             self::DbQuery(self::format("
                 INSERT INTO nested_card_execution
                     (nesting_index, card_id, executing_as_if_on_card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
                 VALUES
                     ({nesting_index}, {card_id}, {as_if_on}, {launcher_id}, {effect_type}, 1, -1, -1)
-            ", array('nesting_index' => $nesting_index + 1, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+            ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
         } else {
             for($i=8; $i>=1; $i--) {
                 self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
@@ -7547,9 +7565,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             for ($i = count($visible_echo_effects); $i >= 1; $i--) {
                 self::DbQuery(self::format("
                     INSERT INTO echo_execution
-                        (execution_index, card_id)
+                        (nesting_index, execution_index, card_id)
                     VALUES
-                        ({execution_index}, {card_id})
+                        (0, {execution_index}, {card_id})
                 ", array('execution_index' => $i, 'card_id' => $visible_echo_effects[$i - 1])));
             }
         } else if (self::getDemandEffect($card['id']) == null) {
@@ -9562,7 +9580,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $launcher_id = self::getGameStateValue('active_player');
         if ($previous_effect_type == 3) { // echo effect
             $previous_effect_number = $nested_card_state['current_effect_number'];
-            self::DbQuery(self::format("DELETE FROM echo_execution WHERE execution_index = {execution_index}", array('execution_index' => $previous_effect_number)));
+            $nesting_index = $nested_card_state['nesting_index'];
+            self::DbQuery(
+                self::format("DELETE FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {execution_index}",
+                    array('nesting_index' => $nesting_index, 'execution_index' => $previous_effect_number)));
             
             if ($previous_effect_number > 1) {
                 // Move to next echo effect
@@ -9804,7 +9825,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $current_effect_number = $nested_card_state['current_effect_number'];
             // Echo effects are sometimes executed on cards other than the card being dogma'd
             if ($current_effect_type == 3) {
-                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
@@ -14495,7 +14519,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $current_effect_number = $nested_card_state['current_effect_number'];
             // Echo effects are sometimes executed on cards other than the card being dogma'd
             if ($current_effect_type == 3) {
-                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}", array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
@@ -21226,7 +21251,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $current_effect_number = $nested_card_state['current_effect_number'];
             // Echo effects are sometimes executed on cards other than the card being dogma'd
             if ($current_effect_type == 3) {
-                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE execution_index = {effect_number}", array('effect_number' => $current_effect_number)));
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
         } else {
             $nested_id_1 = self::getGameStateValue('nested_id_1');
