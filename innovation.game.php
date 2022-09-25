@@ -2098,6 +2098,9 @@ class Innovation extends Table
         case 'deck->achievements':
             $message = clienttranslate('The bottom ${<}${age}${>} card is transfered to the available achievements.');
             break;
+        case 'achievements->deck':
+            $message = clienttranslate('A ${<}${age}${>} achievement card is returned to its deck.');
+            break;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -14275,6 +14278,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 3;
                 break;
 
+            // id 415, Echoes age 9: Calculator
+            case "415N1":
+                self::setAuxiliaryArray(array());
+                $step_max = 1;
+                break;
+
+            case "415N2":
+                $step_max = 1;
+                break;
+
+            // id 416, Echoes age 9: Laser
+            case "416N1":
+                $step_max = 2;
+                break;
+                
             // id 417, Echoes age 9: Helicopter
             case "417N1":
                 $step_max = 2;
@@ -21017,6 +21035,83 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 415, Echoes age 9: Calculator
+        case "415N1A":
+            // "Score two bottom non-blue cards from your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',                
+
+                'bottom_from' => true,
+                
+                'color' => array(1,2,3,4) /* non-blue */
+            );
+            break; 
+
+       case "415N1B":
+            // "and repeat this dogma effect (once only)."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',                
+
+                'bottom_from' => true,
+                
+                'color' => array(1,2,3,4) /* non-blue */
+            );
+            break; 
+
+        case "415N2A":
+            // "You may splay your blue cards up."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 3 /* up */,
+                'color' => array(0) /* blue */
+            );
+            break; 
+            
+        // id 416, Echoes age 9: Laser
+        case "416N1A":
+            // "Return all unclaimed standard achievements."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'deck',                
+            );
+            break;
+            
+        case "416N1B":
+            // "Then, return half (rounded up) of the cards in your score pile."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => ceil(self::countCardsInLocation($player_id, 'score') / 2),
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',                
+            );
+            break;
+
         // id 417, Echoes age 9: Helicopter
         case "417N1A":
             // "Transfer a top card other than Helicopter from any player's board to its owner's score pile."
@@ -23900,7 +23995,51 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1);
                     }
                     break;
+                    
+               // id 415, Echoes age 9: Calculator
+                case "415N1A":
+                    if ($n == 2) {
+                        // "If you scored two"
+                        $card_values = self::getAuxiliaryArray();
+                        // "and they have a total value less than 11"
+                        $total_value = $card_values[0] + $card_values[1];
+                        if ($total_value < 11) {
+                            // "draw a card of that total value and repeat this dogma effect (once only)."
+                            self::executeDraw($player_id, $total_value, 'hand');
+                            self::incrementStepMax(1);
+                        }
+                    } 
+                    break;
+                    
+                case "415N1B":
+                    if ($n == 2) {
+                        // "If you scored two"
+                        $card_values = self::getAuxiliaryArray();
+                        // "and they have a total value less than 11"
+                        $total_value = $card_values[0] + $card_values[1];
+                        if ($total_value < 11) {
+                            // "draw a card of that total value."
+                            self::executeDraw($player_id, $total_value, 'hand');
+                        }
+                    } 
+                    break;                    
 
+                // id 416, Echoes age 9: Laser
+                case "416N1A":
+                    $number_of_cards_to_return = ceil(self::countCardsInLocation($player_id, 'score') / 2);
+                    if ($number_of_cards_to_return == 0) {
+                        // "Draw and meld two 10s."
+                        self::executeDraw($player_id, 10, 'board');
+                        self::executeDraw($player_id, 10, 'board');
+                    }
+                    break;
+
+                case "416N1B":
+                    // "Draw and meld two 10s."
+                    self::executeDraw($player_id, 10, 'board');
+                    self::executeDraw($player_id, 10, 'board');
+                    break;
+                    
                 // id 417, Echoes age 9: Helicopter
                 case "417N1A":
                     if ($n > 0) {
@@ -25075,6 +25214,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
                     'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
                 self::setAuxiliaryValue2($choice);
+                break;
+
+            // id 415, Echoes age 9: Calculator
+            case "415N1A":
+                // Track the cards scored
+                $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                $card_values = self::getAuxiliaryArray();
+                $card_values[] = $card['age'];
+                self::setAuxiliaryArray($card_values);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                 break;
 
             // id 421, Echoes age 9: ATM
