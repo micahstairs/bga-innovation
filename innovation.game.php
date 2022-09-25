@@ -2402,8 +2402,8 @@ class Innovation extends Table
                 break;
             case 'hand->none':
                 if ($code === '350N1B' || $code === '350N1D') {
-                    $message_for_player = clienttranslate('${You_must} choose a ${card} from your hand to meld or score');
-                    $message_for_others = clienttranslate('${player_must} choose ${number} other ${card} from his hand to meld or score');
+                    $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your hand to meld or score');
+                    $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his hand to meld or score');
                 } else {
                     // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -2477,8 +2477,13 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
                 break;
             case 'board->hand':
-                $message_for_player = clienttranslate('${You_must} take back ${number} top ${card} from your board to your hand');
-                $message_for_others = clienttranslate('${player_must} take back ${number} top ${card} from his board to his hand');
+                if ($bottom_from == 1) {
+                    $message_for_player = clienttranslate('${You_must} take ${number} bottom ${card} from your board into your hand');
+                    $message_for_others = clienttranslate('${player_must} take ${number} bottom ${card} from his board into his hand');
+                } else {
+                    $message_for_player = clienttranslate('${You_must} take ${number} top ${card} from your board into your hand');
+                    $message_for_others = clienttranslate('${player_must} take ${number} top ${card} from his board into his hand');
+                }
                 break;
             case 'board->score':
                 if ($bottom_from == 1) {
@@ -2881,6 +2886,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your hand to ${opponent_name}\'s score pile');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${your} score pile');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${opponent_name}\'s score pile');
+                break;
+            
+            case 'hand->board':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your hand to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his hand to ${opponent_name}\'s board');
                 break;
                 
             case 'hand->achievements':
@@ -8824,14 +8835,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 347, Echoes age 2: Crossbow
             case "347N1A":
-                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from hand to their board:');
-                $message_for_others = clienttranslate('${player_name} must choose another player to transfer his card from hand to that player\'s board');
+                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from your hand to their board');
+                $message_for_others = clienttranslate('${player_name} must choose another player to transfer a card from his hand to that player\'s board');
                 break;
 
             // id 350, Echoes age 2: Scissors
             case "350N1B":
-                $message_for_player = clienttranslate('${You} must make a choice to meld or score the selected card');
-                $message_for_others = clienttranslate('${player_name} must make a choice to meld or score the selected card');
+                $message_for_player = clienttranslate('${You} must meld or score the selected card');
+                $message_for_others = clienttranslate('${player_name} must meld or score the selected card');
                 $options = array(
                                 array('value' => 1, 'text' => self::format(clienttranslate("Meld"), array())),
                                 array('value' => 0, 'text' => self::format(clienttranslate("Score"), array()))
@@ -8839,8 +8850,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "350N1D":
-                $message_for_player = clienttranslate('${You} must make a choice to meld or score the selected card');
-                $message_for_others = clienttranslate('${player_name} must make a choice to meld or score the selected card');
+                $message_for_player = clienttranslate('${You} must meld or score the selected card');
+                $message_for_others = clienttranslate('${player_name} must meld or score the selected card');
                 $options = array(
                                 array('value' => 1, 'text' => self::format(clienttranslate("Meld"), array())),
                                 array('value' => 0, 'text' => self::format(clienttranslate("Score"), array()))
@@ -12872,14 +12883,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 347, Echoes age 2: Crossbow
             case "347D1":
-                if (count(self::getCardsInHand($player_id)) > 0) {
-                    $step_max = 1; // --> 1 interaction: see B
+                if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                    $step_max = 1;
                 }
                 break;
 
             case "347N1":
-                if (count(self::getCardsInHand($player_id)) > 0) {
-                    $step_max = 2; // --> 1 interaction: see B
+                if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                    $step_max = 2;
                 }
                 break;
 
@@ -12931,7 +12942,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 350, Echoes age 2: Scissors
             case "350E1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "350N1":
@@ -21270,7 +21281,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n_min' => 1,
-                'can_pass' => false,
+                'can_pass' => true,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -23125,8 +23136,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 350, Echoes age 2: Scissors
                 case "350N1A":
                     if ($n > 0) { // card needs to be melded or returned
-                        $hand_card_cnt = self::countCardsInLocation($player_id, 'hand');
-                        if ($hand_card_cnt > 1) {
+                        $hand_card_count = self::countCardsInLocation($player_id, 'hand');
+                        if ($hand_card_count > 1) {
                             self::incrementStepMax(1); // Next card choice must be given
                         }
                         self::incrementStepMax(1); // Must proceed to the meld/score choice
@@ -24538,9 +24549,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($choice == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to score your bottom yellow card.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to score his bottom yellow card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                } else{
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to score your bottom yellow card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to score his bottom yellow card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -24618,42 +24626,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             // id 346, Echoes age 2: Linguistics
-            case "346N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-            
-            // id 347, Echoes age 2: Crossbow
-            case "347N1A":
-                self::notifyPlayer($choice, 'log', clienttranslate('${You} choose player ${player_name} to receive a card.'), array('You' => 'You', 'player_name' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
-                self::notifyAllPlayersBut($choice, 'log', clienttranslate('${player_name} is chosen to receive a card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 350, Echoes age 2: Scissors
-            case "350N1B":
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to meld the selected card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to meld the selected card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to score the selected card.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to score the selected card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                }
-                self::setAuxiliaryValue($choice);
-                break;
-
-            case "350N1D":
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to meld the selected card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to meld the selected card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to score the selected card.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to score the selected card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                }
-                self::setAuxiliaryValue($choice);
-                break;
-                
             case "346E1A":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
@@ -24662,6 +24634,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to foreshadow a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(4)));
                 }
+                self::setAuxiliaryValue($choice);
+                break;
+
+            case "346N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+            
+            // id 347, Echoes age 2: Crossbow
+            case "347N1A":
+                self::setAuxiliaryValue($choice);
+                break;
+
+            // id 350, Echoes age 2: Scissors
+            case "350N1B":
+                self::setAuxiliaryValue($choice);
+                break;
+
+            case "350N1D":
                 self::setAuxiliaryValue($choice);
                 break;
 
