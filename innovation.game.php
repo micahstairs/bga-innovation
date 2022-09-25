@@ -9028,8 +9028,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('${You} must choose which green card to score');
                 $message_for_others = clienttranslate('${player_name} must choose which green card to score');
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Top"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Bottom"), array()))
+                                array('value' => 1, 'text' => clienttranslate("Top")),
+                                array('value' => 0, 'text' => clienttranslate("Bottom")),
                 );
                 break;
 
@@ -9042,8 +9042,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('${You} must choose where to transfer cards from');
                 $message_for_others = clienttranslate('${player_name} must choose where to transfer cards from');
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Hands"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Score piles"), array()))
+                                array('value' => 1, 'text' => clienttranslate("Hands")),
+                                array('value' => 0, 'text' => clienttranslate("Score piles")),
                 );
                 break;
 
@@ -14031,14 +14031,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 401, Echoes age 7: Elevator
             case "401E1":
+                // TODO(ECHOES): Instead of clicking buttons to choose the top or bottom card, it would a better user experience
+                // if we allowed them to directly click on the cards (we will require an option to force the pile to expand so
+                // that the bottom and top cards are both visible).
                 $green_card_count = self::countCardsInLocationKeyedByColor($player_id, 'board')[2];
                 if ($green_card_count > 1) {
                     $step_max = 1;
                 } else if ($green_card_count == 1) {
-                    // no choice to be made.  Score the card that is there.
+                    // No choice to be made. Score the card that is there.
                     $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    self::transferCardFromTo($top_green_card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true); 
-                } // if no card to be scored, don't proceed to next step
+                    self::scoreCard($top_green_card, $player_id);
+                }
                 break;
 
             case "401N1":
@@ -14050,6 +14053,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
 
+                // TODO(#601): Simplify this once choose_value choices are automated.
                 if (count($age_list) > 1) {
                     self::setAuxiliaryValueFromArray($age_list);
                     $step_max = 2;
@@ -23792,18 +23796,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 401, Echoes age 7: Elevator
                 case "401N1B":
-                    // Transfer all cards
+                    // "Choose to transfer all cards of the chosen value from either all other players' hands or all their score piles to your score pile."
                     $age_to_transfer = self::getAuxiliaryValue();
-                    
                     if (self::getAuxiliaryValue2() == 1) {
                         $source = 'hand';
-                    }
-                    else {
+                    } else {
                         $source = 'score';
                     }
-                    
-                    $all_players = self::getAllActivePlayerIds();
-                    foreach ($all_players as $player) {
+                    foreach (self::getAllActivePlayerIds() as $player) {
                         if ($player != $player_id) {
                             $cards = self::getCardsInLocationKeyedByAge($player, $source)[$age_to_transfer];
                             for ($i = 0; $i < count($cards); $i++) {
@@ -25015,14 +25015,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "401N1B":
-                // TODO(ECHOES): Improve the wording of these messages by including the age number (e.g. "You choose to transfer the 7's from all other score piles")
-                if ($choice == 0) { // Score piles                    
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer from score piles.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer from score piles.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                } else { // hands
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer from hands.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer from hands.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));                    
-                }
                 self::setAuxiliaryValue2($choice);
                 break;
 
