@@ -23973,9 +23973,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If Scissors is your new top green card, I win!"
                     $top_green_card = self::getTopCardOnBoard($player_id, 2);
                     if ($top_green_card !== null && $top_green_card['id'] == 350) {
-                        // TODO(ECHOES): Make the card name a parameter so that we ensure that the card name is translated consistently, and to minimize the number of translations.
-                        self::notifyPlayer($launcher_id, 'log', clienttranslate('Scissors is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('Scissors is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        $card_args = self::getNotificationArgsForCardList([$top_green_card]);
+                        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${your} new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'your' => 'your'));
+                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $launcher_id);
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
                         throw new EndOfGame();
@@ -23986,9 +23986,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If Paper is your top green card, you win."
                     $top_green_card = self::getTopCardOnBoard($player_id, 2);
                     if ($top_green_card !== null && $top_green_card['id'] == 30) {
-                        // TODO(ECHOES): Make the card name a parameter so that we ensure that the card name is translated consistently, and to minimize the number of translations.
-                        self::notifyPlayer($player_id, 'log', clienttranslate('Paper is a top card on your board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Paper is a top card on {player_name}\'s board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        $card_args = self::getNotificationArgsForCardList([$top_green_card]);
+                        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${your} top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'your' => 'your'));
+                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
                         throw new EndOfGame();
@@ -24068,7 +24068,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('interactionStep');
     }
     
-    // TODO(ECHOES): Take card_ids_are_in_auxiliary_array into consideration for automation.
+    // TODO(ECHOES#609): Take card_ids_are_in_auxiliary_array into consideration for automation.
     function stPreSelectionMove() {
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         $can_pass = self::getGameStateValue('can_pass') == 1;
@@ -24087,7 +24087,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
 
-            // TODO(ECHOES,FIGURES): Figure out if we need to make any updates to this logic (e.g. with_bonus).
+            // TODO(ECHOES#609,FIGURES): Figure out if we need to make any updates to this logic (e.g. with_bonus).
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
                 ($location_from == 'hand' || $location_from == 'score') &&
