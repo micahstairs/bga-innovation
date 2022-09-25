@@ -25015,6 +25015,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "401N1B":
+                if ($choice == 0) { // Score piles
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other score piles to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other score piles to his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                } else { // Hands
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other hands to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other hands to his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                }
                 self::setAuxiliaryValue2($choice);
                 break;
 
