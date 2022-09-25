@@ -2395,8 +2395,8 @@ class Innovation extends Table
                     $message_for_player = clienttranslate('${You_must} choose a top card to execute from the board of ${targetable_players}');
                     $message_for_others = clienttranslate('${player_must} choose a top card to execute from the board of ${targetable_players}');
                 } else if ($code === '417N1A') {
-                    $message_for_player = clienttranslate('${You_must} choose a top card to transfer from the board of ${targetable_players} to their score pile');
-                    $message_for_others = clienttranslate('${player_must} choose a top card to transfer from the board of ${targetable_players} to their score pile');
+                    $message_for_player = clienttranslate('${You_must} choose a top card to transfer from the board of ${targetable_players} to his score pile');
+                    $message_for_others = clienttranslate('${player_must} choose a top card to transfer from the board of ${targetable_players} to his score pile');
                 } else {
                     // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -6128,17 +6128,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_ids_are_in_auxiliary_array = self::getGameStateValue('card_ids_are_in_auxiliary_array');
         if ($card_ids_are_in_auxiliary_array == 1) {
             $card_ids = self::getAuxiliaryArray();
-            $condition_for_requiring_id = "AND id IN (";
-            $first_id = true;
-            foreach ($card_ids as $card_id) {
-                if ($first_id) {
-                    $first_id = false;
-                } else {
-                    $condition_for_requiring_id .= ", ";
+            if (empty($card_ids)) {
+                $condition_for_requiring_id = "AND FALSE";
+            } else {
+                $condition_for_requiring_id = "AND id IN (";
+                $first_id = true;
+                foreach ($card_ids as $card_id) {
+                    if ($first_id) {
+                        $first_id = false;
+                    } else {
+                        $condition_for_requiring_id .= ", ";
+                    }
+                    $condition_for_requiring_id .= "$card_id";
                 }
-                $condition_for_requiring_id .= "$card_id";
+                $condition_for_requiring_id .= ")";
             }
-            $condition_for_requiring_id .= ")";
         } else {
             $card_id_1 = self::getGameStateValue('card_id_1');
             $card_id_2 = self::getGameStateValue('card_id_2');
@@ -20858,7 +20862,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
                 
-                'not_id' => 417, // helicopter
+                'not_id' => 417, // Helicopter
             );
             break;
 
@@ -23685,12 +23689,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $transferred_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         self::transferCardFromTo($transferred_card, self::getGameStateValue('owner_last_selected'), 'score', false, /*score_keyword*/false);
                         
-                        // Need to fill the auxarray with all eligible cards in hand.
+                        // Need to fill the auxiliary array with all eligible cards in hand.
                         // If none are available, skip the last interaction.
                         $eligible_cards = array();
                         $hand_cards = self::getCardsInHand($player_id);
                         if (count($hand_cards) > 0) {
                             foreach ($hand_cards as $card) {
+                                // TODO(ECHOES): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
                                 for ($icon = 1; $icon <= 6; $icon++) {
                                     if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
                                         $eligible_cards[] = $card['id'];
