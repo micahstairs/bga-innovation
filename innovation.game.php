@@ -14148,12 +14148,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "411D1":
-                // Find all top cards
+                // "I demand you return all cards from your score pile of value matching any of your top cards!"
                 $top_cards = self::countCardsInLocationKeyedByAge($player_id, 'board');
-                $score_cards = self::getCardsInLocation($player_id, 'score');
-                
                 $card_ids_to_return = array();
-                foreach ($score_cards as $card) {
+                foreach (self::getCardsInLocation($player_id, 'score') as $card) {
                     if ($top_cards[$card['age']] > 0) {
                         $card_ids_to_return[] = $card['id'];
                     }
