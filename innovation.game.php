@@ -811,13 +811,23 @@ class Innovation extends Table
             $result['revealed'][$player_id] = self::getCardsInLocation($player_id, 'revealed');
         }
 
-        // Unclaimed achivements 
+        // Unclaimed relics
         $result['unclaimed_relics'] = self::getCardsInLocation(0, 'relics');
         
-        // Unclaimed achivements 
+        // Unclaimed achivements
+        // TODO(#229): Deprecate this and add a new unclaimed_special_achievements entry.
         $result['unclaimed_achievements'] = self::getCardsInLocation(0, 'achievements');
+        if (self::getGameStateValue('release_version') >= 2) {
+            $result['unclaimed_standard_achievement_counts'] = array();
+            for ($type = 0; $type <= 4; $type++) {
+                for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                    $result['unclaimed_standard_achievement_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'achievements', $type, $is_relic);
+                }
+            }
+        }
         
         // Claimed achievements for each player
+        // TODO(#229): Pass counts instead of list of cards.
         $result['claimed_achievements'] = array();
         foreach ($players as $player_id => $player) {
             $result['claimed_achievements'][$player_id] = self::getCardsInLocation($player_id, 'achievements');
@@ -1341,18 +1351,34 @@ class Innovation extends Table
     
     function extractAgeAchievements() {
         /** Take the top card from each pile from age 1 to age 9, in the beginning of the game; these will be used as achievements **/
-        self::DbQuery("
-        UPDATE
-            card as a
-            INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
-        SET
-            a.location = 'achievements',
-            a.position = a.age-1
-        WHERE
-            a.position = b.position AND
-            a.type = 0 AND
-            a.age BETWEEN 1 AND 9
-        ");
+        if (self::getGameStateValue('release_version') >= 2) {
+            self::DbQuery("
+                UPDATE
+                    card as a
+                    INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
+                SET
+                    a.location = 'achievements',
+                    a.position = 0
+                WHERE
+                    a.position = b.position AND
+                    a.type = 0 AND
+                    a.age BETWEEN 1 AND 9
+                ");
+        } else {
+            self::DbQuery("
+                UPDATE
+                    card as a
+                    INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
+                SET
+                    a.location = 'achievements',
+                    a.position = a.age-1
+                WHERE
+                    a.position = b.position AND
+                    a.type = 0 AND
+                    a.age BETWEEN 1 AND 9
+                ");
+        }
+        
     }
     
     function tuckCard($card, $owner_to) {
@@ -1412,6 +1438,11 @@ class Innovation extends Table
         case 'deck':
             $filter_from .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
+        case 'achievements':
+            // For games that were started before Echoes was released, we don't have to worry about new achievements being added
+            if (self::getGameStateValue('release_version') < 2 || $age == null) {
+                break;
+            }
         case 'hand':
         case 'forecast':
         case 'score':
@@ -1431,6 +1462,11 @@ class Innovation extends Table
         case 'deck':
             $filter_to .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
+        case 'achievements':
+            // For games that were started before Echoes was released, we don't have to worry about new achievements being added.
+            if (self::getGameStateValue('release_version') < 2 || $age == null) {
+                break;
+            }
         case 'hand':
         case 'forecast':
         case 'score':
@@ -7150,8 +7186,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getActivePlayerId();
         
         // Check if the player really meet the conditions to achieve that card
-        // TODO(ECHOES): Update this once there can be more than one achievement of the same age in the claimable achievements pile.
-        $card = self::getObjectFromDB(self::format("SELECT * FROM card WHERE location = 'achievements' AND age = {age} AND owner = 0", array('age' => $age)));
+        $card = self::getObjectFromDB(self::format("SELECT * FROM card WHERE location = 'achievements' AND age = {age} AND owner = 0 LIMIT 1", array('age' => $age)));
         if ($card['owner'] != 0) {
             self::throwInvalidChoiceException();
         }
@@ -24748,10 +24783,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 339, Echoes age 1: Chopsticks
             case "339N1A":
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare(1)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(1)));
-                } else {
+                if ($choice == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare(1)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(1)));
                 }

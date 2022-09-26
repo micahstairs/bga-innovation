@@ -143,6 +143,7 @@ CREATE TABLE `icon_count` (
 
 INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
+/* TODO(LATER): See if we can start indexing the achievements at 0 instead of 10. */
 (105, 0, 'achievements', 10),
 (106, 0, 'achievements', 11),
 (107, 0, 'achievements', 12),
