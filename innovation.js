@@ -2268,7 +2268,7 @@ function (dojo, declare) {
                 }
             }
 
-            var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
+            var graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
             return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
         },
         

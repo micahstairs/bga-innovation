@@ -1978,20 +1978,29 @@
   background-image: url("img/special_achievements_portrait.jpg");
   background-size: 175px, auto;
 }
-.recto.S.item_105 {
-  background-position: -1px -1px;
+.recto.S.item_105, .recto.S.item_106, .recto.S.item_107, .recto.S.item_108, .recto.S.item_109 {
+  background-position-y: -1px;
 }
-.recto.S.item_106 {
-  background-position: -36px -1px;
+.recto.S.item_325, .recto.S.item_326, .recto.S.item_327, .recto.S.item_328, .recto.S.item_329 {
+  background-position-y: -47.5px;
 }
-.recto.S.item_107 {
-  background-position: -71px -1px;
+.recto.S.item_435, .recto.S.item_436, .recto.S.item_437, .recto.S.item_438, .recto.S.item_439 {
+  background-position-y: -94px;
 }
-.recto.S.item_108 {
-  background-position: -106px -1px;
+.recto.S.item_105, .recto.S.item_325, .recto.S.item_435 {
+  background-position-x: -1px;
 }
-.recto.S.item_109 {
-  background-position: -141px -1px;
+.recto.S.item_106, .recto.S.item_326, .recto.S.item_436 {
+  background-position-x: -36px;
+}
+.recto.S.item_107, .recto.S.item_327, .recto.S.item_437 {
+  background-position-x: -71px;
+}
+.recto.S.item_108, .recto.S.item_328, .recto.S.item_438 {
+  background-position-x: -106px;
+}
+.recto.S.item_109, .recto.S.item_329, .recto.S.item_439 {
+  background-position-x: -141px;
 }
 .recto.S.default_card_back.age_1, .recto.S.default_card_back.age_2, .recto.S.default_card_back.age_3, .recto.S.default_card_back.age_4, .recto.S.default_card_back.age_5, .recto.S.default_card_back.age_6, .recto.S.default_card_back.age_7, .recto.S.default_card_back.age_8, .recto.S.default_card_back.age_9, .recto.S.default_card_back.age_10 {
   background-image: url("img/card_backs_portrait.jpg");
