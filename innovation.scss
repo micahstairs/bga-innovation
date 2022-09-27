@@ -926,10 +926,10 @@
 .current_effect {
     box-shadow: 0px 0px 6px 2px #fff;
     &.light {
-        background-color: rgb(255 255 255 / 80%) !important;
+        background-color: rgb(255 255 255) !important;
     }
     &.dark {
-        background-color: rgb(0 0 0 / 80%) !important;
+        background-color: rgb(0 0 0) !important;
     }
 }
 .clickable {
