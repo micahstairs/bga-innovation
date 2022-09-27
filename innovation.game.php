@@ -21050,7 +21050,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'bottom_from' => true,
                 
-                'color' => array(1,2,3,4) /* non-blue */
+                'color' => array(1, 2, 3, 4), // non-blue
             );
             break; 
 
@@ -21068,7 +21068,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'bottom_from' => true,
                 
-                'color' => array(1,2,3,4) /* non-blue */
+                'color' => array(1, 2, 3, 4), // non-blue
             );
             break; 
 
@@ -21079,8 +21079,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => 3 /* up */,
-                'color' => array(0) /* blue */
+                'splay_direction' => 3, // up
+                'color' => array(0), // blue
             );
             break; 
             
@@ -25221,7 +25221,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Track the cards scored
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                 $card_values = self::getAuxiliaryArray();
-                $card_values[] = $card['age'];
+                $card_values[] = $card['faceup_age'];
                 self::setAuxiliaryArray($card_values);
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
                 break;
