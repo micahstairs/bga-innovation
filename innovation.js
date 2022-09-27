@@ -479,18 +479,40 @@ function (dojo, declare) {
             // AVAILABLE ACHIEVEMENTS
             // Creation of the zone
             this.zone.achievements = {};
-            this.zone.achievements["0"] = this.createZone('achievements', 0);
-            this.setPlacementRulesForAchievements();
             
             // Add cards to zone according to the current situation
-            for(var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
-                var achievement = gamedatas.unclaimed_achievements[i];
-                if (achievement.age === null) {
-                    continue;
+            if (gamedatas.unclaimed_standard_achievement_counts !== null) {
+                this.zone.achievements["0"] = this.createZone('achievements', 0, null, null, null, grouped_by_age_type_and_is_relic = true);
+                this.setPlacementRulesForAchievements();
+                for (var type = 0; type <= 4; type++) {
+                    for (var is_relic = 0; is_relic <= 1; is_relic++) {
+                        for (var age = 1; age <= 10; age++) {
+                            var num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
+                            for (var i = 0; i < num_cards; i++) {
+                                this.createAndAddToZone(this.zone.achievements["0"], i, age, type, is_relic, null, dojo.body(), null);
+                                if (!this.isSpectator) {
+                                    // Construct card object so that we can add a tooltip to the achievement
+                                    // TODO(LATER): Simplify addTooltipForStandardAchievement once the other callsite is removed.
+                                    var achievement = {'location': 'achievements', 'owner': 0, 'type': type, 'age': age, 'is_relic': is_relic};
+                                    this.addTooltipForStandardAchievement(achievement);
+                                }
+                            }
+                        }
+                    }
                 }
-                this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, achievement.type, achievement.is_relic, null, dojo.body(), null);
-                if (!this.isSpectator) {
-                    this.addTooltipForStandardAchievement(achievement);
+            } else {
+                // TODO(LATER): Remove this once it is safe to do so.
+                this.zone.achievements["0"] = this.createZone('achievements', 0);
+                this.setPlacementRulesForAchievements();
+                for(var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
+                    var achievement = gamedatas.unclaimed_achievements[i];
+                    if (achievement.age === null) {
+                        continue;
+                    }
+                    this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, achievement.type, achievement.is_relic, null, dojo.body(), null);
+                    if (!this.isSpectator) {
+                        this.addTooltipForStandardAchievement(achievement);
+                    }
                 }
             }
             
@@ -2965,6 +2987,9 @@ function (dojo, declare) {
                         );            
         },
         
+        // TODO(ECHOES): We need to add a new method in order to allow players to click on a specific achievement to achieve.
+        // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
+        // The vast majority of the time, players won't notice or care, but this should be considered release blocking.
         action_clicForAchieve : function(event) {
             if(!this.checkAction('achieve')){
                 return;
