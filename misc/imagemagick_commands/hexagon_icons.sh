@@ -403,6 +403,10 @@ extract_hexagon "102" "$TOP_RIGHT"       "$PURPLE_BORDER" "049"
 # File paths/prefixes
 READ_PATH="../cards/Print_EchoesCards_front/Print_EchoesCards_front-"
 FILE_SUFFIX="_echoes.png"
+# Special coordinates for special hexes
+SAXOPHONE_HEX="349,290 363,290 371,303 363,316 349,316 341,303"
+BLACK_HEX="94,346 57,410 94,484 177,484 214,410 177,346"
+
 
 echo "Extracting Echoes hexagon icons..."
 
@@ -545,6 +549,15 @@ extract_hexagon	"097"	"$BOTTOM_CENTER"	"$YELLOW_BORDER"	"102"
 extract_hexagon	"102"	"$BOTTOM_CENTER"	"$PURPLE_BORDER"	"103"
 extract_hexagon	"103"	"$BOTTOM_LEFT"	"$PURPLE_BORDER"	"104"
 
+# Empty hex (manual code, since no border)
+# Make black hexagon, superimpose on black border
+magick "${READ_PATH}096.png" \( +clone -fill Black -colorize 100 -fill White -draw "polygon $BLACK_HEX" \) -alpha off -compose CopyOpacity -composite -trim +repage "temp/s01${FILE_SUFFIX}"
+magick convert "temp/s01${FILE_SUFFIX}" -fill Black -colorize 100 "temp/s01${FILE_SUFFIX}"
+magick convert $RED_BORDER -fill White -colorize 100 "temp/white_border.png"
+magick convert -gravity center "temp/white_border.png" "temp/s01${FILE_SUFFIX}" -composite "temp/s01${FILE_SUFFIX}"
+
+# Saxophone (manual code, since no border)
+magick "${READ_PATH}073.png" \( +clone -fill Black -colorize 100 -fill White -draw "polygon $SAXOPHONE_HEX" \) -alpha off -compose CopyOpacity -composite -trim +repage "temp/s02${FILE_SUFFIX}"
 
 ### SPRITESHEET ###
 
@@ -623,18 +636,26 @@ temp/00{0..9}_echoes.png \
 temp/0{10..14}_echoes.png \
 -trim -tile 15x1 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_15x.png
 
-# Do remaining 9 rows just as 10x rows
+# Add special hexes to second row
+magick montage \
+temp/0{15..24}_echoes.png \
+temp/s{01..02}_echoes.png \
+-trim -tile 12x1 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_12x.png
+
+# Do remaining 8 rows just as 10x rows
 
 magick montage \
-temp/0{15..99}_echoes.png \
+temp/0{25..99}_echoes.png \
 temp/{100..104}_echoes.png \
--trim -tile 10x9 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_10x.png
+-trim -tile 10x8 -geometry 60x60+5+5 -background 'none' temp/echoes_hexagons_10x.png
+
 
 # Combine all images into a single spritesheet.
 magick montage \
 temp/echoes_hexagons_15x.png \
+temp/echoes_hexagons_12x.png \
 temp/echoes_hexagons_10x.png \
--tile 1x2 -geometry +0+0 -background 'none' ../../img/hexagon_icons_echoes.png
+-tile 1x3 -geometry +0+0 -background 'none' ../../img/hexagon_icons_echoes.png
 
 echo "Cleaning up..."
 
