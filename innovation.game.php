@@ -9099,8 +9099,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 426, Echoes age 10: Human Genome
             case "426N1A":
-                $message_for_player = clienttranslate('You may choose a value to score');
-                $message_for_others = clienttranslate('${player_name} may choose a value to score');
+                $message_for_player = clienttranslate('You may choose a value to draw and score');
+                $message_for_others = clienttranslate('${player_name} may choose a value to draw and score');
                 break;
                 
             // id 428, Echoes age 10: Social Networking
@@ -13138,12 +13138,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 360, Echoes age 3: Homing Pigeons
             case "360D1":
-                $cards_in_hand_cnt = self::getCardsInLocationKeyedByAge($launcher_id, 'hand');
+                $cards_in_hand_count = self::getCardsInLocationKeyedByAge($launcher_id, 'hand');
                 $score_cards = self::getCardsInLocation($player_id, 'score');
                 
                 $card_ids_to_return = array();
                 foreach ($score_cards as $card) {
-                    if ($cards_in_hand_cnt[$card['age']] > 0) {
+                    if ($cards_in_hand_count[$card['age']] > 0) {
                         $card_ids_to_return[] = $card['id'];
                     }
                 }
@@ -13441,15 +13441,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "373E1":
                 // Find stacks with maximum cards
                 $max_stack = 0;
-                $card_cnt = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                $card_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 for ($color = 0; $color < 5; $color++) {
-                    if ($max_stack < $card_cnt[$color]) {
-                        $max_stack = $card_cnt[$color];
+                    if ($max_stack < $card_count[$color]) {
+                        $max_stack = $card_count[$color];
                     }
                 }
                 $color_array = array();
                 for ($color = 0; $color < 5; $color++) {
-                    if ($card_cnt[$color] == $max_stack) {
+                    if ($card_count[$color] == $max_stack) {
                         $color_array[] = $color;
                     }
                 }
@@ -13843,28 +13843,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "391N1":
                 // "Score the top two non-bottom cards of the color of the last card you tucked due to Dentures."
                 $color = self::getAuxiliaryValue();
-                $color_cnt = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 
                 $continue = false;
                 do {
-                    if ($color_cnt[$color] > 2) {
+                    if ($color_count[$color] > 2) {
                         // Score the top two cards
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $continue = false;
-                    } else if ($color_cnt[$color] == 2) {
+                    } else if ($color_count[$color] == 2) {
                         // Score the top card only
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $continue = false;
-                    } else if ($color_cnt[$color] == 1) {
+                    } else if ($color_count[$color] == 1) {
                         // "If there are none to score, draw and tuck a 6, then repeat this dogma effect."
                         $continue = true;
                         $card = self::executeDrawAndTuck($player_id, 6);
                         $color = $card['color'];
-                        $color_cnt = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                        $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                     }
                 } while($continue);
                 break;
@@ -13971,9 +13971,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 396, Echoes age 7: Typewriter
             case "396N1":
                 $cards_to_draw = 0;
-                $hand_color_cnts = self::countCardsInLocationKeyedByColor($player_id, 'hand');
+                $hand_color_counts = self::countCardsInLocationKeyedByColor($player_id, 'hand');
                 for ($color = 0; $color < 5 ; $color++) {
-                    if ($hand_color_cnts[$color] > 0) {
+                    if ($hand_color_counts[$color] > 0) {
                         $cards_to_draw++;
                     }
                 }
@@ -21285,8 +21285,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 425, Echoes age 10: Artificial Heart
         case "425N1A":
-            // "Claim one standard achievement, if eligible. 
-            // Your current score is doubled for the purpose of checking eligibility."
+            // "Claim one standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility."
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -24134,20 +24133,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                     
                 case "426N1B":
-                    // "If the values of all of the cards in your hand match 
-                    // the values of all the cards in your score pile exactly, you win."
-                    $hand_card_cnts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                    $score_card_cnts = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    // "If the values of all of the cards in your hand match the values of all the cards in your score pile exactly, you win."
+                    $hand_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
+                    $score_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
                     $eligible = true;
-                    for ($age = 1; $age < 11; $age++) {
-                        if (($hand_card_cnts[$age] == 0 && $score_card_cnts[$age] > 0) ||
-                            ($hand_card_cnts[$age] > 0 && $score_card_cnts[$age] == 0) ) {
+                    for ($age = 1; $age <= 10; $age++) {
+                        if (($hand_card_counts[$age] == 0 && $score_card_counts[$age] > 0) ||
+                            ($hand_card_counts[$age] > 0 && $score_card_counts[$age] == 0) ) {
                             $eligible = false;
                         }
                     }
                     if ($eligible) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same values in the score pile and hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same values in the score pile and hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same values in your score pile and in hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same values in his score pile and in hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Human Genome');
                         throw new EndOfGame();
@@ -24192,19 +24190,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1);
                     }
                     
-                    // "If all the colors on your board contain 
-                    // the same number of visible cards (unsplayed = 1), you win."
+                    // "If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win."
                     $card_counts = array();
                     for ($color = 0; $color < 5; $color++) {
-                        $card_cnt =  self::countVisibleCards($player_id, $color);
-                        if ($card_cnt > 0) { // ignore the empty piles
-                            $card_counts[] = $card_cnt;
+                        $card_count =  self::countVisibleCards($player_id, $color);
+                        if ($card_count > 0) { // ignore the empty piles
+                            $card_counts[] = $card_count;
                         }
                     }
                     
                     if (count(array_unique($card_counts)) == 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in all existing piles.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in all existing piles.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
                         throw new EndOfGame();
@@ -24212,19 +24209,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "433N1B":                   
-                    // "If all the colors on your board contain 
-                    // the same number of visible cards (unsplayed = 1), you win."
+                    // "If all the colors on your board contain  the same number of visible cards (unsplayed = 1), you win."
                     $card_counts = array();
                     for ($color = 0; $color < 5; $color++) {
-                        $card_cnt =  self::countVisibleCards($player_id, $color);
-                        if ($card_cnt > 0) { // ignore the empty piles
-                            $card_counts[] = $card_cnt;
+                        $card_count =  self::countVisibleCards($player_id, $color);
+                        if ($card_count > 0) { // ignore the empty piles
+                            $card_counts[] = $card_count;
                         }
                     }
                     
                     if (count(array_unique($card_counts)) == 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in all existing piles.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in all existing piles.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards n every pile on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
                         throw new EndOfGame();
