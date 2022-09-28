@@ -2615,6 +2615,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your forecast');
                 $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his forecast');
                 break;
+            case 'forecast->achievements':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your forecast to your achievements');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his forecast to his achievements');
+                break;
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -13180,7 +13184,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 
-                if (count($card_ids) > 0) {
+                if (count($card_ids_to_return) > 0) {
                     $step_max = 1;
                     self::setAuxiliaryArray($card_ids_to_return); // store ids for later
                 }
@@ -19852,6 +19856,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
             $options = array(
                 'player_id' => $player_id,
+                'n' => 1,
                 'can_pass' => false,
 
                 'owner_from' => $player_id,
@@ -20099,6 +20104,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
             $options = array(
                 'player_id' => $player_id,
+                'n' => 1,
                 'can_pass' => false,
 
                 'owner_from' => $player_id,
