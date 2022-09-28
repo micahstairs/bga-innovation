@@ -967,10 +967,10 @@
   box-shadow: 0px 0px 6px 2px #fff;
 }
 .current_effect.light {
-  background-color: rgba(255, 255, 255, 0.8) !important;
+  background-color: white !important;
 }
 .current_effect.dark {
-  background-color: rgba(0, 0, 0, 0.8) !important;
+  background-color: black !important;
 }
 
 .clickable {
