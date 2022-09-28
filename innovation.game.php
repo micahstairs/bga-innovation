@@ -9097,6 +9097,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
+            // id 426, Echoes age 10: Human Genome
+            case "426N1A":
+                $message_for_player = clienttranslate('You may choose a value to score');
+                $message_for_others = clienttranslate('${player_name} may choose a value to score');
+                break;
+                
             // id 428, Echoes age 10: Social Networking
             case "428D1A":
                 $message_for_player = clienttranslate('Choose an icon');
@@ -14395,6 +14401,35 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 425, Echoes age 10: Artificial Heart
+            case "425N1":
+                $age_max = self::getMaxAgeOnBoardTopCards($player_id);
+                $player_score = self::getPlayerScore($player_id) * 2; // double the score
+                $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
+                $unclaimed_achievements = self::getCardsInLocation(0, 'achievements');
+
+                $claimable_cards = array();
+                foreach ($unclaimed_achievements as $card) {
+                    $card_age = $card['age'];
+                    if ($card_age !== null) { // ignore special achievements
+                        // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
+                        if ($card_age <= $age_max && $player_score >= 5 * $card_age * ($claimed_achievement_count[$card_age] + 1)) {
+                            $claimable_cards[] = $card['id'];
+                        }
+                    }
+                }
+                
+                if (count($claimable_cards) > 0) {
+                    self::setAuxiliaryArray($claimable_cards);                
+                    $step_max = 1;
+                }
+                break;
+
+            // id 426, Echoes age 10: Human Genome
+            case "426N1":
+                $step_max = 2;
+                break;
+                
             // id 427, Echoes age 10: Camcorder
             case "427D1":
                 $step_max = 1;
@@ -14484,6 +14519,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray(array_unique($bonuses));
                     $step_max = 1;
                 }
+                break;
+
+            // id 433, Echoes age 10: Puzzle Cube
+            case "433N1":
+                $step_max = 1;
+                break;
+
+            case "433N2":
+                // "Draw and meld a 10."
+                self::executeDraw($player_id, 10, 'board');
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -21237,8 +21282,54 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'score_keyword' => true,
              );
             break;
+        
+        // id 425, Echoes age 10: Artificial Heart
+        case "425N1A":
+            // "Claim one standard achievement, if eligible. 
+            // Your current score is doubled for the purpose of checking eligibility."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
 
-         // id 427, Echoes age 10: Camcorder
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'achievements',
+                
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        // id 426, Echoes age 10: Human Genome
+        case "426N1A":
+            // "You may draw and score a card of any value."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'choose_value' => true,
+            );
+            break;
+
+        case "426N1B":
+            // "Take a bottom card from your board into your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'hand',
+
+                'bottom_from' => true,
+            );       
+            break;
+            
+        // id 427, Echoes age 10: Camcorder
         case "427D1A":
             // "I demand you transfer all cards in your hand to my hand!"
             $options = array(
@@ -21445,6 +21536,45 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
              );
+            break;
+
+        // id 433, Echoes age 10: Puzzle Cube
+        case "433N1A":
+            // "You may score the bottom card or two bottom cards of one color from your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'bottom_from' => true,
+                
+                'score_keyword' => true,
+            );       
+            break;
+
+        case "433N1B":
+            // "You may score the bottom card or two bottom cards of one color from your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'bottom_from' => true,
+                
+                'score_keyword' => true,
+                
+                'color' => array(self::getGameStateValue('color_last_selected')),
+            );       
             break;
             
         // id 434, Echoes age 10: Sudoku
@@ -23995,6 +24125,35 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 426, Echoes age 10: Human Genome
+                case "426N1A":
+                    $choice = self::getAuxiliaryValue();
+                    if ($choice > 0) {
+                        $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
+                    }
+                    break;
+                    
+                case "426N1B":
+                    // "If the values of all of the cards in your hand match 
+                    // the values of all the cards in your score pile exactly, you win."
+                    $hand_card_cnts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
+                    $score_card_cnts = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                    $eligible = true;
+                    for ($age = 1; $age < 11; $age++) {
+                        if (($hand_card_cnts[$age] == 0 && $score_card_cnts[$age] > 0) ||
+                            ($hand_card_cnts[$age] > 0 && $score_card_cnts[$age] == 0) ) {
+                            $eligible = false;
+                        }
+                    }
+                    if ($eligible) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same values in the score pile and hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same values in the score pile and hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Human Genome');
+                        throw new EndOfGame();
+                    }
+                    break;
+                    
                 // id 427, Echoes age 10: Camcorder
                 case "427D1A":
                     // "Draw a 9!"
@@ -24026,6 +24185,51 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "432N2A":
                     self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
                     break;  
+
+                // id 433, Echoes age 10: Puzzle Cube
+                case "433N1A":
+                    if ($n > 0) {
+                        self::incrementStepMax(1);
+                    }
+                    
+                    // "If all the colors on your board contain 
+                    // the same number of visible cards (unsplayed = 1), you win."
+                    $card_counts = array();
+                    for ($color = 0; $color < 5; $color++) {
+                        $card_cnt =  self::countVisibleCards($player_id, $color);
+                        if ($card_cnt > 0) { // ignore the empty piles
+                            $card_counts[] = $card_cnt;
+                        }
+                    }
+                    
+                    if (count(array_unique($card_counts)) == 1) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in all existing piles.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in all existing piles.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
+                        throw new EndOfGame();
+                    }
+                    break;
+
+                case "433N1B":                   
+                    // "If all the colors on your board contain 
+                    // the same number of visible cards (unsplayed = 1), you win."
+                    $card_counts = array();
+                    for ($color = 0; $color < 5; $color++) {
+                        $card_cnt =  self::countVisibleCards($player_id, $color);
+                        if ($card_cnt > 0) { // ignore the empty piles
+                            $card_counts[] = $card_cnt;
+                        }
+                    }
+                    
+                    if (count(array_unique($card_counts)) == 1) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in all existing piles.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in all existing piles.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
+                        throw new EndOfGame();
+                    }
+                    break;
                     
                 // id 434, Echoes age 10: Sudoku
                 case "434N1A":
@@ -25090,6 +25294,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
+            // id 426, Echoes age 10: Human Genome
+            case "426N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+                
             // id 428, Echoes age 10: Social Networking
             case "428D1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
