@@ -9154,7 +9154,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "414N1B":
-                $message_for_player = clienttranslate('${You} must choose an opponent:');
+                $message_for_player = clienttranslate('${You} must choose an opponent');
                 $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
 
