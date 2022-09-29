@@ -24162,7 +24162,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "414N1C":
                     if ($n > 0) {
                         // check for achievement match
-                        self::incrementStepMax(1);
+                        $achieve_cards = self::countCardsInLocationKeyedByAge(self::getAuxiliaryValue2(), 'achievements', null, /*is_relic*/false);
+                        if ($achieve_cards[self::getAuxiliaryValue()] > 0) {
+                            // matching achievement value found.
+                            self::incrementStepMax(1);
+                        }
                     }
                     break;
                     
