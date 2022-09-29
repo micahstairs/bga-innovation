@@ -92,6 +92,14 @@ CREATE TABLE IF NOT EXISTS `auxiliary_value_table` (
   PRIMARY KEY(`nesting_index`, `array_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/* Table used to store a index-based auxiliary value (useful for indexing by player IDs, for example) */
+CREATE TABLE IF NOT EXISTS `indexed_auxiliary_value` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
+ `index_id` INT(10) DEFAULT 0 COMMENT 'ID of the index (the indices do not need to be consecutive, making it useful for things such as player IDs)',
+ `value` INT COMMENT 'The auxiliary value',
+  PRIMARY KEY(`nesting_index`, `index_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
 CREATE TABLE IF NOT EXISTS `random` (
  `id` SMALLINT UNSIGNED NOT NULL,
