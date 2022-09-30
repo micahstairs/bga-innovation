@@ -1772,7 +1772,7 @@ class Innovation extends Table
     }
     
     function getSelectedCards() {
-        return self::getObjectListFromDB("SELECT * FROM card WHERE selected IS TRUE ORDER BY a.location, a.position");
+        return self::getObjectListFromDB("SELECT * FROM card WHERE selected IS TRUE ORDER BY location, position");
     }
     
     function getVisibleSelectedCards($player_id) {
