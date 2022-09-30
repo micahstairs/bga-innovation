@@ -24518,7 +24518,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
-            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile($selected_cards) : null;
+            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
 
             // TODO(ECHOES#609,FIGURES): Figure out if we need to make any updates to this logic (e.g. with_bonus).
             $selection_will_reveal_hidden_information =
