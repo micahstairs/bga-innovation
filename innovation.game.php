@@ -3416,6 +3416,9 @@ class Innovation extends Table
     }
     
     function notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay) {
+
+        $new_score = self::updatePlayerScore($target_player_id);
+
         if ($splay_direction == 0 && !$force_unsplay) { // Unsplay event
             $color_in_clear = self::getColorInClear($color);
 
@@ -3423,22 +3426,24 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
             }
 
-            self::notifyPlayer($player_id, 'splayedPile', clienttranslate('${Your} ${colored} stack is reduced to one card so it loses its splay.'), array(
+            self::notifyPlayer($target_player_id, 'splayedPile', clienttranslate('${Your} ${colored} stack is reduced to one card so it loses its splay.'), array(
                 'i18n' => array('colored'),
                 'Your' => 'Your',
                 'colored' => $color_in_clear,
-                'player_id' => $player_id,
+                'player_id' => $target_player_id,
                 'color' => $color,
-                'splay_direction' => $splay_direction
+                'splay_direction' => $splay_direction,
+                'new_score' => $new_score,
             ));
             
-            self::notifyAllPlayersBut($player_id, 'splayedPile', clienttranslate('${player_name}\'s ${colored} stack is reduced to one card so it loses its splay.'), array(
+            self::notifyAllPlayersBut($target_player_id, 'splayedPile', clienttranslate('${player_name}\'s ${colored} stack is reduced to one card so it loses its splay.'), array(
                 'i18n' => array('colored'),
-                'player_name' => self::getPlayerNameFromId($player_id),
+                'player_name' => self::getPlayerNameFromId($target_player_id),
                 'colored' => $color_in_clear,
-                'player_id' => $player_id,
+                'player_id' => $target_player_id,
                 'color' => $color,
-                'splay_direction' => $splay_direction
+                'splay_direction' => $splay_direction,
+                'new_score' => $new_score,
             ));
             return;
         }
@@ -3461,7 +3466,8 @@ class Innovation extends Table
                 'splay_direction' => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
                 'new_ressource_counts' => $new_ressource_counts,
-                'forced_unsplay' => $force_unsplay
+                'forced_unsplay' => $force_unsplay,
+                'new_score' => $new_score,
             ));
             
             self::notifyAllPlayersBut($player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays his ${colored_cards}.') : clienttranslate('${player_name} splays his ${colored_cards} ${splay_direction_in_clear}.'), array(
@@ -3473,7 +3479,8 @@ class Innovation extends Table
                 'splay_direction' => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
                 'new_ressource_counts' => $new_ressource_counts,
-                'forced_unsplay' => $force_unsplay
+                'forced_unsplay' => $force_unsplay,
+                'new_score' => $new_score,
             ));
 
         } else {
@@ -3488,7 +3495,8 @@ class Innovation extends Table
                 'splay_direction' => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
                 'new_ressource_counts' => $new_ressource_counts,
-                'forced_unsplay' => $force_unsplay
+                'forced_unsplay' => $force_unsplay,
+                'new_score' => $new_score,
             ));
 
             self::notifyPlayer($target_player_id, 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays your ${colored_cards}.') : clienttranslate('${player_name} splays your ${colored_cards} ${splay_direction_in_clear}.'), array(
@@ -3500,7 +3508,8 @@ class Innovation extends Table
                 'splay_direction' => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
                 'new_ressource_counts' => $new_ressource_counts,
-                'forced_unsplay' => $force_unsplay
+                'forced_unsplay' => $force_unsplay,
+                'new_score' => $new_score,
             ));
             
             self::notifyAllPlayersBut(array($player_id, $target_player_id), 'splayedPile', $force_unsplay ? clienttranslate('${player_name} unsplays ${target_player_name}\'s ${colored_cards}.') : clienttranslate('${player_name} splays ${target_player_name}\'s ${colored_cards} ${splay_direction_in_clear}.'), array(
@@ -3513,7 +3522,8 @@ class Innovation extends Table
                 'splay_direction' => $splay_direction,
                 'splay_direction_in_clear' => $splay_direction_in_clear,
                 'new_ressource_counts' => $new_ressource_counts,
-                'forced_unsplay' => $force_unsplay
+                'forced_unsplay' => $force_unsplay,
+                'new_score' => $new_score,
             ));
 
         }
