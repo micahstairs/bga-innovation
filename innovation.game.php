@@ -13803,7 +13803,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw a 7."
                 self::executeDraw($player_id, 7, 'hand');
                 //  "If you melded a blue card due to Stethoscope's echo effect, draw an 8."
-                if (self::getAuxiliaryValue() == 1) {
+                if (self::getIndexedAuxiliaryValue($player_id) == 1) {
                     self::executeDraw($player_id, 8, 'hand');
                 }
                 break;
@@ -23997,10 +23997,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 386, Echoes age 6: Stethoscope
                 case "386E1A":
                     if ($n > 0 && self::getGameStateValue('color_last_selected') == 0) {
-                        self::setAuxiliaryValue(1); // it is blue
+                        self::setIndexedAuxiliaryValue($player_id, 1); // it is blue
                     }
                     else {
-                        self::setAuxiliaryValue(-1);
+                        self::setIndexedAuxiliaryValue($player_id, -1);
                     }
                     break;
 
