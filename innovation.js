@@ -3957,6 +3957,7 @@ function (dojo, declare) {
             var splay_direction = notif.args.splay_direction;
             var splay_direction_in_clear = notif.args.splay_direction_in_clear;
             var forced_unsplay = notif.args.forced_unsplay;
+            var new_score = notif.args.new_score;
             
             // Change the splay mode of the matching zone on board
             this.setSplayMode(this.zone.board[player_id][color], splay_direction);
@@ -3976,6 +3977,11 @@ function (dojo, declare) {
             this.removeTooltip('splay_' + player_id + '_' + color);
             if (splay_direction > 0) {
                 this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This stack is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
+            }
+
+            // Update the score for that player
+            if (new_score !== undefined) {
+                this.counter.score[player_id].setValue(new_score);
             }
             
             // Update the ressource counts for that player
