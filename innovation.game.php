@@ -6766,6 +6766,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         return $array;
     }
+
+    function setIndexedAuxiliaryValue($index_id, $value) {
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+        self::DbQuery(self::format("
+            INSERT INTO indexed_auxiliary_value
+                (nesting_index, index_id, value)
+            VALUES
+                ({nesting_index}, {index_id}, {value})
+        ", array('nesting_index' => $nesting_index, 'index_id' => $index_id, 'value' => $value)));
+    }
+
+    function getIndexedAuxiliaryValue($index_id) {
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+        return self::getUniqueValueFromDB(self::format("
+            SELECT
+                value
+            FROM
+                indexed_auxiliary_value
+            WHERE
+                nesting_index = {nesting_index} AND
+                index_id = {index_id}
+        ",
+            array('nesting_index' => $nesting_index, 'index_id' => $index_id)
+       ));
+    }
     
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
@@ -6854,6 +6879,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function popCardFromNestedDogmaStack() {
         self::trace('nesting--');
+        if (self::getGameStateValue('release_version') >= 2) {
+            self::DbQuery(self::format("DELETE FROM indexed_auxiliary_value WHERE nesting_index = {nesting_index}", array('nesting_index' => self::getGameStateValue('current_nesting_index'))));
+        }
         if (self::getGameStateValue('release_version') >= 1) {
             self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => self::getGameStateValue('current_nesting_index'))));
             self::incGameStateValue('current_nesting_index', -1);
@@ -7655,6 +7683,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Write info in global variables to prepare the first effect
+        if (self::getGameStateValue('release_version') >= 1) {
+            self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
+        }
         if (self::getGameStateValue('release_version') >= 1) {
             self::setGameStateValue('current_nesting_index', 0);
             self::DbQuery(
@@ -9123,7 +9154,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "414N1B":
-                $message_for_player = clienttranslate('${You} must choose an opponent:');
+                $message_for_player = clienttranslate('${You} must choose an opponent');
                 $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
 
@@ -14349,14 +14380,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 418, Echoes age 9: Jet
             case "418E1":
-                self::setAuxiliaryValue(-1);
+                if ($player_id == $launcher_id) {
+                    self::setAuxiliaryValue(-1);
+                }
                 $step_max = 1;
                 break;
 
             case "418D1":
                 // "I demand you return your top card of the color I melded due to Jet's echo effect!"
-                if (self::getAuxiliaryValue() > 0) {
-                    $card = self::getTopCardOnBoard($player_id, self::getGameStateValue('color_last_selected'));
+                $color = self::getAuxiliaryValue();
+                if ($color >= 0) {
+                    $card = self::getTopCardOnBoard($player_id, $color);
                     if ($card !== null) {
                         self::transferCardFromTo($card, 0, 'deck');
                     }
@@ -14442,7 +14476,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "423N1":
                 // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
-                self::executeNonDemandEffects(self::getCardInfo(self::getAuxiliaryValue()));
+                self::executeNonDemandEffects(self::getCardInfo(self::getIndexedAuxiliaryValue($player_id)));
                 break;
 
             case "423N2":
@@ -24250,8 +24284,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 418, Echoes age 9: Jet
                 case "418E1A":
-                    if ($n > 0) {
-                        self::setAuxiliaryValue(1); // flag that a card was melded
+                    if ($n > 0 && $player_id == $launcher_id) {
+                        self::setAuxiliaryValue(self::getGameStateValue('color_last_selected')); // Remember which color was melded
                     }
                     break;
                     
@@ -24278,7 +24312,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 423, Echoes age 9: Karaoke
                 case "423E1A":
                     $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'board');
-                    self::setAuxiliaryValue($card['id']); // save card id for later
+                    self::setIndexedAuxiliaryValue($player_id, $card['id']); // save card id for later
                     break;
 
                 // id 424, Echoes age 9: Rock
