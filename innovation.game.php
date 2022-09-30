@@ -2615,6 +2615,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your forecast');
                 $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his forecast');
                 break;
+            case 'forecast->board':
+                $message_for_player = clienttranslate('${You_must} meld ${number} ${card} from your forecast to your board');
+                $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his forecast to his board');
+                break;
             case 'forecast->achievements':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your forecast to your achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his forecast to his achievements');
@@ -5059,27 +5063,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card = $pile[$i];
             
             if ($splayed_right) {
-                if ($card['spot_1'] == $icon) {
+                if ($card['spot_1'] !== null && $card['spot_1'] == $icon) {
                     $count += 1;
                 }
             }
             if ($splayed_right || $splayed_up) {
-                if ($card['spot_2'] == $icon) {
+                if ($card['spot_2'] !== null && $card['spot_2'] == $icon) {
                     $count += 1;
                 }
             }
             if ($splayed_up) {
-                if ($card['spot_3'] == $icon) {
+                if ($card['spot_3'] !== null && $card['spot_3'] == $icon) {
                     $count += 1;
                 }
             }
             if ($splayed_left || $splayed_up) {
-                if ($card['spot_4'] == $icon) {
+                if ($card['spot_4'] !== null && $card['spot_4'] == $icon) {
                     $count += 1;
                 }
             }
             if ($splayed_left) {
-                if ($card['spot_5'] == $icon) {
+                if ($card['spot_5'] !== null && $card['spot_5'] == $icon) {
                     $count += 1;
                 }
             }
@@ -20872,7 +20876,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => true,
+                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -23888,8 +23892,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 380, Echoes age 5: Seed Drill
                 case "380N1A":
                     // "If there is at least one card in that deck"
-                    $cards_to_draw_from = self::getCardsInLocationKeyedByAge(0, 'deck');
-                    if (count($cards_to_draw_from[self::getAuxiliaryValue2()]) > 0) {
+                    $cards_to_draw_from = self::countCardsInLocationKeyedByAge(0, 'deck', /*base*/0);
+                    if ($cards_to_draw_from[self::getAuxiliaryValue2()] > 0) {
                         self::incrementStepMax(1);
                     }
                     break;
@@ -24134,8 +24138,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 403, Echoes age 7: Ice Cream
                 case "403N1A":
                     // "If there is at least one card in that deck"
-                    $cards_to_draw_from = self::getCardsInLocationKeyedByAge(0, 'deck');
-                    if (count($cards_to_draw_from[self::getAuxiliaryValue2()]) > 0) {
+                    $cards_to_draw_from = self::countCardsInLocationKeyedByAge(0, 'deck', /*base*/0);
+                    if ($cards_to_draw_from[self::getAuxiliaryValue2()] > 0) {
                         self::incrementStepMax(1);
                     }
                     break;
@@ -24451,7 +24455,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'board');
                     
                     // "If you have at least nine different bonus values visible on your board, you win."
-                    if (count(array_unique(self::boardPileVisibleBonuses($player_id))) >= 9) {
+                    if (count(array_unique(self::getVisibleBonusesOnBoard($player_id))) >= 9) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues visible on your board.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on their board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
