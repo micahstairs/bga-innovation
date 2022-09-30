@@ -1626,7 +1626,7 @@ class Innovation extends Table
     }
     
     function getSelectedCards() {
-        return self::getObjectListFromDB("SELECT * FROM card WHERE selected IS TRUE");
+        return self::getObjectListFromDB("SELECT * FROM card WHERE selected IS TRUE ORDER BY a.location, a.position");
     }
     
     function getVisibleSelectedCards($player_id) {
@@ -17340,6 +17340,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
+            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile($selected_cards) : null;
 
             // TODO(ECHOES,FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
@@ -17391,7 +17392,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-            
+            // Try to return cards to the deck where the order doesn't matter
+            } else if ($enable_autoselection
+                    // Make sure choosing these cards won't reveal hidden information
+                    && (!$selection_will_reveal_hidden_information)
+                    // The player must choose at least all of the selectable cards
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    // There must be at least one card which goes to a unique supply pile
+                    && $card_id_returning_to_unique_supply_pile != null) {
+                self::setGameStateValue('id_last_selected', $card_id_returning_to_unique_supply_pile);
+                self::unmarkAsSelected($card_id_returning_to_unique_supply_pile);
+                self::setGameStateValue('can_pass', 0);
+
+                self::trace('preSelectionMove->interSelectionMove (automated card selection)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
             // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
             } else if ($n_min < 800 && $selection_size < $n_min) {
                 if (self::getGameStateValue('solid_constraint') == 1) {
@@ -17424,6 +17439,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Let the player make his choice
         self::trace('preSelectionMove->selectionMove');
         $this->gamestate->nextState('selectionMove');
+    }
+
+    function getSelectedCardIdBelongingToUniqueSupplyPile() {
+        return self::getUniqueValueFromDB("
+            SELECT
+                id
+            FROM
+                card AS a
+            LEFT JOIN(
+                SELECT
+                    COUNT(*) AS size, age, type, is_relic
+                FROM
+                    card
+                WHERE
+                    selected
+                GROUP BY
+                    age, type, is_relic
+            ) AS b
+            ON
+                a.age = b.age AND a.type = b.type AND a.is_relic = b.is_relic
+            WHERE
+                selected AND b.size = 1
+            ORDER BY
+                a.location, a.age, a.type, a.is_relic, a.position
+            LIMIT 1
+        ");
     }
     
     function stInterSelectionMove() {
