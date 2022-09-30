@@ -19719,7 +19719,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
 
-                'card_id_1' => self::getAuxiliaryValue(),
+                'card_id_1' => self::getIndexedAuxiliaryValue($player_id),
             );
             break;
 
@@ -23714,7 +23714,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     } else {
                         $card = self::executeDraw($player_id, 4, 'hand');
                     }
-                    self::setAuxiliaryValue($card['id']);
+                    self::setIndexedAuxiliaryValue($player_id, $card['id']);
                     break;
 
                 case "359N1A":
