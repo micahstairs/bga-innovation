@@ -458,6 +458,10 @@ function (dojo, declare) {
             if (!gamedatas.figures_expansion_enabled) {
                 dojo.byId('deck_set_5').style.display = 'none';
             }
+            this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
+            this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
+            this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
+            this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
 
             // AVAILABLE RELICS
             // Creation of the zone
@@ -4288,8 +4292,11 @@ function (dojo, declare) {
         },
 
         canShowCardTooltip : function(card_id) {
-            // TODO(CITIES,ECHOES,FIGURES): Add tooltips for remaining relics once the cards are fully implemented.
-            return card_id !== undefined && this.cards[card_id].age !== null && card_id != 215 && card_id != 218 && card_id != 219;
+            return card_id !== undefined &&
+                this.cards[card_id].age !== null &&
+                (card_id != 215 || this.cities_expansion_enabled) &&
+                (card_id != 218 || this.figures_expansion_enabled) &&
+                (card_id != 219 || this.echoes_expansion_enabled);
         },
 
         // Returns true if the current player is a spectator or if the game is currently in replay mode
