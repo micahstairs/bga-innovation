@@ -1979,6 +1979,7 @@ class Innovation extends Table
 
     // This function reveals cards that can possibly have a bonus. It is meant to conceal
     // cards that otherwise cannot fulfill the requirement of having a bonus.
+    // TODO(ECHOES): Re-evaluate this in light of https://boardgamegeek.com/thread/2917322/article/40883141#40883141.
     function revealHandPossibleBonusOnly($player_id) {
         $cards = self::getCardsInHand($player_id);
         $cards_to_reveal = array();
@@ -5605,6 +5606,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function executeDrawAndForeshadow($player_id, $age_min = null) {
         return self::executeDraw($player_id, $age_min, 'forecast');
+    }
+
+    function executeDrawAndReveal($player_id, $age_min = null) {
+        return self::executeDraw($player_id, $age_min, 'revealed');
     }
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
@@ -23640,18 +23645,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // "If you do, draw a card of value equal to that card's bonus."
                         $tucked_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         $bonuses = self::getBonusIcons($tucked_card);
-                        $card = self::executeDraw($player_id, $bonuses[0], 'hand');
+                        $card = self::executeDrawAndReveal($player_id, $bonuses[0], 'hand');
+                        $card = self::transferCardFromTo($card, $player_id, 'hand');
                         
                         if (self::getBonusIcons($card) > 0) {
                             // "If the drawn card also has a bonus"
                             self::incrementStepMax(1); // Add optional repeatable step
                         }
                         else {
-                            self::incrementStep(2); // Stop the interactions
+                            self::incrementStep(2); $step += 2; // Stop the interactions
                         }
                             
-                    }
-                    else {
+                    } else {
                         // Reveal a hand with no bonuses
                         self::revealHandPossibleBonusOnly($player_id);
                     }
@@ -23660,7 +23665,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "352N1B":
                     if ($n > 0) {
                         // card is returned, go back to step 1
-                        self::incrementStep(-2);
+                        self::incrementStep(-2); $step -= 2;
+                        self::setStepMax(1);
                     }
                     break;  
 
