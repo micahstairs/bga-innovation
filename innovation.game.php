@@ -1074,13 +1074,13 @@ class Innovation extends Table
     /** Returns the card types in use by the current game **/
     function getActiveCardTypes() {
         $active_types = array(0);
-        if (self::getGameStateValue('artifacts_mode') > 0) {
+        if (self::getGameStateValue('artifacts_mode') > 1) {
             $active_types[] = 1;
         }
-        if (self::getGameStateValue('cities_mode') > 0) {
+        if (self::getGameStateValue('cities_mode') > 1) {
             $active_types[] = 2;
         }
-         if (self::getGameStateValue('echoes_mode') > 0) {
+         if (self::getGameStateValue('echoes_mode') > 1) {
             $active_types[] = 3;
         }
         // TODO(FIGURES): Update this when implementing the expansion.
