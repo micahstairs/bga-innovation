@@ -1614,6 +1614,7 @@ function (dojo, declare) {
             for (var symbol=1; symbol <= 6; symbol++) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol));
             }
+            text = text.replace(new RegExp("\\$\\{music_note\\}" , "g"), this.square(size, 'music', 'note'));
             return text;
         },
         
