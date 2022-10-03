@@ -23645,8 +23645,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // "If you do, draw a card of value equal to that card's bonus."
                         $tucked_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         $bonuses = self::getBonusIcons($tucked_card);
-                        $card = self::executeDrawAndReveal($player_id, $bonuses[0], 'hand');
-                        $card = self::transferCardFromTo($card, $player_id, 'hand');
+                        $card = self::executeDraw($player_id, $bonuses[0], 'hand');
                         
                         if (self::getBonusIcons($card) > 0) {
                             // "If the drawn card also has a bonus"
