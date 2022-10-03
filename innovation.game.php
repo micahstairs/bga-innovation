@@ -24525,7 +24525,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
-                ($location_from == 'hand' || $location_from == 'score') &&
+                ($location_from == 'hand' || $location_from == 'score' || $location_from == 'forecast') &&
                 // All players can see the number of cards (even in hidden locations) so if there aren't any cards there
                 // it's obvious a selection can't be made.
                 self::countCardsInLocation($owner_from, $location_from) > 0 &&
