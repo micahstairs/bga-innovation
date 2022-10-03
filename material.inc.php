@@ -1638,7 +1638,7 @@ $this->textual_card_infos = array(
 ),
 
 413 => array('name' => clienttranslate('Crossword'),
-    'non_demand_effect_1' => clienttranslate('For each visible bonus your board, draw a card of that value.'),
+    'non_demand_effect_1' => clienttranslate('For each visible bonus on your board, draw a card of that value.'),
 ),
 
 414 => array('name' => clienttranslate('Television'),
