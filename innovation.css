@@ -1665,6 +1665,15 @@
 .square_card_icon.L.icon_6 {
   background-position-x: -393.5px;
 }
+.square_card_icon.L.icon_10 {
+  background-image: none;
+}
+.square_card_icon.L.icon_10 > span {
+  padding: 1px;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
 .square_card_icon.L.color_0 {
   background-position-y: -1px;
 }
@@ -1819,37 +1828,37 @@
   left: 79px;
 }
 .bonus_card_icon.M.bonus_1 {
-  background-position-x: 1px;
+  background-position-x: 0.4528px;
 }
 .bonus_card_icon.M.bonus_2 {
-  background-position-x: -21px;
+  background-position-x: -20.2724942421px;
 }
 .bonus_card_icon.M.bonus_3 {
-  background-position-x: -41px;
+  background-position-x: -41.0387087301px;
 }
 .bonus_card_icon.M.bonus_4 {
-  background-position-x: -62px;
+  background-position-x: -61.8315415968px;
 }
 .bonus_card_icon.M.bonus_5 {
-  background-position-x: -83px;
+  background-position-x: -82.6441901608px;
 }
 .bonus_card_icon.M.bonus_6 {
-  background-position-x: -103px;
+  background-position-x: -103.4726435855px;
 }
 .bonus_card_icon.M.bonus_7 {
-  background-position-x: -124px;
+  background-position-x: -124.3142495285px;
 }
 .bonus_card_icon.M.bonus_8 {
-  background-position-x: -145px;
+  background-position-x: -145.1671216302px;
 }
 .bonus_card_icon.M.bonus_9 {
-  background-position-x: -166px;
+  background-position-x: -166.0298486793px;
 }
 .bonus_card_icon.M.bonus_10 {
-  background-position-x: -187px;
+  background-position-x: -186.9013347681px;
 }
 .bonus_card_icon.M.bonus_11 {
-  background-position-x: -208px;
+  background-position-x: -207.7807040376px;
 }
 .bonus_card_icon.M.bonus_color {
   width: 36px;
@@ -1895,6 +1904,114 @@
 }
 .bonus_card_icon.M.color_4 {
   background-position-x: -153px;
+}
+.bonus_card_icon.L.bonus_value {
+  width: 43px;
+  background-size: 470px auto;
+  height: 43px;
+  background-position-y: -82px;
+}
+.bonus_card_icon.L.bonus_value.top_left_icon {
+  top: 25px;
+  left: 47px;
+}
+.bonus_card_icon.L.bonus_value.bottom_left_icon {
+  bottom: 35px;
+  left: 47px;
+}
+.bonus_card_icon.L.bonus_value.bottom_center_icon {
+  bottom: 35px;
+  left: 210px;
+}
+.bonus_card_icon.L.bonus_value.bottom_right_icon {
+  bottom: 35px;
+  right: 43px;
+}
+.bonus_card_icon.L.bonus_value.top_right_icon {
+  top: 25px;
+  right: 43px;
+}
+.bonus_card_icon.L.bonus_value.top_center_icon {
+  top: 25px;
+  left: 210px;
+}
+.bonus_card_icon.L.bonus_1 {
+  background-position-x: 0.1134px;
+}
+.bonus_card_icon.L.bonus_2 {
+  background-position-x: -41.9641002492px;
+}
+.bonus_card_icon.L.bonus_3 {
+  background-position-x: -84.0213933178px;
+}
+.bonus_card_icon.L.bonus_4 {
+  background-position-x: -126.065569187px;
+}
+.bonus_card_icon.L.bonus_5 {
+  background-position-x: -168.0999938883px;
+}
+.bonus_card_icon.L.bonus_6 {
+  background-position-x: -210.1266494716px;
+}
+.bonus_card_icon.L.bonus_7 {
+  background-position-x: -252.1468453544px;
+}
+.bonus_card_icon.L.bonus_8 {
+  background-position-x: -294.1615120453px;
+}
+.bonus_card_icon.L.bonus_9 {
+  background-position-x: -336.1713451912px;
+}
+.bonus_card_icon.L.bonus_10 {
+  background-position-x: -378.1768846887px;
+}
+.bonus_card_icon.L.bonus_11 {
+  background-position-x: -420.1785617996px;
+}
+.bonus_card_icon.L.bonus_color {
+  width: 75px;
+  height: 75px;
+  background-size: 470px auto;
+  background-position-y: -1px;
+}
+.bonus_card_icon.L.bonus_color.top_left_icon {
+  top: 25px;
+  left: 30px;
+}
+.bonus_card_icon.L.bonus_color.bottom_left_icon {
+  bottom: 23px;
+  left: 30px;
+}
+.bonus_card_icon.L.bonus_color.bottom_center_icon {
+  bottom: 23px;
+  left: 193px;
+}
+.bonus_card_icon.L.bonus_color.bottom_right_icon {
+  bottom: 23px;
+  right: 26px;
+}
+.bonus_card_icon.L.bonus_color.top_right_icon {
+  top: 25px;
+  right: 26px;
+}
+.bonus_card_icon.L.bonus_color.top_center_icon {
+  top: 25px;
+  left: 193px;
+}
+.bonus_card_icon.L.color_0 {
+  background-position-x: 1px;
+}
+.bonus_card_icon.L.color_1 {
+  background-position-x: -77px;
+}
+.bonus_card_icon.L.color_2 {
+  background-position-x: -155px;
+}
+.bonus_card_icon.L.color_3 {
+  background-position-x: -233px;
+}
+.bonus_card_icon.L.color_4 {
+  background-position-x: -311px;
 }
 
 /* Hexagon icons take up ~27 % of a real cards width. 
@@ -4131,136 +4248,136 @@
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_330.M {
-  background-position: -16173px -3px;
+  background-position: -3px -3px;
 }
 .hexagon_card_icon.hexagon_icon_330.L {
-  background-position: -33338px -8px;
+  background-position: -8px -8px;
 }
 .hexagon_card_icon.hexagon_icon_331 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_331.M {
-  background-position: -16222px -3px;
+  background-position: -52px -3px;
 }
 .hexagon_card_icon.hexagon_icon_331.L {
-  background-position: -33439px -8px;
+  background-position: -109px -8px;
 }
 .hexagon_card_icon.hexagon_icon_332 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_332.M {
-  background-position: -16271px -3px;
+  background-position: -101px -3px;
 }
 .hexagon_card_icon.hexagon_icon_332.L {
-  background-position: -33540px -8px;
+  background-position: -210px -8px;
 }
 .hexagon_card_icon.hexagon_icon_333 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_333.M {
-  background-position: -16320px -3px;
+  background-position: -150px -3px;
 }
 .hexagon_card_icon.hexagon_icon_333.L {
-  background-position: -33641px -8px;
+  background-position: -311px -8px;
 }
 .hexagon_card_icon.hexagon_icon_334 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_334.M {
-  background-position: -16369px -3px;
+  background-position: -199px -3px;
 }
 .hexagon_card_icon.hexagon_icon_334.L {
-  background-position: -33742px -8px;
+  background-position: -412px -8px;
 }
 .hexagon_card_icon.hexagon_icon_335 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_335.M {
-  background-position: -16418px -3px;
+  background-position: -248px -3px;
 }
 .hexagon_card_icon.hexagon_icon_335.L {
-  background-position: -33843px -8px;
+  background-position: -513px -8px;
 }
 .hexagon_card_icon.hexagon_icon_336 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_336.M {
-  background-position: -16467px -3px;
+  background-position: -297px -3px;
 }
 .hexagon_card_icon.hexagon_icon_336.L {
-  background-position: -33944px -8px;
+  background-position: -614px -8px;
 }
 .hexagon_card_icon.hexagon_icon_337 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_337.M {
-  background-position: -16516px -3px;
+  background-position: -346px -3px;
 }
 .hexagon_card_icon.hexagon_icon_337.L {
-  background-position: -34045px -8px;
+  background-position: -715px -8px;
 }
 .hexagon_card_icon.hexagon_icon_338 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_338.M {
-  background-position: -16565px -3px;
+  background-position: -395px -3px;
 }
 .hexagon_card_icon.hexagon_icon_338.L {
-  background-position: -34146px -8px;
+  background-position: -816px -8px;
 }
 .hexagon_card_icon.hexagon_icon_339 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_339.M {
-  background-position: -16614px -3px;
+  background-position: -444px -3px;
 }
 .hexagon_card_icon.hexagon_icon_339.L {
-  background-position: -34247px -8px;
+  background-position: -917px -8px;
 }
 .hexagon_card_icon.hexagon_icon_340 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_340.M {
-  background-position: -16663px -3px;
+  background-position: -493px -3px;
 }
 .hexagon_card_icon.hexagon_icon_340.L {
-  background-position: -34348px -8px;
+  background-position: -1018px -8px;
 }
 .hexagon_card_icon.hexagon_icon_341 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_341.M {
-  background-position: -16712px -3px;
+  background-position: -542px -3px;
 }
 .hexagon_card_icon.hexagon_icon_341.L {
-  background-position: -34449px -8px;
+  background-position: -1119px -8px;
 }
 .hexagon_card_icon.hexagon_icon_342 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_342.M {
-  background-position: -16761px -3px;
+  background-position: -591px -3px;
 }
 .hexagon_card_icon.hexagon_icon_342.L {
-  background-position: -34550px -8px;
+  background-position: -1220px -8px;
 }
 .hexagon_card_icon.hexagon_icon_343 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_343.M {
-  background-position: -16810px -3px;
+  background-position: -640px -3px;
 }
 .hexagon_card_icon.hexagon_icon_343.L {
-  background-position: -34651px -8px;
+  background-position: -1321px -8px;
 }
 .hexagon_card_icon.hexagon_icon_344 {
   background-image: url("img/hexagon_icons_echoes.png");
 }
 .hexagon_card_icon.hexagon_icon_344.M {
-  background-position: -16859px -3px;
+  background-position: -689px -3px;
 }
 .hexagon_card_icon.hexagon_icon_344.L {
-  background-position: -34752px -8px;
+  background-position: -1422px -8px;
 }
 .hexagon_card_icon.hexagon_icon_345 {
   background-image: url("img/hexagon_icons_echoes.png");

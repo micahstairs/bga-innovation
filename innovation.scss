@@ -1417,6 +1417,17 @@
         &.icon_6 {
             background-position-x: -393.5px;
         }
+        &.icon_10 {
+            background-image: none;
+            // The following line will be added dynamically via JavaScript:
+            // display: table;
+            & > span {
+                padding: 1px;
+                display: table-cell;
+                vertical-align: middle;
+                text-align: center;
+            }
+        }
         &.color_0 {
             background-position-y: -1px;
         }
@@ -1572,40 +1583,10 @@
                 left: 79px;
             }
         }
-        &.bonus_1 {
-            background-position-x: 1px;
-        }
-        &.bonus_2 {
-            background-position-x: -21px;
-        }
-        &.bonus_3 {
-            background-position-x: -41px;
-        }
-        &.bonus_4 {
-            background-position-x: -62px;
-        }
-        &.bonus_5 {
-            background-position-x: -83px;
-        }
-        &.bonus_6 {
-            background-position-x: -103px;
-        }
-        &.bonus_7 {
-            background-position-x: -124px;
-        }
-        &.bonus_8 {
-            background-position-x: -145px;
-        }
-        &.bonus_9 {
-            background-position-x: -166px;
-        }
-        &.bonus_10 {
-            background-position-x: -187px;
-        }
-        &.bonus_11 {
-            background-position-x: -208px;
-        }
-        // TODO(ECHOES): Add remaining values here.
+        // 1, -21, -41 -62, -83, -103, -124, -145, -166, -187, -208
+        // 21.0702 −20.6174x^1.00377
+        @include m.generate-bonus-x-position-equation(1,11,21.0702px,20.6174,1.00377);
+        
         &.bonus_color {
             width: 36px;
             height: 36px;
@@ -1636,23 +1617,79 @@
                 left: 73px;
             }
         }
-        &.color_0 {
-            background-position-x: -1px;
-        }
-        &.color_1 {
-            background-position-x: -39px;
-        }
-        &.color_2 {
-            background-position-x: -77px;
-        }
-        &.color_3 {
-            background-position-x: -115px;
-        }
-        &.color_4 {
-            background-position-x: -153px;
-        }
+        @include m.generate-color-x-position(0, 4, 1, 38px);
     }
-    // TODO(ECHOES): Render bonus icons on .L cards.
+    &.L {
+        &.bonus_value {
+            width: 43px;
+            background-size: 470px auto;
+            height: 43px;
+            background-position-y: -82px;
+            &.top_left_icon {
+                top: 25px;
+                left: 47px;
+            }
+            &.bottom_left_icon {
+                bottom: 35px;
+                left: 47px;
+            }
+            &.bottom_center_icon {
+                bottom: 35px;
+                left: 210px;
+            }
+            &.bottom_right_icon {
+                bottom: 35px;
+                right: 43px;
+            }
+            &.top_right_icon {
+                top: 25px;
+                right: 43px;
+            }
+            &.top_center_icon {
+                top: 25px;
+                left: 210px;
+            }
+        }
+        // values need refinement (actually values are fine, the equation is not good enough?, maybe fake the generator out by moving it up.
+        // https://www.dcode.fr/function-equation-finder "power"
+        //1,-41,-84,-128,-170,-212,-255 -298, -314, -383 -427
+        // 42.2445 −42.1311x^0.999082
+        // number 5 is currently cut off
+        @include m.generate-bonus-x-position-equation(1,11,42.2445px,42.1311,0.999082);
+
+        &.bonus_color {
+            width: 75px;
+            height: 75px;
+            background-size: 470px auto;
+            background-position-y: -1px;
+            &.top_left_icon {
+                top: 25px;
+                left: 30px;
+            }
+            &.bottom_left_icon {
+                bottom: 23px;
+                left: 30px;
+            }
+            &.bottom_center_icon {
+                bottom: 23px;
+                left: 193px;
+            }
+            &.bottom_right_icon {
+                bottom: 23px;
+                right: 26px;
+            }
+            &.top_right_icon {
+                top: 25px;
+                right: 26px;
+            }
+            &.top_center_icon {
+                top: 25px;
+                left: 193px;
+            }
+        }
+        // I think it the increment is off by a pixle or two
+        @include m.generate-color-x-position(0, 4, -1, 78px);
+    }
 }
 
 /* Hexagon icons take up ~27 % of a real cards width. 
@@ -1954,15 +1991,16 @@ $L_y_position:     8;
         }
     }
     // Echo cards
+    // Since the icons are in their own png, we have to offset i by 330 and 345 back to '0' for calulation purposes
     @for $i from 330 through 434 {
         @if $i <= 344 {
             &.hexagon_icon_#{$i} {
                 background-image: url("img/hexagon_icons_echoes.png");
                 &.M {
-                    background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
+                    background-position: -#{$M_x_position + ($i - 330) * $M_offset}px -#{$M_y_position}px;
                 }
                 &.L {
-                    background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
+                    background-position: -#{$L_x_position + ($i - 330) * $L_offset}px -#{$L_y_position}px;
                 }
             }
         }
@@ -1970,10 +2008,10 @@ $L_y_position:     8;
             &.hexagon_icon_#{$i} {
                 background-image: url("img/hexagon_icons_echoes.png");
                 &.M {
-                    background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
+                    background-position: -#{$M_x_position + ($i - 345) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
                 }
                 &.L {
-                    background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
+                    background-position: -#{$L_x_position + ($i - 345) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
                 }
             }
         }
