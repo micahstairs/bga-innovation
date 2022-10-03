@@ -1094,6 +1094,13 @@
         width: 9px;
         height: 9px;
         vertical-align: middle;
+        &.icon_0 {
+            width: 8px;
+            height: 8px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 153px auto !important;
+            background-position: -103px -11px !important;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 4px;
             height: 4px;
@@ -1180,6 +1187,11 @@
     &.in_tooltip {
         width: 13px;
         height: 12px;
+        &.icon_0 {
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 230px auto;
+            background-position: -155px -17px;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             @include m.icon-background;
             background-size: 83px auto;
