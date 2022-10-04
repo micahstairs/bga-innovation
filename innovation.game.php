@@ -6866,7 +6866,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
             $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
             $has_echo_effect = self::getEchoEffect($card['id']) !== null;
-            $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : 1;
+            $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : ($has_echo_effect ? 3 : 1);
             if ($effect_type == 3) {
                 self::DbQuery(self::format("
                         INSERT INTO echo_execution
