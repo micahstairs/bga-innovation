@@ -14464,18 +14464,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "420N2":
                 // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
-                $lowest_card_age = 11; // This will exclude Yamato from the criteria because we don't want to execute it
-                for ($color = 0; $color <= 4; $color++) {
-                    if ($color != 2) {
+                $lowest_card_age = null;
+                for ($color = 0; $color < 5; $color++) {
+                    if ($color != 2) { // non-green
                         $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($top_card !== null && $top_card['faceup_age'] < $lowest_card_age) {
+                        if ($top_card !== null && ($lowest_card_age == null || $top_card['faceup_age'] < $lowest_card_age)) {
                             $lowest_card_age = $top_card['faceup_age'];
                             self::setAuxiliaryValue($lowest_card_age);
                         }
                     }
                 }
                 
-                if ($lowest_card_age < 11) { // non-green card exists
+                if ($lowest_card_age != null) { // non-green card exists
                     $step_max = 1;
                 }
                 break;
