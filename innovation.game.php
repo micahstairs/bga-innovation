@@ -14469,22 +14469,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "420N2":
                 // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
-                // TODO(ECHOES): There's multiple bugs here. Battleship Yamato's faceup age is 11, which breaks an
-                // assumption that this code currently has. Also, purple is being exlcuded in the for loop. I propose
-                // rewriting this using the countCardsInLocationKeyedByColor function and using an if statement instead
-                // of a for loop.
-                $lowest_card_age = 11;
-                for ($color = 0; $color < 4; $color++) {
-                    if ($color != 2) {
+                $lowest_card_age = null;
+                for ($color = 0; $color < 5; $color++) {
+                    if ($color != 2) { // non-green
                         $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($top_card !== null && $top_card['faceup_age'] < $lowest_card_age) {
+                        if ($top_card !== null && ($lowest_card_age == null || $top_card['faceup_age'] < $lowest_card_age)) {
                             $lowest_card_age = $top_card['faceup_age'];
                             self::setAuxiliaryValue($lowest_card_age);
                         }
                     }
                 }
                 
-                if ($lowest_card_age < 11) { // non-green card exists
+                if ($lowest_card_age != null) { // non-green card exists
                     $step_max = 1;
                 }
                 break;
