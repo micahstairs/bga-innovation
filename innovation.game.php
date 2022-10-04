@@ -21330,6 +21330,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'card_ids_are_in_auxiliary_array' => true,
+                'enable_autoselection' => false,
             );
             break;
             
@@ -24575,7 +24576,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('interactionStep');
     }
     
-    // TODO(ECHOES#609): Take card_ids_are_in_auxiliary_array into consideration for automation.
     function stPreSelectionMove() {
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         $can_pass = self::getGameStateValue('can_pass') == 1;
@@ -24593,19 +24593,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
+            $with_bonus = self::getGameStateValue('with_bonus');
+            $without_bonus = self::getGameStateValue('without_bonus');
             $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
 
-            // TODO(ECHOES#609,FIGURES): Figure out if we need to make any updates to this logic (e.g. with_bonus).
+            // TODO(FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
-                ($location_from == 'hand' || $location_from == 'score') &&
+                ($location_from == 'hand' || $location_from == 'score' || $location_from == 'forecast') &&
                 // All players can see the number of cards (even in hidden locations) so if there aren't any cards there
                 // it's obvious a selection can't be made.
                 self::countCardsInLocation($owner_from, $location_from) > 0 &&
                 // Player is forced to choose a card based on a hidden property (e.g. color or icons). There are
                 // other hidden properties (has_demand_effect, icon_hash_X) that aren't included here because there
                 // are currently no cards where this would actually matter.
-                ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0);
+                ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0 || $with_bonus > 0 || $without_bonus > 0);
             
             // There is no selectable card
             if ($selection_size == 0) {
