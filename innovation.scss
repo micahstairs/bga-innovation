@@ -1114,6 +1114,13 @@
                 height: 8px;
             }
         }
+        &.music_note {
+            width: 8px;
+            height: 8px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 153px auto !important;
+            background-position: -113px -11px !important;
+        }
         .font_size_1 &, .font_size_2 &, .font_size_3 &, .font_size_4 &, .font_size_5 &, .font_size_6 & {
             background-size: 25px auto;
             background-position-y: -21px;
