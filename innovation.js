@@ -1837,7 +1837,13 @@ function (dojo, declare) {
                 return players.join(', ');
             };
 
-            // TODO(ECHOES): Consider mentioning echo effect executions.
+            if (info.num_echo_effects > 0) {
+                if (info.players_executing_non_demand_effects.length == 0) {
+                    HTML_action += "<li>" + _("Nobody will execute the echo effect(s).") + "</li>"
+                } else {
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the echo effect(s)."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                }
+            }
             
             if (exists_i_demand_effect) {
                 if (info.players_executing_i_demand_effects.length == 0) {

@@ -4726,7 +4726,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return count($visible_bonus_icons) == 0 ? 0 : max($visible_bonus_icons);
     }
 
-    // TODO(ECHOES#359): Make sure there isn't a bug here for situations involving nested execution.
     function getCardsWithVisibleEchoEffects($player_id, $dogma_card) {
         /**
         Gets the list of cards with visible echo effects given a specific card being executed (from top to bottom)
@@ -4735,19 +4734,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $color = $dogma_card['color'];
         $pile = self::getCardsInLocationKeyedByColor($player_id, 'board')[$color];
 
+        $visible_echo_effects = array();
+
         // Handle the case when the card being executed isn't even in the pile (e.g. Artifact on display)
         if ($dogma_card['location'] != 'board') {
-            $pile[] = $dogma_card;
+            if (self::countIconsOnCard($card, 10 /* echo effect */) > 0) {
+                $visible_echo_effects[] = $dogma_card['id'];
+            }
         }
-
-        $visible_echo_effects = array();
 
         for ($i = count($pile) - 1; $i >= 0; $i--) {
             $card = $pile[$i];
             $splay_direction = $card['splay_direction'];
 
             $has_visible_echo_efffect = false;
-            if ($card['location'] != 'board' || ($i == count($pile) - 1 && self::countIconsOnCard($card, 10 /* echo effect */) > 0)) {
+            if ($i == count($pile) - 1 && self::countIconsOnCard($card, 10 /* echo effect */) > 0) {
                 $has_visible_echo_efffect = true;
             } else if ($splay_direction == 1) { // left
                 $has_visible_echo_efffect = $card['spot_4'] == 10 || $card['spot_5'] == 10;
@@ -8196,7 +8197,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             AND player_eliminated = 0
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
-        if (self::getNonDemandEffect($card['id'], 1) !== null) {
+
+        // Echo effects are conisdered non-demand effects (the same set of players execute both)
+        $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($launcher_id, $card);
+        $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
+        if (self::getNonDemandEffect($card['id'], 1) !== null || $dogma_effect_info['num_echo_effects'] > 0) {
             $dogma_effect_info['players_executing_non_demand_effects'] =
                 self::getObjectListFromDB(self::format("
                         SELECT
@@ -8214,22 +8219,102 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $launcher_id,
             $dogma_effect_info['players_executing_i_compel_effects'],
             $dogma_effect_info['players_executing_i_demand_effects'],
-            $dogma_effect_info['players_executing_non_demand_effects']
+            $dogma_effect_info['players_executing_non_demand_effects'],
+            $card_ids_with_visible_echo_effects
         );
 
         return $dogma_effect_info;
     }
 
     /** Returns true if the dogma is guaranteed to have no effect (without revealing hidden info to the launching player). */
-    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players) {
+    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players, $card_ids_with_visible_echo_effects) {
 
         $i_compel_will_be_executed = count($i_compel_players) > 0;
         $i_demand_will_be_executed = count($i_demand_players) > 0;
         $non_demand_will_be_executed = count($non_demand_players) > 0;
 
-        // TODO(ECHOES#359): Update this with the players executing echo effects.
         if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed) {
             return true;
+        }
+
+        foreach ($card_ids_with_visible_echo_effects as $card_id) {
+            // NOTE: All cards with echo effects must be included in this switch statement, otherwise it breaks the logic
+            // farther on in this method. Also, we can't return true anywhere here, since the echo effect is not the only
+            // thing being executed.
+            switch ($card_id) {
+                case 219: // Safety Pin
+                case 331: // Perfume
+                case 332: // Ruler
+                case 339: // Chopsticks
+                case 345: // Lever
+                case 346: // Linguistics
+                case 348: // Horseshoes
+                case 355: // Almanac
+                case 356: // Magnifying Glass
+                case 359: // Charitable Trust
+                case 361: // Deoderant
+                case 363: // Novel
+                case 366: // Telescope
+                case 372: // Pencil
+                case 374: // Toilet
+                case 375: // Lightning Rod
+                case 377: // Coke
+                case 385: // Bifocals
+                case 389: // Hot Air Balloon
+                case 391: // Dentures
+                case 398: // Rubber
+                case 399: // Jeans
+                case 410: // Sliced Bread
+                case 406: // X-Ray
+                case 412: // Tractor
+                case 414: // Television
+                case 419: // Credit Card
+                case 420: // Email
+                case 421: // ATM
+                case 423: // Karaoke
+                    // These cards always have an effect.
+                    return false;
+
+                case 334: // Candles
+                case 335: // Plumbing
+                case 343: // Flute
+                case 350: // Scissors
+                case 367: // Kobukson
+                case 371: // Barometer
+                case 373: // Clock
+                case 376: // Thermometer
+                case 382: // Stove
+                case 383: // Piano
+                case 384: // Tuning Fork
+                case 387: // Loom
+                case 395: // Photography
+                case 397: // Machine Gun
+                case 401: // Elevator
+                case 403: // Ice Cream
+                case 422: // Wristwatch
+                    // These cards sometimes have an effect. Until we add more granular logic for these cards, we will
+                    // assume the cards have an effect.
+                    return false;
+
+                case 333: // Bangle
+                case 338: // Umbrella
+                case 342: // Bell
+                case 349: // Glassblowing
+                case 351: // Toothbrush
+                case 364: // Sunglasses
+                case 386: // Stethoscope
+                case 392: // Morphine
+                case 407: // Bandage
+                case 411: // Air Conditioner
+                case 418: // Jet
+                    // These cards have no effect if all players executing the non-demand have empty hands.
+                    foreach ($non_demand_players as $player_id) {
+                        if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                            return false;
+                        }
+                    }
+                    break;
+            }
         }
 
         // NOTE: As a general rule, we should avoid making the following card-specific logic very complicated since it can
