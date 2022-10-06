@@ -8284,7 +8284,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case 373: // Clock
                 case 376: // Thermometer
                 case 382: // Stove
-                case 383: // Piano
                 case 384: // Tuning Fork
                 case 387: // Loom
                 case 395: // Photography
@@ -8302,6 +8301,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case 349: // Glassblowing
                 case 351: // Toothbrush
                 case 364: // Sunglasses
+                case 383: // Piano
                 case 386: // Stethoscope
                 case 392: // Morphine
                 case 407: // Bandage
