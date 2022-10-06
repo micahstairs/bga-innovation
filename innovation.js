@@ -1808,9 +1808,9 @@ function (dojo, declare) {
             var player_id = dojo.attr(player_panel, 'id').substr(7);
 
             var on_display = card_location == 'display';
-            var exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
+            var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
-            var exists_non_demand_effect = card.non_demand_effect_1 !== null;
+            var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
             
             if (info.no_effect) {
                 return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
@@ -1837,7 +1837,13 @@ function (dojo, declare) {
                 return players.join(', ');
             };
 
-            // TODO(ECHOES): Consider mentioning echo effect executions.
+            if (info.num_echo_effects > 0) {
+                if (info.players_executing_non_demand_effects.length == 0) {
+                    HTML_action += "<li>" + _("Nobody will execute the echo effect(s).") + "</li>"
+                } else {
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the echo effect(s)."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                }
+            }
             
             if (exists_i_demand_effect) {
                 if (info.players_executing_i_demand_effects.length == 0) {
