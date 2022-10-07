@@ -13843,6 +13843,47 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            // id 384, Echoes age 5: Tuning Fork
+            case "384E1":
+                // Find all possible card ids that can be selected with this effect.
+                $card_ids = array();
+                for ($age = 1; $age < 11; $age++) {
+                    // Base cards are always available
+                    $card = self::getDeckTopCard($age, 0);
+                    if ($card !== null) {
+                        $card_ids[] = $card['id'];
+                    }
+                    if (self::getGameStateValue('artifacts_mode') > 1) {
+                        $card = self::getDeckTopCard($age, 1);
+                        if ($card !== null) {
+                            $card_ids[] = $card['id'];
+                        }
+                    }
+                    if (self::getGameStateValue('cities_mode') > 1) {
+                        $card = self::getDeckTopCard($age, 2);
+                        if ($card !== null) {
+                            $card_ids[] = $card['id'];
+                        }
+                    }
+                     if (self::getGameStateValue('echoes_mode') > 1) {
+                        $card = self::getDeckTopCard($age, 3);
+                        if ($card !== null) {
+                            //$card_ids[] = $card['id'];
+                        }
+                    }
+                    // TODO(FIGURES): Update this when implementing the expansion.
+                }
+                
+                if (count($card_ids) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryArray($card_ids);
+                }
+                break;
+
+            case "384N1":
+                $step_max = 1;
+                break;
+                    
             // id 385, Echoes age 6: Bifocals
             case "385E1":
                 $step_max = 1;
@@ -20123,31 +20164,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "371N2A":
-            // "If any were blue,"
+            // "You may reveal and return all cards in your forecast."
             $options = array(
                 'player_id' => $player_id,
-                'n' => 1,
                 'can_pass' => true,
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-                
-                'color' => array(0), /* blue */
-            );
-            break;   
-
-        case "371N2B":
-            // "return all cards in your forecast."
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
                 'owner_to' => 0,
-                'location_to' => 'deck',                
+                'location_to' => 'revealed,deck',                
             );
             break;   
 
@@ -20437,6 +20462,71 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 384, Echoes age 5: Tuning Fork
+        case "384E1A":
+            // "Look at the top card of any deck,"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+
+                'owner_from' => $player_id,
+                'location_from' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'hand',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+            
+        case "384E1B":
+            // "then place it back on top."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                'enable_autoselection' => false, // Give the player the chance to read the card
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'bottom_to' => false, // Topdeck
+                
+                'card_id_1' => self::getGameStateValue('card_id_1')
+            );       
+            break;
+
+        case "384N1A":
+            // "Return a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => false,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "384N1B":
+            // Return another card from your hand.
+            // Second time around this is optional
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+            
         // id 385, Echoes age 6: Bifocals
         case "385E1A":
             // "Draw and foreshadow a card of any value."
@@ -23746,14 +23836,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $bonuses = self::getBonusIcons($tucked_card);
                         $card = self::executeDraw($player_id, $bonuses[0], 'hand');
                         
-                        if (self::getBonusIcons($card) > 0) {
+                        if (count(self::getBonusIcons($card)) > 0) {
                             // "If the drawn card also has a bonus"
-                            self::incrementStepMax(1); // Add optional repeatable step
+                            self::setStepMax(2); // Add optional repeatable step
                         }
-                        else {
-                            self::incrementStep(2); $step += 2; // Stop the interactions
-                        }
-                            
                     } else {
                         // Reveal a hand with no bonuses
                         self::revealHand($player_id);
@@ -23939,16 +24025,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you returned at least one card, draw and foreshadow a 6."
                     self::executeDrawAndForeshadow($player_id, 6);
                     break;
-
-                // id 371, Echoes age 4: Barometer
-                case "371N2A":
-                    // "if a blue card is returned"
-                    if ($n > 0) {
-                        // Claim the destiny achievement
-                        self::claimSpecialAchievement($player_id, 436);
-                        self::incrementStepMax(1); // Return the rest of the forecast
-                    }
-                    break;
                     
                 // id 372, Echoes age 4: Pencil
                 case "372N1A":
@@ -24086,6 +24162,46 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 384, Echoes age 5: Tuning Fork
+                case "384E1A":
+                    if ($n > 0) {
+                        self::setGameStateValue('card_id_1', self::getGameStateValue('id_last_selected'));
+                        self::incrementStepMax(1); // return it
+                    }
+                    break;
+
+                case "384N1A":
+                    if ($n > 0) { // "If you do,"
+                        // "draw and reveal a card of the same value"
+                        $card = self::executeDrawAndReveal($player_id, self::getGameStateValue('age_last_selected'));
+                        $top_card_by_color = self::getTopCardOnBoard($player_id, $card['color']);
+                        if ($top_card_by_color == null || $card['faceup_age'] > $top_card_by_color['faceup_age']) {
+                            // "and meld it if it is higher than a top card of the same color on your board. "
+                            self::transferCardFromTo($card, $player_id, 'board');
+                        } else {
+                            // "Otherwise, return it."
+                            self::returnCard($card);
+                        }
+                        self::setStepMax(2); // see if the player wants to repeat
+                    }
+                    break;
+
+                case "384N1B":
+                    if ($n > 0) { // "If you do,"
+                        // "draw and reveal a card of the same value"
+                        $card = self::executeDrawAndReveal($player_id, self::getGameStateValue('age_last_selected'));
+                        $top_card_by_color = self::getTopCardOnBoard($player_id, $card['color']);
+                        if ($top_card_by_color == null || $card['faceup_age'] > $top_card_by_color['faceup_age']) {
+                            // "and meld it if it is higher than a top card of the same color on your board. "
+                            self::transferCardFromTo($card, $player_id, 'board');
+                        } else {
+                            // "Otherwise, return it."
+                            self::returnCard($card);
+                        }
+                        self::setStep(1); // repeat this step
+                    }
+                    break;
+                    
                 // id 385, Echoes age 6: Bifocals
                 case "385E1A":
                     self::executeDraw($player_id, self::getAuxiliaryValue2(), 'forecast');
@@ -25509,6 +25625,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, $choice, 'forecast');
                 break;
 
+            case "371N2A":
+                $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                if ($card['color'] == 0) {
+                    // "If any were blue, claim the Destiny achievement."
+                    self::claimSpecialAchievement($player_id, 436);
+                }
+                // Do the transfer
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                break;
+                
             // id 372, Echoes age 4: Pencil
             case "372N1A":
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
