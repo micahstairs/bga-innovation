@@ -7058,8 +7058,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to seize the relic.'), array('player_name' => self::getPlayerNameFromId($player_id)));
         self::setGameStateValue('relic_id', -1);
 
-        self::trace('relicPlayerTurn->interPlayerTurn (passSeizeRelic)');
-        $this->gamestate->nextState('interPlayerTurn');
+        self::trace('relicPlayerTurn->promoteCard (passSeizeRelic)');
+        $this->gamestate->nextState('promoteCard');
     }
 
     function seizeRelicToHand() {
@@ -7077,8 +7077,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::transferCardFromTo($card, $player_id, 'hand');
         self::setGameStateValue('relic_id', -1);
        
-        self::trace('relicPlayerTurn->interPlayerTurn (seizeRelicToHand)');
-        $this->gamestate->nextState('interPlayerTurn');
+        self::trace('relicPlayerTurn->promoteCard (seizeRelicToHand)');
+        $this->gamestate->nextState('promoteCard');
     }
 
     function seizeRelicToAchievements() {
@@ -7102,8 +7102,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
        
         self::setGameStateValue('relic_id', -1);
 
-        self::trace('relicPlayerTurn->interPlayerTurn (seizeRelicToAchievements)');
-        $this->gamestate->nextState('interPlayerTurn');
+        self::trace('relicPlayerTurn->promoteCard (seizeRelicToAchievements)');
+        $this->gamestate->nextState('promoteCard');
     }
 
     function dogmaArtifactOnDisplay() {
