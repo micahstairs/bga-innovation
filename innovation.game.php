@@ -1799,7 +1799,7 @@ class Innovation extends Table
             WHERE
                 selected IS TRUE AND
                 location != 'board' AND
-                (owner != {player_id} OR location = 'score' OR location = 'achievements')
+                (owner != {player_id} OR location = 'score' OR location = 'forecast' OR location = 'achievements')
         ", // The opposite of the cards the player can see except that we potentially select the cards in his score pile too (to enable direct selection if the player is lazy to see the card in his score pile for transfer)
             array('player_id' => $player_id)
         ));
@@ -13550,7 +13550,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Determine what selections will be valid based on the visible bonuses on all boards.
                 $all_player_ids = self::getAllActivePlayerIds();
                 $all_bonuses = array();
-                foreach($all_player_ids as $this_player_id) {
+                foreach ($all_player_ids as $this_player_id) {
                     $all_bonuses = array_merge($all_bonuses, self::getVisibleBonusesOnBoard($this_player_id));
                 }
                 $all_bonuses = array_unique($all_bonuses); // only need one selection per visible bonus value
@@ -13564,8 +13564,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     $step_max = 1;
                     self::setAuxiliaryValueFromArray(array_unique($age_to_foreshadow));
-                } elseif (count($all_bonuses) == 1) {
+                } else if (count($all_bonuses) == 1) {
                     self::executeDraw($player_id, $all_bonuses[0] + 2, 'forecast');
+                } else {
+                    self::executeDraw($player_id, 2, 'forecast');
                 }
                 break;   
 
@@ -20171,7 +20173,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
-                'owner_to' => 0,
+                'owner_to' => $player_id,
                 'location_to' => 'revealed,deck',                
             );
             break;   
@@ -25626,13 +25628,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "371N2A":
+                // "You may reveal and return all cards in your forecast."
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
+                $card = self::transferCardFromTo($card, $player_id, 'revealed');
                 if ($card['color'] == 0) {
                     // "If any were blue, claim the Destiny achievement."
                     self::claimSpecialAchievement($player_id, 436);
                 }
-                // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, 0, 'deck');
                 break;
                 
             // id 372, Echoes age 4: Pencil
