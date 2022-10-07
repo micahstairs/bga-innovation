@@ -984,7 +984,9 @@ function (dojo, declare) {
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay(args.args._private.dogma_effect_info);
                     break;    
                 case 'promoteCardPlayerTurn':
-                    this.my_forecast_verso_window.show();
+                    if (!this.isInReplayMode()) {
+                        this.my_forecast_verso_window.show();
+                    }
                     var max_age_to_promote = parseInt(args.args.max_age_to_promote);
                     // Make it possible to click or hover on the front of the cards in the forecast
                     this.addTooltipsWithActionsToMyForecast(max_age_to_promote);
@@ -1048,7 +1050,7 @@ function (dojo, declare) {
                         if (visible_selectable_cards !== null) {
                             visible_selectable_cards.addClass("clickable");
                             this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
-                            if (args.args._private.must_show_score) {
+                            if (args.args._private.must_show_score && !this.isInReplayMode()) {
                                 this.my_score_verso_window.show();
                             }
                         }
@@ -1151,7 +1153,9 @@ function (dojo, declare) {
                 
                 switch (stateName) {
                 case 'promoteCardPlayerTurn':
-                    this.my_forecast_verso_window.hide();
+                    if (!this.isInReplayMode()) {
+                        this.my_forecast_verso_window.hide();
+                    }
                     break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
@@ -1160,7 +1164,9 @@ function (dojo, declare) {
                 case 'selectionMove':
                     // Reset tooltips for board (in case there was a splaying choice)
                     this.addTooltipsWithoutActionsToMyBoard();
-                    this.my_score_verso_window.hide();
+                    if (!this.isInReplayMode()) {
+                        this.my_score_verso_window.hide();
+                    }
                 }
             }
         }, 
@@ -4311,7 +4317,7 @@ function (dojo, declare) {
             return this.isSpectator || this.isInReplayMode();
         },
 
-        // Returns true if the game is ongoing but the user clicked "reply from this move" in the log or the game is in archive mode after the game has ended
+        // Returns true if the game is ongoing but the user clicked "replay from this move" in the log or the game is in archive mode after the game has ended
         isInReplayMode : function () {
             return typeof g_replayFrom != 'undefined' || g_archive_mode;
         }
