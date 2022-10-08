@@ -1581,7 +1581,7 @@ $this->textual_card_infos = array(
 ),
 
 402 => array('name' => clienttranslate('Fertilizer'),
-    'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value to the returned card.'),
+    'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value equal to the returned card.'),
     'non_demand_effect_2' => clienttranslate('Draw and foreshadow a card of any value.'),
 ),
 
@@ -1638,7 +1638,7 @@ $this->textual_card_infos = array(
 ),
 
 413 => array('name' => clienttranslate('Crossword'),
-    'non_demand_effect_1' => clienttranslate('For each visible bonus your board, draw a card of that value.'),
+    'non_demand_effect_1' => clienttranslate('For each visible bonus on your board, draw a card of that value.'),
 ),
 
 414 => array('name' => clienttranslate('Television'),
