@@ -20501,8 +20501,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "384N1B":
-            // Return another card from your hand.
-            // Second time around this is optional
+            // "You may repeat this dogma effect."
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
