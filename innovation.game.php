@@ -4704,7 +4704,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Handle the case when the card being executed isn't even in the pile (e.g. Artifact on display)
         if ($dogma_card['location'] != 'board') {
-            if (self::countIconsOnCard($card, 10 /* echo effect */) > 0) {
+            if (self::countIconsOnCard($dogma_card, 10 /* echo effect */) > 0) {
                 $visible_echo_effects[] = $dogma_card['id'];
             }
         }
@@ -14397,13 +14397,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "411D1":
                 // "I demand you return all cards from your score pile of value matching any of your top cards!"
-                $top_cards = self::countCardsInLocationKeyedByAge($player_id, 'board');
+                $top_cards = self::getTopCardsOnBoard($player_id);
                 $card_ids_to_return = array();
-                foreach (self::getCardsInLocation($player_id, 'score') as $card) {
-                    if ($top_cards[$card['age']] > 0) {
-                        $card_ids_to_return[] = $card['id'];
+                foreach (self::getCardsInLocation($player_id, 'score') as $score_card) {
+                    $found = false;
+                    foreach ($top_cards as $top_card) {
+                        if ($top_card['faceup_age'] == $score_card['age']) {
+                            $found = true;
+                            break;
+                        }
                     }
-                }
+                    
+                    if ($found) {
+                        $card_ids_to_return[] = $score_card['id'];
+                    }
+                }   
                 
                 if (count($card_ids_to_return) > 0) {
                     $step_max = 1;
