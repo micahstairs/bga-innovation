@@ -351,7 +351,7 @@ function (dojo, declare) {
             
             this.num_cards_in_row.achievements = num_of_achievments_per_row;
             this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/422): Revise this logic to properly incorporate Forecast zone in the calculations.
+            // TODO(ECHOES#422): Revise this logic to properly incorporate Forecast zone in the calculations.
             this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
 
             // Defining the number of cards the window for forecast verso can host
@@ -3279,15 +3279,15 @@ function (dojo, declare) {
             var zone_container = event.currentTarget.parentNode;
             var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
             var location = zone_infos[0];
-            var owner = zone_infos[1];
+            var owner = location == 'deck' ? 0 : zone_infos[1];
             if (!owner) {
                 owner = 0;
             }
-            var zone = this.getZone(location, owner, null, age);
+            var zone = this.getZone(location, owner, type, age);
             
             // Search the position the card is
             var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
-            
+
             var self = this;
             this.ajaxcall("/innovation/innovation/chooseRecto.html",
                             {

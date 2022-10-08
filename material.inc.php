@@ -1413,7 +1413,7 @@ $this->textual_card_infos = array(
 371 => array('name' => clienttranslate('Barometer'),
     'echo_effect_1' => clienttranslate('Transfer a ${age_5} from your forecast to your hand.'),
     'non_demand_effect_1' => clienttranslate('Draw and foreshadow a card of value two higher than a bonus on any board.'),
-    'non_demand_effect_2' => clienttranslate('You may return all cards in your forecast. If any were blue, claim the Destiny achievement.'),
+    'non_demand_effect_2' => clienttranslate('You may reveal and return all cards in your forecast. If any were blue, claim the Destiny achievement.'),
 ),       
 
 372 => array('name' => clienttranslate('Pencil'),
