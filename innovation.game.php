@@ -204,60 +204,6 @@ class Innovation extends Table
             self::setGameStateValue('cities_mode', 1);
             self::setGameStateValue('echoes_mode', 1);
         }
-        // TODO(LATER): Remove this.
-        if ($this->innovationGameState->get('release_version') == 0) {
-            self::initGameStateLabels(array(
-                'card_id_1' => 69,
-                'card_id_2' => 70,
-                'card_id_3' => 71,
-                'require_achievement_eligibility' => 72,
-                'has_demand_effect' => 73,
-                'has_splay_direction' => 74,
-                'owner_last_selected' => 75,
-                'type_array' => 76,
-                'age_array' => 77,
-                'player_array' => 78,
-                'icon_hash_1' => 79,
-                'icon_hash_2' => 80,
-                'icon_hash_3' => 81,
-                'icon_hash_4' => 82,
-                'icon_hash_5' => 83,
-                'enable_autoselection' => 84,
-                'include_relics' => 85,
-                'relic_id' => 95,
-                'current_action_number' => 96,
-                'current_nesting_index' => 97,
-                'release_version' => 98,
-                'debug_mode' => 99,
-                'artifacts_mode' => 102,
-            ));
-            self::setGameStateValue('card_id_1', -2);
-            self::setGameStateValue('card_id_2', -2);
-            self::setGameStateValue('card_id_3', -2);
-            self::setGameStateValue('require_achievement_eligibility', -1);
-            self::setGameStateValue('has_demand_effect', -1);
-            self::setGameStateValue('has_splay_direction', -1);
-            self::setGameStateValue('owner_last_selected', -1);
-            self::setGameStateValue('type_array', -1);
-            self::setGameStateValue('age_array', -1);
-            self::setGameStateValue('player_array', -1);
-            self::setGameStateValue('icon_hash_1', -1);
-            self::setGameStateValue('icon_hash_2', -1);
-            self::setGameStateValue('icon_hash_3', -1);
-            self::setGameStateValue('icon_hash_4', -1);
-            self::setGameStateValue('icon_hash_5', -1);
-            self::setGameStateValue('enable_autoselection', -1);
-            self::setGameStateValue('include_relics', -1);
-            self::setGameStateValue('with_bonus', -1);
-            self::setGameStateValue('without_bonus', -1);
-            self::setGameStateValue('card_ids_are_in_auxiliary_array', -1);
-            self::setGameStateValue('relic_id', -1);
-            self::setGameStateValue('current_action_number', -1);
-            self::setGameStateValue('current_nesting_index', -1);
-            self::setGameStateValue('release_version', 0);
-            self::setGameStateValue('debug_mode', 0);
-            self::setGameStateValue('artifacts_mode', 1);
-        }
     }
 
     //****** CODE FOR DEBUG MODE
@@ -492,7 +438,7 @@ class Innovation extends Table
         /************ Start the game initialization *****/
 
         // Indicate that this production game was created after the Cities and Echoes expansions were released
-        // TODO(FIGURES): Update this before releasing future expansions.
+        // TODO(CITIES,FIGURES): Update this before releasing future expansions.
         self::setGameStateInitialValue('release_version', 2);
 
         // Init global values with their initial values
@@ -526,9 +472,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('first_player_with_only_one_action', 1);
         self::setGameStateInitialValue('second_player_with_only_one_action', count($players) >= 4 ? 1 : 0); // used when >= 4 players only
         self::setGameStateInitialValue('has_second_action', 1);
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::setGameStateInitialValue('current_action_number', -1);
-        }
+        self::setGameStateInitialValue('current_action_number', -1);
         
         // Flags used when the game ends to know how it ended
         self::setGameStateInitialValue('game_end_type', -1); // 0 for game end by achievements, 1 for game end by score, -1 for game end by dogma
@@ -539,32 +483,19 @@ class Innovation extends Table
         
         // Flags used in dogma to remember player roles and which card it is, which effect (yet -1 as default value since there are not currently in use)
         self::setGameStateInitialValue('sharing_bonus', -1); // 1 if the dogma player will have a sharing bonus, else 0
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::setGameStateInitialValue('current_nesting_index', -1);
-            self::DbQuery("
-                INSERT INTO nested_card_execution (
-                    nesting_index,
-                    card_id,
-                    executing_as_if_on_card_id,
-                    launcher_id,
-                    current_player_id,
-                    current_effect_type,
-                    current_effect_number,
-                    step,
-                    step_max
-                ) VALUES (0, -1, -1, -1, -1, -1, -1, -1, -1)");
-        } else {
-            self::setGameStateInitialValue('current_player_under_dogma_effect', -1);
-            self::setGameStateInitialValue('dogma_card_id', -1);
-            self::setGameStateInitialValue('current_effect_type', -1); // 0 for I demand dogma, 1 for non-demand dogma, 2 for I compel dogma
-            self::setGameStateInitialValue('current_effect_number', -1); // 1, 2 or 3
-            for($i=1; $i<=9; $i++) {
-                self::setGameStateInitialValue('nested_id_'.$i, -1); // The card being executed through exclusive execution
-                self::setGameStateInitialValue('nested_current_effect_number_'.$i, -1); // The non-demand effect number currently executed
-            }
-            self::setGameStateInitialValue('step', -1);
-            self::setGameStateInitialValue('step_max', -1);
-        }
+        self::setGameStateInitialValue('current_nesting_index', -1);
+        self::DbQuery("
+            INSERT INTO nested_card_execution (
+                nesting_index,
+                card_id,
+                executing_as_if_on_card_id,
+                launcher_id,
+                current_player_id,
+                current_effect_type,
+                current_effect_number,
+                step,
+                step_max
+            ) VALUES (0, -1, -1, -1, -1, -1, -1, -1, -1)");
         
         // Flag used for player interaction in dogma to remember what splay is proposed (-1 as default and if the choice does not involve splaying)
         self::setGameStateInitialValue('splay_direction', -1);
@@ -857,27 +788,14 @@ class Innovation extends Table
         $result['number_of_achievements_needed_to_win'] = self::getGameStateValue('number_of_achievements_needed_to_win');
         
         // Link to the current dogma effect (if any)
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            if ($nested_card_state == null) {
-                $JSCardEffectQuery = null;
-            } else {
-                $current_effect_type = $nested_card_state['current_effect_type'];
-                $current_effect_number = $nested_card_state['current_effect_number'];
-                $card_id = $nested_card_state['card_id'];
-                $JSCardEffectQuery = $card_id == -1 ? null : self::getJSCardEffectQuery(self::getCardInfo($card_id), $current_effect_type, $current_effect_number);
-            }
+        $nested_card_state = self::getCurrentNestedCardState();
+        if ($nested_card_state == null) {
+            $JSCardEffectQuery = null;
         } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1;
-            if ($card_id == -1) {
-                $JSCardEffectQuery = null;
-            } else {
-                $card = self::getCardInfo($card_id);
-                $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-                $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
-                $JSCardEffectQuery = $current_effect_number == -1 ? null : self::getJSCardEffectQuery($card, $current_effect_type, $current_effect_number);
-            }
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            $card_id = $nested_card_state['card_id'];
+            $JSCardEffectQuery = $card_id == -1 ? null : self::getJSCardEffectQuery(self::getCardInfo($card_id), $current_effect_type, $current_effect_number);
         }
         $result['JSCardEffectQuery'] = $JSCardEffectQuery;
         
@@ -885,17 +803,13 @@ class Innovation extends Table
         $active_player = self::getGameStateValue('active_player');
         $result['active_player'] = $active_player == -1 ? null : $active_player;
         if ($active_player != -1) {
-            if (self::getGameStateValue('release_version') >= 1) {
-                $action_number = self::getGameStateValue('current_action_number');
-                $result['action_number'] = $action_number;
-                $card = self::getArtifactOnDisplay($active_player);
-                if ($card !== null && $this->gamestate->state()['name'] == 'artifactPlayerTurn') {
-                    $result['artifact_on_display_icons'] = array();
-                    $result['artifact_on_display_icons']['resource_icon'] = $card['dogma_icon'];
-                    $result['artifact_on_display_icons']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
-                }
-            } else {
-                $result['action_number'] = self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') || self::getGameStateValue('has_second_action') ? 1 : 2;
+            $action_number = self::getGameStateValue('current_action_number');
+            $result['action_number'] = $action_number;
+            $card = self::getArtifactOnDisplay($active_player);
+            if ($card !== null && $this->gamestate->state()['name'] == 'artifactPlayerTurn') {
+                $result['artifact_on_display_icons'] = array();
+                $result['artifact_on_display_icons']['resource_icon'] = $card['dogma_icon'];
+                $result['artifact_on_display_icons']['resource_count_delta'] = self::countIconsOnCard($card, $card['dogma_icon']);
             }
         }
         
@@ -2052,12 +1966,8 @@ class Innovation extends Table
     }
 
     function getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) {
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $post_execution_indicator = $nested_card_state['post_execution_index'] == 0 ? '' : '+';
-        } else {
-            $post_execution_indicator = '';
-        }
+        $nested_card_state = self::getCurrentNestedCardState();
+        $post_execution_indicator = $nested_card_state['post_execution_index'] == 0 ? '' : '+';
         // Echo effects are sometimes executed on cards other than the card being dogma'd
         if ($current_effect_type == 3) {
             $nesting_index = $nested_card_state['nesting_index'];
@@ -3199,7 +3109,7 @@ class Innovation extends Table
         $players = self::getCollectionFromDB("SELECT player_no, player_id, player_eliminated FROM player");
         $num_players = count($players);
 
-        if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_nesting_index') < 0) {
+        if (self::getGameStateValue('current_nesting_index') < 0) {
             $current_player_id = self::getGameStateValue('active_player');
         } else {
             $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
@@ -3573,11 +3483,7 @@ class Innovation extends Table
     
     function notifyEndOfGameByDogma() {
         $player_id = self::getGameStateValue('winner_by_dogma');
-        if (self::getGameStateValue('release_version') >= 1) {
-            $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
-        } else {
-            $dogma_card_id = self::getGameStateValue('dogma_card_id');
-        }
+        $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
 
         if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
             if ($dogma_card_id == 207 /* Exxon Valdez */ ) {
@@ -3624,24 +3530,15 @@ class Innovation extends Table
     /** This function should be called whenever something changes in the game **/
     function recordThatChangeOccurred() {
         
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            if ($nested_card_state == null) {
-                return;
-            }
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_player_under_dogma_effect = $nested_card_state['current_player_id'];
-
-            // Tell all currently executing "The Big Bang" cards that the game state has changed.
-            self::DbQuery("UPDATE nested_card_execution SET auxiliary_value = 1 WHERE card_id = 203");
-        } else {
-            $current_effect_type = self::getGameStateValue('current_effect_type');
-            if ($current_effect_type == -1) { // Not in dogma
-                // Nothing to be done
-                return;
-            }
-            $current_player_under_dogma_effect = self::getGameStateValue('current_player_under_dogma_effect');
+        $nested_card_state = self::getCurrentNestedCardState();
+        if ($nested_card_state == null) {
+            return;
         }
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_player_under_dogma_effect = $nested_card_state['current_player_id'];
+
+        // Tell all currently executing "The Big Bang" cards that the game state has changed.
+        self::DbQuery("UPDATE nested_card_execution SET auxiliary_value = 1 WHERE card_id = 203");
         
         // Mark that the player under effect made a change in the game
         self::markExecutingPlayer($current_player_under_dogma_effect);
@@ -3831,11 +3728,7 @@ class Innovation extends Table
         /**
             Get all static information about all cards in the database.
         **/
-        if (self::getGameStateValue('release_version') >= 1) {
-            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM card");
-        } else {
-            $cards = self::getObjectListFromDB("SELECT id, 0 as type, age, age as faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, 0 as is_relic FROM card");
-        }
+        $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM card");
         return self::attachTextualInfoToList($cards);
     }
     
@@ -5415,42 +5308,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /* Returns the ID of the next player under effect, or null */
     function getNextPlayerUnderEffect($dogma_effect_type, $player_id, $launcher_id) {
         // I demand
-        if (self::getGameStateValue('release_version') >= 1) {
-            $launcher_icon_count = self::getUniqueValueFromDB(self::format("
-                SELECT
-                    featured_icon_count
-                FROM
-                    player
-                WHERE
-                    player_id = {launcher_id}
-            ",
-                array('launcher_id' => $launcher_id)
-            ));
-            // I demand
-            if ($dogma_effect_type == 0) {
-                $player_query = self::format(
-                    "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
-                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
-                );
-            // I compel
-            } else if ($dogma_effect_type == 2) {
-                $player_query = self::format(
-                    "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
-                    array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
-                );
-            // Non-demand
-            } else {
-                $player_query = self::format(
-                    "featured_icon_count >= {launcher_icon_count}",
-                    array('launcher_icon_count' => $launcher_icon_count)
-                );
-            }
+        $launcher_icon_count = self::getUniqueValueFromDB(self::format("
+            SELECT
+                featured_icon_count
+            FROM
+                player
+            WHERE
+                player_id = {launcher_id}
+        ",
+            array('launcher_id' => $launcher_id)
+        ));
+        // I demand
+        if ($dogma_effect_type == 0) {
+            $player_query = self::format(
+                "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
+                array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+            );
+        // I compel
+        } else if ($dogma_effect_type == 2) {
+            $player_query = self::format(
+                "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
+                array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
+            );
+        // Non-demand
         } else {
-            if ($dogma_effect_type == 0) {
-                $player_query = self::format("stronger_or_equal = FALSE AND player_id != {launcher_id}", array('launcher_id' => $launcher_id));
-            } else {
-                $player_query = "stronger_or_equal = TRUE";
-            }
+            $player_query = self::format(
+                "featured_icon_count >= {launcher_icon_count}",
+                array('launcher_icon_count' => $launcher_icon_count)
+            );
         }
 
         // NOTE: The constant '100' is mostly arbitrary. It just needed to be at least as large as the maximum number of players in the game.
@@ -6413,9 +6298,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'forecast';
         default:
             // This should not happen
-            if (self::getGameStateValue('release_version') >= 1) {
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
-            }
+            throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
             break;
         }
     }
@@ -6489,26 +6372,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Functions used for returning args to clients (Several states send these same things) **/
     function getArgForDogmaEffect() {
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-            // Echo effects are sometimes executed on cards other than the card being dogma'd
-            if ($current_effect_type == 3) {
-                $nesting_index = $nested_card_state['nesting_index'];
-                $card_id = self::getUniqueValueFromDB(
-                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
-                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
-            }
-            $card = self::getCardInfo($card_id);
-        } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1;
-            $card = self::getCardInfo($card_id);
-            $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-            $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
+        // Echo effects are sometimes executed on cards other than the card being dogma'd
+        if ($current_effect_type == 3) {
+            $nesting_index = $nested_card_state['nesting_index'];
+            $card_id = self::getUniqueValueFromDB(
+                self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                    array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
         }
+        $card = self::getCardInfo($card_id);
         
         $card_names = self::getDogmaCardNames();
         
@@ -6542,46 +6417,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $card_names = array();
         
-        if (self::getGameStateValue('release_version') >= 1) {
-            $i18n = array();
-            $nesting_index = self::getGameStateValue('current_nesting_index');
-            for ($i = 0; $i <= $nesting_index; $i++) {
-                $nested_card_state = self::getNestedCardState($i);
-                $current_effect_type = $nested_card_state['current_effect_type'];
-                $current_effect_number = $nested_card_state['current_effect_number'];
-                $card_id = $nested_card_state['card_id'];
-                // Echo effects are sometimes executed on cards other than the card being dogma'd
-                if ($current_effect_type == 3) {
-                    $nesting_index = $nested_card_state['nesting_index'];
-                    $card_id = self::getUniqueValueFromDB(
-                        self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
-                            array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
-                }
-                $card = self::getCardInfo($card_id);
-                $card_names['card_'.$i] = self::getCardName($card_id);
-                $card_names['ref_player_'.$i] = $player_id;
-                $i18n[] = 'card_'.$i;
+        $i18n = array();
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+        for ($i = 0; $i <= $nesting_index; $i++) {
+            $nested_card_state = self::getNestedCardState($i);
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            $card_id = $nested_card_state['card_id'];
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
-        } else {
-            $dogma_card_id = self::getGameStateValue('dogma_card_id');
-            $dogma_card = self::getCardInfo($dogma_card_id);
-            $card_names['card_0'] = self::getCardName($dogma_card['id']);
-            $card_names['ref_player_0'] = self::getGameStateValue('active_player');
-            $i18n = array('card_0');
-
-            $j = 1;
-            for($i=9; $i>=1; $i--) {
-                $nested_id = self::getGameStateValue('nested_id_'.$i);
-                if ($nested_id == -1) {
-                    continue;
-                }
-                
-                $card = self::getCardInfo($nested_id);
-                $card_names['card_'.$j] = self::getCardName($card['id']);
-                $card_names['ref_player_'.$j] = $player_id;
-                $i18n[] = 'card_'.$j;
-                $j++;
-            }
+            $card = self::getCardInfo($card_id);
+            $card_names['card_'.$i] = self::getCardName($card_id);
+            $card_names['ref_player_'.$i] = $player_id;
+            $i18n[] = 'card_'.$i;
         }
 
         $card_names['i18n'] = $i18n;
@@ -6600,20 +6453,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function setLauncherId($launcher_id) {
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('launcher_id', $launcher_id);
-        }
+        self::updateCurrentNestedCardState('launcher_id', $launcher_id);
     }
 
     function getLauncherId() {
-        if (self::getGameStateValue('release_version') >= 1) {
-            if (self::getGameStateValue('current_nesting_index') < 0) {
-                return self::getGameStateValue('active_player');
-            }
-            return self::getCurrentNestedCardState()['launcher_id'];
-        } else {
+        if (self::getGameStateValue('current_nesting_index') < 0) {
             return self::getGameStateValue('active_player');
         }
+        return self::getCurrentNestedCardState()['launcher_id'];
     }
 
     function incrementStep($delta) {
@@ -6621,19 +6468,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function setStep($step) {
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('step', $step);
-        } else {
-            self::setGameStateValue('step', $step);
-        }
+        self::updateCurrentNestedCardState('step', $step);
     }
 
     function getStep() {
-        if (self::getGameStateValue('release_version') >= 1) {
-            return self::getCurrentNestedCardState()['step'];
-        } else {
-            return self::getGameStateValue('step');
-        }
+        return self::getCurrentNestedCardState()['step'];
     }
 
     function incrementStepMax($delta) {
@@ -6641,27 +6480,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function setStepMax($step_max) {
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('step_max', $step_max);
-        } else {
-            self::setGameStateValue('step_max', $step_max);
-        }
+        self::updateCurrentNestedCardState('step_max', $step_max);
     }
 
     function getStepMax() {
-        if (self::getGameStateValue('release_version') >= 1) {
-            return self::getCurrentNestedCardState()['step_max'];
-        } else {
-            return self::getGameStateValue('step_max');
-        }
+        return self::getCurrentNestedCardState()['step_max'];
     }
 
     function setAuxiliaryValue($auxiliary_value) {
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('auxiliary_value', $auxiliary_value);
-        } else {
-            self::setGameStateValue('auxiliary_value', $auxiliary_value);
-        }
+        self::updateCurrentNestedCardState('auxiliary_value', $auxiliary_value);
     }
 
     function setAuxiliaryValueFromArray($array) {
@@ -6669,11 +6496,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function getAuxiliaryValue() {
-        if (self::getGameStateValue('release_version') >= 1) {
-            return self::getCurrentNestedCardState()['auxiliary_value'];
-        } else {
-            return self::getGameStateValue('auxiliary_value');
-        }
+        return self::getCurrentNestedCardState()['auxiliary_value'];
     }
 
     function getAuxiliaryValueAsArray() {
@@ -6785,30 +6608,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Nested dogma excution management system: FIFO stack **/
     function executeNonDemandEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        if (self::getGameStateValue('release_version') >= 1) {
-            $card_args = self::getNotificationArgsForCardList([$card]);
-            if (self::getNonDemandEffect($card['id'], 1) === null && self::getEchoEffect($card['id']) === null) {
-                self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
-                return;
-            }
-            self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}.'),
-                ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
-            self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}.'),
-                ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
-        } else {
-            if (self::getNonDemandEffect($card['id'], 1) === null) { // There is no non-demand effect
-                self::notifyGeneralInfo(clienttranslate('There is no non-demand effect on this card.'));
-                // No exclusive execution: do nothing
-                return;
-            }
-            if (self::getNonDemandEffect($card['id'], 2) !== null) { // There are 2 or 3 non-demand effects
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effects of this card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effects of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-            } else { // There is a single non-demand effect
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} execute the non-demand effect of this card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} executes the non-demand effect of this card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
-            }
+        $card_args = self::getNotificationArgsForCardList([$card]);
+        if (self::getNonDemandEffect($card['id'], 1) === null && self::getEchoEffect($card['id']) === null) {
+            self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
+            return;
         }
+        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}.'),
+            ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}.'),
+            ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
     }
 
@@ -6829,42 +6637,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function pushCardIntoNestedDogmaStack($card, $execute_demand_effects) {
         self::trace('nesting++');
-        if (self::getGameStateValue('release_version') >= 1) {
-            $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
-            $nested_card_state = self::getCurrentNestedCardState();
-            // Every card that says "execute the effects" also says "as if they were on this card"
-            if ($execute_demand_effects) {
-                $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
-            } else {
-                $as_if_on = $card['id'];
-            }
-            $next_nesting_index = self::getGameStateValue('current_nesting_index') + 1;
-            $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
-            $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
-            $has_echo_effect = self::getEchoEffect($card['id']) !== null;
-            $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : ($has_echo_effect ? 3 : 1);
-            if ($effect_type == 3) {
-                self::DbQuery(self::format("
-                        INSERT INTO echo_execution
-                            (nesting_index, execution_index, card_id)
-                        VALUES
-                            ({nesting_index}, 1, {card_id})
-                    ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'])));
-            }
-            self::DbQuery(self::format("
-                INSERT INTO nested_card_execution
-                    (nesting_index, card_id, executing_as_if_on_card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
-                VALUES
-                    ({nesting_index}, {card_id}, {as_if_on}, {launcher_id}, {effect_type}, 1, -1, -1)
-            ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+        $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
+        $nested_card_state = self::getCurrentNestedCardState();
+        // Every card that says "execute the effects" also says "as if they were on this card"
+        if ($execute_demand_effects) {
+            $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
         } else {
-            for($i=8; $i>=1; $i--) {
-                self::setGameStateValue('nested_id_'.($i+1), self::getGameStateValue('nested_id_'.$i));
-                self::setGameStateValue('nested_current_effect_number_'.($i+1), self::getGameStateValue('nested_current_effect_number_'.$i));
-            }
-            self::setGameStateValue('nested_id_1', $card['id']);
-            self::setGameStateValue('nested_current_effect_number_1', 0);
+            $as_if_on = $card['id'];
         }
+        $next_nesting_index = self::getGameStateValue('current_nesting_index') + 1;
+        $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
+        $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
+        $has_echo_effect = self::getEchoEffect($card['id']) !== null;
+        $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : ($has_echo_effect ? 3 : 1);
+        if ($effect_type == 3) {
+            self::DbQuery(self::format("
+                    INSERT INTO echo_execution
+                        (nesting_index, execution_index, card_id)
+                    VALUES
+                        ({nesting_index}, 1, {card_id})
+                ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'])));
+        }
+        self::DbQuery(self::format("
+            INSERT INTO nested_card_execution
+                (nesting_index, card_id, executing_as_if_on_card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
+            VALUES
+                ({nesting_index}, {card_id}, {as_if_on}, {launcher_id}, {effect_type}, 1, -1, -1)
+        ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
     }
     
     function popCardFromNestedDogmaStack() {
@@ -6872,16 +6671,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('release_version') >= 2) {
             self::DbQuery(self::format("DELETE FROM indexed_auxiliary_value WHERE nesting_index = {nesting_index}", array('nesting_index' => self::getGameStateValue('current_nesting_index'))));
         }
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => self::getGameStateValue('current_nesting_index'))));
-            self::incGameStateValue('current_nesting_index', -1);
-            self::updateCurrentNestedCardState('post_execution_index', 'post_execution_index + 1');
-        } else {
-            for($i=1; $i<=8; $i++) {
-                self::setGameStateValue('nested_id_'.$i, self::getGameStateValue('nested_id_'.($i+1)));
-                self::setGameStateValue('nested_current_effect_number_'.$i, self::getGameStateValue('nested_current_effect_number_'.($i+1)));
-            }
-        }
+        self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => self::getGameStateValue('current_nesting_index'))));
+        self::incGameStateValue('current_nesting_index', -1);
+        self::updateCurrentNestedCardState('post_execution_index', 'post_execution_index + 1');
     }
 
     function getNestedCardState($nesting_index) {
@@ -6927,20 +6719,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function getCurrentPlayerUnderDogmaEffect() {
-        if (self::getGameStateValue('release_version') >= 1) {
-            $player_id = self::getCurrentNestedCardState()['current_player_id'];
-            // TODO(LATER): Figure out why this workaround is necessary.
-            if ($player_id == -1) {
-                return self::getGameStateValue('active_player');
-            }
-            return $player_id;
-        } else {
-            $player_id = self::getGameStateValue('current_player_under_dogma_effect');
-            if ($player_id == -1) {
-                return self::getGameStateValue('active_player');
-            }
-            return $player_id;
+        $player_id = self::getCurrentNestedCardState()['current_player_id'];
+        // TODO(LATER): Figure out why this workaround is necessary.
+        if ($player_id == -1) {
+            return self::getGameStateValue('active_player');
         }
+        return $player_id;
     }
     
 //////////// Player actions
@@ -7515,16 +7299,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function updateActionAndTurnStats($player_id) {
-        if (self::getGameStateValue('release_version') >= 1) {
-            if (self::getGameStateValue('current_action_number') == 1) {
-                self::incStat(1, 'turns_number');
-                self::incStat(1, 'turns_number', $player_id);
-            }
-        } else {
-            if (self::getGameStateValue('has_second_action') || self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action')) {
-                self::incStat(1, 'turns_number');
-                self::incStat(1, 'turns_number', $player_id);
-            }
+        if (self::getGameStateValue('current_action_number') == 1) {
+            self::incStat(1, 'turns_number');
+            self::incStat(1, 'turns_number', $player_id);
         }
         self::incStat(1, 'actions_number');
         self::incStat(1, 'actions_number', $player_id);
@@ -7587,66 +7364,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $players_teams[$player_no] = $player['player_team'];
             
             self::notifyPlayerRessourceCount($id, $dogma_icon, $player_ressource_count);
-
-            if (self::getGameStateValue('release_version') >= 1) {
-                self::DBQuery(self::format("
-                    UPDATE 
-                        player
-                    SET
-                        featured_icon_count = {featured_icon_count}
-                    WHERE
-                        player_id = {player_id}"
-                ,
-                    array('featured_icon_count' => $player_ressource_count, 'player_id' => $id)
-                ));
-            }
-        }
-
-        if (self::getGameStateValue('release_version') < 1) {
-            $player_no = $dogma_player_no;
-            $player_no_under_i_demand_effect = 0;
-            $player_no_under_non_demand_effect = 0;
-            
-            // Loop on players finishing with the one who triggered the dogma
-            do {
-                if ($player_no == $players_nb) { // End of table reached, go back to the top
-                    $player_no = 1;
-                }
-                else { // Next row
-                    $player_no = $player_no + 1;          
-                }
-                
-                $player_ressource_count = $players_ressource_count[$player_no];
-                
-                // Mark the player
-                if ($player_ressource_count >= $dogma_player_ressource_count) {
-                    $stronger_or_equal = "TRUE";
-                    $player_no_under_non_demand_effect++;
-                    $player_no_under_effect = $player_no_under_non_demand_effect;
-                }
-                else {
-                    $stronger_or_equal = "FALSE";
-                    if ($players_teams[$player_no] != $dogma_player_team) {
-                        $player_no_under_i_demand_effect++;
-                        $player_no_under_effect = $player_no_under_i_demand_effect;
-                    }
-                    else { // Player on the same team don't suffer the I demand effect of each other
-                        $player_no_under_effect = 0;
-                    }
-                }
-                self::DBQuery(self::format("
-                    UPDATE 
-                        player
-                    SET
-                        stronger_or_equal = {stronger_or_equal},
-                        player_no_under_effect = {player_no_under_effect}
-                    WHERE
-                        player_no = {player_no}"
-                ,
-                    array('stronger_or_equal' => $stronger_or_equal, 'player_no_under_effect' => $player_no_under_effect, 'player_no' => $player_no)
-                ));
-                
-            } while ($player_no != $dogma_player_no);
+            self::DBQuery(self::format("
+                UPDATE 
+                    player
+                SET
+                    featured_icon_count = {featured_icon_count}
+                WHERE
+                    player_id = {player_id}"
+            ,
+                array('featured_icon_count' => $player_ressource_count, 'player_id' => $id)
+            ));
         }
 
         $visible_echo_effects = self::getCardsWithVisibleEchoEffects($player_id, $card);
@@ -7673,32 +7400,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Write info in global variables to prepare the first effect
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
-        }
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::setGameStateValue('current_nesting_index', 0);
-            self::DbQuery(
-                self::format("
-                    UPDATE
-                        nested_card_execution
-                    SET
-                        card_id = {card_id},
-                        executing_as_if_on_card_id = {card_id},
-                        card_location = '{card_location}',
-                        launcher_id = {launcher_id},
-                        current_effect_type = {effect_type},
-                        current_effect_number = {effect_number},
-                        post_execution_index = 0
-                    WHERE
-                        nesting_index = 0",
-                    array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number))
-            );
-        } else {
-            self::setGameStateValue('dogma_card_id', $card['id']);
-            self::setGameStateValue('current_effect_type', $current_effect_type);
-            self::setGameStateValue('current_effect_number', 1);
-        }
+        self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
+        self::setGameStateValue('current_nesting_index', 0);
+        self::DbQuery(
+            self::format("
+                UPDATE
+                    nested_card_execution
+                SET
+                    card_id = {card_id},
+                    executing_as_if_on_card_id = {card_id},
+                    card_location = '{card_location}',
+                    launcher_id = {launcher_id},
+                    current_effect_type = {effect_type},
+                    current_effect_number = {effect_number},
+                    post_execution_index = 0
+                WHERE
+                    nesting_index = 0",
+                array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number))
+        );
         self::setGameStateValue('sharing_bonus', 0);
     }
 
@@ -7801,14 +7520,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             case 'choose_value':
-                if (self::getGameStateValue('release_version') >= 1) {
-                    if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
-                        self::throwInvalidChoiceException();
-                    }
-                } else {
-                    if (!ctype_digit($choice) || $choice < 1 || $choice > 10) {
-                        self::throwInvalidChoiceException();
-                    }
+                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_non_negative_integer':
@@ -7817,14 +7530,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             case 'choose_color':
-                if (self::getGameStateValue('release_version') >= 1) {
-                    if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
-                        self::throwInvalidChoiceException();
-                    }
-                } else {
-                    if (!ctype_digit($choice) || $choice < 0 || $choice > 4) {
-                        self::throwInvalidChoiceException();
-                    }
+                if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('color_array'))) {
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_two_colors':
@@ -7832,14 +7539,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::throwInvalidChoiceException();
                 }
                 $colors = self::getValueAsArray($choice);
-                if (self::getGameStateValue('release_version') >= 1) {
-                    if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
-                        self::throwInvalidChoiceException();
-                    }
-                } else {
-                    if (count($colors) <> 2 || $colors[0] == $colors[1] || $colors[0] < 0 || $colors[0] > 4 || $colors[1] < 0 || $colors[1] > 4) {
-                        self::throwInvalidChoiceException();
-                    }
+                if (count($colors) <> 2 || $colors[0] == $colors[1] || !in_array($colors[0], self::getGameStateValueAsArray('color_array')) || !in_array($colors[1], self::getGameStateValueAsArray('color_array'))) {
+                    self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_three_colors':
@@ -8615,17 +8316,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $you = 'you'; 
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-        } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
-            $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-            $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
-        }
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
         
         $card = self::getCardInfo($card_id);
         $card_name = self::getCardName($card['id']);
@@ -9313,12 +9007,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $bottom_from = self::getGameStateValue("bottom_from");
             $owner_to = self::getGameStateValue("owner_to");
             $location_to = self::decodeLocation(self::getGameStateValue("location_to"));
-            // TODO(LATER): Remove this since it's only needed to migrate game during the release of Artifacts.
-            if (self::getGameStateValue('release_version') == 0 && $location_to == 'deck') {
-                $bottom_to = true;
-            } else {
-                $bottom_to = self::getGameStateValue("bottom_to");
-            }
+            $bottom_to = self::getGameStateValue("bottom_to");
             $age_min = self::getGameStateValue("age_min");
             $age_max = self::getGameStateValue("age_max");
             $with_icon = self::getGameStateValue("with_icon");
@@ -9678,7 +9367,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::giveExtraTime(self::getActivePlayerId());
         
         // Does he play again?
-        if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_action_number') == 0) {
+        if (self::getGameStateValue('current_action_number') == 0) {
             $next_player = false;
         } else if (self::getGameStateValue('first_player_with_only_one_action')) {
             // First turn: the player had only one action to make
@@ -9719,13 +9408,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->gamestate->nextState('artifactPlayerTurn');
                 return;
             }
-            if (self::getGameStateValue('release_version') >= 1) {
-                self::setGameStateValue('current_action_number', 1);
-            }
+            self::setGameStateValue('current_action_number', 1);
         } else {
-            if (self::getGameStateValue('release_version') >= 1) {
-                self::incGameStateValue('current_action_number', 1);
-            }
+            self::incGameStateValue('current_action_number', 1);
         }
         self::notifyGeneralInfo('<!--empty-->');
         self::trace('interPlayerTurn->playerTurn');
@@ -9734,27 +9419,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function stDogmaEffect() {
         // An effect of a dogma has to be resolved
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-        } else {
-            $current_effect_type = self::getGameStateValue('current_effect_type');
-            $current_effect_number = self::getGameStateValue('current_effect_number');
-            $card_id = self::getGameStateValue('dogma_card_id');
-        }
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
         $card = self::getCardInfo($card_id);
         $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, $card);
         
         // Search for the first player who will undergo/share the effects, if any
         $launcher_id = self::getLauncherId();
-        if (self::getGameStateValue('release_version') >= 1) {
-            // During nested execution echo/non-demand effects are not shared with other players.
-            $first_player = $nested_card_state['nesting_index'] > 0 && ($current_effect_type == 1 || $current_effect_type == 3) ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
-        } else {
-            $first_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
-        }
+        // During nested execution echo/non-demand effects are not shared with other players.
+        $first_player = $nested_card_state['nesting_index'] > 0 && ($current_effect_type == 1 || $current_effect_type == 3) ? $launcher_id : self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
         if ($first_player === null) {
             // There is no player affected by the effect
             self::notifyGeneralInfo("<span class='minor_information'>" . clienttranslate('Nobody is affected by the ${qualified_effect} of the card.') . "</span>", array(
@@ -9768,11 +9443,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
         
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('current_player_id', $first_player);
-        } else {
-            self::setGameStateValue('current_player_under_dogma_effect', $first_player);
-        }
+        self::updateCurrentNestedCardState('current_player_id', $first_player);
         $this->gamestate->changeActivePlayer($first_player);
         
         // Begin the loop with this player
@@ -9782,14 +9453,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function stInterDogmaEffect() {
         // A effect of a dogma card has been resolved. Is there another one?
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $previous_effect_type = $nested_card_state['current_effect_type'];
-        } else {
-            $previous_effect_type = self::getGameStateValue('current_effect_type');
-            $card_id = self::getGameStateValue('dogma_card_id');
-        }
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $previous_effect_type = $nested_card_state['current_effect_type'];
 
         $launcher_id = self::getGameStateValue('active_player');
         if ($previous_effect_type == 3) { // echo effect
@@ -9820,7 +9486,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $next_effect_number = 1;
 
             // Update statistics about I demand and I compel execution.
-            if (self::getGameStateValue('release_version') >= 1 && self::getGameStateValue('current_nesting_index') == 0) {
+            if (self::getGameStateValue('current_nesting_index') == 0) {
                 $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
                 foreach ($affected_players as $player_id) {
                     if ($previous_effect_type == 0) {
@@ -9842,11 +9508,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         } else {
             // Next non-demand effect, if it exists
             $next_effect_type = 1;
-            if (self::getGameStateValue('release_version') >= 1) {
-                $next_effect_number = $nested_card_state['current_effect_number'] + 1;
-            } else {
-                $next_effect_number = self::getGameStateValue('current_effect_number') + 1;
-            }
+            $next_effect_number = $nested_card_state['current_effect_number'] + 1;
         }
         
         $card = self::getCardInfo($card_id);
@@ -9854,57 +9516,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // If there isn't another dogma effect on the card
         if ($next_effect_type == 1 && ($next_effect_number > 3 || self::getNonDemandEffect($card['id'], $next_effect_number) === null)) {
 
-            if (self::getGameStateValue('release_version') >= 1) {
-                // Finish executing the card which triggered this one
-                if (self::getGameStateValue('current_nesting_index') >= 1) {
-                    $card_args = self::getNotificationArgsForCardList([$card]);
-                    self::notifyAll('logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
-                        ['card_1' => $card_args, 'card_ids' => [$card_id]]);
-                    
-                    self::popCardFromNestedDogmaStack();
+            // Finish executing the card which triggered this one
+            if (self::getGameStateValue('current_nesting_index') >= 1) {
+                $card_args = self::getNotificationArgsForCardList([$card]);
+                self::notifyAll('logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
+                    ['card_1' => $card_args, 'card_ids' => [$card_id]]);
+                
+                self::popCardFromNestedDogmaStack();
 
-                    $nested_card_state = self::getCurrentNestedCardState();
-                    $this->gamestate->changeActivePlayer($nested_card_state['current_player_id']);
-                    self::trace('interDogmaEffect->playerInvolvedTurn');
-                    $this->gamestate->nextState('playerInvolvedTurn');
-                    return;
-                }
-
-                // Return the Artifact on display if the free dogma action was used
-                $nested_card_state = self::getNestedCardState(0);
-                if ($nested_card_state['card_location'] == 'display') {
-                    $launcher_id = $nested_card_state['launcher_id'];
-                    self::returnCard($card);
-                    self::giveExtraTime($launcher_id);
-                }
-
-                // Update statistics about which opponents shared in the non-demand effects
-                $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
-                foreach ($affected_players as $player_id) {
-                    if ($player_id != $launcher_id) {
-                        self::incStat(1, 'sharing_effects_number', $player_id);
-                    }
-                }
+                $nested_card_state = self::getCurrentNestedCardState();
+                $this->gamestate->changeActivePlayer($nested_card_state['current_player_id']);
+                self::trace('interDogmaEffect->playerInvolvedTurn');
+                $this->gamestate->nextState('playerInvolvedTurn');
+                return;
             }
-            
-            // Stats
-            if (self::getGameStateValue('release_version') < 1) {
-                $i_demand_effects = false;
-                $executing_players = self::getExecutingPlayers();
-                foreach($executing_players as $player_id => $stronger_or_equal) {
-                    if ($player_id == $launcher_id) {
-                        continue;
-                    }
-                    if ($stronger_or_equal) { // This player had effectively shared some dogma effects of the card
-                        self::incStat(1, 'sharing_effects_number', $player_id);
-                    }
-                    else { // The card had an I demand effect, and at least one player executed it with effects
-                        self::incStat(1, 'i_demand_effects_number', $player_id);
-                        $i_demand_effects = true;
-                    }
-                }
-                if ($i_demand_effects) {
-                    self::incStat(1, 'dogma_actions_number_with_i_demand', $launcher_id);
+
+            // Return the Artifact on display if the free dogma action was used
+            $nested_card_state = self::getNestedCardState(0);
+            if ($nested_card_state['card_location'] == 'display') {
+                $launcher_id = $nested_card_state['launcher_id'];
+                self::returnCard($card);
+                self::giveExtraTime($launcher_id);
+            }
+
+            // Update statistics about which opponents shared in the non-demand effects
+            $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
+            foreach ($affected_players as $player_id) {
+                if ($player_id != $launcher_id) {
+                    self::incStat(1, 'sharing_effects_number', $player_id);
                 }
             }
 
@@ -9933,35 +9572,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::resetPlayerTable();
             
             // [R] Disable the flags used when in dogma 
-            if (self::getGameStateValue('release_version') >= 1) {
-                // NOTE: The implementation of Dancing Girl relies on the fact that the auxiliary_value is initialized to -1.
-                self::DbQuery("
-                    UPDATE
-                        nested_card_execution
-                    SET
-                        card_id = -1,
-                        executing_as_if_on_card_id = -1,
-                        launcher_id = -1,
-                        card_location = NULL,
-                        current_player_id = -1,
-                        current_effect_type = -1,
-                        current_effect_number = -1,
-                        auxiliary_value = -1,
-                        auxiliary_value_2 = -1
-                    WHERE
-                        nesting_index = 0"
-                );
-            } else {
-                self::setGameStateValue('current_player_under_dogma_effect', -1);
-                self::setGameStateValue('dogma_card_id', -1);
-                self::setGameStateValue('current_effect_type', -1);
-                self::setGameStateValue('current_effect_number', -1);
-                for($i=1; $i<=9; $i++) {
-                    self::setGameStateInitialValue('nested_id_'.$i, -1);
-                    self::setGameStateInitialValue('nested_current_effect_number_'.$i, -1);
-                }
-                self::setAuxiliaryValue(-1);
-            }
+            // NOTE: The implementation of Dancing Girl relies on the fact that the auxiliary_value is initialized to -1.
+            self::DbQuery("
+                UPDATE
+                    nested_card_execution
+                SET
+                    card_id = -1,
+                    executing_as_if_on_card_id = -1,
+                    launcher_id = -1,
+                    card_location = NULL,
+                    current_player_id = -1,
+                    current_effect_type = -1,
+                    current_effect_number = -1,
+                    auxiliary_value = -1,
+                    auxiliary_value_2 = -1
+                WHERE
+                    nesting_index = 0"
+            );
             self::setGameStateValue('sharing_bonus', -1);
             self::setStep(-1);
             self::setStepMax(-1);
@@ -10014,13 +9641,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // There is another (non-demand) effect to perform
-        if (self::getGameStateValue('release_version') >= 1) {
-            self::updateCurrentNestedCardState('current_effect_number', $next_effect_number);
-            self::updateCurrentNestedCardState('current_effect_type', $next_effect_type);
-        } else {
-            self::setGameStateValue('current_effect_type', 1);
-            self::setGameStateValue('current_effect_number', $next_effect_number);
-        }
+        self::updateCurrentNestedCardState('current_effect_number', $next_effect_number);
+        self::updateCurrentNestedCardState('current_effect_type', $next_effect_type);
         
         // Jump to this effect
         self::trace('interDogmaEffect->dogmaEffect');
@@ -10032,37 +9654,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getLauncherId();
 
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-            // Echo effects are sometimes executed on cards other than the card being dogma'd
-            if ($current_effect_type == 3) {
-                $nesting_index = $nested_card_state['nesting_index'];
-                $card_id = self::getUniqueValueFromDB(
-                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
-                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
-            }
-        } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
-            $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-            $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
+        // Echo effects are sometimes executed on cards other than the card being dogma'd
+        if ($current_effect_type == 3) {
+            $nesting_index = $nested_card_state['nesting_index'];
+            $card_id = self::getUniqueValueFromDB(
+                self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                    array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
         }
         $step_max = null;
         $step = null;
         
-        if (self::getGameStateValue('release_version') >= 1) {
-            if ($nested_card_state['post_execution_index'] == 0) {
-                $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
-                self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
-            } else {
-                // TODO(LATER): Consider adding something to the log which says that an effect is resuming.
-            }
-        } else {
+        if ($nested_card_state['post_execution_index'] == 0) {
             $qualified_effect = self::qualifyEffect($current_effect_type, $current_effect_number, self::getCardInfo($card_id));      
             self::notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id);
+        } else {
+            // TODO(LATER): Consider adding something to the log which says that an effect is resuming.
         }
         
         $crown = self::getIconSquare(1);
@@ -11230,24 +10840,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "If this occurs, the dogma action is complete"
                     // (Set the flags as if the launcher had completed the non-demand dogma effect)
-                    if (self::getGameStateValue('release_version') >= 1) {
-                        self::DbQuery(
-                            self::format("
-                                UPDATE
-                                    nested_card_execution
-                                SET
-                                    current_player_id = {player_id},
-                                    current_effect_type = 1,
-                                    current_effect_number = 1
-                                WHERE
-                                    nesting_index = {nesting_index}",
-                                array('player_id' => $launcher_id, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
-                        );
-                    } else {
-                        self::setGameStateValue('current_player_under_dogma_effect', $launcher_id);
-                        self::setGameStateValue('current_effect_type', 1);
-                        self::setGameStateValue('current_effect_number', 1);
-                    }
+                    self::DbQuery(
+                        self::format("
+                            UPDATE
+                                nested_card_execution
+                            SET
+                                current_player_id = {player_id},
+                                current_effect_type = 1,
+                                current_effect_number = 1
+                            WHERE
+                                nesting_index = {nesting_index}",
+                            array('player_id' => $launcher_id, 'nesting_index' => self::getGameStateValue('current_nesting_index')))
+                    );
                 } else {
                     self::notifyGeneralInfo(clienttranslate('This card is not red.'));
                     // (Implicit) "Place it into your hand"
@@ -14788,39 +14392,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stInterPlayerInvolvedTurn() {
-        // Code for handling "execute each of the non demand effects of card X"
-        while (true) {
-
-            if (self::getGameStateValue('release_version') >= 1) {
-                break;
-            } else {
-                $nested_id_1 = self::getGameStateValue('nested_id_1');
-                if ($nested_id_1 == -1) { // No or no more card in the execution stack
-                    // Resume normal situation
-                    self::trace('Out of nesting');
-                    break;
-                }
-                
-                $card = self::getCardInfo($nested_id_1);
-                $current_effect_number = self::getGameStateValue('nested_current_effect_number_1') + 1; // Next effect
-                
-                if ($current_effect_number > 3 || self::getNonDemandEffect($card['id'], $current_effect_number) === null) {
-                    // No card has more than 3 non-demand dogma => there is no more effect
-                    // or the next non-demand-dogma effect is not defined
-                    self::notifyGeneralInfo(clienttranslate("Card execution within dogma completed."));
-                    self::popCardFromNestedDogmaStack();
-                } else { // There is at least one effect the player can perform
-                    self::setGameStateValue('nested_current_effect_number_1', $current_effect_number);
-                    // Continuation of exclusive execution
-                    self::trace('interPlayerInvolvedTurn->playerInvolvedTurn');
-                    $this->gamestate->nextState('playerInvolvedTurn');
-                    return;
-                }
-            }
-        }
         
-        // Code executed when there is no exclusive execution to handle, or when it's over
-
         try {
             self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
         } catch (EndOfGame $e) {
@@ -14832,7 +14404,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // Switch to new card that was pushed onto the stack
-        if (self::getGameStateValue('release_version') >= 1 && self::getNestedCardState(self::getGameStateValue('current_nesting_index') + 1) != null) {
+        if (self::getNestedCardState(self::getGameStateValue('current_nesting_index') + 1) != null) {
             self::incGameStateValue('current_nesting_index', 1);
             self::trace('interPlayerInvolvedTurn->dogmaEffect');
             $this->gamestate->nextState('dogmaEffect');
@@ -14843,35 +14415,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getLauncherId();
 
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nesting_index = self::getGameStateValue('current_nesting_index');
-            $current_effect_type = self::getNestedCardState($nesting_index)['current_effect_type'];
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+        $current_effect_type = self::getNestedCardState($nesting_index)['current_effect_type'];
 
-            // If this is a nested card, don't allow other players to share the non-demand effect
-            $nesting_index = self::getGameStateValue('current_nesting_index');
-            self::updateCurrentNestedCardState('post_execution_index', 0);
-            $nested_card_state = self::getNestedCardState($nesting_index);
-            $next_player = $nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1 ? null : self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+        // If this is a nested card, don't allow other players to share the non-demand effect
+        $nesting_index = self::getGameStateValue('current_nesting_index');
+        self::updateCurrentNestedCardState('post_execution_index', 0);
+        $nested_card_state = self::getNestedCardState($nesting_index);
+        $next_player = $nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1 ? null : self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
 
-            // There are no more players which are eligible to share this effect
-            if ($next_player === null) {
-                self::trace('interPlayerInvolvedTurn->interDogmaEffect');
-                $this->gamestate->nextState('interDogmaEffect');
-                return;
-            }
-            self::updateCurrentNestedCardState('current_player_id', $next_player);
-        } else {
-            $current_effect_type = self::getGameStateValue('current_effect_type');
-            $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
-            if ($next_player === null) {
-                // There is no more player eligible for this effect
-                // End of the dogma effect
-                self::trace('interPlayerInvolvedTurn->interDogmaEffect');
-                $this->gamestate->nextState('interDogmaEffect');
-                return;
-            }
-            self::setGameStateValue('current_player_under_dogma_effect', $next_player);
+        // There are no more players which are eligible to share this effect
+        if ($next_player === null) {
+            self::trace('interPlayerInvolvedTurn->interDogmaEffect');
+            $this->gamestate->nextState('interDogmaEffect');
+            return;
         }
+        self::updateCurrentNestedCardState('current_player_id', $next_player);
         $this->gamestate->changeActivePlayer($next_player);
         
         // Jump to this player
@@ -14883,21 +14442,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getLauncherId();
 
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-            // Echo effects are sometimes executed on cards other than the card being dogma'd
-            if ($current_effect_type == 3) {
-                $nesting_index = $nested_card_state['nesting_index'];
-                $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}", array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
-            }
-        } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
-            $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-            $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
+        // Echo effects are sometimes executed on cards other than the card being dogma'd
+        if ($current_effect_type == 3) {
+            $nesting_index = $nested_card_state['nesting_index'];
+            $card_id = self::getUniqueValueFromDB(self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}", array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
         }
 
         $step = self::getStep();
@@ -21989,23 +21541,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getLauncherId();
 
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-            // Echo effects are sometimes executed on cards other than the card being dogma'd
-            if ($current_effect_type == 3) {
-                $nesting_index = $nested_card_state['nesting_index'];
-                $card_id = self::getUniqueValueFromDB(
-                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
-                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
-            }
-        } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
-            $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-            $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
+        // Echo effects are sometimes executed on cards other than the card being dogma'd
+        if ($current_effect_type == 3) {
+            $nesting_index = $nested_card_state['nesting_index'];
+            $card_id = self::getUniqueValueFromDB(
+                self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                    array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
         }
 
         $step = self::getStep();
@@ -24920,17 +24465,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         $launcher_id = self::getLauncherId();
-        if (self::getGameStateValue('release_version') >= 1) {
-            $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-        } else {
-            $nested_id_1 = self::getGameStateValue('nested_id_1');
-            $card_id = $nested_id_1 == -1 ? self::getGameStateValue('dogma_card_id') : $nested_id_1 ;
-            $current_effect_type = $nested_id_1 == -1 ? self::getGameStateValue('current_effect_type') : 1 /* Non-demand effects only*/;
-            $current_effect_number = $nested_id_1 == -1 ?  self::getGameStateValue('current_effect_number') : self::getGameStateValue('nested_current_effect_number_1');
-        }
+        $nested_card_state = self::getCurrentNestedCardState();
+        $card_id = $nested_card_state['card_id'];
+        $current_effect_type = $nested_card_state['current_effect_type'];
+        $current_effect_number = $nested_card_state['current_effect_number'];
         $step = self::getStep();
         
         $crown = self::getIconSquare(1);
