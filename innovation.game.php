@@ -1621,7 +1621,7 @@ class Innovation extends Table
         ");
         
         foreach ($cards as $card) {
-            // TODO(CITIES,ECHOES): Revisit this.
+            // TODO(ECHOES#671,CITIES#672): Revisit this.
             if ($card['id'] < 215 || $card['id'] > 440 || $card['id'] == 216 || $card['id'] == 217) {
                 // 1 is used for hex icons, allowing it to be ignored in the product
                 $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
@@ -8137,7 +8137,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $resource_column = 'player_icon_count_' . $dogma_icon;
         $extra_icons = $is_on_display ? self::countIconsOnCard($card, $dogma_icon) : 0;
 
-        // TODO(ECHOES#359): Update this with the players executing echo effects.
         $dogma_effect_info['players_executing_i_compel_effects'] = [];
         $dogma_effect_info['players_executing_i_demand_effects'] = [];
         $dogma_effect_info['players_executing_non_demand_effects'] = [];
@@ -19758,8 +19757,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "356N1A":
             // "You may return three cards of equal value from your hand."
             // First, select the value to return.
-            // TODO(ECHOES): This would be simpler if players directly chose one of the cards they want to return,
-            // instead of choosing a value first.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -20584,8 +20581,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 389 Echoes age 6: Hot Air Balloon
         case "389N1A":
             // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
-            // TODO(ECHOES): The require achievements flag doesn't work if the matching numbered achievement is no longer
-            // available from the achievements pile.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
