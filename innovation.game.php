@@ -2590,6 +2590,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your forecast to your achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his forecast to his achievements');
                 break;
+            case 'deck->hand':
+                $message_for_player = clienttranslate('${You_must} look at ${number} top ${card} of any deck');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} of any deck');
+                break;
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -13847,33 +13851,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 384, Echoes age 5: Tuning Fork
             case "384E1":
-                // Find all possible card ids that can be selected with this effect.
+                // "Look at the top card of any deck"
                 $card_ids = array();
-                for ($age = 1; $age < 11; $age++) {
-                    // Base cards are always available
-                    $card = self::getDeckTopCard($age, 0);
-                    if ($card !== null) {
-                        $card_ids[] = $card['id'];
-                    }
-                    if (self::getGameStateValue('artifacts_mode') > 1) {
-                        $card = self::getDeckTopCard($age, 1);
+                for ($age = 1; $age <= 10; $age++) {
+                    for ($type = 0; $type <= 4; $type++) {
+                        $card = self::getDeckTopCard($age, $type);
                         if ($card !== null) {
                             $card_ids[] = $card['id'];
                         }
                     }
-                    if (self::getGameStateValue('cities_mode') > 1) {
-                        $card = self::getDeckTopCard($age, 2);
-                        if ($card !== null) {
-                            $card_ids[] = $card['id'];
-                        }
-                    }
-                     if (self::getGameStateValue('echoes_mode') > 1) {
-                        $card = self::getDeckTopCard($age, 3);
-                        if ($card !== null) {
-                            //$card_ids[] = $card['id'];
-                        }
-                    }
-                    // TODO(FIGURES): Update this when implementing the expansion.
                 }
                 
                 if (count($card_ids) > 0) {
@@ -20472,7 +20458,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => false,
 
-                'owner_from' => $player_id,
+                'owner_from' => 0,
                 'location_from' => 'deck',
                 'owner_to' => $player_id,
                 'location_to' => 'hand',
@@ -20496,7 +20482,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'bottom_to' => false, // Topdeck
                 
-                'card_id_1' => self::getGameStateValue('card_id_1')
+                'card_id_1' => self::getGameStateValue('card_id_1'),
             );       
             break;
 

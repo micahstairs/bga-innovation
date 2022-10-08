@@ -3279,15 +3279,15 @@ function (dojo, declare) {
             var zone_container = event.currentTarget.parentNode;
             var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
             var location = zone_infos[0];
-            var owner = zone_infos[1];
+            var owner = location == 'deck' ? 0 : zone_infos[1];
             if (!owner) {
                 owner = 0;
             }
-            var zone = this.getZone(location, owner, null, age);
+            var zone = this.getZone(location, owner, type, age);
             
             // Search the position the card is
             var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
-            
+
             var self = this;
             this.ajaxcall("/innovation/innovation/chooseRecto.html",
                             {
