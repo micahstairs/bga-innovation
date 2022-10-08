@@ -13490,7 +13490,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "367N1":
                 // "For every two cards returned as a result of the demand, draw and tuck a 4."
-                $num_cards_to_draw_and_tuck =  self::getAuxiliaryValue() / 2;
+                $num_cards_to_draw_and_tuck = self::intDivision(self::getAuxiliaryValue(), 2);
                 for ($i = 0; $i < $num_cards_to_draw_and_tuck; $i++) {
                     self::executeDrawAndTuck($player_id, 4);
                 }
