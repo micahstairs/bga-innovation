@@ -1357,6 +1357,10 @@ class Innovation extends Table
             if (self::getGameStateValue('release_version') < 2 || $age == null) {
                 break;
             }
+            // The player's achievement pile is not grouped by type or age
+            if ($owner_from != 0) {
+                break;
+            }
         case 'hand':
         case 'forecast':
         case 'score':
@@ -1379,6 +1383,10 @@ class Innovation extends Table
         case 'achievements':
             // For games that were started before Echoes was released, we don't have to worry about new achievements being added.
             if (self::getGameStateValue('release_version') < 2 || $age == null) {
+                break;
+            }
+            // The player's achievement pile is not grouped by type or age
+            if ($owner_to != 0) {
                 break;
             }
         case 'hand':
