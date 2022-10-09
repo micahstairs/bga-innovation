@@ -16467,7 +16467,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
-                'not_id' => (self::getGameStateValue('release_version') >= 1 ? self::getCurrentNestedCardState()['executing_as_if_on_card_id'] : 100),
+                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
             );       
             break;
         
