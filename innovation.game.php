@@ -7108,7 +7108,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $player_id, 'hand');
                         // Return the ones which don't have a matching icon
                         } else {
-                            // TODO(#403): This return should be an interaction so that the player can choose the order.
+                            // TODO(CITIES#403): This return should be an interaction so that the player can choose the order.
                             self::transferCardFromTo($card, 0, 'deck');
                         }
                     }
