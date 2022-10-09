@@ -5686,10 +5686,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function setSelectionRange($options) {
-        // TODO(LATER): Deprecate and remove 'choose_opponent' and 'choose_opponent_with_fewer_points' and use 'choose_player' instead.
         $possible_special_types_of_choice = [
-            'choose_opponent',
-            'choose_opponent_with_fewer_points',
             'choose_value',
             'choose_color',
             'choose_two_colors',
@@ -6315,11 +6312,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function encodeSpecialTypeOfChoice($special_type_of_choice) {
+        // NOTE: The following values are unused and safe to re-use: 1, 2
         switch($special_type_of_choice) {
-        case 'choose_opponent':
-            return 1;
-        case 'choose_opponent_with_fewer_points':
-            return 2;
         case 'choose_value':
             return 3;
         case 'choose_color':
@@ -6344,11 +6338,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function decodeSpecialTypeOfChoice($special_type_of_choice_code) {
+        // NOTE: The following values are unused and safe to re-use: 1, 2
         switch($special_type_of_choice_code) {
-        case 1:
-            return 'choose_opponent';
-        case 2:
-            return 'choose_opponent_with_fewer_points';
         case 3:
             return 'choose_value';
         case 4:
@@ -7512,24 +7503,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
-            case 'choose_opponent':
-            case 'choose_opponent_with_fewer_points':
-                // Player choice
-                // Check if the choice is a opponent
-                if ($choice == $player_id) {
-                    self::throwInvalidChoiceException();
-                }
-                else if ($choice == self::getPlayerTeammate($player_id)) {
-                    self::throwInvalidChoiceException();
-                }
-                $players = self::loadPlayersBasicInfos();
-                if (!array_key_exists($choice, $players)) {
-                    self::throwInvalidChoiceException();
-                }
-                if ($choice == 'choose_opponent_with_fewer_points' && self::getPlayerScore($choice) >= self::getPlayerScore($player_id)) {
-                    self::throwInvalidChoiceException();
-                }
-                break;
             case 'choose_value':
                 if (!ctype_digit($choice) || !in_array($choice, self::getGameStateValueAsArray('age_array'))) {
                     self::throwInvalidChoiceException();
@@ -8344,56 +8317,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         if ($special_type_of_choice > 0) {
             switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
-            case 'choose_opponent':
-                $options = self::getObjectListFromDB(self::format("
-                    SELECT
-                        player_id AS value,
-                        player_name AS text
-                    FROM
-                        player
-                    WHERE
-                        player_team <> (
-                            SELECT
-                                player_team
-                            FROM
-                                player
-                            WHERE
-                                player_id = {player_id}
-                        )
-                "
-                ,
-                    array('player_id' => $player_id)
-                ));
-                break;
-            case 'choose_opponent_with_fewer_points':
-                $options = self::getObjectListFromDB(self::format("
-                    SELECT
-                        player_id AS value,
-                        player_name AS text
-                    FROM
-                        player
-                    WHERE
-                        player_team <> (
-                            SELECT
-                                player_team
-                            FROM
-                                player
-                            WHERE
-                                player_id = {player_id}
-                        ) AND
-                        player_innovation_score < (
-                            SELECT
-                                player_innovation_score
-                            FROM
-                                player
-                            WHERE
-                                player_id = {player_id}
-                        )
-                "
-                ,
-                    array('player_id' => $player_id)
-                ));
-                break;
             case 'choose_value':
                 $options = array();
                 foreach (self::getGameStateValueAsArray('age_array') as $age) {
@@ -14753,23 +14676,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         case "18N1B":
             // "You may transfer your top red card to another player's board. If you do, transfer that player's top green card to your board.
-            if (self::getGameStateValue('release_version') >= 1) {
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => true,
-                    
-                    'choose_player' => true,
-                    'players' => self::getOtherActivePlayers($player_id)
-                );
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
                 
-            } else {
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => true,
-                    
-                    'choose_opponent' => true
-                );
-            }
+                'choose_player' => true,
+                'players' => self::getOtherActivePlayers($player_id)
+            );
             break;
             
         // id 19, age 2: Currency
@@ -14945,22 +14858,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 28, age 3: Optics
         case "28N1A":
             // "An opponent with fewer points than you"
-            if (self::getGameStateValue('release_version') >= 1) {
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-                    
-                    'choose_player' => true,
-                    'players' => self::getActiveOpponentsWithFewerPoints($player_id)
-                );
-            } else {
-                $options = array(
-                    'player_id' => $player_id,
-                    'can_pass' => false,
-                    
-                    'choose_opponent_with_fewer_points' => true
-                );
-            }
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => false,
+                
+                'choose_player' => true,
+                'players' => self::getActiveOpponentsWithFewerPoints($player_id)
+            );
             break;
             
         case "28N1B":
@@ -20514,13 +20418,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 400, Echoes age 7: Telegraph
         case "400N1A":
-            // "You may choose an opponent "
+            // "You may choose an opponent"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 'can_pass' => true,
                 
-                'choose_opponent' => true,
+                'choose_player' => true,
+                'players' => self::getActiveOpponents($player_id),
             );
             break;
 
@@ -20881,7 +20786,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => false,
                 
-                'choose_opponent' => true,
+                'choose_player' => true,
+                'players' => self::getActiveOpponents($player_id),
             );
             break;
 
