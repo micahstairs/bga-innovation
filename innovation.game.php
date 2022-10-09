@@ -40,6 +40,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new \Innovation\GameState($this);
+        // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -50,13 +51,7 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
-            'current_player_under_dogma_effect' => 19, // Deprecated
-            'dogma_card_id' => 20,                     // Deprecated
-            'current_effect_type' => 21,               // Deprecated
-            'current_effect_number' => 22,             // Deprecated
             'sharing_bonus' => 23,
-            'step' => 24,     // Deprecated
-            'step_max' => 25, // Deprecated
             'special_type_of_choice' => 26,
             'choice' => 27,
             'can_pass' => 28,
@@ -80,25 +75,6 @@ class Innovation extends Table
             'age_last_selected' => 46,
             'color_last_selected' => 47,
             'score_keyword' => 48,
-            'auxiliary_value' => 49,                // Deprecated
-            'nested_id_1' => 50,                    // Deprecated
-            'nested_current_effect_number_1' => 51, // Deprecated
-            'nested_id_2' => 52,                    // Deprecated
-            'nested_current_effect_number_2' => 53, // Deprecated
-            'nested_id_3' => 54,                    // Deprecated
-            'nested_current_effect_number_3' => 55, // Deprecated
-            'nested_id_4' => 56,                    // Deprecated
-            'nested_current_effect_number_4' => 57, // Deprecated
-            'nested_id_5' => 58,                    // Deprecated
-            'nested_current_effect_number_5' => 59, // Deprecated
-            'nested_id_6' => 60,                    // Deprecated
-            'nested_current_effect_number_6' => 61, // Deprecated
-            'nested_id_7' => 62,                    // Deprecated
-            'nested_current_effect_number_7' => 63, // Deprecated
-            'nested_id_8' => 64,                    // Deprecated
-            'nested_current_effect_number_8' => 65, // Deprecated
-            'nested_id_9' => 66,                    // Deprecated
-            'nested_current_effect_number_9' => 67, // Deprecated 
             'card_id_1' => 69,
             'card_id_2' => 70,
             'card_id_3' => 71,
