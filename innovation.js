@@ -2053,7 +2053,6 @@ function (dojo, declare) {
         },
         
         selectDrawableCard : function(age_to_draw, type_to_draw) {
-            // Assumes that the player can only draw from the base deck.
             var deck_to_draw_in = this.zone.deck[type_to_draw][age_to_draw].items;
             var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
             return dojo.query("#" + top_card.id);
