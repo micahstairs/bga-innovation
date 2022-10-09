@@ -181,7 +181,22 @@ $stats_type = array(
         "relics_stolen_number" => array("id"=> 32,
                     "name" => totranslate("Number of relics stolen from player"),
                     "type" => "int" ),
-                    
+
+        /* Echoes-specific */
+
+        "foreshadowed_number" => array("id"=> 60,
+                    "name" => totranslate("Number of cards foreshadowed"),
+                    "type" => "int" ),
+
+        "promoted_number" => array("id"=> 61,
+                    "name" => totranslate("Number of cards promoted from forecast"),
+                    "type" => "int" ),
+
+        // This counts every execution of every echo effect, regardless of whether it was nested or even if it was effective.
+        "executed_echo_effect_number" => array("id"=> 62,
+                    "name" => totranslate("Number of executed echo effects"),
+                    "type" => "int" ),
+
     )
 
 );
