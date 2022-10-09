@@ -5486,16 +5486,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // If the type isn't specified, then we are either drawing a Base or Echoes card.
         if ($type === null) {
-            // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
-            if (self::getGameStateValue('echoes_mode') == 2 &&
-                    (self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
-                    self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0 && 
-                    self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
-                $type = 3;
-            // Otherwise draw a base card
-            } else {
-                $type = 0;
-            }
+            $type = self::getCardTypeToDraw($player_id);
         }
         
         if ($bottom_from) {
@@ -5518,6 +5509,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             throw $e; // Re-throw exception to higher level
         }
         return $card;
+    }
+
+    function getCardTypeToDraw($player_id) {
+        // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
+        if (self::getGameStateValue('echoes_mode') == 2 &&
+                (self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
+                self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0 && 
+                self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
+            return 3;
+        }
+        // Otherwise draw a base card
+        return 0;
     }
     
     function removeAllHandsBoardsAndScores() {
@@ -7779,6 +7782,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'qualified_action' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') ? clienttranslate('a single action') :
                                   (self::getGameStateValue('has_second_action') ? clienttranslate('a first action') : clienttranslate('a second action')),
             'age_to_draw' => self::getAgeToDrawIn($player_id),
+            'type_to_draw' => self::getCardTypeToDraw($player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
             '_private' => array(
                 'active' => array( // "Active" player only
