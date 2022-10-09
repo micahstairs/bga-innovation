@@ -1015,7 +1015,7 @@ function (dojo, declare) {
                     
                     // Top drawable card on deck (draw action)
                     if (args.args.age_to_draw <= 10) {
-                        var drawable_card = this.selectDrawableCard(args.args.age_to_draw);
+                        var drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
                         drawable_card.addClass("clickable");
                         this.on(drawable_card, 'onclick', 'action_clicForDraw');
                     }
@@ -2052,9 +2052,8 @@ function (dojo, declare) {
             return dojo.query(identifiers.join(","));
         },
         
-        selectDrawableCard : function(age_to_draw) {
-            // Assumes that the player can only draw from the base deck.
-            var deck_to_draw_in = this.zone.deck[0][age_to_draw].items;
+        selectDrawableCard : function(age_to_draw, type_to_draw) {
+            var deck_to_draw_in = this.zone.deck[type_to_draw][age_to_draw].items;
             var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
             return dojo.query("#" + top_card.id);
         },
