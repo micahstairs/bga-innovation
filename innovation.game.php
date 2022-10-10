@@ -4776,7 +4776,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Since the stack is not unsplayed, it has at least two cards
         for($i=0; $i<count($pile)-1; $i++) {
             $card = $pile[$i];
-            if($splay_direction == 1 && $card['spot_4'] == $icon && $card['spot_5'] == $icon || 
+            if($splay_direction == 1 && ($card['spot_4'] == $icon || $card['spot_5'] == $icon) || 
                     $splay_direction == 2 && ($card['spot_1'] == $icon || $card['spot_2'] == $icon) || 
                     $splay_direction == 3 && ($card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon)) {
                 return true;
