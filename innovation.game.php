@@ -608,6 +608,13 @@ class Innovation extends Table
                 self::initStat('player', 'relics_stolen_number', 0);
             }
         }
+
+        // Initialize Echoes-specific statistics
+        if (self::getGameStateValue('echoes_mode') > 1) {
+            self::initStat('player', 'foreshadowed_number', 0);
+            self::initStat('player', 'promoted_number', 0);
+            self::initStat('player', 'executed_echo_effect_number', 0);
+        }
         
         // Store the age of each card when face-up
         self::DbQuery("UPDATE card SET faceup_age = (CASE id WHEN 188 THEN 11 ELSE age END)");
@@ -1472,6 +1479,9 @@ class Innovation extends Table
             array('filter_from' => $filter_from, 'position_from' => $position_from)
         ));
 
+        if ($location_to == 'forecast') {
+            self::incStat(1, 'foreshadowed_number', $owner_to);
+        }
         
         $transferInfo = array(
             'owner_from' => $owner_from,
@@ -6948,6 +6958,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         self::transferCardFromTo($promoted_card, $player_id, "board");
         self::setGameStateValue('melded_card_id', $card_id);
+
+        self::incStat(1, 'promoted_number', $player_id);
 
         self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
         $this->gamestate->nextState('promoteDogmaPlayerTurn');
@@ -14352,6 +14364,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $nesting_index = self::getGameStateValue('current_nesting_index');
         $current_effect_type = self::getNestedCardState($nesting_index)['current_effect_type'];
+
+        if ($current_effect_type == 3) {
+            self::incStat(1, 'executed_echo_effect_number', $player_id);
+        }
 
         // If this is a nested card, don't allow other players to share the non-demand effect
         $nesting_index = self::getGameStateValue('current_nesting_index');
