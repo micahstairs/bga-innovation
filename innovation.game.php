@@ -5477,19 +5477,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // If the type isn't specified, then we are either drawing a Base or Echoes card.
         if ($type === null) {
-            $type = self::getCardTypeToDraw($player_id);
+            $type = self::getCardTypeToDraw($age_to_draw, $player_id);
         }
         
         if ($bottom_from) {
             $card = self::getDeckBottomCard($age_to_draw, $type);
         } else {
             $card = self::getDeckTopCard($age_to_draw, $type);
-        }
-
-        // If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
-        // draw a base card of that value instead.
-        if ($card === null) {
-            $card = self::getDeckTopCard($age_to_draw, /*type=*/ 0);
         }
 
         try {
@@ -5502,16 +5496,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card;
     }
 
-    function getCardTypeToDraw($player_id) {
+    function getCardTypeToDraw($age_to_draw, $player_id) {
+        $card_type = 0;
         // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
         if (self::getGameStateValue('echoes_mode') == 2 &&
                 (self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
                 self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0 && 
                 self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
-            return 3;
+            $card_type = 3;
         }
-        // Otherwise draw a base card
-        return 0;
+        // If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
+        // draw a base card of that value instead.
+        if (self::getDeckTopCard($age_to_draw, $card_type) === null) {
+            $card_type = 0;
+        }
+        return $card_type;
     }
     
     function removeAllHandsBoardsAndScores() {
@@ -7741,14 +7740,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function argPlayerTurn() {
         $player_id = self::getGameStateValue('active_player');
+        $age_to_draw = self::getAgeToDrawIn($player_id);
         return array(
             'i18n' => array('qualified_action'),
             'action_number' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') || self::getGameStateValue('has_second_action') ? 1 : 2,
 
             'qualified_action' => self::getGameStateValue('first_player_with_only_one_action') || self::getGameStateValue('second_player_with_only_one_action') ? clienttranslate('a single action') :
                                   (self::getGameStateValue('has_second_action') ? clienttranslate('a first action') : clienttranslate('a second action')),
-            'age_to_draw' => self::getAgeToDrawIn($player_id),
-            'type_to_draw' => self::getCardTypeToDraw($player_id),
+            'age_to_draw' => $age_to_draw,
+            'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
             '_private' => array(
                 'active' => array( // "Active" player only
