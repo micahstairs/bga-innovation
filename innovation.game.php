@@ -519,9 +519,6 @@ class Innovation extends Table
         self::setGameStateInitialValue('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         self::setGameStateInitialValue('has_splay_direction', -1); // List of splay directions encoded in a single value
         
-        // Flags specific to some dogmas
-        self::setGameStateInitialValue('auxiliary_value', -1); // This value is used when in dogma for some specific cards when it is needed to remember something between steps or effect. By default, it does not reinitialise until the end of the dogma
-
         // Flags specific to the meld action
         self::setGameStateInitialValue('relic_id', -1);
         self::setGameStateInitialValue('melded_card_id', -1);
