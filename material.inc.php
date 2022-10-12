@@ -1512,7 +1512,7 @@ $this->textual_card_infos = array(
 
 389 => array('name' => clienttranslate('Hot Air Balloon'),
     'echo_effect_1' => clienttranslate('Draw and score a ${age_7}.'),
-    'non_demand_effect_1' => clienttranslate('You may achieve (if eligible) a top card from any player\'s board if they have an achievement of matching value. If you do, transfer your top green card to that player\'s board. Otherwise, draw and meld a ${age_7}.'),
+    'non_demand_effect_1' => clienttranslate('You may achieve (if eligible) a top card from any other player\'s board if they have an achievement of matching value. If you do, transfer your top green card to that player\'s board. Otherwise, draw and meld a ${age_7}.'),
 ), 
 
 390 => array('name' => clienttranslate('Steamboat'),

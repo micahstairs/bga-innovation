@@ -13489,14 +13489,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "389N1":
-                // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
+                // "You may achieve (if eligible) a top card from any other player's board if they have an achievement of matching value."
                 $card_id_list = array();
                 foreach (self::getAllActivePlayerIds() as $any_player_id) {
-                    $top_cards = self::getTopCardsOnBoard($any_player_id);
-                    $achievement_age_counts = self::countCardsInLocationKeyedByAge($any_player_id, 'achievements', $type=null, $is_relic=false);
-                    foreach ($top_cards as $card) {
-                        if ($achievement_age_counts[$card['faceup_age']] > 0) {
-                            $card_id_list[] = $card['id'];
+                    if ($player_id != $any_player_id) {
+                        $top_cards = self::getTopCardsOnBoard($any_player_id);
+                        $achievement_age_counts = self::countCardsInLocationKeyedByAge($any_player_id, 'achievements', $type=null, $is_relic=false);
+                        foreach ($top_cards as $card) {
+                            if ($achievement_age_counts[$card['faceup_age']] > 0) {
+                                $card_id_list[] = $card['id'];
+                            }
                         }
                     }
                 }
