@@ -5459,6 +5459,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::executeDraw($player_id, $age_min, 'revealed');
     }
 
+    function executeDrawAndMeld($player_id, $age_min = null, $type = null) {
+        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ false, $type);
+    }
+
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
         return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
     }
@@ -9730,13 +9734,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 7, age 1: Sailing
             case "7N1":
-                self::executeDraw($player_id, 1, 'board'); // "Draw and meld a 1"
+                self::executeDrawAndMeld($player_id, 1); // "Draw and meld a 1"
                 break;
                 
             // id 8, age 1: The wheel
             case "8N1":
-                self::executeDraw($player_id, 1); // "Draw two 1"
-                self::executeDraw($player_id, 1); // 
+                // "Draw two 1"
+                self::executeDraw($player_id, 1);
+                self::executeDraw($player_id, 1);
                 break;
                 
             // id 9, age 1: Agriculture
@@ -10024,7 +10029,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 28, age 3: Optics        
             case "28N1":
-                $card = self::executeDraw($player_id, 3, 'board'); // "Draw and meld a 3"
+                $card = self::executeDrawAndMeld($player_id, 3); // "Draw and meld a 3"
                 if (self::hasRessource($card, 1)) { // "If it has a crown"
                     self::notifyGeneralInfo(clienttranslate('It has a ${crown}.'), array('crown' => $crown));
                     self::executeDraw($player_id, 4, 'score'); // "Draw and score a 4"
@@ -10141,7 +10146,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 35, age 4: Experimentation        
             case "35N1":
-                self::executeDraw($player_id, 5, 'board'); // "Draw and meld a 5"
+                 // "Draw and meld a 5"
+                self::executeDrawAndMeld($player_id, 5);
                 break;
                 
             // id 36, age 4: Printing press        
@@ -10411,7 +10417,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             case "55N2":
-                self::executeDraw($player_id, 7, 'board'); // "Draw and meld a 7"
+                // "Draw and meld a 7"
+                self::executeDrawAndMeld($player_id, 7);
                 break;
             
             // id 56, age 6: Encyclopedia
@@ -10493,8 +10500,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             case "62N1":
-                if (self::getAuxiliaryValue() == 1) { // "If any card was returned as a result of the demand"
-                    self::executeDraw($player_id, 7, 'board'); // "Draw and meld a 7"
+                // "If any card was returned as a result of the demand, draw and meld a 7."
+                if (self::getAuxiliaryValue() == 1) {
+                    self::executeDrawAndMeld($player_id, 7);
                 }
                 break;
             
@@ -10674,7 +10682,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "79N1":
-                self::executeDraw($player_id, 8, 'board'); // "Draw and meld an ${age_8}"
+                // "Draw and meld an 8"
+                self::executeDrawAndMeld($player_id, 8);
                 break;
                 
             // id 80, age 8: Mass media 
@@ -10724,13 +10733,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "85N2":
-                $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
+                // "Draw and meld a 10"
+                $card = self::executeDrawAndMeld($player_id, 10);
                 self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
                 break;
             
             // id 86, age 9: Genetics     
             case "86N1":
-                $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
+                // "Draw and meld a 10"
+                $card = self::executeDrawAndMeld($player_id, 10);
                 $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                 $pile = $board[$card['color']];
                 for($p=0; $p < count($pile)-1; $p++) { // "For each card beneath it"
@@ -10897,9 +10908,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "96N2":
-                self::executeDraw($player_id, 10, 'board'); // "Draw and meld two 10"
-                $card = self::executeDraw($player_id, 10, 'board'); //
-                self::executeNonDemandEffects($card); // "Execute each of the second card's non-demand dogma effects"
+                // Draw and meld two 10s, then execute each of the second card's non dogma effects. Do not share them."
+                self::executeDrawAndMeld($player_id, 10);
+                $card = self::executeDrawAndMeld($player_id, 10);
+                self::executeNonDemandEffects($card);
                 break;
                 
             // id 97, age 10: Miniaturization
@@ -10913,7 +10925,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($top_green_card !== null) {
                     self::scoreCard($top_green_card, $player_id); // "Score your top green card"
                 }
-                $card = self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10
+                $card = self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10
                 self::executeNonDemandEffects($card); // "Execute each its non-demand dogma effects"
                 break;
             
@@ -11167,7 +11179,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${clocks}.'), array('You' => 'You', 'n' => $number_of_clocks, 'clocks' => $clock));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
-                    self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
+                    self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
 
@@ -11337,7 +11349,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              // id 125, Artifacts age 2: Seikilos Epitaph
              case "125N1":
                 // "Draw and meld a 3"
-                $melded_card = self::executeDraw($player_id, 3, 'board');
+                $melded_card = self::executeDrawAndMeld($player_id, 3);
                
                 // "Meld your bottom card of the drawn card's color"
                 $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
@@ -11686,7 +11698,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 159, Artifacts age 5: Barque-Longue La Belle
             case "159N1":
                 do {
-                    $card = self::executeDraw($player_id, 5, 'board'); // "Draw and meld a 5"
+                    $card = self::executeDrawAndMeld($player_id, 5); // "Draw and meld a 5"
                 } while ($card['color'] != 2); // // "If the drawn card is not green, repeat this effect"
                 break;
 
@@ -11780,7 +11792,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "172N1":
                 do {
                     // "Draw and meld a 6"
-                    $card = self::executeDraw($player_id, 6, 'board');
+                    $card = self::executeDrawAndMeld($player_id, 6);
                     // "If the drawn card's color is the color with the fewest (or tied) number of visible cards on your board"
                     $num_visible_cards_of_drawn_color = self::countVisibleCards($player_id, $card['color']);
                     for ($color = 0; $color < 5; $color++) {
@@ -11841,7 +11853,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 177, Artifacts age 7: Submarine H. L. Hunley
             case "177C1":
                 // "I compel you to draw and meld a 7" 
-                $card = self::executeDraw($player_id, 7, 'board');
+                $card = self::executeDrawAndMeld($player_id, 7);
 
                 // "Reveal the bottom card on your board of the melded card's color"
                 $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
@@ -11862,7 +11874,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw and score an 8"
                 $card = self::executeDraw($player_id, 8, 'score');
                 // "Draw and meld an 8"
-                $card = self::executeDraw($player_id, 8, 'board');
+                $card = self::executeDrawAndMeld($player_id, 8);
                 $step_max = 1;
                 break;
 
@@ -11962,7 +11974,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 185, Artifacts age 8: Parnell Pitch Drop
             case "185N1":
                 // "Draw and meld a card of value one higher than the highest top card on your board"
-                $card = self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1, 'board');
+                $card = self::executeDrawAndMeld($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1);
                 if (self::countIconsOnCard($card, 6) == 3) {
                     // "If the melded card has three clocks, you win"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 ${clocks}.'), array('You' => 'You', 'clocks' => $clock));
@@ -12064,7 +12076,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "195N1":
                 // "Draw and meld a 9"
-                $card = self::executeDraw($player_id, 9, 'board');
+                $card = self::executeDrawAndMeld($player_id, 9);
 
                 // Store information about whether the card has a clock or not
                 if (self::hasRessource($card, 6)) {
@@ -12144,8 +12156,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 202, Artifacts age 9: Magnavox Odyssey
             case "202N1":
                 // "Draw and meld two 10s"
-                $card_1 = self::executeDraw($player_id, 10, 'board');
-                $card_2 = self::executeDraw($player_id, 10, 'board');
+                $card_1 = self::executeDrawAndMeld($player_id, 10);
+                $card_2 = self::executeDrawAndMeld($player_id, 10);
                 
                 // "If they are the same color, you win"
                 if ($card_1['color'] == $card_2['color']) {
@@ -12188,7 +12200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 205, Artifacts age 10: Rover Curiosity
             case "205N1":
                 // "Draw and meld an Artifact 10"
-                $card = self::executeDraw($player_id, 10, 'board', /*bottom_to=*/ false, /*type=*/ 1);
+                $card = self::executeDrawAndMeld($player_id, 10, /*type=*/ 1);
                 // "Execute the effects of the melded card as if they were on this card. Do not share them"
                 self::executeAllEffects($card);
                 break;
@@ -12358,7 +12370,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($bonuses) > 0) {
                     // Only Cities cards can have more than one bonus (but these cards won't be drawn here) so we can just
                     // pick the first (and only) bonus on the Echoes card.
-                    self::executeDraw($player_id, $bonuses[0], 'board');
+                    self::executeDrawAndMeld($player_id, $bonuses[0]);
                 }
                 break;
 
@@ -12844,7 +12856,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 if ($has_tower) {
-                    self::executeDraw($player_id, 3, 'board');
+                    self::executeDrawAndMeld($player_id, 3);
                 } else {
                     self::executeDraw($player_id, 4, 'hand');
                 }
@@ -12853,7 +12865,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 361, Echoes age 3: Deoderant
             case "361E1":
                 // "Draw and meld a 3."
-                self::executeDraw($player_id, 3, 'board');
+                self::executeDrawAndMeld($player_id, 3);
                 break;
 
             // id 362, Echoes age 3: Sandpaper
@@ -13212,7 +13224,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     else {
                         $age_to_draw = 1; // No yellow card means melding a 1
                     }
-                    $card = self::executeDraw($player_id, $age_to_draw, 'board');
+                    $card = self::executeDrawAndMeld($player_id, $age_to_draw);
                 } while ($card['color'] == 3); // "If the melded card is yellow, repeat this dogma effect."
                 break;
 
@@ -13505,7 +13517,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 } else {
                     // "Otherwise, draw and meld a 7"
-                    self::executeDraw($player_id, 7, 'board');
+                    self::executeDrawAndMeld($player_id, 7);
                 }
                 break;
                 
@@ -13644,7 +13656,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 394, Echoes age 6: Kaleidoscope
             case "394N1":
                 // "Draw and meld a 7"
-                $card = self::executeDraw($player_id, 7, 'board');
+                $card = self::executeDrawAndMeld($player_id, 7);
                 self::setAuxiliaryValue($card['color']);
                 $step_max = 1;
                 break;
@@ -13787,7 +13799,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "403D1":
-                self::executeDraw($player_id, 1, 'board');
+                // "I demand you draw and meld a 1!"
+                self::executeDrawAndMeld($player_id, 1);
                 break;
 
             case "403N1":
@@ -14009,7 +14022,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 414, Echoes age 8: Television
             case "414E1":
                 // "Draw and meld an 8."
-                self::executeDraw($player_id, 8, 'board');
+                self::executeDrawAndMeld($player_id, 8);
                 break;
                 
             case "414N1":
@@ -14273,7 +14286,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "433N2":
                 // "Draw and meld a 10."
-                self::executeDraw($player_id, 10, 'board');
+                self::executeDrawAndMeld($player_id, 10);
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -21511,7 +21524,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 1, age 1: Tools
                 case "1N1A":
                     if ($n > 0) { // "If you do"
-                        self::executeDraw($player_id, 3, 'board'); // "Draw and meld a 3"
+                        self::executeDrawAndMeld($player_id, 3); // "Draw and meld a 3"
                     }
                     break;
                 case "1N2A":
@@ -21597,7 +21610,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 16, age 2: Mathematics
                 case "16N1A":
                     if ($n > 0) { // "If you do"
-                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected') + 1, 'board'); // "Draw and meld a card of value one higher than the card you returned"
+                        self::executeDrawAndMeld($player_id, self::getGameStateValue('age_last_selected') + 1); // "Draw and meld a card of value one higher than the card you returned"
                     }
                     break;
                
@@ -21724,7 +21737,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 43, age 4: Enterprise
                 case "43D1A":
                     if ($n > 0) { // "If you do"
-                        self::executeDraw($player_id, 4, 'board'); // "Draw and meld a 4"
+                        self::executeDrawAndMeld($player_id, 4); // "Draw and meld a 4"
                     }
                     break;
                 
@@ -21822,7 +21835,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 62, age 6: Vaccination
                 case "62D1A":
                     if ($n > 0) { // "If you returned any"
-                        self::executeDraw($player_id, 6, 'board'); // "Draw and meld a 6"
+                        self::executeDrawAndMeld($player_id, 6); // "Draw and meld a 6"
                         self::setAuxiliaryValue(1); // Flag that a card has been returned
                     }
                     break;
@@ -21933,7 +21946,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 79, age 8: Corporations        
                 case "79D1A":
                     if ($n > 0) { // "If you transfered any cards"
-                        self::executeDraw($player_id, 8, 'board'); // "Draw and meld a 8"
+                        self::executeDrawAndMeld($player_id, 8); // "Draw and meld a 8"
                     }
                     break;
 
@@ -22587,7 +22600,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     sort($ages_on_top);
                     // "For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order"
                     foreach ($ages_on_top as $card_age) {
-                        self::executeDraw($player_id, $card_age + 1, 'board');
+                        self::executeDrawAndMeld($player_id, $card_age + 1);
                     }
                     break;
 
@@ -22740,7 +22753,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                     // "Draw a card of value one higher and meld it"
                     $age_selected = self::getFaceupAgeLastSelected();
-                    $card = self::executeDraw($player_id, $age_selected + 1, 'board');
+                    $card = self::executeDrawAndMeld($player_id, $age_selected + 1);
                     
                     // "If it melded over one of the chosen cards, repeat this effect"
                     if ($card['color'] == $color_1 || $card['color'] == $color_2) {
@@ -22759,7 +22772,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $age_value = self::getAuxiliaryValue();
                     
                     // "Draw and meld a card of that value"
-                    $card = self::executeDraw($player_id, $age_value, 'board');
+                    $card = self::executeDrawAndMeld($player_id, $age_value);
 
                     // "Splay up the color of the melded card"
                     self::splayUp($player_id, $player_id, $card['color']);
@@ -23046,7 +23059,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "217N1A":
                     // "If you do, draw and meld a card of value equal to the number of cards returned"
                     if ($n > 0) {
-                        $card = self::executeDraw($player_id, $n, 'board');
+                        $card = self::executeDrawAndMeld($player_id, $n);
                         
                         // "If the melded card has a clock, return it"
                         if (self::countIconsOnCard($card, 6) > 0) {
@@ -23065,7 +23078,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "331D1A":
                     // "If you do, draw and meld a card of equal value!"
                     if ($n > 0) {
-                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'board');
+                        self::executeDrawAndMeld($player_id, self::getGameStateValue('age_last_selected'));
                     }
                     break;
 
@@ -23103,12 +23116,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "337N1B":
-                    // "For each card returned,"
+                    // "For each card returned, either draw and meld a 2, or draw and foreshadow a 3."
                     if (self::getAuxiliaryValue2() == 0) {
                         self::executeDrawAndForeshadow($player_id, 3);
                     }
                     else {
-                        self::executeDraw($player_id, 2, 'board');
+                        self::executeDrawAndMeld($player_id, 2);
                     }
                     
                     $iterations_left = self::getAuxiliaryValue();
@@ -23202,7 +23215,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "348D1A":
                     // "If you do, draw and meld a 2!"
                     if ($n > 0) {
-                        self::executeDraw($player_id, 2, 'board');
+                        self::executeDrawAndMeld($player_id, 2);
                     }
                     break;
 
@@ -23699,7 +23712,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                         // "Otherwise, draw and meld a 7."
                     } else {
-                        self::executeDraw($player_id, 7, 'board');
+                        self::executeDrawAndMeld($player_id, 7);
                     }
                     break;
                     
@@ -23937,15 +23950,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $number_of_cards_to_return = ceil(self::countCardsInLocation($player_id, 'score') / 2);
                     if ($number_of_cards_to_return == 0) {
                         // "Draw and meld two 10s."
-                        self::executeDraw($player_id, 10, 'board');
-                        self::executeDraw($player_id, 10, 'board');
+                        self::executeDrawAndMeld($player_id, 10);
+                        self::executeDrawAndMeld($player_id, 10);
                     }
                     break;
 
                 case "416N1B":
                     // "Draw and meld two 10s."
-                    self::executeDraw($player_id, 10, 'board');
-                    self::executeDraw($player_id, 10, 'board');
+                    self::executeDrawAndMeld($player_id, 10);
+                    self::executeDrawAndMeld($player_id, 10);
                     break;
                     
                 // id 417, Echoes age 9: Helicopter
@@ -24011,7 +24024,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 423, Echoes age 9: Karaoke
                 case "423E1A":
-                    $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'board');
+                    $card = self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
                     self::setIndexedAuxiliaryValue($player_id, $card['id']); // save card id for later
                     break;
 
@@ -24148,7 +24161,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 434, Echoes age 10: Sudoku
                 case "434N1A":
                     // "Draw and meld a card of any value."
-                    $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'board');
+                    $card = self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
                     
                     // "If you have at least nine different bonus values visible on your board, you win."
                     if (count(array_unique(self::getVisibleBonusesOnBoard($player_id))) >= 9) {
