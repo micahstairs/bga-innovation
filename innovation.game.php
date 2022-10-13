@@ -5448,6 +5448,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $color = self::getPlayerColorFromId($player_id);
         return "<span style='font-weight: bold; color:#".$color.";'>".$text."</span>";
     }
+
+    function getColoredPlayerName($player_id) {
+        return self::getColoredPlayerName($player_id);
+    }
     
     /** Execution of actions authorized by server **/
 
@@ -5587,7 +5591,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'player_to_remove' => $player_id,
         ));
         self::notifyAllPlayersBut($player_id, 'removedPlayer', clienttranslate('All ${player_name}\'s cards were removed from the game.'), array(
-            'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+            'player_name' => self::getColoredPlayerName($player_id),
             'player_to_remove' => $player_id,
         ));
     }
@@ -6390,7 +6394,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             array(
                 'player' => '${player}',
                 'player_id' => $player_id,
-                'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+                'player_name' => self::getColoredPlayerName($player_id),
                 'player_name_as_you' => 'You'
             )
         );
@@ -6600,7 +6604,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}.'),
             ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}.'),
-            ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
+            ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
     }
 
@@ -6615,7 +6619,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
-            ['player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
+            ['player_name' => self::getColoredPlayerName($player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
     
@@ -7590,7 +7594,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'player_id' => $player_id,
                     'new_max_age_on_board' => $new_max_age_on_board,
                     'rearrangement' => $choice,
-                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+                    'player_name' => self::getColoredPlayerName($player_id),
                     'color' => self::getColorInClear($color))
                 );
                 $choice = 1;
@@ -8281,7 +8285,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
  
     function argSelectionMove() {
         $player_id = self::getActivePlayerId();
-        $player_name = self::getColoredText(self::getPlayerNameFromId($player_id), $player_id);
+        $player_name = self::getColoredPlayerName($player_id);
         $You = 'You';
         $you = 'you'; 
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
@@ -8960,7 +8964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $opponent_name = null;
         } else if ($opponent_id > 0) {
             $your = 'your';
-            $opponent_name = self::getColoredText(self::getPlayerNameFromId($opponent_id), $opponent_id);
+            $opponent_name = self::getColoredPlayerName($opponent_id);
         } else if ($opponent_id == -2) {
             $your = null;
             if ($n_min > 800) {
@@ -9720,7 +9724,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Indicate this number
                 $translated_number = self::getTranslatedNumber($number_to_be_scored);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color(s) present on your board not present on any opponent\'s board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $translated_number));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color(s) present on his board not present on any of his opponents\' boards.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $translated_number));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color(s) present on his board not present on any of his opponents\' boards.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $translated_number));
 
                 // Score this number of times
                 for ($i = 0; $i < $number_to_be_scored; $i++) {
@@ -9769,12 +9773,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 if ($number_of_towers >= 4) { // "If you have at least four towers on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least four ${icon} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least four ${icon} on his board.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => $tower));
                     $step_max = 1; // --> 1 interaction: see B
                 }
                 else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have less than four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has less than four ${icon} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has less than four ${icon} on his board.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => $tower));
                 }
                 break;
                 
@@ -9789,13 +9793,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color = $card['color'];
                 if (self::hasThisColorOnBoard($player_id, $color)) { // "If it is the same color of any card on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => self::getColorInClear($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
                     self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
                     self::executeDraw($player_id, 1); // "Draw a 1"
                 }
                 else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} do not have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => self::getColorInClear($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} does not have this color on his board.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} does not have this color on his board.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
                     self::transferCardFromTo($card, $player_id, 'hand'); // (Put the card in your hand)
                 }
                 break;
@@ -9804,14 +9808,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "15N1":
                 if (self::countCardsInLocation($player_id, 'score') > self::countCardsInLocation($player_id, 'hand')) { // "If you have more cards in your score pile than in your hand"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have more cards in your score pile than in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has more cards in his score pile than in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has more cards in his score pile than in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     
                     self::executeDraw($player_id, 3); // "Draw two 3"
                     self::executeDraw($player_id, 3); // 
                 }
                 else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have more cards in your score pile than in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have more cards in his score pile than in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have more cards in his score pile than in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
                 
@@ -9846,12 +9850,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $achievement = self::getCardInfo(105);
                     if ($achievement['owner'] == 0) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} are the only player with five top cards.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Empire achievement"
                     }
                     else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} are the only player with five top cards but the Empire achievement has already been claimed.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards but the Empire achievement has already been claimed.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards but the Empire achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     }
                 }
                 break;
@@ -9885,7 +9889,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "21N1":
                 if (self::countCardsInLocation($player_id, 'score') == 0 && self::countCardsInLocation($player_id, 'hand') == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand or score pile to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand or score pile to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand or score pile to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
                     $step_max = 1; // --> 1 interaction: see B
                 }
@@ -9902,18 +9906,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     if ($number <= 1) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color with one or more visible ${leaves}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
                     }
                     else { // $number > 1
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${leaves}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
                     }
                     // "For each color of your board that have one leaf or more"
                 }
                 else {
                     $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2 /* leaf */);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
                     $number = self::intDivision($number_of_leaves,2); // "For every two leaves on your board"
                 }
                 
@@ -9944,7 +9948,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "25N1":
                 $number_of_towers = self::getPlayerSingleRessourceCount($player_id, 4);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${towers}.'), array('You' => 'You', 'n' => $number_of_towers, 'towers' => $tower));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${towers}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_towers, 'towers' => $tower));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${towers}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_towers, 'towers' => $tower));
                 $any_card_red = false;
                 $cards = array();
                 for($i=0; $i<self::intDivision($number_of_towers,3); $i++) { // "For every three towers on your board"
@@ -9957,13 +9961,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 if ($any_card_red) { // "If any of the drawn cards are red"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} drew a red card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew a red card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew a red card.'), array('player_name' => self::getColoredPlayerName($player_id)));
 
                     $step_max = 1; // --> 1 interactions: see B
                 }
                 else { // "Otherwise"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not draw a red card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not draw a red card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not draw a red card.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     foreach($cards as $card) {
                         self::transferCardFromTo($card, $player_id, 'hand'); // "Keep them" (ie place them in your hand)
                     }
@@ -9991,12 +9995,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $achievement = self::getCardInfo(108);
                     if ($achievement['owner'] == 0) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown}.'), array('your' => 'your', 'crown' => $crown));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'crown' => $crown));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown}.'), array('player_name' => self::getColoredPlayerName($player_id), 'crown' => $crown));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the World achievement"
                     }
                     else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the Empire achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown} but the World achievement has already been claimed.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'crown' => $crown));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown} but the World achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id), 'crown' => $crown));
                     }
                 }
                 break;
@@ -10014,7 +10018,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($no_top_card_with_tower) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top card with a ${tower} on your board.'), array('You' => 'You', 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${tower} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top card with a ${tower} on his board.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
                 }
                 break;
                 
@@ -10032,7 +10036,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyGeneralInfo(clienttranslate('It does not have a ${crown}.'), array('crown' => $crown));
                     if (empty(self::getActiveOpponentsWithFewerPoints($player_id))) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${you}.'), array('you' => 'you'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${player_name}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There is no opponent who has fewer points than ${player_name}.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     } else {
                         $step_max = 2;
                     }
@@ -10058,11 +10062,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($number_of_colors_splayed_left < 2) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_colors_splayed_left));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
                 }
                 else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_colors_splayed_left));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
                 }
                 
                 for($i=0;$i<$number_of_colors_splayed_left;$i++) { // For every color you have splayed left
@@ -10101,7 +10105,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step = 2; // Skip first interaction
                     self::revealHand($player_id);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
 
                 }
                 $step_max = 2;
@@ -10131,7 +10135,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     self::revealHand($player_id);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
                 }
                 break;
                 
@@ -10190,12 +10194,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $achievement = self::getCardInfo(107);
                     if ($achievement['owner'] == 0) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have all your five colors splayed.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Wonder achievement"
                     }
                     else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have all your five colors splayed but the Wonder achievement has already been claimed.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed but the Wonder achievement has already been claimed.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed but the Wonder achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     }
                 }
                 break;
@@ -10263,11 +10267,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($same_color) { // "If two or more cards are the same color"
                     $step_max = 1; // --> 1 interactions: see B
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} drew two cards of the same color.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew two cards of the same color.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew two cards of the same color.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 else { // "Otherwise"
                     self::notifyPlayer($player_id, 'log', clienttranslate('All the cards ${you} drew have different colors.'), array('you' => 'you'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All the cards ${player_name} drew have different colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All the cards ${player_name} drew have different colors.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     foreach($cards as $card) {
                         self::transferCardFromTo($card, $player_id, 'hand'); // "Keep them" (ie place them in your hand)
                     }
@@ -10372,12 +10376,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $achievement = self::getCardInfo(109);
                     if ($achievement['owner'] == 0) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('All non-purple top cards on ${your} board are value ${age_6} or higher.'), array('your' => 'your', 'age_6' => self::getAgeSquare(6)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All non-purple top cards on ${player_name}\'s board are value ${age_6} or higher.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age_6' => self::getAgeSquare(6)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All non-purple top cards on ${player_name}\'s board are value ${age_6} or higher.'), array('player_name' => self::getColoredPlayerName($player_id), 'age_6' => self::getAgeSquare(6)));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Universe achievement"
                     }
                     else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('All non-purple top cards on ${your} board are value ${age_6} or higher but the Universe achievement has already been claimed.'), array('your' => 'your', 'age_6' => self::getAgeSquare(6)));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All non-purple top cards on ${player_name}\'s board are value ${age_6} or higher but the Universe achievement has already been claimed.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age_6' => self::getAgeSquare(6)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All non-purple top cards on ${player_name}\'s board are value ${age_6} or higher but the Universe achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id), 'age_6' => self::getAgeSquare(6)));
                     }
                 }
                 break;
@@ -10430,18 +10434,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     if ($number <= 1) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color with one or more visible ${factories}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
                     }
                     else { // $number > 1
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${factories}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
                     }
                     // "For each color of your board that have one factory or more"
                 }
                 else {
                     $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5 /* factory */);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${factories}.'), array('You' => 'You', 'n' => $number_of_factories, 'factories' => $factory));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${factories}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_factories, 'factories' => $factory));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${factories}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_factories, 'factories' => $factory));
                     $number = self::intDivision($number_of_factories,2); // "For every two factories on your board"
                 }
                 
@@ -10534,7 +10538,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getGameStateValue('game_rules') == 1) { // Last edition
                     $number_of_crowns = self::getPlayerSingleRessourceCount($launcher_id, 1 /* crown */);
                     self::notifyPlayer($launcher_id, 'log', clienttranslate('${You} have ${n} ${crowns}.'), array('You' => 'You', 'n' => $number_of_crowns, 'crowns' => $crown));
-                    self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('${player_name} has ${n} ${crowns}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_crowns, 'crowns' => $crown));
+                    self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('${player_name} has ${n} ${crowns}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_crowns, 'crowns' => $crown));
                     $number = self::intDivision($number_of_crowns, 4);
                     if ($number == 0) {
                         self::notifyGeneralInfo(clienttranslate('No card has to be transfered.'));
@@ -10601,7 +10605,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
             
@@ -10705,7 +10709,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "83N2":
                 if (self::getPlayerSingleRessourceCount($player_id, 3 /* lightbulb */) >= 20) { // "If you have twenty or more lightbulbs on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least twenty ${lightbulbs}.'), array('You' => 'You', 'lightbulbs' => $lightbulb));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least twenty ${lightbulbs}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'lightbulbs' => $lightbulb));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least twenty ${lightbulbs}.'), array('player_name' => self::getColoredPlayerName($player_id), 'lightbulbs' => $lightbulb));
                     self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Empiricism');
                     throw new EndOfGame();                
@@ -10795,7 +10799,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $number_of_green_cards = $number_of_cards_on_board[2];
                 if ($number_of_green_cards >= 10) { // "If you have ten or more green cards on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least ten green cards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least ten green cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least ten green cards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Collaboration');
                     throw new EndOfGame();                
@@ -10860,7 +10864,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 foreach ($player_ids as $player_id) {
                     $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
                     if (!$any_under_three_leaves && $number_of_leaves < 3) { // Less than three
                         self::notifyGeneralInfo(clienttranslate('That is less than 3.'));
                         $any_under_three_leaves = true;
@@ -10883,7 +10887,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 else { // "If any player has less than three leaves, the single player with the most number of leaves"
                     self::notifyPlayer($owner_of_max_number_of_leaves, 'log', clienttranslate('${You} have more ${leaves} than each opponent.'), array('You' => 'You', 'leaves' => $leaf));
-                    self::notifyAllPlayersBut($owner_of_max_number_of_leaves, 'log', clienttranslate('${player_name} has more ${leaves} than each opponent.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($owner_of_max_number_of_leaves), $owner_of_max_number_of_leaves), 'leaves' => $leaf));
+                    self::notifyAllPlayersBut($owner_of_max_number_of_leaves, 'log', clienttranslate('${player_name} has more ${leaves} than each opponent.'), array('player_name' => self::getColoredPlayerName($owner_of_max_number_of_leaves), 'leaves' => $leaf));
                     self::setGameStateValue('winner_by_dogma', $owner_of_max_number_of_leaves); // "Wins"
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Bioengineering');
                     throw new EndOfGame();
@@ -10977,7 +10981,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5);
                     
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${m} ${leaves} and ${n} ${factories}.'), array('You' => 'You', 'm' => $number_of_leaves, 'leaves' => $leaf, 'n' => $number_of_factories, 'factories' => $factory));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${m} ${leaves} and ${n} ${factories}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'm' => $number_of_leaves, 'leaves' => $leaf, 'n' => $number_of_factories, 'factories' => $factory));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${m} ${leaves} and ${n} ${factories}.'), array('player_name' => self::getColoredPlayerName($player_id), 'm' => $number_of_leaves, 'leaves' => $leaf, 'n' => $number_of_factories, 'factories' => $factory));
                     
                     if ($nobody_more_leaves_than_factories && $number_of_leaves > $number_of_factories) {
                         self::notifyGeneralInfo(clienttranslate('That is more ${leaves} than ${factories}'), array('leaves' => $leaf, 'factories' => $factory));
@@ -11088,7 +11092,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "102N1":
                 if (self::countCardsInLocation($player_id, 'hand') == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand to score.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand to score.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand to score.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
                     $step_max = 1; // --> 1 interaction: see B
                 }
@@ -11165,7 +11169,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "104N3":
                 $number_of_clocks = self::getPlayerSingleRessourceCount($player_id, 6 /* clock */);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${clocks}.'), array('You' => 'You', 'n' => $number_of_clocks, 'clocks' => $clock));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDraw($player_id, 10, 'board'); // "Draw and meld a 10"
                 }
@@ -11233,7 +11237,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::revealHand($player_id);
                     $color_in_clear = self::getColorInClear(4);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredPlayerName($player_id), 'colored' => $color_in_clear));
                 } else {
                     $step_max = 1;
                 }
@@ -11295,7 +11299,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($player_id == $launcher_id) {
                     if ($num_movements == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Dancing Girl');
                         throw new EndOfGame();
@@ -11394,7 +11398,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $top_card = self::getTopCardOnBoard($player_id, 3); // top yellow card
                 if ($top_card !== null && $top_card['id'] == 131) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Holy Grail as a top card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn HolyLance');
                     throw new EndOfGame();
@@ -11544,7 +11548,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} top card(s) with a ${tower} on your board.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($num_cards), 'tower' => $tower));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card(s) with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($num_cards), 'tower' => $tower));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} top card(s) with a ${tower} on his board.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($num_cards), 'tower' => $tower));
                 self::setAuxiliaryValue($num_cards);
                 if ($num_cards > 0) {
                     $step_max = 1;
@@ -11598,7 +11602,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($no_top_card_with_crown) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top cards with a ${crown} on your board.'), array('You' => 'You', 'crown' => $crown));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top cards with a ${crown} on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'crown' => $crown));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top cards with a ${crown} on his board.'), array('player_name' => self::getColoredPlayerName($player_id), 'crown' => $crown));
                 }
                 break;
 
@@ -11620,13 +11624,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
                 if (count(array_diff($card_count_by_color, array(1))) == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly five cards and five colors in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stInterInteractionStep CrossOfCoronado');
                     throw new EndOfGame();
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have exactly five cards and five colors in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have exactly five cards and five colors in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
 
@@ -11833,7 +11837,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'i18n' => array('color'),
                     'number' => $visible_card_count,
                     'color' => self::getColorInClear($card['color']),
-                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id))
+                    'player_name' => self::getColoredPlayerName($player_id))
                 );
                 self::executeDraw($player_id, $visible_card_count, 'score');
                 break;
@@ -11884,7 +11888,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::revealHand($player_id);
                     $color_in_clear = self::getColorInClear(0);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredPlayerName($player_id), 'colored' => $color_in_clear));
 
                     // "Transfer all cards in your hand to my hand"
                     foreach (self::getIdsOfCardsInLocation($player_id, 'hand') as $id) {
@@ -11966,7 +11970,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::countIconsOnCard($card, 6) == 3) {
                     // "If the melded card has three clocks, you win"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with 3 ${clocks}.'), array('You' => 'You', 'clocks' => $clock));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 ${clocks}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'clocks' => $clock));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with 3 ${clocks}.'), array('player_name' => self::getColoredPlayerName($player_id), 'clocks' => $clock));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Parnell Pitch Drop');
                     throw new EndOfGame();
@@ -12038,7 +12042,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         )); 
                         self::notifyAllPlayersBut($single_player_id, 'log', clienttranslate('${player_name} has the highest top ${color} card.'), array(
                             'i18n' => array('color'),
-                            'player_name' => self::getColoredText(self::getPlayerNameFromId($single_player_id), $single_player_id),
+                            'player_name' => self::getColoredPlayerName($single_player_id),
                             'color' => self::getColorInClear($color)
                         ));
                         self::transferCardFromTo($card, $single_player_id, 'achievements');
@@ -12150,7 +12154,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "If they are the same color, you win"
                 if ($card_1['color'] == $card_2['color']) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded two cards of the same color'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded two cards of the same color'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded two cards of the same color'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Magnavox Odyssey');
                     throw new EndOfGame();
@@ -12207,7 +12211,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::decodeGameType(self::getGameStateValue('game_type')) == 'individual') {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
-                        'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)
+                        'player_name' => self::getColoredPlayerName($player_id)
                     ));
                     self::eliminatePlayer($player_id);
                     if (count(self::getAllActivePlayers()) == 1) {
@@ -12255,13 +12259,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($win_condition_met) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in their score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in their score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Maastricht Treaty');
                     throw new EndOfGame();
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in their score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in their score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
 
@@ -12280,13 +12284,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // There is a stack on your board that has the most cards of all stacks on all boards
                 if ($win_condition_met) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Seikan Tunnel');
                     throw new EndOfGame();
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards of a color showing on your board out of all colors on all boards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards of a color showing on his board out of all colors on all boards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
                 
@@ -12299,7 +12303,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "212N1":
                 // "You win"
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} found Waldo!'), array('You' => 'You'));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} found Waldo!'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} found Waldo!'), array('player_name' => self::getColoredPlayerName($player_id)));
                 self::setGameStateValue('winner_by_dogma', $player_id);
                 self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
                 throw new EndOfGame();
@@ -12431,7 +12435,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     self::revealHand($player_id);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
                 }
                 break;
 
@@ -12631,7 +12635,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($colors);
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top cards ${color} cards with a ${icon_4} or ${icon_5}, so no transfer will occur.'), array('You' => 'You', 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All of ${player_name}\'s top cards have ${icon_4} or ${icon_5}, so no transfer will occur.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All of ${player_name}\'s top cards have ${icon_4} or ${icon_5}, so no transfer will occur.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
                 }
                 break;
 
@@ -12724,7 +12728,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Reveal hand to confirm no matching cards are there.
                     self::revealHand($player_id);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${color} cards in your hand.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${color} cards in his hand.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${color} cards in his hand.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
                     
                     // "Otherwise, foreshadow the drawn card."
                     self::transferCardFromTo($revealed_card, $player_id, 'forecast');
@@ -12901,7 +12905,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
                     self::notifyAllPlayersBut($player_id, 'log', 
                         clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon}.'), 
-                        array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => self::getIconSquare($icon_match)));
+                        array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($icon_match)));
                     // "claim the Supremacy achievement."
                     self::claimSpecialAchievement($player_id, 439);
                 }
@@ -12936,7 +12940,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', 
                         clienttranslate('${player_name} does not have a purple card.'), 
-                        array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));                    
+                        array('player_name' => self::getColoredPlayerName($player_id)));                    
                     break;
                 } else {
                     $non_purple_card = false;
@@ -12961,14 +12965,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', 
                             clienttranslate('${player_name} does not have a top non-purple card.'), 
-                            array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            array('player_name' => self::getColoredPlayerName($player_id)));
                     } else if ($same_splay_direction) {
                         self::notifyPlayer($player_id, 'log', 
                             clienttranslate('All of ${your} piles are already splayed the same direction.'), 
                             array('your' => 'your'));
                         self::notifyAllPlayersBut($player_id, 'log', 
                             clienttranslate('All of ${player_name}\'s piles are already splayed the same direction.'), 
-                            array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            array('player_name' => self::getColoredPlayerName($player_id)));
                     } else {
                         $step_max = 2;
                         self::setAuxiliaryValue2FromArray($color_array); // For color selection later
@@ -13152,7 +13156,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', 
                         clienttranslate('${player_name} has no bonuses on his board.'), 
-                        array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        array('player_name' => self::getColoredPlayerName($player_id)));
 
                 }
                 break;
@@ -13445,7 +13449,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 2;
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two different values in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
             
@@ -13827,7 +13831,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "you win"
                     // TODO(ECHOES): Update these log statements to include the music note icon.
                     self::notifyPlayer($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Saxophone');
                     throw new EndOfGame();
@@ -14202,7 +14206,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $this_player_icon_counts[4] < $min_towers) {
                 
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the fewest ${factory}, ${crown}, and ${tower}.'), array('You' => 'You', 'factory' => $factory, 'crown' => $crown, 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the fewest ${factory}, ${crown}, and ${tower}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'factory' => $factory, 'crown' => $crown, 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the fewest ${factory}, ${crown}, and ${tower}.'), array('player_name' => self::getColoredPlayerName($player_id), 'factory' => $factory, 'crown' => $crown, 'tower' => $tower));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Social Networking');
                     throw new EndOfGame();
@@ -15159,7 +15163,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "42N1B":
             $number_of_lightbulbs = self::getPlayerSingleRessourceCount($player_id, 3 /* lightbulb */);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${lightbulbs}.'), array('You' => 'You', 'n' => $number_of_lightbulbs, 'lightbulbs' => $lightbulb));
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${lightbulbs}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_lightbulbs, 'lightbulbs' => $lightbulb));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${lightbulbs}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_lightbulbs, 'lightbulbs' => $lightbulb));
             // "Score a card from your hand for every two lightbulbs on your board"
             $options = array(
                 'player_id' => $player_id,
@@ -15209,7 +15213,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "44N1A":
             $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
             // "You may tuck a card from your hand for every two leaves on your board"
             $options = array(
                 'player_id' => $player_id,
@@ -15885,7 +15889,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "76N1A":
             $number_of_clocks = self::getPlayerSingleRessourceCount($player_id, 6 /* clock */);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${clocks}.'), array('You' => 'You', 'n' => $number_of_clocks, 'clocks' => $clock));
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
             // "Return a card in any opponent's score pile for every two clocks on your board"
             $options = array(
                 'player_id' => $player_id,
@@ -21614,7 +21618,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                         else {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top red card on your board.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top red card on your board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no top red card on your board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                     }
                     break;
@@ -21627,12 +21631,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         if ($number_of_cards_to_score == 1) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('Each card ${you} returned has the same value.'), array('you' => 'you'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} returned has the same value.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} returned has the same value.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                         else if ($number_of_cards_to_score > 1) {
                             $n = self::getTranslatedNumber($number_of_cards_to_score);
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned cards of ${n} different values.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $n));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} returned.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $n));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} returned.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $n));
                         }
                         
                         // "For every different value of card you returned"
@@ -21761,10 +21765,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
                             if ($number_of_cards == 1) {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
+                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($color)));
                             } else {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($color)));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($color)));
+                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($color)));
                             }
                             self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
                         }
@@ -21779,7 +21783,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // First edition only
                     if ($n > 0 && self::countCardsInLocation($player_id, 'hand') == 1) { // "If you do, and have only one card in hand afterwards"
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have now only one card in your hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has now only one card in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has now only one card in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         $step--; self::incrementStep(-1); // --> "Repeat this demand"
                     }
                     break;
@@ -21811,7 +21815,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             if (!$transfer) { // The player had no card of this color in his hand
                                 $color_in_clear = self::getColorInClear($color);
                                 self::notifyPlayer($other_player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                                self::notifyAllPlayersBut($other_player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($other_player_id), $other_player_id), 'colored' => $color_in_clear));
+                                self::notifyAllPlayersBut($other_player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredPlayerName($other_player_id), 'colored' => $color_in_clear));
                             }
                         }
                         self::transferCardFromTo($revealed_card, $player_id, 'hand'); // Place back the card into player's hand
@@ -21884,12 +21888,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         if ($number_of_cards_to_score == 1) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('Each card ${you} tucked has the same value.'), array('you' => 'you'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} tucked has the same value.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} tucked has the same value.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                         else if ($number_of_cards_to_score > 1) {
                             $n = self::getTranslatedNumber($number_of_cards_to_score);
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} tucked cards of ${n} different values.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $n));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} tucked.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $n));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} tucked.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $n));
                         }
                         
                         // "For every different value of card you tucked"
@@ -21952,12 +21956,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         if ($number_of_cards_to_draw == 1) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('Each card ${you} returned has the same value.'), array('you' => 'you'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} returned has the same value.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name} returned has the same value.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                         else if ($number_of_cards_to_draw > 1) {
                             $n = self::getTranslatedNumber($number_of_cards_to_draw);
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned cards of ${n} different values.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $n));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} returned.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $n));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in the cards ${player_name} returned.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $n));
                         }
                         
                         // "For every different value of card that you returned"
@@ -22076,16 +22080,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         if ($number_of_different_value == 0) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no card in your score pile.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s has no card in his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s has no card in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                         else if ($number_of_different_value == 1) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('Each card in ${your} score pile has the same value.'), array('your' => 'your'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name}\'s score pile has the same value.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each card ${player_name}\'s score pile has the same value.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                         else if ($number_of_different_value > 1) {
                             $n = self::getTranslatedNumber($number_of_different_value);
                             self::notifyPlayer($player_id, 'log', clienttranslate('There are ${n} different values that can be found in ${your} score pile.'), array('i18n' => array('n'), 'your' => 'your', 'n' => $n));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in ${player_name}\'s score pile.'), array('i18n' => array('n'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $n));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${n} different values that can be found in ${player_name}\'s score pile.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $n));
                         }
                         
                         for($i=0; $i<$number_of_different_value; $i++) { // "For every different value of card in your score pile"
@@ -22462,7 +22466,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::revealHand($player_id);
                         $color_in_clear = self::getColorInClear(0);
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'colored' => $color_in_clear));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::getColoredPlayerName($player_id), 'colored' => $color_in_clear));
                         $step = $step + 1;
                         self::incrementStep(1);
                     }
@@ -22543,7 +22547,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $colored_cards = $cards[$chosen_color];
                     $num_cards = count($colored_cards);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'You' => 'You', 'n' => $num_cards, 'color' => self::getColorInClear($chosen_color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $num_cards, 'color' => self::getColorInClear($chosen_color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $num_cards, 'color' => self::getColorInClear($chosen_color)));
                     
                     // "If you have exactly that many cards of that color, score them, and splay right your cards of that color"
                     if ($num_cards == self::getAuxiliaryValue()) {
@@ -22767,7 +22771,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
                     if ($card['faceup_age'] == self::countVisibleCards($player_id, $card['color'])) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card whose value is equal to the number of visible cards in your ${color} stack.'), array('You' => 'You', 'color'=> self::getColorInClear($card['color'])));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card whose value is equal to the number of visible cards in his ${color} stack.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color'=> self::getColorInClear($card['color'])));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card whose value is equal to the number of visible cards in his ${color} stack.'), array('player_name' => self::getColoredPlayerName($player_id), 'color'=> self::getColorInClear($card['color'])));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep International Prototype Metre Bar');
                         throw new EndOfGame();
@@ -22853,7 +22857,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // "If you return eight cards, you win"
                         if (self::getAuxiliaryValue() == 8) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned 8 cards.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned 8 cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned 8 cards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);
                             self::trace('EOG bubbled from self::stInterInteractionStep Earharts Lockheed Electra 10E');
                             throw new EndOfGame();
@@ -22912,7 +22916,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // "If the melded card has no effects, you win"
                         if ($melded_card['type'] == 2 /* a City card */ || $melded_card['id'] == 188 /* Battleship Yamato */) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with no effects.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::getColoredPlayerName($player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Garlands Ruby Slippers');
                             throw new EndOfGame();
@@ -22961,7 +22965,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you revealed all five colors, you win"
                     if (count(array_count_values($revealed_colors)) == 5) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed all 5 colors.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed all 5 colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed all 5 colors.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Syncom 3');
                         throw new EndOfGame();
@@ -22977,7 +22981,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you have exactly 25 points, you win"
                     if (self::getPlayerScore($player_id) == 25) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have exactly 25 points.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly 25 points.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has exactly 25 points.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Marilyn Diptych');
                         throw new EndOfGame();
@@ -23004,7 +23008,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $bottom_yellow_card = self::getBottomCardOnBoard($player_id, 3);
                     if ($bottom_yellow_card != null && $bottom_yellow_card['id'] == 10) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Domestication as a bottom card.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Domestication as a bottom card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Domestication as a bottom card.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep Dolly the Sheep');
                         throw new EndOfGame();
@@ -24022,7 +24026,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($top_green_card !== null && $top_green_card['id'] == 350) {
                         $card_args = self::getNotificationArgsForCardList([$top_green_card]);
                         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${your} new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'your' => 'your'));
-                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $launcher_id);
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
                         throw new EndOfGame();
@@ -24035,7 +24039,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($top_green_card !== null && $top_green_card['id'] == 30) {
                         $card_args = self::getNotificationArgsForCardList([$top_green_card]);
                         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${your} top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'your' => 'your'));
-                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
                         throw new EndOfGame();
@@ -24063,7 +24067,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     if ($eligible) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same values in your score pile and in hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same values in his score pile and in hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same values in his score pile and in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Human Genome');
                         throw new EndOfGame();
@@ -24119,7 +24123,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     if (count(array_unique($card_counts)) == 1) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
                         throw new EndOfGame();
@@ -24138,7 +24142,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     if (count(array_unique($card_counts)) == 1) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards n every pile on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards n every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
                         throw new EndOfGame();
@@ -24153,7 +24157,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you have at least nine different bonus values visible on your board, you win."
                     if (count(array_unique(self::getVisibleBonusesOnBoard($player_id))) >= 9) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues visible on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on their board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on their board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Sudoku');
                         throw new EndOfGame();                
@@ -24415,7 +24419,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 else {
                     self::notifyPlayer($choice, 'log', clienttranslate('${You} have no top green card on your board.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($choice, 'log', clienttranslate('${player_name} has no top green card on his board.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                    self::notifyAllPlayersBut($choice, 'log', clienttranslate('${player_name} has no top green card on his board.'), array('player_name' => self::getColoredPlayerName($choice)));
                 }
                 break;
                 
@@ -24435,11 +24439,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // $choice is yes or no
                 if ($choice == 0) { // No exchange
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 else { // "Exchange all the highest cards in your hand with all the highest cards in your score pile"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     
                     // Get highest cards in hand and highest cards in score
                     $ids_of_highest_cards_in_hand = self::getIdsOfHighestCardsInLocation($player_id, 'hand');
@@ -24472,15 +24476,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "50N1B":
                 // $choice is a color
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::splayRight($player_id, $player_id, $choice); // "Splay that color of your cards right"
                 $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$choice];
                 if ($number_of_cards == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored' => self::getColorInClear($choice)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($choice)));
                 }
                 self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
                 break;
@@ -24490,10 +24494,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // $choice is yes or no
                 if ($choice == 0) { // No tuck
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to tuck.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else { // Draw and tuck
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to tuck.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     
                     self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
                     
@@ -24528,11 +24532,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // $choice is yes or no
                 if ($choice == 0) { // No exchange
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 else { // "Exchange all the cards in your hand with all the cards in your score pile"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to exchange.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     
                     // Get all in hand and all cards in score
                     $ids_of_cards_in_hand = self::getIdsOfCardsInLocation($player_id, 'hand');
@@ -24570,7 +24574,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 80, age 8, Mass media
             case "80N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
@@ -24590,7 +24594,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // $choice was two colors
                 $colors = self::getValueAsArray($choice);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredPlayerName($player_id), 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
                 
                 $card = self::executeDraw($player_id, 9, 'revealed'); // "Draw and reveal a 9"
                 if ($card['color'] <> $colors[0] && $card['color'] <> $colors[1]) {
@@ -24624,11 +24628,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // $choice is yes or no
                 if ($choice == 0) { // No scoring
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to score the cards in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to score the cards in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to score the cards in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 else { // "Score all cards from your hand"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to score the cards in your hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to score the cards in his hand.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to score the cards in his hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     
                     // Get all cards in hand
                     $ids_of_cards_in_hand = self::getIdsOfCardsInLocation($player_id, 'hand');
@@ -24660,7 +24664,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "122N1A":
                 $color_in_clear = self::getColorInClear($choice);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => $color_in_clear));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => $color_in_clear));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => $color_in_clear));
                 self::setAuxiliaryValue($choice);
 
                 // "Each player reveals all cards of that color from their hand"
@@ -24671,7 +24675,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::revealHand($id);
                     $num_cards = self::countCardsInLocationKeyedByColor($id, 'hand')[$choice];
                     self::notifyPlayer($id, 'log', clienttranslate('${You} revealed ${n} ${color} card(s).'), array('i18n' => array('n', 'color'), 'You' => 'You', 'color' => $color_in_clear, 'n' => self::getTranslatedNumber($num_cards)));
-                    self::notifyAllPlayersBut($id, 'log', clienttranslate('${player_name} revealed ${n} ${color} card(s).'), array('i18n' => array('n', 'color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($id), $id), 'color' => $color_in_clear, 'n' => self::getTranslatedNumber($num_cards)));
+                    self::notifyAllPlayersBut($id, 'log', clienttranslate('${player_name} revealed ${n} ${color} card(s).'), array('i18n' => array('n', 'color'), 'player_name' => self::getColoredPlayerName($id), 'color' => $color_in_clear, 'n' => self::getTranslatedNumber($num_cards)));
                     if ($num_cards > 0) {
                         if ($id == $player_id) {
                             $player_revealed_cards = true;
@@ -24707,7 +24711,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
@@ -24740,7 +24744,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($second_card, $player_id, 'board');
                     if ($first_card['type'] == $second_card['type']) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose cards from the same card set.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     } else {
                         if ($first_card['color'] == $second_card['color']) {
                             // "Draw and score five 2s"
@@ -24749,7 +24753,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                         } else {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose different colors.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose different colors.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose different colors.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         }
                     }
                 }
@@ -24758,41 +24762,41 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 147, Artifacts age 4: East India Company Charter
             case "147N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             // id 152, Artifacts age 5: Mona Lisa
             case "152N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
             case "152N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the number ${n}.'), array('You' => 'You', 'n' => $choice));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the number ${n}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'n' => $choice));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the number ${n}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $choice));
                 self::setAuxiliaryValue($choice);
                 break;
 
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
             // id 158, Artifacts age 5: Ship of the Line Sussex
             case "158N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
             // id 162, Artifacts age 5: The Daily Courant
             case "162N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
@@ -24808,7 +24812,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 );
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array(
                     'i18n' => array('color_1', 'color_2', 'color_3'),
-                    'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
+                    'player_name' => self::getColoredPlayerName($player_id),
                     'color_1' => self::getColorInClear($colors[0]),
                     'color_2' => self::getColorInClear($colors[1]),
                     'color_3' => self::getColorInClear($colors[2]))
@@ -24834,14 +24838,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 173, Artifacts age 6: Moonlight Sonata
             case "173N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
             // id 179, Artifacts age 7: International Prototype Metre Bar
             case "179N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -24855,7 +24859,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 191, Artifacts age 8: Plush Beweglich Rod Bear
             case "191N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -24863,7 +24867,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "211N1A":
                 if ($choice == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to score your bottom yellow card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to score his bottom yellow card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to score his bottom yellow card.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -24872,10 +24876,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $age_to_draw_in = self::getAgeToDrawIn($player_id, 1);
                 if ($choice == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to draw and tuck.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to draw and tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -24883,7 +24887,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 336, Echoes age 1: Comb
             case "336N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -24891,10 +24895,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "337N1B":
                 if ($choice == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and foreshadow a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(3)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and foreshadow a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(3)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and meld a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(2)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and meld a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(2)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and meld a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(2)));
                 }
                 self::setAuxiliaryValue2($choice);
                 break;
@@ -24903,7 +24907,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "339N1A":
                 if ($choice == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare(1)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(1)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(1)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -24911,7 +24915,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 341, Echoes age 1: Soap
             case "341N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -24928,7 +24932,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "345N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 $age_counts = self::getAuxiliaryArray();
                 $age_counts[$choice - 1]--; // there has to be at least one entry for this value
                 self::setAuxiliaryArray($age_counts);
@@ -24941,17 +24945,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346E1A":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(3)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(3)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to foreshadow a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(4)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to foreshadow a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(4)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "346N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
@@ -24972,17 +24976,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 351, Echoes age 2: Toothbrush
             case "351E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "351N2A":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare(2)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(2)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(2)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare(2)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare(2)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(2)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -24990,7 +24994,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 356, Echoes age 3: Magnifying Glass
             case "356N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -25011,17 +25015,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $age = 4;                
                 }
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "359N1B":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to return your top green card.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to return his top green card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to return his top green card.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to achieve your top green card.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to achieve his top green card.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to achieve his top green card.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -25030,32 +25034,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "364N1A":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay your purple cards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay his purple cards.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay his purple cards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
                     $splay_direction = self::getCurrentSplayDirection($player_id, 4);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay a non-purple pile ${splay_direction}.'), array('You' => 'You', 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay a non-purple pile ${splay_direction}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay a non-purple pile ${splay_direction}.'), array('player_name' => self::getColoredPlayerName($player_id), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "364N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
             // id 370, Echoes age 4: Globe
             case "370N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             // id 371, Echoes age 4: Barometer
             case "371N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 // "Draw and foreshadow a card of value two higher than a bonus on any board."
                 self::executeDraw($player_id, $choice, 'forecast');
                 break;
@@ -25085,14 +25089,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 379, Echoes age 5: Palampore
             case "379N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             // id 380, Echoes age 5: Seed Drill
             case "380N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
@@ -25100,10 +25104,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $age_value = self::getAuxiliaryValue2();
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -25111,34 +25115,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 381, Echoes age 5: Pressure Cooker
             case "381N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
             // id 383, Echoes age 5: Piano
             case "383E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
             // id 385, Echoes age 6: Bifocals
             case "385E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
             // id 399, Echoes age 7: Jeans
             case "399N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "399N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
             
@@ -25146,16 +25150,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "400N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the player ${player_choice}.'), 
                     array('You' => 'You', 
-                    'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                    'player_choice' => self::getColoredPlayerName($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the player ${player_choice}.'), 
-                    array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
-                    'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                    array('player_name' => self::getColoredPlayerName($player_id),
+                    'player_choice' => self::getColoredPlayerName($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "400N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'color' => self::getColorInClear($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
@@ -25171,17 +25175,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "401N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             case "401N1B":
                 if ($choice == 0) { // Score piles
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other score piles to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other score piles to his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other score piles to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 } else { // Hands
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other hands to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other hands to his score pile.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other hands to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 }
                 self::setAuxiliaryValue2($choice);
                 break;
@@ -25189,7 +25193,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 402, Echoes age 7: Fertilizer
             case "402N2A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 // "Draw and foreshadow a card of any value."
                 self::executeDrawAndForeshadow($player_id, $choice);
                 break;
@@ -25197,14 +25201,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 403, Echoes age 7: Ice Cream
             case "403N1A":
                  self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
             // id 406, Echoes age 8: X-ray
             case "406N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
                 
@@ -25212,10 +25216,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $age_value = self::getAuxiliaryValue2();
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($age_value)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;
@@ -25233,17 +25237,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 414, Echoes age 8: Television
             case "414N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
             case "414N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the player ${player_choice}.'), 
                     array('You' => 'You', 
-                    'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                    'player_choice' => self::getColoredPlayerName($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the player ${player_choice}.'), 
-                    array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id),
-                    'player_choice' => self::getColoredText(self::getPlayerNameFromId($choice), $choice)));
+                    array('player_name' => self::getColoredPlayerName($player_id),
+                    'player_choice' => self::getColoredPlayerName($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
@@ -25260,28 +25264,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 421, Echoes age 9: ATM
             case "421E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             // id 423, Echoes age 9: Karaoke
             case "423E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
             // id 426, Echoes age 10: Human Genome
             case "426N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
             // id 428, Echoes age 10: Social Networking
             case "428D1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${icon}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'icon' => self::getIconSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${icon}.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -25297,14 +25301,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 432, Echoes age 10: MP3
             case "432N2A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 
             // id 434, Echoes age 10: Sudoku
             case "434N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredText(self::getPlayerNameFromId($player_id), $player_id), 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                                 
