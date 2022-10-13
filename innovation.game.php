@@ -1292,6 +1292,9 @@ class Innovation extends Table
      **/
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false) {
 
+        // Get updated state of card in case a stale reference was passed.
+        $card = self::getCardInfo($card['id']);
+
         // Do not move the card at all.
         if ($location_to == 'none') {
             return;
@@ -10567,7 +10570,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for ($age = 10; $age >= 1; $age--) {
                     if (count($cards_by_age[$age]) <= $num_cards_left_to_transfer) {
                         foreach ($cards_by_age[$age] as $card) {
-                            $card = self::getCardInfo($card['id']);
                             self::transferCardFromTo($card, $launcher_id, 'hand');
                             $num_cards_left_to_transfer--;
                             $num_cards_in_hand--;
@@ -11489,7 +11491,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // TODO(https://github.com/micahstairs/bga-innovation/issues/304): Use bulk reveal mechanism.
                 $cards = self::getCardsInLocation($player_id, 'hand');
                 foreach ($cards as $card) {
-                    $card = self::getCardInfo($card['id']);
                     self::transferCardFromTo($card, $player_id, 'revealed');
                 }
                 $step_max = 1;
@@ -12791,7 +12792,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If it is red, transfer all cards from your hand to my score pile!"
                     $hand_cards = self::getCardsInHand($player_id);
                     foreach ($hand_cards as $card) {
-                        $card = self::getCardInfo($card['id']);
                         self::transferCardFromTo($card, $launcher_id, 'score');
                     }
                 }
@@ -22198,7 +22198,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $achievement_was_claimed = false;
                     foreach ($different_values_selected_so_far as $returned_age) {
                         foreach ($achievements_by_age[$returned_age] as $achievement) {
-                            $achievement = self::getCardInfo($achievement['id']); // refresh card info
                             self::transferCardFromTo($achievement, $player_id, 'achievements');
                             $achievement_was_claimed = true;
                         }
@@ -22774,7 +22773,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "Otherwise, return the melded card"
                     } else {
-                        $card = self::getCardInfo($card['id']); // We need to refetch the card, otherwise its splayed state may be stale
                         self::returnCard($card);
                     }
                     break;
@@ -25312,11 +25310,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($splay_direction == -1) {
                     if ($location_to == 'revealed,deck') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                        $card = self::getCardInfo($card['id']); // Update the card's state
                         self::returnCard($card); // Return
                     } else if ($location_to == 'revealed,score') {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                        $card = self::getCardInfo($card['id']); // Update the card's state
                         self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
                     } else {
                         self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
