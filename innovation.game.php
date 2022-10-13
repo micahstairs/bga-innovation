@@ -9635,7 +9635,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 0, age 1: Pottery
             case "0N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             case "0N2":
                 self::executeDraw($player_id, 1); // "Draw a 1"
@@ -9643,10 +9643,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 1, age 1: Tools
             case "1N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             case "1N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 2, age 1: Writing
@@ -9657,7 +9657,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 3, age 1: Archery
             case "3D1":
                 self::executeDraw($player_id, 1); // "Draw a 1"
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 4, age 1: Metalworking
@@ -9697,7 +9697,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                         self::setAuxiliaryValue(0);
                     }
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
             
@@ -9709,7 +9709,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 6, age 1: Clothing
             case "6N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             case "6N2":
                 // "Score a 1 for each color present on your board not present on any other player board"
@@ -9757,17 +9757,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 9, age 1: Agriculture
             case "9N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 10, age 1: Domestication
             case "10N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 11, age 1: Masonry
             case "11N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 12, age 1: City states
@@ -9786,7 +9786,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($number_of_towers >= 4) { // "If you have at least four towers on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least four ${icon} on his board.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => $tower));
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have less than four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
@@ -9796,7 +9796,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 13, age 1: Code of laws
             case "13N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 14, age 1: Mysticism
@@ -9833,12 +9833,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 16, age 2: Mathematics
             case "16N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 17, age 2: Construction
             case "17D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "17N1":
@@ -9874,13 +9874,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 18, age 2: Road building
             case "18N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 19, age 2: Currency
             case "19N1":
                 self::setAuxiliaryValueFromArray(array());
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 20, age 2: Mapmaking
@@ -9888,7 +9888,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                     self::setAuxiliaryValue(0);
                 }
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "20N1":
@@ -9903,7 +9903,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand or score pile to exchange.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand or score pile to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
                 
@@ -9940,7 +9940,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 23, age 2: Monotheism        
             case "23D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "23N1":
@@ -9949,11 +9949,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 24, age 2: Philosophy        
             case "24N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "24N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 25, age 3: Alchemy        
@@ -9975,7 +9975,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} drew a red card.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew a red card.'), array('player_name' => self::getColoredPlayerName($player_id)));
 
-                    $step_max = 1; // --> 1 interactions: see B
+                    $step_max = 1;
                 }
                 else { // "Otherwise"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not draw a red card.'), array('You' => 'You'));
@@ -9987,12 +9987,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "25N2":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
                 
             // id 26, age 3: Translation        
             case "26N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1;
                 break;
                 
             case "26N2":
@@ -10035,7 +10035,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "27N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1;
                 break;
                 
             // id 28, age 3: Optics        
@@ -10057,12 +10057,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 29, age 3: Compass
             case "29D1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
                 
             // id 30, age 3: Paper        
             case "30N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "30N2":
@@ -10125,12 +10125,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 32, age 3: Medicine        
             case "32D1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
                 
             // id 33, age 3: Education        
             case "33N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 34, age 3: Feudalism        
@@ -10152,7 +10152,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "34N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 35, age 4: Experimentation        
@@ -10163,11 +10163,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 36, age 4: Printing press        
             case "36N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "36N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 37, age 4: Colonialism
@@ -10182,7 +10182,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                     self::setAuxiliaryValue(0);
                 }
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "38N1":
@@ -10193,7 +10193,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 39, age 4: Invention
             case "39N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "39N2":
@@ -10219,46 +10219,46 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 40, age 4: Navigation
             case "40D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 41, age 4: Anatomy
             case "41D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 42, age 4: Perspective
             case "42N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 43, age 4: Enterprise
             case "43D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "43N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 44, age 4: Reformation
             case "44N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "44N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 45, age 5: Chemistry
             case "45N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "45N2":
                 // "Draw and score a card of value one higher than the highest top card on your board"
                 self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id) + 1, 'score');
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 46, age 5: Physics
@@ -10278,7 +10278,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 if ($same_color) { // "If two or more cards are the same color"
-                    $step_max = 1; // --> 1 interactions: see B
+                    $step_max = 1;
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} drew two cards of the same color.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} drew two cards of the same color.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
@@ -10297,11 +10297,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "47N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "47N3":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 48, age 5: The pirate code
@@ -10309,27 +10309,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                     self::setAuxiliaryValue(0);
                 }
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "48N1":
                 if (self::getAuxiliaryValue() == 1) { // "If any card was transfered due to the demand"
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
                 
             // id 49, age 5: Banking
             case "49D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "49N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 50, age 5: Measurement
             case "50N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 51, age 5: Statistics
@@ -10345,12 +10345,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 else { // First edition
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
 
             case "51N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 52, age 5: Steam engine
@@ -10419,12 +10419,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                    $colors = array(0,1,2,3); // All but purple
                 }
                 self::setAuxiliaryValueFromArray($colors);
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 55, age 6: Atomic theory
             case "55N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "55N2":
@@ -10434,7 +10434,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 56, age 6: Encyclopedia
             case "56N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 57, age 6: Industrialisation
@@ -10469,7 +10469,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "57N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                
             // id 58, age 6: Machine tools
@@ -10479,27 +10479,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 59, age 6: Classification
             case "59N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 60, age 6: Metric system
             case "60N1":
                 if (self::getCurrentSplayDirection($player_id, 2 /* green */) == 2 /* right */) { // "If your green cards are splayed right"
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
             
             case "60N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 61, age 6: Canning
             case "61N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "61N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 62, age 6: Vaccination
@@ -10507,7 +10507,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                     self::setAuxiliaryValue(0);
                 }
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "62N1":
@@ -10522,30 +10522,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
                     self::setAuxiliaryValue(0);
                 }
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 64, age 6: Emancipation
             case "64D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "64N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 65, age 7: Evolution          
             case "65N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 66, age 7: Publications
             case "66N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "66N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 67, age 7: Combustion
@@ -10564,7 +10564,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $number = 2;
                 }
                 self::setAuxiliaryValue($number);
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "67N1":
@@ -10625,70 +10625,70 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 70, age 7: Electricity
             case "70N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 71, age 7: Refrigeration
             case "71D1":
                 if (self::countCardsInLocation($player_id, 'hand') > 1) {
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
                 
             case "71N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 72, age 7: Sanitation        
             case "72D1":
-                $step_max = 3; // --> 3 interactions: see B
+                $step_max = 3;
                 break;
                 
             // id 73, age 7: Lighting        
             case "73N1":
                 self::setAuxiliaryValueFromArray(array()); // Flag to indicate what ages have been tucked
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 74, age 7: Railroad        
             case "74N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "74N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 75, age 8: Quantum theory        
             case "75N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 76, age 8: Rocketry       
             case "76N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 77, age 8: Flight
             case "77N1":
                 if (self::getCurrentSplayDirection($player_id, 1 /* red */) == 3 /* up */) { // "If your red cards are splayed up"
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
             
             case "77N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 78, age 8: Mobility        
             case "78D1":
                 self::setAuxiliaryValueFromArray(array(0,2,3,4)); // Flag to indicate the colors the player can still choose (not red at the start)
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 break;
                 
             // id 79, age 8: Corporations        
             case "79D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "79N1":
@@ -10698,27 +10698,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 80, age 8: Mass media 
             case "80N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "80N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 81, age 8: Antibiotics
             case "81N1":
                 self::setAuxiliaryValueFromArray(array()); // Flag to indicate what ages have been tucked
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 82, age 8: Skyscrapers
             case "82D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 83, age 8: Empiricism     
             case "83N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "83N2":
@@ -10734,12 +10734,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 84, age 8: Socialism     
             case "84N1":
                 self::setAuxiliaryValue(0); // Flag to indicate if one purple card has been tuckeds or not
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 85, age 9: Computers     
             case "85N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "85N2":
@@ -10762,7 +10762,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 87, age 9: Composites     
             case "87D1":
-                $step_max = 2; // --> 2 interactions: see B
+                $step_max = 2;
                 if (self::countCardsInLocation($player_id, 'hand') <= 1) {
                     $step = 2; // --> (All but one card when there is 0 or 1 card means that nothing is to be done) Jump directly to step 2
                 }
@@ -10801,14 +10801,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "88N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 89, age 9: Collaboration
             case "89D1":
                 self::executeDraw($player_id, 9, 'revealed'); // "Draw two 9 and reveal them"
                 self::executeDraw($player_id, 9, 'revealed'); //
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "89N1":
@@ -10825,25 +10825,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 90, age 9: Satellites
             case "90N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "90N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "90N3":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 91, age 9: Ecology
             case "91N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 92, age 9: Suburbia
             case "92N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 93, age 9: Services
@@ -10855,23 +10855,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
             
                 if (count($ids_of_highest_cards_in_score) > 0) { // "If you transferred any cards"
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
               
 
             // id 94, age 9: Specialization
             case "94N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "94N2":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             // id 95, age 10: Bioengineering
             case "95N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             case "95N2":
@@ -10926,7 +10926,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 97, age 10: Miniaturization
             case "97N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
             
             // id 98, age 10: Robotics
@@ -10942,13 +10942,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 99, age 10: Databases
             case "99D1":
                 if (self::countCardsInLocation($player_id, 'score') > 0) { // (Nothing to do if the player has nothing in his score pile)
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
             
             // id 100, age 10: Self service
             case "100N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
                 
             case "100N2":
@@ -10986,7 +10986,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 101, age 10: Globalization
             case "101D1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "101N1":
@@ -11112,7 +11112,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand to score.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand to score.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
             
@@ -11177,7 +11177,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 104, age 10: The internet.
             case "104N1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             case "104N2":
@@ -11195,11 +11195,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 110, Artifacts age 1: Treaty of Kadesh
             case "110C1":
-                $step_max = 1; // --> 1 interaction
+                $step_max = 1;
                 break;
 
             case "110N1":
-                $step_max = 1; // --> 1 interaction
+                $step_max = 1;
                 break;
 
             // id 111, Artifacts age 1: Sibidu Needle
@@ -12604,7 +12604,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346N1":
                 $vis_bonuses = array_unique(self::getVisibleBonusesOnBoard($player_id));
                 if (count($vis_bonuses) > 1) {
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 elseif (count($vis_bonuses) == 1) {
                     self::executeDraw($player_id, $vis_bonuses[0], 'hand');
@@ -12613,7 +12613,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "346E1":
-                $step_max = 1; // --> 1 interaction: see B
+                $step_max = 1;
                 break;
 
             // id 347, Echoes age 2: Crossbow
@@ -12659,7 +12659,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 349, Echoes age 2: Glassblowing
             case "349E1":
                 if (count(self::getCardsInHand($player_id)) > 0) {
-                    $step_max = 1; // --> 1 interaction: see B
+                    $step_max = 1;
                 }
                 break;
 
@@ -14866,7 +14866,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
                 
             case "27N1":
-                $step_max = 1; // --> 1 interactions: see B
+                $step_max = 1;
                 break;
                 
         // id 28, age 3: Optics
