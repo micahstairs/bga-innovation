@@ -1589,7 +1589,7 @@ class Innovation extends Table
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
         if (self::getGameStateValue('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), /*bottom_to=*/ false, /*type=*/ 2);
+            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
         }
         
         self::recordThatChangeOccurred();
@@ -7153,7 +7153,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (self::getGameStateValue('cities_mode') > 1) {
             // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
             if ($previous_top_card === null && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), false, 2);
+                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', false, 2);
             }
         }
 
@@ -11446,7 +11446,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 133, Artifacts age 2: Dead Sea Scrolls
             case "133N1":
                 // "Draw an Artifact of value equal to the value of your highest top card"
-                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), /*bottom_to=*/ false, /*type=*/ 1);
+                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 1);
                 break;
 
             // id 134, Artifacts age 2: Cyrus Cylinder
@@ -24755,8 +24755,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1A":
                 // "Draw two 2s of that type"
-                self::setGameStateValue('card_id_1', self::executeDraw($player_id, 2, /*bottom_to=*/ false, /*type=*/ $choice)['id']);
-                self::setGameStateValue('card_id_2', self::executeDraw($player_id, 2, /*bottom_to=*/ false, /*type=*/ $choice)['id']);
+                self::setGameStateValue('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
+                self::setGameStateValue('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
                 break;
 
             case "126N1C":
