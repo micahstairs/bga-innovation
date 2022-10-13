@@ -294,6 +294,16 @@ $machinestates = array(
             "justBeforeGameEnd" => 98,
         ],
     ),
+
+    90 => array(
+        "name" => "executeDogmaForReal",
+        "description" => clienttranslate('Finalising the player action...'),
+        "type" => "game",
+        "action" => "stExecuteDogmaForReal",
+        "transitions" => array(
+            "dogmaEffect" => 6,
+        ),
+    ),
     
     98 => array(
         "name" => "justBeforeGameEnd",

@@ -40,7 +40,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new \Innovation\GameState($this);
-        // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 49-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -51,6 +51,7 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
+            'dogma_execution_state' => 19, // 0 for not in a dogma, 1 for dry run, 2 for real execution
             'sharing_bonus' => 23,
             'special_type_of_choice' => 26,
             'choice' => 27,
@@ -160,9 +161,9 @@ class Innovation extends Table
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
 
-        // TODDO(ECHOES): Manually test this.
+        // TODO(ECHOES): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            // TODDO(ECHOES): Make sure newly added global variables get added here.
+            // TODO(ECHOES): Make sure newly added global variables get added here (dogma_execution_state is guarded by release_version so it does not need to be included)
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
@@ -1297,6 +1298,8 @@ class Innovation extends Table
             return;
         }
 
+        // TODO(ECHOES#691): Abort the dogma dry run since a card is about to be transferred.
+
         // Relics are not returned to the deck.
         if ($card['is_relic'] && $location_to == 'deck') {
             $location_to = 'relics';
@@ -1568,6 +1571,8 @@ class Innovation extends Table
         if ($splay_direction >= 1 && self::countCardsInLocationKeyedByColor($target_player_id, 'board')[$color] <= 1) {
             return;
         }
+
+        // TODO(ECHOES#691): Abort dogma dry run.
 
         self::DbQuery(self::format("
             UPDATE
@@ -1875,6 +1880,7 @@ class Innovation extends Table
             $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty hand.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
             return;
         }
+        // TODO(ECHOES#691): Abort the dogma dry run since hidden info is going to be revealed.
         $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
         $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your hand: ${card_list}.'),
             array_merge($args, ['You' => 'You']));
@@ -1889,6 +1895,7 @@ class Innovation extends Table
             $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty score pile.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
             return;
         }
+        // TODO(ECHOES#691): Abort the dogma dry run since hidden info is going to be revealed.
         $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
         $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your score pile: ${card_list}.'),
             array_merge($args, ['You' => 'You']));
@@ -3673,6 +3680,23 @@ class Innovation extends Table
             $message = clienttranslate("No stack matches the criteria of the effect for splaying.");
         }
         self::notifyGeneralInfo($message);
+    }
+
+    /** Returns true if a dry run of the dogma is underway (for the purposes of letting players undo a no-op) */
+    function doingDryRunOfDogma() {
+        return self::getGameStateValue('release_version') >= 2 && self::getGameStateValue('dogma_execution_state') == 1;
+    }
+
+    function notifyPlayer($player_id, $notification_type, $notification_log, $notification_args) {
+        if (!self::doingDryRunOfDogma()) {
+            parent::notifyPlayer($player_id, $notification_type, $notification_log, $notification_args);
+        }
+    }
+
+    function notifyAllPlayers($notification_type, $notification_log, $notification_args) {
+        if (!self::doingDryRunOfDogma()) {
+            parent::notifyAllPlayers($notification_type, $notification_log, $notification_args);
+        }
     }
     
     function notifyPlayerRessourceCount($player_id, $dogma_icon, $ressource_count) {
@@ -5514,6 +5538,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function removeAllHandsBoardsAndScores() {
+        // TODO(ECHOES#691): Add recordThatChangeOccurred call and abort the dry run if there is going to be a change.
         self::DbQuery("
             UPDATE
                 card
@@ -5548,9 +5573,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function removeAllCardsFromPlayer($player_id) {
+        // TODO(ECHOES#691): Move recordThatChangeOccurred to the callsite in case this method is ever re-used for other cards.
         // Even if no cards are removed we will still mark that change has occurred because a player has been eliminated.
         self::recordThatChangeOccurred();
 
+        // TODO(ECHOES#691): Add recordThatChangeOccurred call if any cards belonged to the player. And abort the dry run if there is going to be a change.
         self::DbQuery(self::format("
             UPDATE
                 card
@@ -5593,6 +5620,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function removeAllTopCardsAndHands() {
+        // TODO(ECHOES#691): Abort the dogma dry run if there are any cards in hand. This also lets us eliminate the
+        // self::DbAffectedRow call, which I don't trust anyway.
         // Remove cards from all players' hands.
         self::DbQuery("
             UPDATE
@@ -5615,6 +5644,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $top_cards_to_remove = array_merge($top_cards_to_remove, self::getTopCardsOnBoard($player_id));
         }
 
+        // TODO(ECHOES#691): Abort the dogma dry run if there are any cards on the board.
         // Remove top cards from boards.
         self::DbQuery("
             UPDATE
@@ -6858,6 +6888,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
+        // TODO(ECHOES#691): Do a dry run of the dogma first. The number of extra icons will need to be stored in a global variable.
         self::setUpDogma($player_id, $card, self::countIconsOnCard($card, $card['dogma_icon']));        
         self::incStat(1, 'free_action_dogma_number', $player_id);
         
@@ -6969,6 +7000,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to dogma your promoted card.'), array('You' => 'You'));    
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to dogma his promoted card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
 
+        // TODO(ECHOES#691): Do a dry run of the dogma first.
         self::setUpDogma($player_id, self::getCardInfo(self::getGameStateValue('melded_card_id')));
 
         self::trace('promoteDogmaPlayerTurn->dogmaEffect (dogmaPromotedCard)');
@@ -7275,6 +7307,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::incStat(1, 'dogma_actions_number', $player_id);
         if ($card['type'] == 1) {
             self::incStat(1, 'dogma_actions_number_targeting_artifact_on_board', $player_id);
+        }
+
+        // Indicate that we are doing a dry run of the dogma (required in order to give players an option to undo a no-op)
+        if (self::getGameStateValue('release_version') >= 2) {
+            self::setGameStateValue('dogma_execution_state', 1);
         }
 
         self::setUpDogma($player_id, $card);
@@ -9335,6 +9372,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyGeneralInfo('<!--empty-->');
         self::trace('interPlayerTurn->playerTurn');
         $this->gamestate->nextState('playerTurn');
+    }
+
+    function stExecuteDogmaForReal() {
+        // TODO(ECHOES#691): Empty nested_card_execution, echo_execution, and indexed_auxiliary_value tables.
+        // Any other tables?
     }
     
     function stDogmaEffect() {
@@ -24187,6 +24229,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stPreSelectionMove() {
+        // TODO(ECHOES#691): Abort dogma dry run if hidden info is about to be revealed.
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         $can_pass = self::getGameStateValue('can_pass') == 1;
 
