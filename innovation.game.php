@@ -12671,7 +12671,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 // "Draw and foreshadow a card of value three higher than the lowest non-green top card on your board."
-                self::executeDraw($player_id, $min_value + 3, 'forecast');
+                self::executeDrawAndForeshadow($player_id, $min_value + 3);
                 break;
 
             // id 350, Echoes age 2: Scissors
@@ -13015,7 +13015,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 366, Echoes age 4: Telescope
             case "366E1":
                 // "Draw and foreshadow a 5."
-                self::executeDraw($player_id, 5, 'forecast');
+                self::executeDrawAndForeshadow($player_id, 5);
                 break;
 
             case "366N1":
@@ -13112,9 +13112,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                     self::setAuxiliaryValueFromArray(array_unique($age_to_foreshadow));
                 } else if (count($all_bonuses) == 1) {
-                    self::executeDraw($player_id, $all_bonuses[0] + 2, 'forecast');
+                    self::executeDrawAndForeshadow($player_id, $all_bonuses[0] + 2);
                 } else {
-                    self::executeDraw($player_id, 2, 'forecast');
+                    self::executeDrawAndForeshadow($player_id, 2);
                 }
                 break;   
 
@@ -23357,7 +23357,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::revealHand($player_id);
                         
                         // "Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board."
-                        self::executeDraw($player_id, count(self::getTopCardsOnBoard($player_id)), 'forecast');
+                        self::executeDrawAndForeshadow($player_id, count(self::getTopCardsOnBoard($player_id)));
                     }
                     break;
 
@@ -23686,13 +23686,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 385, Echoes age 6: Bifocals
                 case "385E1A":
-                    self::executeDraw($player_id, self::getAuxiliaryValue2(), 'forecast');
+                    self::executeDrawAndForeshadow($player_id, self::getAuxiliaryValue2());
                     break;
 
                 case "385N1A":
                     // " If you do, draw and foreshadow a card of equal value to the card returned."
                     if ($n > 0) {
-                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'forecast');
+                        self::executeDrawAndForeshadow($player_id, self::getGameStateValue('age_last_selected'));
                     }
                     break;
 
@@ -23883,7 +23883,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 406, Echoes age 8: X-ray
                 case "406N1A":
-                    self::executeDraw($player_id, self::getAuxiliaryValue2(), 'forecast');
+                    self::executeDrawAndForeshadow($player_id, self::getAuxiliaryValue2());
                     $cards_left = self::getAuxiliaryValue() - 1;
                     if ($cards_left > 0) {
                         self::setAuxiliaryValue($cards_left);
@@ -25100,7 +25100,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 // "Draw and foreshadow a card of value two higher than a bonus on any board."
-                self::executeDraw($player_id, $choice, 'forecast');
+                self::executeDrawAndForeshadow($player_id, $choice);
                 break;
 
             case "371N2A":
