@@ -5455,6 +5455,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     /** Execution of actions authorized by server **/
 
+    function executeDrawAndScore($player_id, $age_min = null) {
+        return self::executeDraw($player_id, $age_min, 'score');
+    }
+
     function executeDrawAndForeshadow($player_id, $age_min = null) {
         return self::executeDraw($player_id, $age_min, 'forecast');
     }
@@ -12506,7 +12510,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     
                     if ($score_a_2) {
-                        self::executeDraw($player_id, 2, 'score');
+                        self::executeDrawAndScore($player_id, 2);
                     }
                 }
                 break;
@@ -13053,7 +13057,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "369N2":
                 if (self::countCardsInLocation($player_id, 'hand') == 1 ) {
                     self::executeDraw($player_id, 4, 'hand');
-                    self::executeDraw($player_id, 4, 'score');
+                    self::executeDrawAndScore($player_id, 4);
                 }
                 break;
 
@@ -13347,7 +13351,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 foreach (self::getAllPlayerIds() as $this_player_id) {
                     $count_cards = self::countCardsInLocationKeyedByAge($this_player_id, 'hand');
                     
-                    for ($age=1;$age < 11; $age++) {
+                    for ($age = 1; $age <= 10; $age++) {
                         if ($count_cards[$age] > 0) {
                             $age_array[] = $age;
                         }
@@ -13489,7 +13493,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 389, Echoes age 6: Hot Air Balloon
             case "389E1":
                 // "Draw and score a 7."
-                self::executeDraw($player_id, 7, 'score');
+                self::executeDrawAndScore($player_id, 7);
                 break;
                 
             case "389N1":
@@ -13692,7 +13696,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "397E1":
                 // "If you have five top cards, draw and score a 7."
                 if (count(self::getTopCardsOnBoard($player_id)) == 5) {
-                    self::executeDraw($player_id, 7, 'score');
+                    self::executeDrawAndScore($player_id, 7);
                 }
                 break;
 
@@ -13807,6 +13811,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "404N2":
                 // "If the music note for Bell, Flute, Piano, and Saxophone are visible anywhere"
+                // TODO(ECHOES): Technically the 'display' location is also considered visible. Is it possible for Echo cards
+                // to end up on display?
                 $cards_to_draw = 0;
                 
                 // Check Bell
@@ -13986,7 +13992,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "412N1":
                 // "Draw and score a 7. Draw a 7."
-                self::executeDraw($player_id, 7, 'score');
+                self::executeDrawAndScore($player_id, 7);
                 self::executeDraw($player_id, 7, 'hand');
                 break;
 
@@ -18657,6 +18663,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
+                'score_keyword' => true,
+
                 'bottom_from' => true,
             );            
             break;
@@ -19001,6 +19009,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
+                'score_keyword' => true,
+
                 'with_bonus' => true,
             );       
             break;
@@ -19269,6 +19279,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 358, Echoes age 3: Katana
         case "358D1A":
+            // "I demand you transfer two top cards with a tower from your board to my score pile!"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
@@ -20080,6 +20091,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'owner_to' => $player_id,
                 'location_to' => 'score',
+
+                'score_keyword' => true,
                 
                 'age' => self::getMinAgeOnBoardTopCards($player_id),
             );
@@ -20156,6 +20169,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
+                'score_keyword' => true,
+
                 'card_ids_are_in_auxiliary_array' => true,
             );
             break;
@@ -20213,6 +20228,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'score',
+
+                'score_keyword' => true,
                 
                 'age' => self::getAuxiliaryValue(),
             );
@@ -20832,7 +20849,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'board',
                 'owner_to' => $player_id,
-                'location_to' => 'score',                
+                'location_to' => 'score',
+                
+                'score_keyword' => true,
 
                 'bottom_from' => true,
                 
@@ -20850,7 +20869,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'board',
                 'owner_to' => $player_id,
-                'location_to' => 'score',                
+                'location_to' => 'score',
+
+                'score_keyword' => true,
 
                 'bottom_from' => true,
                 
@@ -23333,7 +23354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         $bonuses = self::getBonusIcons($card);
-                        self::executeDraw($player_id, $bonuses[0] + 1, 'score');
+                        self::executeDrawAndScore($player_id, $bonuses[0] + 1);
                     }
                     break;
 
@@ -23524,7 +23545,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 379, Echoes age 5: Palampore
                 case "379N1A":
-                    self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
+                    self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
                     break;
 
                 // id 380, Echoes age 5: Seed Drill
@@ -23606,7 +23627,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     sort($top_card_values);
                     
                     foreach ($top_card_values as $sorted_value) {
-                        self::executeDraw($player_id, $sorted_value, 'score');
+                        self::executeDrawAndScore($player_id, $sorted_value);
                     }
                     break;
 
@@ -23870,8 +23891,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $value_to_score = self::getGameStateValue('age_last_selected') - 1;
                     }
-                    self::executeDraw($player_id, $value_to_score, 'score');
-                    self::executeDraw($player_id, $value_to_score, 'score');
+                    self::executeDrawAndScore($player_id, $value_to_score);
+                    self::executeDrawAndScore($player_id, $value_to_score);
                     break;     
 
                 // id 413, Echoes age 8: Crossword
@@ -23998,7 +24019,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 419, Echoes age 9: Credit Card
                 case "419N1A":
                     if ($n > 0) { // "if you do, draw and score a card of equal value."
-                        self::executeDraw($player_id, self::getGameStateValue('age_last_selected'), 'score');
+                        self::executeDrawAndScore($player_id, self::getGameStateValue('age_last_selected'));
                     }
                     break;
 
@@ -24012,7 +24033,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 421, Echoes age 9: ATM
                 case "421E1A":
                     // "Draw and score a card of any value."
-                    $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
+                    $card = self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
                     break;
 
                 // id 423, Echoes age 9: Karaoke
@@ -24050,9 +24071,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 426, Echoes age 10: Human Genome
                 case "426N1A":
+                    // "You may draw and score a card of any value."
                     $choice = self::getAuxiliaryValue();
                     if ($choice > 0) {
-                        $card = self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
+                        $card = self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
                     }
                     break;
                     
@@ -24098,14 +24120,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 432, Echoes age 10: MP3
                 case "432N1A":
+                    // "For each card returned, claim two standard achievements for which you are eligible."
                     if ($n > 0) {
                         self::incrementStepMax(1);
-                        self::setAuxiliaryValue($n * 2); // number of achievements to claim
+                        self::setAuxiliaryValue($n * 2);
                     }
                     break;
                     
                 case "432N2A":
-                    self::executeDraw($player_id, self::getAuxiliaryValue(), 'score');
+                    // "Draw and score a card of value equal to a bonus on your board"
+                    self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
                     break;  
 
                 // id 433, Echoes age 10: Puzzle Cube
