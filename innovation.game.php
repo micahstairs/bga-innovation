@@ -5453,7 +5453,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function getColoredPlayerName($player_id) {
-        return self::getColoredPlayerName($player_id);
+        return self::getColoredText(self::getPlayerNameFromId($player_id), $player_id);
     }
     
     /** Execution of actions authorized by server **/
