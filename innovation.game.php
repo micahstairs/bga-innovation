@@ -160,9 +160,9 @@ class Innovation extends Table
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
 
-        // TODDO(ECHOES): Manually test this.
+        // TODO(ECHOES): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            // TODDO(ECHOES): Make sure newly added global variables get added here.
+            // TODO(ECHOES): Make sure newly added global variables get added here.
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
