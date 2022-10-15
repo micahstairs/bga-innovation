@@ -12969,21 +12969,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $same_splay_direction = true;
                     $purple_splay = $top_purple_card['splay_direction'];
                     $color_array = array();
-                    $card_cnts_by_color = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                    $card_counts_by_color = self::countCardsInLocationKeyedByColor($player_id, 'board');
                     for ($color = 0; $color < 4; $color++) { // non-purple
                         $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($card_cnts_by_color[$color] > 0 ) { // color present
+                        if ($card_counts_by_color[$color] > 0 ) { // color present
                             $non_purple_card = true;
                             if ($top_card['splay_direction'] != $purple_splay) {
                                 $same_splay_direction = false;
                             }
                         }
-                        if ($card_cnts_by_color[$color] > 1 ) { // splayable
+                        if ($card_counts_by_color[$color] > 1 ) { // splayable
                             $color_array[] = $color;
                         }
                     }
                     
-                    if ($non_purple_card == false) {
+                    if (!$non_purple_card) {
                         self::notifyPlayer($player_id, 'log', 
                             clienttranslate('${You} do not have a top non-purple card.'), 
                             array('You' => 'You'));
