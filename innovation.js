@@ -1845,9 +1845,9 @@ function (dojo, declare) {
 
             if (info.num_echo_effects > 0) {
                 if (info.players_executing_non_demand_effects.length == 0) {
-                    HTML_action += "<li>" + _("Nobody will execute the echo effect(s).") + "</li>"
+                    HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the echo effect(s)."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
                 }
             }
             
