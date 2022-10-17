@@ -5771,7 +5771,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             }
         }
-        
+        if (!array_key_exists('can_pass', $rewritten_options)) {
+            $rewritten_options['can_pass'] = true;
+        }
         if (!array_key_exists('n_min', $rewritten_options)) {
             $rewritten_options['n_min'] = 999;
         }
@@ -14494,7 +14496,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14511,7 +14512,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14535,7 +14535,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14568,7 +14567,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14602,7 +14600,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -14671,7 +14668,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14687,7 +14683,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'n_min' => 1,
                 'n_max' => 2,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14728,7 +14723,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -14744,7 +14738,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "You may exchange all the highest cards in your hand with all the highest cards in your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -14763,7 +14756,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -14807,7 +14799,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return the drawn cards and all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed,hand',
@@ -14821,7 +14812,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14835,7 +14825,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14882,7 +14871,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "An opponent with fewer points than you"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_player' => true,
                 'players' => self::getActiveOpponentsWithFewerPoints($player_id)
@@ -14894,7 +14882,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -14909,7 +14896,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -14926,7 +14912,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $launcher_id,
                 'location_from' => 'board',
@@ -14956,7 +14941,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -14987,7 +14971,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $launcher_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $launcher_id,
                 'location_from' => 'score',
@@ -15003,7 +14986,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15038,7 +15020,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15094,7 +15075,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15130,7 +15110,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15148,7 +15127,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15162,7 +15140,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15197,7 +15174,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::intDivision($number_of_lightbulbs, 2),
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15214,7 +15190,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15288,7 +15263,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15302,7 +15276,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return the drawn cards and all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed,hand',
@@ -15346,7 +15319,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15362,7 +15334,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15382,7 +15353,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15440,7 +15410,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_color' => true
             );
@@ -15453,7 +15422,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15483,7 +15451,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15543,7 +15510,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15556,7 +15522,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Meld of cards of that color from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15596,7 +15561,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "You may draw and tuck a 6"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -15619,7 +15583,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all the lowest cards in your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15651,7 +15614,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15688,7 +15650,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15728,7 +15689,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::getAuxiliaryValue(),
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -15745,7 +15705,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15761,7 +15720,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "You may exchange all the highest cards in your hand with all the highest cards in your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -15772,7 +15730,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all your top cards without a factory"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15789,7 +15746,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::intDivision(self::countCardsInLocation($player_id, 'hand'), 2), // Half (rounded down)
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15820,7 +15776,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $launcher_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $launcher_id,
                 'location_from' => 'hand',
@@ -15837,7 +15792,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15871,7 +15825,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all the cards in your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -15923,7 +15876,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::intDivision($number_of_clocks, 2),
-                'can_pass' => false,
                 
                 'owner_from' => 'any opponent',
                 'location_from' => 'score',
@@ -15964,7 +15916,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -15983,7 +15934,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16014,7 +15964,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a value"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_value' => true
             );
@@ -16024,7 +15973,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards of that value from all score piles"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'score',
@@ -16069,7 +16017,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16085,7 +16032,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all the cards from that pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'pile',
@@ -16102,7 +16048,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_two_colors' => true 
             );
@@ -16155,7 +16100,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::countCardsInLocation($player_id, 'hand') - 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16169,7 +16113,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -16186,7 +16129,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
@@ -16203,7 +16145,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $launcher_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -16217,7 +16158,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from you hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16243,7 +16183,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16272,7 +16211,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16306,7 +16244,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $launcher_id,
                 'location_from' => 'board',
@@ -16323,7 +16260,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16350,7 +16286,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 'any opponent',
                 'location_from' => 'board',
@@ -16382,7 +16317,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => ceil(self::countCardsInLocation($player_id, 'score') / 2),
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -16397,7 +16331,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16415,7 +16348,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16431,7 +16363,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // The player faces a choice
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -16455,7 +16386,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all top cards from your board with a demand effect"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16471,7 +16401,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16490,7 +16419,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return the drawn card and all cards from your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed,score',
@@ -16505,7 +16433,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16523,7 +16450,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16538,7 +16464,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Choose any type
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_type' => true,
                 'type' => self::getActiveCardTypes()
@@ -16552,7 +16477,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16570,7 +16494,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16591,7 +16514,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16607,7 +16529,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -16624,7 +16545,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -16638,7 +16558,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'achievements',
@@ -16655,7 +16574,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16670,7 +16588,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 3,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16684,7 +16601,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 // Propagate values required to detect whether the scored cards are the same color
                 'card_id_1' => $card_id_1,
@@ -16705,7 +16621,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_color' => true
             );
@@ -16715,7 +16630,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "return them"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16732,7 +16646,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16746,7 +16659,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_color' => true
             );
@@ -16757,7 +16669,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16773,7 +16684,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a type"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_type' => true,
                 'type' => self::getActiveCardTypes()
@@ -16785,7 +16695,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16802,7 +16711,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_player' => true,
                 'players' => self::getActiveOpponents($player_id)
@@ -16815,7 +16723,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16833,7 +16740,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16850,7 +16756,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16865,7 +16770,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16879,7 +16783,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'age' => self::getGameStateValue('age_last_selected'),
                 'owner_from' => 0,
@@ -16897,7 +16800,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -16913,7 +16815,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16932,7 +16833,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
@@ -16951,7 +16851,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
@@ -16964,7 +16863,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16979,7 +16877,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -16995,7 +16892,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
@@ -17012,7 +16908,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17029,7 +16924,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17042,7 +16936,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return a card from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 'n' => 1,
 
                 'owner_from' => $player_id,
@@ -17058,7 +16951,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => $age_selected,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17075,7 +16967,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $launcher_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -17117,7 +17008,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17131,7 +17021,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17147,7 +17036,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17163,7 +17051,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -17180,7 +17067,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::getAuxiliaryValue(),
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17195,7 +17081,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17209,7 +17094,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -17226,7 +17110,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17246,7 +17129,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
 
@@ -17271,7 +17153,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'score',
@@ -17288,7 +17169,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17304,7 +17184,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17318,7 +17197,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17334,7 +17212,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17350,7 +17227,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17400,7 +17276,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17415,7 +17290,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17434,7 +17308,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_color' => true,
             );
@@ -17450,7 +17323,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_non_negative_integer' => true,
             );
@@ -17460,7 +17332,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Otherwise, return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17475,7 +17346,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17501,7 +17371,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17527,7 +17396,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all non-blue top cards from your board"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17542,7 +17410,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "157C1A":
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_color' => true,
                 'color' => self::getGameStateValueAsArray('color_array')
@@ -17554,7 +17421,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17567,7 +17433,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_color' => true
             );
@@ -17579,7 +17444,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17594,7 +17458,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 'any other player',
                 'location_from' => 'board',
@@ -17608,7 +17471,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true
             );       
@@ -17619,7 +17481,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 'enable_autoselection' => false, // Give the player the chance to read the card
                 
                 'owner_from' => $player_id,
@@ -17655,7 +17516,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -17672,7 +17532,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17686,7 +17545,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -17704,7 +17562,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17718,7 +17575,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17733,7 +17589,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17748,7 +17603,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17765,7 +17619,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "And all cards of its color from your board"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'pile',
@@ -17782,7 +17635,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17798,7 +17650,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17814,7 +17665,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17831,7 +17681,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose three colors"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_three_colors' => true
             );
@@ -17843,7 +17692,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards of the drawn card's color from your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17860,7 +17708,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17876,7 +17723,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -17902,7 +17748,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_color' => true,
                 'color' =>  $color_array
@@ -17914,7 +17759,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -17931,7 +17775,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17945,7 +17788,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -17962,7 +17804,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17978,7 +17819,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -17994,7 +17834,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards of its color from your board"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'pile',
@@ -18011,7 +17850,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -18028,7 +17866,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a value"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_value' => true
             );
@@ -18040,7 +17877,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,  
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18056,7 +17892,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards in your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18069,7 +17904,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards in your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -18084,7 +17918,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18098,7 +17931,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Tuck all cards from your score pile of that color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -18116,7 +17948,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'age' => self::getMaxAgeInScore($player_id),
                 
@@ -18133,7 +17964,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_player' => true,
                 'players' => self::getGameStateValueAsArray('player_array')
@@ -18146,7 +17976,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -18161,7 +17990,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -18178,7 +18006,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -18198,7 +18025,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards of the drawn color from your board"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'pile',
@@ -18215,7 +18041,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18236,7 +18061,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_value' => true,
                 'age' => $selectable_ages
@@ -18247,7 +18071,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards of that value from all score piles"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'score',
@@ -18264,7 +18087,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -18282,7 +18104,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18299,7 +18120,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'achievements',
@@ -18315,7 +18135,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -18329,7 +18148,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Transfer all top cards on your board with a demand effect to my score pile"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -18346,7 +18164,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18362,7 +18179,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -18380,7 +18196,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
                 
                 'splay_direction' => 3
             );
@@ -18391,7 +18206,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18484,7 +18298,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => $num_cards - 4,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -18511,7 +18324,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "You may draw and tuck a 1"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -18577,7 +18389,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -18609,7 +18420,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all cards of value higher than 6 from your hand!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18626,7 +18436,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'color' => self::getAuxiliaryValueAsArray(),
                 
@@ -18642,7 +18451,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18660,7 +18468,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18677,7 +18484,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -18695,7 +18501,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_color' => true,
             );
@@ -18705,7 +18510,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return the rest of the drawn cards"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -18733,8 +18537,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "337N1B":
             // "draw and meld a 2, or draw and foreshadow a 3"
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
 
                 'choose_yes_or_no' => true
             );
@@ -18745,7 +18548,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'age' => self::getMaxAgeOnBoardTopCards($player_id),
                 
@@ -18776,7 +18578,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::getAuxiliaryValue() * 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18805,8 +18606,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "339N1A":
             // "you may transfer its bottom card to the available achievements."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
                 
                 'choose_yes_or_no' => true,
             );
@@ -18816,7 +18616,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose a color"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_color' => true,
             );
@@ -18890,7 +18689,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18927,7 +18725,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => $age_array,
@@ -18940,7 +18737,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $selectable_ages = array_unique(self::getVisibleBonusesOnBoard($player_id));
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_value' => true,
                 'age' => $selectable_ages,
@@ -18950,8 +18746,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "346E1A":
             // "Draw a 3 OR Draw and foreshadow a 4."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
                 
                 'choose_yes_or_no' => true,
             );
@@ -18963,7 +18758,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -18979,7 +18773,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_player' => true,
                 'players' => self::getOtherActivePlayers($player_id),
@@ -18991,7 +18784,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19006,7 +18798,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'color' => self::getAuxiliaryValueAsArray(),
                 
@@ -19023,7 +18814,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19042,7 +18832,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19072,7 +18861,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_yes_or_no' => true,
             );
@@ -19097,7 +18885,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_yes_or_no' => true,
             );
@@ -19109,7 +18896,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
@@ -19120,7 +18906,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Tuck all cards of one present value from your hand."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'age' => self::getAuxiliaryValue(),
                 
@@ -19147,8 +18932,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "351N2A":
             // "you may transfer its bottom card to the available achievements."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
                 
                 'choose_yes_or_no' => true,
             );
@@ -19160,7 +18944,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19193,7 +18976,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                          
                 'color' => array(self::getAuxiliaryValue()),
                 
@@ -19212,7 +18994,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19247,7 +19028,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19304,7 +19084,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19319,8 +19098,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "359E1A":
             // "Draw a 3 or 4."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
 
                 'choose_yes_or_no' => true,
             );
@@ -19345,8 +19123,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "359N1B":
             // "either return or achieve (if eligible) your top green card."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
 
                 'choose_yes_or_no' => true,
             );
@@ -19358,7 +19135,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,                
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -19401,7 +19177,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19429,7 +19204,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19458,8 +19232,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "364N1B":
             // Choose a color for purple to match
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
 
                 'choose_color' => true,
                 'color' => self::getAuxiliaryValue2AsArray(),
@@ -19471,7 +19244,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'splay_direction' => self::getCurrentSplayDirection($player_id, 4),
                 'color' => self::getAuxiliaryValue2AsArray(), // non-purple
@@ -19513,7 +19285,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
@@ -19530,7 +19301,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
@@ -19542,7 +19312,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you you return all your top cards with a tower"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19559,7 +19328,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19615,7 +19383,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'splay_direction' => self::getAuxiliaryValue(),
                 'color' => array(0,1,2,3,4) /* any color */
@@ -19628,7 +19395,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
@@ -19644,7 +19410,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
@@ -19685,7 +19450,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19703,7 +19467,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "return the rest of the drawn cards."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19731,7 +19494,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "373D1A":
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -19745,7 +19507,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all cards from your score pile of value matching the highest bonus on my board!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -19791,7 +19552,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19809,7 +19569,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
@@ -19833,7 +19592,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19849,7 +19607,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => array(3,4,5),
@@ -19859,8 +19616,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "380N1B":
             // "you may transfer its bottom card to the available achievements."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
                 
                 'choose_yes_or_no' => true,
             );
@@ -19871,7 +19627,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your hand."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -19885,7 +19640,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => array_unique(self::getBase16ArrayFromValue(self::getAuxiliaryValue())),
@@ -19898,7 +19652,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -19929,7 +19682,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
@@ -19941,7 +19693,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 5,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -19956,7 +19707,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'deck',
@@ -19972,7 +19722,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 'enable_autoselection' => false, // Give the player the chance to read the card
                 
                 'owner_from' => $player_id,
@@ -19991,7 +19740,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20020,7 +19768,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
             );
@@ -20058,7 +19805,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20106,7 +19852,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20138,7 +19883,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20155,7 +19899,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20183,7 +19926,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20200,7 +19942,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all odd-valued cards in your hand!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20229,7 +19970,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20243,7 +19983,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20275,7 +20014,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
@@ -20290,7 +20028,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20306,7 +20043,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your hand."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20320,7 +20056,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you transfer all of your top cards with a bonus to my score pile!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20335,7 +20070,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all your top non-red cards."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20352,7 +20086,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20383,7 +20116,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20400,7 +20132,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => array(1,2,3,4,5,6),
@@ -20414,7 +20145,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => $age_list, 
@@ -20426,7 +20156,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -20440,7 +20169,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'revealed',
@@ -20490,7 +20218,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Score your top or bottom green card."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -20501,7 +20228,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
@@ -20512,7 +20238,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Choose to transfer all cards of the chosen value from either all other players' hands or all their score piles to your score pile."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
                 
                 'choose_yes_or_no' => true
             );
@@ -20536,7 +20261,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
             );
@@ -20548,7 +20272,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20568,7 +20291,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => array(6,7,8,9),
@@ -20578,8 +20300,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "403N1B":
             // "you may transfer its bottom card to the available achievements."
             $options = array(
-                'player_id' => $player_id,
-                'can_pass' => false, 
+                'player_id' => $player_id, 
                 
                 'choose_yes_or_no' => true,
             );
@@ -20604,7 +20325,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20619,7 +20339,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "and return the rest"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20636,7 +20355,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
             );
@@ -20660,7 +20378,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20677,7 +20394,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20693,7 +20409,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20722,7 +20437,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20736,7 +20450,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20766,7 +20479,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all cards from your score pile of value matching any of your top cards!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20793,7 +20505,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_value' => true,
                 'age' => $age_choices,
@@ -20806,7 +20517,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
             );
@@ -20817,7 +20527,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_player' => true,
                 'players' => self::getActiveOpponents($player_id),
@@ -20829,7 +20538,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => self::getAuxiliaryValue2(),
                 'location_from' => 'score',
@@ -20846,7 +20554,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => self::getAuxiliaryValue2(),
                 'location_from' => 'score',
@@ -20865,7 +20572,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20885,7 +20591,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -20917,7 +20622,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all unclaimed standard achievements."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -20931,7 +20635,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => ceil(self::countCardsInLocation($player_id, 'score') / 2),
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -20946,7 +20649,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 'any player',
                 'location_from' => 'board',
@@ -20979,7 +20681,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -21023,7 +20724,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -21041,7 +20741,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
             );
@@ -21052,7 +20751,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -21083,7 +20781,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -21102,7 +20799,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
                 'age' => array(1,2,3,4,5,6,7,8,9),
@@ -21131,7 +20827,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -21164,7 +20859,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -21192,7 +20886,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -21208,7 +20901,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you transfer all cards in your hand to my hand!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -21221,7 +20913,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Meld all 9s from your hand."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -21236,7 +20927,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Return all other cards from your hand."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -21250,7 +20940,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you choose an icon type!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'choose_icon_type' => true,
              );
@@ -21260,7 +20949,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "Transfer all top cards without that icon from your board to my score pile!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -21276,7 +20964,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all cards from your forecast!"
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'forecast',
@@ -21303,7 +20990,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 4,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -21317,7 +21003,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
@@ -21389,7 +21074,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => self::getAuxiliaryValue(),
-                'can_pass' => false,
 
                 'owner_from' => 0,
                 'location_from' => 'achievements',
@@ -21405,7 +21089,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
 
                 'choose_value' => true,
                 'age' => self::getAuxiliaryValueAsArray(),
@@ -21457,7 +21140,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => false,
                 
                 'choose_value' => true,
             );
