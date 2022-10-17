@@ -12358,7 +12358,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 216, Relic age 4: Complex Numbers
             case "216N1":
-                $step_max = 1;
+                if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                    $step_max = 1;
+                }
                 break;
 
             // id 217, Relic age 5: Newton-Wickins Telescope
@@ -18368,19 +18370,78 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 216, Relic age 4: Complex Numbers
         case "216N1A":
             // "You may reveal a card from your hand having exactly the same icons, in type and number, as a top card on your board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
+            if (self::getGameStateValue('release_version') >= 2)  {
+                $card_ids = array();
+                $hand_cards = self::getCardsInLocation($player_id, 'hand');
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                // Bonus icons and other special city icons are counted as per https://boardgamegeek.com/thread/1872362/article/40784224.
+                foreach ($hand_cards as $card) {
+                    $eligible = false;
+                        
+                    foreach ($top_cards as $top_card) {
+                        $match_found = true;
+                        if ($top_card !== null) {
+                            // search icons are considered different than basic icons so they need to be handled separately
+                            if ($card['spot_6'] !== null && $top_card['spot_6'] !== null && $card['spot_6'] != $top_card['spot_6']) {
+                                $match_found = false; // If the search icons don't match
+                                break;
+                            }
+                            for ($icon = 1; $icon <= 13; $icon++) { 
+                                // Echo effects are not considered icons, so they are skipped
+                                if ($icon == 10) {
+                                    continue;
+                                }
+                                if (self::countIconsOnCard($card, $icon) != self::countIconsOnCard($top_card, $icon)) {
+                                    $match_found = false; // If any icon counts mismatch, then the card isn't eligible
+                                    break;
+                                }
+                            }
+                            for ($icon = 101; $icon <= 111; $icon++) { // count bonus icons
+                                if (self::countIconsOnCard($card, $icon) != self::countIconsOnCard($top_card, $icon)) {
+                                    $match_found = false; // If any icon counts mismatch, then the card isn't eligible
+                                    break;
+                                }
+                            }
+                            if ($match_found) {
+                                $eligible = true;
+                            }
+                        }
+                    }
+                    if ($eligible) {
+                        $card_ids[] = $card['id'];
+                    }
+                    
+                }
+                self::setAuxiliaryArray($card_ids);
                 
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed'
-            );
-            $i = 1;
-            foreach (self::getTopCardsOnBoard($player_id) as $top_card) {
-                $options += array('icon_hash_'.$i++ => $top_card['icon_hash']);
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => true,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'revealed',
+                    
+                    'card_ids_are_in_auxiliary_array' => true,
+                    'enable_autoselection' => false,
+                );
+            } else {                
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => true,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'revealed'
+                );
+                $i = 1;
+                foreach (self::getTopCardsOnBoard($player_id) as $top_card) {
+                    $options += array('icon_hash_'.$i++ => $top_card['icon_hash']);
+                }   
             }
             break;
 
@@ -23360,7 +23421,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             // "Otherwise, return it."
                             self::returnCard($card);
                         }
-                        self::setStep(1); // repeat this step
+                        self::setStep(1); $step=1; // repeat this step
                     }
                     break;
                     
@@ -23777,17 +23838,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $score_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
                     $eligible = true;
                     for ($age = 1; $age <= 10; $age++) {
-                        if (($hand_card_counts[$age] == 0 && $score_card_counts[$age] > 0) ||
-                            ($hand_card_counts[$age] > 0 && $score_card_counts[$age] == 0) ) {
+                        if ($hand_card_counts[$age] != $score_card_counts[$age]) {
                             $eligible = false;
                         }
                     }
                     if ($eligible) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same values in your score pile and in hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same values in his score pile and in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the exact same values in your score pile and in hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the exact same values in his score pile and in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Human Genome');
                         throw new EndOfGame();
+                    }
+                    else {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the exact same values in your score pile and hand.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the exact same values in his score pile and hand.'), array('player_name' => self::getColoredPlayerName($player_id)));                        
                     }
                     break;
                     
