@@ -23710,24 +23710,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $transferred_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         self::transferCardFromTo($transferred_card, self::getGameStateValue('owner_last_selected'), 'score', false, /*score_keyword*/false);
                         
-                        // Need to fill the auxiliary array with all eligible cards in hand.
-                        // If none are available, skip the last interaction.
+                        // Fill the auxiliary array with all eligible cards in hand.
                         $eligible_cards = array();
-                        $hand_cards = self::getCardsInHand($player_id);
-                        if (count($hand_cards) > 0) {
-                            foreach ($hand_cards as $card) {
-                                // TODO(ECHOES): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
-                                for ($icon = 1; $icon <= 6; $icon++) {
-                                    if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
-                                        $eligible_cards[] = $card['id'];
-                                        break; // only 1 icon needs to be common
-                                    }
+                        foreach (self::getCardsInHand($player_id) as $card) {
+                            // TODO(ECHOES): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
+                            for ($icon = 1; $icon <= 6; $icon++) {
+                                if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
+                                    $eligible_cards[] = $card['id'];
+                                    break; // only 1 icon needs to be common
                                 }
                             }
-                            self::setAuxiliaryArray($eligible_cards);
-                        } else {
-                            self::setStepMax(1); // none left to return
                         }
+                        self::setAuxiliaryArray($eligible_cards);
                     }
                     break;
 
@@ -23984,7 +23978,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // There is no selectable card
             if ($selection_size == 0) {
                 
-                if (($splay_direction == -1 && ($can_pass || $n_min <= 0)) && $selection_will_reveal_hidden_information) {
+                if (($splay_direction == -1 && ($can_pass || $n_min <= 0)) && ($selection_will_reveal_hidden_information || !$enable_autoselection)) {
                     // The player can pass or stop and the opponents can't know that the player has no eligible card
                     // This can happen for example in the Masonry effect
                     
