@@ -5683,6 +5683,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function setSelectionRange($options) {
+
+        $rewritten_options = array();
+        if (!array_key_exists('can_pass', $rewritten_options)) {
+            $rewritten_options['can_pass'] = true;
+        }
+        if (!array_key_exists('color', $rewritten_options)) {
+            $rewritten_options['color'] = array(0, 1, 2, 3, 4);
+        }
+        if (!array_key_exists('type', $rewritten_options)) {
+            $rewritten_options['type'] = self::getActiveCardTypes();
+        }
+        if (!array_key_exists('age', $rewritten_options)) {
+            $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        }
+        if (!array_key_exists('players', $rewritten_options)) {
+            $rewritten_options['players'] = self::getAllActivePlayers();
+        }
+
         $possible_special_types_of_choice = [
             'choose_value',
             'choose_color',
@@ -5698,51 +5716,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
                 self::setGameStateValue('special_type_of_choice', self::encodeSpecialTypeOfChoice($special_type_of_choice));
-                self::setGameStateValue('can_pass', $options['can_pass'] ? 1 : 0); 
+                self::setGameStateValue('can_pass', $rewritten_options['can_pass'] ? 1 : 0); 
 
-                // Only used by 'choose_value'.
-                if (array_key_exists('age', $options)) {
-                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['age'] has
-                    // at least one element in it.
-                    self::setGameStateValueFromArray('age_array', $options['age']);
-                } else {
-                    self::setGameStateValueFromArray('age_array', array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
-                }
-
-                // Only used by 'choose_color','choose_two_colors', and 'choose_three_colors'.
-                if (array_key_exists('color', $options)) {
-                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['color'] has enough
-                    // colors in it. For example, for 'choose_color', the array must have at least one element in it.
-                    self::setGameStateValueFromArray('color_array', $options['color']);
-                } else {
-                    self::setGameStateValueFromArray('color_array', array(0, 1, 2, 3, 4));
-                }
-
-                // Only used by 'choose_type'.
-                if (array_key_exists('type', $options)) {
-                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['type'] has
-                    // at least one element in it.
-                    self::setGameStateValueFromArray('type_array', $options['type']);
-                } else {
-                    self::setGameStateValueFromArray('type_array', self::getActiveCardTypes());
-                }
-
-                // Only used by 'choose_player'.
-                if (array_key_exists('players', $options)) {
-                    // NOTE: It is the responsibility of the card's implementation to ensure that $options['players'] has
-                    // at least one element in it.
-                    self::setGameStateValueFromArray('player_array', $options['players']);
-                } else {
-                    self::setGameStateValueFromArray('player_array', self::getAllActivePlayers());
-                }
-
+                // NOTE: It is the responsibility of the card's implementation to ensure that the array in use has at least one element in it.
+                self::setGameStateValueFromArray('age_array', $rewritten_options['age']); // used by 'choose_value'
+                self::setGameStateValueFromArray('color_array', $rewritten_options['color']); // used by 'choose_color', 'choose_two_colors', and 'choose_three_colors'
+                self::setGameStateValueFromArray('type_array', $rewritten_options['type']); // used by 'choose_type'
+                self::setGameStateValueFromArray('player_array', $rewritten_options['players']); // used by 'choose_player'
                 return;
             }
         }
 
         self::setGameStateValue('special_type_of_choice', 0);
         
-        $rewritten_options = array();
         foreach($options as $key => $value) {
             switch($key) {
             case 'player_id':
@@ -5771,9 +5757,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             }
         }
-        if (!array_key_exists('can_pass', $rewritten_options)) {
-            $rewritten_options['can_pass'] = true;
-        }
         if (!array_key_exists('n_min', $rewritten_options)) {
             $rewritten_options['n_min'] = 999;
         }
@@ -5788,14 +5771,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         if (!array_key_exists('age_max', $rewritten_options)) {
             $rewritten_options['age_max'] = 10;
-        }
-        // TODO(LATER): Rewrite 'age' if we end up needing this. Right now we only use 'age' for 'choose_value'.
-        // TODO(LATER): Rewrite 'player' if we end up needing this. Right now we only use 'player' for 'choose_player'.
-        if (!array_key_exists('color', $rewritten_options)) {
-            $rewritten_options['color'] = array(0, 1, 2, 3, 4);
-        }
-        if (!array_key_exists('type', $rewritten_options)) {
-            $rewritten_options['type'] = array(0, 1, 2, 3, 4);
         }
         if (!array_key_exists('with_icon', $rewritten_options)) {
             $rewritten_options['with_icon'] = 0;
