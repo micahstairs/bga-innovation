@@ -9390,7 +9390,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else {
                 // The last echo effect is complete, so move onto the next non-echo effect
                 $next_effect_number = 1;
-                if (self::getDemandEffect($card_id) == null) {
+                $skip_demand_effects = $nesting_index > 0 && $nested_card_state['executing_as_if_on_card_id'] == $nested_card_state['card_id'];
+                if (self::getDemandEffect($card_id) == null || $skip_demand_effects) {
                     $next_effect_type = 1; // non-demand
                 } else if (self::isCompelEffect($card_id)) {
                     $next_effect_type = 2; // I compel
