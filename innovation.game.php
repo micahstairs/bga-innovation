@@ -2068,8 +2068,14 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his display.');
             break;
         case 'forecast->board':
-            $message_for_player = clienttranslate('${You} promote ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
-            $message_for_others = clienttranslate('${player_name} promotes ${<}${age}${>} ${<<}${name}${>>} from his forecast.');
+            $current_state = $this->gamestate->state();
+            if ($current_state['name'] == 'promoteCardPlayerTurn') {
+                $message_for_player = clienttranslate('${You} promote ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+                $message_for_others = clienttranslate('${player_name} promotes ${<}${age}${>} ${<<}${name}${>>} from his forecast.');
+            } else {
+                $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
+                $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his forecast.');
+            }
             break;
         case 'hand->deck':
             if ($bottom_to) {
