@@ -5686,7 +5686,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $rewritten_options = array();
         if (!array_key_exists('can_pass', $rewritten_options)) {
-            $rewritten_options['can_pass'] = true;
+            $rewritten_options['can_pass'] = false;
         }
         if (!array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array(0, 1, 2, 3, 4);
