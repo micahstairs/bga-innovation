@@ -7907,9 +7907,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return true;
         }
 
+        // NOTE: As a general rule, we should avoid making the any card-specific logic very complicated since it can
+        // introduce subtle bugs and may negatively affect performance. For example, there are technically a lot more cases
+        // where Clothing has no effect, but it is non-trivial to capture those cases in a concise way.
+
+        // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
             // NOTE: All cards with echo effects must be included in this switch statement, otherwise it breaks the logic
-            // farther on in this method. Also, we can't return true anywhere here, since the echo effect is not the only
+            // farther down in this method. Also, we can't return true anywhere here, since the echo effect is not the only
             // thing being executed.
             switch ($card_id) {
                 case 219: // Safety Pin
@@ -7987,39 +7992,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        // NOTE: As a general rule, we should avoid making the following card-specific logic very complicated since it can
-        // introduce subtle bugs and may negatively affect performance. For example, there are technically a lot more cases
-        // where Clothing has no effect, but it is non-trivial to capture those cases in a concise way.
-        // 
-        // We should also avoid trying to detect situations which don't happen very often. Here is a list of cases we've
-        // deliberated avoided implementing for this reason:
-        // - Philosophy (24): The card has no effect if no player executing the non-demand has a pile that can be splayed left or at least one card in their hand.
-        // - Engineering (27): The card has no effect if no player executing the demand has a top card with a tower and no player executing the non-demand has a pile that can be splayed left.
-        // - Machinery (31): The card has no effect if all players have an empty hand and no player executing the non-demand has a red pile that can be splayed left.
-        // - Feudalism (34): The card has no effect if all players executing the demand have empty hands and no player executing the non-demand has a yellow/purple pile that can be splayed left.
-        // 
-        // Here are a list of cards which may or may not make sense to eventually add a check for, but are non-trivial to implement.
-        // - Compass: id 29
-        // - Paper: id 30
-        // - Printing Press: id 36
-        // - Invention: id 39
-        // - Enterprise: id 43
-        // - Reformation: id 44
-        // - Banking: id 49
-        // - Statistics: id 51
-        // - Industrialization: id 57
-        // - Metric System: id 60
-        // - Emancipation: id 64
-        // - Flight: id 77
-        // - Mobility: id 78
-        // - Mass Media: id 80
-        // - Skyscrapers: id 82
-        // - Composites: id 87
-        // - Services: id 93
-        // - Specialization: id 94
-
-        // TODO(ECHOES#597,FIGURES): Add cases.
+        // Check the card's demand and non-demand effects
+        // NOTE: There is no point in adding any cases for cards which have an echo effect which ALWAYS has an effect (e.g. "Draw a 2"),
+        // but for the sake of completeness, it also doesn't hurt to add them below (even though they will never get executed).
         switch ($card['id']) {
+
+            // TODO(ECHOES#597,FIGURES): Add cases.
+
+            /*** Cards which have no effects on them ***/
+
+            case 188: // Battleship Yamato
+            case 332: // Ruler
+            case 335: // Plumbing
+            case 344: // Puppet
+                return true;
 
             /*** Basic cases involving empty hands and/or empty score piles **/
 
@@ -8054,6 +8040,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 174: // Marcha Real
             case 182: // Singer Model 27
             case 216: // Complex Numbers
+            case 338: // Umbrella
+            case 341: // Soap
+            case 352: // Watermill
+            case 362: // Sandpaper
+            case 370: // Globe
+            case 372: // Pencil
+            case 384: // Tuning Fork
                 // These cards have no effect if all players executing the non-demand have empty hands.
                 foreach ($non_demand_players as $player_id) {
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
@@ -8063,6 +8056,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return true;
 
             case 68: // Explosives
+            case 334: // Candles
+            case 408: // Parachute
                 // This card has no effect if all players executing the demand have empty hands.
                 foreach ($i_demand_players as $player_id) {
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
@@ -8073,6 +8068,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 71: // Refrigeration
             case 72: // Sanitation
+            case 347: // Crossbow
+            case 393: // Indian Clubs
                 // These cards have no effect if all players have empty hands.
                 foreach (self::getAllActivePlayerIds() as $player_id) {
                     if (self::countCardsInLocation($player_id, 'hand') > 0) {
@@ -8085,6 +8082,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 56: // Encyclopedia
             case 146: // Delft Pocket Telescope
             case 217: // Newton‑Wickins Telescope
+            case 401: // Elevator
                 // The card has no effect if all players executing the non-demand have empty score piles.
                 foreach ($non_demand_players as $player_id) {
                     if (self::countCardsInLocation($player_id, 'score') > 0) {
@@ -8095,6 +8093,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
             case 41: // Anatomy
             case 99: // Databases
+            case 411: // Air Conditioner
                 // These cards have no effect if all players executing the demand have empty score piles.
                 foreach ($i_demand_players as $player_id) {
                     if (self::countCardsInLocation($player_id, 'score') > 0) {
@@ -8105,6 +8104,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 32: // Medicine
             case 76: // Rocketry
+            case 430: // Flash Drive
                 // The card has no effect if all players have empty score piles.
                 foreach (self::getAllActivePlayerIds() as $player_id) {
                     if (self::countCardsInLocation($player_id, 'score') > 0) {
