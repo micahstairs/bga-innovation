@@ -7997,7 +7997,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // but for the sake of completeness, it also doesn't hurt to add them below (even though they will never get executed).
         switch ($card['id']) {
 
-            // TODO(ECHOES#597,FIGURES): Add cases.
+            // TODO(FIGURES): Add cases.
 
             /*** Cards which have no effects on them ***/
 
