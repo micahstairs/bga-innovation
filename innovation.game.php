@@ -5658,6 +5658,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function setSelectionRange($options) {
 
         $rewritten_options = array();
+        foreach ($options as $key => $value) {
+            switch ($key) {
+            case 'player_id':
+                $player_id = $value;
+                break;
+            case 'owner_from':
+                if ($value === 'any player') {
+                    $value = -2;
+                } else if ($value === 'any opponent') {
+                    $value = -3;
+                } else if ($value === 'any other player') {
+                    $value = -4;
+                }
+                $rewritten_options['owner_from'] = $value;
+                break;
+            case 'n':
+                $rewritten_options['n_min'] = $value;
+                $rewritten_options['n_max'] = $value;
+                break;
+            case 'age':
+                $rewritten_options['age_min'] = $value;
+                $rewritten_options['age_max'] = $value;
+                break;
+            default:
+                $rewritten_options[$key] = $value;
+                break;
+            }
+        }
         if (!array_key_exists('can_pass', $rewritten_options)) {
             $rewritten_options['can_pass'] = false;
         }
@@ -5701,35 +5729,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         self::setGameStateValue('special_type_of_choice', 0);
-        
-        foreach($options as $key => $value) {
-            switch($key) {
-            case 'player_id':
-                $player_id = $value;
-                break;
-            case 'owner_from':
-                if ($value === 'any player') {
-                    $value = -2;
-                } else if ($value === 'any opponent') {
-                    $value = -3;
-                } else if ($value === 'any other player') {
-                    $value = -4;
-                }
-                $rewritten_options['owner_from'] = $value;
-                break;
-            case 'n':
-                $rewritten_options['n_min'] = $value;
-                $rewritten_options['n_max'] = $value;
-                break;
-            case 'age':
-                $rewritten_options['age_min'] = $value;
-                $rewritten_options['age_max'] = $value;
-                break;
-            default:
-                $rewritten_options[$key] = $value;
-                break;
-            }
-        }
         if (!array_key_exists('n_min', $rewritten_options)) {
             $rewritten_options['n_min'] = 999;
         }
