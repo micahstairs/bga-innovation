@@ -592,9 +592,6 @@ class Innovation extends Table
         // Store the age of each card when face-up
         self::DbQuery("UPDATE card SET faceup_age = (CASE id WHEN 188 THEN 11 ELSE age END)");
 
-        // Create a hash of the icons for each card
-        self::calculateIconHashForAllCards();
-
         // Card shuffling in decks
         self::shuffle();
         
@@ -1511,35 +1508,6 @@ class Innovation extends Table
             }
         }
         return $card;
-    }
-
-    /*
-     * Assigns each card in the DB a hash for the icons on the card (equality means that the two cards share the same icons in both type and number).
-     */
-    function calculateIconHashForAllCards() {
-        $cards = self::getObjectListFromDB("
-            SELECT
-                id,
-                spot_1,
-                spot_2,
-                spot_3,
-                spot_4
-            FROM
-                card
-        ");
-        
-        foreach ($cards as $card) {
-            // TODO(ECHOES#671,CITIES#672): Revisit this.
-            if ($card['id'] < 215 || $card['id'] > 440 || $card['id'] == 216 || $card['id'] == 217) {
-                // 1 is used for hex icons, allowing it to be ignored in the product
-                $icon_hash_key = array(1, 2, 3, 5, 7, 13, 17);
-                $hash_value = ($icon_hash_key[$card['spot_1'] ?: 0]) *
-                              ($icon_hash_key[$card['spot_2'] ?: 0]) *
-                              ($icon_hash_key[$card['spot_3'] ?: 0]) *
-                              ($icon_hash_key[$card['spot_4'] ?: 0]);
-                self::DbQuery(self::format("UPDATE card SET icon_hash = {hash_value} WHERE id = {id}", array('hash_value' => $hash_value, 'id' => $card['id'])));
-            }
-        }
     }
     
     /** Splay mechanism **/
