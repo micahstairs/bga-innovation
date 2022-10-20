@@ -6630,7 +6630,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
         $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
         $has_echo_effect = self::getEchoEffect($card['id']) !== null;
-        $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : ($has_echo_effect ? 3 : 1);
+        $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : 1;
         if ($effect_type == 3) {
             self::DbQuery(self::format("
                     INSERT INTO echo_execution
@@ -9395,8 +9395,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else {
                 // The last echo effect is complete, so move onto the next non-echo effect
                 $next_effect_number = 1;
-                $skip_demand_effects = $nesting_index > 0 && $nested_card_state['executing_as_if_on_card_id'] == $nested_card_state['card_id'];
-                if (self::getDemandEffect($card_id) == null || $skip_demand_effects) {
+                if (self::getDemandEffect($card_id) == null) {
                     $next_effect_type = 1; // non-demand
                 } else if (self::isCompelEffect($card_id)) {
                     $next_effect_type = 2; // I compel
