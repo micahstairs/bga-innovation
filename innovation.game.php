@@ -9384,6 +9384,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($previous_effect_type == 3) { // echo effect
             $previous_effect_number = $nested_card_state['current_effect_number'];
             $nesting_index = $nested_card_state['nesting_index'];
+
+            // After executing each buried echo effect, clear the auxiliary values.
+            if ($nesting_index == 0) {
+                $card_id_of_previous_echo_effect = self::DbQuery(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {execution_index}",
+                        array('nesting_index' => $nesting_index, 'execution_index' => $previous_effect_number)));
+                if ($card_id_of_previous_echo_effect != $card_id) {
+                    self::DbQuery("
+                        UPDATE
+                            nested_card_execution
+                        SET
+                            auxiliary_value = -1,
+                            auxiliary_value_2 = -1
+                        WHERE
+                            nesting_index = 0"
+                    );
+                }
+            }
+
             self::DbQuery(
                 self::format("DELETE FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {execution_index}",
                     array('nesting_index' => $nesting_index, 'execution_index' => $previous_effect_number)));
