@@ -19267,7 +19267,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "364N1C":
-            // Choose a color for purple's splay to match
+            // Choose a color to match purple's splay
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -21445,7 +21445,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "36N1A":
                     if ($n > 0) { // "If you do"
                         $top_purple_card = self::getTopCardOnBoard($player_id, 4 /* purple */);
-                        self::executeDraw($player_id, $top_purple_card['age'] + 2); // "Draw a card of value two higher than the top purple card on your board"
+                        if ($top_purple_card !== null) {
+                            self::executeDraw($player_id, $top_purple_card['age'] + 2); // "Draw a card of value two higher than the top purple card on your board"
+                        }
+                        else {
+                            self::executeDraw($player_id, 2); // If no purple card, draw a 2.
+                        }
                     }
                     break;
                     
@@ -23162,6 +23167,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                case "364N1A":
+                    $choice = self::getAuxiliaryValue();
+                    if ($choice == 1) {
+                        $splayable_colors = self::getAuxiliaryValue2AsArray();
+                        if (count($splayable_colors) > 0) {
+                            self::incrementStepMax(1);
+                        }
+                        else {
+                            self::splay($player_id, $player_id, 4, 0); // matching an unsplay
+                        }
+                    }
+                    else { // Proceed to selecting a matching color to splay purple's direction
+                        self::incrementStepMax(2);
+                        self::incrementStep(1); $step++;
+                    }
+                    break;
+
                 case "364N1B":
                     $color_chosen = self::getAuxiliaryValue();
                     self::splay($player_id, $player_id, 4, self::getCurrentSplayDirection($player_id, $color_chosen));
@@ -24777,22 +24799,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "364N1A":
                 if ($choice == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay your purple cards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay his purple cards.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                    
-                    $splayable_colors = self::getAuxiliaryValue2AsArray();
-                    if (count($splayable_colors) > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    else {
-                        self::splay($player_id, $player_id, 4, 0); // matching an unsplay
-                    }
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay his purple cards.'), array('player_name' => self::getColoredPlayerName($player_id)));                    
                 } else {
                     $splay_direction = self::getCurrentSplayDirection($player_id, 4);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay a non-purple pile ${splay_direction}.'), array('You' => 'You', 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay a non-purple pile ${splay_direction}.'), array('player_name' => self::getColoredPlayerName($player_id), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)));
-
-                    self::incrementStepMax(2);
-                    self::incrementStep(1); $step++;
                 }
                 self::setAuxiliaryValue($choice);
                 break;
