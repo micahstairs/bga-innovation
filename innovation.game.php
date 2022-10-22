@@ -19969,6 +19969,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all odd-valued cards in your hand!"
             $options = array(
                 'player_id' => $player_id,
+                'n' => count(self::getAuxiliaryArray()),
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20366,6 +20367,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "and return the rest"
             $options = array(
                 'player_id' => $player_id,
+                'n' => count(self::getAuxiliaryArray()),
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -20506,6 +20508,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "I demand you return all cards from your score pile of value matching any of your top cards!"
             $options = array(
                 'player_id' => $player_id,
+                'n' => count(self::getAuxiliaryArray()),
 
                 'owner_from' => $player_id,
                 'location_from' => 'score',
