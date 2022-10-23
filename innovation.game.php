@@ -2463,6 +2463,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} meld ${number} ${card} from your forecast to your board');
                 $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his forecast to his board');
                 break;
+            case 'forecast->hand':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your forecast to your hand');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his forecast to his hand');
+                break;
             case 'forecast->achievements':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your forecast to your achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his forecast to his achievements');
