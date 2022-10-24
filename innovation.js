@@ -358,9 +358,6 @@ function (dojo, declare) {
                 this.num_cards_in_row.score = this.num_cards_in_row.score / 2;
             }
 
-            console.log("# in score: " + this.num_cards_in_row.score);
-            console.log("# in forecast: " + this.num_cards_in_row.forecast);
-
             // Defining the number of cards the window for forecast verso can host
             // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
             this.num_cards_in_row.my_forecast_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
