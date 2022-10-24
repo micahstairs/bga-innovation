@@ -5678,8 +5678,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $rewritten_options['n_max'] = $value;
                 break;
             case 'age':
-                $rewritten_options['age_min'] = $value;
-                $rewritten_options['age_max'] = $value;
+                // TODO(LATER): Stop overloading the 'age' option and add a separate option for when we are passing an array.
+                if (array_key_exists('choose_value', $options)) {
+                    $rewritten_options[$key] = $value;
+                } else {
+                    $rewritten_options['age_min'] = $value;
+                    $rewritten_options['age_max'] = $value;
+                }
                 break;
             default:
                 $rewritten_options[$key] = $value;
