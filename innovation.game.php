@@ -19398,8 +19398,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
 
                 'color' => array(self::getAuxiliaryValue()), 
             );
@@ -24058,8 +24058,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setGameStateValue('n_max', $selection_size);
                 }
 
-            // Reduce n_max to the selection size
-            } else if ($n_max < 800 && $selection_size < $n_max) {
+            // Reduce n_max to the selection size (Globe is an exception because it would reveal hidden info)
+            } else if ($n_max < 800 && $selection_size < $n_max && !$selection_will_reveal_hidden_information) {
                 self::setGameStateValue('n_max', $selection_size);
             }
         } else if ($special_type_of_choice == 10) { // choose_player
@@ -24819,8 +24819,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 370, Echoes age 4: Globe
             case "370N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
