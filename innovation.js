@@ -332,7 +332,7 @@ function (dojo, declare) {
             this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
             this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
             
-            // Add achievements to win to achievement container and determin max cards per row for the achievement container
+            // Add achievements to win to achievement container and determine max cards per row for the achievement container
             for(var player_id in this.players) {
                 dojo.addClass('achievement_container_' + player_id, 'to_win_' + this.number_of_achievements_needed_to_win)
             }
@@ -342,17 +342,24 @@ function (dojo, declare) {
             var progress_width = dojo.position('progress_' + any_player_id).w;
             var score_width = progress_width - achievement_container_width - 10 - reference_card_width;
            
-            var num_of_achievments_per_row = 4;
+            this.num_cards_in_row.achievements = 4;
             if (achievement_container_width >= 140 && achievement_container_width <= 175 ) {
-                num_of_achievments_per_row = 5;
+                this.num_cards_in_row.achievements = 5;
             } else if (achievement_container_width > 175) {
-                num_of_achievments_per_row = this.number_of_achievements_needed_to_win;
+                this.num_cards_in_row.achievements = this.number_of_achievements_needed_to_win;
             }
             
-            this.num_cards_in_row.achievements = num_of_achievments_per_row;
             this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
-            // TODO(ECHOES#422): Revise this logic to properly incorporate Forecast zone in the calculations.
             this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
+
+            // Split the space between the score and the forecast
+            if (gamedatas.echoes_expansion_enabled) {
+                this.num_cards_in_row.forecast = this.num_cards_in_row.forecast / 2;
+                this.num_cards_in_row.score = this.num_cards_in_row.score / 2;
+            }
+
+            console.log("# in score: " + this.num_cards_in_row.score);
+            console.log("# in forecast: " + this.num_cards_in_row.forecast);
 
             // Defining the number of cards the window for forecast verso can host
             // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
@@ -2376,9 +2383,9 @@ function (dojo, declare) {
             if(new_location == 'board') {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
             } else if (new_location == 'forecast') {
-                zone_width = dojo.position('forecast_container_' + owner).w;
+                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
             } else if (new_location == 'score') {
-                zone_width = dojo.position('score_container_' + owner).w;
+                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
             } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
                 var n = this.num_cards_in_row[new_location];
