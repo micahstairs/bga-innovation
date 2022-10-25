@@ -19402,8 +19402,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
 
                 'color' => array(self::getAuxiliaryValue()), 
             );
@@ -24062,8 +24062,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setGameStateValue('n_max', $selection_size);
                 }
 
-            // Reduce n_max to the selection size
-            } else if ($n_max < 800 && $selection_size < $n_max) {
+            // Reduce n_max to the selection size (Globe is an exception because it would reveal hidden info)
+            } else if ($n_max < 800 && $selection_size < $n_max && !$selection_will_reveal_hidden_information) {
                 self::setGameStateValue('n_max', $selection_size);
             }
         } else if ($special_type_of_choice == 10) { // choose_player
