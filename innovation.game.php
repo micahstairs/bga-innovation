@@ -13738,7 +13738,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 400, Echoes age 7: Telegraph
             case "400N1":
-                $step_max = 2;
+                $step_max = 1;
                 break;
                 
             case "400N2":
@@ -24932,6 +24932,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     array('player_name' => self::getColoredPlayerName($player_id),
                     'player_choice' => self::getColoredPlayerName($choice)));
                 self::setAuxiliaryValue($choice);
+                self::incrementStepMax(1); // continue to next action if a selection was made
                 break;
 
             case "400N1B":
