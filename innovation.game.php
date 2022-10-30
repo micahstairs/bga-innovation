@@ -17,10 +17,11 @@
   */
 
 
+use Doctrine\DBAL\Connection;
+use Innovation\Cards;
+
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
-require_once('modules/Innovation/Utils/Arrays.php');
-require_once('modules/Innovation/Utils/Strings.php');
-require_once('modules/Innovation/GameState.php');
+require_once('modules/loader.php');
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
@@ -29,9 +30,12 @@ class Innovation extends Table
 {
     /** @var \Innovation\GameState An inverted control structure for accessing game state in a testable manner */
     private \Innovation\GameState $innovationGameState;
+    /** @var Cards Service class for accessing cards */
+    private Cards $cards;
 
     function __construct()
     {
+        $this->textual_card_infos = [];
         // Your global variables labels:
         //  Here, you can assign labels to global variables you are using for this game.
         //  You can use any number of global variables with IDs between 10 and 99.
@@ -40,7 +44,12 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new \Innovation\GameState($this);
+<<<<<<< HEAD
         // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
+=======
+        $this->cards = new Cards($this->getDatabaseConnection());
+
+>>>>>>> 7ee7b3b (Example of using bga-wb and inversion of control)
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -116,6 +125,20 @@ class Innovation extends Table
     protected function getGameName()
     {
         return "innovation";
+    }
+
+    /**
+     * Return the DB connection object, allowing passing it to delegative models
+     *
+     * @return Connection
+     * @throws ReflectionException
+     */
+    public function getDatabaseConnection(): Connection
+    {
+        $reflector = new ReflectionObject($this);
+        $method = $reflector->getMethod('getDbConnection');
+        $method->setAccessible(true);
+        return $method->invoke($this);
     }
 
     function upgradeTableDb($from_version) {
@@ -3729,7 +3752,7 @@ class Innovation extends Table
     }
 
     function getCardName($id) {
-        return $this->textual_card_infos[$id]['name'];
+        return $this->textual_card_infos[$id]['name'] ?? '';
     }
 
     function getNonDemandEffect($id, $effect_number) {
@@ -6692,15 +6715,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         (note: each method below must match an input method in innovation.action.php)
     */
     
-    function initialMeld($card_id) {
+    public function initialMeld($card_id): void
+    {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('initialMeld');
         $player_id = self::getCurrentPlayerId();
 
         // Check if the player really has this card
-        $card = self::getCardInfo($card_id);
-        
-        if ($card['owner'] != $player_id || $card['location'] != "hand") {
+        $card = $this->cards->find($card_id);
+        if (!$card->isOwner($player_id) || !$card->isInHand())
+        {
             self::throwInvalidChoiceException();
         }
         
@@ -6711,7 +6735,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Mark it as selected
-        self::markAsSelected($card_id, $player_id);
+        self::markAsSelected($card_id);
         
         // Notify
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array(

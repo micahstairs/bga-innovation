@@ -17,6 +17,8 @@ In order to test changes to the game, you need to be able to copy the code out o
 
 Once the project is checked out, run `composer install` to pull the dependencies (mainly for unit testing).
 
+Finally, copy `bgaproject.dist.yml` to `bgaproject.yml`, and edit the values for your local database information. (You can leave the sftp stanza blank.) 
+
 #### Setting up your branch
 In order to submit changes to this repository you will need to eventually submit a pull request with your changes. This means you need to have your own local branch. Before running the following commands, make sure you are on the branch of this repository that you want to diverge from (e.g. `main-dev`) and that you have called `git pull` so that you have the latest changes.
 ```

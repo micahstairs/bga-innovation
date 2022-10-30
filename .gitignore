@@ -11,3 +11,9 @@ misc/_mixins.css
 misc/_mixins.css.map
 vendor/
 .phpunit.result.cache
+
+/backup
+/build
+/dist
+/bgaproject.yml
+!/bgaproject.yml.dist
