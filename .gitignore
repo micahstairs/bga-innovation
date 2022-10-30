@@ -9,3 +9,9 @@ package-lock.json
 innovation.css.map
 vendor/
 .phpunit.result.cache
+
+/backup
+/build
+/dist
+/bgaproject.yml
+!/bgaproject.yml.dist

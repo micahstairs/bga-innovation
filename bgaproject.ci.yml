@@ -1,0 +1,15 @@
+useComposer: false
+testDb:
+    name: innovation_test
+    namePrefix: innovation_test_
+    user: root
+    pass: password
+    externallyManaged: true
+
+sftp:
+    host: ""
+    user: ""
+    pass: ""
+
+linterPhpBin: php
+extraSrc: []
