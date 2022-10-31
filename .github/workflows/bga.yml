@@ -27,7 +27,7 @@ jobs:
       - name: Rename innovation to innovationdev
         run: php bga-sharedcode/misc/bgaprojectrename.php innovation innovationdev
       - name: Delete files that we do not want to upload
-        run: cd innovationdev && rm -rf .vscode .git .DS_Store misc node_modules package-lock.json vendor composer.json composer.lock phpunit.xml tests && cd ..
+        run: cd innovationdev && rm -rf .vscode .git .github .DS_Store misc node_modules package-lock.json vendor composer.json composer.lock phpunit.xml tests && cd ..
       - name: Push to BGA
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
