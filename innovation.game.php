@@ -12420,7 +12420,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "333E1":
-                $step_max = 1;
+                $cards = self::countCardsInLocationKeyedByColor($player_id, 'hand');
+                if ($cards[1 /* red */] == 0) {
+                    self::revealHand($player_id);
+                } else {
+                    $step_max = 1;
+                }
                 break;
             
             // id 334, Echoes age 1: Candles
