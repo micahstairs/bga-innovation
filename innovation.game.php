@@ -21,7 +21,12 @@ use Doctrine\DBAL\Connection;
 use Innovation\Cards;
 
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
-require_once('modules/loader.php');
+require_once('modules/Innovation/Errors/CardNotFoundException.php');
+require_once('modules/Innovation/Utils/Arrays.php');
+require_once('modules/Innovation/Utils/Strings.php');
+require_once('modules/Innovation/GameState.php');
+require_once('modules/Innovation/Models/Card.php');
+require_once('modules/Innovation/Cards.php');
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
@@ -44,12 +49,9 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new \Innovation\GameState($this);
-<<<<<<< HEAD
-        // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
-=======
         $this->cards = new Cards($this->getDatabaseConnection());
 
->>>>>>> 7ee7b3b (Example of using bga-wb and inversion of control)
+        // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
