@@ -137,7 +137,7 @@ class Innovation extends Table
      */
     public function getDatabaseConnection(): Connection
     {
-        $reflector = new ReflectionObject($this);
+        $reflector = new ReflectionClass(get_class($this));
         $method = $reflector->getMethod('getDbConnection');
         $method->setAccessible(true);
         return $method->invoke($this);
