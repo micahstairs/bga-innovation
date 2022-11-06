@@ -2234,8 +2234,8 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>}.');
             break;
         case 'forecast->hand':
-            $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} ${<<}${name}${>>} from your forecast to your hand.');
-            $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from your forecast to your hand.');
+            $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your forecast to your hand.');
+            $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his forecast to his hand.');
             break;
             
         default:
@@ -24958,12 +24958,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "401N1B":
+                $age = self::getAuxiliaryValue();
                 if ($choice == 0) { // Score piles
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other score piles to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other score piles to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other score piles to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other score piles to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
                 } else { // Hands
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other hands to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other hands to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other hands to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other hands to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
                 }
                 self::setAuxiliaryValue2($choice);
                 break;
