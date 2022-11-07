@@ -35,5 +35,5 @@ jobs:
          server: '1.studio.boardgamearena.com'
          password: ${{ secrets.BGA_PASSWORD }} 
          local_path: './innovationdev'
-         remote_path: '/innovationdev'
+         remote_path: ''
          sftp_only: true
