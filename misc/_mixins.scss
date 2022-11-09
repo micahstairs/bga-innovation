@@ -31,9 +31,6 @@
         $loopoffset: 1;
     }
     @for $i from $min through $max {
-        // $position: ($linearEQy - $linearEQx * ($i - 1 + $loopoffset))px;
-        // $position: -0.0128205 * ($i*$i) - 20.6734 * $i + 21.0848px;
-        // $position: -(21.0702px - 20.6174 * math.pow($i,1.00377));
         $position: -($exponentEQv1 - $exponentEQv2 * math.pow($i,$exponentEQv3));
         @include class-variable-position($className,$i, $position, $axis)
     }
