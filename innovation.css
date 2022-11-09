@@ -1813,52 +1813,52 @@
 }
 .bonus_card_icon.M.bonus_value.bottom_center_icon {
   bottom: 12px;
-  left: 79px;
+  left: 80px;
 }
 .bonus_card_icon.M.bonus_value.bottom_right_icon {
   bottom: 12px;
-  right: 17px;
+  right: 16px;
 }
 .bonus_card_icon.M.bonus_value.top_right_icon {
   top: 15px;
-  right: 17px;
+  right: 16px;
 }
 .bonus_card_icon.M.bonus_value.top_center_icon {
   top: 15px;
-  left: 79px;
+  left: 80px;
 }
 .bonus_card_icon.M.bonus_1 {
-  background-position-x: 0.4528px;
+  background-position-x: 0.9771px;
 }
 .bonus_card_icon.M.bonus_2 {
-  background-position-x: -20.2724942421px;
+  background-position-x: -20.1224186597px;
 }
 .bonus_card_icon.M.bonus_3 {
-  background-position-x: -41.0387087301px;
+  background-position-x: -41.1745345358px;
 }
 .bonus_card_icon.M.bonus_4 {
-  background-position-x: -61.8315415968px;
+  background-position-x: -62.1959259402px;
 }
 .bonus_card_icon.M.bonus_5 {
-  background-position-x: -82.6441901608px;
+  background-position-x: -83.1945003482px;
 }
 .bonus_card_icon.M.bonus_6 {
-  background-position-x: -103.4726435855px;
+  background-position-x: -104.1749096732px;
 }
 .bonus_card_icon.M.bonus_7 {
-  background-position-x: -124.3142495285px;
+  background-position-x: -125.1402249479px;
 }
 .bonus_card_icon.M.bonus_8 {
-  background-position-x: -145.1671216302px;
+  background-position-x: -146.0926272556px;
 }
 .bonus_card_icon.M.bonus_9 {
-  background-position-x: -166.0298486793px;
+  background-position-x: -167.0337463617px;
 }
 .bonus_card_icon.M.bonus_10 {
-  background-position-x: -186.9013347681px;
+  background-position-x: -187.9648465933px;
 }
 .bonus_card_icon.M.bonus_11 {
-  background-position-x: -207.7807040376px;
+  background-position-x: -208.886937491px;
 }
 .bonus_card_icon.M.bonus_color {
   width: 36px;
@@ -1913,19 +1913,19 @@
 }
 .bonus_card_icon.L.bonus_value.top_left_icon {
   top: 25px;
-  left: 47px;
+  left: 48px;
 }
 .bonus_card_icon.L.bonus_value.bottom_left_icon {
   bottom: 35px;
-  left: 47px;
+  left: 48px;
 }
 .bonus_card_icon.L.bonus_value.bottom_center_icon {
   bottom: 35px;
-  left: 210px;
+  left: 211px;
 }
 .bonus_card_icon.L.bonus_value.bottom_right_icon {
   bottom: 35px;
-  right: 43px;
+  right: 41px;
 }
 .bonus_card_icon.L.bonus_value.top_right_icon {
   top: 25px;
@@ -1933,43 +1933,43 @@
 }
 .bonus_card_icon.L.bonus_value.top_center_icon {
   top: 25px;
-  left: 210px;
+  left: 211px;
 }
 .bonus_card_icon.L.bonus_1 {
-  background-position-x: 0.1134px;
+  background-position-x: 1.2654px;
 }
 .bonus_card_icon.L.bonus_2 {
-  background-position-x: -41.9641002492px;
+  background-position-x: -41.7983502971px;
 }
 .bonus_card_icon.L.bonus_3 {
-  background-position-x: -84.0213933178px;
+  background-position-x: -84.7557962783px;
 }
 .bonus_card_icon.L.bonus_4 {
-  background-position-x: -126.065569187px;
+  background-position-x: -127.6443533782px;
 }
 .bonus_card_icon.L.bonus_5 {
-  background-position-x: -168.0999938883px;
+  background-position-x: -170.4817578836px;
 }
 .bonus_card_icon.L.bonus_6 {
-  background-position-x: -210.1266494716px;
+  background-position-x: -213.2784427134px;
 }
 .bonus_card_icon.L.bonus_7 {
-  background-position-x: -252.1468453544px;
+  background-position-x: -256.0412947012px;
 }
 .bonus_card_icon.L.bonus_8 {
-  background-position-x: -294.1615120453px;
+  background-position-x: -298.7752045966px;
 }
 .bonus_card_icon.L.bonus_9 {
-  background-position-x: -336.1713451912px;
+  background-position-x: -341.4838266732px;
 }
 .bonus_card_icon.L.bonus_10 {
-  background-position-x: -378.1768846887px;
+  background-position-x: -384.1699956628px;
 }
 .bonus_card_icon.L.bonus_11 {
-  background-position-x: -420.1785617996px;
+  background-position-x: -426.8359749347px;
 }
 .bonus_card_icon.L.bonus_color {
-  width: 75px;
+  width: 76px;
   height: 75px;
   background-size: 470px auto;
   background-position-y: -1px;
@@ -2002,16 +2002,16 @@
   background-position-x: 1px;
 }
 .bonus_card_icon.L.color_1 {
-  background-position-x: -77px;
+  background-position-x: -76.5px;
 }
 .bonus_card_icon.L.color_2 {
-  background-position-x: -155px;
+  background-position-x: -154px;
 }
 .bonus_card_icon.L.color_3 {
-  background-position-x: -233px;
+  background-position-x: -231.5px;
 }
 .bonus_card_icon.L.color_4 {
-  background-position-x: -311px;
+  background-position-x: -309px;
 }
 
 /* Hexagon icons take up ~27 % of a real cards width. 

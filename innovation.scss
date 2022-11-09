@@ -1568,24 +1568,24 @@
             }
             &.bottom_center_icon {
                 bottom: 12px;
-                left: 79px;
+                left: 80px;
             }
             &.bottom_right_icon {
                 bottom: 12px;
-                right: 17px;
+                right: 16px;
             }
             &.top_right_icon {
                 top: 15px;
-                right: 17px;
+                right: 16px;
             }
             &.top_center_icon {
                 top: 15px;
-                left: 79px;
+                left: 80px;
             }
         }
-        // 1, -21, -41 -62, -83, -103, -124, -145, -166, -187, -208
-        // 21.0702 −20.6174x^1.00377
-        @include m.generate-bonus-x-position-equation(1,11,21.0702px,20.6174,1.00377);
+        // 1, -20, -41 -63, -83, -104, -125, -146, -167, -188, -209
+        // 22.2029 −21.2258x^0.995702
+        @include m.generate-bonus-x-position-equation(1,11,22.2029px,21.2258,0.995702);
         
         &.bonus_color {
             width: 36px;
@@ -1627,19 +1627,19 @@
             background-position-y: -82px;
             &.top_left_icon {
                 top: 25px;
-                left: 47px;
+                left: 48px;
             }
             &.bottom_left_icon {
                 bottom: 35px;
-                left: 47px;
+                left: 48px;
             }
             &.bottom_center_icon {
                 bottom: 35px;
-                left: 210px;
+                left: 211px;
             }
             &.bottom_right_icon {
                 bottom: 35px;
-                right: 43px;
+                right: 41px;
             }
             &.top_right_icon {
                 top: 25px;
@@ -1647,18 +1647,15 @@
             }
             &.top_center_icon {
                 top: 25px;
-                left: 210px;
+                left: 211px;
             }
         }
-        // values need refinement (actually values are fine, the equation is not good enough?, maybe fake the generator out by moving it up.
-        // https://www.dcode.fr/function-equation-finder "power"
-        //1,-41,-84,-128,-170,-212,-255 -298, -314, -383 -427
-        // 42.2445 −42.1311x^0.999082
-        // number 5 is currently cut off
-        @include m.generate-bonus-x-position-equation(1,11,42.2445px,42.1311,0.999082);
+        //1,-41,-85,-128,-171,-213,-256,-298,-342,-384,-427
+        // 44.6125 −43.3471x^0.995277
+        @include m.generate-bonus-x-position-equation(1,11,44.6125px,43.3471,0.995277);
 
         &.bonus_color {
-            width: 75px;
+            width: 76px;
             height: 75px;
             background-size: 470px auto;
             background-position-y: -1px;
@@ -1687,8 +1684,7 @@
                 left: 193px;
             }
         }
-        // I think it the increment is off by a pixle or two
-        @include m.generate-color-x-position(0, 4, -1, 78px);
+        @include m.generate-color-x-position(0, 4, -1, 77.5px);
     }
 }
 
