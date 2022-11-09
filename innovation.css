@@ -1179,6 +1179,13 @@
   height: 9px;
   vertical-align: middle;
 }
+.square.M.icon_0 {
+  width: 8px;
+  height: 8px;
+  background-image: url("img/hexagon_icons_echoes.png");
+  background-size: 153px auto !important;
+  background-position: -103px -11px !important;
+}
 .square.M.icon_1, .square.M.icon_2, .square.M.icon_3, .square.M.icon_4, .square.M.icon_5, .square.M.icon_6 {
   width: 4px;
   height: 4px;
@@ -1191,6 +1198,13 @@
 .font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1, .font_size_9 .square.M.icon_1, .font_size_10 .square.M.icon_1, .font_size_11 .square.M.icon_1, .font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2, .font_size_9 .square.M.icon_2, .font_size_10 .square.M.icon_2, .font_size_11 .square.M.icon_2, .font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3, .font_size_9 .square.M.icon_3, .font_size_10 .square.M.icon_3, .font_size_11 .square.M.icon_3, .font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4, .font_size_9 .square.M.icon_4, .font_size_10 .square.M.icon_4, .font_size_11 .square.M.icon_4, .font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5, .font_size_9 .square.M.icon_5, .font_size_10 .square.M.icon_5, .font_size_11 .square.M.icon_5, .font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6, .font_size_9 .square.M.icon_6, .font_size_10 .square.M.icon_6, .font_size_11 .square.M.icon_6 {
   width: 8px;
   height: 8px;
+}
+.square.M.music_note {
+  width: 8px;
+  height: 8px;
+  background-image: url("img/hexagon_icons_echoes.png");
+  background-size: 153px auto !important;
+  background-position: -113px -11px !important;
 }
 .font_size_1 .square.M, .font_size_2 .square.M, .font_size_3 .square.M, .font_size_4 .square.M, .font_size_5 .square.M, .font_size_6 .square.M {
   background-size: 25px auto;
@@ -1322,6 +1336,11 @@
 .square.in_tooltip {
   width: 13px;
   height: 12px;
+}
+.square.in_tooltip.icon_0 {
+  background-image: url("img/hexagon_icons_echoes.png");
+  background-size: 230px auto;
+  background-position: -155px -17px;
 }
 .square.in_tooltip.icon_1, .square.in_tooltip.icon_2, .square.in_tooltip.icon_3, .square.in_tooltip.icon_4, .square.in_tooltip.icon_5, .square.in_tooltip.icon_6 {
   background-image: url("img/resource_icons.jpg");

@@ -332,7 +332,7 @@ function (dojo, declare) {
             this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
             this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
             
-            // Add achievements to win to achievement container and determin max cards per row for the achievement container
+            // Add achievements to win to achievement container and determine max cards per row for the achievement container
             for(var player_id in this.players) {
                 dojo.addClass('achievement_container_' + player_id, 'to_win_' + this.number_of_achievements_needed_to_win)
             }
@@ -342,17 +342,21 @@ function (dojo, declare) {
             var progress_width = dojo.position('progress_' + any_player_id).w;
             var score_width = progress_width - achievement_container_width - 10 - reference_card_width;
            
-            var num_of_achievments_per_row = 4;
+            this.num_cards_in_row.achievements = 4;
             if (achievement_container_width >= 140 && achievement_container_width <= 175 ) {
-                num_of_achievments_per_row = 5;
+                this.num_cards_in_row.achievements = 5;
             } else if (achievement_container_width > 175) {
-                num_of_achievments_per_row = this.number_of_achievements_needed_to_win;
+                this.num_cards_in_row.achievements = this.number_of_achievements_needed_to_win;
             }
             
-            this.num_cards_in_row.achievements = num_of_achievments_per_row;
             this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/422): Revise this logic to properly incorporate Forecast zone in the calculations.
             this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
+
+            // Split the space between the score and the forecast
+            if (gamedatas.echoes_expansion_enabled) {
+                this.num_cards_in_row.forecast = this.num_cards_in_row.forecast / 2;
+                this.num_cards_in_row.score = this.num_cards_in_row.score / 2;
+            }
 
             // Defining the number of cards the window for forecast verso can host
             // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
@@ -984,7 +988,9 @@ function (dojo, declare) {
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay(args.args._private.dogma_effect_info);
                     break;    
                 case 'promoteCardPlayerTurn':
-                    this.my_forecast_verso_window.show();
+                    if (!this.isInReplayMode()) {
+                        this.my_forecast_verso_window.show();
+                    }
                     var max_age_to_promote = parseInt(args.args.max_age_to_promote);
                     // Make it possible to click or hover on the front of the cards in the forecast
                     this.addTooltipsWithActionsToMyForecast(max_age_to_promote);
@@ -1013,7 +1019,7 @@ function (dojo, declare) {
                     
                     // Top drawable card on deck (draw action)
                     if (args.args.age_to_draw <= 10) {
-                        var drawable_card = this.selectDrawableCard(args.args.age_to_draw);
+                        var drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
                         drawable_card.addClass("clickable");
                         this.on(drawable_card, 'onclick', 'action_clicForDraw');
                     }
@@ -1048,7 +1054,7 @@ function (dojo, declare) {
                         if (visible_selectable_cards !== null) {
                             visible_selectable_cards.addClass("clickable");
                             this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
-                            if (args.args._private.must_show_score) {
+                            if (args.args._private.must_show_score && !this.isInReplayMode()) {
                                 this.my_score_verso_window.show();
                             }
                         }
@@ -1151,7 +1157,9 @@ function (dojo, declare) {
                 
                 switch (stateName) {
                 case 'promoteCardPlayerTurn':
-                    this.my_forecast_verso_window.hide();
+                    if (!this.isInReplayMode()) {
+                        this.my_forecast_verso_window.hide();
+                    }
                     break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
@@ -1160,7 +1168,9 @@ function (dojo, declare) {
                 case 'selectionMove':
                     // Reset tooltips for board (in case there was a splaying choice)
                     this.addTooltipsWithoutActionsToMyBoard();
-                    this.my_score_verso_window.hide();
+                    if (!this.isInReplayMode()) {
+                        this.my_score_verso_window.hide();
+                    }
                 }
             }
         }, 
@@ -1608,12 +1618,13 @@ function (dojo, declare) {
             text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
-            for (var age=1; age <= 10; age++) {
+            for (var age = 1; age <= 10; age++) {
                 text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age));
             }
-            for (var symbol=1; symbol <= 6; symbol++) {
+            for (var symbol = 0; symbol <= 6; symbol++) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol));
             }
+            text = text.replace(new RegExp("\\$\\{music_note\\}" , "g"), this.square(size, 'music', 'note'));
             return text;
         },
         
@@ -1807,9 +1818,9 @@ function (dojo, declare) {
             var player_id = dojo.attr(player_panel, 'id').substr(7);
 
             var on_display = card_location == 'display';
-            var exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
+            var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
-            var exists_non_demand_effect = card.non_demand_effect_1 !== null;
+            var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
             
             if (info.no_effect) {
                 return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
@@ -1836,7 +1847,13 @@ function (dojo, declare) {
                 return players.join(', ');
             };
 
-            // TODO(ECHOES): Consider mentioning echo effect executions.
+            if (info.num_echo_effects > 0) {
+                if (info.players_executing_non_demand_effects.length == 0) {
+                    HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>"
+                } else {
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                }
+            }
             
             if (exists_i_demand_effect) {
                 if (info.players_executing_i_demand_effects.length == 0) {
@@ -2039,9 +2056,8 @@ function (dojo, declare) {
             return dojo.query(identifiers.join(","));
         },
         
-        selectDrawableCard : function(age_to_draw) {
-            // Assumes that the player can only draw from the base deck.
-            var deck_to_draw_in = this.zone.deck[0][age_to_draw].items;
+        selectDrawableCard : function(age_to_draw, type_to_draw) {
+            var deck_to_draw_in = this.zone.deck[type_to_draw][age_to_draw].items;
             var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
             return dojo.query("#" + top_card.id);
         },
@@ -2364,9 +2380,9 @@ function (dojo, declare) {
             if(new_location == 'board') {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
             } else if (new_location == 'forecast') {
-                zone_width = dojo.position('forecast_container_' + owner).w;
+                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
             } else if (new_location == 'score') {
-                zone_width = dojo.position('score_container_' + owner).w;
+                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
             } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
                 var n = this.num_cards_in_row[new_location];
@@ -2991,7 +3007,7 @@ function (dojo, declare) {
                         );            
         },
         
-        // TODO(ECHOES): We need to add a new method in order to allow players to click on a specific achievement to achieve.
+        // TODO(ECHOES#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
         // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
         // The vast majority of the time, players won't notice or care, but this should be considered release blocking.
         action_clicForAchieve : function(event) {
@@ -3266,15 +3282,15 @@ function (dojo, declare) {
             var zone_container = event.currentTarget.parentNode;
             var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
             var location = zone_infos[0];
-            var owner = zone_infos[1];
+            var owner = location == 'deck' ? 0 : zone_infos[1];
             if (!owner) {
                 owner = 0;
             }
-            var zone = this.getZone(location, owner, null, age);
+            var zone = this.getZone(location, owner, type, age);
             
             // Search the position the card is
             var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
-            
+
             var self = this;
             this.ajaxcall("/innovation/innovation/chooseRecto.html",
                             {
@@ -4304,7 +4320,7 @@ function (dojo, declare) {
             return this.isSpectator || this.isInReplayMode();
         },
 
-        // Returns true if the game is ongoing but the user clicked "reply from this move" in the log or the game is in archive mode after the game has ended
+        // Returns true if the game is ongoing but the user clicked "replay from this move" in the log or the game is in archive mode after the game has ended
         isInReplayMode : function () {
             return typeof g_replayFrom != 'undefined' || g_archive_mode;
         }

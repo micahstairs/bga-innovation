@@ -240,7 +240,7 @@ $machinestates = array(
         "args" => "argRelicPlayerTurn",
         "type" => "activeplayer",
         "possibleactions" => array("seizeRelicToAchievements", "seizeRelicToHand", "passSeizeRelic"),
-        "transitions" => array("interPlayerTurn" => 5, "justBeforeGameEnd" => 98)
+        "transitions" => array("promoteCard" => 18, "justBeforeGameEnd" => 98)
     ),
 
     17 => array(

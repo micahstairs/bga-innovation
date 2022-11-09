@@ -1094,6 +1094,13 @@
         width: 9px;
         height: 9px;
         vertical-align: middle;
+        &.icon_0 {
+            width: 8px;
+            height: 8px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 153px auto !important;
+            background-position: -103px -11px !important;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 4px;
             height: 4px;
@@ -1106,6 +1113,13 @@
                 width: 8px;
                 height: 8px;
             }
+        }
+        &.music_note {
+            width: 8px;
+            height: 8px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 153px auto !important;
+            background-position: -113px -11px !important;
         }
         .font_size_1 &, .font_size_2 &, .font_size_3 &, .font_size_4 &, .font_size_5 &, .font_size_6 & {
             background-size: 25px auto;
@@ -1180,6 +1194,11 @@
     &.in_tooltip {
         width: 13px;
         height: 12px;
+        &.icon_0 {
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 230px auto;
+            background-position: -155px -17px;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             @include m.icon-background;
             background-size: 83px auto;
@@ -1586,7 +1605,6 @@
         // 1, -20, -41 -63, -83, -104, -125, -146, -167, -188, -209
         // 22.2029 −21.2258x^0.995702
         @include m.generate-bonus-x-position-equation(1,11,22.2029px,21.2258,0.995702);
-        
         &.bonus_color {
             width: 36px;
             height: 36px;
