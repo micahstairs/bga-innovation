@@ -1,4 +1,5 @@
 @use "variables" as v;
+@use 'sass:math';
 @mixin achievement-win-number($number) {
 	&.to_win_#{$number} {
 		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * $number;
@@ -24,6 +25,16 @@
         @include class-variable-position($className,$i, $position, $axis)
     }
 }
+@mixin generate-class-variable-position-equation($min, $max, $exponentEQv1, $exponentEQv2, $exponentEQv3, $className, $axis) {
+    $loopoffset: 0;
+    @if $min ==  0 {
+        $loopoffset: 1;
+    }
+    @for $i from $min through $max {
+        $position: -($exponentEQv1 - $exponentEQv2 * math.pow($i,$exponentEQv3));
+        @include class-variable-position($className,$i, $position, $axis)
+    }
+}
 @mixin generate-icon-x-position($min, $max, $start_offset, $increment) {
     @include generate-class-variable-position($min, $max, $start_offset, $increment, 'icon', 'x')
 }
@@ -35,6 +46,12 @@
 }
 @mixin generate-color-y-position($min, $max, $start_offset, $increment) {
     @include generate-class-variable-position($min, $max, $start_offset, $increment, 'color', 'y')
+}
+@mixin generate-bonus-x-position($min, $max, $start_offset, $increment) {
+    @include generate-class-variable-position($min, $max, $start_offset, $increment, 'bonus', 'x')
+}
+@mixin generate-bonus-x-position-equation($min, $max, $exponentEQv1, $exponentEQv2, $exponentEQv3,) {
+    @include generate-class-variable-position-equation($min, $max, $exponentEQv1, $exponentEQv2, $exponentEQv3, 'bonus', 'x')
 }
 
 @mixin square-age {
