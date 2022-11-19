@@ -24017,6 +24017,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $with_bonus = self::getGameStateValue('with_bonus');
             $without_bonus = self::getGameStateValue('without_bonus');
             $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
+            $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
@@ -24083,6 +24084,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
+            // Try to tuck/meld cards to the deck where the order doesn't matter
+            } else if ($enable_autoselection
+                    // Make sure choosing these cards won't reveal hidden information
+                    && (!$selection_will_reveal_hidden_information)
+                    // The player must choose at least all of the selectable cards
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    // There must be at least one card which has a unique color
+                    && $card_id_with_unique_color != null) {
+                self::setGameStateValue('id_last_selected', $card_id_with_unique_color);
+                self::unmarkAsSelected($card_id_with_unique_color);
+                self::setGameStateValue('can_pass', 0);
+
+                self::trace('preSelectionMove->interSelectionMove (automated card selection)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
             // There are selectable cards, but not enough to fulfill the requirement ("May effects only")
             } else if ($n_min < 800 && $selection_size < $n_min) {
                 if (self::getGameStateValue('solid_constraint') == 1) {
@@ -24139,6 +24155,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 selected AND b.size = 1
             ORDER BY
                 a.location, a.age, a.type, a.is_relic, a.position
+            LIMIT 1
+        ");
+    }
+
+    function getSelectedCardIdWithUniqueColor() {
+        return self::getUniqueValueFromDB("
+            SELECT
+                id
+            FROM
+                card AS a
+            LEFT JOIN(
+                SELECT
+                    COUNT(*) AS size, color
+                FROM
+                    card
+                WHERE
+                    selected
+                GROUP BY
+                    color
+            ) AS b
+            ON
+                a.color = b.color
+            WHERE
+                selected AND b.size = 1
+            ORDER BY
+                a.location, a.color, a.position
             LIMIT 1
         ");
     }
