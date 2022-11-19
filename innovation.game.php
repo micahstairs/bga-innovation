@@ -24103,21 +24103,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else if ($n_max < 800 && $selection_size < $n_max && !$selection_will_reveal_hidden_information) {
                 self::setGameStateValue('n_max', $selection_size);
             }
-        } else if ($special_type_of_choice == 10) { // choose_player
-            $player_array = self::getGameStateValueAsArray('player_array');
-            // Automatically choose the player if there's only one option (and passing isn't allowed)
-            if (count($player_array) == 1 && !$can_pass) {
-                self::setGameStateValue('choice', self::playerNoToPlayerId($player_array[0]));
-                self::trace('preSelectionMove->interSelectionMove (only one player)');
-                $this->gamestate->nextState('interSelectionMove');
-                return;
-            }
         } else if ($special_type_of_choice == 3) { // choose_value
             $age_array = self::getGameStateValueAsArray('age_array');
             // Automatically choose the value if there's only one option (and passing isn't allowed)
             if (count($age_array) == 1 && !$can_pass) {
                 self::setGameStateValue('choice', $age_array[0]);
                 self::trace('preSelectionMove->interSelectionMove (only one value)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
+        } else if ($special_type_of_choice == 4) { // choose_color
+            $color_array = self::getGameStateValueAsArray('color_array');
+            // Automatically choose the color if there's only one option (and passing isn't allowed)
+            if (count($color_array) == 1 && !$can_pass) {
+                self::setGameStateValue('choice', $color_array[0]);
+                self::trace('preSelectionMove->interSelectionMove (only one color)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
+        } else if ($special_type_of_choice == 10) { // choose_player
+            $player_array = self::getGameStateValueAsArray('player_array');
+            // Automatically choose the player if there's only one option (and passing isn't allowed)
+            if (count($player_array) == 1 && !$can_pass) {
+                self::setGameStateValue('choice', self::playerNoToPlayerId($player_array[0]));
+                self::trace('preSelectionMove->interSelectionMove (only one player)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             }
