@@ -6906,6 +6906,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         self::incStat(1, 'promoted_number', $player_id);
 
+        try {
+            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::meld');
+            self::trace('promoteCardPlayerTurn->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
+
         self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
         $this->gamestate->nextState('promoteDogmaPlayerTurn');
     }
