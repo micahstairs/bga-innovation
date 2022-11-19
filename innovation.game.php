@@ -14034,6 +14034,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // Automate the choice if there is no more than one unique bonus value or if the player already has an
                 // Echoes card in hand (the drawing order only matters to allow the player to control which Echoes card they draw)
+                // TODO(LATER): Move this logic to a more generic location so that this is not card-specific.
                 if (count(array_unique($visible_bonuses)) <= 1 || self::countCardsInLocation($player_id, 'hand', /*type=*/ 3)) {
                     foreach ($visible_bonuses as $bonus) {
                         self::executeDraw($player_id, $bonus);
@@ -23691,6 +23692,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // Automate the choice if there is no more than one unique bonus value or if the player already has an
                     // Echoes card in hand (the drawing order only matters to allow the player to control which Echoes card they draw)
+                    // TODO(LATER): Move this logic to a more generic location so that this is not card-specific.
                     if ($unique_values_left_to_draw <= 1 || self::countCardsInLocation($player_id, 'hand', /*type=*/ 3)) {
                         for ($age = 1; $age <= 11; $age++) {
                             for ($i = 0; $i < $age_counts[$age]; $i++) {
@@ -24107,6 +24109,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if (count($player_array) == 1 && !$can_pass) {
                 self::setGameStateValue('choice', self::playerNoToPlayerId($player_array[0]));
                 self::trace('preSelectionMove->interSelectionMove (only one player)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
+        } else if ($special_type_of_choice == 3) { // choose_value
+            $age_array = self::getGameStateValueAsArray('age_array');
+            // Automatically choose the value if there's only one option (and passing isn't allowed)
+            if (count($age_array) == 1 && !$can_pass) {
+                self::setGameStateValue('choice', $age_array[0]);
+                self::trace('preSelectionMove->interSelectionMove (only one value)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
             }
