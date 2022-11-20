@@ -13577,12 +13577,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "391E1":
                 // "Draw and tuck a 6."
                 $card = self::executeDrawAndTuck($player_id, 6);
-                self::setAuxiliaryValue($card['color']);
+                self::setIndexedAuxiliaryValue($player_id, $card['color']);
                 break;
                 
             case "391N1":
                 // "Score the top two non-bottom cards of the color of the last card you tucked due to Dentures."
-                $color = self::getAuxiliaryValue();
+                $color = self::getIndexedAuxiliaryValue($player_id);
                 $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 
                 $continue = false;
