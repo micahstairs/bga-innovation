@@ -6906,16 +6906,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         self::incStat(1, 'promoted_number', $player_id);
 
-        try {
-            self::checkForSpecialAchievements();
-        } catch (EndOfGame $e) {
-            // End of the game: the exception has reached the highest level of code
-            self::trace('EOG bubbled from self::meld');
-            self::trace('promoteCardPlayerTurn->justBeforeGameEnd');
-            $this->gamestate->nextState('justBeforeGameEnd');
-            return;
-        }
-
         self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
         $this->gamestate->nextState('promoteDogmaPlayerTurn');
     }
@@ -7041,17 +7031,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
         self::transferCardFromTo($card, $card['owner'], 'board');
-        
-        try {
-            self::checkForSpecialAchievements();
-        } catch (EndOfGame $e) {
-            // End of the game: the exception has reached the highest level of code
-            self::trace('EOG bubbled from self::meld');
-            self::trace('playerTurn->justBeforeGameEnd');
-            $this->gamestate->nextState('justBeforeGameEnd');
-            return;
-        }
-
         self::setGameStateValue('melded_card_id', $card['id']);
         
         // Execute city's icon effect
@@ -14365,16 +14344,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stInterPlayerInvolvedTurn() {
-        
-        try {
-            self::checkForSpecialAchievements();
-        } catch (EndOfGame $e) {
-            // End of the game: the exception has reached the highest level of code
-            self::trace('EOG bubbled from self::stInterPlayerInvolvedTurn');
-            self::trace('interPlayerInvolvedTurn->justBeforeGameEnd');
-            $this->gamestate->nextState('justBeforeGameEnd');
-            return;
-        }
 
         // Switch to new card that was pushed onto the stack
         if (self::getNestedCardState(self::getGameStateValue('current_nesting_index') + 1) != null) {
