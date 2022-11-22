@@ -1828,7 +1828,7 @@ class Innovation extends Table
         }
 
         try {
-            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ true);
+            self::checkForSpecialAchievements();
         } catch(EndOfGame $e) {
             $end_of_game = true;
         }
@@ -3104,20 +3104,20 @@ class Innovation extends Table
     }
 
     /** Checks to see if any players are eligible for special achievements. **/
-    function checkForSpecialAchievements($onlyImmediateAchievements) {
+    function checkForSpecialAchievements() {
         // "In the rare case that two players simultaneously become eligible to claim a special achievement,
         // the tie is broken in turn order going clockwise, with the current player winning ties."
         // https://boardgamegeek.com/thread/2710666/simultaneous-special-achievements-tiebreaker
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
-            self::checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements);
+            self::checkForSpecialAchievementsForPlayer($player_id);
         }
     }
     
     /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
-    function checkForSpecialAchievementsForPlayer($player_id, $onlyImmediateAchievements) {
+    function checkForSpecialAchievementsForPlayer($player_id) {
         // TODO(FIGURES): Update this once there are other special achievements to test for.
-        $achievements_to_test = $onlyImmediateAchievements ? array(106) : array(105, 106, 107, 108, 109);
-        if (self::getGameStateValue('echoes_mode') > 1 && !$onlyImmediateAchievements) {
+        $achievements_to_test = array(105, 106, 107, 108, 109);
+        if (self::getGameStateValue('echoes_mode') > 1) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
         $end_of_game = false;
@@ -7031,17 +7031,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
         self::transferCardFromTo($card, $card['owner'], 'board');
-        
-        try {
-            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
-        } catch (EndOfGame $e) {
-            // End of the game: the exception has reached the highest level of code
-            self::trace('EOG bubbled from self::meld');
-            self::trace('playerTurn->justBeforeGameEnd');
-            $this->gamestate->nextState('justBeforeGameEnd');
-            return;
-        }
-
         self::setGameStateValue('melded_card_id', $card['id']);
         
         // Execute city's icon effect
@@ -10666,28 +10655,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 78, age 8: Mobility        
             case "78D1":
                 // "I demand you transfer the two highest non-red top cards without a factory from your board to my score pile!"
+                // TODO(LATER): Uncomment this for the 4th edition once order no longer matters forspecial achievement eligiblity
                 // NOTE: This code is only here in order to add automation to the situation where there is no choice for which two
                 // cards need to be transferred. Generic automation is not possible here because we must implement the card as two
                 // separate interactions instead of a single interaction which returns two cards.
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $selectable_cards = array();
-                for ($age = 11; $age >= 1; $age--) {
-                    foreach ($top_cards as $top_card) {
-                        if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
-                            $selectable_cards[] = $top_card;
-                        }
-                    }
-                    if (count($selectable_cards) == 2) {
-                        foreach ($selectable_cards as $card) {
-                            self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
-                        }
-                        // "If you transferred any cards, draw an 8"
-                        self::executeDraw($player_id, 8);
-                        break 2; // Exit the for loop and the switch
-                    } else if (count($selectable_cards) > 2) {
-                        break;
-                    }
-                }
+                // $top_cards = self::getTopCardsOnBoard($player_id);
+                // $selectable_cards = array();
+                // for ($age = 11; $age >= 1; $age--) {
+                //     foreach ($top_cards as $top_card) {
+                //         if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
+                //             $selectable_cards[] = $top_card;
+                //         }
+                //     }
+                //     if (count($selectable_cards) == 2) {
+                //         foreach ($selectable_cards as $card) {
+                //             self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                //         }
+                //         // "If you transferred any cards, draw an 8"
+                //         self::executeDraw($player_id, 8);
+                //         break 2; // Exit the for loop and the switch
+                //     } else if (count($selectable_cards) > 2) {
+                //         break;
+                //     }
+                // }
 
                 // Proceed without automation
                 self::setAuxiliaryValueFromArray(array(0,2,3,4)); // Flag to indicate the colors the player can still choose (not red at the start)
@@ -14355,16 +14345,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stInterPlayerInvolvedTurn() {
-        
-        try {
-            self::checkForSpecialAchievements(/*onlyImmediateAchievements=*/ false);
-        } catch (EndOfGame $e) {
-            // End of the game: the exception has reached the highest level of code
-            self::trace('EOG bubbled from self::stInterPlayerInvolvedTurn');
-            self::trace('interPlayerInvolvedTurn->justBeforeGameEnd');
-            $this->gamestate->nextState('justBeforeGameEnd');
-            return;
-        }
 
         // Switch to new card that was pushed onto the stack
         if (self::getNestedCardState(self::getGameStateValue('current_nesting_index') + 1) != null) {
@@ -14853,7 +14833,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15495,7 +15477,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'age' => self::getMaxAgeInScore($player_id)
+                'age' => self::getMaxAgeInScore($player_id),
+
+                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15536,7 +15520,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'color' => array(self::getAuxiliaryValue()) /* The color the player has revealed */
+                'color' => array(self::getAuxiliaryValue()), /* The color the player has revealed */
+
+                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15744,7 +15730,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'without_icon' => 5 /* factory */
+                'without_icon' => 5, /* factory */
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
         
@@ -16047,6 +16035,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getAuxiliaryValue()), /* the color of the card chosen on the first step */
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
              );
             break;
         
@@ -16400,7 +16390,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'has_demand_effect' => true
+                'has_demand_effect' => true,
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
         
@@ -16768,7 +16760,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
 
@@ -17410,7 +17404,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'color' => array(1, 2, 3, 4) // non-blue
+                'color' => array(1, 2, 3, 4), // non-blue
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -17633,7 +17629,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'color' => array(self::getGameStateValue('color_last_selected'))
+                'color' => array(self::getGameStateValue('color_last_selected')),
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -17848,7 +17846,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'color' => array(self::getAuxiliaryValue())
+                'color' => array(self::getAuxiliaryValue()),
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
              );
             break;
             
@@ -18039,7 +18039,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'color' => array($card['color'])
+                'color' => array($card['color']),
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
             
@@ -18162,7 +18164,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'score',
 
-                'has_demand_effect' => true
+                'has_demand_effect' => true,
+
+                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -19158,6 +19162,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
 
                 'with_icon' => 4, /* tower */
+
+                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -19386,6 +19392,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'with_icon' => 4, /* tower */
+
+                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -20131,6 +20139,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'with_bonus' => true,
+
+                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -21026,6 +21036,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'without_icon' => self::getAuxiliaryValue(),
+
+                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
              );
             break;
 
