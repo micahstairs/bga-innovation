@@ -10655,29 +10655,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 78, age 8: Mobility        
             case "78D1":
                 // "I demand you transfer the two highest non-red top cards without a factory from your board to my score pile!"
-                // TODO(LATER): Uncomment this for the 4th edition once order no longer matters forspecial achievement eligiblity
                 // NOTE: This code is only here in order to add automation to the situation where there is no choice for which two
                 // cards need to be transferred. Generic automation is not possible here because we must implement the card as two
                 // separate interactions instead of a single interaction which returns two cards.
-                // $top_cards = self::getTopCardsOnBoard($player_id);
-                // $selectable_cards = array();
-                // for ($age = 11; $age >= 1; $age--) {
-                //     foreach ($top_cards as $top_card) {
-                //         if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
-                //             $selectable_cards[] = $top_card;
-                //         }
-                //     }
-                //     if (count($selectable_cards) == 2) {
-                //         foreach ($selectable_cards as $card) {
-                //             self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
-                //         }
-                //         // "If you transferred any cards, draw an 8"
-                //         self::executeDraw($player_id, 8);
-                //         break 2; // Exit the for loop and the switch
-                //     } else if (count($selectable_cards) > 2) {
-                //         break;
-                //     }
-                // }
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                $selectable_cards = array();
+                for ($age = 11; $age >= 1; $age--) {
+                    foreach ($top_cards as $top_card) {
+                        if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
+                            $selectable_cards[] = $top_card;
+                        }
+                    }
+                    if (count($selectable_cards) == 2) {
+                        foreach ($selectable_cards as $card) {
+                            self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                        }
+                        // "If you transferred any cards, draw an 8"
+                        self::executeDraw($player_id, 8);
+                        break 2; // Exit the for loop and the switch
+                    } else if (count($selectable_cards) > 2) {
+                        break;
+                    }
+                }
 
                 // Proceed without automation
                 self::setAuxiliaryValueFromArray(array(0,2,3,4)); // Flag to indicate the colors the player can still choose (not red at the start)
