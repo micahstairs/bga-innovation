@@ -1170,10 +1170,28 @@
     &.L {
         width: 19px;
         height: 19px;
+        &.icon_0 {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            top: 4px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 459px auto !important;
+            background-position: -310px -33px !important;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             @include m.icon-background;
             background-position-y: -114px;
             background-size: 135px auto;
+        }
+        &.music_note {
+            width: 24px;
+            height: 24px;
+			position: relative;
+            top: 4px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 459px auto !important;
+            background-position: -340px -33px !important;
         }
         &.age {
 			@include m.square-age;
