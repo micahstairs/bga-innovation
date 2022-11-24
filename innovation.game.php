@@ -8204,6 +8204,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // The card has no effect if all players executing the non-demand have factories on all their top cards.
                 // TODO(LATER): Implement this.
                 break;
+
+            case 175: // Periodic Table
+                // The card has no effect if all players executing the non-demand have top cards with unique values.
+                foreach ($non_demand_players as $player_id) {
+                    if (count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id)) > 0) {
+                        return false;
+                    }
+                }
+                return true;
         }
 
         return false;
@@ -11828,9 +11837,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "175N1":
                 // Determine if there are any top cards which have the same value as another top card on their board
                 $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
-                if (count($colors) >= 1) {
+                if (count($colors) >= 2) {
                     self::setAuxiliaryValueFromArray($colors);
                     $step_max = 2;
+                } else {
+                    self::notifyGeneralInfo(clienttranslate("No two top cards have the same value."));
                 }
                 break;
 
@@ -14413,7 +14424,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         // [B] SPECIFIC CODE: for effects where interaction is needed, what is the range of cards/colors/values among which the player has to make a choice? and what is to be done with that card?
-        $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         self::trace('[B]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
 
@@ -17815,7 +17825,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
 
-                'color' => self::getAuxiliaryValueAsArray()
+                'color' => self::getAuxiliaryValueAsArray(),
             );
 
             break;
@@ -17831,7 +17841,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'none',
 
                 'not_id' => self::getGameStateValue('id_last_selected'),
-                'age' => self::getGameStateValue('age_last_selected')
+                'age' => self::getGameStateValue('age_last_selected'),
             );
             break;
 
@@ -21286,7 +21296,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             try {
                 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
                 // [D] SPECIFIC CODE: what to be done after the player finished his selection of cards/colors/values?
-                $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
                 $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
                 self::trace('[D]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
                 switch($code) {
@@ -22553,6 +22562,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "175N1B":
                     $color_1 = self::getAuxiliaryValue();
                     $color_2 = self::getGameStateValue('color_last_selected');
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose your top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::getColorInClear($color_1), 'color_2' => self::getColorInClear($color_2)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses his top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredPlayerName($player_id), 'color_1' => self::getColorInClear($color_1), 'color_2' => self::getColorInClear($color_2)));
 
                     // "Draw a card of value one higher and meld it"
                     $age_selected = self::getFaceupAgeLastSelected();
@@ -22562,10 +22573,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($card['color'] == $color_1 || $card['color'] == $color_2) {
                         // Determine if there are still any top cards which have the same value as another top card on their board
                         $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
-                        if (count($colors) >= 1) {
+                        if (count($colors) >= 2) {
                             self::setAuxiliaryValueFromArray($colors);
                             $step = $step - 2;
                             self::incrementStep(-2);
+                        } else {
+                            self::notifyGeneralInfo(clienttranslate("No two top cards have the same value."));
                         }
                     }
                     break;
@@ -24033,6 +24046,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
+            $nested_card_state = self::getCurrentNestedCardState();
+            $card_id = $nested_card_state['card_id'];
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            $step = self::getStep();
+            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+
+            // Special automation case for Periodic Table (it's broken into two interactions only because the choice is sometimes complex)
+            if ($code == '175N1A' && $selection_size == 2) {
+                $card = self::getSelectedCards()[0];
+                self::setGameStateValue('id_last_selected', $card['id']);
+                self::unmarkAsSelected($card['id']);
+                self::trace('preSelectionMove->interSelectionMove (Periodic Table automation)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
+
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
@@ -24273,7 +24303,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
             //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             // [C] SPECIFIC CODE: what is to be done with the card/color/value the player chose?
-            $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
             $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
             self::trace('[C]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
             switch($code) {
