@@ -24070,7 +24070,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)
                     && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) <= $selection_size)
                     // The player must choose at least all of the selectable cards
-                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // If there's more than one selectable card, only automate the choices if the order does not matter
                     && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck'))) {
                 // A card is chosen automatically for the player
@@ -24088,7 +24088,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Make sure choosing these cards won't reveal hidden information
                     && (!$selection_will_reveal_hidden_information)
                     // The player must choose at least all of the selectable cards
-                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // There must be at least one card which goes to a unique supply pile
                     && $card_id_returning_to_unique_supply_pile != null) {
                 self::setGameStateValue('id_last_selected', $card_id_returning_to_unique_supply_pile);
@@ -24103,7 +24103,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Make sure choosing these cards won't reveal hidden information
                     && (!$selection_will_reveal_hidden_information)
                     // The player must choose at least all of the selectable cards
-                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // There must be at least one card which has a unique color
                     && $card_id_with_unique_color != null) {
                 self::setGameStateValue('id_last_selected', $card_id_with_unique_color);
