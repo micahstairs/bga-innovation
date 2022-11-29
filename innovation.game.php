@@ -189,10 +189,8 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        if ($card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
+        if ($card['location'] == 'achievements' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
             self::transferCardFromTo($card, $player_id, 'hand');
-        } else if ($card['location'] == 'achievements') {
-            throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else {
