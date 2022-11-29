@@ -18165,8 +18165,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
 
                 'has_demand_effect' => true,
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -19162,8 +19160,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
 
                 'with_icon' => 4, /* tower */
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -20139,8 +20135,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'with_bonus' => true,
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -21036,8 +21030,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'without_icon' => self::getAuxiliaryValue(),
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
              );
             break;
 
