@@ -24034,16 +24034,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
+            $num_cards_in_location_from = self::countCardsInLocation($owner_from, $location_from);
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
                 ($location_from == 'hand' || $location_from == 'score' || $location_from == 'forecast') &&
                 // All players can see the number of cards (even in hidden locations) so if there aren't any cards there
                 // it's obvious a selection can't be made.
-                self::countCardsInLocation($owner_from, $location_from) > 0 &&
+                $num_cards_in_location_from > 0 &&
                 // Player is forced to choose a card based on a hidden property (e.g. color or icons). There are
                 // other hidden properties (has_demand_effect, icon_hash_X) that aren't included here because there
                 // are currently no cards where this would actually matter.
                 ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0 || $with_bonus > 0 || $without_bonus > 0);
+
+            // If all cards from the location must be chosen, then it doesn't matter if the information is hidden or not. It will soon come to light.
+            if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {
+                $selection_will_reveal_hidden_information = false;
+            }
             
             // There is no selectable card
             if ($selection_size == 0) {
