@@ -14857,8 +14857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'score',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15501,8 +15499,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'age' => self::getMaxAgeInScore($player_id),
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15544,8 +15540,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'color' => array(self::getAuxiliaryValue()), /* The color the player has revealed */
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15754,8 +15748,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'without_icon' => 5, /* factory */
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
         
@@ -16058,8 +16050,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getAuxiliaryValue()), /* the color of the card chosen on the first step */
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
              );
             break;
         
@@ -16414,8 +16404,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'has_demand_effect' => true,
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
         
@@ -16784,8 +16772,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
 
@@ -17428,8 +17414,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'color' => array(1, 2, 3, 4), // non-blue
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -17653,8 +17637,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getGameStateValue('color_last_selected')),
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -17870,8 +17852,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getAuxiliaryValue()),
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
              );
             break;
             
@@ -18063,8 +18043,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array($card['color']),
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
             
@@ -19411,8 +19389,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'with_icon' => 4, /* tower */
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -24048,6 +24024,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $owner_from = self::getGameStateValue('owner_from');
             $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
             $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
+            $bottom_to = self::getGameStateValue('bottom_to');
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
@@ -24136,7 +24113,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // The player must choose at least all of the selectable cards
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // There must be at least one card which goes to a unique supply pile
-                    && $card_id_returning_to_unique_supply_pile != null) {
+                    && $card_id_returning_to_unique_supply_pile != null
+                    // The cards are coming from anywhere but the board
+                    // TODO(LATER): Extend this automation to the board once the special achievement check is moved to the end of the action.
+                    && $location_from != 'board') {
                 self::setGameStateValue('id_last_selected', $card_id_returning_to_unique_supply_pile);
                 self::unmarkAsSelected($card_id_returning_to_unique_supply_pile);
                 self::setGameStateValue('can_pass', 0);
@@ -24144,12 +24124,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-            // Try to tuck/meld cards to the deck where the order doesn't matter
+            // Try to tuck cards to the deck where the order doesn't matter
             } else if ($enable_autoselection
                     // Make sure choosing these cards won't reveal hidden information
                     && (!$selection_will_reveal_hidden_information)
                     // The player must choose at least all of the selectable cards
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    // The cards are being tucked
+                    // TODO(LATER): Extend this automation to melding once the special achievement check is moved to the end of the action.
+                    && $bottom_to > 0
                     // There must be at least one card which has a unique color
                     && $card_id_with_unique_color != null) {
                 self::setGameStateValue('id_last_selected', $card_id_with_unique_color);
