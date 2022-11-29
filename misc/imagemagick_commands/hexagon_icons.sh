@@ -42,8 +42,10 @@ extract_hexagon()
     magick convert -gravity center $3 "temp/$4${FILE_SUFFIX}" -composite "temp/$4${FILE_SUFFIX}"
     
     #tint only green hexes
+    GREENTINT=${5:-30}
+    
     if [[ "${3}" == "${GREEN_BORDER}" ]]; then
-        tint_image "temp/$4${FILE_SUFFIX}" green 30
+        tint_image "temp/$4${FILE_SUFFIX}" green "$GREENTINT"
     fi
     
 }
@@ -210,7 +212,8 @@ extract_hexagon	"022"	"$BOTTOM_RIGHT"	"$BLUE_BORDER"	"015"
 extract_hexagon	"023"	"$BOTTOM_RIGHT"	"$BLUE_BORDER"	"016"
 extract_hexagon	"016"	"$BOTTOM_LEFT"	"$RED_BORDER"	"017"
 extract_hexagon	"017"	"$TOP_LEFT"	"$RED_BORDER"	"018"
-extract_hexagon	"020"	"$BOTTOM_CENTER"	"$GREEN_BORDER"	"019"
+# Increase tint intensity on holy lance
+extract_hexagon	"020"	"$BOTTOM_CENTER"	"$GREEN_BORDER"	"019" "100"
 extract_hexagon	"021"	"$BOTTOM_CENTER"	"$GREEN_BORDER"	"020"
 extract_hexagon	"018"	"$BOTTOM_LEFT"	"$YELLOW_BORDER"	"021"
 extract_hexagon	"019"	"$BOTTOM_RIGHT"	"$YELLOW_BORDER"	"022"
@@ -222,8 +225,9 @@ extract_hexagon	"032"	"$BOTTOM_CENTER"	"$BLUE_BORDER"	"025"
 extract_hexagon	"033"	"$BOTTOM_CENTER"	"$BLUE_BORDER"	"026"
 extract_hexagon	"026"	"$BOTTOM_LEFT"	"$RED_BORDER"	"027"
 extract_hexagon	"027"	"$TOP_LEFT"	"$RED_BORDER"	"028"
-extract_hexagon	"030"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"029"
-extract_hexagon	"031"	"$BOTTOM_CENTER"	"$GREEN_BORDER"	"030"
+# Increase tint intensity on philosopher's stone and beauvais cathedral clock
+extract_hexagon	"030"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"029" "100"
+extract_hexagon	"031"	"$BOTTOM_CENTER"	"$GREEN_BORDER"	"030" "100"
 extract_hexagon	"028"	"$BOTTOM_CENTER"	"$YELLOW_BORDER"	"031"
 extract_hexagon	"029"	"$BOTTOM_RIGHT"	"$YELLOW_BORDER"	"032"
 extract_hexagon	"034"	"$TOP_LEFT"	"$PURPLE_BORDER"	"033"
@@ -259,7 +263,8 @@ extract_hexagon	"063"	"$BOTTOM_LEFT"	"$BLUE_BORDER"	"056"
 extract_hexagon	"056"	"$TOP_LEFT"	"$RED_BORDER"	"057"
 extract_hexagon	"057"	"$BOTTOM_RIGHT"	"$RED_BORDER"	"058"
 extract_hexagon	"060"	"$BOTTOM_CENTER"	"$GREEN_BORDER"	"059"
-extract_hexagon	"061"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"060"
+# Increase tint intensity on buttonwood agreement
+extract_hexagon	"061"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"060" "100"
 extract_hexagon	"058"	"$TOP_LEFT"	"$YELLOW_BORDER"	"061"
 extract_hexagon	"059"	"$TOP_LEFT"	"$YELLOW_BORDER"	"062"
 extract_hexagon	"064"	"$BOTTOM_CENTER"	"$PURPLE_BORDER"	"063"
@@ -461,7 +466,8 @@ extract_hexagon	"044"	"$BOTTOM_RIGHT"	"$BLUE_BORDER"	"035"
 extract_hexagon	"045"	"$TOP_LEFT"	"$BLUE_BORDER"	"036"
 extract_hexagon	"040"	"$BOTTOM_CENTER"	"$RED_BORDER"	"037"
 extract_hexagon	"041"	"$BOTTOM_CENTER"	"$RED_BORDER"	"038"
-extract_hexagon	"038"	"$BOTTOM_LEFT"	"$GREEN_BORDER"	"039"
+# Increase tint intensity on chintz
+extract_hexagon	"038"	"$BOTTOM_LEFT"	"$GREEN_BORDER"	"039" "100"
 extract_hexagon	"039"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"040"
 extract_hexagon	"036"	"$BOTTOM_RIGHT"	"$YELLOW_BORDER"	"041"
 extract_hexagon	"037"	"$TOP_LEFT"	"$YELLOW_BORDER"	"042"
@@ -475,7 +481,8 @@ extract_hexagon	"055"	"$TOP_LEFT"	"$BLUE_BORDER"	"046"
 extract_hexagon	"050"	"$BOTTOM_RIGHT"	"$RED_BORDER"	"047"
 extract_hexagon	"051"	"$BOTTOM_CENTER"	"$RED_BORDER"	"048"
 extract_hexagon	"048"	"$BOTTOM_LEFT"	"$GREEN_BORDER"	"049"
-extract_hexagon	"049"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"050"
+# Increase tint intensity on seed drill
+extract_hexagon	"049"	"$BOTTOM_RIGHT"	"$GREEN_BORDER"	"050" "100"
 extract_hexagon	"046"	"$BOTTOM_LEFT"	"$YELLOW_BORDER"	"051"
 extract_hexagon	"047"	"$TOP_LEFT"	"$YELLOW_BORDER"	"052"
 extract_hexagon	"052"	"$BOTTOM_CENTER"	"$PURPLE_BORDER"	"053"
