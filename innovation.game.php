@@ -1554,6 +1554,13 @@ class Innovation extends Table
         ));
         
         self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
+
+        try {
+            self::checkForSpecialAchievements();
+        } catch(EndOfGame $e) {
+            self::trace('EOG bubbled from self::splay');
+            throw $e; // Re-throw exception to higher level
+        }
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
         if (self::getGameStateValue('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
