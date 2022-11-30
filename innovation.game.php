@@ -13144,17 +13144,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 373, Echoes age 4: Clock
             case "373E1":
-                // Find stacks with maximum cards
-                $max_stack = 0;
-                $card_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                for ($color = 0; $color < 5; $color++) {
-                    if ($max_stack < $card_count[$color]) {
-                        $max_stack = $card_count[$color];
-                    }
-                }
+                // "You may splay your color with the most cards right"
+                $stack_size = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                $largest_stack = max($stack_size);
                 $color_array = array();
                 for ($color = 0; $color < 5; $color++) {
-                    if ($card_count[$color] == $max_stack) {
+                    if ($stack_size[$color] == $largest_stack) {
                         $color_array[] = $color;
                     }
                 }
@@ -13188,14 +13183,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                $step_max = 1;
                 break;
 
+            // id 373, Echoes age 4: Clock
             case "373D1":
                 $total_clocks = 0;
                 // "I demand you draw and reveal three 10s"
-                for ($i = 1; $i <= 3; $i++) {
+                for ($i = 0; $i < 3; $i++) {
                     $card = self::executeDraw($player_id, 10, 'revealed');
                     // "total the number of clocks on them"
                     $total_clocks = $total_clocks + self::countIconsOnCard($card, 6); // clocks
                 }
+                self::notifyGeneralInfo(clienttranslate('There were a total of ${n} ${clocks} on the drawn cards.'), array('n' => $total_clocks, 'clocks' => $clock));
                 self::setAuxiliaryValue($total_clocks);
                 $step_max = 1;
                 break;
@@ -19556,6 +19553,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 373, Echoes age 4: Clock
         case "373E1A":
+            // "You may splay your color with the most cards right"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -19567,6 +19565,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "373D1A":
+            // "I demand you draw and reveal three 10s, total the number of clocks on them, and then return them!"
             $options = array(
                 'player_id' => $player_id,
 
