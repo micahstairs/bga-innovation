@@ -23482,10 +23482,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 386, Echoes age 6: Stethoscope
                 case "386E1A":
+                    if ($n <= 0) {
+                        // Prove that they did not have any blue or yellow cards in hand.
+                        self::revealHand($player_id);
+                    }
                     if ($n > 0 && self::getGameStateValue('color_last_selected') == 0) {
                         self::setIndexedAuxiliaryValue($player_id, 1); // it is blue
-                    }
-                    else {
+                    } else {
                         self::setIndexedAuxiliaryValue($player_id, -1);
                     }
                     break;
