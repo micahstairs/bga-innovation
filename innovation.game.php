@@ -189,10 +189,8 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
-        if ($card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
+        if ($card['location'] == 'achievements' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
             self::transferCardFromTo($card, $player_id, 'hand');
-        } else if ($card['location'] == 'achievements') {
-            throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
         } else {
@@ -1554,6 +1552,13 @@ class Innovation extends Table
         ));
         
         self::notifyForSplay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay);
+
+        try {
+            self::checkForSpecialAchievements();
+        } catch(EndOfGame $e) {
+            self::trace('EOG bubbled from self::splay');
+            throw $e; // Re-throw exception to higher level
+        }
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
         if (self::getGameStateValue('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
@@ -6901,7 +6906,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
-        self::transferCardFromTo($promoted_card, $player_id, "board");
+        try {
+            self::transferCardFromTo($promoted_card, $player_id, "board");
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::promoteCard');
+            self::trace('promoteCard->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
         self::setGameStateValue('melded_card_id', $card_id);
 
         self::incStat(1, 'promoted_number', $player_id);
@@ -8204,6 +8217,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // The card has no effect if all players executing the non-demand have factories on all their top cards.
                 // TODO(LATER): Implement this.
                 break;
+
+            case 175: // Periodic Table
+                // The card has no effect if all players executing the non-demand have top cards with unique values.
+                foreach ($non_demand_players as $player_id) {
+                    if (count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id)) > 0) {
+                        return false;
+                    }
+                }
+                return true;
         }
 
         return false;
@@ -11828,9 +11850,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "175N1":
                 // Determine if there are any top cards which have the same value as another top card on their board
                 $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
-                if (count($colors) >= 1) {
+                if (count($colors) >= 2) {
                     self::setAuxiliaryValueFromArray($colors);
                     $step_max = 2;
+                } else {
+                    self::notifyGeneralInfo(clienttranslate("No two top cards have the same value."));
                 }
                 break;
 
@@ -13144,17 +13168,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 373, Echoes age 4: Clock
             case "373E1":
-                // Find stacks with maximum cards
-                $max_stack = 0;
-                $card_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                for ($color = 0; $color < 5; $color++) {
-                    if ($max_stack < $card_count[$color]) {
-                        $max_stack = $card_count[$color];
-                    }
-                }
+                // "You may splay your color with the most cards right"
+                $stack_size = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                $largest_stack = max($stack_size);
                 $color_array = array();
                 for ($color = 0; $color < 5; $color++) {
-                    if ($card_count[$color] == $max_stack) {
+                    if ($stack_size[$color] == $largest_stack) {
                         $color_array[] = $color;
                     }
                 }
@@ -13188,14 +13207,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                $step_max = 1;
                 break;
 
+            // id 373, Echoes age 4: Clock
             case "373D1":
                 $total_clocks = 0;
                 // "I demand you draw and reveal three 10s"
-                for ($i = 1; $i <= 3; $i++) {
+                for ($i = 0; $i < 3; $i++) {
                     $card = self::executeDraw($player_id, 10, 'revealed');
                     // "total the number of clocks on them"
                     $total_clocks = $total_clocks + self::countIconsOnCard($card, 6); // clocks
                 }
+                self::notifyGeneralInfo(clienttranslate('There were a total of ${n} ${clocks} on the drawn cards.'), array('n' => $total_clocks, 'clocks' => $clock));
                 self::setAuxiliaryValue($total_clocks);
                 $step_max = 1;
                 break;
@@ -13959,6 +13980,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $green_tucked = true;
                         }
                     }
+                    if ($green_tucked) {
+                        self::notifyGeneralInfo("At least one of the tucked cards were green so the dogma effect is repeating.");
+                    }
                 } while ($green_tucked);
                 break;
             
@@ -14413,7 +14437,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         // [B] SPECIFIC CODE: for effects where interaction is needed, what is the range of cards/colors/values among which the player has to make a choice? and what is to be done with that card?
-        $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         self::trace('[B]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
 
@@ -14834,8 +14857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'score',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15478,8 +15499,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'age' => self::getMaxAgeInScore($player_id),
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15521,8 +15540,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'color' => array(self::getAuxiliaryValue()), /* The color the player has revealed */
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
         
@@ -15731,8 +15748,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'without_icon' => 5, /* factory */
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
         
@@ -16035,8 +16050,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getAuxiliaryValue()), /* the color of the card chosen on the first step */
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
              );
             break;
         
@@ -16391,8 +16404,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'has_demand_effect' => true,
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
         
@@ -16761,8 +16772,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
-
-                'enable_autoselection' => false, // Meld order can affect special achievement eligiblity
             );
             break;
 
@@ -17405,8 +17414,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'color' => array(1, 2, 3, 4), // non-blue
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -17630,8 +17637,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getGameStateValue('color_last_selected')),
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -17815,7 +17820,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
 
-                'color' => self::getAuxiliaryValueAsArray()
+                'color' => self::getAuxiliaryValueAsArray(),
             );
 
             break;
@@ -17831,7 +17836,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'none',
 
                 'not_id' => self::getGameStateValue('id_last_selected'),
-                'age' => self::getGameStateValue('age_last_selected')
+                'age' => self::getGameStateValue('age_last_selected'),
             );
             break;
 
@@ -17847,8 +17852,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array(self::getAuxiliaryValue()),
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
              );
             break;
             
@@ -18040,8 +18043,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'color' => array($card['color']),
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
             
@@ -18165,8 +18166,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
 
                 'has_demand_effect' => true,
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -19162,8 +19161,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
 
                 'with_icon' => 4, /* tower */
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -19392,8 +19389,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
 
                 'with_icon' => 4, /* tower */
-
-                'enable_autoselection' => false, // Return order can affect special achievement eligiblity
             );
             break;
 
@@ -19556,6 +19551,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 373, Echoes age 4: Clock
         case "373E1A":
+            // "You may splay your color with the most cards right"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -19567,6 +19563,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "373D1A":
+            // "I demand you draw and reveal three 10s, total the number of clocks on them, and then return them!"
             $options = array(
                 'player_id' => $player_id,
 
@@ -20139,8 +20136,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'with_bonus' => true,
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
             );
             break;
 
@@ -21036,8 +21031,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'without_icon' => self::getAuxiliaryValue(),
-
-                'enable_autoselection' => false, // Transfer order can affect special achievement eligiblity
              );
             break;
 
@@ -21286,7 +21279,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             try {
                 //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
                 // [D] SPECIFIC CODE: what to be done after the player finished his selection of cards/colors/values?
-                $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
                 $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
                 self::trace('[D]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
                 switch($code) {
@@ -22553,6 +22545,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "175N1B":
                     $color_1 = self::getAuxiliaryValue();
                     $color_2 = self::getGameStateValue('color_last_selected');
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose your top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::getColorInClear($color_1), 'color_2' => self::getColorInClear($color_2)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses his top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredPlayerName($player_id), 'color_1' => self::getColorInClear($color_1), 'color_2' => self::getColorInClear($color_2)));
 
                     // "Draw a card of value one higher and meld it"
                     $age_selected = self::getFaceupAgeLastSelected();
@@ -22562,10 +22556,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($card['color'] == $color_1 || $card['color'] == $color_2) {
                         // Determine if there are still any top cards which have the same value as another top card on their board
                         $colors = self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id);
-                        if (count($colors) >= 1) {
+                        if (count($colors) >= 2) {
                             self::setAuxiliaryValueFromArray($colors);
                             $step = $step - 2;
                             self::incrementStep(-2);
+                        } else {
+                            self::notifyGeneralInfo(clienttranslate("No two top cards have the same value."));
                         }
                     }
                     break;
@@ -23482,10 +23478,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 386, Echoes age 6: Stethoscope
                 case "386E1A":
+                    if ($n <= 0) {
+                        // Prove that they did not have any blue or yellow cards in hand.
+                        self::revealHand($player_id);
+                    }
                     if ($n > 0 && self::getGameStateValue('color_last_selected') == 0) {
                         self::setIndexedAuxiliaryValue($player_id, 1); // it is blue
-                    }
-                    else {
+                    } else {
                         self::setIndexedAuxiliaryValue($player_id, -1);
                     }
                     break;
@@ -24025,6 +24024,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $owner_from = self::getGameStateValue('owner_from');
             $location_from = self::decodeLocation(self::getGameStateValue('location_from'));
             $location_to = self::decodeLocation(self::getGameStateValue('location_to'));
+            $bottom_to = self::getGameStateValue('bottom_to');
             $colors = self::getGameStateValueAsArray('color_array');
             $with_icon = self::getGameStateValue('with_icon');
             $without_icon = self::getGameStateValue('without_icon');
@@ -24033,17 +24033,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
+            $nested_card_state = self::getCurrentNestedCardState();
+            $card_id = $nested_card_state['card_id'];
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            $step = self::getStep();
+            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+
+            // Special automation case for Periodic Table (it's broken into two interactions only because the choice is sometimes complex)
+            if ($code == '175N1A' && $selection_size == 2) {
+                $card = self::getSelectedCards()[0];
+                self::setGameStateValue('id_last_selected', $card['id']);
+                self::unmarkAsSelected($card['id']);
+                self::trace('preSelectionMove->interSelectionMove (Periodic Table automation)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
+            }
+
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
+            $num_cards_in_location_from = self::countCardsInLocation($owner_from, $location_from);
             $selection_will_reveal_hidden_information =
                 // The player making the decision has hiddden information about the card(s) that other players do not have.
                 ($location_from == 'hand' || $location_from == 'score' || $location_from == 'forecast') &&
                 // All players can see the number of cards (even in hidden locations) so if there aren't any cards there
                 // it's obvious a selection can't be made.
-                self::countCardsInLocation($owner_from, $location_from) > 0 &&
+                $num_cards_in_location_from > 0 &&
                 // Player is forced to choose a card based on a hidden property (e.g. color or icons). There are
                 // other hidden properties (has_demand_effect, icon_hash_X) that aren't included here because there
                 // are currently no cards where this would actually matter.
                 ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0 || $with_bonus > 0 || $without_bonus > 0);
+
+            // If all cards from the location must be chosen, then it doesn't matter if the information is hidden or not. It will soon come to light.
+            if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {
+                $selection_will_reveal_hidden_information = false;
+            }
             
             // There is no selectable card
             if ($selection_size == 0) {
@@ -24070,7 +24093,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)
                     && (!$selection_will_reveal_hidden_information || self::countCardsInLocation($owner_from, $location_from) <= $selection_size)
                     // The player must choose at least all of the selectable cards
-                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // If there's more than one selectable card, only automate the choices if the order does not matter
                     && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck'))) {
                 // A card is chosen automatically for the player
@@ -24088,9 +24111,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Make sure choosing these cards won't reveal hidden information
                     && (!$selection_will_reveal_hidden_information)
                     // The player must choose at least all of the selectable cards
-                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // There must be at least one card which goes to a unique supply pile
-                    && $card_id_returning_to_unique_supply_pile != null) {
+                    && $card_id_returning_to_unique_supply_pile != null
+                    // The cards are coming from anywhere but the board
+                    // TODO(LATER): Extend this automation to the board once the special achievement check is moved to the end of the action.
+                    && $location_from != 'board') {
                 self::setGameStateValue('id_last_selected', $card_id_returning_to_unique_supply_pile);
                 self::unmarkAsSelected($card_id_returning_to_unique_supply_pile);
                 self::setGameStateValue('can_pass', 0);
@@ -24098,12 +24124,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-            // Try to tuck/meld cards to the deck where the order doesn't matter
+            // Try to tuck cards to the deck where the order doesn't matter
             } else if ($enable_autoselection
                     // Make sure choosing these cards won't reveal hidden information
                     && (!$selection_will_reveal_hidden_information)
                     // The player must choose at least all of the selectable cards
-                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
+                    // The cards are being tucked
+                    // TODO(LATER): Extend this automation to melding once the special achievement check is moved to the end of the action.
+                    && $bottom_to > 0
                     // There must be at least one card which has a unique color
                     && $card_id_with_unique_color != null) {
                 self::setGameStateValue('id_last_selected', $card_id_with_unique_color);
@@ -24273,7 +24302,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
             //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             // [C] SPECIFIC CODE: what is to be done with the card/color/value the player chose?
-            $letters = array(1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D');
             $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
             self::trace('[C]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
             switch($code) {

@@ -619,16 +619,35 @@
   margin-bottom: 5px;
   margin-right: 5px;
 }
+.deck_set > .deck_pile.condensed {
+  padding-top: 10px;
+  padding-left: 20px;
+}
 .deck_set > .deck_pile > .deck {
   display: inline-block;
   width: 80px;
   height: 100%;
 }
 .deck_set > .deck_pile > .deck_count {
+  align-items: center;
   margin-right: 2px;
   width: 20px;
   display: flex;
-  align-items: center;
+}
+.deck_set > .deck_pile > .deck_count.condensed {
+  display: inline-block;
+  text-align: center;
+  position: absolute;
+  margin-left: -12.5px;
+  margin-top: -12.5px;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  background: #f4f1f1;
+  color: #000000;
+  border: 1px solid #000000;
+  border-radius: 50%;
+  z-index: 100;
 }
 
 #relics {
@@ -1292,10 +1311,28 @@
   width: 19px;
   height: 19px;
 }
+.square.L.icon_0 {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: 4px;
+  background-image: url("img/hexagon_icons_echoes.png");
+  background-size: 459px auto !important;
+  background-position: -310px -33px !important;
+}
 .square.L.icon_1, .square.L.icon_2, .square.L.icon_3, .square.L.icon_4, .square.L.icon_5, .square.L.icon_6 {
   background-image: url("img/resource_icons.jpg");
   background-position-y: -114px;
   background-size: 135px auto;
+}
+.square.L.music_note {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: 4px;
+  background-image: url("img/hexagon_icons_echoes.png");
+  background-size: 459px auto !important;
+  background-position: -340px -33px !important;
 }
 .square.L.age {
   background-color: black;

@@ -430,6 +430,16 @@ function (dojo, declare) {
             if (gamedatas.active_player !== null) {
                 this.givePlayerActionCard(gamedatas.active_player, gamedatas.action_number);
             }
+
+            this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
+            this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
+            this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
+            this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
+
+            var num_sets = 1 + this.artifacts_expansion_enabled + this.cities_expansion_enabled + this.echoes_expansion_enabled + this.figures_expansion_enabled;
+            if (num_sets > 2) {
+                this.delta.deck = {"x": 0.25, "y": 0.25}; // overlap
+            }
             
             // DECKS
             this.zone.deck = {};
@@ -448,6 +458,10 @@ function (dojo, declare) {
                     
                     // Current number of cards in the deck
                     $(`deck_count_${type}_${age}`).innerHTML = num_cards;
+                    if (num_sets > 2) {
+                        dojo.addClass(`deck_count_${type}_${age}`, 'condensed');
+                        dojo.addClass(`deck_pile_${type}_${age}`, 'condensed');
+                    }
                 }
             }
             if (!gamedatas.artifacts_expansion_enabled) {
@@ -462,10 +476,6 @@ function (dojo, declare) {
             if (!gamedatas.figures_expansion_enabled) {
                 dojo.byId('deck_set_5').style.display = 'none';
             }
-            this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
-            this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
-            this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
-            this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
 
             // AVAILABLE RELICS
             // Creation of the zone
