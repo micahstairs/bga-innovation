@@ -6901,7 +6901,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
-        self::transferCardFromTo($promoted_card, $player_id, "board");
+        try {
+            self::transferCardFromTo($promoted_card, $player_id, "board");
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::promoteCard');
+            self::trace('promoteCard->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
         self::setGameStateValue('melded_card_id', $card_id);
 
         self::incStat(1, 'promoted_number', $player_id);
