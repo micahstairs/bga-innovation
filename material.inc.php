@@ -1392,7 +1392,7 @@ $this->textual_card_infos = array(
 
 367 => array('name' => clienttranslate('Kobukson'),
     'echo_effect_1' => clienttranslate('Splay left one color on any player\'s board.'),
-    'i_demand_effect_1' => clienttranslate('${I demand} you you return all your top cards with a ${icon_4}! Draw and tuck a ${age_4}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all your top cards with a ${icon_4}! Draw and tuck a ${age_4}!'),
     'non_demand_effect_1' => clienttranslate('For every two cards returned as a result of the demand, draw and tuck a ${age_4}.'),
 ),      
     
