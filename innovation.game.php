@@ -23738,6 +23738,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($total_value < 11) {
                             // "draw a card of that total value and repeat this dogma effect (once only)."
                             self::executeDraw($player_id, $total_value);
+                            self::setAuxiliaryArray(array());
                             self::incrementStepMax(1);
                         }
                     } 
@@ -25164,6 +25165,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 415, Echoes age 9: Calculator
             case "415N1A":
+            case "415N1B":
                 // Track the cards scored
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                 $card_values = self::getAuxiliaryArray();
