@@ -1229,7 +1229,12 @@ function (dojo, declare) {
                     
                     // Blue buttons for draw action (or red if taking this action would finish the game)
                     if (args.age_to_draw <= 10) {
-                        this.addActionButton("take_draw_action", _("Draw a ${age}").replace("${age}", this.square('N', 'age', args.age_to_draw)), "action_clicForDraw")
+                        if (args.type_to_draw == 3) {
+                            var draw_button_text = _("Draw an Echoes ${age}");
+                        } else {
+                            var draw_button_text = _("Draw a ${age}");
+                        }
+                        this.addActionButton("take_draw_action", draw_button_text.replace("${age}", this.square('N', 'age', args.age_to_draw)), "action_clicForDraw");
                     }
                     else {
                         this.addActionButton("take_draw_action", _("Finish the game (attempt to draw above ${age_10})").replace('${age_10}', this.square('N', 'age', 10)), "action_clicForDraw")
