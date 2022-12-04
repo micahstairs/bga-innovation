@@ -12849,7 +12849,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 358, Echoes age 3: Katana
             case "358D1":
                 self::setAuxiliaryValue(0); // Total towers transferred
-                $step_max = 1;
+                $step_max = 2;
                 break;
 
             // id 359, Echoes age 3: Charitable Trust
@@ -19150,10 +19150,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 358, Echoes age 3: Katana
         case "358D1A":
+        case "358D1B":
             // "I demand you transfer two top cards with a tower from your board to my score pile!"
             $options = array(
                 'player_id' => $player_id,
-                'n' => 2,
+                'n' => 1,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -23151,10 +23152,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                 
                 // id 358, Echoes age 3: Katana
-                case "358D1A":
+                case "358D1B":
                     // "If you transferred any, draw a card of value equal to the total number of towers on those cards and transfer it to my forecast!"
-                    if ($n > 0) {
-                        $card = self::executeDraw($player_id, self::getAuxiliaryValue());
+                    $num_towers = self::getAuxiliaryValue();
+                    if ($num_towers > 0) {
+                        $card = self::executeDraw($player_id, $num_towers);
                         self::transferCardFromTo($card, $launcher_id, 'forecast');
                     }
                     break;
@@ -24909,6 +24911,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 358, Echoes age 3: Katana
             case "358D1A":
+            case "358D1B":
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                 self::setAuxiliaryValue(self::getAuxiliaryValue() + self::countIconsOnCard($card, 4));
                 
