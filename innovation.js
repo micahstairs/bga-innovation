@@ -1994,7 +1994,11 @@ function (dojo, declare) {
             }
 
             HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
-            HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
+            if (this.cities_expansion_enabled || this.echoes_expansion_enabled) {
+                HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
+            } else {
+                HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+            }
             HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
         
             return HTML_action;
