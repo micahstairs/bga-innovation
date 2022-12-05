@@ -6812,6 +6812,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
             self::transferCardFromTo($card, $player_id, "achievements");
         } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::promoteCard');
+            self::trace('promoteCard->justBeforeGameEnd');
             $this->gamestate->nextState('justBeforeGameEnd');
             return;
         }
@@ -7043,7 +7046,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
-        self::transferCardFromTo($card, $card['owner'], 'board');
+        try {
+            self::transferCardFromTo($card, $card['owner'], 'board');
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::meld');
+            self::trace('playerTurn->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
+
         self::setGameStateValue('melded_card_id', $card['id']);
         
         // Execute city's icon effect
@@ -10677,29 +10689,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 78, age 8: Mobility        
             case "78D1":
                 // "I demand you transfer the two highest non-red top cards without a factory from your board to my score pile!"
-                // TODO(LATER): Uncomment this for the 4th edition once order no longer matters forspecial achievement eligiblity
                 // NOTE: This code is only here in order to add automation to the situation where there is no choice for which two
                 // cards need to be transferred. Generic automation is not possible here because we must implement the card as two
                 // separate interactions instead of a single interaction which returns two cards.
-                // $top_cards = self::getTopCardsOnBoard($player_id);
-                // $selectable_cards = array();
-                // for ($age = 11; $age >= 1; $age--) {
-                //     foreach ($top_cards as $top_card) {
-                //         if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
-                //             $selectable_cards[] = $top_card;
-                //         }
-                //     }
-                //     if (count($selectable_cards) == 2) {
-                //         foreach ($selectable_cards as $card) {
-                //             self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
-                //         }
-                //         // "If you transferred any cards, draw an 8"
-                //         self::executeDraw($player_id, 8);
-                //         break 2; // Exit the for loop and the switch
-                //     } else if (count($selectable_cards) > 2) {
-                //         break;
-                //     }
-                // }
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                $selectable_cards = array();
+                for ($age = 11; $age >= 1; $age--) {
+                    foreach ($top_cards as $top_card) {
+                        if ($top_card['faceup_age'] == $age && $top_card['color'] != 1 && !self::hasRessource($top_card, 5)) {
+                            $selectable_cards[] = $top_card;
+                        }
+                    }
+                    if (count($selectable_cards) == 2) {
+                        foreach ($selectable_cards as $card) {
+                            self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                        }
+                        // "If you transferred any cards, draw an 8"
+                        self::executeDraw($player_id, 8);
+                        break 2; // Exit the for loop and the switch
+                    } else if (count($selectable_cards) > 2) {
+                        break;
+                    }
+                }
 
                 // Proceed without automation
                 self::setAuxiliaryValueFromArray(array(0,2,3,4)); // Flag to indicate the colors the player can still choose (not red at the start)
@@ -12849,7 +12860,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 358, Echoes age 3: Katana
             case "358D1":
                 self::setAuxiliaryValue(0); // Total towers transferred
-                $step_max = 1;
+                $step_max = 2;
                 break;
 
             // id 359, Echoes age 3: Charitable Trust
@@ -19150,10 +19161,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 358, Echoes age 3: Katana
         case "358D1A":
+        case "358D1B":
             // "I demand you transfer two top cards with a tower from your board to my score pile!"
             $options = array(
                 'player_id' => $player_id,
-                'n' => 2,
+                'n' => 1,
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
@@ -23151,10 +23163,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                 
                 // id 358, Echoes age 3: Katana
-                case "358D1A":
+                case "358D1B":
                     // "If you transferred any, draw a card of value equal to the total number of towers on those cards and transfer it to my forecast!"
-                    if ($n > 0) {
-                        $card = self::executeDraw($player_id, self::getAuxiliaryValue());
+                    $num_towers = self::getAuxiliaryValue();
+                    if ($num_towers > 0) {
+                        $card = self::executeDraw($player_id, $num_towers);
                         self::transferCardFromTo($card, $launcher_id, 'forecast');
                     }
                     break;
@@ -23738,6 +23751,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($total_value < 11) {
                             // "draw a card of that total value and repeat this dogma effect (once only)."
                             self::executeDraw($player_id, $total_value);
+                            self::setAuxiliaryArray(array());
                             self::incrementStepMax(1);
                         }
                     } 
@@ -24909,6 +24923,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 358, Echoes age 3: Katana
             case "358D1A":
+            case "358D1B":
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                 self::setAuxiliaryValue(self::getAuxiliaryValue() + self::countIconsOnCard($card, 4));
                 
@@ -25164,6 +25179,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 415, Echoes age 9: Calculator
             case "415N1A":
+            case "415N1B":
                 // Track the cards scored
                 $card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                 $card_values = self::getAuxiliaryArray();
