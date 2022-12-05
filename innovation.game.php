@@ -6812,6 +6812,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
             self::transferCardFromTo($card, $player_id, "achievements");
         } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::promoteCard');
+            self::trace('promoteCard->justBeforeGameEnd');
             $this->gamestate->nextState('justBeforeGameEnd');
             return;
         }
@@ -7043,7 +7046,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
-        self::transferCardFromTo($card, $card['owner'], 'board');
+        try {
+            self::transferCardFromTo($card, $card['owner'], 'board');
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::meld');
+            self::trace('playerTurn->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
+
         self::setGameStateValue('melded_card_id', $card['id']);
         
         // Execute city's icon effect
