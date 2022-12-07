@@ -3022,9 +3022,9 @@ function (dojo, declare) {
                         );            
         },
         
-        // TODO(ECHOES#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
+        // TODO(#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
         // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
-        // The vast majority of the time, players won't notice or care, but this should be considered release blocking.
+        // The vast majority of the time, players won't notice or care, which is why we haven't implemented it yet.
         action_clicForAchieve : function(event) {
             if(!this.checkAction('achieve')){
                 return;

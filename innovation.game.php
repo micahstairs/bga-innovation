@@ -13863,8 +13863,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "404N2":
                 // "If the music note for Bell, Flute, Piano, and Saxophone are visible anywhere"
-                // TODO(ECHOES): Technically the 'display' location is also considered visible. Is it possible for Echo cards
-                // to end up on display?
                 $cards_to_draw = 0;
                 
                 // Check Bell
@@ -19649,7 +19647,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(ECHOES): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
+            // TODO(ECHOES#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
