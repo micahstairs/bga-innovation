@@ -12571,6 +12571,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "340N2":
                 // "Draw and reveal a 1"
                 $card = self::executeDraw($player_id, 1, 'revealed');
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                 self::transferCardFromTo($card, $player_id, 'hand');
                 
                 // "If it is yellow, score all 1s from your hand"
