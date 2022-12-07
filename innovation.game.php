@@ -8103,8 +8103,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 15: // Calendar
                 // The card has no effect if no player executing the non-demand effect has more cards in their score pile than their hand.
-                // TODO(LATER): Implement this.
-                break;
+                foreach ($non_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'score') > self::countCardsInLocation($player_id, 'hand')) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 17: // Construction
                 // This demand always has an effect
