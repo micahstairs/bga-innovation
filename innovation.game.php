@@ -8094,8 +8094,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 12: // City States
                 // The card has no effect if no player executing the demand effect has at least 4 towers on their board.
-                // TODO(LATER): Implement this.
-                break;
+                foreach ($i_demand_players as $player_id) {
+                    if (self::getPlayerResourceCounts($player_id)[4] >= 4) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 15: // Calendar
                 // The card has no effect if no player executing the non-demand effect has more cards in their score pile than their hand.
