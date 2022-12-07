@@ -956,12 +956,12 @@
     &:hover {
         cursor: pointer;
     }
+    &.mid_dogma {
+        box-shadow: 0 0 6px 3px rgb(154, 5, 5) !important;
+    }
 }
 .selected {
-    box-shadow: 0 0 6px 3px rgb(178, 10, 10) !important;
-}
-.clickable_important {
-    box-shadow: 0 0 6px 3px rgb(178, 10, 10) !important;
+    box-shadow: 0 0 6px 3px black !important;
 }
 .splay_indicator {
     margin: auto;

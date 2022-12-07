@@ -998,13 +998,12 @@
 .clickable:hover {
   cursor: pointer;
 }
-
-.selected {
-  box-shadow: 0 0 6px 3px #b20a0a !important;
+.clickable.mid_dogma {
+  box-shadow: 0 0 6px 3px #9a0505 !important;
 }
 
-.clickable_important {
-  box-shadow: 0 0 6px 3px #b20a0a !important;
+.selected {
+  box-shadow: 0 0 6px 3px black !important;
 }
 
 .splay_indicator {

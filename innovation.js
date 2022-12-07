@@ -130,7 +130,7 @@ function (dojo, declare) {
             
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
-            this.deactivated_cards_important = null;
+            this.deactivated_cards_mid_dogma = null;
             this.erased_pagemaintitle_text = null;
         },
         
@@ -1023,7 +1023,7 @@ function (dojo, declare) {
                     // Claimable achievements (achieve action)
                     if (args.args.claimable_ages.length > 0) {
                         var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
-                        claimable_achievements.addClass("clickable").addClass("clickable_important");
+                        claimable_achievements.addClass("clickable");
                         this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
                     }
                     
@@ -1062,7 +1062,7 @@ function (dojo, declare) {
                         // Allowed selected cards by the server
                         var visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
                         if (visible_selectable_cards !== null) {
-                            visible_selectable_cards.addClass("clickable");
+                            visible_selectable_cards.addClass("clickable").addClass('mid_dogma');
                             this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
                             if (args.args._private.must_show_score && !this.isInReplayMode()) {
                                 this.my_score_verso_window.show();
@@ -1070,7 +1070,7 @@ function (dojo, declare) {
                         }
                         var selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
                         if (selectable_rectos !== null) {
-                            selectable_rectos.addClass("clickable");
+                            selectable_rectos.addClass("clickable").addClass('mid_dogma');
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
                         }
                         if (args.args._private.show_all_cards_on_board) {
@@ -1100,7 +1100,7 @@ function (dojo, declare) {
                         this.publication_permutations_done = [];
                         
                         var selectable_cards = this.selectAllCardsOnMyBoard();
-                        selectable_cards.addClass("clickable");
+                        selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
                     }
                     
@@ -2109,9 +2109,9 @@ function (dojo, declare) {
         deactivateClickEvents : function() {
             this.deactivated_cards = dojo.query(".clickable");
             this.deactivated_cards.removeClass("clickable");
-            
-            this.deactivated_cards_important = dojo.query(".clickable_important");
-            this.deactivated_cards_important.removeClass("clickable_important");
+
+            this.deactivated_cards_mid_dogma = dojo.query(".mid_dogma");
+            this.deactivated_cards_mid_dogma.removeClass("mid_dogma");
             
             this.off(this.deactivated_cards, 'onclick');
 
@@ -2124,7 +2124,7 @@ function (dojo, declare) {
         
         resurrectClickEvents : function(revert_text) {
             this.deactivated_cards.addClass("clickable");
-            this.deactivated_cards_important.addClass("clickable_important");
+            this.deactivated_cards_mid_dogma.addClass("mid_dogma");
             
             this.restart(this.deactivated_cards, 'onclick');
             
@@ -3554,6 +3554,7 @@ function (dojo, declare) {
                 other_colors.splice(color, 1);
                 var cards = this.selectCardsOnMyBoardOfColors(other_colors);
                 cards.removeClass("clickable");
+                cards.removeClass("mid_dogma");
                 this.off(cards, 'onclick');
                 
                 // Mark info
@@ -3601,6 +3602,7 @@ function (dojo, declare) {
             
             var selectable_cards = this.selectAllCardsOnMyBoard();
             selectable_cards.addClass("clickable");
+            selectable_cards.addClass("mid_dogma");
             this.on(selectable_cards, 'onclick', 'publicationClicForMove');
             
             this.publication_permuted_zone = null;
