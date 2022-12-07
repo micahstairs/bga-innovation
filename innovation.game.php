@@ -770,6 +770,15 @@ class Innovation extends Table
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
             $card_id = $nested_card_state['card_id'];
+
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
+            }
+
             $JSCardEffectQuery = $card_id == -1 ? null : self::getJSCardEffectQuery(self::getCardInfo($card_id), $current_effect_type, $current_effect_number);
         }
         $result['JSCardEffectQuery'] = $JSCardEffectQuery;
