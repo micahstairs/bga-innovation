@@ -770,6 +770,15 @@ class Innovation extends Table
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
             $card_id = $nested_card_state['card_id'];
+
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
+            }
+
             $JSCardEffectQuery = $card_id == -1 ? null : self::getJSCardEffectQuery(self::getCardInfo($card_id), $current_effect_type, $current_effect_number);
         }
         $result['JSCardEffectQuery'] = $JSCardEffectQuery;
@@ -8094,13 +8103,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 12: // City States
                 // The card has no effect if no player executing the demand effect has at least 4 towers on their board.
-                // TODO(LATER): Implement this.
-                break;
+                foreach ($i_demand_players as $player_id) {
+                    if (self::getPlayerResourceCounts($player_id)[4] >= 4) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 15: // Calendar
                 // The card has no effect if no player executing the non-demand effect has more cards in their score pile than their hand.
-                // TODO(LATER): Implement this.
-                break;
+                foreach ($non_demand_players as $player_id) {
+                    if (self::countCardsInLocation($player_id, 'score') > self::countCardsInLocation($player_id, 'hand')) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 17: // Construction
                 // This demand always has an effect
@@ -12571,6 +12588,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "340N2":
                 // "Draw and reveal a 1"
                 $card = self::executeDraw($player_id, 1, 'revealed');
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                 self::transferCardFromTo($card, $player_id, 'hand');
                 
                 // "If it is yellow, score all 1s from your hand"
@@ -13863,8 +13881,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "404N2":
                 // "If the music note for Bell, Flute, Piano, and Saxophone are visible anywhere"
-                // TODO(ECHOES): Technically the 'display' location is also considered visible. Is it possible for Echo cards
-                // to end up on display?
                 $cards_to_draw = 0;
                 
                 // Check Bell
@@ -19649,7 +19665,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(ECHOES): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
+            // TODO(ECHOES#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -24044,7 +24060,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $without_icon = self::getGameStateValue('without_icon');
             $with_bonus = self::getGameStateValue('with_bonus');
             $without_bonus = self::getGameStateValue('without_bonus');
-            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
+            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
             $nested_card_state = self::getCurrentNestedCardState();
@@ -24109,7 +24125,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // The player must choose at least all of the selectable cards
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // If there's more than one selectable card, only automate the choices if the order does not matter
-                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck'))) {
+                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck'))) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()

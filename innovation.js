@@ -130,7 +130,7 @@ function (dojo, declare) {
             
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
-            this.deactivated_cards_important = null;
+            this.deactivated_cards_mid_dogma = null;
             this.erased_pagemaintitle_text = null;
         },
         
@@ -1023,7 +1023,7 @@ function (dojo, declare) {
                     // Claimable achievements (achieve action)
                     if (args.args.claimable_ages.length > 0) {
                         var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
-                        claimable_achievements.addClass("clickable").addClass("clickable_important");
+                        claimable_achievements.addClass("clickable");
                         this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
                     }
                     
@@ -1062,7 +1062,7 @@ function (dojo, declare) {
                         // Allowed selected cards by the server
                         var visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
                         if (visible_selectable_cards !== null) {
-                            visible_selectable_cards.addClass("clickable");
+                            visible_selectable_cards.addClass("clickable").addClass('mid_dogma');
                             this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
                             if (args.args._private.must_show_score && !this.isInReplayMode()) {
                                 this.my_score_verso_window.show();
@@ -1070,7 +1070,7 @@ function (dojo, declare) {
                         }
                         var selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
                         if (selectable_rectos !== null) {
-                            selectable_rectos.addClass("clickable");
+                            selectable_rectos.addClass("clickable").addClass('mid_dogma');
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
                         }
                         if (args.args._private.show_all_cards_on_board) {
@@ -1100,7 +1100,7 @@ function (dojo, declare) {
                         this.publication_permutations_done = [];
                         
                         var selectable_cards = this.selectAllCardsOnMyBoard();
-                        selectable_cards.addClass("clickable");
+                        selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
                     }
                     
@@ -1904,9 +1904,6 @@ function (dojo, declare) {
         },
         
         createActionTextForCardInSplayablePile : function(card, color_in_clear, splay_direction, splay_direction_in_clear) {
-            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
-            HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
-
             var pile = this.zone.board[this.player_id][card.color].items;
             
             var splay_indicator = 'splay_indicator_' + this.player_id + '_' + card.color;
@@ -1917,64 +1914,117 @@ function (dojo, declare) {
                 }
             }
             
-            // Calculate new ressource count if the splay direction changes
+            // Calculate new resource count if the splay direction changes
             // Get current ressouce count
             var current_ressource_counts = {};
             var new_ressource_counts = {};
-            for(var icon=1; icon<=6; icon++) {
+            for (var icon = 1; icon <= 6; icon++) {
                 current_count = this.counter.ressource_count[this.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
             }
-            
-            // Browse all the cards of the pîle except the one on top
-            for (var i=0; i<pile.length-1; i++) {
-                var pile_card = pile[i];
-                var pile_card_id = this.getCardIdFromHTMLId(pile_card.id);
-                var pile_card = this.cards[pile_card_id];
-                
-                // Remove ressources brought by the current splay
-                // TODO(CITIES): Account for more spots on the card.
-                switch(parseInt(current_splay_direction)) {
-                case 0: // Not currently splayed: no lost
-                    break;
-                case 1: // Only the icon on bottom right can be seen (spot_4)
-                    new_ressource_counts[pile_card.spot_4]--
-                    break;
-                case 2: // Icons on left can be seen (spot_1 and spot_2)
-                    new_ressource_counts[pile_card.spot_1]--
-                    new_ressource_counts[pile_card.spot_2]--
-                    break;
-                case 3: // Icons on bottom can be seen (spot_2, spot_3 and spot_4)
-                    new_ressource_counts[pile_card.spot_2]--
-                    new_ressource_counts[pile_card.spot_3]--
-                    new_ressource_counts[pile_card.spot_4]--
-                    break;
-                }
-                
-                // Add ressources granted by the new splay
-                // TODO(CITIES): Account for more spots on the card.
-                switch(parseInt(splay_direction)) {
-                case 0: // Not splayed (this should not happen)
-                    break;
-                case 1: // Only the icon on bottom right will be revealed (spot_4)
-                    new_ressource_counts[pile_card.spot_4]++
-                    break;
-                case 2: // Icons on left will be revealed (spot_1 and spot_2)
-                    new_ressource_counts[pile_card.spot_1]++
-                    new_ressource_counts[pile_card.spot_2]++
-                    break;
-                case 3: // Icons on bottom will be revealed (spot_2, spot_3 and spot_4)
-                    new_ressource_counts[pile_card.spot_2]++
-                    new_ressource_counts[pile_card.spot_3]++
-                    new_ressource_counts[pile_card.spot_4]++
-                    break;
+
+            var bonus_icons = [];
+
+            // Find bonus icons on the top cards
+            for (var i = 0; i < 5; i++) {
+                var current_pile = this.zone.board[this.player_id][i].items;
+                if (current_pile.length > 0) {
+                    var top_card = this.cards[this.getCardIdFromHTMLId(current_pile[current_pile.length-1].id)];
+                    bonus_icons.push(this.getBonusIconValue(top_card.spot_1));
+                    bonus_icons.push(this.getBonusIconValue(top_card.spot_2));
+                    bonus_icons.push(this.getBonusIconValue(top_card.spot_3));
+                    bonus_icons.push(this.getBonusIconValue(top_card.spot_4));
+                    bonus_icons.push(this.getBonusIconValue(top_card.spot_5));
+                    bonus_icons.push(this.getBonusIconValue(top_card.spot_6));
                 }
             }
             
+            // Browse all the cards of the pîle except the one on top
+            for (var i = 0; i < pile.length - 1; i++) {
+                var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)]
+                
+                // Remove resources which were granted by the current splay
+                switch (parseInt(current_splay_direction)) {
+                case 0: // Not currently splayed: no icons will be lost
+                    break;
+                case 1: // The icons on the right will be lost (spot_4 and spot_5)
+                    new_ressource_counts[pile_card.spot_4]--;
+                    new_ressource_counts[pile_card.spot_5]--;
+                    break;
+                case 2: // The icons on the left will be lost (spot_1 and spot_2)
+                    new_ressource_counts[pile_card.spot_1]--;
+                    new_ressource_counts[pile_card.spot_2]--;
+                    break;
+                case 3: // The icons on the bottom will be lost (spot_2, spot_3 and spot_4)
+                    new_ressource_counts[pile_card.spot_2]--;
+                    new_ressource_counts[pile_card.spot_3]--;
+                    new_ressource_counts[pile_card.spot_4]--;
+                    break;
+                }
+                
+                // Add resources granted by the new splay
+                switch (parseInt(splay_direction)) {
+                case 0: // Not splayed (this should not happen)
+                    break;
+                case 1: // The icons on the right will be revealed (spot_4 and spot_5)
+                    new_ressource_counts[pile_card.spot_4]++;
+                    new_ressource_counts[pile_card.spot_5]++;
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_5));
+                    break;
+                case 2: // The icons on the left will be revealed (spot_1 and spot_2)
+                    new_ressource_counts[pile_card.spot_1]++;
+                    new_ressource_counts[pile_card.spot_2]++;
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    break;
+                case 3: // The icons on the bottom will be revealed (spot_2, spot_3 and spot_4)
+                    new_ressource_counts[pile_card.spot_2]++;
+                    new_ressource_counts[pile_card.spot_3]++;
+                    new_ressource_counts[pile_card.spot_4]++;
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    break;
+                }
+            }
+
+            // Calculate new score (score pile + bonus icons)
+            var new_score = 0;
+            var score_pile = this.zone.score[this.player_id].items;
+            for (var i = 0; i < score_pile.length; i++) {
+                new_score += this.getCardAgeFromHTMLId(score_pile[i].id);
+            }
+            bonus_icons = bonus_icons.filter(val => val > 0); // Remove the zeroes
+            console.log(bonus_icons);
+            if (bonus_icons.length > 0) {
+                var max_bonus = 0;
+                for (var i = 0; i < bonus_icons.length; i++) {
+                    if (bonus_icons[i] > max_bonus) {
+                        max_bonus = bonus_icons[i];
+                    }
+                }
+                new_score += max_bonus + bonus_icons.length - 1;
+            }
+
+            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
+            if (this.cities_expansion_enabled || this.echoes_expansion_enabled) {
+                HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
+            } else {
+                HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+            }
             HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
         
             return HTML_action;
+        },
+
+        getBonusIconValue : function(icon) {
+            // TODO(EXPANSION): If there is ever a bonus icon with a value higher than 11, then this needs to be changed.
+            if (icon > 100 && icon <= 111) {
+                return icon - 100;
+            }
+            return 0;
         },
         
         createSimulatedRessourceTable : function(current_ressource_counts, new_ressource_counts) {
@@ -2109,9 +2159,9 @@ function (dojo, declare) {
         deactivateClickEvents : function() {
             this.deactivated_cards = dojo.query(".clickable");
             this.deactivated_cards.removeClass("clickable");
-            
-            this.deactivated_cards_important = dojo.query(".clickable_important");
-            this.deactivated_cards_important.removeClass("clickable_important");
+
+            this.deactivated_cards_mid_dogma = dojo.query(".mid_dogma");
+            this.deactivated_cards_mid_dogma.removeClass("mid_dogma");
             
             this.off(this.deactivated_cards, 'onclick');
 
@@ -2124,7 +2174,7 @@ function (dojo, declare) {
         
         resurrectClickEvents : function(revert_text) {
             this.deactivated_cards.addClass("clickable");
-            this.deactivated_cards_important.addClass("clickable_important");
+            this.deactivated_cards_mid_dogma.addClass("mid_dogma");
             
             this.restart(this.deactivated_cards, 'onclick');
             
@@ -3022,9 +3072,9 @@ function (dojo, declare) {
                         );            
         },
         
-        // TODO(ECHOES#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
+        // TODO(#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
         // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
-        // The vast majority of the time, players won't notice or care, but this should be considered release blocking.
+        // The vast majority of the time, players won't notice or care, which is why we haven't implemented it yet.
         action_clicForAchieve : function(event) {
             if(!this.checkAction('achieve')){
                 return;
@@ -3554,6 +3604,7 @@ function (dojo, declare) {
                 other_colors.splice(color, 1);
                 var cards = this.selectCardsOnMyBoardOfColors(other_colors);
                 cards.removeClass("clickable");
+                cards.removeClass("mid_dogma");
                 this.off(cards, 'onclick');
                 
                 // Mark info
@@ -3601,6 +3652,7 @@ function (dojo, declare) {
             
             var selectable_cards = this.selectAllCardsOnMyBoard();
             selectable_cards.addClass("clickable");
+            selectable_cards.addClass("mid_dogma");
             this.on(selectable_cards, 'onclick', 'publicationClicForMove');
             
             this.publication_permuted_zone = null;
