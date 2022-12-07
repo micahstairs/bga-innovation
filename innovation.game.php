@@ -24044,7 +24044,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $without_icon = self::getGameStateValue('without_icon');
             $with_bonus = self::getGameStateValue('with_bonus');
             $without_bonus = self::getGameStateValue('without_bonus');
-            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
+            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
             $nested_card_state = self::getCurrentNestedCardState();
@@ -24109,7 +24109,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // The player must choose at least all of the selectable cards
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // If there's more than one selectable card, only automate the choices if the order does not matter
-                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck'))) {
+                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck'))) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()
