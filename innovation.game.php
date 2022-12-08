@@ -11872,7 +11872,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 174, Artifacts age 6: Marcha Real
             case "174N1":
                 self::setAuxiliaryValue(-1);
-                self::setAuxiliaryValue(-1);
+                self::setAuxiliaryValue2(-1);
                 $step_max = 1;
                 break;
 
