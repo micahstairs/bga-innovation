@@ -7161,6 +7161,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             for ($age = 1; $age <= $melded_card['age']; $age++) {
                 if ($card_counts[$age] > 0) {
                     self::trace('promoteCard->promoteCardPlayerTurn');
+                    // Give the player extra time to decide which card to promote
+                    self::giveExtraTime($melded_card['owner']);
                     $this->gamestate->nextState('promoteCardPlayerTurn');
                     return;
                 }
