@@ -101,6 +101,8 @@ function (dojo, declare) {
             this.display_mode = null;
             this.view_full = null;
 
+            this.note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
+
             this.arrows_for_expanded_mode = "&gt;&gt; &lt;&lt;"; // >> <<
             this.arrows_for_compact_mode = "&lt;&lt; &gt;&gt;"; // << >>
             this.number_of_splayed_piles = null;
@@ -440,6 +442,17 @@ function (dojo, declare) {
             if (num_sets > 2) {
                 this.delta.deck = {"x": 0.25, "y": 0.25}; // overlap
             }
+
+            // Button for view full
+            this.addButtonForViewFull();
+
+            // Button for display mode
+            this.addButtonForSplayMode();
+            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
+                this.enableButtonForSplayMode();
+            }
+            // Button for looking at special achievements
+            this.addButtonForSpecialAchievements();
             
             // DECKS
             this.zone.deck = {};
@@ -548,6 +561,7 @@ function (dojo, declare) {
                 }
                 this.createAndAddToZone(this.zone.special_achievements["0"], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                 this.addTooltipForCard(achievement);
+                dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
             }
             
             // PLAYERS' HANDS
@@ -769,15 +783,6 @@ function (dojo, declare) {
                         this.addTooltipForCard(card);
                     }
                 }
-            }
-            
-            // Button for view full
-            this.addButtonForViewFull();
-            
-            // Button for display mode
-            this.addButtonForSplayMode();
-            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
-                this.enableButtonForSplayMode();
             }
             
             // REVEALED ZONE
@@ -1377,7 +1382,7 @@ function (dojo, declare) {
             
             this.disableButtonForSplayMode(); // Disabled by default
         },
-        
+
         disableButtonForSplayMode : function() {
             var change_display_mode_button = dojo.query('#change_display_mode_button');
             this.off(change_display_mode_button, 'onclick');
@@ -1388,6 +1393,46 @@ function (dojo, declare) {
             var change_display_mode_button = dojo.query('#change_display_mode_button');
             this.on(change_display_mode_button, 'onclick', 'toggle_displayMode');
             change_display_mode_button.removeClass('disabled');
+        },
+
+        addButtonForSpecialAchievements : function() {
+            // Build button
+            var button_text = _("Browse Special Achievements");
+            var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': button_text, 'i18n': ['button_text']});
+            dojo.place(button, 'change_display_mode_button', 'after');
+            this.addCustomTooltip('browse_special_achievements_button', '<p>' + _('Browse the full list of special achievement cards.') + '</p>', "")
+
+            // Build popup box
+            this.special_achievements_window = new dijit.Dialog({ 'title': _("List of Special Achievements") });
+            var ids = [105, 106, 107, 108, 109];
+            if (this.cities_expansion_enabled) {
+                ids.push(325, 326, 327, 328, 329);
+            }
+            if (this.echoes_expansion_enabled) {
+                ids.push(435, 436, 437, 438, 439);
+            }
+            // TODO(FIGURES): Add special achievements.
+            console.log(ids);
+            var content = "";
+            for (var i = 0; i < ids.length; i++) {
+                var card_id = ids[i];
+                var card_data = this.cards[card_id];
+
+                var name = _(card_data.name).toUpperCase();
+                var text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
+                if (card_id == 106) {
+                    text += ` ${this.note_for_monument}`;
+                }
+                if (card_data.alternative_condition_for_claiming != null) {
+                    text += ` ${this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip')}`;
+                }
+                content += `<div id="special_achievement_summary_${card_id}" class="special_achievement_summary"><div class="special_achievement_icon item_${card_id} age_null S card"></div><div class="special_achievement_text">${text}</div></div></br>`;
+            }
+            this.special_achievements_window.attr("content", content + "<a id='special_achievements_close_window' class='bgabutton bgabutton_blue'>Close</a>");
+
+            // Make everything clickable
+            dojo.connect($('special_achievements_close_window'), 'onclick', this, 'click_close_special_achievements_window');
+            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievements_window');
         },
         
         /*
@@ -2405,7 +2450,7 @@ function (dojo, declare) {
             var card_data = this.cards[card.id];
             var name = _(card_data.name).toUpperCase();
             var is_monument = card.id == 106;
-            var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
+            var note_for_monument = this.note_for_monument;
             var div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
             var div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
@@ -3808,6 +3853,14 @@ function (dojo, declare) {
                         );
             }
         },
+
+        click_open_special_achievements_window : function() {
+            this.special_achievements_window.show();
+        },
+
+        click_close_special_achievements_window : function() {
+            this.special_achievements_window.hide();
+        },
         
         ///////////////////////////////////////////////////
         //// Reaction to cometD notifications
@@ -3915,6 +3968,9 @@ function (dojo, declare) {
                     id_to = id_from; // recto -> recto
                 }
             }
+
+            // If this is a special achievement, marked it as unclaimed (if it is not, then this does nothing)
+            dojo.query('#special_achievement_summary_' + id_to).removeClass('unclaimed');
             
             // Update BGA score if needed
             if (card.owner_from != 0 && card.location_from == 'achievements') {
