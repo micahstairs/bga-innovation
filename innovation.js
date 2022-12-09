@@ -1404,12 +1404,12 @@ function (dojo, declare) {
 
             // Build popup box
             this.special_achievements_window = new dijit.Dialog({ 'title': _("List of Special Achievements") });
-            var ids = [105, 106, 107, 108, 109];
+            var ids = [106, 105, 107, 109, 108];
             if (this.cities_expansion_enabled) {
                 ids.push(325, 326, 327, 328, 329);
             }
             if (this.echoes_expansion_enabled) {
-                ids.push(435, 436, 437, 438, 439);
+                ids.push(439, 436, 435, 437, 438);
             }
             // TODO(FIGURES): Add special achievements.
             console.log(ids);
