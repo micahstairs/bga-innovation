@@ -3455,7 +3455,6 @@ class Innovation extends Table
                 'You' => 'You',
                 'age_10' => $age_10
             ));
-            return array($player_id);
         } else { // Team play
             self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'player_name' => self::getPlayerNameFromId($player_id),
@@ -3465,8 +3464,24 @@ class Innovation extends Table
                 'You' => 'You',
                 'age_10' => $age_10
             ));
-            return array($player_id, $teammate_id);
+            // Sum the score of the teammates
+            self::DbQuery("
+                UPDATE
+                    player AS a
+                    LEFT JOIN (
+                        SELECT
+                            player_team, SUM(player_innovation_score) AS team_score
+                        FROM
+                            player
+                        GROUP BY
+                            player_team
+
+                    ) AS b ON a.player_team = b.player_team
+                SET
+                    a.player_innovation_score = b.team_score
+            ");
         }
+        return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_innovation_score = (SELECT MAX(player_innovation_score) FROM player)", true);
     }
     
     /** Notifies that the game ended due to a dogma effect, returning the winning player(s) **/
