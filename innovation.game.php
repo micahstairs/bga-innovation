@@ -3395,7 +3395,7 @@ class Innovation extends Table
         }
     }
     
-    /** Notify end of game **/
+    /** Notifies that the game ended due to achievements, returning the winning player(s) **/
     function notifyEndOfGameByAchievements() {
         // Display who won and with how many achievements
         // (There can be weird cases when two players tie or one player get more achievements than needed if two or more special achievements are claimed at the same time)
@@ -3438,8 +3438,10 @@ class Innovation extends Table
                 }
             }
         }
+        return $winners;
     }
     
+    /** Notifies that the game ended due to score, returning the winning player(s) **/
     function notifyEndOfGameByScore() {
         $player_id = self::getGameStateValue('player_who_could_not_draw');
         $age_10 = self::getAgeSquare(10);
@@ -3453,19 +3455,21 @@ class Innovation extends Table
                 'You' => 'You',
                 'age_10' => $age_10
             ));
+            return array($player_id);
         } else { // Team play
             self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'player_name' => self::getPlayerNameFromId($player_id),
                 'age_10' => $age_10
             ));
-            
             self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'You' => 'You',
                 'age_10' => $age_10
             ));
+            return array($player_id, $teammate_id);
         }
     }
     
+    /** Notifies that the game ended due to a dogma effect, returning the winning player(s) **/
     function notifyEndOfGameByDogma() {
         $player_id = self::getGameStateValue('winner_by_dogma');
         $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
@@ -3482,6 +3486,7 @@ class Innovation extends Table
                 ));
                 self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You meet the victory condition. You win!'), array());
             }
+            return array($player_id);
         } else { // Team play
             $teammate_id = self::getPlayerTeammate($player_id);
             $winning_team = array($player_id, $teammate_id);
@@ -3503,6 +3508,7 @@ class Innovation extends Table
                     'player_name' => self::getPlayerNameFromId($player_id)
                 ));
             }
+            return $winning_team;
         }
     }
     
@@ -5144,69 +5150,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ");
         
         return self::getPlayerResourceCounts($player_id);
-    }
-    
-    function promoteScoreToBGAScore() {
-        // Called if the game ends by drawing. The innovation score is the main value to check to determine the winner and the number of achievements is used as a tie-breaker.
-        
-        // If team game, add the score of the teammate first
-        if (self::decodeGameType(self::getGameStateValue('game_type')) == 'team') {
-            self::DbQuery("
-            UPDATE
-                player AS a
-                LEFT JOIN (
-                    SELECT
-                        player_team, SUM(player_innovation_score) AS team_score
-                    FROM
-                        player
-                    GROUP BY
-                        player_team
-                
-                ) AS b ON a.player_team = b.player_team
-            SET
-                a.player_innovation_score = b.team_score
-            ");
-        }
-        
-        self::DbQuery("
-        UPDATE
-            player
-        SET
-            player_score_aux = player_score,
-            player_score = player_innovation_score
-        ");
-    }
-    
-    function binarizeBGAScore() {
-        // Called if the game ends by dogma. The innovation score is 1 for winners, 0 for losers. There is no tie-breaker.
-        self::DbQuery(self::format("
-        UPDATE
-            player
-        SET
-            player_score_aux = 0,
-            player_score = (CASE WHEN player_id = {winner} THEN 1 ELSE 0 END)
-        ",
-            array('winner' => self::getGameStateValue('winner_by_dogma'))        
-        ));
-        
-        if (self::decodeGameType(self::getGameStateValue('game_type')) == 'team') {
-            // Add the score of the teammate 0 + 0 for losers, 0 + 1 for winners
-            self::DbQuery("
-            UPDATE
-                player AS a
-                LEFT JOIN (
-                    SELECT
-                        player_team, SUM(player_score) AS team_score
-                    FROM
-                        player
-                    GROUP BY
-                        player_team
-                
-                ) AS b ON a.player_team = b.player_team
-            SET
-                a.player_score = b.team_score
-            ");
-        }
     }
     
     /** Information about players **/
@@ -25314,26 +25257,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stJustBeforeGameEnd() {
         switch(self::getGameStateValue('game_end_type')) {
         case 0: // achievements
-            self::notifyEndOfGameByAchievements();
+            $winning_players = self::notifyEndOfGameByAchievements();
             self::setStat(true, 'end_achievements');
             break;
         case 1: // score
-            // Important value for winning is no more the number of achievements but the score
-            // Promote player score to BGA score
-            // Keeping the number of achivement as BGA auxiliary score as tie breaker
-            self::promoteScoreToBGAScore();
-            self::notifyEndOfGameByScore();
+            $winning_players = self::notifyEndOfGameByScore();
             self::setStat(true, 'end_score');
             break;
         case -1: // dogma
-            // In that case, the score is modified so that the winner team got 1, the losers 0, there is no tie breaker
-            self::binarizeBGAScore();
-            self::notifyEndOfGameByDogma();
+            $winning_players = self::notifyEndOfGameByDogma();
             self::setStat(true, 'end_dogma');
             break;
         default:
             break;
         }
+
+        // Give the winner(s) 1 gold star and 0 silver stars, and the loser(s) no stars.
+        self::DbQuery(self::format("
+            UPDATE
+                player
+            SET
+                player_score_aux = 0,
+                player_score = (CASE WHEN player_id IN ({winners}) THEN 1 ELSE 0 END)
+            ",
+            array('winners' => join($winning_players, ','))
+        ));
         
         self::trace('justBeforeGameEnd->gameEnd');
         $this->gamestate->nextState(); // End the game
