@@ -1397,7 +1397,7 @@ function (dojo, declare) {
 
         addButtonForSpecialAchievements : function() {
             // Build button
-            var button_text = _("Browse Special Achievements");
+            var button_text = _("Browse special achievements");
             var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': button_text, 'i18n': ['button_text']});
             dojo.place(button, 'change_display_mode_button', 'after');
             this.addCustomTooltip('browse_special_achievements_button', '<p>' + _('Browse the full list of special achievement cards.') + '</p>', "")
