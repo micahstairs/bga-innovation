@@ -359,17 +359,17 @@ function (dojo, declare) {
             }
 
             // Defining the number of cards the window for forecast verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
             this.num_cards_in_row.my_forecast_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
-            if (this.num_cards_in_row.my_forecast_verso > 6) {
-                this.num_cards_in_row.my_forecast_verso = 6;
+            if (this.num_cards_in_row.my_forecast_verso > 5) {
+                this.num_cards_in_row.my_forecast_verso = 5;
             }
             
             // Defining the number of cards the window for score verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
             this.num_cards_in_row.my_score_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
-            if (this.num_cards_in_row.my_score_verso > 6) {
-                this.num_cards_in_row.my_score_verso = 6;
+            if (this.num_cards_in_row.my_score_verso > 5) {
+                this.num_cards_in_row.my_score_verso = 5;
             }
             
             // PLAYER PANELS
