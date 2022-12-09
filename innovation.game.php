@@ -11873,6 +11873,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 174, Artifacts age 6: Marcha Real
             case "174N1":
+                self::setAuxiliaryValue(-1);
+                self::setAuxiliaryValue2(-1);
                 $step_max = 1;
                 break;
 
@@ -17811,7 +17813,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 174, Artifacts age 6: Marcha Real
         case "174N1A":
-            // Reveal two cards from your hand
+            // "Reveal and return two cards from your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 2,
@@ -17819,7 +17821,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'revealed'
+                'location_to' => 'revealed,deck'
             );
             break;
     
@@ -22541,26 +22543,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
-                    $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
+                    // TODO(LATER): Clean up the dead code branch.
+                    if (self::getGameStateValue('release_version') >= 2) {
+                        $card_id_1 = self::getAuxiliaryValue();
+                        $card_1 = $card_id_1 < 0 ? null : self::getCardInfo($card_id_1);
+                        $card_id_2 = self::getAuxiliaryValue2();
+                        $card_2 = $card_id_2 < 0 ? null : self::getCardInfo($card_id_2);
+                    } else {
+                        $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                        $card_1 = count($revealed_cards) >= 1 ? $revealed_cards[0] : null;
+                        $card_2 = count($revealed_cards) >= 2 ? $revealed_cards[1] : null;
 
-                    // Return revealed cards from your hand
-                    if ($card_1 != null) {
-                        self::returnCard($card_1);
-                    }
-                    if ($card_2 != null) {
-                        self::returnCard($card_2);
+                        // Return revealed cards from your hand
+                        if ($card_1 != null) {
+                            self::returnCard($card_1);
+                        }
+                        if ($card_2 != null) {
+                            self::returnCard($card_2);
+                        }
                     }
 
                     if ($card_1 != null && $card_2 != null) {
                         // "If they have the same value, draw a card of value one higher"
                         if ($card_1['age'] == $card_2['age']) {
+                            self::notifyGeneralInfo(clienttranslate('They both have the same value.'));
                             self::executeDraw($player_id, $card_1['age'] + 1);
+                        } else {
+                            self::notifyGeneralInfo(clienttranslate('They do not have the same value.'));
                         }
                         // "If they have the same color, claim an achievement, ignoring eligibility"
                         if ($card_1['color'] == $card_2['color']) {
+                            self::notifyGeneralInfo(clienttranslate('They both have the same color.'));
                             self::incrementStepMax(1);
+                        } else {
+                            self::notifyGeneralInfo(clienttranslate('They do not have the same color.'));
                         }
                     } else if ($card_1 == null && $card_2 == null) { // If none are returned, they are still considered to have the same value (0)
                         self::executeDraw($player_id, 1);
@@ -24781,6 +24797,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
+                break;
+
+            // id 174, Artifacts age 6: Marcha Real
+            case "174N1A":
+                // TODO(LATER): Clean up the dead code branch.
+                if (self::getGameStateValue('release_version') >= 2) {
+                    if (self::getAuxiliaryValue() < 0) {
+                        self::setAuxiliaryValue($card['id']);
+                    } else {
+                        self::setAuxiliaryValue2($card['id']);
+                    }
+                    $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                    self::transferCardFromTo($card, 0, 'deck');
+                } else {
+                    // Do the transfer
+                    self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                }
                 break;
                 
             // id 179, Artifacts age 7: International Prototype Metre Bar
