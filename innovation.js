@@ -1404,7 +1404,7 @@ function (dojo, declare) {
 
             // Build popup box
             this.special_achievements_window = new dijit.Dialog({ 'title': _("List of Special Achievements") });
-            var ids = [106, 105, 107, 109, 108];
+            var ids = [106, 105, 108, 107, 109];
             if (this.cities_expansion_enabled) {
                 ids.push(325, 326, 327, 328, 329);
             }
