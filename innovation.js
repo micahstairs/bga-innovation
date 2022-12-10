@@ -1447,6 +1447,11 @@ function (dojo, declare) {
         },
 
         refreshSpecialAchievementProgression : function() {
+            // Don't check special achievement progress if this is a spectator
+            if (this.isSpectator) {
+                return;
+            }
+
             // Refresh progression towards the player achieving the special achievements
             self = this;
             dojo.query(".special_achievement_summary").forEach(function(node) {
