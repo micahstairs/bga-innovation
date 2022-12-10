@@ -23275,8 +23275,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         else {
                             self::splay($player_id, $player_id, 4, 0); // matching an unsplay
                         }
-                    }
-                    else { // Proceed to selecting a matching color to splay purple's direction
+                    } else if ($choice == 0) { // Proceed to selecting a matching color to splay purple's direction
                         self::incrementStepMax(2);
                         self::incrementStep(1); $step++;
                     }
