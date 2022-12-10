@@ -140,6 +140,11 @@
   max-width: 45px;
 }
 
+.special_achievement_status {
+  text-align: center;
+  font-weight: bold;
+}
+
 .special_achievement_text {
   vertical-align: middle;
   padding-left: 10px;

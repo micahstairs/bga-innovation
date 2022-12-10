@@ -805,6 +805,9 @@ class Innovation extends Table
         // My wish for splay
         $result['display_mode'] = self::getPlayerWishForSplay($current_player_id);        
         $result['view_full'] = self::getPlayerWishForViewFull($current_player_id);
+
+        // Counters used for the Monument special achievement
+        $result['monument_counters'] = self::getFlagsForMonument($current_player_id);
         
         return $result;
     }
@@ -1776,14 +1779,15 @@ class Innovation extends Table
             if ($location_from == 'board' || $location_to == 'board') {
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
+            // Update counters for the Monument special achievement
+            // TODO(ECHOES): If there are any cards which tuck/score a card which belongs to another player, then
+            // there is a bug here that we need to fix.
             if ($location_to == 'board' && $bottom_to) { // That's a tuck
-                // Update player count for Monument
                 self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
-            }
-            else if ($transferInfo['score_keyword']) { // That's a score
-                // Update player count for Monument
+            } else if ($transferInfo['score_keyword']) { // That's a score
                 self::incrementFlagForMonument($player_id, 'number_of_scored_cards');
             }
+            $transferInfo['monument_counters'][$player_id] = self::getFlagsForMonument($player_id);
             self::notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo);
         } else {
             $player_id = self::getActivePlayerId(); // $player_id == $owner_from or $owner_to. It is also the one from whom this action is originated
@@ -3259,6 +3263,7 @@ class Innovation extends Table
     }
     
     function resetFlagsForMonument() { // The turn of the current player has ended. Set the numbers of tuck cards and scored cards back to zero for all players 
+        self::notifyAll('resetMonumentCounters', '', array());
         self::DbQuery("
             UPDATE
                 player
