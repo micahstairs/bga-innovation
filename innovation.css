@@ -125,6 +125,14 @@
   border-style: dotted;
 }
 
+#browse_special_achievements_small_button {
+  display: flex;
+  text-align: center;
+  width: fit-content;
+  margin: auto;
+  margin-top: 10px;
+}
+
 .special_achievement_summary {
   display: flex;
   vertical-align: middle;
@@ -671,7 +679,7 @@
 }
 
 #special_achievements {
-  margin-left: 20px;
+  margin-left: 28px;
 }
 
 .player > p {

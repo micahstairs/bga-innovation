@@ -563,6 +563,11 @@ function (dojo, declare) {
                 this.addTooltipForCard(achievement);
                 dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
             }
+
+            // Add another button here to open up the special achievements popup
+            var button = this.format_string_recursive("<i id='browse_special_achievements_small_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
+            dojo.place(button, 'special_achievements', 'after');
+            this.on(dojo.query('#browse_special_achievements_small_button'), 'onclick', 'click_open_special_achievements_window');
             
             // PLAYERS' HANDS
             this.zone.hand = {};
