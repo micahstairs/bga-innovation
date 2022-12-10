@@ -1404,12 +1404,12 @@ function (dojo, declare) {
 
             // Build popup box
             this.special_achievements_window = new dijit.Dialog({ 'title': _("List of Special Achievements") });
-            var ids = [105, 106, 107, 108, 109];
+            var ids = [106, 105, 108, 107, 109];
             if (this.cities_expansion_enabled) {
                 ids.push(325, 326, 327, 328, 329);
             }
             if (this.echoes_expansion_enabled) {
-                ids.push(435, 436, 437, 438, 439);
+                ids.push(439, 436, 435, 437, 438);
             }
             // TODO(FIGURES): Add special achievements.
             console.log(ids);
@@ -1798,6 +1798,23 @@ function (dojo, declare) {
         },
         
         createActionTextForMeld : function(self, card) {
+            // Calculate new score (score pile + bonus icons)
+            var bonus_icons = [];
+            for (var i = 0; i < 5; i++) {
+                var pile_zone = self.zone.board[self.player_id][i];
+                var splay_direction = pile_zone.splay_direction;
+                // If there are no cards in the stack yet, treat the pile as unsplayed
+                if (pile_zone.items.length == 0) {
+                    splay_direction = 0;
+                }
+                if (i == card.color) {
+                    bonus_icons = bonus_icons.concat(self.getVisibleBonusIconsInPile(pile_zone.items, splay_direction, card));
+                } else {
+                    bonus_icons = bonus_icons.concat(self.getVisibleBonusIconsInPile(pile_zone.items, splay_direction));
+                }
+            }
+            var new_score = self.computeTotalScore(self.zone.score[self.player_id].items, bonus_icons);
+
             HTML_action = "<p class='possible_action'>" + _("Click to meld this card.") + "<p>";
             // See if melding this card would cover another one
             var pile = self.zone.board[self.player_id][card.color].items;
@@ -1806,61 +1823,80 @@ function (dojo, declare) {
                 var top_card = pile[pile.length - 1];
                 var top_card_id = self.getCardIdFromHTMLId(top_card.id);
                 var top_card = self.cards[top_card_id];
-                HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
-                    {
-                        'age': self.square('N', 'age', top_card.age, 'in_log'),
-                        'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
-                    });
-            }
-            else {
-                HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+                if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+                    HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>",
+                        {
+                            'age': self.square('N', 'age', top_card.age, 'in_log'),
+                            'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>",
+                            'score' : new_score
+                        });
+                } else {
+                    HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
+                        {
+                            'age': self.square('N', 'age', top_card.age, 'in_log'),
+                            'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
+                        });
+                }
+            } else {
+                if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+                    HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
+                } else {
+                    HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+                }
             }
             
             // Calculate new ressource count if this card is melded
             // Get current ressouce count
             var current_ressource_counts = {};
             var new_ressource_counts = {};
-            for(var icon=1; icon<=6; icon++) {
+            for (var icon = 1; icon <= 6; icon++) {
                 current_count = self.counter.ressource_count[self.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
             }
             
             // Add ressources brought by the new card
-            // TODO(CITIES): Account for more spots on the card.
-            new_ressource_counts[card.spot_1]++
-            new_ressource_counts[card.spot_2]++
-            new_ressource_counts[card.spot_3]++
-            new_ressource_counts[card.spot_4]++
+            new_ressource_counts[card.spot_1]++;
+            new_ressource_counts[card.spot_2]++;
+            new_ressource_counts[card.spot_3]++;
+            new_ressource_counts[card.spot_4]++;
+            new_ressource_counts[card.spot_5]++;
+            new_ressource_counts[card.spot_6]++;
             
             if (covered_card) { // Substract the ressources no longer visible
                 var splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
-                for (var direction=0; direction<=3; direction++) {
+                for (var direction = 0; direction <= 3; direction++) {
                     if (dojo.hasClass(splay_indicator, 'splay_' + direction)) {
                         var splay_direction = direction;
                         break;
                     }
                 }
                 
-                // TODO(CITIES): Account for more spots on the card.
-                switch(parseInt(splay_direction)) {
-                case 0: // All icons of the old top card are lost
-                    new_ressource_counts[top_card.spot_1]--
-                    new_ressource_counts[top_card.spot_2]--
-                    new_ressource_counts[top_card.spot_3]--
-                    new_ressource_counts[top_card.spot_4]--
+                switch (parseInt(splay_direction)) {
+                case 0: // No splay (all icons of the old top card are lost)
+                    new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_2]--;
+                    new_ressource_counts[top_card.spot_3]--;
+                    new_ressource_counts[top_card.spot_4]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
-                case 1: // Only the icon on bottom right can still be seen (spot_4)
-                    new_ressource_counts[top_card.spot_1]--
-                    new_ressource_counts[top_card.spot_2]--
-                    new_ressource_counts[top_card.spot_3]--
+                case 1: // Splayed left (only the icons on the right can still be seen)
+                    new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_2]--;
+                    new_ressource_counts[top_card.spot_3]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
-                case 2: // Icons on left can still be seen (spot_1 and spot_2)
-                    new_ressource_counts[top_card.spot_3]--
-                    new_ressource_counts[top_card.spot_4]--
+                case 2: // Splayed right (only the icons on the left can still be seen)
+                    new_ressource_counts[top_card.spot_3]--;
+                    new_ressource_counts[top_card.spot_4]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
-                case 3: // Icons on bottom can still be seen (spot_2, spot_3 and spot_4)
-                    new_ressource_counts[top_card.spot_1]--
+                case 3: // Splayed up (only the icons on the bottom can still be seen)
+                    new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
                 }
             }
@@ -1968,22 +2004,6 @@ function (dojo, declare) {
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
             }
-
-            var bonus_icons = [];
-
-            // Find bonus icons on the top cards
-            for (var i = 0; i < 5; i++) {
-                var current_pile = this.zone.board[this.player_id][i].items;
-                if (current_pile.length > 0) {
-                    var top_card = this.cards[this.getCardIdFromHTMLId(current_pile[current_pile.length-1].id)];
-                    bonus_icons.push(this.getBonusIconValue(top_card.spot_1));
-                    bonus_icons.push(this.getBonusIconValue(top_card.spot_2));
-                    bonus_icons.push(this.getBonusIconValue(top_card.spot_3));
-                    bonus_icons.push(this.getBonusIconValue(top_card.spot_4));
-                    bonus_icons.push(this.getBonusIconValue(top_card.spot_5));
-                    bonus_icons.push(this.getBonusIconValue(top_card.spot_6));
-                }
-            }
             
             // Browse all the cards of the pîle except the one on top
             for (var i = 0; i < pile.length - 1; i++) {
@@ -2015,43 +2035,30 @@ function (dojo, declare) {
                 case 1: // The icons on the right will be revealed (spot_4 and spot_5)
                     new_ressource_counts[pile_card.spot_4]++;
                     new_ressource_counts[pile_card.spot_5]++;
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_5));
                     break;
                 case 2: // The icons on the left will be revealed (spot_1 and spot_2)
                     new_ressource_counts[pile_card.spot_1]++;
                     new_ressource_counts[pile_card.spot_2]++;
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
                     break;
                 case 3: // The icons on the bottom will be revealed (spot_2, spot_3 and spot_4)
                     new_ressource_counts[pile_card.spot_2]++;
                     new_ressource_counts[pile_card.spot_3]++;
                     new_ressource_counts[pile_card.spot_4]++;
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
                     break;
                 }
             }
 
             // Calculate new score (score pile + bonus icons)
-            var new_score = 0;
-            var score_pile = this.zone.score[this.player_id].items;
-            for (var i = 0; i < score_pile.length; i++) {
-                new_score += this.getCardAgeFromHTMLId(score_pile[i].id);
-            }
-            bonus_icons = bonus_icons.filter(val => val > 0); // Remove the zeroes
-            console.log(bonus_icons);
-            if (bonus_icons.length > 0) {
-                var max_bonus = 0;
-                for (var i = 0; i < bonus_icons.length; i++) {
-                    if (bonus_icons[i] > max_bonus) {
-                        max_bonus = bonus_icons[i];
-                    }
+            var bonus_icons = [];
+            for (var i = 0; i < 5; i++) {
+                var pile_zone = this.zone.board[this.player_id][i];
+                if (i == card.color) {
+                    bonus_icons = bonus_icons.concat(this.getVisibleBonusIconsInPile(pile_zone.items, splay_direction));
+                } else {
+                    bonus_icons = bonus_icons.concat(this.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction));
                 }
-                new_score += max_bonus + bonus_icons.length - 1;
             }
+            var new_score = this.computeTotalScore(this.zone.score[this.player_id].items, bonus_icons);
 
             HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
             if (this.cities_expansion_enabled || this.echoes_expansion_enabled) {
@@ -2062,6 +2069,72 @@ function (dojo, declare) {
             HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
         
             return HTML_action;
+        },
+
+        /** Returns all visible bonus icons in a particular pile, optionally pretending a card is placed on top of the pile */
+        getVisibleBonusIconsInPile : function(pile, splay_direction, card_being_melded = null) {
+            var bonus_icons = [];
+
+            // Top card
+            var top_card = null;
+            if (pile.length > 0) {
+                top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
+            }
+            if (card_being_melded != null) {
+                top_card = card_being_melded;
+            }
+            if (top_card != null) {
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_1));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_2));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_3));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_4));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_5));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_6));
+            }
+
+            // Cards underneath
+            var pile_length = card_being_melded == null ? pile.length : pile.length + 1;
+            for (var i = 0; i < pile_length - 1; i++) {
+                var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+                switch (parseInt(splay_direction)) {
+                case 0: // Not splayed
+                    break;
+                case 1: // Splayed left (the icons on the right would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_5));
+                    break;
+                case 2: // Splayed right (the icons on the left would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    break;
+                case 3: // Splayed up (the icons on the bottom would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    break;
+                }
+            }
+
+            return bonus_icons;
+        },
+
+        /** Computes what the player's total score would be given a score pile and list of bonus icons.  */
+        computeTotalScore : function(score_pile, bonus_icons) {
+            var score = 0;
+            for (var i = 0; i < score_pile.length; i++) {
+                score += this.getCardAgeFromHTMLId(score_pile[i].id);
+            }
+            bonus_icons = bonus_icons.filter(val => val > 0); // Remove the zeroes
+            if (bonus_icons.length > 0) {
+                var max_bonus = 0;
+                for (var i = 0; i < bonus_icons.length; i++) {
+                    if (bonus_icons[i] > max_bonus) {
+                        max_bonus = bonus_icons[i];
+                    }
+                }
+                score += max_bonus + bonus_icons.length - 1;
+            }
+            return score;
         },
 
         getBonusIconValue : function(icon) {

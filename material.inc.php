@@ -540,7 +540,7 @@ $this->textual_card_infos = array(
 
 108 => array('name' => clienttranslate('World'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have twelve or more ${icon_6} on your board.'),
-    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Translation.')),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Translation.')),
 
 109 => array('name' => clienttranslate('Universe'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have five top cards, and each is of value ${age_8} or higher.'),
