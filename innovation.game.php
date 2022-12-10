@@ -3799,7 +3799,7 @@ class Innovation extends Table
         }
         
         $textual_infos = $this->textual_card_infos[$card['id']];
-        if (self::getGameStateValue('game_rules') == 2) { // If we play the first edition of the game
+        if ($this->innovationGameState->usingFirstEditionRules()) {
             // Inverse the rules used for effects if there is any difference. Then, only the non-alt version wil be used.
             if (array_key_exists('i_demand_effect_1_alt', $textual_infos)) {
                 $unused_rule = $textual_infos['i_demand_effect_1'];
@@ -9892,7 +9892,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 22, age 2: Fermenting        
             case "22N1":
-                if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2 /* leaf */);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
+                    $number = self::intDivision($number_of_leaves,2); // "For every two leaves on your board"
+                } else {
                     $number = 0;
                     for($color=0; $color<5; $color++) {
                         if (self::boardPileHasRessource($player_id, $color, 2 /* leaf */)) { // There is at least one visible leaf in that color
@@ -9908,12 +9913,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
                     }
                     // "For each color of your board that have one leaf or more"
-                }
-                else {
-                    $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2 /* leaf */);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    $number = self::intDivision($number_of_leaves,2); // "For every two leaves on your board"
                 }
                 
                 for($i=0; $i<$number; $i++) {
@@ -10317,7 +10316,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 51, age 5: Statistics
             case "51D1":
-                if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    $step_max = 1;
+                } else {
                     // Get highest cards in score
                     $ids_of_highest_cards_in_score = self::getIdsOfHighestCardsInLocation($player_id, 'score');
 
@@ -10326,9 +10327,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $card = self::getCardInfo($id);
                         self::transferCardFromTo($card, $player_id, 'hand'); // "Transfer all the highest cards in your score pile to your hand"
                     }
-                }
-                else { // First edition
-                    $step_max = 1;
                 }
                 break;
 
@@ -10384,7 +10382,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 54, age 5: Societies
             case "54D1":
-                if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    $colors = array(0,1,2,3); // All but purple
+                } else {
                     $colors = array();
                     // Determine colors which top cards with a lightbulb of the player have a value higher than the tops cards of the launcher
                     for ($color = 0; $color < 5; $color++) {
@@ -10397,9 +10397,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $colors[] = $color; // This color is selectable
                         }
                     }
-                }
-                else { // First edition
-                   $colors = array(0,1,2,3); // All but purple
                 }
                 self::setAuxiliaryValueFromArray($colors);
                 $step_max = 1;
@@ -10422,7 +10419,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 57, age 6: Industrialisation
             case "57N1":
-                if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    // "For every two factories on your board"
+                    $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5 /* factory */);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${factories}.'), array('You' => 'You', 'n' => $number_of_factories, 'factories' => $factory));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${factories}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_factories, 'factories' => $factory));
+                    $number = self::intDivision($number_of_factories,2);
+                } else {
+                    // "For each color of your board that have one factory or more"
                     $number = 0;
                     for($color=0; $color<5; $color++) {
                         if (self::boardPileHasRessource($player_id, $color, 5 /* factory */)) { // There is at least one visible factory in that color
@@ -10437,13 +10441,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${factories}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
                     }
-                    // "For each color of your board that have one factory or more"
-                }
-                else {
-                    $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5 /* factory */);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${factories}.'), array('You' => 'You', 'n' => $number_of_factories, 'factories' => $factory));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${factories}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_factories, 'factories' => $factory));
-                    $number = self::intDivision($number_of_factories,2); // "For every two factories on your board"
                 }
                 
                 for($i=0; $i<$number; $i++) {
@@ -10533,7 +10530,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 67, age 7: Combustion
             case "67D1":
-                if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                if ($this->innovationGameState->usingFirstEditionRules()) {
+                    $number = 2;
+                } else {
                     $number_of_crowns = self::getPlayerSingleRessourceCount($launcher_id, 1 /* crown */);
                     self::notifyPlayer($launcher_id, 'log', clienttranslate('${You} have ${n} ${crowns}.'), array('You' => 'You', 'n' => $number_of_crowns, 'crowns' => $crown));
                     self::notifyAllPlayersBut($launcher_id, 'log', clienttranslate('${player_name} has ${n} ${crowns}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_crowns, 'crowns' => $crown));
@@ -10543,15 +10542,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     }
                 }
-                else { // First edition
-                    $number = 2;
-                }
                 self::setAuxiliaryValue($number);
                 $step_max = 1;
                 break;
                 
             case "67N1":
-                if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                if (!$this->innovationGameState->usingFirstEditionRules()) {
                     $bottom_red_card = self::getBottomCardOnBoard($player_id, 1 /* red */);
                     if ($bottom_red_card !== null) {
                         self::returnCard($bottom_red_card); // "Return your bottom red card"
@@ -15378,20 +15374,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 50, age 5: Measurement
         case "50N1A":
-            if (self::getGameStateValue('game_rules') == 1) { // Last edition
-                // "You may reveal and return a card from your hand"
-                $options = array(
-                    'player_id' => $player_id,
-                    'n' => 1,
-                    'can_pass' => true,
-                    
-                    'owner_from' => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to' => $player_id,
-                    'location_to' => 'revealed,deck',
-                );
-            }
-            else { // First edition
+            if ($this->innovationGameState->usingFirstEditionRules()) {
                 // "You may return a card from your hand"
                 $options = array(
                     'player_id' => $player_id,
@@ -15402,6 +15385,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'location_from' => 'hand',
                     'owner_to' => 0,
                     'location_to' => 'deck',
+                );
+            } else {
+                // "You may reveal and return a card from your hand"
+                $options = array(
+                    'player_id' => $player_id,
+                    'n' => 1,
+                    'can_pass' => true,
+                    
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'revealed,deck',
                 );
             }
             break;
@@ -21471,7 +21466,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 34, age 3: Feudalism        
                 case "34D1A":
-                    if (self::getGameStateValue('game_rules') == 1) { // Last edition => additional rule
+                    if (!$this->innovationGameState->usingFirstEditionRules()) {
                         if ($n > 0) { // "If you do"
                             self::unsplay($player_id, $player_id, self::getGameStateValue('color_last_selected')); // "Unsplay that color of your cards"
                         }
@@ -21554,7 +21549,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 50, age 5: Measurement
                 case "50N1A":
                     if ($n > 0) { // "If you do"
-                        if (self::getGameStateValue('game_rules') == 1) { // Last edition
+                        if ($this->innovationGameState->usingFirstEditionRules()) {
+                            // In the first edition, color is chosen by the player
+                            self::incrementStepMax(1);
+                        } else {
                             $color = self::getGameStateValue('color_last_selected');
                             self::splayRight($player_id, $player_id, $color); // "Splay that color of your cards right"
                             $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
@@ -21566,9 +21564,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number_of_cards), 'colored_cards' => self::getColorInClearWithCards($color)));
                             }
                             self::executeDraw($player_id, $number_of_cards); // "Draw a card of value equal to the number of cards of that color on your board"
-                        }
-                        else { // First edition => color is chosen by the player
-                            self::incrementStepMax(1);
                         }
                     }
                     break;
@@ -21801,7 +21796,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 88, age 9: Fission
                 case "88N1A":
-                    if (self::getGameStateValue('game_rules') == 1) {
+                    if (!$this->innovationGameState->usingFirstEditionRules()) {
                         self::executeDraw($player_id, 10); // "Draw a 10"
                     }
                     break;
