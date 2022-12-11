@@ -1186,6 +1186,10 @@ function (dojo, declare) {
                     if (!this.isInReplayMode()) {
                         this.my_score_verso_window.hide();
                     }
+                    for(var color=0; color<5; color++) {
+                        var zone = this.zone.board[this.player_id][color];
+                        this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                    }
                 }
             }
         }, 
