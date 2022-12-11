@@ -101,6 +101,10 @@ function (dojo, declare) {
             this.display_mode = null;
             this.view_full = null;
 
+            // Counters used to track progress of the Monument special achievement
+            this.number_of_tucked_cards = 0;
+            this.number_of_scored_cards = 0;
+
             this.note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
 
             this.arrows_for_expanded_mode = "&gt;&gt; &lt;&lt;"; // >> <<
@@ -812,6 +816,11 @@ function (dojo, declare) {
                     this.addTooltipForCard(card);
                 }
             }
+
+            // Update special achievements overview with progression towards each achievement
+            this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
+            this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
+            this.refreshSpecialAchievementProgression();
             
             // REFERENCE CARD
             this.addTooltipForReferenceCard();
@@ -1426,7 +1435,6 @@ function (dojo, declare) {
                 ids.push(439, 436, 435, 437, 438);
             }
             // TODO(FIGURES): Add special achievements.
-            console.log(ids);
             var content = "";
             for (var i = 0; i < ids.length; i++) {
                 var card_id = ids[i];
@@ -1440,13 +1448,138 @@ function (dojo, declare) {
                 if (card_data.alternative_condition_for_claiming != null) {
                     text += ` ${this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip')}`;
                 }
-                content += `<div id="special_achievement_summary_${card_id}" class="special_achievement_summary"><div class="special_achievement_icon item_${card_id} age_null S card"></div><div class="special_achievement_text">${text}</div></div></br>`;
+                content += `<div id="special_achievement_summary_${card_id}" class="special_achievement_summary">`;
+                content += `<div class="special_achievement_icon"><div class="item_${card_id} age_null S card"></div><div class="special_achievement_status"></div></div>`;
+                content += `<div class="special_achievement_text">${text}</div>`
+                content += `</div></br>`;
             }
             this.special_achievements_window.attr("content", content + "<a id='special_achievements_close_window' class='bgabutton bgabutton_blue'>Close</a>");
 
             // Make everything clickable
             dojo.connect($('special_achievements_close_window'), 'onclick', this, 'click_close_special_achievements_window');
             this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievements_window');
+        },
+
+        refreshSpecialAchievementProgression : function() {
+            // Don't check special achievement progress if this is a spectator
+            if (this.isSpectator) {
+                return;
+            }
+
+            // Refresh progression towards the player achieving the special achievements
+            self = this;
+            dojo.query(".special_achievement_summary").forEach(function(node) {
+                var id = parseInt(node.id.substring(node.id.lastIndexOf('_') + 1));
+                var numerator = -1;
+                var denominator = -1;
+
+                // Skip calculation if the special achievement is already claimed
+                if (dojo.query(`#special_achievement_summary_${id}.unclaimed`).length == 1) {
+                    switch(id) {
+                        case 105:
+                            // three or more icons of all six types
+                            numerator = 0;
+                            denominator = 6;
+                            for (var i = 1; i <= 6; i++) {
+                                if (self.counter.ressource_count[self.player_id][i].getValue() >= 3) {
+                                    numerator++;
+                                }
+                            }
+                            break;
+                        case 106:
+                            // tuck six or score six cards during a single turn
+                            numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
+                            denominator = 6;
+                            break;
+                        case 107:
+                            // five colors on your board, and each is splayed either up or right
+                            numerator = 0;
+                            denominator = 5;
+                            for (var i = 0; i < 5; i++) {
+                                var splay_direction = self.zone.board[self.player_id][i].splay_direction;
+                                if (splay_direction == 2 || splay_direction == 3) {
+                                    numerator++;
+                                }
+                            }
+                            break;
+                        case 108:
+                            // twelve or more visible clocks on your board
+                            numerator = self.counter.ressource_count[self.player_id][6].getValue();
+                            denominator = 12;
+                            break;
+                        case 109:
+                            // five top cards, and each is of value 8 or higher
+                            numerator = 0;
+                            denominator = 5;
+                            for (var i = 0; i < 5; i++) {
+                                var items = self.zone.board[self.player_id][i].items;
+                                if (items.length > 0) {
+                                    var top_card_id = self.getCardIdFromHTMLId(items[items.length - 1].id);
+                                    var top_card = self.cards[top_card_id];
+                                    if (top_card.age >= 8) {
+                                        numerator++;
+                                    }
+                                }
+                            }
+                            break;
+                        case 435:
+                            // eight or more bonuses visible on your board
+                            numerator = 0;
+                            denominator = 8;
+                            for (var i = 0; i < 5; i++) {
+                                numerator += self.getVisibleBonusIconsInPile(self.zone.board[self.player_id][i].items).length;
+                            }
+                            break;
+                        case 436:
+                            // seven or more cards in your forecast
+                            numerator = self.zone.forecast[self.player_id].items.length;
+                            denominator = 7;
+                            break;
+                        case 437:
+                            // eight or more hex icons visible in one color
+                            numerator = 0;
+                            denominator = 8;
+                            for (var i = 0; i < 5; i++) {
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                var num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 0 /* hex icon */);
+                                if (num_icons > numerator) {
+                                    numerator = num_icons;
+                                }
+                            }
+                            break;
+                        case 438:
+                            // a color with four or more visible echo effects
+                            numerator = 0;
+                            denominator = 4;
+                            for (var i = 0; i < 5; i++) {
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                var num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 10 /* echo icon */);
+                                if (num_icons > numerator) {
+                                    numerator = num_icons;
+                                }
+                            }
+                            break;
+                        case 439:
+                            // three icons or more of the same icon type visible in each of four different colors
+                            numerator = 0;
+                            denominator = 4;
+                            for (var icon = 1; icon <= 6; icon++) {
+                                var num_piles = 0;
+                                for (var color = 0; color < 5; color++) {
+                                    var pile_zone = self.zone.board[self.player_id][color];
+                                    if (self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, icon) >= 3) {
+                                        num_piles++;
+                                    }
+                                }
+                                if (num_piles > numerator) {
+                                    numerator = num_piles;
+                                }
+                            }
+                            break;
+                    }
+                }
+                dojo.query(`#special_achievement_summary_${id} .special_achievement_status`)[0].innerHTML = (numerator >= 0 && denominator > 0) ? `${numerator}/${denominator}` : "";
+            });
         },
         
         /*
@@ -2129,7 +2262,7 @@ function (dojo, declare) {
                 }
             }
 
-            return bonus_icons;
+            return bonus_icons.filter(val => val > 0); // Remove the zeroes
         },
 
         /** Computes what the player's total score would be given a score pile and list of bonus icons.  */
@@ -2138,7 +2271,6 @@ function (dojo, declare) {
             for (var i = 0; i < score_pile.length; i++) {
                 score += this.getCardAgeFromHTMLId(score_pile[i].id);
             }
-            bonus_icons = bonus_icons.filter(val => val > 0); // Remove the zeroes
             if (bonus_icons.length > 0) {
                 var max_bonus = 0;
                 for (var i = 0; i < bonus_icons.length; i++) {
@@ -2157,6 +2289,75 @@ function (dojo, declare) {
                 return icon - 100;
             }
             return 0;
+        },
+
+        /** Counts how many of a particular icon is visible in a specific pile */
+        countVisibleIconsInPile : function(pile, splay_direction, icon) {
+            var count = 0;
+
+            // Top card
+            var top_card = null;
+            if (pile.length > 0) {
+                top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
+            }
+            if (top_card != null) {
+                if (top_card.spot_1 == icon) {
+                    count++;
+                }
+                if (top_card.spot_2 == icon) {
+                    count++;
+                }
+                if (top_card.spot_3 == icon) {
+                    count++;
+                }
+                if (top_card.spot_4 == icon) {
+                    count++;
+                }
+                if (top_card.spot_5 == icon) {
+                    count++;
+                }
+                if (top_card.spot_6 == icon) {
+                    count++;
+                }
+            }
+
+            // Cards underneath
+            for (var i = 0; i < pile.length - 1; i++) {
+                var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+                switch (parseInt(splay_direction)) {
+                case 0: // Not splayed
+                    break;
+                case 1: // Splayed left (the icons on the right would be visible)
+                    if (pile_card.spot_4 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_5 == icon) {
+                        count++;
+                    }
+                    break;
+                case 2: // Splayed right (the icons on the left would be visible)
+                    if (pile_card.spot_1 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_2 == icon) {
+                        count++;
+                    }
+                    break;
+                case 3: // Splayed up (the icons on the bottom would be visible)
+                    if (pile_card.spot_2 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_3 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_4 == icon) {
+                        count++;
+                    }
+                    break;
+                }
+            }
+
+            return count;
         },
         
         createSimulatedRessourceTable : function(current_ressource_counts, new_ressource_counts) {
@@ -3979,6 +4180,7 @@ function (dojo, declare) {
             dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
+            dojo.subscribe('resetMonumentCounters', this, "notif_resetMonumentCounters");  // This kind of notification does not need any delay
             
             dojo.subscribe('log', this, "notif_log"); // This kind of notification does not change anything but log on the interface, no delay
             
@@ -3998,6 +4200,7 @@ function (dojo, declare) {
                 dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
                 dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('resetMonumentCounters_spectator', this, "notif_resetMonumentCounters_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('log_spectator', this, "notif_log_spectator"); // This kind of notification does not change anything but log on the interface, no delay
             };
@@ -4116,10 +4319,15 @@ function (dojo, declare) {
             if(card.new_max_age_on_board_to !== undefined) {
                 this.counter.max_age_on_board[card.owner_to].setValue(card.new_max_age_on_board_to);
             }
+            if(card.monument_counters[this.player_id] !== undefined) {
+                this.number_of_tucked_cards = card.monument_counters[this.player_id].number_of_tucked_cards;
+                this.number_of_scored_cards = card.monument_counters[this.player_id].number_of_scored_cards;
+            }
 
             // Handle case where card is being removed from the game.
             if (!zone_to) {
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+                this.refreshSpecialAchievementProgression();
                 return;
             }
 
@@ -4169,6 +4377,9 @@ function (dojo, declare) {
             if (this.canShowCardTooltip(card.id)) {
                 this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
             }
+            
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
 
         notif_logWithCardTooltips: function(notif) {
@@ -4234,6 +4445,9 @@ function (dojo, declare) {
                     this.enableButtonForSplayMode();
                 }
             }
+
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
         
         notif_rearrangedPile: function(notif) {
@@ -4254,6 +4468,9 @@ function (dojo, declare) {
                     this.publicationSwap(player_id, permuted_zone, permutation.position, permutation.delta);
                 }
             }
+            
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
         
         notif_removedHandsBoardsAndScores: function(notif) {
@@ -4300,6 +4517,9 @@ function (dojo, declare) {
             // Disable the button for splay mode
             this.disableButtonForSplayMode();
             this.number_of_splayed_piles = 0;
+
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
 
         notif_removedTopCardsAndHands: function(notif) {
@@ -4320,6 +4540,9 @@ function (dojo, declare) {
                     this.counter.ressource_count[player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
                 }
             }
+
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
 
         notif_removedPlayer: function(notif) {
@@ -4376,6 +4599,12 @@ function (dojo, declare) {
                     dojo.query(".player_info .ressource_" + icon).style("opacity", 1);
                 }
             }
+        },
+
+        notif_resetMonumentCounters: function(notif) {
+            this.number_of_scored_cards = 0;
+            this.number_of_tucked_cards = 0;
+            this.refreshSpecialAchievementProgression();
         },
         
         notif_log: function(notif) {
@@ -4451,6 +4680,14 @@ function (dojo, declare) {
             
             // Call normal notif
             this.notif_updateResourcesForArtifactOnDisplay(notif);
+        },
+
+        notif_resetMonumentCounters_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+            
+            // Call normal notif
+            this.notif_resetMonumentCounters(notif);
         },
         
         notif_log_spectator: function(notif) {
