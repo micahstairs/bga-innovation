@@ -105,8 +105,6 @@ function (dojo, declare) {
             this.number_of_tucked_cards = 0;
             this.number_of_scored_cards = 0;
 
-            this.note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
-
             this.arrows_for_expanded_mode = "&gt;&gt; &lt;&lt;"; // >> <<
             this.arrows_for_compact_mode = "&lt;&lt; &gt;&gt;"; // << >>
             this.number_of_splayed_piles = null;
@@ -1443,7 +1441,7 @@ function (dojo, declare) {
                 var name = _(card_data.name).toUpperCase();
                 var text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
                 if (card_id == 106) {
-                    text += ` ${this.note_for_monument}`;
+                    text += ` ${_("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")}`;
                 }
                 if (card_data.alternative_condition_for_claiming != null) {
                     text += ` ${this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip')}`;
@@ -2738,7 +2736,7 @@ function (dojo, declare) {
             var card_data = this.cards[card.id];
             var name = _(card_data.name).toUpperCase();
             var is_monument = card.id == 106;
-            var note_for_monument = this.note_for_monument;
+            var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
             var div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
             var div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
@@ -4319,7 +4317,7 @@ function (dojo, declare) {
             if(card.new_max_age_on_board_to !== undefined) {
                 this.counter.max_age_on_board[card.owner_to].setValue(card.new_max_age_on_board_to);
             }
-            if(card.monument_counters[this.player_id] !== undefined) {
+            if(card.monument_counters !== undefined && card.monument_counters[this.player_id] !== undefined) {
                 this.number_of_tucked_cards = card.monument_counters[this.player_id].number_of_tucked_cards;
                 this.number_of_scored_cards = card.monument_counters[this.player_id].number_of_scored_cards;
             }
