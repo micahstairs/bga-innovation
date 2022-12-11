@@ -351,13 +351,13 @@ function (dojo, declare) {
                 this.num_cards_in_row.achievements = this.number_of_achievements_needed_to_win;
             }
             
-            this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
+            this.num_cards_in_row.score = parseInt(score_width / (this.delta.score.x));
             this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
 
             // Split the space between the score and the forecast
             if (gamedatas.echoes_expansion_enabled) {
-                this.num_cards_in_row.forecast = this.num_cards_in_row.forecast / 2;
-                this.num_cards_in_row.score = this.num_cards_in_row.score / 2;
+                this.num_cards_in_row.forecast = Math.floor(this.num_cards_in_row.forecast / 2);
+                this.num_cards_in_row.score = Math.floor(this.num_cards_in_row.score / 2);
             }
 
             // Defining the number of cards the window for forecast verso can host
@@ -645,6 +645,9 @@ function (dojo, declare) {
                     }
                 }
             }
+            if (!this.echoes_expansion_enabled) {
+                dojo.byId('forecast_text_' + this.player_id).style.display = 'none';
+            }
             
             // PLAYERS' SCORE
             this.zone.score = {};
@@ -675,7 +678,7 @@ function (dojo, declare) {
             }
 
             // My forecast: create an extra zone to show the versos of the cards at will in a windows
-            if (!this.isSpectator) {
+            if (!this.isSpectator && this.echoes_expansion_enabled) {
                 this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>Close</a>");
                 this.zone.my_forecast_verso = this.createZone('my_forecast_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_forecast_verso, left_to_right=true);
@@ -730,8 +733,10 @@ function (dojo, declare) {
             }
             
             if (!this.isSpectator) {
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+                if (this.echoes_expansion_enabled) {
+                    dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
+                    dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+                }
                 dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
                 dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
                 dojo.query('#progress_' + this.player_id + ' .achievement_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(${n} needed to win)').replace('${n}', gamedatas.number_of_achievements_needed_to_win) + '</span>';

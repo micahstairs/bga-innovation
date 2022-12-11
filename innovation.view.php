@@ -96,7 +96,7 @@
                                                     "OPT_SCORE_CLASS" => " class='score_show_window'",
                                                     "HAND" => self::_("Hand"),
                                                     "DISPLAY" => self::_("Artifact on Display"),
-                                                    "FORECAST_PILE" => self::_("Forecast pile"),
+                                                    "FORECAST_PILE" => self::_("Forecast"),
                                                     "SCORE_PILE" => self::_("Score pile"),
                                                     "ACHIEVEMENTS" => self::_("Achievements")
                                                     ) );
