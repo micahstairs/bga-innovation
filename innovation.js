@@ -1035,7 +1035,6 @@ function (dojo, declare) {
                     this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
                     break;
                 case 'dogmaPromotedPlayerTurn':
-                    // TODO(ECHOES): Add special case for Battleship Yamato.
                     var card_id = parseInt(args.args.promoted_card_id);
                     var promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
                     promoted_card.addClass("clickable");
