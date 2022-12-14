@@ -1895,7 +1895,7 @@ class Innovation extends Table
                 $log = $log.', ';
             }
             if ($card['age'] != null) {
-                $log = $log."<span class='square N age age_".$card['age']."'>".$card['age']."</span> ";
+                $log = $log."<span class='square N age age_".$card['age']." type_".$card['type']."'>".$card['age']."</span> ";
             }
             $log = $log.'<span id=\''.uniqid().'\'class=\'card_name card_id_'.$card['id'].'\'>${name_'.$i.'}</span>';
             $args['name_'.$i] = self::getCardName($card['id']);
@@ -1909,7 +1909,11 @@ class Innovation extends Table
         
         // Delimiters for age icon
         if (strpos($text, '{<}') > -1) {
-            $delimiters['<'] = "<span class='square N age'>";
+            if ($card_id == null){
+                $delimiters['<'] = "<span class='square N age'>";
+            } else {
+                $delimiters['<'] = "<span class='square N age type_".self::getCardInfo($card_id)['type']."'>";
+            }
             $delimiters['>'] = "</span>";
         }
 
@@ -3635,7 +3639,7 @@ class Innovation extends Table
     function getAgeSquare($age) {
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
     }
-    
+
     function notifyDogma($card) {
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];

@@ -1174,6 +1174,26 @@
   width: 13px;
   height: 12px;
 }
+.square.N.age.type_0, .square.N.age.type_1, .square.N.age.type_2, .square.N.age.type_3, .square.N.age.type_4 {
+  border: 1px solid black;
+  color: black;
+  font-weight: bold;
+}
+.square.N.age.type_0 {
+  background-color: #f0d68c;
+}
+.square.N.age.type_1 {
+  background-color: #d2b7ff;
+}
+.square.N.age.type_2 {
+  background-color: #ff9fe5;
+}
+.square.N.age.type_3 {
+  background-color: #3ce8ff;
+}
+.square.N.age.type_4 {
+  background-color: #16eb54;
+}
 .square.N.icon_1 {
   background-position-x: 0px;
 }
@@ -2267,7 +2287,7 @@
   background-color: #f0d68c;
 }
 .recto.S.simplified_card_back.type_1 {
-  background-color: #be97ff;
+  background-color: #d2b7ff;
 }
 .recto.S.simplified_card_back.type_2 {
   background-color: #ff9fe5;
