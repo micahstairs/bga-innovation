@@ -444,17 +444,6 @@ function (dojo, declare) {
             if (num_sets > 2) {
                 this.delta.deck = {"x": 0.25, "y": 0.25}; // overlap
             }
-
-            // Button for view full
-            this.addButtonForViewFull();
-
-            // Button for display mode
-            this.addButtonForSplayMode();
-            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
-                this.enableButtonForSplayMode();
-            }
-            // Button for looking at special achievements
-            this.addButtonForSpecialAchievements();
             
             // DECKS
             this.zone.deck = {};
@@ -815,7 +804,16 @@ function (dojo, declare) {
                 }
             }
 
-            // Update special achievements overview with progression towards each achievement
+            // Button for view full
+            this.addButtonForViewFull();
+
+            // Button for display mode
+            this.addButtonForSplayMode();
+            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
+                this.enableButtonForSplayMode();
+            }
+            // Button for looking at special achievements
+            this.addButtonForSpecialAchievements();
             this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.refreshSpecialAchievementProgression();
