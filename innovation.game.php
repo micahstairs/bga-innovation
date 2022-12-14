@@ -4164,6 +4164,10 @@ class Innovation extends Table
         return self::getCardsInLocation($player_id, 'hand');
     }
 
+    function countCardsInHand($player_id) {
+        return self::countCardsInLocation($player_id, 'hand');
+    }
+
     function getCardsInScorePile($player_id) {
         return self::getCardsInLocation($player_id, 'score');
     }
@@ -12569,7 +12573,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 341, Echoes age 1: Soap
             case "341N1":
-                if (self::getCardsInHand($player_id) > 0) {
+                if (self::countCardsInHand($player_id) > 0) {
                     $step_max = 2;
                 }
                 break;
@@ -12581,7 +12585,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "342E1":
-                if (self::getCardsInHand($player_id) > 0) {
+                if (self::countCardsInHand($player_id) > 0) {
                     $step_max = 1;
                 }
                 break;
@@ -12679,7 +12683,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 349, Echoes age 2: Glassblowing
             case "349E1":
-                if (count(self::getCardsInHand($player_id)) > 0) {
+                if (self::countCardsInHand($player_id) > 0) {
                     $step_max = 1;
                 }
                 break;
