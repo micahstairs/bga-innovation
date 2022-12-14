@@ -1522,7 +1522,8 @@ function (dojo, declare) {
                             numerator = 0;
                             denominator = 8;
                             for (var i = 0; i < 5; i++) {
-                                numerator += self.getVisibleBonusIconsInPile(self.zone.board[self.player_id][i].items).length;
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                numerator += self.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction).length;
                             }
                             break;
                         case 436:
