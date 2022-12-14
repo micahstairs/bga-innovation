@@ -1895,7 +1895,7 @@ class Innovation extends Table
                 $log = $log.', ';
             }
             if ($card['age'] != null) {
-                $log = $log."<span class='square N age age_".$card['age']."'>".$card['age']."</span> ";
+                $log = $log."<span class='square N age age_".$card['age']." type_".$card['type']."'>".$card['age']."</span> ";
             }
             $log = $log.'<span id=\''.uniqid().'\'class=\'card_name card_id_'.$card['id'].'\'>${name_'.$i.'}</span>';
             $args['name_'.$i] = self::getCardName($card['id']);
@@ -1909,7 +1909,11 @@ class Innovation extends Table
         
         // Delimiters for age icon
         if (strpos($text, '{<}') > -1) {
-            $delimiters['<'] = "<span class='square N age'>";
+            if ($card_id == null){
+                $delimiters['<'] = "<span class='square N age'>";
+            } else {
+                $delimiters['<'] = "<span class='square N age type_".self::getCardInfo($card_id)['type']."'>";
+            }
             $delimiters['>'] = "</span>";
         }
 
@@ -3635,7 +3639,7 @@ class Innovation extends Table
     function getAgeSquare($age) {
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
     }
-    
+
     function notifyDogma($card) {
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];
@@ -4162,6 +4166,10 @@ class Innovation extends Table
 
     function getCardsInHand($player_id) {
         return self::getCardsInLocation($player_id, 'hand');
+    }
+
+    function countCardsInHand($player_id) {
+        return self::countCardsInLocation($player_id, 'hand');
     }
 
     function getCardsInScorePile($player_id) {
@@ -12569,7 +12577,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 341, Echoes age 1: Soap
             case "341N1":
-                if (self::getCardsInHand($player_id) > 0) {
+                if (self::countCardsInHand($player_id) > 0) {
                     $step_max = 2;
                 }
                 break;
@@ -12581,7 +12589,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "342E1":
-                if (self::getCardsInHand($player_id) > 0) {
+                if (self::countCardsInHand($player_id) > 0) {
                     $step_max = 1;
                 }
                 break;
@@ -12679,7 +12687,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 349, Echoes age 2: Glassblowing
             case "349E1":
-                if (count(self::getCardsInHand($player_id)) > 0) {
+                if (self::countCardsInHand($player_id) > 0) {
                     $step_max = 1;
                 }
                 break;
