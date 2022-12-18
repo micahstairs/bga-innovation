@@ -1133,6 +1133,26 @@
 			line-height: 12px;
 			width: 13px;
 			height: 12px;
+            &.type_0, &.type_1, &.type_2, &.type_3, &.type_4 {
+                border: 1px solid black;
+                color: black;
+                font-weight: bold;
+            }
+            &.type_0 {
+                background-color: #f0d68c;
+            }
+            &.type_1 {
+                background-color: #d2b7ff;
+            }
+            &.type_2 {
+                background-color: #ff9fe5;
+            }
+            &.type_3 {
+                background-color: #3ce8ff;
+            }
+            &.type_4 {
+                background-color: #16eb54;
+            }
 		}
         @include m.generate-icon-x-position(1, 6, 0, 15.5px);
     }
@@ -1951,7 +1971,7 @@
                 background-color: #f0d68c;
             }
             &.type_1 {
-                background-color: #be97ff;
+                background-color: #d2b7ff;
             }
             &.type_2 {
                 background-color: #ff9fe5;

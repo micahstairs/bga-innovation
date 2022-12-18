@@ -444,17 +444,6 @@ function (dojo, declare) {
             if (num_sets > 2) {
                 this.delta.deck = {"x": 0.25, "y": 0.25}; // overlap
             }
-
-            // Button for view full
-            this.addButtonForViewFull();
-
-            // Button for display mode
-            this.addButtonForSplayMode();
-            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
-                this.enableButtonForSplayMode();
-            }
-            // Button for looking at all cards (including special achievements)
-            this.addButtonForBrowsingCards();
             
             // DECKS
             this.zone.deck = {};
@@ -815,7 +804,16 @@ function (dojo, declare) {
                 }
             }
 
-            // Update special achievements overview with progression towards each achievement
+            // Button for view full
+            this.addButtonForViewFull();
+
+            // Button for display mode
+            this.addButtonForSplayMode();
+            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
+                this.enableButtonForSplayMode();
+            }
+            // Button for looking at special achievements
+            this.addButtonForSpecialAchievements();
             this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.refreshSpecialAchievementProgression();
@@ -1035,7 +1033,6 @@ function (dojo, declare) {
                     this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
                     break;
                 case 'dogmaPromotedPlayerTurn':
-                    // TODO(ECHOES): Add special case for Battleship Yamato.
                     var card_id = parseInt(args.args.promoted_card_id);
                     var promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
                     promoted_card.addClass("clickable");
@@ -1556,7 +1553,8 @@ function (dojo, declare) {
                             numerator = 0;
                             denominator = 8;
                             for (var i = 0; i < 5; i++) {
-                                numerator += self.getVisibleBonusIconsInPile(self.zone.board[self.player_id][i].items).length;
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                numerator += self.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction).length;
                             }
                             break;
                         case 436:
