@@ -552,7 +552,6 @@ function (dojo, declare) {
                 }
                 this.createAndAddToZone(this.zone.special_achievements["0"], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                 this.addTooltipForCard(achievement);
-                dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
             }
 
             // Add another button here to open up the special achievements popup
@@ -812,8 +811,14 @@ function (dojo, declare) {
             if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
                 this.enableButtonForSplayMode();
             }
-            // Button for looking at special achievements
-            this.addButtonForSpecialAchievements();
+            // Button for looking at cards (including special achievements)
+            this.addButtonForBrowsingCards();
+            for (var i = 0; i < gamedatas.unclaimed_achievements.length; i++) {
+                var achievement = gamedatas.unclaimed_achievements[i];
+                if (achievement.age === null) {
+                    dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
+                }
+            }
             this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.refreshSpecialAchievementProgression();
