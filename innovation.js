@@ -552,13 +552,12 @@ function (dojo, declare) {
                 }
                 this.createAndAddToZone(this.zone.special_achievements["0"], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                 this.addTooltipForCard(achievement);
-                dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
             }
 
             // Add another button here to open up the special achievements popup
-            var button = this.format_string_recursive("<i id='browse_special_achievements_small_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
+            var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
             dojo.place(button, 'special_achievements', 'after');
-            this.on(dojo.query('#browse_special_achievements_small_button'), 'onclick', 'click_open_special_achievements_window');
+            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_card_browsing_window');
             
             // PLAYERS' HANDS
             this.zone.hand = {};
@@ -812,8 +811,14 @@ function (dojo, declare) {
             if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
                 this.enableButtonForSplayMode();
             }
-            // Button for looking at special achievements
-            this.addButtonForSpecialAchievements();
+            // Button for looking at cards (including special achievements)
+            this.addButtonForBrowsingCards();
+            for (var i = 0; i < gamedatas.unclaimed_achievements.length; i++) {
+                var achievement = gamedatas.unclaimed_achievements[i];
+                if (achievement.age === null) {
+                    dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
+                }
+            }
             this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.refreshSpecialAchievementProgression();
@@ -1413,15 +1418,15 @@ function (dojo, declare) {
             change_display_mode_button.removeClass('disabled');
         },
 
-        addButtonForSpecialAchievements : function() {
+        addButtonForBrowsingCards : function() {
             // Build button
-            var button_text = _("Browse special achievements");
-            var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': button_text, 'i18n': ['button_text']});
+            var button_text = _("Browse all cards");
+            var button = this.format_string_recursive("<i id='browse_all_cards_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': button_text, 'i18n': ['button_text']});
             dojo.place(button, 'change_display_mode_button', 'after');
-            this.addCustomTooltip('browse_special_achievements_button', '<p>' + _('Browse the full list of special achievement cards.') + '</p>', "")
+            this.addCustomTooltip('browse_all_cards_button', '<p>' + _('Browse the full list of cards, including special achievement.') + '</p>', "")
 
             // Build popup box
-            this.special_achievements_window = new dijit.Dialog({ 'title': _("List of Special Achievements") });
+            this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
             var ids = [106, 105, 108, 107, 109];
             if (this.cities_expansion_enabled) {
                 ids.push(325, 326, 327, 328, 329);
@@ -1431,6 +1436,33 @@ function (dojo, declare) {
             }
             // TODO(FIGURES): Add special achievements.
             var content = "";
+            
+            content += "<div id='browse_cards_buttons_row_1'>";
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_0'>" + _("Base Set") + "</div>";
+            if (this.artifacts_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_1'>" + _("Artifacts") + "</div>";
+            }
+            if (this.cities_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_2'>" + _("Cities") + "</div>";
+            }
+            if (this.echoes_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_3'>" + _("Echoes") + "</div>";
+            }
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray selected' id='browse_special_achievements'>" + _("Special Achievements") + "</div>";
+            // TODO(FIGURES): Add button for Figures.
+            content += "</div>";
+
+            content += "<div id='browse_cards_buttons_row_2'>";
+            for (var age = 1; age <= 10; age++) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
+            }
+            if (this.artifacts_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_relics'>" + _("Relics") + "</div>";
+            }
+            content += "</div>";
+            content += "<div id='browse_card_summaries'></div>";
+
+            content += "<div id='special_achievement_summaries'>";
             for (var i = 0; i < ids.length; i++) {
                 var card_id = ids[i];
                 var card_data = this.cards[card_id];
@@ -1448,11 +1480,15 @@ function (dojo, declare) {
                 content += `<div class="special_achievement_text">${text}</div>`
                 content += `</div></br>`;
             }
-            this.special_achievements_window.attr("content", content + "<a id='special_achievements_close_window' class='bgabutton bgabutton_blue'>Close</a>");
+            content += `</div>`;
+            this.card_browsing_window.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>Close</a>");
+            dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
 
             // Make everything clickable
-            dojo.connect($('special_achievements_close_window'), 'onclick', this, 'click_close_special_achievements_window');
-            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievements_window');
+            this.on(dojo.query('#browse_all_cards_button'), 'onclick', 'click_open_card_browsing_window');
+            this.on(dojo.query('#close_card_browser_button'), 'onclick', 'click_close_card_browsing_window');
+            this.on(dojo.query('.browse_cards_button:not(#browse_special_achievements)'), 'onclick', 'click_browse_cards');
+            this.on(dojo.query('#browse_special_achievements'), 'onclick', 'click_browse_special_achievements');
         },
 
         refreshSpecialAchievementProgression : function() {
@@ -2684,6 +2720,15 @@ function (dojo, declare) {
 
             var graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
             return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
+        },
+
+        createCardForCardBrowser : function(id) {
+            var card = this.cards[id];
+            var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, 'M card');
+            var HTML_inside = this.writeOverCard(card, 'M');
+            var simplified_card_back = this.prefs[110].value == 2;
+            var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
+            return `<div id = 'browse_card_id_${id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
         },
         
         writeOverCard : function(card, size) {
@@ -4138,12 +4183,96 @@ function (dojo, declare) {
             }
         },
 
-        click_open_special_achievements_window : function() {
-            this.special_achievements_window.show();
+        click_open_card_browsing_window : function() {
+            this.card_browsing_window.show();
         },
 
-        click_close_special_achievements_window : function() {
-            this.special_achievements_window.hide();
+        click_close_card_browsing_window : function() {
+            this.card_browsing_window.hide();
+        },
+
+        click_browse_cards : function(event) {
+            var id = dojo.getAttr(event.currentTarget, 'id');
+
+            dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
+
+            if (id.startsWith('browse_cards_type_')) {
+                dojo.query('#browse_cards_buttons_row_1 > .browse_cards_button').removeClass('selected');
+                dojo.query(`#${id}`).addClass('selected');
+                dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
+                if (id == 'browse_cards_type_1') {
+                    dojo.byId('browse_relics').style.display = 'inline-block';
+                } else {
+                    dojo.byId('browse_relics').style.display = 'none';
+                }
+                if (dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button.selected').length == 0) {
+                    dojo.query('#browse_cards_age_1').addClass('selected');
+                }
+            } else {
+                dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button').removeClass('selected');
+                dojo.query(`#${id}`).addClass('selected');
+            }
+
+            dojo.byId('browse_card_summaries').style.display = 'block';
+            dojo.query('#special_achievement_summaries').addClass('heightless');
+
+            var node = dojo.query('#browse_card_summaries')[0];
+            node.innerHTML = '';
+
+            // Special case for relics
+            if (dojo.query(`#browse_relics.selected`).length > 0) {
+                for (var i = 215; i <= 219; i++) {
+                    if (this.canShowCardTooltip(i)) {
+                        node.innerHTML += this.createCardForCardBrowser(i);
+                    }
+                }
+                return;
+            }
+
+            // Figure out which set is selected
+            var type = 0;
+            for (var i = 0; i <= 4; i++) {
+                if (dojo.query(`#browse_cards_type_${i}.selected`).length > 0) {
+                    type = i;
+                }
+            }
+
+            // Figure out which age is selected
+            var age = 1;
+            for (var i = 1; i <= 10; i++) {
+                if (dojo.query(`#browse_cards_age_${i}.selected`).length > 0) {
+                    age = i;
+                }
+            }
+
+            // Determine range of cards to render            
+            var min_id = type * 110 + age * 10 - 5;
+            var max_id = min_id + 9;
+            if (age == 1) {
+                min_id -= 5;
+            }
+
+            // Special case for relics
+            if (dojo.query(`#browse_relics.selected`).length > 0) {
+                min_id = 215;
+                max_id = 219;
+            }
+
+            // Add cards to popup
+            for (var i = min_id; i <= max_id; i++) {
+                node.innerHTML += this.createCardForCardBrowser(i);
+                // TODO(LATER): Figure out why this tooltip isn't working.
+                // var card = this.cards[i];
+                // this.addCustomTooltip(`browse_card_id_${i}`, this.createCard(i, card.age, card.type, card.is_relic, "L card", card), "");
+            }
+        },
+
+        click_browse_special_achievements : function() {
+            dojo.query('.browse_cards_button').removeClass('selected');
+            dojo.query('#browse_special_achievements').addClass('selected');
+            dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
+            dojo.byId('browse_card_summaries').style.display = 'none';
+            dojo.query('#special_achievement_summaries').removeClass('heightless');
         },
         
         ///////////////////////////////////////////////////

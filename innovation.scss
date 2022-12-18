@@ -119,19 +119,33 @@
 #display_button_bar {
     height: 49px;
 }
-#change_display_mode_button, #change_view_full_button, #browse_special_achievements_button {
+#change_display_mode_button, #change_view_full_button, #browse_all_cards_button {
     display: inline-block;
     font-size: 12px;
     margin-left: 5px;
     background-color: rgba(255,255,255,.5);
     border-style: dotted;
 }
-#browse_special_achievements_small_button {
+#browse_cards_buttons_row_1, #browse_cards_buttons_row_2 {
+    text-align: center;
+}
+.browse_cards_button {
+    margin: 10px;
+    &.selected {
+        background: #dedede;
+        box-shadow: inset 0px 0px 5px #676767;
+    }
+}
+#browse_special_achievements_button {
     display: flex;
     text-align: center;
     width: fit-content;
     margin: auto;
     margin-top: 10px;
+}
+#special_achievement_summaries.heightless {
+    height: 0px;
+    visibility: hidden;
 }
 .special_achievement_summary {
     display: flex;
