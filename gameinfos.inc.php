@@ -44,6 +44,9 @@ $gameinfos = [
     // Time in second add to a player when "giveExtraTime" is called (speed profile = slow)
     'slow_additional_time' => 480,
 
+    // This description will be used as a tooltip to explain the tie breaker to the players.
+    'tie_breaker_description' => totranslate("Number of achievements if the game ended by score. Else this value is set to zero and is irrelevant: there is no tie breaker."),
+
     // The game end result will display "Winner" for the 1st player(s) and "Loser" for all other players
     'losers_not_ranked' => false,
 
