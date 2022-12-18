@@ -436,6 +436,7 @@ function (dojo, declare) {
             }
 
             this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
+            this.relics_enabled = gamedatas.relics_enabled;
             this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
             this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
             this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
@@ -1456,7 +1457,7 @@ function (dojo, declare) {
             for (var age = 1; age <= 10; age++) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
             }
-            if (this.artifacts_expansion_enabled) {
+            if (this.relics_enabled) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_relics'>" + _("Relics") + "</div>";
             }
             content += "</div>";
@@ -4200,10 +4201,8 @@ function (dojo, declare) {
                 dojo.query('#browse_cards_buttons_row_1 > .browse_cards_button').removeClass('selected');
                 dojo.query(`#${id}`).addClass('selected');
                 dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
-                if (id == 'browse_cards_type_1') {
-                    dojo.byId('browse_relics').style.display = 'inline-block';
-                } else {
-                    dojo.byId('browse_relics').style.display = 'none';
+                if (this.relics_enabled) {
+                    dojo.byId('browse_relics').style.display = (id == 'browse_cards_type_1') ? 'inline-block' : 'none';
                 }
                 if (dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button.selected').length == 0) {
                     dojo.query('#browse_cards_age_1').addClass('selected');
