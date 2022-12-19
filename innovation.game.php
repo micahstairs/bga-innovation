@@ -6534,7 +6534,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function getIndexedAuxiliaryValue($index_id) {
         $nesting_index = self::getGameStateValue('current_nesting_index');
-        return self::getUniqueValueFromDB(self::format("
+        $result = self::getUniqueValueFromDB(self::format("
             SELECT
                 value
             FROM
@@ -6545,6 +6545,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ",
             array('nesting_index' => $nesting_index, 'index_id' => $index_id)
        ));
+       if ($result == null) {
+        $result = -1;
+       }
+       return $result;
     }
     
     /** Nested dogma excution management system: FIFO stack **/
@@ -12858,7 +12862,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "359N1":
-                $step_max = 1;
+                // Only execute the non-demand if the echo effect was executed
+                if (self::getIndexedAuxiliaryValue($player_id) >= 0) {
+                    $step_max = 1;
+                }
                 break;
 
             // id 360, Echoes age 3: Homing Pigeons
@@ -13593,24 +13600,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "391N1":
                 // "Score the top two non-bottom cards of the color of the last card you tucked due to Dentures."
-                $color = self::getIndexedAuxiliaryValue($player_id);
+                $color = self::getIndexedAuxiliaryValue($player_id); // NOTE: The color is -1 if the Echo effect was not executed
                 $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 
                 $continue = false;
                 do {
-                    if ($color_count[$color] > 2) {
+                    if ($color >= 0 && $color_count[$color] > 2) {
                         // Score the top two cards
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $continue = false;
-                    } else if ($color_count[$color] == 2) {
+                    } else if ($color >= 0 && $color_count[$color] == 2) {
                         // Score the top card only
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $continue = false;
-                    } else if ($color_count[$color] == 1) {
+                    } else if ($color < 0 || $color_count[$color] == 1) {
                         // "If there are none to score, draw and tuck a 6, then repeat this dogma effect."
                         $continue = true;
                         $card = self::executeDrawAndTuck($player_id, 6);
@@ -14185,7 +14192,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "423N1":
                 // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
-                self::executeNonDemandEffects(self::getCardInfo(self::getIndexedAuxiliaryValue($player_id)));
+                $melded_card_id = self::getIndexedAuxiliaryValue($player_id);
+                if ($melded_card_id != null) { // This check is required since the echo effect is not always executed during nested execution
+                    self::executeNonDemandEffects(self::getCardInfo($melded_card_id));
+                }
                 break;
 
             case "423N2":
