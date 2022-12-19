@@ -38,7 +38,7 @@
   background-color: #ebd5bd;
 }
 
-#debug_card_list {
+#debug_card_list, #debug_color_list {
   height: 30px;
 }
 

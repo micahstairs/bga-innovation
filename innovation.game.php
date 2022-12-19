@@ -359,6 +359,13 @@ class Innovation extends Table
             throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
+    function debug_splay($color, $direction) {
+        if (self::getGameStateValue('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        $player_id = self::getCurrentPlayerId();
+        self::splay($player_id, $player_id, $color, $direction);
+    }
     //******
     
     /*

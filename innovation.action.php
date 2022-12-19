@@ -90,6 +90,13 @@
         $this->game->debug_foreshadow($card_id);
         self::ajaxResponse();
     }
+    public function debug_splay() {
+        self::setAjaxMode();
+        $color = self::getArg("color", AT_posint, true);
+        $direction = self::getArg("direction", AT_posint, true);
+        $this->game->debug_splay($color, $direction);
+        self::ajaxResponse();
+    }
     //******
       
     public function initialMeld() {
