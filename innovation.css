@@ -1181,6 +1181,10 @@
   width: 14px;
   height: 14px;
 }
+#pagemaintitletext > .square.N.age {
+  top: -2px;
+  position: relative;
+}
 .square.N.age {
   background-color: black;
   border: 1px solid white;

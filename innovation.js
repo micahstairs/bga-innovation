@@ -1971,7 +1971,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -1982,7 +1982,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -1995,7 +1995,7 @@ function (dojo, declare) {
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var no_effect = dogma_effect_info[id].no_effect;
                 dojo.attr(HTML_id, 'no_effect', no_effect);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -2006,7 +2006,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -3552,7 +3552,8 @@ function (dojo, declare) {
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
-            var card_name = dojo.attr(HTML_id, 'card_name');
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card_name = this.cards[card_id].name;
 
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Meld ${card_name}?"), {'card_name' : _(card_name)});
 
@@ -3573,16 +3574,16 @@ function (dojo, declare) {
             // Short timer (3 seconds)
             if (this.prefs[101].value == 2) {
                 wait_time = 2;
-            
+
             // Medium timer (5 seconds)
             } else if (this.prefs[101].value == 3) {
                 wait_time = 4;
-            
+
             // Long timer (10 seconds)
             } else if (this.prefs[101].value == 4) {
                 wait_time = 9;
             }
-            
+
             this.startActionTimer("meld_confirm_button", wait_time, this.action_confirmMeld, HTML_id);
         },
 
@@ -3624,58 +3625,67 @@ function (dojo, declare) {
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
-            var no_effect = dojo.attr(HTML_id, 'no_effect');
-            var card_name = dojo.attr(HTML_id, 'card_name');
-
-            if (no_effect) {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${card_name}? It will have no effect."), {'card_name' : _(card_name)});
-            } else {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${card_name}?"), {'card_name' : _(card_name)});
-            }
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name}?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
 
             // Add cancel button
             this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
             dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
             dojo.addClass("dogma_cancel_button", 'bgabutton_red');
 
-            // Add confirm button
-            this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
+            // Add confirm button for timer
+            this.addActionButton("dogma_confirm_timer_button", _("Confirm"), "action_manuallyConfirmTimerDogma");
 
-            $("dogma_confirm_button").innerHTML = _("Confirm");
-            dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
+            $("dogma_confirm_timer_button").innerHTML = _("Confirm");
+            dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
 
-            // If the card will not have an effect, force the player to manually click confirm
-            if (!no_effect) {
-                // When confirmation is disabled in game preferences, click the confirmation button instantly
-                var wait_time = 0;
+            // When confirmation is disabled in game preferences, click the confirmation button instantly
+            var wait_time = 0;
 
-                // Short timer (3 seconds)
-                if (this.prefs[100].value == 2) {
-                    wait_time = 2;
-                
-                // Medium timer (5 seconds)
-                } else if (this.prefs[100].value == 3) {
-                    wait_time = 4;
-                
-                // Long timer (10 seconds)
-                } else if (this.prefs[100].value == 4) {
-                    wait_time = 9;
-                }
-                
-                this.startActionTimer("dogma_confirm_button", wait_time, this.action_confirmDogma, HTML_id);
+            // Short timer (3 seconds)
+            if (this.prefs[100].value == 2) {
+                wait_time = 2;
+            
+            // Medium timer (5 seconds)
+            } else if (this.prefs[100].value == 3) {
+                wait_time = 4;
+            
+            // Long timer (10 seconds)
+            } else if (this.prefs[100].value == 4) {
+                wait_time = 9;
             }
+            
+            this.startActionTimer("dogma_confirm_timer_button", wait_time, this.action_manuallyConfirmTimerDogma, event);
         },
 
         action_cancelDogma : function(event) {
             this.stopActionTimer();
             this.resurrectClickEvents(true);
             dojo.destroy("dogma_cancel_button");
-            dojo.destroy("dogma_confirm_button");
+            dojo.destroy("dogma_confirm_timer_button");
+            dojo.destroy("dogma_confirm_warning_button");
         },
 
-        action_manuallyConfirmDogma : function(event) {
+        action_manuallyConfirmTimerDogma : function(event) {
             this.stopActionTimer();
-            var HTML_id = dojo.attr('dogma_confirm_button', 'html_id');
+            var HTML_id = dojo.attr('dogma_confirm_timer_button', 'html_id');
+
+            var no_effect = dojo.attr(HTML_id, 'no_effect');
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            if (no_effect) {
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? It will have no effect."), {'age': this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
+                dojo.destroy("dogma_confirm_timer_button");
+                this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
+                dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
+            } else {
+                this.action_confirmDogma(HTML_id);
+            }
+        },
+
+        action_manuallyConfirmWarningDogma : function(event) {
+            var HTML_id = dojo.attr('dogma_confirm_warning_button', 'html_id');
             this.action_confirmDogma(HTML_id);
         },
 
@@ -3685,7 +3695,8 @@ function (dojo, declare) {
             }
 
             dojo.destroy("dogma_cancel_button");
-            dojo.destroy("dogma_confirm_button");
+            dojo.destroy("dogma_confirm_timer_button");
+            dojo.destroy("dogma_confirm_warning_button");
 
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             this.ajaxcall("/innovation/innovation/dogma.html",
