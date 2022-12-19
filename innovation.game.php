@@ -1780,7 +1780,7 @@ class Innovation extends Table
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
             // Update counters for the Monument special achievement
-            // TODO(ECHOES): If there are any cards which tuck/score a card which belongs to another player, then
+            // TODO(ECHOES,FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
             // there is a bug here that we need to fix.
             if ($location_to == 'board' && $bottom_to) { // That's a tuck
                 self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
@@ -2221,7 +2221,7 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
             break;
         case 'achievements->hand':
-            // TODO(ECHOES,FIGURES): Update this if any cards transfer non-relic cards from a player's achievement pile to their hand.
+            // TODO(FIGURES): Update this if any cards transfer non-relic cards from a player's achievement pile to their hand.
             $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} from your achievements to your hand.');
             $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from his achievements to his hand.');
             break;
@@ -13136,8 +13136,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($all_bonuses) > 1) {
                     $age_to_foreshadow = array();
                     foreach ($all_bonuses as $bonus) {
-                        // TODO(ECHOES#472): The value here could be as high as 13 with a visible bonus of 11
-                        // which would end the game. This could be presented as a game-ending option like with Evolution.
+                        // TODO(https://github.com/micahstairs/bga-innovation/issues/472): The value here could be as high
+                        // as 13 with a visible bonus of 11 which would end the game. This could be presented as a
+                        // game-ending option like with Evolution.
                         $age_to_foreshadow[] = $bonus + 2;
                     }
                     $step_max = 1;
@@ -13788,7 +13789,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 401, Echoes age 7: Elevator
             case "401E1":
-                // TODO(ECHOES): Instead of clicking buttons to choose the top or bottom card, it would a better user experience
+                // TODO(LATER): Instead of clicking buttons to choose the top or bottom card, it would a better user experience
                 // if we allowed them to directly click on the cards (we will require an option to force the pile to expand so
                 // that the bottom and top cards are both visible).
                 $green_card_count = self::countCardsInLocationKeyedByColor($player_id, 'board')[2];
@@ -19635,7 +19636,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(ECHOES#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/472): This needs to have the "choose_draw_value" when
+            // that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
