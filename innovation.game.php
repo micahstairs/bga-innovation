@@ -8624,22 +8624,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 350, Echoes age 2: Scissors
             case "350N1B":
-                $message_for_player = clienttranslate('${You} must meld or score the selected card');
-                $message_for_others = clienttranslate('${player_name} must meld or score the selected card');
+            case "350N1D":
+                $selected_card = self::getCardInfo(self::getAuxiliaryValue2());
+                $card_args = self::getNotificationArgsForCardList([$selected_card]);
+                $message_args_for_player['selected_card'] = $card_args;
+                $message_args_for_others['selected_card'] = $card_args;
+                $message_for_player = clienttranslate('${You} must meld or score ${selected_card}');
+                $message_for_others = clienttranslate('${player_name} must meld or score ${selected_card}');
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Meld"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Score"), array()))
+                                array('value' => 1, 'text' => clienttranslate("Meld")),
+                                array('value' => 0, 'text' => clienttranslate("Score"))
                 );
                 break;
-
-            case "350N1D":
-                $message_for_player = clienttranslate('${You} must meld or score the selected card');
-                $message_for_others = clienttranslate('${player_name} must meld or score the selected card');
-                $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Meld"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Score"), array()))
-                );
-                break;                
                 
             // id 351, Echoes age 2: Toothbrush
             case "351E1A":
@@ -8897,7 +8893,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             //[SS]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             
             $card_names = self::getDogmaCardNames();
-            
+
             $args = array_merge(array(
                 // Public info
                 'card_name' => 'card_name',
