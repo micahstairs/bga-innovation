@@ -359,6 +359,13 @@ class Innovation extends Table
             throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
         }
     }
+    function debug_splay($color, $direction) {
+        if (self::getGameStateValue('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        $player_id = self::getCurrentPlayerId();
+        self::splay($player_id, $player_id, $color, $direction);
+    }
     //******
     
     /*
@@ -1780,7 +1787,7 @@ class Innovation extends Table
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
             // Update counters for the Monument special achievement
-            // TODO(ECHOES): If there are any cards which tuck/score a card which belongs to another player, then
+            // TODO(ECHOES,FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
             // there is a bug here that we need to fix.
             if ($location_to == 'board' && $bottom_to) { // That's a tuck
                 self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
@@ -2221,7 +2228,7 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic to his hand.');
             break;
         case 'achievements->hand':
-            // TODO(ECHOES,FIGURES): Update this if any cards transfer non-relic cards from a player's achievement pile to their hand.
+            // TODO(FIGURES): Update this if any cards transfer non-relic cards from a player's achievement pile to their hand.
             $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} from your achievements to your hand.');
             $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from his achievements to his hand.');
             break;
@@ -3404,7 +3411,7 @@ class Innovation extends Table
         }
     }
     
-    /** Notifies that the game ended due to achievements, returning the winning player(s) **/
+    /** Notify end of game **/
     function notifyEndOfGameByAchievements() {
         // Display who won and with how many achievements
         // (There can be weird cases when two players tie or one player get more achievements than needed if two or more special achievements are claimed at the same time)
@@ -3447,10 +3454,8 @@ class Innovation extends Table
                 }
             }
         }
-        return $winners;
     }
     
-    /** Notifies that the game ended due to score, returning the winning player(s) **/
     function notifyEndOfGameByScore() {
         $player_id = self::getGameStateValue('player_who_could_not_draw');
         $age_10 = self::getAgeSquare(10);
@@ -3469,31 +3474,14 @@ class Innovation extends Table
                 'player_name' => self::getPlayerNameFromId($player_id),
                 'age_10' => $age_10
             ));
+            
             self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'You' => 'You',
                 'age_10' => $age_10
             ));
-            // Sum the score of the teammates
-            self::DbQuery("
-                UPDATE
-                    player AS a
-                    LEFT JOIN (
-                        SELECT
-                            player_team, SUM(player_innovation_score) AS team_score
-                        FROM
-                            player
-                        GROUP BY
-                            player_team
-
-                    ) AS b ON a.player_team = b.player_team
-                SET
-                    a.player_innovation_score = b.team_score
-            ");
         }
-        return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_innovation_score = (SELECT MAX(player_innovation_score) FROM player)", true);
     }
     
-    /** Notifies that the game ended due to a dogma effect, returning the winning player(s) **/
     function notifyEndOfGameByDogma() {
         $player_id = self::getGameStateValue('winner_by_dogma');
         $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
@@ -3510,7 +3498,6 @@ class Innovation extends Table
                 ));
                 self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You meet the victory condition. You win!'), array());
             }
-            return array($player_id);
         } else { // Team play
             $teammate_id = self::getPlayerTeammate($player_id);
             $winning_team = array($player_id, $teammate_id);
@@ -3532,7 +3519,6 @@ class Innovation extends Table
                     'player_name' => self::getPlayerNameFromId($player_id)
                 ));
             }
-            return $winning_team;
         }
     }
     
@@ -5180,6 +5166,69 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getPlayerResourceCounts($player_id);
     }
     
+    function promoteScoreToBGAScore() {
+        // Called if the game ends by drawing. The innovation score is the main value to check to determine the winner and the number of achievements is used as a tie-breaker.
+        
+        // If team game, add the score of the teammate first
+        if (self::decodeGameType(self::getGameStateValue('game_type')) == 'team') {
+            self::DbQuery("
+            UPDATE
+                player AS a
+                LEFT JOIN (
+                    SELECT
+                        player_team, SUM(player_innovation_score) AS team_score
+                    FROM
+                        player
+                    GROUP BY
+                        player_team
+                
+                ) AS b ON a.player_team = b.player_team
+            SET
+                a.player_innovation_score = b.team_score
+            ");
+        }
+        
+        self::DbQuery("
+        UPDATE
+            player
+        SET
+            player_score_aux = player_score,
+            player_score = player_innovation_score
+        ");
+    }
+    
+    function binarizeBGAScore() {
+        // Called if the game ends by dogma. The innovation score is 1 for winners, 0 for losers. There is no tie-breaker.
+        self::DbQuery(self::format("
+        UPDATE
+            player
+        SET
+            player_score_aux = 0,
+            player_score = (CASE WHEN player_id = {winner} THEN 1 ELSE 0 END)
+        ",
+            array('winner' => self::getGameStateValue('winner_by_dogma'))        
+        ));
+        
+        if (self::decodeGameType(self::getGameStateValue('game_type')) == 'team') {
+            // Add the score of the teammate 0 + 0 for losers, 0 + 1 for winners
+            self::DbQuery("
+            UPDATE
+                player AS a
+                LEFT JOIN (
+                    SELECT
+                        player_team, SUM(player_score) AS team_score
+                    FROM
+                        player
+                    GROUP BY
+                        player_team
+                
+                ) AS b ON a.player_team = b.player_team
+            SET
+                a.player_score = b.team_score
+            ");
+        }
+    }
+    
     /** Information about players **/
     function getPlayerNameFromId($player_id) {
         // TODO(LATER): Identify and fix the nested execution bug which makes this hack necessary.
@@ -6534,7 +6583,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function getIndexedAuxiliaryValue($index_id) {
         $nesting_index = self::getGameStateValue('current_nesting_index');
-        return self::getUniqueValueFromDB(self::format("
+        $result = self::getUniqueValueFromDB(self::format("
             SELECT
                 value
             FROM
@@ -6545,6 +6594,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ",
             array('nesting_index' => $nesting_index, 'index_id' => $index_id)
        ));
+       if ($result == null) {
+        $result = -1;
+       }
+       return $result;
     }
     
     /** Nested dogma excution management system: FIFO stack **/
@@ -8613,22 +8666,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 350, Echoes age 2: Scissors
             case "350N1B":
-                $message_for_player = clienttranslate('${You} must meld or score the selected card');
-                $message_for_others = clienttranslate('${player_name} must meld or score the selected card');
+            case "350N1D":
+                $selected_card = self::getCardInfo(self::getAuxiliaryValue2());
+                $card_args = self::getNotificationArgsForCardList([$selected_card]);
+                $message_args_for_player['selected_card'] = $card_args;
+                $message_args_for_others['selected_card'] = $card_args;
+                $message_for_player = clienttranslate('${You} must meld or score ${selected_card}');
+                $message_for_others = clienttranslate('${player_name} must meld or score ${selected_card}');
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Meld"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Score"), array()))
+                                array('value' => 1, 'text' => clienttranslate("Meld")),
+                                array('value' => 0, 'text' => clienttranslate("Score"))
                 );
                 break;
-
-            case "350N1D":
-                $message_for_player = clienttranslate('${You} must meld or score the selected card');
-                $message_for_others = clienttranslate('${player_name} must meld or score the selected card');
-                $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Meld"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Score"), array()))
-                );
-                break;                
                 
             // id 351, Echoes age 2: Toothbrush
             case "351E1A":
@@ -8886,7 +8935,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             //[SS]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             
             $card_names = self::getDogmaCardNames();
-            
+
             $args = array_merge(array(
                 // Public info
                 'card_name' => 'card_name',
@@ -12858,7 +12907,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "359N1":
-                $step_max = 1;
+                // Only execute the non-demand if the echo effect was executed
+                if (self::getIndexedAuxiliaryValue($player_id) >= 0) {
+                    $step_max = 1;
+                }
                 break;
 
             // id 360, Echoes age 3: Homing Pigeons
@@ -13136,8 +13188,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($all_bonuses) > 1) {
                     $age_to_foreshadow = array();
                     foreach ($all_bonuses as $bonus) {
-                        // TODO(ECHOES#472): The value here could be as high as 13 with a visible bonus of 11
-                        // which would end the game. This could be presented as a game-ending option like with Evolution.
+                        // TODO(https://github.com/micahstairs/bga-innovation/issues/472): The value here could be as high
+                        // as 13 with a visible bonus of 11 which would end the game. This could be presented as a
+                        // game-ending option like with Evolution.
                         $age_to_foreshadow[] = $bonus + 2;
                     }
                     $step_max = 1;
@@ -13593,24 +13646,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "391N1":
                 // "Score the top two non-bottom cards of the color of the last card you tucked due to Dentures."
-                $color = self::getIndexedAuxiliaryValue($player_id);
+                $color = self::getIndexedAuxiliaryValue($player_id); // NOTE: The color is -1 if the Echo effect was not executed
                 $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 
                 $continue = false;
                 do {
-                    if ($color_count[$color] > 2) {
+                    if ($color >= 0 && $color_count[$color] > 2) {
                         // Score the top two cards
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $continue = false;
-                    } else if ($color_count[$color] == 2) {
+                    } else if ($color >= 0 && $color_count[$color] == 2) {
                         // Score the top card only
                         $card = self::getTopCardOnBoard($player_id, $color);
                         self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
                         $continue = false;
-                    } else if ($color_count[$color] == 1) {
+                    } else if ($color < 0 || $color_count[$color] == 1) {
                         // "If there are none to score, draw and tuck a 6, then repeat this dogma effect."
                         $continue = true;
                         $card = self::executeDrawAndTuck($player_id, 6);
@@ -13788,7 +13841,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 401, Echoes age 7: Elevator
             case "401E1":
-                // TODO(ECHOES): Instead of clicking buttons to choose the top or bottom card, it would a better user experience
+                // TODO(LATER): Instead of clicking buttons to choose the top or bottom card, it would a better user experience
                 // if we allowed them to directly click on the cards (we will require an option to force the pile to expand so
                 // that the bottom and top cards are both visible).
                 $green_card_count = self::countCardsInLocationKeyedByColor($player_id, 'board')[2];
@@ -14185,7 +14238,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "423N1":
                 // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
-                self::executeNonDemandEffects(self::getCardInfo(self::getIndexedAuxiliaryValue($player_id)));
+                $melded_card_id = self::getIndexedAuxiliaryValue($player_id);
+                if ($melded_card_id != null) { // This check is required since the echo effect is not always executed during nested execution
+                    self::executeNonDemandEffects(self::getCardInfo($melded_card_id));
+                }
                 break;
 
             case "423N2":
@@ -19635,7 +19691,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(ECHOES#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
+            // TODO(https://github.com/micahstairs/bga-innovation/issues/472): This needs to have the "choose_draw_value" when
+            // that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -20117,8 +20174,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed,deck',
             );
             break;
 
@@ -25312,31 +25369,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stJustBeforeGameEnd() {
         switch(self::getGameStateValue('game_end_type')) {
         case 0: // achievements
-            $winning_players = self::notifyEndOfGameByAchievements();
+            self::notifyEndOfGameByAchievements();
             self::setStat(true, 'end_achievements');
             break;
         case 1: // score
-            $winning_players = self::notifyEndOfGameByScore();
+            // Important value for winning is no more the number of achievements but the score
+            // Promote player score to BGA score
+            // Keeping the number of achivement as BGA auxiliary score as tie breaker
+            self::promoteScoreToBGAScore();
+            self::notifyEndOfGameByScore();
             self::setStat(true, 'end_score');
             break;
         case -1: // dogma
-            $winning_players = self::notifyEndOfGameByDogma();
+            // In that case, the score is modified so that the winner team got 1, the losers 0, there is no tie breaker
+            self::binarizeBGAScore();
+            self::notifyEndOfGameByDogma();
             self::setStat(true, 'end_dogma');
             break;
         default:
             break;
         }
-
-        // Give the winner(s) 1 gold star and 0 silver stars, and the loser(s) no stars.
-        self::DbQuery(self::format("
-            UPDATE
-                player
-            SET
-                player_score_aux = 0,
-                player_score = (CASE WHEN player_id IN ({winners}) THEN 1 ELSE 0 END)
-            ",
-            array('winners' => join($winning_players, ','))
-        ));
         
         self::trace('justBeforeGameEnd->gameEnd');
         $this->gamestate->nextState(); // End the game

@@ -38,7 +38,7 @@
   background-color: #ebd5bd;
 }
 
-#debug_card_list {
+#debug_card_list, #debug_color_list {
   height: 30px;
 }
 
@@ -1206,7 +1206,7 @@
   background-color: #ff9fe5;
 }
 .square.N.age.type_3 {
-  background-color: #3ce8ff;
+  background-color: #88d2ff;
 }
 .square.N.age.type_4 {
   background-color: #16eb54;
@@ -2310,7 +2310,7 @@
   background-color: #ff9fe5;
 }
 .recto.S.simplified_card_back.type_3 {
-  background-color: #3ce8ff;
+  background-color: #88d2ff;
 }
 .recto.S.simplified_card_back.type_4 {
   background-color: #16eb54;

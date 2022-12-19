@@ -141,7 +141,6 @@ function (dojo, declare) {
         //****** CODE FOR DEBUG MODE
         debug_draw: function() {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_draw.html",
                 {
                     lock: true,
@@ -152,7 +151,6 @@ function (dojo, declare) {
         },
         debug_meld: function() {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_meld.html",
                 {
                     lock: true,
@@ -163,7 +161,6 @@ function (dojo, declare) {
         },
         debug_tuck: function() {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_tuck.html",
                 {
                     lock: true,
@@ -174,7 +171,6 @@ function (dojo, declare) {
         },
         debug_score: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_score.html",
                 {
                     lock: true,
@@ -185,7 +181,6 @@ function (dojo, declare) {
         },  
         debug_achieve: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_achieve.html",
                 {
                     lock: true,
@@ -196,7 +191,6 @@ function (dojo, declare) {
         },
         debug_return: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_return.html",
                 {
                     lock: true,
@@ -207,7 +201,6 @@ function (dojo, declare) {
         },
         debug_topdeck: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_topdeck.html",
                 {
                     lock: true,
@@ -218,7 +211,6 @@ function (dojo, declare) {
         },
         debug_dig: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_dig.html",
                 {
                     lock: true,
@@ -229,7 +221,6 @@ function (dojo, declare) {
         },
         debug_foreshadow: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_foreshadow.html",
                 {
                     lock: true,
@@ -237,6 +228,51 @@ function (dojo, declare) {
                 },
                 this, function (result) { }, function (is_error) {}
             );      
+        },
+        debug_unsplay: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 0
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
+        debug_splay_left: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 1
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
+        debug_splay_right: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 2
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
+        debug_splay_up: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            console.log(debug_color_list.value);
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 3
+                },
+                this, function (result) { }, function (is_error) {}
+            );
         },
         //******
                 
@@ -258,26 +294,45 @@ function (dojo, declare) {
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
+
+                // Prepend UI elements for debug area
+                main_area.innerHTML =
+                    "</br><select id='debug_color_list'></select>"
+                    + "<button id='debug_unsplay' class='action-button debug_button bgabutton bgabutton_red'>UNSPLAY</button>"
+                    + "<button id='debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
+                    + "<button id='debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
+                    + "<button id='debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
+                    + main_area.innerHTML;
                 if (gamedatas.echoes_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
                 }
                 if (gamedatas.artifacts_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
                 }
-                main_area.innerHTML = "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML;
+                main_area.innerHTML =
+                    "<select id='debug_card_list'></select>"
+                    + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
+                    + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
+                    + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
+                    + "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>"
+                    + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
+                    + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
+                    + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
+                    + main_area.innerHTML;
 
+                // Populate dropdown lists
                 for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
                     var key = Object.keys(gamedatas.cards)[i];
                     var card = gamedatas.cards[key];
                     $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
                 }
+                $('debug_color_list').innerHTML += `<option value='0'>Blue</option>`;
+                $('debug_color_list').innerHTML += `<option value='1'>Red</option>`;
+                $('debug_color_list').innerHTML += `<option value='2'>Green</option>`;
+                $('debug_color_list').innerHTML += `<option value='3'>Yellow</option>`;
+                $('debug_color_list').innerHTML += `<option value='4'>Purple</option>`;
+
+                // Trigger events when buttons are clicked
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
                 dojo.connect($('debug_meld'), 'onclick', this, 'debug_meld');
                 dojo.connect($('debug_tuck'), 'onclick', this, 'debug_tuck');
@@ -291,7 +346,10 @@ function (dojo, declare) {
                 if (gamedatas.echoes_expansion_enabled) {
                     dojo.connect($('debug_foreshadow'), 'onclick', this, 'debug_foreshadow');
                 }
-
+                dojo.connect($('debug_unsplay'), 'onclick', this, 'debug_unsplay');
+                dojo.connect($('debug_splay_left'), 'onclick', this, 'debug_splay_left');
+                dojo.connect($('debug_splay_right'), 'onclick', this, 'debug_splay_right');
+                dojo.connect($('debug_splay_up'), 'onclick', this, 'debug_splay_up');
             }
             //******
         
@@ -436,6 +494,7 @@ function (dojo, declare) {
             }
 
             this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
+            this.relics_enabled = gamedatas.relics_enabled;
             this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
             this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
             this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
@@ -1456,7 +1515,7 @@ function (dojo, declare) {
             for (var age = 1; age <= 10; age++) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
             }
-            if (this.artifacts_expansion_enabled) {
+            if (this.relics_enabled) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_relics'>" + _("Relics") + "</div>";
             }
             content += "</div>";
@@ -4200,10 +4259,8 @@ function (dojo, declare) {
                 dojo.query('#browse_cards_buttons_row_1 > .browse_cards_button').removeClass('selected');
                 dojo.query(`#${id}`).addClass('selected');
                 dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
-                if (id == 'browse_cards_type_1') {
-                    dojo.byId('browse_relics').style.display = 'inline-block';
-                } else {
-                    dojo.byId('browse_relics').style.display = 'none';
+                if (this.relics_enabled) {
+                    dojo.byId('browse_relics').style.display = (id == 'browse_cards_type_1') ? 'inline-block' : 'none';
                 }
                 if (dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button.selected').length == 0) {
                     dojo.query('#browse_cards_age_1').addClass('selected');
