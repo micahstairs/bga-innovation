@@ -1127,6 +1127,15 @@
             width: 14px;
             height: 14px;
         }
+        &.music_note {
+            width: 16px;
+            height: 16px;
+            position: relative;
+            top: -1px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 306px auto !important;
+            background-position: -226px -22px !important;
+        }
         &.age {
 			@include m.square-age;
 			font-size: 11px;
