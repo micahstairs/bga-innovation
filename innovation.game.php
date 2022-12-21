@@ -7833,6 +7833,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $dogma_effect_info['players_executing_i_compel_effects'] = [];
         $dogma_effect_info['players_executing_i_demand_effects'] = [];
         $dogma_effect_info['players_executing_non_demand_effects'] = [];
+        $dogma_effect_info['players_executing_echo_effects'] = [];
 
         if (self::isCompelEffect($card['id']) === true) {
             $dogma_effect_info['players_executing_i_compel_effects'] =
@@ -7860,20 +7861,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
 
-        // Echo effects are conisdered non-demand effects (the same set of players execute both)
+        // NOTE: We slightly abuse the term "sharing" here since the following can include a player's teammate (even though
+        // that wouldn't trigger a sharing bonus)
+        $sharing_players =
+            self::getObjectListFromDB(self::format("
+                    SELECT
+                        player_id
+                    FROM
+                        player
+                    WHERE
+                        player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                        AND player_eliminated = 0
+                ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($launcher_id, $card);
         $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
-        if (self::getNonDemandEffect($card['id'], 1) !== null || $dogma_effect_info['num_echo_effects'] > 0) {
-            $dogma_effect_info['players_executing_non_demand_effects'] =
-                self::getObjectListFromDB(self::format("
-                        SELECT
-                            player_id
-                        FROM
-                            player
-                        WHERE
-                            player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
-                            AND player_eliminated = 0
-                    ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        if (self::getNonDemandEffect($card['id'], 1) !== null) {
+            $dogma_effect_info['players_executing_non_demand_effects'] = $sharing_players;
+        }
+        if ($dogma_effect_info['num_echo_effects'] > 0) {
+            $dogma_effect_info['players_executing_echo_effects'] = $sharing_players;
         }
 
         $dogma_effect_info['no_effect'] = self::dogmaHasNoEffect(
@@ -7882,6 +7888,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $dogma_effect_info['players_executing_i_compel_effects'],
             $dogma_effect_info['players_executing_i_demand_effects'],
             $dogma_effect_info['players_executing_non_demand_effects'],
+            $dogma_effect_info['players_executing_echo_effects'],
             $card_ids_with_visible_echo_effects
         );
 
@@ -7889,13 +7896,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns true if the dogma is guaranteed to have no effect (without revealing hidden info to the launching player). */
-    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players, $card_ids_with_visible_echo_effects) {
+    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players, $echo_players, $card_ids_with_visible_echo_effects) {
 
         $i_compel_will_be_executed = count($i_compel_players) > 0;
         $i_demand_will_be_executed = count($i_demand_players) > 0;
         $non_demand_will_be_executed = count($non_demand_players) > 0;
+        $echo_will_be_executed = count($echo_players) > 0;
 
-        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed) {
+        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed && !$echo_will_be_executed) {
             return true;
         }
 
@@ -7974,8 +7982,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case 407: // Bandage
                 case 411: // Air Conditioner
                 case 418: // Jet
-                    // These cards have no effect if all players executing the non-demand have empty hands.
-                    foreach ($non_demand_players as $player_id) {
+                    // These cards have no effect if all players executing the echo effect have empty hands.
+                    foreach ($echo_players as $player_id) {
                         if (self::countCardsInLocation($player_id, 'hand') > 0) {
                             return false;
                         }
