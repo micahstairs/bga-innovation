@@ -3626,6 +3626,10 @@ class Innovation extends Table
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
     }
 
+    function getMusicNoteIcon() {
+        return "<span title='music note' class='square N music_note'></span>";
+    }
+
     function notifyDogma($card) {
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];
@@ -13935,11 +13939,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] == 3)) { // up only
                     $cards_to_draw++;
                 }
+                self::notifyGeneralInfo(clienttranslate('There is ${n} ${music_note} visible across all player boards.'), array('n' => $cards_to_draw, 'music_note' => self::getMusicNoteIcon()));
                 if ($cards_to_draw == 4) {
                     // "you win"
-                    // TODO(ECHOES): Update these log statements to include the music note icon.
-                    self::notifyPlayer($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Saxophone');
                     throw new EndOfGame();
