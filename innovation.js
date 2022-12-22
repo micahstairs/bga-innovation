@@ -264,7 +264,6 @@ function (dojo, declare) {
         },
         debug_splay_up: function() {
             var debug_color_list = document.getElementById("debug_color_list");
-            console.log(debug_color_list.value);
             this.ajaxcall("/innovation/innovation/debug_splay.html",
                 {
                     lock: true,
@@ -1738,6 +1737,17 @@ function (dojo, declare) {
         
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
+
+            // The score pile and forecast are a special case because both the front and back are rendered
+            if (card.owner == this.player_id && (card.location == 'score' || card.location == 'forecast')) {
+                var front_HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, 'M card');
+                this.addCustomTooltip(front_HTML_id, this.getTooltipForCard(card.id), "");
+                var back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+                var back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, 'S recto');
+                this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
+                return;
+            }
+
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
              // Special achievement
              if (card.age === null) {
@@ -1745,12 +1755,6 @@ function (dojo, declare) {
                 return;
             }
             this.addCustomTooltip(HTML_id, this.getTooltipForCard(card.id), "");
-            // Add a second tooltip to the backs of cards in the score pile and forecast
-            if (card.owner == this.player_id && (card.location == 'score' || card.location == 'forecast')) {
-                var back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
-                var back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, zone.HTML_class);
-                this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
-            }
         },
 
         getTooltipForCard : function(card_id) {
