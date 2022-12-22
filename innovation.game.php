@@ -8664,7 +8664,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 347, Echoes age 2: Crossbow
             case "347N1A":
-                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from your hand to their board');
+                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from your hand to his board');
                 $message_for_others = clienttranslate('${player_name} must choose another player to transfer a card from his hand to that player\'s board');
                 break;
 
@@ -8819,8 +8819,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 400, Echoes age 7: Telegraph
             case "400N1A":
-                $message_for_player = clienttranslate('${You} may choose another player to match a splayed pile on their board:');
-                $message_for_others = clienttranslate('${player_name} may choose another player to match a splayed pile on their board');
+                $message_for_player = clienttranslate('${You} may choose another player to match a splayed pile on his board:');
+                $message_for_others = clienttranslate('${player_name} may choose another player to match a splayed pile on his board');
                 break;
 
             case "400N1B":
@@ -8840,7 +8840,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "401N1A":
                 $message_for_player = clienttranslate('Choose a value present in your score pile');
-                $message_for_others = clienttranslate('${player_name} must choose a value present in their score pile');
+                $message_for_others = clienttranslate('${player_name} must choose a value present in his score pile');
                 break;
                 
             case "401N1B":
@@ -12350,13 +12350,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($win_condition_met) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in their score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Maastricht Treaty');
                     throw new EndOfGame();
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in their score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
 
@@ -24049,7 +24049,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you have at least nine different bonus values visible on your board, you win."
                     if (count(array_unique(self::getVisibleBonusesOnBoard($player_id))) >= 9) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues visible on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on their board.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Sudoku');
                         throw new EndOfGame();                
