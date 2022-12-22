@@ -9306,7 +9306,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = $earliest_card['owner'];
         
         $english_card_name = self::getCardName($earliest_card['id']);
-        self::notifyPlayer($player_id, 'initialCardChosen', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded the first card in English alphabetical order (${english_name}): You play first.'), array(
             'You' => 'You',
             'english_name' => $english_card_name,
         ));
@@ -9320,7 +9320,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::setLauncherId($player_id);
         $this->gamestate->changeActivePlayer($player_id);
         self::setGameStateValue('current_action_number', 1);
-        self::notifyGeneralInfo('<!--empty-->');
+        self::notifyPlayer($player_id, 'log', clienttranslate('${You} are about to take your first and only action.'), array('You' => 'You'));
+        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is about to take his first and only action.'), array('player_name' => self::getPlayerNameFromId($player_id)));
         self::trace('turn0->playerTurn');
         $this->gamestate->nextState();
     }
@@ -9329,7 +9330,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // An action of the player has been fully resolved.
 
         // Give him extra time for his actions to come
-        self::giveExtraTime(self::getActivePlayerId());
+        $player_id = self::getActivePlayerId();
+        self::giveExtraTime($player_id);
         
         // Does he play again?
         if (self::getGameStateValue('current_action_number') == 0) {
@@ -9367,7 +9369,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card = self::getArtifactOnDisplay($player_id);
             if ($card !== null) {
                 self::setGameStateValue('current_action_number', 0);
-                self::notifyGeneralInfo('<!--empty-->');
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} are about to take your free action.'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is about to take his free action.'), array('player_name' => self::getPlayerNameFromId($player_id)));
                 self::increaseResourcesForArtifactOnDisplay($player_id, $card);
                 self::trace('interPlayerTurn->artifactPlayerTurn');
                 $this->gamestate->nextState('artifactPlayerTurn');
@@ -9377,7 +9380,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         } else {
             self::incGameStateValue('current_action_number', 1);
         }
-        self::notifyGeneralInfo('<!--empty-->');
+        
+        if (self::getGameStateValue('second_player_with_only_one_action') == 1) {
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are about to take your first and only action.'), array('You' => 'You'));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is about to take his first and only action.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        } else if (self::getGameStateValue('current_action_number') == 1) {
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are about to take your first action.'), array('You' => 'You'));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is about to take his first action.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        } else {
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} are about to take your second action.'), array('You' => 'You'));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is about to take his second action.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+        }
+        
         self::trace('interPlayerTurn->playerTurn');
         $this->gamestate->nextState('playerTurn');
     }
