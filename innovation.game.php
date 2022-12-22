@@ -160,9 +160,9 @@ class Innovation extends Table
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
 
-        // TODO(ECHOES): Manually test this.
+        // TODO(ECHOES#648): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            // TODO(ECHOES): Make sure newly added global variables get added here.
+            // TODO(ECHOES#648): Make sure newly added global variables get added here.
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
@@ -1787,7 +1787,7 @@ class Innovation extends Table
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
             // Update counters for the Monument special achievement
-            // TODO(ECHOES,FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
+            // TODO(FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
             // there is a bug here that we need to fix.
             if ($location_to == 'board' && $bottom_to) { // That's a tuck
                 self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
