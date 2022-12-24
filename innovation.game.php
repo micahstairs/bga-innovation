@@ -24136,7 +24136,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0 || $with_bonus > 0 || $without_bonus > 0);
 
             // If all cards from the location must be chosen, then it doesn't matter if the information is hidden or not. It will soon come to light.
-            if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {
+            if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {
                 $selection_will_reveal_hidden_information = false;
             }
             
