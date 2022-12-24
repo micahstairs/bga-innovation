@@ -264,7 +264,6 @@ function (dojo, declare) {
         },
         debug_splay_up: function() {
             var debug_color_list = document.getElementById("debug_color_list");
-            console.log(debug_color_list.value);
             this.ajaxcall("/innovation/innovation/debug_splay.html",
                 {
                     lock: true,
@@ -739,7 +738,6 @@ function (dojo, declare) {
                 for (var i = 0; i < gamedatas.my_forecast.length; i++) {
                     var card = gamedatas.my_forecast[i];
                     this.createAndAddToZone(this.zone.my_forecast_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
-                    // Add tooltip
                     this.addTooltipForCard(card);
                 }
                 // Provide links to get access to that window and close it
@@ -755,7 +753,6 @@ function (dojo, declare) {
                 for (var i = 0; i < gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
                     this.createAndAddToZone(this.zone.my_score_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
-                    // Add tooltip
                     this.addTooltipForCard(card);
                 }
                 // Provide links to get access to that window and close it
@@ -1253,6 +1250,7 @@ function (dojo, declare) {
                     if (!this.isInReplayMode()) {
                         this.my_forecast_verso_window.hide();
                     }
+                    this.addTooltipsWithoutActionsToMyForecast();
                     break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
@@ -1316,12 +1314,7 @@ function (dojo, declare) {
                     
                     // Blue buttons for draw action (or red if taking this action would finish the game)
                     if (args.age_to_draw <= 10) {
-                        if (args.type_to_draw == 3) {
-                            var draw_button_text = _("Draw an Echoes ${age}");
-                        } else {
-                            var draw_button_text = _("Draw a ${age}");
-                        }
-                        this.addActionButton("take_draw_action", draw_button_text.replace("${age}", this.square('N', 'age', args.age_to_draw)), "action_clicForDraw");
+                        this.addActionButton("take_draw_action", _("Draw a ${age}").replace("${age}", this.square('N', 'age', args.age_to_draw, 'type_' + args.type_to_draw)), "action_clicForDraw");
                     }
                     else {
                         this.addActionButton("take_draw_action", _("Finish the game (attempt to draw above ${age_10})").replace('${age_10}', this.square('N', 'age', 10)), "action_clicForDraw")
@@ -1744,6 +1737,17 @@ function (dojo, declare) {
         
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
+
+            // The score pile and forecast are a special case because both the front and back are rendered
+            if (card.owner == this.player_id && (card.location == 'score' || card.location == 'forecast')) {
+                var front_HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, 'M card');
+                this.addCustomTooltip(front_HTML_id, this.getTooltipForCard(card.id), "");
+                var back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+                var back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, 'S recto');
+                this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
+                return;
+            }
+
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
              // Special achievement
              if (card.age === null) {
@@ -1944,6 +1948,10 @@ function (dojo, declare) {
             this.addTooltipsWithoutActionsTo(this.selectMyCardsInHand());
         },
 
+        addTooltipsWithoutActionsToMyForecast : function() {
+            this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast());
+        },
+
         addTooltipsWithoutActionsToMyBoard : function() {
             this.addTooltipsWithoutActionsTo(this.selectAllCardsOnMyBoard());
         },
@@ -1971,18 +1979,18 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
-        addTooltipsWithActionsToMyForecast : function(max_age_to_promote) {
+        addTooltipsWithActionsToMyForecast : function(max_age_to_promote=null) {
             var cards = this.selectMyCardsInForecast(max_age_to_promote);
             this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -1995,7 +2003,9 @@ function (dojo, declare) {
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var no_effect = dogma_effect_info[id].no_effect;
                 dojo.attr(HTML_id, 'no_effect', no_effect);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
+                dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
+                dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
             });
         },
 
@@ -2006,7 +2016,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -2147,10 +2157,6 @@ function (dojo, declare) {
         createActionTextForDogma : function(self, card, dogma_effect_info, card_location) {
             var info = dogma_effect_info[card.id];
 
-            // Use workaround to get this.player_id, since it is unfortunately not accessible from here.
-            var player_panel = dojo.query(".player:nth-of-type(1)")[0];
-            var player_id = dojo.attr(player_panel, 'id').substr(7);
-
             var on_display = card_location == 'display';
             var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
@@ -2170,22 +2176,11 @@ function (dojo, declare) {
             HTML_action += "<p>" + _("If you do:") + "</p>";
             HTML_action += "<ul class='recap_dogma'>";
 
-            getOtherPlayersCommaSeparated = function(player_ids) {
-                var players = [];
-                for (var i = 0; i < player_ids.length; i++) {
-                    if (player_ids[i] != player_id) {
-                        var player = $('name_' + player_ids[i]).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                        players.push(player);
-                    }
-                }
-                return players.join(', ');
-            };
-
             if (info.num_echo_effects > 0) {
-                if (info.players_executing_non_demand_effects.length == 0) {
+                if (info.players_executing_echo_effects.length == 0) {
                     HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_echo_effects)}) + "</li>"
                 }
             }
             
@@ -2193,7 +2188,7 @@ function (dojo, declare) {
                 if (info.players_executing_i_demand_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects)}) + "</li>"
                 }
             }
 
@@ -2201,7 +2196,7 @@ function (dojo, declare) {
                 if (info.players_executing_i_compel_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)}) + "</li>"
                 }
             }
             
@@ -2209,7 +2204,7 @@ function (dojo, declare) {
                 if (info.players_executing_non_demand_effects.length == 1) {
                     HTML_action += "<li>" + _("You will execute the non-demand effect(s) alone.") + "</li>"
                 } else if (info.players_executing_non_demand_effects.length > 1) {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
                 }
             }
 
@@ -2220,6 +2215,17 @@ function (dojo, declare) {
             HTML_action += "</ul>";
 
             return HTML_action;
+        },
+
+        getOtherPlayersCommaSeparated : function(player_ids) {
+            var players = [];
+            for (var i = 0; i < player_ids.length; i++) {
+                if (player_ids[i] != this.player_id) {
+                    var player = $('name_' + player_ids[i]).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                    players.push(player);
+                }
+            }
+            return players.join(', ');
         },
         
         createActionTextForCardInSplayablePile : function(card, color_in_clear, splay_direction, splay_direction_in_clear) {
@@ -2478,7 +2484,10 @@ function (dojo, declare) {
         },
 
         selectMyCardsInForecast : function(max_age_to_promote) {
-            var queries = []
+            if (max_age_to_promote == null) {
+                return dojo.query("#my_forecast_verso > .M");
+            }
+            var queries = [];
             for (var age = 1; age <= max_age_to_promote; age++) {
                 queries.push("#my_forecast_verso > .age_" + age);
             }
@@ -2486,9 +2495,12 @@ function (dojo, declare) {
         },
 
         selectMyCardBacksInForecast : function(max_age_to_promote) {
-            var queries = []
+            if (max_age_to_promote == null) {
+                return dojo.query(`#forecast_${this.player_id} > .S`);
+            }
+            var queries = [];
             for (var age = 1; age <= max_age_to_promote; age++) {
-                queries.push("#forecast_" + this.player_id + " > .age_" + age);
+                queries.push(`#forecast_${this.player_id} > .age_${age}`);
             }
             return dojo.query(queries.join(","));
         },
@@ -3552,7 +3564,8 @@ function (dojo, declare) {
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
-            var card_name = dojo.attr(HTML_id, 'card_name');
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card_name = this.cards[card_id].name;
 
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Meld ${card_name}?"), {'card_name' : _(card_name)});
 
@@ -3573,16 +3586,16 @@ function (dojo, declare) {
             // Short timer (3 seconds)
             if (this.prefs[101].value == 2) {
                 wait_time = 2;
-            
+
             // Medium timer (5 seconds)
             } else if (this.prefs[101].value == 3) {
                 wait_time = 4;
-            
+
             // Long timer (10 seconds)
             } else if (this.prefs[101].value == 4) {
                 wait_time = 9;
             }
-            
+
             this.startActionTimer("meld_confirm_button", wait_time, this.action_confirmMeld, HTML_id);
         },
 
@@ -3624,58 +3637,86 @@ function (dojo, declare) {
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
-            var no_effect = dojo.attr(HTML_id, 'no_effect');
-            var card_name = dojo.attr(HTML_id, 'card_name');
-
-            if (no_effect) {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${card_name}? It will have no effect."), {'card_name' : _(card_name)});
-            } else {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${card_name}?"), {'card_name' : _(card_name)});
-            }
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name}?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
 
             // Add cancel button
             this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
             dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
             dojo.addClass("dogma_cancel_button", 'bgabutton_red');
 
-            // Add confirm button
-            this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
+            // Add confirm button for timer
+            this.addActionButton("dogma_confirm_timer_button", _("Confirm"), "action_manuallyConfirmTimerDogma");
 
-            $("dogma_confirm_button").innerHTML = _("Confirm");
-            dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
+            $("dogma_confirm_timer_button").innerHTML = _("Confirm");
+            dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
 
-            // If the card will not have an effect, force the player to manually click confirm
-            if (!no_effect) {
-                // When confirmation is disabled in game preferences, click the confirmation button instantly
-                var wait_time = 0;
+            // When confirmation is disabled in game preferences, click the confirmation button instantly
+            var wait_time = 0;
 
-                // Short timer (3 seconds)
-                if (this.prefs[100].value == 2) {
-                    wait_time = 2;
-                
-                // Medium timer (5 seconds)
-                } else if (this.prefs[100].value == 3) {
-                    wait_time = 4;
-                
-                // Long timer (10 seconds)
-                } else if (this.prefs[100].value == 4) {
-                    wait_time = 9;
-                }
-                
-                this.startActionTimer("dogma_confirm_button", wait_time, this.action_confirmDogma, HTML_id);
+            // Short timer (3 seconds)
+            if (this.prefs[100].value == 2) {
+                wait_time = 2;
+            
+            // Medium timer (5 seconds)
+            } else if (this.prefs[100].value == 3) {
+                wait_time = 4;
+            
+            // Long timer (10 seconds)
+            } else if (this.prefs[100].value == 4) {
+                wait_time = 9;
             }
+            
+            this.startActionTimer("dogma_confirm_timer_button", wait_time, this.action_manuallyConfirmTimerDogma, event);
         },
 
         action_cancelDogma : function(event) {
             this.stopActionTimer();
             this.resurrectClickEvents(true);
             dojo.destroy("dogma_cancel_button");
-            dojo.destroy("dogma_confirm_button");
+            dojo.destroy("dogma_confirm_timer_button");
+            dojo.destroy("dogma_confirm_warning_button");
         },
 
-        action_manuallyConfirmDogma : function(event) {
+        action_manuallyConfirmTimerDogma : function(event) {
             this.stopActionTimer();
-            var HTML_id = dojo.attr('dogma_confirm_button', 'html_id');
+            var HTML_id = dojo.attr('dogma_confirm_timer_button', 'html_id');
+
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            var sharing_players = dojo.attr(HTML_id, 'non_demand_effect_players');
+            if (sharing_players == '') {
+                sharing_players = dojo.attr(HTML_id, 'echo_effect_players');
+            }
+            if (dojo.attr(HTML_id, 'no_effect')) {
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? It will have no effect."),
+                    {
+                        'age': this.square('N', 'age', card.age, 'type_' + card.type),
+                        'card_name' : _(card.name)
+                    }
+                );
+                dojo.destroy("dogma_confirm_timer_button");
+                this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
+                dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
+            } else if (sharing_players.includes(',')) {
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."),
+                    {
+                        'age': this.square('N', 'age', card.age, 'type_' + card.type),
+                        'card_name' : _(card.name),
+                        'players' : this.getOtherPlayersCommaSeparated(sharing_players.split(','))
+                    }
+                );
+                dojo.destroy("dogma_confirm_timer_button");
+                this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
+                dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
+            } else {
+                this.action_confirmDogma(HTML_id);
+            }
+        },
+
+        action_manuallyConfirmWarningDogma : function(event) {
+            var HTML_id = dojo.attr('dogma_confirm_warning_button', 'html_id');
             this.action_confirmDogma(HTML_id);
         },
 
@@ -3685,7 +3726,8 @@ function (dojo, declare) {
             }
 
             dojo.destroy("dogma_cancel_button");
-            dojo.destroy("dogma_confirm_button");
+            dojo.destroy("dogma_confirm_timer_button");
+            dojo.destroy("dogma_confirm_warning_button");
 
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             this.ajaxcall("/innovation/innovation/dogma.html",

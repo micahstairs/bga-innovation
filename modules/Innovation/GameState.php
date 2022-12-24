@@ -84,4 +84,12 @@ class GameState
     {
         return $this->get('game_rules') == 2;
     }
+
+    /**
+     * @return bool
+     */
+    public function usingThirdEditionRules()
+    {
+        return $this->get('game_rules') == 1;
+    }
 }

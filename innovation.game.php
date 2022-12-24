@@ -160,9 +160,9 @@ class Innovation extends Table
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
         }
 
-        // TODO(ECHOES): Manually test this.
+        // TODO(ECHOES#648): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            // TODO(ECHOES): Make sure newly added global variables get added here.
+            // TODO(ECHOES#648): Make sure newly added global variables get added here.
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
@@ -1787,7 +1787,7 @@ class Innovation extends Table
                 $progressInfo['new_ressource_counts'] = self::updatePlayerRessourceCounts($player_id);
             }
             // Update counters for the Monument special achievement
-            // TODO(ECHOES,FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
+            // TODO(FIGURES): If there are any cards which tuck/score a card which belongs to another player, then
             // there is a bug here that we need to fix.
             if ($location_to == 'board' && $bottom_to) { // That's a tuck
                 self::incrementFlagForMonument($player_id, 'number_of_tucked_cards');
@@ -3624,6 +3624,10 @@ class Innovation extends Table
     
     function getAgeSquare($age) {
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
+    }
+
+    function getMusicNoteIcon() {
+        return "<span title='music note' class='square N music_note'></span>";
     }
 
     function notifyDogma($card) {
@@ -7833,6 +7837,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $dogma_effect_info['players_executing_i_compel_effects'] = [];
         $dogma_effect_info['players_executing_i_demand_effects'] = [];
         $dogma_effect_info['players_executing_non_demand_effects'] = [];
+        $dogma_effect_info['players_executing_echo_effects'] = [];
 
         if (self::isCompelEffect($card['id']) === true) {
             $dogma_effect_info['players_executing_i_compel_effects'] =
@@ -7860,20 +7865,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
 
-        // Echo effects are conisdered non-demand effects (the same set of players execute both)
+        // NOTE: We slightly abuse the term "sharing" here since the following can include a player's teammate (even though
+        // that wouldn't trigger a sharing bonus)
+        $sharing_players =
+            self::getObjectListFromDB(self::format("
+                    SELECT
+                        player_id
+                    FROM
+                        player
+                    WHERE
+                        player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
+                        AND player_eliminated = 0
+                ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($launcher_id, $card);
         $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
-        if (self::getNonDemandEffect($card['id'], 1) !== null || $dogma_effect_info['num_echo_effects'] > 0) {
-            $dogma_effect_info['players_executing_non_demand_effects'] =
-                self::getObjectListFromDB(self::format("
-                        SELECT
-                            player_id
-                        FROM
-                            player
-                        WHERE
-                            player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
-                            AND player_eliminated = 0
-                    ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+        if (self::getNonDemandEffect($card['id'], 1) !== null) {
+            $dogma_effect_info['players_executing_non_demand_effects'] = $sharing_players;
+        }
+        if ($dogma_effect_info['num_echo_effects'] > 0) {
+            $dogma_effect_info['players_executing_echo_effects'] = $sharing_players;
         }
 
         $dogma_effect_info['no_effect'] = self::dogmaHasNoEffect(
@@ -7882,6 +7892,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $dogma_effect_info['players_executing_i_compel_effects'],
             $dogma_effect_info['players_executing_i_demand_effects'],
             $dogma_effect_info['players_executing_non_demand_effects'],
+            $dogma_effect_info['players_executing_echo_effects'],
             $card_ids_with_visible_echo_effects
         );
 
@@ -7889,13 +7900,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns true if the dogma is guaranteed to have no effect (without revealing hidden info to the launching player). */
-    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players, $card_ids_with_visible_echo_effects) {
+    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players, $echo_players, $card_ids_with_visible_echo_effects) {
 
         $i_compel_will_be_executed = count($i_compel_players) > 0;
         $i_demand_will_be_executed = count($i_demand_players) > 0;
         $non_demand_will_be_executed = count($non_demand_players) > 0;
+        $echo_will_be_executed = count($echo_players) > 0;
 
-        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed) {
+        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed && !$echo_will_be_executed) {
             return true;
         }
 
@@ -7974,8 +7986,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case 407: // Bandage
                 case 411: // Air Conditioner
                 case 418: // Jet
-                    // These cards have no effect if all players executing the non-demand have empty hands.
-                    foreach ($non_demand_players as $player_id) {
+                    // These cards have no effect if all players executing the echo effect have empty hands.
+                    foreach ($echo_players as $player_id) {
                         if (self::countCardsInLocation($player_id, 'hand') > 0) {
                             return false;
                         }
@@ -8660,7 +8672,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 347, Echoes age 2: Crossbow
             case "347N1A":
-                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from your hand to their board');
+                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from your hand to his board');
                 $message_for_others = clienttranslate('${player_name} must choose another player to transfer a card from his hand to that player\'s board');
                 break;
 
@@ -8815,8 +8827,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 400, Echoes age 7: Telegraph
             case "400N1A":
-                $message_for_player = clienttranslate('${You} may choose another player to match a splayed pile on their board:');
-                $message_for_others = clienttranslate('${player_name} may choose another player to match a splayed pile on their board');
+                $message_for_player = clienttranslate('${You} may choose another player to match a splayed pile on his board:');
+                $message_for_others = clienttranslate('${player_name} may choose another player to match a splayed pile on his board');
                 break;
 
             case "400N1B":
@@ -8836,7 +8848,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "401N1A":
                 $message_for_player = clienttranslate('Choose a value present in your score pile');
-                $message_for_others = clienttranslate('${player_name} must choose a value present in their score pile');
+                $message_for_others = clienttranslate('${player_name} must choose a value present in his score pile');
                 break;
                 
             case "401N1B":
@@ -9425,7 +9437,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // After executing each buried echo effect, clear the auxiliary values.
             if ($nesting_index == 0) {
-                $card_id_of_previous_echo_effect = self::DbQuery(
+                $card_id_of_previous_echo_effect = self::getUniqueValueFromDB(
                     self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {execution_index}",
                         array('nesting_index' => $nesting_index, 'execution_index' => $previous_effect_number)));
                 if ($card_id_of_previous_echo_effect != $card_id) {
@@ -9722,7 +9734,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 5, age 1: Oars
             case "5D1":
-                if (self::getGameStateValue('release_version') >= 1) {
+                // Skip automation entirely if Echoes is being used and there's at least two cards with
+                // crowns (unless there's at least one Echoes card without a crown). We do this because
+                // the selection order can often affect which cards are drawn, so automating it is not
+                // possible.
+                $num_cards_with_crowns = 0;
+                $num_echoes_cards_without_crowns = 0;
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if (self::hasRessource($card, 1)) {
+                        $num_cards_with_crowns++;
+                    } else if ($card['type'] == 3) {
+                        $num_echoes_cards_without_crowns++;
+                    }
+                }
+                if (self::getGameStateValue('echoes_mode') > 1 && $num_cards_with_crowns >= 2 && $num_echoes_cards_without_crowns == 0) {
+                    $step_max = 1;
+                } else {
                     do {
                         $card_transfered = false;
                         foreach (self::getCardsInHand($player_id) as $card) {
@@ -9735,14 +9762,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 break;
                             }
                         }
-                    } while ($card_transfered && self::getGameStateValue('game_rules') == 1);
+                    } while ($card_transfered && $this->innovationGameState->usingThirdEditionRules());
                     // Reveal hand to prove that they have no crowns.
                     self::revealHand($player_id);
-                } else {
-                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                        self::setAuxiliaryValue(0);
-                    }
-                    $step_max = 1;
                 }
                 break;
             
@@ -10609,7 +10631,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "67N1":
-                if (!$this->innovationGameState->usingFirstEditionRules()) {
+                if ($this->innovationGameState->usingThirdEditionRules()) {
                     $bottom_red_card = self::getBottomCardOnBoard($player_id, 1 /* red */);
                     if ($bottom_red_card !== null) {
                         self::returnCard($bottom_red_card); // "Return your bottom red card"
@@ -12346,13 +12368,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($win_condition_met) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the most cards in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in their score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the most cards in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Maastricht Treaty');
                     throw new EndOfGame();
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the most cards in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in their score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the most cards in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
 
@@ -13927,11 +13949,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] == 3)) { // up only
                     $cards_to_draw++;
                 }
+                self::notifyGeneralInfo(clienttranslate('There is ${n} ${music_note} visible across all player boards.'), array('n' => $cards_to_draw, 'music_note' => self::getMusicNoteIcon()));
                 if ($cards_to_draw == 4) {
                     // "you win"
-                    // TODO(ECHOES): Update these log statements to include the music note icon.
-                    self::notifyPlayer($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are 4 music notes visible across all player boards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     self::setGameStateValue('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Saxophone');
                     throw new EndOfGame();
@@ -21386,7 +21406,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) { // "If you do"
                         self::executeDraw($player_id, 1); // "Draw a 1"
                         self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                        if (self::getGameStateValue('game_rules') == 1) { // Last edition => additionnal rule
+                        if ($this->innovationGameState->usingThirdEditionRules()) {
                             $step--; self::incrementStep(-1); // "Repeat that dogma effect"
                         }
                     } else {
@@ -21536,7 +21556,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 34, age 3: Feudalism        
                 case "34D1A":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
+                    if ($this->innovationGameState->usingThirdEditionRules()) {
                         if ($n > 0) { // "If you do"
                             self::unsplay($player_id, $player_id, self::getGameStateValue('color_last_selected')); // "Unsplay that color of your cards"
                         }
@@ -21866,7 +21886,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 88, age 9: Fission
                 case "88N1A":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
+                    if ($this->innovationGameState->usingThirdEditionRules()) {
                         self::executeDraw($player_id, 10); // "Draw a 10"
                     }
                     break;
@@ -24047,7 +24067,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you have at least nine different bonus values visible on your board, you win."
                     if (count(array_unique(self::getVisibleBonusesOnBoard($player_id))) >= 9) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues visible on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on their board.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Sudoku');
                         throw new EndOfGame();                
@@ -24134,7 +24154,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0 || $with_bonus > 0 || $without_bonus > 0);
 
             // If all cards from the location must be chosen, then it doesn't matter if the information is hidden or not. It will soon come to light.
-            if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {
+            if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {
                 $selection_will_reveal_hidden_information = false;
             }
             
