@@ -7409,7 +7409,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Write info in global variables to prepare the first effect
-        self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
+        if (self::getGameStateValue('release_version') >= 2) {
+            self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
+        }
         self::setGameStateValue('current_nesting_index', 0);
         self::DbQuery(
             self::format("
