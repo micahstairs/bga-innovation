@@ -90,7 +90,8 @@ $game_options = array(
             2 => array(
                 /* TODO(FIGURES): Add more conditions when other expansions are added. */
                 array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
-                array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
+                /* TODO(CITIES): Re-add this condition. */
+                // array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
                 array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
             ),
         )
@@ -115,6 +116,7 @@ $game_options = array(
         )
     ),
 
+    /* TODO(CITIES): Add game options.
     103 => array(
         'name' => totranslate('Cities of Destiny expansion'),
         'values' => array(
@@ -122,6 +124,7 @@ $game_options = array(
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
         )
     ),
+    */
 
     104 => array(
         'name' => totranslate('Echoes of the Past expansion'),

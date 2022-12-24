@@ -107,7 +107,8 @@ class Innovation extends Table
             'game_type' => 100, // 1 for normal game, 2 for team game
             'game_rules' => 101, // 1 for last edition, 2 for first edition
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
-            'cities_mode' => 103, // 1 for "Disabled", 2 for "Enabled"
+            // TODO(CITIES): Re-add this.
+            // 'cities_mode' => 103, // 1 for "Disabled", 2 for "Enabled"
             'echoes_mode' => 104, // 1 for "Disabled", 2 for "Enabled"
             'extra_achievement_to_win' => 110 // 1 for "Disabled", 2 for "Enabled"
         ));
@@ -169,7 +170,6 @@ class Innovation extends Table
                 'without_bonus' => 88,
                 'card_ids_are_in_auxiliary_array' => 89,
                 'melded_card_id' => 94,
-                'cities_mode' => 103,
                 'echoes_mode' => 104,
             ));
             self::setGameStateValue('bottom_from', -1);
@@ -177,7 +177,6 @@ class Innovation extends Table
             self::setGameStateValue('without_bonus', -1);
             self::setGameStateValue('card_ids_are_in_auxiliary_array', -1);
             self::setGameStateValue('melded_card_id', -1);
-            self::setGameStateValue('cities_mode', 1);
             self::setGameStateValue('echoes_mode', 1);
         }
     }
@@ -434,9 +433,10 @@ class Innovation extends Table
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
         }
 
-        if (self::getGameStateValue('cities_mode') > 1) {
-            self::incGameStateValue('number_of_achievements_needed_to_win', 1);
-        }
+        // TODO(CITIES): Re-add this.
+        // if (self::getGameStateValue('cities_mode') > 1) {
+        //     self::incGameStateValue('number_of_achievements_needed_to_win', 1);
+        // }
         
         if (self::getGameStateValue('echoes_mode') > 1) {
             self::incGameStateValue('number_of_achievements_needed_to_win', 1);
@@ -560,10 +560,11 @@ class Innovation extends Table
             }
         }
 
-        if (self::getGameStateValue('cities_mode') > 1) {
-            self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
-            self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
-        }
+        // TODO(CITIES): Re-add this.
+        // if (self::getGameStateValue('cities_mode') > 1) {
+        //     self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
+        //     self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
+        // }
 
         if (self::getGameStateValue('echoes_mode') > 1) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
@@ -646,7 +647,8 @@ class Innovation extends Table
 
         $result['artifacts_expansion_enabled'] = self::getGameStateValue('artifacts_mode') > 1;
         $result['relics_enabled'] = self::getGameStateValue('artifacts_mode') == 3;
-        $result['cities_expansion_enabled'] = self::getGameStateValue('cities_mode') > 1;
+        // TODO(CITIES): Update this.
+        $result['cities_expansion_enabled'] = false;
         $result['echoes_expansion_enabled'] = self::getGameStateValue('echoes_mode') > 1;
         // TODO(FIGURES): Update this when the expansion is added.
         $result['figures_expansion_enabled'] = false;
@@ -985,9 +987,10 @@ class Innovation extends Table
         if (self::getGameStateValue('artifacts_mode') > 1) {
             $active_types[] = 1;
         }
-        if (self::getGameStateValue('cities_mode') > 1) {
-            $active_types[] = 2;
-        }
+        // TODO(CITIES): Re-add this.
+        // if (self::getGameStateValue('cities_mode') > 1) {
+        //     $active_types[] = 2;
+        // }
          if (self::getGameStateValue('echoes_mode') > 1) {
             $active_types[] = 3;
         }
@@ -1414,18 +1417,19 @@ class Innovation extends Table
            ));
             $position_to = 0;
             
-            if (self::getGameStateValue('cities_mode') > 1) {
-                // Victory and Glory Cities special achievements require tucking a card
-                // with a particular symbol to get the special achievement.
-                if ($location_to == 'board') { // tuck a flag to board
-                    if (self::hasRessource($card, 8)) { // has a flag
-                        self::claimSpecialAchievement($owner_to, 328); // Glory
-                    }
-                    if (self::hasRessource($card, 9)) { // has a fountain
-                        self::claimSpecialAchievement($owner_to, 329); // Victory
-                    }
-                }
-            }
+            // TODO(CITIES): Re-add this.
+            // if (self::getGameStateValue('cities_mode') > 1) {
+            //     // Victory and Glory Cities special achievements require tucking a card
+            //     // with a particular symbol to get the special achievement.
+            //     if ($location_to == 'board') { // tuck a flag to board
+            //         if (self::hasRessource($card, 8)) { // has a flag
+            //             self::claimSpecialAchievement($owner_to, 328); // Glory
+            //         }
+            //         if (self::hasRessource($card, 9)) { // has a fountain
+            //             self::claimSpecialAchievement($owner_to, 329); // Victory
+            //         }
+            //     }
+            // }
         } else { // $bottom_to is false
             // new_position = number of cards in the location
             $position_to = self::getUniqueValueFromDB(self::format("
@@ -1580,9 +1584,10 @@ class Innovation extends Table
         }
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
-        if (self::getGameStateValue('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
-        }
+        // TODO(CITIES): Re-add this.
+        // if (self::getGameStateValue('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+        //     self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
+        // }
         
         self::recordThatChangeOccurred();
     }
@@ -7159,12 +7164,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
         
-        if (self::getGameStateValue('cities_mode') > 1) {
-            // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
-            if ($previous_top_card === null && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', false, 2);
-            }
-        }
+        // TODO(CITIES): Re-add this.
+        // if (self::getGameStateValue('cities_mode') > 1) {
+        //     // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
+        //     if ($previous_top_card === null && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+        //         self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', false, 2);
+        //     }
+        // }
 
         self::trace('playerTurn->digArtifact');
         $this->gamestate->nextState('digArtifact');
@@ -7730,8 +7736,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return true;
             case 1:
                 return self::getGameStateValue('artifacts_mode') > 1;
-            case 2:
-                return self::getGameStateValue('cities_mode') > 1;
+            // TODO(CITIES): Re-add this.
+            // case 2:
+            //     return self::getGameStateValue('cities_mode') > 1;
             case 3:
                 return self::getGameStateValue('echoes_mode') > 1;
             // TODO(FIGURES): Add another case when we implement this expansion.
