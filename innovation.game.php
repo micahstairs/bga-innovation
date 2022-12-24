@@ -7180,9 +7180,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function stPromoteCard() {
-        $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
-        
         if (self::getGameStateValue('echoes_mode') > 1) {
+            $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
             $card_counts = self::countCardsInLocationKeyedByAge($melded_card['owner'], 'forecast');
             for ($age = 1; $age <= $melded_card['age']; $age++) {
                 if ($card_counts[$age] > 0) {
