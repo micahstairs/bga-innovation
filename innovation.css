@@ -1181,6 +1181,10 @@
   width: 14px;
   height: 14px;
 }
+#pagemaintitletext > .square.N.age {
+  top: -2px;
+  position: relative;
+}
 .square.N.music_note {
   width: 16px;
   height: 16px;

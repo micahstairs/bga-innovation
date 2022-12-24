@@ -1127,6 +1127,10 @@
             width: 14px;
             height: 14px;
         }
+        #pagemaintitletext > &.age {
+            top: -2px;
+            position: relative;
+        }
         &.music_note {
             width: 16px;
             height: 16px;
