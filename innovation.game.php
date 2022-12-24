@@ -9429,7 +9429,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // After executing each buried echo effect, clear the auxiliary values.
             if ($nesting_index == 0) {
-                $card_id_of_previous_echo_effect = self::DbQuery(
+                $card_id_of_previous_echo_effect = self::getUniqueValueFromDB(
                     self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {execution_index}",
                         array('nesting_index' => $nesting_index, 'execution_index' => $previous_effect_number)));
                 if ($card_id_of_previous_echo_effect != $card_id) {
