@@ -730,12 +730,10 @@ class Innovation extends Table
         // Unclaimed achivements
         // TODO(#229): Deprecate this and add a new unclaimed_special_achievements entry.
         $result['unclaimed_achievements'] = self::getCardsInLocation(0, 'achievements');
-        if (self::getGameStateValue('release_version') >= 2) {
-            $result['unclaimed_standard_achievement_counts'] = array();
-            for ($type = 0; $type <= 4; $type++) {
-                for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
-                    $result['unclaimed_standard_achievement_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'achievements', $type, $is_relic);
-                }
+        $result['unclaimed_standard_achievement_counts'] = array();
+        for ($type = 0; $type <= 4; $type++) {
+            for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                $result['unclaimed_standard_achievement_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'achievements', $type, $is_relic);
             }
         }
         
