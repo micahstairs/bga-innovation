@@ -9726,7 +9726,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 5, age 1: Oars
             case "5D1":
-                if (self::getGameStateValue('release_version') >= 1) {
+                // Skip automation entirely if Echoes is being used and there's at least two cards with
+                // crowns (unless there's at least one Echoes card without a crown). We do this because
+                // the selection order can often affect which cards are drawn, so automating it is not
+                // possible.
+                $num_cards_with_crowns = 0;
+                $num_echoes_cards_without_crowns = 0;
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if (self::hasRessource($card, 1)) {
+                        $num_cards_with_crowns++;
+                    } else if ($card['type'] == 3) {
+                        $num_echoes_cards_without_crowns++;
+                    }
+                }
+                if (self::getGameStateValue('echoes_mode') > 1 && $num_cards_with_crowns >= 2 && $num_echoes_cards_without_crowns == 0) {
+                    $step_max = 1;
+                } else {
                     do {
                         $card_transfered = false;
                         foreach (self::getCardsInHand($player_id) as $card) {
@@ -9739,14 +9754,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 break;
                             }
                         }
-                    } while ($card_transfered && self::getGameStateValue('game_rules') == 1);
+                    } while ($card_transfered && $this->innovationGameState->usingThirdEditionRules());
                     // Reveal hand to prove that they have no crowns.
                     self::revealHand($player_id);
-                } else {
-                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                        self::setAuxiliaryValue(0);
-                    }
-                    $step_max = 1;
                 }
                 break;
             
@@ -10613,7 +10623,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "67N1":
-                if (!$this->innovationGameState->usingFirstEditionRules()) {
+                if ($this->innovationGameState->usingThirdEditionRules()) {
                     $bottom_red_card = self::getBottomCardOnBoard($player_id, 1 /* red */);
                     if ($bottom_red_card !== null) {
                         self::returnCard($bottom_red_card); // "Return your bottom red card"
@@ -21388,7 +21398,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) { // "If you do"
                         self::executeDraw($player_id, 1); // "Draw a 1"
                         self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                        if (self::getGameStateValue('game_rules') == 1) { // Last edition => additionnal rule
+                        if ($this->innovationGameState->usingThirdEditionRules()) {
                             $step--; self::incrementStep(-1); // "Repeat that dogma effect"
                         }
                     } else {
@@ -21538,7 +21548,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 34, age 3: Feudalism        
                 case "34D1A":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
+                    if ($this->innovationGameState->usingThirdEditionRules()) {
                         if ($n > 0) { // "If you do"
                             self::unsplay($player_id, $player_id, self::getGameStateValue('color_last_selected')); // "Unsplay that color of your cards"
                         }
@@ -21868,7 +21878,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 88, age 9: Fission
                 case "88N1A":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
+                    if ($this->innovationGameState->usingThirdEditionRules()) {
                         self::executeDraw($player_id, 10); // "Draw a 10"
                     }
                     break;
