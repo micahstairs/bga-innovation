@@ -119,50 +119,7 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'type'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'type'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'faceup_age'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `faceup_age` TINYINT UNSIGNED DEFAULT NULL;");
-            self::DbQuery("UPDATE `card` SET `faceup_age` = `age`");
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'has_demand'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `has_demand` BOOLEAN NOT NULL DEFAULT FALSE;");
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'is_relic'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `is_relic` BOOLEAN NOT NULL DEFAULT FALSE;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'icon_hash'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `icon_hash` INT(32) UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `random` LIKE 'type'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_random ADD `type` TINYINT UNSIGNED;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'featured_icon_count'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'turn_order_ending_with_launcher'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'spot_5'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `spot_5` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'spot_6'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_5'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_5` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_6'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-
-        // TODO(ECHOES#648): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            // TODO(ECHOES#648): Make sure newly added global variables get added here.
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
