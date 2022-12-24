@@ -23871,7 +23871,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // Fill the auxiliary array with all eligible cards in hand.
                         $eligible_cards = array();
                         foreach (self::getCardsInHand($player_id) as $card) {
-                            // TODO(ECHOES): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
+                            // TODO(LATER): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
                             for ($icon = 1; $icon <= 6; $icon++) {
                                 if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
                                     $eligible_cards[] = $card['id'];
