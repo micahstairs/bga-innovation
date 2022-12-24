@@ -264,7 +264,6 @@ function (dojo, declare) {
         },
         debug_splay_up: function() {
             var debug_color_list = document.getElementById("debug_color_list");
-            console.log(debug_color_list.value);
             this.ajaxcall("/innovation/innovation/debug_splay.html",
                 {
                     lock: true,
@@ -739,7 +738,6 @@ function (dojo, declare) {
                 for (var i = 0; i < gamedatas.my_forecast.length; i++) {
                     var card = gamedatas.my_forecast[i];
                     this.createAndAddToZone(this.zone.my_forecast_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
-                    // Add tooltip
                     this.addTooltipForCard(card);
                 }
                 // Provide links to get access to that window and close it
@@ -755,7 +753,6 @@ function (dojo, declare) {
                 for (var i = 0; i < gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
                     this.createAndAddToZone(this.zone.my_score_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
-                    // Add tooltip
                     this.addTooltipForCard(card);
                 }
                 // Provide links to get access to that window and close it
@@ -1253,6 +1250,7 @@ function (dojo, declare) {
                     if (!this.isInReplayMode()) {
                         this.my_forecast_verso_window.hide();
                     }
+                    this.addTooltipsWithoutActionsToMyForecast();
                     break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
@@ -1739,6 +1737,17 @@ function (dojo, declare) {
         
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
+
+            // The score pile and forecast are a special case because both the front and back are rendered
+            if (card.owner == this.player_id && (card.location == 'score' || card.location == 'forecast')) {
+                var front_HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, 'M card');
+                this.addCustomTooltip(front_HTML_id, this.getTooltipForCard(card.id), "");
+                var back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+                var back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, 'S recto');
+                this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
+                return;
+            }
+
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
              // Special achievement
              if (card.age === null) {
@@ -1939,6 +1948,10 @@ function (dojo, declare) {
             this.addTooltipsWithoutActionsTo(this.selectMyCardsInHand());
         },
 
+        addTooltipsWithoutActionsToMyForecast : function() {
+            this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast());
+        },
+
         addTooltipsWithoutActionsToMyBoard : function() {
             this.addTooltipsWithoutActionsTo(this.selectAllCardsOnMyBoard());
         },
@@ -1970,7 +1983,7 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipsWithActionsToMyForecast : function(max_age_to_promote) {
+        addTooltipsWithActionsToMyForecast : function(max_age_to_promote=null) {
             var cards = this.selectMyCardsInForecast(max_age_to_promote);
             this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
             var self = this;
@@ -2473,7 +2486,10 @@ function (dojo, declare) {
         },
 
         selectMyCardsInForecast : function(max_age_to_promote) {
-            var queries = []
+            if (max_age_to_promote == null) {
+                return dojo.query("#my_forecast_verso > .M");
+            }
+            var queries = [];
             for (var age = 1; age <= max_age_to_promote; age++) {
                 queries.push("#my_forecast_verso > .age_" + age);
             }
@@ -2481,9 +2497,12 @@ function (dojo, declare) {
         },
 
         selectMyCardBacksInForecast : function(max_age_to_promote) {
-            var queries = []
+            if (max_age_to_promote == null) {
+                return dojo.query(`#forecast_${this.player_id} > .S`);
+            }
+            var queries = [];
             for (var age = 1; age <= max_age_to_promote; age++) {
-                queries.push("#forecast_" + this.player_id + " > .age_" + age);
+                queries.push(`#forecast_${this.player_id} > .age_${age}`);
             }
             return dojo.query(queries.join(","));
         },
