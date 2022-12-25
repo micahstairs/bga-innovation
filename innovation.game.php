@@ -375,7 +375,7 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
-        // Indicate that this production game was created after the Cities and Echoes expansions were released
+        // Indicate that this production game was created after the Echoes expansions was released
         // TODO(CITIES,FIGURES): Update this before releasing future expansions.
         self::setGameStateInitialValue('release_version', 2);
 
