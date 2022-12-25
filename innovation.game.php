@@ -119,50 +119,7 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'type'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'type'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `type` TINYINT UNSIGNED NOT NULL DEFAULT '0';"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'faceup_age'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `faceup_age` TINYINT UNSIGNED DEFAULT NULL;");
-            self::DbQuery("UPDATE `card` SET `faceup_age` = `age`");
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'has_demand'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `has_demand` BOOLEAN NOT NULL DEFAULT FALSE;");
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'is_relic'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `is_relic` BOOLEAN NOT NULL DEFAULT FALSE;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'icon_hash'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `icon_hash` INT(32) UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `random` LIKE 'type'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_random ADD `type` TINYINT UNSIGNED;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'featured_icon_count'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'turn_order_ending_with_launcher'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'spot_5'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `spot_5` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'spot_6'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_5'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_5` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card_with_top_card_indication` LIKE 'spot_6'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card_with_top_card_indication ADD `spot_6` TINYINT UNSIGNED DEFAULT NULL;"); 
-        }
-
-        // TODO(ECHOES#648): Manually test this.
         if ($this->innovationGameState->get('release_version') == 1) {
-            // TODO(ECHOES#648): Make sure newly added global variables get added here.
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
@@ -418,7 +375,7 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
-        // Indicate that this production game was created after the Cities and Echoes expansions were released
+        // Indicate that this production game was created after the Echoes expansions was released
         // TODO(CITIES,FIGURES): Update this before releasing future expansions.
         self::setGameStateInitialValue('release_version', 2);
 
@@ -730,12 +687,10 @@ class Innovation extends Table
         // Unclaimed achivements
         // TODO(#229): Deprecate this and add a new unclaimed_special_achievements entry.
         $result['unclaimed_achievements'] = self::getCardsInLocation(0, 'achievements');
-        if (self::getGameStateValue('release_version') >= 2) {
-            $result['unclaimed_standard_achievement_counts'] = array();
-            for ($type = 0; $type <= 4; $type++) {
-                for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
-                    $result['unclaimed_standard_achievement_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'achievements', $type, $is_relic);
-                }
+        $result['unclaimed_standard_achievement_counts'] = array();
+        for ($type = 0; $type <= 4; $type++) {
+            for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                $result['unclaimed_standard_achievement_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'achievements', $type, $is_relic);
             }
         }
         
@@ -7182,9 +7137,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function stPromoteCard() {
-        $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
-        
         if (self::getGameStateValue('echoes_mode') > 1) {
+            $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
             $card_counts = self::countCardsInLocationKeyedByAge($melded_card['owner'], 'forecast');
             for ($age = 1; $age <= $melded_card['age']; $age++) {
                 if ($card_counts[$age] > 0) {
@@ -7412,7 +7366,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Write info in global variables to prepare the first effect
-        self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
+        if (self::getGameStateValue('release_version') >= 2) {
+            self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
+        }
         self::setGameStateValue('current_nesting_index', 0);
         self::DbQuery(
             self::format("
@@ -23871,7 +23827,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // Fill the auxiliary array with all eligible cards in hand.
                         $eligible_cards = array();
                         foreach (self::getCardsInHand($player_id) as $card) {
-                            // TODO(ECHOES): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
+                            // TODO(LATER): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
                             for ($icon = 1; $icon <= 6; $icon++) {
                                 if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
                                     $eligible_cards[] = $card['id'];

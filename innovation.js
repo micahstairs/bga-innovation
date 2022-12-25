@@ -4360,9 +4360,12 @@ function (dojo, declare) {
             // Add cards to popup
             for (var i = min_id; i <= max_id; i++) {
                 node.innerHTML += this.createCardForCardBrowser(i);
-                // TODO(LATER): Figure out why this tooltip isn't working.
-                // var card = this.cards[i];
-                // this.addCustomTooltip(`browse_card_id_${i}`, this.createCard(i, card.age, card.type, card.is_relic, "L card", card), "");
+            }
+
+            // NOTE: For some reason the tooltips get removed when we add more HTLM to the node, so we need to use a
+            // separate loop to add them.
+            for (var i = min_id; i <= max_id; i++) {
+                this.addCustomTooltip(`browse_card_id_${i}`, this.getTooltipForCard(i), "");
             }
         },
 
