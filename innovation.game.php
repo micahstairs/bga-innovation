@@ -375,9 +375,9 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
-        // Indicate that this production game was created after the Echoes expansions was released
-        // TODO(CITIES,FIGURES): Update this before releasing future expansions.
-        self::setGameStateInitialValue('release_version', 2);
+        // Indicate that this production game was created after the Cities expansions was released
+        // TODO(FIGURES): Update this before releasing future expansions.
+        self::setGameStateInitialValue('release_version', 3);
 
         // Init global values with their initial values
         $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);

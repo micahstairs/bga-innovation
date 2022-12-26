@@ -4162,39 +4162,52 @@ function (dojo, declare) {
                     ressource_counts[icon] = this.counter.ressource_count[player_id][icon].getValue();
                 }
                 
-                // TODO(CITIES): Account for more spots on the card.
                 switch(parseInt(zone.splay_direction)) {
                 case 0: // All icons of the old top card are lost
-                    ressource_counts[old_top_card.spot_1]--
-                    ressource_counts[old_top_card.spot_2]--
-                    ressource_counts[old_top_card.spot_3]--
-                    ressource_counts[old_top_card.spot_4]--
+                    ressource_counts[old_top_card.spot_1]--;
+                    ressource_counts[old_top_card.spot_2]--;
+                    ressource_counts[old_top_card.spot_3]--;
+                    ressource_counts[old_top_card.spot_4]--;
+                    ressource_counts[old_top_card.spot_5]--;
+                    ressource_counts[old_top_card.spot_6]--;
                     
-                    ressource_counts[new_top_card.spot_1]++
-                    ressource_counts[new_top_card.spot_2]++
-                    ressource_counts[new_top_card.spot_3]++
-                    ressource_counts[new_top_card.spot_4]++
+                    ressource_counts[new_top_card.spot_1]++;
+                    ressource_counts[new_top_card.spot_2]++;
+                    ressource_counts[new_top_card.spot_3]++;
+                    ressource_counts[new_top_card.spot_4]++;
+                    ressource_counts[new_top_card.spot_5]++;
+                    ressource_counts[new_top_card.spot_6]++;
                     break;
-                case 1: // Only the icon on bottom right can still be seen (spot_4)
-                    ressource_counts[old_top_card.spot_1]--
-                    ressource_counts[old_top_card.spot_2]--
-                    ressource_counts[old_top_card.spot_3]--
+                case 1: // Only the icons on the right can still be seen (spot_4 and spot_5)
+                    ressource_counts[old_top_card.spot_1]--;
+                    ressource_counts[old_top_card.spot_2]--;
+                    ressource_counts[old_top_card.spot_3]--;
+                    ressource_counts[old_top_card.spot_5]--;
                     
-                    ressource_counts[new_top_card.spot_1]++
-                    ressource_counts[new_top_card.spot_2]++
-                    ressource_counts[new_top_card.spot_3]++
+                    ressource_counts[new_top_card.spot_1]++;
+                    ressource_counts[new_top_card.spot_2]++;
+                    ressource_counts[new_top_card.spot_3]++;
+                    ressource_counts[new_top_card.spot_5]++;
                     break;
                 case 2: // Icons on left can still be seen (spot_1 and spot_2)
-                    ressource_counts[old_top_card.spot_3]--
-                    ressource_counts[old_top_card.spot_4]--
+                    ressource_counts[old_top_card.spot_3]--;
+                    ressource_counts[old_top_card.spot_4]--;
+                    ressource_counts[old_top_card.spot_5]--;
+                    ressource_counts[old_top_card.spot_6]--;
                     
-                    ressource_counts[new_top_card.spot_3]++
-                    ressource_counts[new_top_card.spot_4]++
+                    ressource_counts[new_top_card.spot_3]++;
+                    ressource_counts[new_top_card.spot_4]++;
+                    ressource_counts[new_top_card.spot_5]++;
+                    ressource_counts[new_top_card.spot_6]++;
                     break;
                 case 3: // Icons on bottom can still be seen (spot_2, spot_3 and spot_4)
-                    ressource_counts[old_top_card.spot_1]--
+                    ressource_counts[old_top_card.spot_1]--;
+                    ressource_counts[old_top_card.spot_5]--;
+                    ressource_counts[old_top_card.spot_6]--;
                     
-                    ressource_counts[new_top_card.spot_1]++
+                    ressource_counts[new_top_card.spot_1]++;
+                    ressource_counts[new_top_card.spot_5]++;
+                    ressource_counts[new_top_card.spot_6]++;
                     break;
                 }
                 
