@@ -1718,12 +1718,6 @@
 .square_card_icon.M.icon_6 {
   background-position-x: -192.5px;
 }
-.square_card_icon.M.icon_7 {
-  background-image: url("img/cities_special_icons.png");
-  width: 40px;
-  height: 40px;
-  background-position-x: -41px;
-}
 .square_card_icon.M.icon_10 {
   background-image: none;
 }
@@ -1844,8 +1838,35 @@
   left: 195px;
 }
 
-.city_special_icon {
+.city_search_icon {
   background-image: url("img/cities_special_icons.png");
+  position: absolute;
+  background-position-y: -165px;
+  top: 0px;
+  left: 70px;
+}
+.city_search_icon.M {
+  width: 45px;
+  height: 45px;
+  background-size: 230px auto;
+}
+.city_search_icon.M.color_0 {
+  background-position-x: 0px;
+}
+.city_search_icon.M.color_1 {
+  background-position-x: -46px;
+}
+.city_search_icon.M.color_2 {
+  background-position-x: -92px;
+}
+.city_search_icon.M.color_3 {
+  background-position-x: -138px;
+}
+.city_search_icon.M.color_4 {
+  background-position-x: -184px;
+}
+
+.city_special_icon {
   background-image: url("img/cities_special_icons.png");
   position: absolute;
 }
