@@ -520,9 +520,13 @@ function (dojo, declare) {
                     
                     // Current number of cards in the deck
                     $(`deck_count_${type}_${age}`).innerHTML = num_cards;
-                    if (num_sets > 2) {
-                        dojo.addClass(`deck_count_${type}_${age}`, 'condensed');
-                        dojo.addClass(`deck_pile_${type}_${age}`, 'condensed');
+                    // TODO(FIGURES): Handle the case where there are 5 sets.
+                    if (num_sets == 3) {
+                        dojo.addClass(`deck_count_${type}_${age}`, 'three_sets');
+                        dojo.addClass(`deck_pile_${type}_${age}`, 'three_sets');
+                    } else if (num_sets == 4) {
+                        dojo.addClass(`deck_count_${type}_${age}`, 'four_sets');
+                        dojo.addClass(`deck_pile_${type}_${age}`, 'four_sets');
                     }
                 }
             }
