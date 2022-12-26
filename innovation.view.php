@@ -65,6 +65,7 @@
         $this->page->begin_block( "innovation_innovation", "decks_group_2" );
         $this->page->begin_block( "innovation_innovation", "decks_group_3" );
         $this->page->begin_block( "innovation_innovation", "decks_group_4" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_5" );
         $this->page->begin_block( "innovation_innovation", "decks" );
         $this->page->begin_block( "innovation_innovation", "available_relics" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
@@ -91,10 +92,12 @@
                                                     "R" => $rgb[0],
                                                     "G" => $rgb[1],
                                                     "B" => $rgb[2],
-                                                    "OPT_CLASS" => " class='score_show_window'",
+                                                    "OPT_FORECAST_CLASS" => " class='forecast_show_window'",
+                                                    "OPT_SCORE_CLASS" => " class='score_show_window'",
                                                     "HAND" => self::_("Hand"),
                                                     "DISPLAY" => self::_("Artifact on Display"),
-                                                    "SCORE_PILE" => self::_("Score pile"), 
+                                                    "FORECAST_PILE" => self::_("Forecast"),
+                                                    "SCORE_PILE" => self::_("Score pile"),
                                                     "ACHIEVEMENTS" => self::_("Achievements")
                                                     ) );
             // Opponents
@@ -144,7 +147,8 @@
                                         "R" => $rgb[0],
                                         "G" => $rgb[1],
                                         "B" => $rgb[2],
-                                        "OPT_CLASS" => "",
+                                        "OPT_FORECAST_CLASS" => "",
+                                        "OPT_SCORE_CLASS" => "",
                                         "HAND" => self::_("Hand"),
                                         "DISPLAY" => self::_("Artifact on Display"),
                                         "SCORE_PILE" => self::_("Score pile"),
@@ -152,17 +156,20 @@
                                          ) );
         }
         
-        for ($age = 1; $age <= 5; $age++) {
+        for ($age = 1; $age <= 10; $age++) {
             $this->page->insert_block("decks_group_1", array("TYPE" => 0, "AGE" => $age));
         }
-        for ($age = 1; $age <= 5; $age++) {
+        for ($age = 1; $age <= 10; $age++) {
             $this->page->insert_block("decks_group_2", array("TYPE" => 1, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
-            $this->page->insert_block("decks_group_3", array("TYPE" => 0, "AGE" => $age));
+        for ($age = 1; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_3", array("TYPE" => 2, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
-            $this->page->insert_block("decks_group_4", array("TYPE" => 1, "AGE" => $age));
+        for ($age = 1; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_4", array("TYPE" => 3, "AGE" => $age));
+        }
+        for ($age = 1; $age <= 10; $age++) {
+            $this->page->insert_block("decks_group_5", array("TYPE" => 4, "AGE" => $age));
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
         $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );

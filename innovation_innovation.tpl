@@ -39,8 +39,12 @@
                 </div>
             </div>
             <div id="progress_{PLAYER_ID}" class="progress">
+                <div id="forecast_container_{PLAYER_ID}" class="forecast_container">
+                    <p id="forecast_text_{PLAYER_ID}"{OPT_FORECAST_CLASS}>{FORECAST_PILE}</p>
+                    <div id="forecast_{PLAYER_ID}" class="forecast"></div>
+                </div>
                 <div id="score_container_{PLAYER_ID}" class="score_container">
-                    <p id="score_text_{PLAYER_ID}"{OPT_CLASS}>{SCORE_PILE}</p>
+                    <p id="score_text_{PLAYER_ID}"{OPT_SCORE_CLASS}>{SCORE_PILE}</p>
                     <div id="score_{PLAYER_ID}" class="score"></div>
                 </div>
                 <div id="reference_card_{PLAYER_ID}" class="reference_card S"></div>
@@ -75,6 +79,11 @@
             <!-- BEGIN decks_group_4 -->
                 <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
             <!-- END decks_group_4 -->
+        </div>
+        <div id="deck_set_5" class="deck_set">
+            <!-- BEGIN decks_group_5 -->
+                <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+            <!-- END decks_group_5 -->
         </div>
     </div>
     <div id="available_relics_container">

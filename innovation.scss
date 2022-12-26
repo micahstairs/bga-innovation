@@ -46,19 +46,15 @@
         }
     }
 }
-#debug_card_list {
+#debug_card_list, #debug_color_list {
     height: 30px;
 }
 .debug_button {
-    width: 100px;
+    width: 150px;
 }
 .card_name {
     font-weight: bold;
     font-style: normal;
-    color: black;
-}
-.achievement_name {
-    font-weight: bold;
     color: black;
 }
 .player.whiteblock {
@@ -123,19 +119,54 @@
 #display_button_bar {
     height: 49px;
 }
-#change_display_mode_button {
+#change_display_mode_button, #change_view_full_button, #browse_all_cards_button {
     display: inline-block;
     font-size: 12px;
     margin-left: 5px;
     background-color: rgba(255,255,255,.5);
     border-style: dotted;
 }
-#change_view_full_button {
-    display: inline-block;
-    font-size: 12px;
-    margin-left: 5px;
-    background-color: rgba(255,255,255,.5);
-    border-style: dotted;
+#browse_cards_buttons_row_1, #browse_cards_buttons_row_2 {
+    text-align: center;
+}
+.browse_cards_button {
+    margin: 10px;
+    &.selected {
+        background: #dedede;
+        box-shadow: inset 0px 0px 5px #676767;
+    }
+}
+#browse_special_achievements_button {
+    display: flex;
+    text-align: center;
+    width: fit-content;
+    margin: auto;
+    margin-top: 10px;
+}
+#special_achievement_summaries.heightless {
+    height: 0px;
+    visibility: hidden;
+}
+.special_achievement_summary {
+    display: flex;
+    vertical-align: middle;
+    opacity: 0.3;
+    &.unclaimed {
+        opacity: 1;
+    }
+}
+.special_achievement_icon {
+    float: left;
+    min-width: 45px;
+    max-width: 45px;
+}
+.special_achievement_status {
+    text-align: center;
+    font-weight: bold;
+}
+.special_achievement_text {
+    vertical-align: middle;
+    padding-left: 10px;
 }
 .disabled {
     color: grey !important;
@@ -166,12 +197,30 @@
     display: flex;
     margin-top: 30px;
 }
+.forecast_container {
+    flex-grow: 1;
+    vertical-align: top;
+    display: inline-block;
+    position: relative;
+    p {
+        font-style: italic;
+        font-size: 0.8em;
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+        left: 3px;
+        height: 16px;
+        overflow-y: hidden;
+        text-align: left;
+    }
+}
+
 .score_container {
     flex-grow: 1;
     vertical-align: top;
     display: inline-block;
     position: relative;
-    >p {
+    p {
         font-style: italic;
         font-size: 0.8em;
         position: absolute;
@@ -183,8 +232,6 @@
         text-align: right;
     }
 }
-
-
 
 .achievement_container {
     vertical-align: top;
@@ -209,6 +256,12 @@
         overflow-y: hidden;
     }
 }
+.forecast {
+    display: inline-block;
+    margin-top: 18px;
+    display: inline-block;
+    height: 49px;
+}
 .score {
     display: inline-block;
     margin-top: 18px;
@@ -220,6 +273,13 @@
     margin-top: 18px;
     display: inline-block;
     height: 49px;
+}
+.forecast_show_window {
+    text-decoration: underline;
+    font-weight: bold;
+    &:hover {
+        cursor: pointer;
+    }
 }
 .score_show_window {
     text-decoration: underline;
@@ -548,6 +608,10 @@
         height: 49px;
         margin-bottom: 5px;
         margin-right: 5px;
+        &.condensed {
+            padding-top: 10px;
+            padding-left: 20px;
+        }
 
         >.deck {
             display: inline-block;
@@ -555,10 +619,25 @@
             height: 100%;
         }
         >.deck_count {
+            align-items: center;
             margin-right: 2px;
             width: 20px;
             display: flex;
-            align-items: center;
+            &.condensed {
+                display: inline-block;
+                text-align: center;
+                position: absolute;
+                margin-left: -12.5px;
+                margin-top: -12.5px;
+                width: 25px;
+                height: 25px;
+                line-height: 25px;
+                background: #f4f1f1;
+                color: #000000;
+                border: 1px solid #000000;
+                border-radius: 50%;
+                z-index: 100;
+            }
         }
     }
 }
@@ -569,7 +648,7 @@
     margin-left: 45px;
 }
 #special_achievements {
-    margin-left: 20px;
+    margin-left: 28px;
 }
 .player {
     >p {
@@ -589,6 +668,7 @@
 .two_lines {
     top: -16px !important;
     height: 32px !important;
+    padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
 }
 .sep {
     display: inline-block;
@@ -653,6 +733,9 @@
         height: 14px;
         top: 4px;
         line-height: 16px;
+        &.type_2 {
+            top: 54px;
+        }
     }
     &.L {
         width: 25px;
@@ -662,9 +745,12 @@
     }
 }
 .color_0 {
-    .card_age {
+    &.card_age {
         &.M {
             right: 6.5px;
+            &.type_2 {
+                right: 18px;
+            }
         }
         &.L {
             right: 21px;
@@ -672,9 +758,12 @@
     }
 }
 .color_1 {
-    .card_age {
+    &.card_age {
         &.M {
             right: 6px;
+            &.type_2 {
+                right: 18px;
+            }
         }
         &.L {
             right: 21px;
@@ -682,9 +771,12 @@
     }
 }
 .color_2 {
-    .card_age {
+    &.card_age {
         &.M {
             right: 6.5px;
+            &.type_2 {
+                right: 18px;
+            }
         }
         &.L {
             right: 20px;
@@ -692,9 +784,12 @@
     }
 }
 .color_3 {
-    .card_age {
+    &.card_age {
         &.M {
             right: 6px;
+            &.type_2 {
+                right: 18px;
+            }
         }
         &.L {
             right: 22px;
@@ -702,9 +797,12 @@
     }
 }
 .color_4 {
-    .card_age {
+    &.card_age {
         &.M {
             right: 6.5px;
+            &.type_2 {
+                right: 18px;
+            }
         }
         &.L {
             right: 22px;
@@ -730,6 +828,11 @@
         top: 5px;
         width: 93px;
         height: 15px;
+        &.type_2 {
+            left: 50px;
+            top: 54.5px;
+            width: 80px;
+        }
     }
     &.L {
         left: 143px;
@@ -805,6 +908,30 @@
         height: 151px;
     }
 }
+.echo_effect {
+    border-style: solid;
+    border-width: 1px;
+    &.color_0 {
+        background-color: #b2def2;
+        border-color: #0e2a50;
+    }
+    &.color_1 {
+        background-color: #f7c3d2;
+        border-color: #5a090c;
+    }
+    &.color_2 {
+        background-color: #9dd19b;
+        border-color: #122c18;
+    }
+    &.color_3 {
+        background-color: #f4f4be;
+        border-color: #8b6a28;
+    }
+    &.color_4 {
+        background-color: #b4bcd8;
+        border-color: #220e40;
+    }
+}
 .effect.color_0 {
     border-color: #0e2a50;
     &.light {
@@ -853,10 +980,10 @@
 .current_effect {
     box-shadow: 0px 0px 6px 2px #fff;
     &.light {
-        background-color: rgb(255 255 255 / 80%) !important;
+        background-color: rgb(255 255 255) !important;
     }
     &.dark {
-        background-color: rgb(0 0 0 / 80%) !important;
+        background-color: rgb(0 0 0) !important;
     }
 }
 .clickable {
@@ -864,12 +991,12 @@
     &:hover {
         cursor: pointer;
     }
+    &.mid_dogma {
+        box-shadow: 0 0 6px 3px rgb(154, 5, 5) !important;
+    }
 }
 .selected {
-    box-shadow: 0 0 6px 3px rgb(178, 10, 10) !important;
-}
-.clickable_important {
-    box-shadow: 0 0 6px 3px rgb(178, 10, 10) !important;
+    box-shadow: 0 0 6px 3px white !important;
 }
 .splay_indicator {
     margin: auto;
@@ -1000,12 +1127,45 @@
             width: 14px;
             height: 14px;
         }
+        #pagemaintitletext > &.age {
+            top: -2px;
+            position: relative;
+        }
+        &.music_note {
+            width: 16px;
+            height: 16px;
+            position: relative;
+            top: -1px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 306px auto !important;
+            background-position: -226px -22px !important;
+        }
         &.age {
 			@include m.square-age;
 			font-size: 11px;
 			line-height: 12px;
 			width: 13px;
 			height: 12px;
+            &.type_0, &.type_1, &.type_2, &.type_3, &.type_4 {
+                border: 1px solid black;
+                color: black;
+                font-weight: bold;
+            }
+            &.type_0 {
+                background-color: #f0d68c;
+            }
+            &.type_1 {
+                background-color: #d2b7ff;
+            }
+            &.type_2 {
+                background-color: #ff9fe5;
+            }
+            &.type_3 {
+                background-color: #88d2ff;
+            }
+            &.type_4 {
+                background-color: #16eb54;
+            }
 		}
         @include m.generate-icon-x-position(1, 6, 0, 15.5px);
     }
@@ -1021,6 +1181,13 @@
         width: 9px;
         height: 9px;
         vertical-align: middle;
+        &.icon_0 {
+            width: 8px;
+            height: 8px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 153px auto !important;
+            background-position: -103px -11px !important;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             width: 4px;
             height: 4px;
@@ -1029,17 +1196,24 @@
             margin-top: -1px;
             margin-bottom: -1px;
             line-height: 4px;
-            .font_size_7 &, .font_size_8 & {
+            .font_size_7 &, .font_size_8 &, .font_size_9 &, .font_size_10 &, .font_size_11 & {
                 width: 8px;
                 height: 8px;
             }
+        }
+        &.music_note {
+            width: 8px;
+            height: 8px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 153px auto !important;
+            background-position: -113px -11px !important;
         }
         .font_size_1 &, .font_size_2 &, .font_size_3 &, .font_size_4 &, .font_size_5 &, .font_size_6 & {
             background-size: 25px auto;
             background-position-y: -21px;
             @include m.generate-icon-x-position(1, 6, 0, 4.1666667px);
         }
-        .font_size_7 &, .font_size_8 & {
+        .font_size_7 &, .font_size_8 &, .font_size_9 &, .font_size_10 &, .font_size_11 & {
             background-size: 50px auto;
             background-position-y: -42px;
             border: none; // At this size, it looks better without a border since there's a white border from the image.
@@ -1073,7 +1247,7 @@
 			font-size: 7px;
 			line-height: 8px;
 		}
-        .font_size_8 &.age {
+        .font_size_8 &.age, .font_size_9 &.age, .font_size_10 &.age, .font_size_11 &.age {
 			width: 9px;
 			height: 9px;
 			font-size: 8px;
@@ -1083,10 +1257,28 @@
     &.L {
         width: 19px;
         height: 19px;
+        &.icon_0 {
+            width: 24px;
+            height: 24px;
+            position: relative;
+            top: 4px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 459px auto !important;
+            background-position: -310px -33px !important;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             @include m.icon-background;
             background-position-y: -114px;
             background-size: 135px auto;
+        }
+        &.music_note {
+            width: 24px;
+            height: 24px;
+			position: relative;
+            top: 4px;
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 459px auto !important;
+            background-position: -340px -33px !important;
         }
         &.age {
 			@include m.square-age;
@@ -1107,6 +1299,11 @@
     &.in_tooltip {
         width: 13px;
         height: 12px;
+        &.icon_0 {
+            background-image: url("img/hexagon_icons_echoes.png");
+            background-size: 230px auto;
+            background-position: -155px -17px;
+        }
         &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
             @include m.icon-background;
             background-size: 83px auto;
@@ -1162,6 +1359,9 @@
 .card {
     display: inline-block;
     background-image: url('img/card_backgrounds.jpg');
+    &.type_2 {
+        background-image: url('img/card_backgrounds_cities.jpg');
+    }
     position: relative;
     border: solid 1px #ffffff;
     &.simplified {
@@ -1193,20 +1393,29 @@
             background-size: 232px, auto;
             border-radius: 3px;
         }
-        &.item_105 {
-            background-position: -1px -1px;
+        &.item_105, &.item_106, &.item_107, &.item_108, &.item_109 {
+            background-position-y: -1px;
         }
-        &.item_106 {
-            background-position: -47px -1px;
+        &.item_325, &.item_326, &.item_327, &.item_328, &.item_329 {
+            background-position-y: -37px;
         }
-        &.item_107 {
-            background-position: -93.5px -1px;
+        &.item_435, &.item_436, &.item_437, &.item_438, &.item_439 {
+            background-position-y: -73px;
         }
-        &.item_108 {
-            background-position: -140px -1px;
+        &.item_105, &.item_325, &.item_435 {
+            background-position-x: -1px;
         }
-        &.item_109 {
-            background-position: -186px -1px;
+        &.item_106, &.item_326, &.item_436 {
+            background-position-x: -47px;
+        }
+        &.item_107, &.item_327, &.item_437 {
+            background-position-x: -93.5px;
+        }
+        &.item_108, &.item_328, &.item_438 {
+            background-position-x: -140px;
+        }
+        &.item_109, &.item_329, &.item_439 {
+            background-position-x: -186px;
         }
     }
 }
@@ -1233,8 +1442,8 @@
     }
     &.M {
         width: 36px;
-        background-size: 230px auto;
         height: 36px;
+        background-size: 230px auto;
         &.icon_1 {
             background-position-x: -1px;
         }
@@ -1252,6 +1461,23 @@
         }
         &.icon_6 {
             background-position-x: -192.5px;
+        }
+        &.icon_7 {
+            background-image: url("img/cities_special_icons.png");
+            width: 40px;
+            height: 40px;
+            background-position-x: -41px;
+        }
+        &.icon_10 {
+            background-image: none;
+            // The following line will be added dynamically via JavaScript:
+            // display: table;
+            & > span {
+                padding: 1px;
+                display: table-cell;
+                vertical-align: middle;
+                text-align: center;
+            }
         }
         &.color_0 {
             background-position-y: -1px;
@@ -1284,6 +1510,14 @@
             bottom: 7px;
             right: 7px;
         }
+        &.top_right_icon {
+            top: 7px;
+            right: 7px;
+        }
+        &.top_center_icon {
+            top: 7px;
+            left: 72px;
+        }
     }
     &.L {
         width: 75px;
@@ -1306,6 +1540,17 @@
         }
         &.icon_6 {
             background-position-x: -393.5px;
+        }
+        &.icon_10 {
+            background-image: none;
+            // The following line will be added dynamically via JavaScript:
+            // display: table;
+            & > span {
+                padding: 1px;
+                display: table-cell;
+                vertical-align: middle;
+                text-align: center;
+            }
         }
         &.color_0 {
             background-position-y: -1px;
@@ -1338,6 +1583,231 @@
             bottom: 23px;
             right: 26px;
         }
+        &.top_right_icon {
+            top: 25px;
+            right: 26px;
+        }
+        &.top_center_icon {
+            top: 25px;
+            left: 195px;
+        }
+    }
+}
+
+.city_special_icon {
+    @include m.city-special-icon-background;
+    background-image: url("img/cities_special_icons.png");
+    position: absolute;
+    &.icon_null {
+        display: none;
+    }
+    &.M {
+        width: 40px;
+        height: 40px;
+        background-size: 230px auto;
+        &.icon_7 {
+            background-position-y: -1px;
+        }
+        &.icon_8 {
+            background-position-y: -83px;
+        }
+        &.icon_9 {
+            background-position-y: -124px;
+        }
+        &.icon_11, &.icon_12, &.icon_13 {
+            background-position-y: -42px;
+        }
+        &.icon_12 {
+            transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+        }
+        &.icon_13 {
+            transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+        }
+        &.color_0 {
+            background-position-x: -1px;
+        }
+        &.color_1 {
+            background-position-x: -42px;
+        }
+        &.color_2 {
+            background-position-x: -83px;
+        }
+        &.color_3 {
+            background-position-x: -124px;
+        }
+        &.color_4 {
+            background-position-x: -165px;
+        }
+        &.top_left_icon {
+            top: 5px;
+            left: 5px;
+        }
+        &.bottom_left_icon {
+            bottom: 5px;
+            left: 5px;
+        }
+        &.bottom_center_icon {
+            bottom: 5px;
+            left: 70px;
+        }
+        &.bottom_right_icon {
+            bottom: 5px;
+            right: 5px;
+        }
+        &.top_right_icon {
+            top: 5px;
+            right: 5px;
+        }
+        &.top_center_icon {
+            top: 5px;
+            left: 70px;
+        }
+    }
+}
+
+.bonus_card_icon {
+    @include m.bonus-background;
+    position: absolute;
+    &.M {
+        &.bonus_value {
+            width: 20px;
+            height: 22px;
+            background-size: 230px auto;
+            background-position-y: -40px;
+            &.top_left_icon {
+                top: 15px;
+                left: 14px;
+            }
+            &.bottom_left_icon {
+                bottom: 12px;
+                left: 14px;
+            }
+            &.bottom_center_icon {
+                bottom: 12px;
+                left: 80px;
+            }
+            &.bottom_right_icon {
+                bottom: 12px;
+                right: 16px;
+            }
+            &.top_right_icon {
+                top: 15px;
+                right: 16px;
+            }
+            &.top_center_icon {
+                top: 15px;
+                left: 80px;
+            }
+        }
+        // 1, -20, -41 -63, -83, -104, -125, -146, -167, -188, -209
+        // 22.2029 −21.2258x^0.995702
+        @include m.generate-bonus-x-position-equation(1,11,22.2029px,21.2258,0.995702);
+        &.bonus_color {
+            width: 36px;
+            height: 36px;
+            background-size: 230px auto;
+            background-position-y: -1px;
+            &.top_left_icon {
+                top: 7px;
+                left: 7px;
+            }
+            &.bottom_left_icon {
+                bottom: 7px;
+                left: 7px;
+            }
+            &.bottom_center_icon {
+                bottom: 7px;
+                left: 73px;
+            }
+            &.bottom_right_icon {
+                bottom: 7px;
+                right: 7px;
+            }
+            &.top_right_icon {
+                top: 7px;
+                right: 7px;
+            }
+            &.top_center_icon {
+                top: 7px;
+                left: 73px;
+            }
+        }
+        @include m.generate-color-x-position(0, 4, 1, 38px);
+    }
+    &.L {
+        &.bonus_value {
+            width: 43px;
+            background-size: 470px auto;
+            height: 43px;
+            background-position-y: -82px;
+            &.top_left_icon {
+                top: 44px;
+                left: 48px;
+            }
+            &.bottom_left_icon {
+                bottom: 35px;
+                left: 48px;
+            }
+            &.bottom_center_icon {
+                bottom: 35px;
+                left: 211px;
+            }
+            &.bottom_right_icon {
+                bottom: 35px;
+                right: 41px;
+            }
+            &.top_right_icon {
+                top: 25px;
+                right: 43px;
+            }
+            &.top_center_icon {
+                top: 25px;
+                left: 211px;
+            }
+        }
+        //1,-41,-85,-128,-171,-213,-256,-298,-342,-384,-427
+        // 44.6125 −43.3471x^0.995277
+        @include m.generate-bonus-x-position-equation(1,11,44.6125px,43.3471,0.995277);
+
+        &.bonus_color {
+            width: 76px;
+            height: 75px;
+            background-size: 470px auto;
+            background-position-y: -1px;
+            &.top_left_icon {
+                top: 25px;
+                left: 30px;
+            }
+            &.bottom_left_icon {
+                bottom: 23px;
+                left: 30px;
+            }
+            &.bottom_center_icon {
+                bottom: 23px;
+                left: 193px;
+            }
+            &.bottom_right_icon {
+                bottom: 23px;
+                right: 26px;
+            }
+            &.top_right_icon {
+                top: 25px;
+                right: 26px;
+            }
+            &.top_center_icon {
+                top: 25px;
+                left: 193px;
+            }
+        }
+        @include m.generate-color-x-position(0, 4, -1, 77.5px);
     }
 }
 
@@ -1367,6 +1837,14 @@
             bottom: 1px;
             right: 2px;
         }
+        &.top_right_icon {
+            top: 2px;
+            right: 2px;
+        }
+        &.top_center_icon {
+            top: 2px;
+            left: 69px;
+        }
     }
     &.L {
         background-size: 1511px, auto;
@@ -1388,6 +1866,14 @@
             bottom: 11px;
             right: 15px;
         }
+        &.top_right_icon {
+            top: 17px;
+            right: 15px;
+        }
+        &.top_center_icon {
+            top: 17px;
+            left: 192px;
+        }
     }
 }
 
@@ -1405,20 +1891,29 @@
             background-image: url("img/special_achievements_portrait.jpg");
             background-size: 175px, auto;
         }
-        &.item_105 {
-            background-position: -1px -1px;
+        &.item_105, &.item_106, &.item_107, &.item_108, &.item_109 {
+            background-position-y: -1px;
         }
-        &.item_106 {
-            background-position: -36px -1px;
+        &.item_325, &.item_326, &.item_327, &.item_328, &.item_329 {
+            background-position-y: -47.5px;
         }
-        &.item_107 {
-            background-position: -71px -1px;
+        &.item_435, &.item_436, &.item_437, &.item_438, &.item_439 {
+            background-position-y: -94px;
         }
-        &.item_108 {
-            background-position: -106px -1px;
+        &.item_105, &.item_325, &.item_435 {
+            background-position-x: -1px;
         }
-        &.item_109 {
-            background-position: -141px -1px;
+        &.item_106, &.item_326, &.item_436 {
+            background-position-x: -36px;
+        }
+        &.item_107, &.item_327, &.item_437 {
+            background-position-x: -71px;
+        }
+        &.item_108, &.item_328, &.item_438 {
+            background-position-x: -106px;
+        }
+        &.item_109, &.item_329, &.item_439 {
+            background-position-x: -141px;
         }
         &.default_card_back {
             &.age_1, &.age_2, &.age_3, &.age_4, &.age_5, &.age_6, &.age_7, &.age_8, &.age_9, &.age_10 {
@@ -1489,13 +1984,13 @@
                 background-color: #f0d68c;
             }
             &.type_1 {
-                background-color: #be97ff;
+                background-color: #d2b7ff;
             }
             &.type_2 {
                 background-color: #ff9fe5;
             }
             &.type_3 {
-                background-color: #3ce8ff;
+                background-color: #88d2ff;
             }
             &.type_4 {
                 background-color: #16eb54;
@@ -1571,7 +2066,6 @@ $L_y_position:     8;
         }
     }
     // Relic cards
-    // They are located on the age 2 line at the end of the Artifact cards, use those numbers for xy calcs
     @for $i from 215 through 219 {
         &.hexagon_icon_#{$i} {
             &.M {
@@ -1579,6 +2073,65 @@ $L_y_position:     8;
             }
             &.L {
                 background-position: -#{$L_x_position + ($i + 5) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 100),10)))) * $L_offset}px;
+            }
+        }
+    }
+    // City cards
+    @for $i from 220 through 324 {
+        @if $i <= 234 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $M_offset}px -#{$M_y_position + $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $L_offset}px -#{$L_y_position + $L_offset}px;
+                }
+            }
+        }
+        @if $i >= 235 and $i <= 314 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $M_offset}px -#{$M_y_position + (2 + math.floor(math.div($i - 235, 10))) * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $L_offset}px -#{$L_y_position + (2 + math.floor(math.div($i - 235, 10))) * $L_offset}px;
+                }
+            }
+        }
+        @if $i >= 315 {
+            &.hexagon_icon_#{$i} {
+                &.M {
+                    background-position: -#{$M_x_position + (10 + math.floor(math.div($i - 315, 2))) * $M_offset}px -#{$M_y_position + 12 * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + (10 + math.floor(math.div($i - 315, 2))) * $L_offset}px -#{$L_y_position + 12 * $L_offset}px;
+                }
+            }
+        }
+    }
+    // Echo cards
+    // Since the icons are in their own png, we have to offset i by 330 and 345 back to '0' for calulation purposes
+    @for $i from 330 through 434 {
+        @if $i <= 344 {
+            &.hexagon_icon_#{$i} {
+                background-image: url("img/hexagon_icons_echoes.png");
+                &.M {
+                    background-position: -#{$M_x_position + ($i - 330) * $M_offset}px -#{$M_y_position}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + ($i - 330) * $L_offset}px -#{$L_y_position}px;
+                }
+            }
+        }
+        @if $i >= 345 {
+            &.hexagon_icon_#{$i} {
+                background-image: url("img/hexagon_icons_echoes.png");
+                &.M {
+                    background-position: -#{$M_x_position + ($i - 345) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
+                }
+                &.L {
+                    background-position: -#{$L_x_position + ($i - 345) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
+                }
             }
         }
     }

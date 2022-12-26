@@ -60,20 +60,44 @@ CREATE TABLE IF NOT EXISTS `card` (
 
 /* Table used to manage the execution of nested effects */
 CREATE TABLE IF NOT EXISTS `nested_card_execution` (
- `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (1 is for the original card, 2 is for the next card, etc.)',
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
  `card_id` SMALLINT COMMENT '-1 means no card',
  `executing_as_if_on_card_id` SMALLINT COMMENT '-1 means no card',
  `card_location` VARCHAR(12) DEFAULT NULL COMMENT 'The initial location of the card when its dogma was executed (board, display, or NULL)',
  `launcher_id` INT(10) NOT NULL COMMENT 'ID of the player who initially launched this card',
  `current_player_id` INT(10) DEFAULT NULL COMMENT 'ID of the player currently executing the card',
- `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel',
- `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (no cards have more than 3 effects on them)',
+ `current_effect_type` TINYINT COMMENT '-1=unset, 0=demand, 1=non-demand, 2=compel, 3=echo',
+ `current_effect_number` TINYINT COMMENT '-1 (unset), 1, 2, or 3 (but can be higher for echo effects)',
  `step` TINYINT COMMENT 'The interaction that the card is on',
  `step_max` TINYINT COMMENT 'The anticipated number of interactions that the card will have',
  `post_execution_index` TINYINT DEFAULT 0 COMMENT '0 means the effect has not triggered another card, 1 means the effect already triggered another card and resumed executing this effect',
  `auxiliary_value` INT DEFAULT -1 COMMENT 'An auxiliary value used by certain card implementations',
  `auxiliary_value_2` INT DEFAULT -1 COMMENT 'A second auxiliary value used by certain card implementations',
   PRIMARY KEY(`nesting_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table used to manage the execution of echo effects */
+CREATE TABLE IF NOT EXISTS `echo_execution` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
+ `execution_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of when the echo effect should be executed (an index of 1 is used for the final card to be executed, and higher indicies are used for cards buried deeper)',
+ `card_id` SMALLINT COMMENT 'the ID of the card',
+  PRIMARY KEY(`nesting_index`, `execution_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table used to store a table-based auxiliary array (some card implementations require storing lots of integers) */
+CREATE TABLE IF NOT EXISTS `auxiliary_value_table` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
+ `array_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The 1-based index of the array (the 0th index is used as a header to indicate the array size)',
+ `value` INT COMMENT 'the auxiliary value',
+  PRIMARY KEY(`nesting_index`, `array_index`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/* Table used to store a index-based auxiliary value (useful for indexing by player IDs, for example) */
+CREATE TABLE IF NOT EXISTS `indexed_auxiliary_value` (
+ `nesting_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The index of the nesting (0 is for the original card, 1 is for the next card, etc.)',
+ `index_id` INT(10) DEFAULT 0 COMMENT 'ID of the index (the indices do not need to be consecutive, making it useful for things such as player IDs)',
+ `value` INT COMMENT 'The auxiliary value',
+  PRIMARY KEY(`nesting_index`, `index_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Auxiliary tables: these are only used when needed to update card or player and their content is deleted after that */
@@ -127,18 +151,26 @@ CREATE TABLE `icon_count` (
 
 INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
-(105, 0, 'achievements', 10),
-(106, 0, 'achievements', 11),
-(107, 0, 'achievements', 12),
-(108, 0, 'achievements', 13),
-(109, 0, 'achievements', 14),
+/* TODO(LATER): See if we can start indexing the achievements at 0 instead of 10. */
+(105, 0, 'achievements', 11),
+(106, 0, 'achievements', 10),
+(107, 0, 'achievements', 14),
+(108, 0, 'achievements', 12),
+(109, 0, 'achievements', 13),
 
 /* Cities special achievements */
 (325, 2, 'removed', 15),
 (326, 2, 'removed', 16),
 (327, 2, 'removed', 17),
 (328, 2, 'removed', 18),
-(329, 2, 'removed', 19);
+(329, 2, 'removed', 19),
+
+/* Echoes special achievements */
+(435, 3, 'removed', 22),
+(436, 3, 'removed', 21),
+(437, 3, 'removed', 24),
+(438, 3, 'removed', 23),
+(439, 3, 'removed', 20);
 
 /* Insert relic cards */
 
@@ -148,8 +180,7 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (216, 0, 4, 0, 5, 0, 3, 3, NULL, NULL, 3, TRUE, 'removed'),
 (217, 1, 5, 4, 5, 3, 5, 0, NULL, NULL, 5, TRUE, 'removed'),
 (218, 4, 6, 1, 6, 6, 0, 2, NULL, NULL, 6, TRUE, 'removed'),
-/* TODO(ECHOES): Add Echo effect to this card */
-(219, 3, 7, 3, 0, 0, 2, 2, NULL, NULL, 2, TRUE, 'removed');
+(219, 3, 7, 3, 0,10, 2, 2, NULL, NULL, 2, TRUE, 'removed');
 
 /* Insert normal cards */
 
@@ -405,7 +436,132 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (211, 1,10, 3, 0, 6, 2, 6, 6, 'removed'),
 (212, 1,10, 3, 2, 6, 0, 2, 2, 'removed'),
 (213, 1,10, 4, 0, 6, 6, 6, 6, 'removed'),
-(214, 1,10, 4, 0, 5, 5, 6, 5, 'removed');
+(214, 1,10, 4, 0, 5, 5, 6, 5, 'removed'),
+
+/* Echoes - Age 1 */
+(330, 3, 1, 0,  0,101,  1,  1, 1, 'removed'),
+(331, 3, 1, 0, 10,  4,101,  0, 4, 'removed'),
+(332, 3, 1, 0,  3,  0,  3, 10, 3, 'removed'),
+(333, 3, 1, 1,  0,  4, 10,101, 4, 'removed'),
+(334, 3, 1, 1, 10,101,  0,  3, 3, 'removed'),
+(335, 3, 1, 1, 10,102,  0,  4, 4, 'removed'),
+(336, 3, 1, 2,  4,  4,  2,  0, 4, 'removed'),
+(337, 3, 1, 2,  4,  1,  0,  1, 1, 'removed'),
+(338, 3, 1, 2,  2,  2,  0, 10, 2, 'removed'),
+(339, 3, 1, 3,  0,  2,  2, 10, 2, 'removed'),
+(340, 3, 1, 3,  4,  0,  4,101, 4, 'removed'),
+(341, 3, 1, 3,  2,102,  0,  2, 2, 'removed'),
+(342, 3, 1, 4,  4,  0,  4, 10, 4, 'removed'),
+(343, 3, 1, 4,101,  0,  1, 10, 1, 'removed'),
+(344, 3, 1, 4,  0,  4,103,  4, 4, 'removed'),
+
+/* Echoes - Age 2 */
+(345, 3, 2, 0,  3,  0, 10,  3, 3, 'removed'),
+(346, 3, 2, 0,  3,  3, 10,  0, 3, 'removed'),
+(347, 3, 2, 1,103,  0,  4,  4, 4, 'removed'),
+(348, 3, 2, 1,  0,102, 10,  4, 4, 'removed'),
+(349, 3, 2, 2,  0,  1,  1, 10, 1, 'removed'),
+(350, 3, 2, 2, 10,  0,102,  4, 4, 'removed'),
+(351, 3, 2, 3,102, 10,  0,  2, 2, 'removed'),
+(352, 3, 2, 3,  2,  2,  2,  0, 2, 'removed'),
+(353, 3, 2, 4,  4,102,  0,  4, 4, 'removed'),
+(354, 3, 2, 4,  1,103,  1,  0, 1, 'removed'),
+
+/* Echoes - Age 3 */
+(355, 3, 3, 0,  0,  2,104, 10, 2, 'removed'),
+(356, 3, 3, 0,  3,  0,103, 10, 3, 'removed'),
+(357, 3, 3, 1,  0,  3,  3,  3, 3, 'removed'),
+(358, 3, 3, 1,  4,  4,  0,  4, 4, 'removed'),
+(359, 3, 3, 2, 10,  0,  1,103, 1, 'removed'),
+(360, 3, 3, 2,103,  2,  0,  2, 2, 'removed'),
+(361, 3, 3, 3,  1, 10,  1,  0, 1, 'removed'),
+(362, 3, 3, 3,  1,  1,  0,  2, 1, 'removed'),
+(363, 3, 3, 4,  0,103,  1, 10, 1, 'removed'),
+(364, 3, 3, 4,  0,103, 10,  4, 4, 'removed'),
+
+/* Echoes - Age 4 */
+(365, 3, 4, 0,  3,  3,  3,  0, 3, 'removed'),
+(366, 3, 4, 0,  0,104,  3, 10, 3, 'removed'),
+(367, 3, 4, 1,105,  5,  0, 10, 5, 'removed'),
+(368, 3, 4, 1,  1,  1,  0,  1, 1, 'removed'),
+(369, 3, 4, 2,  1,  0,  1,104, 1, 'removed'),
+(370, 3, 4, 2,  5,104,  5,  0, 5, 'removed'),
+(371, 3, 4, 3,  2, 10,  2,  0, 2, 'removed'),
+(372, 3, 4, 3,  0, 10,  3,104, 3, 'removed'),
+(373, 3, 4, 4, 10,105,  0,  3, 3, 'removed'),
+(374, 3, 4, 4, 10,  2,  0,  2, 2, 'removed'),
+
+/* Echoes - Age 5 */
+(375, 3, 5, 0, 10,  5,  0,106, 5, 'removed'),
+(376, 3, 5, 0,  0, 10,105,  3, 3, 'removed'),
+(377, 3, 5, 1, 10,  5,  5,  0, 5, 'removed'),
+(378, 3, 5, 1,  1,  1,  0,  1, 1, 'removed'),
+(379, 3, 5, 2,  5,  0,  5,105, 5, 'removed'),
+(380, 3, 5, 2,  3,  2,  2,  0, 2, 'removed'),
+(381, 3, 5, 3,105,  0,  3,  3, 3, 'removed'),
+(382, 3, 5, 3,  0,106,  5, 10, 5, 'removed'),
+(383, 3, 5, 4,105, 10,  0,  3, 3, 'removed'),
+(384, 3, 5, 4, 10,  3,  3,  0, 3, 'removed'),
+
+/* Echoes - Age 6 */
+(385, 3, 6, 0, 10,  0,  1,  1, 1, 'removed'),
+(386, 3, 6, 0,  3, 10,  3,  0, 3, 'removed'),
+(387, 3, 6, 1,  5,106,  0, 10, 5, 'removed'),
+(388, 3, 6, 1,  5,  5,  5,  0, 5, 'removed'),
+(389, 3, 6, 2,  3, 10,  0,107, 3, 'removed'),
+(390, 3, 6, 2,  0,106,  1,  1, 1, 'removed'),
+(391, 3, 6, 3, 10,  5,  5,  0, 5, 'removed'),
+(392, 3, 6, 3,  3,  0,107, 10, 3, 'removed'),
+(393, 3, 6, 4,  0,  2,106,  2, 2, 'removed'),
+(394, 3, 6, 4,106,  3,  0,  3, 3, 'removed'),
+
+/* Echoes - Age 7 */
+(395, 3, 7, 0, 10,  3,  0,107, 3, 'removed'),
+(396, 3, 7, 0,  3,  0,  1,  1, 1, 'removed'),
+(397, 3, 7, 1,  5,  5, 10,  0, 5, 'removed'),
+(398, 3, 7, 1,  0, 10,  5,107, 5, 'removed'),
+(399, 3, 7, 2, 10,  2,  0,108, 2, 'removed'),
+(400, 3, 7, 2,  0,  6,  6,  3, 6, 'removed'),
+(401, 3, 7, 3,107, 10,  6,  0, 6, 'removed'),
+(402, 3, 7, 3,  2,  0,  5,  2, 2, 'removed'),
+(403, 3, 7, 4,  0,108,  2, 10, 2, 'removed'),
+(404, 3, 7, 4,107,  1,  0,  1, 1, 'removed'),
+
+/* Echoes - Age 8 */
+(405, 3, 8, 0,  0,  3,  3,  3, 3, 'removed'),
+(406, 3, 8, 0,  0,  2, 10,108, 2, 'removed'),
+(407, 3, 8, 1,  2, 10,  0,  2, 2, 'removed'),
+(408, 3, 8, 1,  5,  0,  6,  6, 6, 'removed'),
+(409, 3, 8, 2,108,  5,  5,  0, 5, 'removed'),
+(410, 3, 8, 2, 10,  0,109,  1, 1, 'removed'),
+(411, 3, 8, 3,  0, 10,109,  2, 2, 'removed'),
+(412, 3, 8, 3, 10,  6,  6,  0, 6, 'removed'),
+(413, 3, 8, 4,  1,108,  0,  1, 1, 'removed'),
+(414, 3, 8, 4,108,  0,  6, 10, 6, 'removed'),
+
+/* Echoes - Age 9 */
+(415, 3, 9, 0,  6,  0,  6,  3, 6, 'removed'),
+(416, 3, 9, 0,  3,  2,  3,  0, 3, 'removed'),
+(417, 3, 9, 1,  5,  5,  5,  0, 5, 'removed'),
+(418, 3, 9, 1,  0, 10,  6,110, 6, 'removed'),
+(419, 3, 9, 2, 10,  1,109,  0, 1, 'removed'),
+(420, 3, 9, 2, 10,  6,  6,  0, 6, 'removed'),
+(421, 3, 9, 3,  1,  0, 10,109, 1, 'removed'),
+(422, 3, 9, 3,  0,  5,110, 10, 5, 'removed'),
+(423, 3, 9, 4,  0,  2,109, 10, 2, 'removed'),
+(424, 3, 9, 4,  2,109,  0,  2, 2, 'removed'),
+
+/* Echoes - Age 10 */
+(425, 3,10, 0,  0,  2,  2,111, 2, 'removed'),
+(426, 3,10, 0,  3,  3,110,  0, 3, 'removed'),
+(427, 3,10, 1,  0,  6,  6,  5, 6, 'removed'),
+(428, 3,10, 1,  0,110,  6,  6, 6, 'removed'),
+(429, 3,10, 2,  1,  0,  6,  6, 6, 'removed'),
+(430, 3,10, 2,  5,  5,  0,  5, 5, 'removed'),
+(431, 3,10, 3,  6,  0,110,  6, 6, 'removed'),
+(432, 3,10, 3,  1,110,  0,  1, 1, 'removed'),
+(433, 3,10, 4,  3,  3,  0,  3, 3, 'removed'),
+(434, 3,10, 4,  3,  0,  3,111, 3, 'removed');
 
 /* Insert Cities cards */
 
@@ -516,23 +672,23 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (305, 2, 9, 0, 110,   6, 110,   1, 0,   6, 6, 'removed'),
 (306, 2, 9, 0,   6,   6,  13,   3, 0,   9, 6, 'removed'),
 (307, 2, 9, 1,   5,   6,   7,   6, 0,  13, 6, 'removed'),
-(308, 3, 9, 1, 110,   5, 110,   1, 0,   5, 5, 'removed'),
-(309, 3, 9, 2, 109, 109,   6,   3, 0,   3, 5, 'removed'),
-(310, 3, 9, 2,   3,   1,  13,   1, 0,   9, 1, 'removed'),
-(311, 3, 9, 3,   2,   6,   7,   6, 0,  13, 6, 'removed'),
-(312, 3, 9, 3, 109,   1, 109,   2, 0,   2, 2, 'removed'),
-(313, 3, 9, 4,   5,   6,   7,   5, 0,  13, 5, 'removed'),
-(314, 3, 9, 4,   2,   3,   7,   21, 0,  9, 2, 'removed'),
+(308, 2, 9, 1, 110,   5, 110,   1, 0,   5, 5, 'removed'),
+(309, 2, 9, 2, 109, 109,   6,   3, 0,   3, 5, 'removed'),
+(310, 2, 9, 2,   3,   1,  13,   1, 0,   9, 1, 'removed'),
+(311, 2, 9, 3,   2,   6,   7,   6, 0,  13, 6, 'removed'),
+(312, 2, 9, 3, 109,   1, 109,   2, 0,   2, 2, 'removed'),
+(313, 2, 9, 4,   5,   6,   7,   5, 0,  13, 5, 'removed'),
+(314, 2, 9, 4,   2,   3,   7,   2, 0,   9, 2, 'removed'),
 
 /* Cities - Age 10 */
-(315, 3,10, 0,   2,   2,  13,   3, 0,   9, 2, 'removed'),
-(316, 3,10, 0, 110, 110,   6,   3, 0,   6, 6, 'removed'),
-(317, 3,10, 1, 110, 110,   5,   1, 0,   5, 5, 'removed'),
-(318, 3,10, 1,   2,   6,  13,   6, 0,   9, 6, 'removed'),
-(319, 3,10, 2,   3,   6,  13,   6, 0,   9, 6, 'removed'),
-(320, 3,10, 2,   6,   1, 111,   1, 0, 111, 1, 'removed'),
-(321, 3,10, 3,   2,   6,  13,   2, 0,   9, 2, 'removed'),
-(322, 3,10, 3, 110, 110,   6,   1, 0,   1, 1, 'removed'),
-(323, 3,10, 4,   5,   6,   9,   5, 0,   9, 5, 'removed'),
-(324, 3,10, 4,   2,   3,  13,   3, 0,   9, 3, 'removed');
+(315, 2,10, 0,   2,   2,  13,   3, 0,   9, 2, 'removed'),
+(316, 2,10, 0, 110, 110,   6,   3, 0,   6, 6, 'removed'),
+(317, 2,10, 1, 110, 110,   5,   1, 0,   5, 5, 'removed'),
+(318, 2,10, 1,   2,   6,  13,   6, 0,   9, 6, 'removed'),
+(319, 2,10, 2,   3,   6,  13,   6, 0,   9, 6, 'removed'),
+(320, 2,10, 2,   6,   1, 111,   1, 0, 111, 1, 'removed'),
+(321, 2,10, 3,   2,   6,  13,   2, 0,   9, 2, 'removed'),
+(322, 2,10, 3, 110, 110,   6,   1, 0,   1, 1, 'removed'),
+(323, 2,10, 4,   5,   6,   9,   5, 0,   9, 5, 'removed'),
+(324, 2,10, 4,   2,   3,  13,   3, 0,   9, 3, 'removed');
 

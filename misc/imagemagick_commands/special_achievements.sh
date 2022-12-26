@@ -19,71 +19,71 @@ wonder_offset="+150+150"
 world_offset="+150+160"
 universe_offset="+150+190"
 
-magick convert "$folder_path/base_special_achievement_${empire_num}.png" -crop 450x330${empire_offset} +repage  "$folder_path/temp/base_special_achievement_${empire_num}_cropped.png"
-magick convert "$folder_path/base_special_achievement_${monument_num}.png" -crop 450x330${monument_offset} +repage  "$folder_path/temp/base_special_achievement_${monument_num}_cropped.png"
-magick convert "$folder_path/base_special_achievement_${wonder_num}.png" -crop 450x330${wonder_offset} +repage  "$folder_path/temp/base_special_achievement_${wonder_num}_cropped.png"
-magick convert "$folder_path/base_special_achievement_${world_num}.png" -crop 450x330${world_offset} +repage  "$folder_path/temp/base_special_achievement_${world_num}_cropped.png"
-magick convert "$folder_path/base_special_achievement_${universe_num}.png" -crop 450x330${universe_offset} +repage  "$folder_path/temp/base_special_achievement_${universe_num}_cropped.png"
+magick convert "../cards/Print_BaseCards_front/Print_BaseCards_front-107.png" -crop 450x330${empire_offset} +repage  "$folder_path/temp/base_special_achievement_${empire_num}_cropped.png"
+magick convert "../cards/Print_BaseCards_front/Print_BaseCards_front-106.png" -crop 450x330${monument_offset} +repage  "$folder_path/temp/base_special_achievement_${monument_num}_cropped.png"
+magick convert "../cards/Print_BaseCards_front/Print_BaseCards_front-109.png" -crop 450x330${wonder_offset} +repage  "$folder_path/temp/base_special_achievement_${wonder_num}_cropped.png"
+magick convert "../cards/Print_BaseCards_front/Print_BaseCards_front-108.png" -crop 450x330${world_offset} +repage  "$folder_path/temp/base_special_achievement_${world_num}_cropped.png"
+magick convert "../cards/Print_BaseCards_front/Print_BaseCards_front-110.png" -crop 450x330${universe_offset} +repage  "$folder_path/temp/base_special_achievement_${universe_num}_cropped.png"
 
 # CITIES
 
-fame_num=1
-glory_num=2
-legend_num=3
-repute_num=4
+legend_num=1
+repute_num=2
+fame_num=3
+glory_num=4
 victory_num=5
 
-fame_offset="+150+120"
+legend_offset="+102+90"
+repute_offset="+150+130"
+fame_offset="+150+110"
 glory_offset="+150+170"
-legend_offset="+102+100"
-repute_offset="+150+140"
 victory_offset="+150+135"
 
-magick convert "$folder_path/cities_special_achievement_${fame_num}.png" -crop 450x330${fame_offset} +repage  "$folder_path/temp/cities_special_achievement_${fame_num}_cropped.png"
-magick convert "$folder_path/cities_special_achievement_${glory_num}.png" -crop 450x330${glory_offset} +repage  "$folder_path/temp/cities_special_achievement_${glory_num}_cropped.png"
-magick convert "$folder_path/cities_special_achievement_${legend_num}.png" -crop 545x400${legend_offset} +repage  -resize 450x330 "$folder_path/temp/cities_special_achievement_${legend_num}_cropped.png"
-magick convert "$folder_path/cities_special_achievement_${repute_num}.png" -crop 450x330${repute_offset} +repage  "$folder_path/temp/cities_special_achievement_${repute_num}_cropped.png"
-magick convert "$folder_path/cities_special_achievement_${victory_num}.png" -crop 450x330${victory_offset} +repage  "$folder_path/temp/cities_special_achievement_${victory_num}_cropped.png"
+magick convert "../cards/Print_CitiesCards_front/Print_CitiesCards_front-106.png" -crop 545x400${legend_offset} +repage  -resize 450x330 "$folder_path/temp/cities_special_achievement_${legend_num}_cropped.png"
+magick convert "../cards/Print_CitiesCards_front/Print_CitiesCards_front-107.png" -crop 450x330${repute_offset} +repage  "$folder_path/temp/cities_special_achievement_${repute_num}_cropped.png"
+magick convert "../cards/Print_CitiesCards_front/Print_CitiesCards_front-108.png" -crop 450x330${fame_offset} +repage  "$folder_path/temp/cities_special_achievement_${fame_num}_cropped.png"
+magick convert "../cards/Print_CitiesCards_front/Print_CitiesCards_front-109.png" -crop 450x330${glory_offset} +repage  "$folder_path/temp/cities_special_achievement_${glory_num}_cropped.png"
+magick convert "../cards/Print_CitiesCards_front/Print_CitiesCards_front-110.png" -crop 450x330${victory_offset} +repage  "$folder_path/temp/cities_special_achievement_${victory_num}_cropped.png"
 
 # ECHOES
 
-destiny_num=1
-heritage_num=2
-history_num=3
-supremacy_num=4
-wealth_num=5
+wealth_num=1
+destiny_num=2
+heritage_num=3
+history_num=4
+supremacy_num=5
 
+wealth_offset="+150+170"
 destiny_offset="+150+155"
 heritage_offset="+102+120"
 history_offset="+150+140"
 supremacy_offset="+150+125"
-wealth_offset="+150+170"
 
-magick convert "$folder_path/echoes_special_achievement_${destiny_num}.png" -crop 450x330${destiny_offset} +repage  "$folder_path/temp/echoes_special_achievement_${destiny_num}_cropped.png"
-magick convert "$folder_path/echoes_special_achievement_${heritage_num}.png" -crop 545x400${heritage_offset} +repage  -resize 450x330 "$folder_path/temp/echoes_special_achievement_${heritage_num}_cropped.png"
-magick convert "$folder_path/echoes_special_achievement_${history_num}.png" -crop 450x330${history_offset} +repage  "$folder_path/temp/echoes_special_achievement_${history_num}_cropped.png"
-magick convert "$folder_path/echoes_special_achievement_${supremacy_num}.png" -crop 450x330${supremacy_offset} +repage  "$folder_path/temp/echoes_special_achievement_${supremacy_num}_cropped.png"
-magick convert "$folder_path/echoes_special_achievement_${wealth_num}.png" -crop 450x330${wealth_offset} +repage  "$folder_path/temp/echoes_special_achievement_${wealth_num}_cropped.png"
+magick convert "../cards/Print_EchoesCards_front/Print_EchoesCards_front-106.png" -crop 450x330${wealth_offset} +repage  "$folder_path/temp/echoes_special_achievement_${wealth_num}_cropped.png"
+magick convert "../cards/Print_EchoesCards_front/Print_EchoesCards_front-107.png" -crop 450x330${destiny_offset} +repage  "$folder_path/temp/echoes_special_achievement_${destiny_num}_cropped.png"
+magick convert "../cards/Print_EchoesCards_front/Print_EchoesCards_front-108.png" -crop 545x400${heritage_offset} +repage  -resize 450x330 "$folder_path/temp/echoes_special_achievement_${heritage_num}_cropped.png"
+magick convert "../cards/Print_EchoesCards_front/Print_EchoesCards_front-109.png" -crop 450x330${history_offset} +repage  "$folder_path/temp/echoes_special_achievement_${history_num}_cropped.png"
+magick convert "../cards/Print_EchoesCards_front/Print_EchoesCards_front-110.png" -crop 450x330${supremacy_offset} +repage  "$folder_path/temp/echoes_special_achievement_${supremacy_num}_cropped.png"
 
 # FIGURES
 
-advancement_num=1
-expansion_num=2
-rivalry_num=3
-trade_num=4
-war_num=5
+expansion_num=1
+trade_num=2
+war_num=3
+rivalry_num=4
+advancement_num=5
 
-advancement_offset="+150+110"
 expansion_offset="+150+160"
-rivalry_offset="+150+130"
 trade_offset="+150+185"
 war_offset="+150+115"
+rivalry_offset="+150+130"
+advancement_offset="+150+100"
 
-magick convert "$folder_path/figures_special_achievement_${advancement_num}.png" -crop 450x330${advancement_offset} +repage  "$folder_path/temp/figures_special_achievement_${advancement_num}_cropped.png"
-magick convert "$folder_path/figures_special_achievement_${expansion_num}.png" -crop 450x330${expansion_offset} +repage  "$folder_path/temp/figures_special_achievement_${expansion_num}_cropped.png"
-magick convert "$folder_path/figures_special_achievement_${rivalry_num}.png" -crop 450x330${rivalry_offset} +repage  "$folder_path/temp/figures_special_achievement_${rivalry_num}_cropped.png"
-magick convert "$folder_path/figures_special_achievement_${trade_num}.png" -crop 450x330${trade_offset} +repage  "$folder_path/temp/figures_special_achievement_${trade_num}_cropped.png"
-magick convert "$folder_path/figures_special_achievement_${war_num}.png" -crop 450x330${war_offset} +repage  "$folder_path/temp/figures_special_achievement_${war_num}_cropped.png"
+magick convert "../cards/Print_FiguresCards_front/Print_FiguresCards_front-106.png" -crop 450x330${expansion_offset} +repage  "$folder_path/temp/figures_special_achievement_${expansion_num}_cropped.png"
+magick convert "../cards/Print_FiguresCards_front/Print_FiguresCards_front-107.png" -crop 450x330${trade_offset} +repage  "$folder_path/temp/figures_special_achievement_${trade_num}_cropped.png"
+magick convert "../cards/Print_FiguresCards_front/Print_FiguresCards_front-108.png" -crop 450x330${war_offset} +repage  "$folder_path/temp/figures_special_achievement_${war_num}_cropped.png"
+magick convert "../cards/Print_FiguresCards_front/Print_FiguresCards_front-109.png" -crop 450x330${rivalry_offset} +repage  "$folder_path/temp/figures_special_achievement_${rivalry_num}_cropped.png"
+magick convert "../cards/Print_FiguresCards_front/Print_FiguresCards_front-110.png" -crop 450x330${advancement_offset} +repage  "$folder_path/temp/figures_special_achievement_${advancement_num}_cropped.png"
 
 # Shrink images
 mogrify -path $folder_path/temp/scaled -resize 150x110 \

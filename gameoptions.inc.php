@@ -88,8 +88,11 @@ $game_options = array(
         'startcondition' => array(
             1 => array(/* No special condition here */),
             2 => array(
-                /* TODO(CITIES,ECHOES,FIGURES): Add more conditions when other expansions are added. */
+                /* TODO(FIGURES): Add more conditions when other expansions are added. */
                 array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
+                /* TODO(CITIES): Re-add condition. */
+                // array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
+                array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
             ),
         )
     ),
@@ -113,14 +116,14 @@ $game_options = array(
         )
     ),
 
-    /* TODO(CITIES,ECHOES,FIGURES): Add game options.
+    /* TODO(CITIES): Add game options.
     103 => array(
         'name' => totranslate('Cities of Destiny expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
         )
-    ),
+    ), */
 
     104 => array(
         'name' => totranslate('Echoes of the Past expansion'),
@@ -130,6 +133,7 @@ $game_options = array(
         )
     ),
 
+    /* TODO(FIGURES): Add game options.
     105 => array(
         'name' => totranslate('Figures in the Sand expansion'),
         'values' => array(

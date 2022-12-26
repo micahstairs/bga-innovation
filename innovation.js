@@ -55,6 +55,8 @@ function (dojo, declare) {
             this.HTML_class.display = "M card";
             this.HTML_class.deck = "S recto";
             this.HTML_class.board = "M card";
+            this.HTML_class.forecast = "S recto";
+            this.HTML_class.my_forecast_verso = "M card";
             this.HTML_class.score = "S recto";
             this.HTML_class.my_score_verso = "M card";
             this.HTML_class.revealed = "M card";
@@ -68,6 +70,8 @@ function (dojo, declare) {
             this.num_cards_in_row.opponent_hand = null;
             this.num_cards_in_row.display = 1;
             this.num_cards_in_row.deck = 15;
+            this.num_cards_in_row.forecast = null;
+            this.num_cards_in_row.my_forecast_verso = null;
             this.num_cards_in_row.score = null;
             this.num_cards_in_row.my_score_verso = null;
             // For board, this.num_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
@@ -81,6 +85,8 @@ function (dojo, declare) {
             this.delta.opponent_hand = {"x": 35, "y": 49}; // + 2
             this.delta.display = {"x": 189, "y": 133}; // +7
             this.delta.deck = {"x": 3, "y": 3}; // overlap
+            this.delta.forecast = {"x": 35, "y": 49}; // + 2
+            this.delta.my_forecast_verso = {"x": 189, "y": 133}; // +7
             this.delta.score = {"x": 35, "y": 49}; // + 2
             this.delta.my_score_verso = {"x": 189, "y": 133}; // +7
             // For board, this.delta is not defined because it's managed by the splay system: the width is defined dynamically
@@ -94,6 +100,10 @@ function (dojo, declare) {
             
             this.display_mode = null;
             this.view_full = null;
+
+            // Counters used to track progress of the Monument special achievement
+            this.number_of_tucked_cards = 0;
+            this.number_of_scored_cards = 0;
 
             this.arrows_for_expanded_mode = "&gt;&gt; &lt;&lt;"; // >> <<
             this.arrows_for_compact_mode = "&lt;&lt; &gt;&gt;"; // << >>
@@ -124,36 +134,33 @@ function (dojo, declare) {
             
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
-            this.deactivated_cards_important = null;
+            this.deactivated_cards_mid_dogma = null;
             this.erased_pagemaintitle_text = null;
         },
         
         //****** CODE FOR DEBUG MODE
         debug_draw: function() {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_draw.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function(result){}, function(is_error){},
             );
         },
         debug_meld: function() {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_meld.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function(result){}, function(is_error){},
             );
         },
         debug_tuck: function() {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_tuck.html",
                 {
                     lock: true,
@@ -164,58 +171,107 @@ function (dojo, declare) {
         },
         debug_score: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_score.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );
         },  
         debug_achieve: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_achieve.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
         },
         debug_return: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_return.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
         },
         debug_topdeck: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_topdeck.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
         },
         debug_dig: function () {
             var debug_card_list = document.getElementById("debug_card_list");
-            self = this;
             this.ajaxcall("/innovation/innovation/debug_dig.html",
                 {
                     lock: true,
-                    card_id: debug_card_list.selectedIndex
+                    card_id: debug_card_list.value
                 },
                 this, function (result) { }, function (is_error) {}
             );      
+        },
+        debug_foreshadow: function () {
+            var debug_card_list = document.getElementById("debug_card_list");
+            this.ajaxcall("/innovation/innovation/debug_foreshadow.html",
+                {
+                    lock: true,
+                    card_id: debug_card_list.value
+                },
+                this, function (result) { }, function (is_error) {}
+            );      
+        },
+        debug_unsplay: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 0
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
+        debug_splay_left: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 1
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
+        debug_splay_right: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 2
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
+        debug_splay_up: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 3
+                },
+                this, function (result) { }, function (is_error) {}
+            );
         },
         //******
                 
@@ -237,22 +293,45 @@ function (dojo, declare) {
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
+
+                // Prepend UI elements for debug area
+                main_area.innerHTML =
+                    "</br><select id='debug_color_list'></select>"
+                    + "<button id='debug_unsplay' class='action-button debug_button bgabutton bgabutton_red'>UNSPLAY</button>"
+                    + "<button id='debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
+                    + "<button id='debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
+                    + "<button id='debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
+                    + main_area.innerHTML;
+                if (gamedatas.echoes_expansion_enabled) {
+                    main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
+                }
                 if (gamedatas.artifacts_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
                 }
-                main_area.innerHTML = "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>" + main_area.innerHTML;
-                main_area.innerHTML = "<select id='debug_card_list'></select>" + main_area.innerHTML;
+                main_area.innerHTML =
+                    "<select id='debug_card_list'></select>"
+                    + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
+                    + "<button id='debug_meld' class='action-button debug_button bgabutton bgabutton_red'>MELD</button>"
+                    + "<button id='debug_tuck' class='action-button debug_button bgabutton bgabutton_red'>TUCK</button>"
+                    + "<button id='debug_score' class='action-button debug_button bgabutton bgabutton_red'>SCORE</button>"
+                    + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
+                    + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
+                    + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
+                    + main_area.innerHTML;
 
-                for (var id = 0; id < gamedatas.cards.length; id++) {
-                    var card = gamedatas.cards[id];
-                    $('debug_card_list').innerHTML += `<option value='card_${id}'> ${id} - ${card.name} (Age ${card.age})</option>`;
+                // Populate dropdown lists
+                for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
+                    var key = Object.keys(gamedatas.cards)[i];
+                    var card = gamedatas.cards[key];
+                    $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
                 }
+                $('debug_color_list').innerHTML += `<option value='0'>Blue</option>`;
+                $('debug_color_list').innerHTML += `<option value='1'>Red</option>`;
+                $('debug_color_list').innerHTML += `<option value='2'>Green</option>`;
+                $('debug_color_list').innerHTML += `<option value='3'>Yellow</option>`;
+                $('debug_color_list').innerHTML += `<option value='4'>Purple</option>`;
+
+                // Trigger events when buttons are clicked
                 dojo.connect($('debug_draw'), 'onclick', this, 'debug_draw');
                 dojo.connect($('debug_meld'), 'onclick', this, 'debug_meld');
                 dojo.connect($('debug_tuck'), 'onclick', this, 'debug_tuck');
@@ -263,11 +342,18 @@ function (dojo, declare) {
                 if (gamedatas.artifacts_expansion_enabled) {
                     dojo.connect($('debug_dig'), 'onclick', this, 'debug_dig');
                 }
-
+                if (gamedatas.echoes_expansion_enabled) {
+                    dojo.connect($('debug_foreshadow'), 'onclick', this, 'debug_foreshadow');
+                }
+                dojo.connect($('debug_unsplay'), 'onclick', this, 'debug_unsplay');
+                dojo.connect($('debug_splay_left'), 'onclick', this, 'debug_splay_left');
+                dojo.connect($('debug_splay_right'), 'onclick', this, 'debug_splay_right');
+                dojo.connect($('debug_splay_up'), 'onclick', this, 'debug_splay_up');
             }
             //******
         
             this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
+            this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
             this.text_for_expanded_mode = _("Show compact");
             this.text_for_compact_mode = _("Show expanded");
             this.text_for_view_normal = _("Look at all cards in piles");
@@ -307,31 +393,44 @@ function (dojo, declare) {
             this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
             this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
             
-
-            // Add achievements to win to achievement container and determin max cards per row for the achievement container
+            // Add achievements to win to achievement container and determine max cards per row for the achievement container
             for(var player_id in this.players) {
                 dojo.addClass('achievement_container_' + player_id, 'to_win_' + this.number_of_achievements_needed_to_win)
             }
+
             var achievement_container_width = dojo.position('achievement_container_' + any_player_id).w
             var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
             var progress_width = dojo.position('progress_' + any_player_id).w;
             var score_width = progress_width - achievement_container_width - 10 - reference_card_width;
            
-            var num_of_achievments_per_row = 4;
+            this.num_cards_in_row.achievements = 4;
             if (achievement_container_width >= 140 && achievement_container_width <= 175 ) {
-                num_of_achievments_per_row = 5;
+                this.num_cards_in_row.achievements = 5;
             } else if (achievement_container_width > 175) {
-                num_of_achievments_per_row = this.number_of_achievements_needed_to_win;
+                this.num_cards_in_row.achievements = this.number_of_achievements_needed_to_win;
             }
             
-            this.num_cards_in_row.achievements = num_of_achievments_per_row;
-            this.num_cards_in_row.score = parseInt((score_width + this.delta.score.x - this.card_dimensions['S card'].width) / (this.delta.score.x));
+            this.num_cards_in_row.score = parseInt(score_width / (this.delta.score.x));
+            this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
+
+            // Split the space between the score and the forecast
+            if (gamedatas.echoes_expansion_enabled) {
+                this.num_cards_in_row.forecast = Math.floor(this.num_cards_in_row.forecast / 2);
+                this.num_cards_in_row.score = Math.floor(this.num_cards_in_row.score / 2);
+            }
+
+            // Defining the number of cards the window for forecast verso can host
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
+            this.num_cards_in_row.my_forecast_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
+            if (this.num_cards_in_row.my_forecast_verso > 5) {
+                this.num_cards_in_row.my_forecast_verso = 5;
+            }
             
             // Defining the number of cards the window for score verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 6 cards.
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
             this.num_cards_in_row.my_score_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
-            if (this.num_cards_in_row.my_score_verso > 6) {
-                this.num_cards_in_row.my_score_verso = 6;
+            if (this.num_cards_in_row.my_score_verso > 5) {
+                this.num_cards_in_row.my_score_verso = 5;
             }
             
             // PLAYER PANELS
@@ -392,10 +491,21 @@ function (dojo, declare) {
             if (gamedatas.active_player !== null) {
                 this.givePlayerActionCard(gamedatas.active_player, gamedatas.action_number);
             }
+
+            this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
+            this.relics_enabled = gamedatas.relics_enabled;
+            this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
+            this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
+            this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
+
+            var num_sets = 1 + this.artifacts_expansion_enabled + this.cities_expansion_enabled + this.echoes_expansion_enabled + this.figures_expansion_enabled;
+            if (num_sets > 2) {
+                this.delta.deck = {"x": 0.25, "y": 0.25}; // overlap
+            }
             
             // DECKS
             this.zone.deck = {};
-            for (var type = 0; type <= 1; type++) {
+            for (var type = 0; type <= 4; type++) {
                 this.zone.deck[type] = {};
                 for (var age = 1; age <= 10; age++) {
                     // Creation of the zone
@@ -410,11 +520,23 @@ function (dojo, declare) {
                     
                     // Current number of cards in the deck
                     $(`deck_count_${type}_${age}`).innerHTML = num_cards;
+                    if (num_sets > 2) {
+                        dojo.addClass(`deck_count_${type}_${age}`, 'condensed');
+                        dojo.addClass(`deck_pile_${type}_${age}`, 'condensed');
+                    }
                 }
             }
             if (!gamedatas.artifacts_expansion_enabled) {
                 dojo.byId('deck_set_2').style.display = 'none';
+            }
+            if (!gamedatas.cities_expansion_enabled) {
+                dojo.byId('deck_set_3').style.display = 'none';
+            }
+            if (!gamedatas.echoes_expansion_enabled) {
                 dojo.byId('deck_set_4').style.display = 'none';
+            }
+            if (!gamedatas.figures_expansion_enabled) {
+                dojo.byId('deck_set_5').style.display = 'none';
             }
 
             // AVAILABLE RELICS
@@ -437,18 +559,40 @@ function (dojo, declare) {
             // AVAILABLE ACHIEVEMENTS
             // Creation of the zone
             this.zone.achievements = {};
-            this.zone.achievements["0"] = this.createZone('achievements', 0);
-            this.setPlacementRulesForAchievements();
             
             // Add cards to zone according to the current situation
-            for(var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
-                var achievement = gamedatas.unclaimed_achievements[i];
-                if (achievement.age === null) {
-                    continue;
+            if (gamedatas.unclaimed_standard_achievement_counts !== null) {
+                this.zone.achievements["0"] = this.createZone('achievements', 0, null, null, null, grouped_by_age_type_and_is_relic = true);
+                this.setPlacementRulesForAchievements();
+                for (var type = 0; type <= 4; type++) {
+                    for (var is_relic = 0; is_relic <= 1; is_relic++) {
+                        for (var age = 1; age <= 10; age++) {
+                            var num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
+                            for (var i = 0; i < num_cards; i++) {
+                                this.createAndAddToZone(this.zone.achievements["0"], i, age, type, is_relic, null, dojo.body(), null);
+                                if (!this.isSpectator) {
+                                    // Construct card object so that we can add a tooltip to the achievement
+                                    // TODO(LATER): Simplify addTooltipForStandardAchievement once the other callsite is removed.
+                                    var achievement = {'location': 'achievements', 'owner': 0, 'type': type, 'age': age, 'is_relic': is_relic};
+                                    this.addTooltipForStandardAchievement(achievement);
+                                }
+                            }
+                        }
+                    }
                 }
-                this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, achievement.type, achievement.is_relic, null, dojo.body(), null);
-                if (!this.isSpectator) {
-                    this.addTooltipForStandardAchievement(achievement);
+            } else {
+                // TODO(LATER): Remove this once it is safe to do so.
+                this.zone.achievements["0"] = this.createZone('achievements', 0);
+                this.setPlacementRulesForAchievements();
+                for(var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
+                    var achievement = gamedatas.unclaimed_achievements[i];
+                    if (achievement.age === null) {
+                        continue;
+                    }
+                    this.createAndAddToZone(this.zone.achievements["0"], i, achievement.age, achievement.type, achievement.is_relic, null, dojo.body(), null);
+                    if (!this.isSpectator) {
+                        this.addTooltipForStandardAchievement(achievement);
+                    }
                 }
             }
             
@@ -467,6 +611,11 @@ function (dojo, declare) {
                 this.createAndAddToZone(this.zone.special_achievements["0"], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                 this.addTooltipForCard(achievement);
             }
+
+            // Add another button here to open up the special achievements popup
+            var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
+            dojo.place(button, 'special_achievements', 'after');
+            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_card_browsing_window');
             
             // PLAYERS' HANDS
             this.zone.hand = {};
@@ -488,7 +637,7 @@ function (dojo, declare) {
                         this.addTooltipForCard(card);
                     }
                 } else {
-                    for (var type = 0; type <= 1; type++) {
+                    for (var type = 0; type <= 4; type++) {
                         for (var is_relic = 0; is_relic <= 1; is_relic++) {
                             for (var age = 1; age <= 10; age++) {
                                 var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
@@ -528,6 +677,30 @@ function (dojo, declare) {
                     this.addTooltipForCard(card);
                 }
             }
+
+            // PLAYERS' FORECAST
+            this.zone.forecast = {};
+            for (var player_id in this.players) {
+                // Creation of the zone
+                this.zone.forecast[player_id] = this.createZone('forecast', player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
+                this.setPlacementRules(this.zone.forecast[player_id], left_to_right=true);
+                    
+                // Add cards to zone according to the current situation
+                for (var type = 0; type <= 4; type++) {
+                    for (var is_relic = 0; is_relic <= 1; is_relic++) {
+                        var forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
+                        for (var age = 1; age <= 10; age++) {
+                            var num_cards = forecast_count[age];
+                            for(var i = 0; i < num_cards; i++) {
+                                this.createAndAddToZone(this.zone.forecast[player_id], i, age, type, is_relic, null, dojo.body(), null);
+                            }
+                        }
+                    }
+                }
+            }
+            if (!this.echoes_expansion_enabled) {
+                dojo.byId('forecast_text_' + this.player_id).style.display = 'none';
+            }
             
             // PLAYERS' SCORE
             this.zone.score = {};
@@ -537,7 +710,7 @@ function (dojo, declare) {
                 this.setPlacementRules(this.zone.score[player_id], left_to_right=false);
                     
                 // Add cards to zone according to the current situation
-                for (var type = 0; type <= 1; type++) {
+                for (var type = 0; type <= 4; type++) {
                     for (var is_relic = 0; is_relic <= 1; is_relic++) {
                         var score_count = gamedatas.score_counts[player_id][type][is_relic];
                         for (var age = 1; age <= 10; age++) {
@@ -556,21 +729,35 @@ function (dojo, declare) {
                     }
                 }
             }
+
+            // My forecast: create an extra zone to show the versos of the cards at will in a windows
+            if (!this.isSpectator && this.echoes_expansion_enabled) {
+                this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>Close</a>");
+                this.zone.my_forecast_verso = this.createZone('my_forecast_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
+                this.setPlacementRules(this.zone.my_forecast_verso, left_to_right=true);
+                for (var i = 0; i < gamedatas.my_forecast.length; i++) {
+                    var card = gamedatas.my_forecast[i];
+                    this.createAndAddToZone(this.zone.my_forecast_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
+                    this.addTooltipForCard(card);
+                }
+                // Provide links to get access to that window and close it
+                dojo.connect($('forecast_text_' + this.player_id), 'onclick', this, 'click_display_forecast_window');
+                dojo.connect($('forecast_close_window'), 'onclick', this, 'click_close_forecast_window');
+            }
             
             // My score: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator) {
                 this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
                 this.zone.my_score_verso = this.createZone('my_score_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_score_verso, left_to_right=true);
-                for(var i=0; i<gamedatas.my_score.length; i++) {
+                for (var i = 0; i < gamedatas.my_score.length; i++) {
                     var card = gamedatas.my_score[i];
                     this.createAndAddToZone(this.zone.my_score_verso, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
-                    // Add tooltip
                     this.addTooltipForCard(card);
                 }
                 // Provide links to get access to that window and close it
-                dojo.connect($('score_text_' + this.player_id), 'onclick', this, 'clic_display_score_window');
-                dojo.connect($('score_close_window'), 'onclick', this, 'clic_close_score_window');
+                dojo.connect($('score_text_' + this.player_id), 'onclick', this, 'click_display_score_window');
+                dojo.connect($('score_close_window'), 'onclick', this, 'click_close_score_window');
             }
             
             // PLAYERS' ACHIEVEMENTS
@@ -597,8 +784,12 @@ function (dojo, declare) {
             }
             
             if (!this.isSpectator) {
+                if (this.echoes_expansion_enabled) {
+                    dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
+                    dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+                }
                 dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-                dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(click to look at the cards)') + '</span>';
+                dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
                 dojo.query('#progress_' + this.player_id + ' .achievement_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(${n} needed to win)').replace('${n}', gamedatas.number_of_achievements_needed_to_win) + '</span>';
             }
             
@@ -650,15 +841,6 @@ function (dojo, declare) {
                 }
             }
             
-            // Button for view full
-            this.addButtonForViewFull();
-            
-            // Button for display mode
-            this.addButtonForSplayMode();
-            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
-                this.enableButtonForSplayMode();
-            }
-            
             // REVEALED ZONE
             this.zone.revealed = {};    
             for (var player_id in this.players) {
@@ -676,6 +858,26 @@ function (dojo, declare) {
                     this.addTooltipForCard(card);
                 }
             }
+
+            // Button for view full
+            this.addButtonForViewFull();
+
+            // Button for display mode
+            this.addButtonForSplayMode();
+            if (this.number_of_splayed_piles > 0) { // If at least there is one splayed color on any player board
+                this.enableButtonForSplayMode();
+            }
+            // Button for looking at cards (including special achievements)
+            this.addButtonForBrowsingCards();
+            for (var i = 0; i < gamedatas.unclaimed_achievements.length; i++) {
+                var achievement = gamedatas.unclaimed_achievements[i];
+                if (achievement.age === null) {
+                    dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
+                }
+            }
+            this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
+            this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
+            this.refreshSpecialAchievementProgression();
             
             // REFERENCE CARD
             this.addTooltipForReferenceCard();
@@ -875,18 +1077,39 @@ function (dojo, declare) {
                     break;
                 case 'artifactPlayerTurn':
                     this.addTooltipWithDogmaActionToMyArtifactOnDisplay(args.args._private.dogma_effect_info);
+                    break;    
+                case 'promoteCardPlayerTurn':
+                    if (!this.isInReplayMode()) {
+                        this.my_forecast_verso_window.show();
+                    }
+                    var max_age_to_promote = parseInt(args.args.max_age_to_promote);
+                    // Make it possible to click or hover on the front of the cards in the forecast
+                    this.addTooltipsWithActionsToMyForecast(max_age_to_promote);
+                    var cards_in_forecast = this.selectMyCardsInForecast(max_age_to_promote);
+                    cards_in_forecast.addClass("clickable");
+                    this.on(cards_in_forecast, 'onclick', 'action_clickForPromote');
+                    // Make it possible to click the backs of the cards in the forecast
+                    var card_backs_in_forecast = this.selectMyCardBacksInForecast(max_age_to_promote);
+                    card_backs_in_forecast.addClass("clickable");
+                    this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
+                    break;
+                case 'dogmaPromotedPlayerTurn':
+                    var card_id = parseInt(args.args.promoted_card_id);
+                    var promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
+                    promoted_card.addClass("clickable");
+                    this.on(promoted_card, 'onclick', 'action_clickForDogmaPromoted');
                     break;
                 case 'playerTurn':
                     // Claimable achievements (achieve action)
                     if (args.args.claimable_ages.length > 0) {
                         var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
-                        claimable_achievements.addClass("clickable").addClass("clickable_important");
+                        claimable_achievements.addClass("clickable");
                         this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
                     }
                     
                     // Top drawable card on deck (draw action)
                     if (args.args.age_to_draw <= 10) {
-                        var drawable_card = this.selectDrawableCard(args.args.age_to_draw);
+                        var drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
                         drawable_card.addClass("clickable");
                         this.on(drawable_card, 'onclick', 'action_clicForDraw');
                     }
@@ -919,16 +1142,22 @@ function (dojo, declare) {
                         // Allowed selected cards by the server
                         var visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
                         if (visible_selectable_cards !== null) {
-                            visible_selectable_cards.addClass("clickable");
+                            visible_selectable_cards.addClass("clickable").addClass('mid_dogma');
                             this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
-                            if (args.args._private.must_show_score) {
+                            if (args.args._private.must_show_score && !this.isInReplayMode()) {
                                 this.my_score_verso_window.show();
                             }
                         }
                         var selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
                         if (selectable_rectos !== null) {
-                            selectable_rectos.addClass("clickable");
+                            selectable_rectos.addClass("clickable").addClass('mid_dogma');
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
+                        }
+                        if (args.args._private.show_all_cards_on_board) {
+                            for (var color = 0; color < 5; color++) {
+                                var zone = this.zone.board[this.player_id][color];
+                                this.setSplayMode(zone, zone.splay_direction, full_visible=true);
+                            }
                         }
                         // Add special warning to Tools to prevent the player from accidentally returning a 3 in the first
                         // part of the interaction in an attempt to draw 3 cards.
@@ -951,7 +1180,7 @@ function (dojo, declare) {
                         this.publication_permutations_done = [];
                         
                         var selectable_cards = this.selectAllCardsOnMyBoard();
-                        selectable_cards.addClass("clickable");
+                        selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
                     }
                     
@@ -1017,6 +1246,12 @@ function (dojo, declare) {
                 // I was supposed to play
                 
                 switch (stateName) {
+                case 'promoteCardPlayerTurn':
+                    if (!this.isInReplayMode()) {
+                        this.my_forecast_verso_window.hide();
+                    }
+                    this.addTooltipsWithoutActionsToMyForecast();
+                    break;
                 case 'playerTurn':
                     this.addTooltipsWithoutActionsToMyHand();
                     this.addTooltipsWithoutActionsToMyBoard();
@@ -1024,7 +1259,13 @@ function (dojo, declare) {
                 case 'selectionMove':
                     // Reset tooltips for board (in case there was a splaying choice)
                     this.addTooltipsWithoutActionsToMyBoard();
-                    this.my_score_verso_window.hide();
+                    if (!this.isInReplayMode()) {
+                        this.my_score_verso_window.hide();
+                    }
+                    for(var color=0; color<5; color++) {
+                        var zone = this.zone.board[this.player_id][color];
+                        this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                    }
                 }
             }
         }, 
@@ -1054,6 +1295,13 @@ function (dojo, declare) {
                     this.addActionButton("return_artifact", _("Return"), "action_clicForReturnArtifact");
                     this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
                     break;
+                case 'promoteCardPlayerTurn':
+                    this.addActionButton("pass_promote", _("Pass"), "action_clickForPassPromote");
+                    break;
+                case 'dogmaPromotedPlayerTurn':
+                    this.addActionButton("dogma_promoted", _("Dogma"), "action_clickForDogmaPromoted");
+                    this.addActionButton("pass_dogma_promoted", _("Pass"), "action_clickForPassDogmaPromoted");
+                    break;
                 case 'playerTurn':
                     // Red buttons for claimable_achievements
                     for (var i=0; i<args.claimable_ages.length; i++) {
@@ -1066,7 +1314,7 @@ function (dojo, declare) {
                     
                     // Blue buttons for draw action (or red if taking this action would finish the game)
                     if (args.age_to_draw <= 10) {
-                        this.addActionButton("take_draw_action", _("Draw a ${age}").replace("${age}", this.square('N', 'age', args.age_to_draw)), "action_clicForDraw")
+                        this.addActionButton("take_draw_action", _("Draw a ${age}").replace("${age}", this.square('N', 'age', args.age_to_draw, 'type_' + args.type_to_draw)), "action_clicForDraw");
                     }
                     else {
                         this.addActionButton("take_draw_action", _("Finish the game (attempt to draw above ${age_10})").replace('${age_10}', this.square('N', 'age', 10)), "action_clicForDraw")
@@ -1209,7 +1457,7 @@ function (dojo, declare) {
             
             this.disableButtonForSplayMode(); // Disabled by default
         },
-        
+
         disableButtonForSplayMode : function() {
             var change_display_mode_button = dojo.query('#change_display_mode_button');
             this.off(change_display_mode_button, 'onclick');
@@ -1220,6 +1468,202 @@ function (dojo, declare) {
             var change_display_mode_button = dojo.query('#change_display_mode_button');
             this.on(change_display_mode_button, 'onclick', 'toggle_displayMode');
             change_display_mode_button.removeClass('disabled');
+        },
+
+        addButtonForBrowsingCards : function() {
+            // Build button
+            var button_text = _("Browse all cards");
+            var button = this.format_string_recursive("<i id='browse_all_cards_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': button_text, 'i18n': ['button_text']});
+            dojo.place(button, 'change_display_mode_button', 'after');
+            this.addCustomTooltip('browse_all_cards_button', '<p>' + _('Browse the full list of cards, including special achievement.') + '</p>', "")
+
+            // Build popup box
+            this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
+            var ids = [106, 105, 108, 107, 109];
+            if (this.cities_expansion_enabled) {
+                ids.push(325, 326, 327, 328, 329);
+            }
+            if (this.echoes_expansion_enabled) {
+                ids.push(439, 436, 435, 437, 438);
+            }
+            // TODO(FIGURES): Add special achievements.
+            var content = "";
+            
+            content += "<div id='browse_cards_buttons_row_1'>";
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_0'>" + _("Base Set") + "</div>";
+            if (this.artifacts_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_1'>" + _("Artifacts") + "</div>";
+            }
+            if (this.cities_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_2'>" + _("Cities") + "</div>";
+            }
+            if (this.echoes_expansion_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_3'>" + _("Echoes") + "</div>";
+            }
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray selected' id='browse_special_achievements'>" + _("Special Achievements") + "</div>";
+            // TODO(FIGURES): Add button for Figures.
+            content += "</div>";
+
+            content += "<div id='browse_cards_buttons_row_2'>";
+            for (var age = 1; age <= 10; age++) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
+            }
+            if (this.relics_enabled) {
+                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_relics'>" + _("Relics") + "</div>";
+            }
+            content += "</div>";
+            content += "<div id='browse_card_summaries'></div>";
+
+            content += "<div id='special_achievement_summaries'>";
+            for (var i = 0; i < ids.length; i++) {
+                var card_id = ids[i];
+                var card_data = this.cards[card_id];
+
+                var name = _(card_data.name).toUpperCase();
+                var text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
+                if (card_id == 106) {
+                    text += ` ${_("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")}`;
+                }
+                if (card_data.alternative_condition_for_claiming != null) {
+                    text += ` ${this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip')}`;
+                }
+                content += `<div id="special_achievement_summary_${card_id}" class="special_achievement_summary">`;
+                content += `<div class="special_achievement_icon"><div class="item_${card_id} age_null S card"></div><div class="special_achievement_status"></div></div>`;
+                content += `<div class="special_achievement_text">${text}</div>`
+                content += `</div></br>`;
+            }
+            content += `</div>`;
+            this.card_browsing_window.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>Close</a>");
+            dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
+
+            // Make everything clickable
+            this.on(dojo.query('#browse_all_cards_button'), 'onclick', 'click_open_card_browsing_window');
+            this.on(dojo.query('#close_card_browser_button'), 'onclick', 'click_close_card_browsing_window');
+            this.on(dojo.query('.browse_cards_button:not(#browse_special_achievements)'), 'onclick', 'click_browse_cards');
+            this.on(dojo.query('#browse_special_achievements'), 'onclick', 'click_browse_special_achievements');
+        },
+
+        refreshSpecialAchievementProgression : function() {
+            // Don't check special achievement progress if this is a spectator
+            if (this.isSpectator) {
+                return;
+            }
+
+            // Refresh progression towards the player achieving the special achievements
+            self = this;
+            dojo.query(".special_achievement_summary").forEach(function(node) {
+                var id = parseInt(node.id.substring(node.id.lastIndexOf('_') + 1));
+                var numerator = -1;
+                var denominator = -1;
+
+                // Skip calculation if the special achievement is already claimed
+                if (dojo.query(`#special_achievement_summary_${id}.unclaimed`).length == 1) {
+                    switch(id) {
+                        case 105:
+                            // three or more icons of all six types
+                            numerator = 0;
+                            denominator = 6;
+                            for (var i = 1; i <= 6; i++) {
+                                if (self.counter.ressource_count[self.player_id][i].getValue() >= 3) {
+                                    numerator++;
+                                }
+                            }
+                            break;
+                        case 106:
+                            // tuck six or score six cards during a single turn
+                            numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
+                            denominator = 6;
+                            break;
+                        case 107:
+                            // five colors on your board, and each is splayed either up or right
+                            numerator = 0;
+                            denominator = 5;
+                            for (var i = 0; i < 5; i++) {
+                                var splay_direction = self.zone.board[self.player_id][i].splay_direction;
+                                if (splay_direction == 2 || splay_direction == 3) {
+                                    numerator++;
+                                }
+                            }
+                            break;
+                        case 108:
+                            // twelve or more visible clocks on your board
+                            numerator = self.counter.ressource_count[self.player_id][6].getValue();
+                            denominator = 12;
+                            break;
+                        case 109:
+                            // five top cards, and each is of value 8 or higher
+                            numerator = 0;
+                            denominator = 5;
+                            for (var i = 0; i < 5; i++) {
+                                var items = self.zone.board[self.player_id][i].items;
+                                if (items.length > 0) {
+                                    var top_card_id = self.getCardIdFromHTMLId(items[items.length - 1].id);
+                                    var top_card = self.cards[top_card_id];
+                                    if (top_card.age >= 8) {
+                                        numerator++;
+                                    }
+                                }
+                            }
+                            break;
+                        case 435:
+                            // eight or more bonuses visible on your board
+                            numerator = 0;
+                            denominator = 8;
+                            for (var i = 0; i < 5; i++) {
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                numerator += self.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction).length;
+                            }
+                            break;
+                        case 436:
+                            // seven or more cards in your forecast
+                            numerator = self.zone.forecast[self.player_id].items.length;
+                            denominator = 7;
+                            break;
+                        case 437:
+                            // eight or more hex icons visible in one color
+                            numerator = 0;
+                            denominator = 8;
+                            for (var i = 0; i < 5; i++) {
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                var num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 0 /* hex icon */);
+                                if (num_icons > numerator) {
+                                    numerator = num_icons;
+                                }
+                            }
+                            break;
+                        case 438:
+                            // a color with four or more visible echo effects
+                            numerator = 0;
+                            denominator = 4;
+                            for (var i = 0; i < 5; i++) {
+                                var pile_zone = self.zone.board[self.player_id][i];
+                                var num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 10 /* echo icon */);
+                                if (num_icons > numerator) {
+                                    numerator = num_icons;
+                                }
+                            }
+                            break;
+                        case 439:
+                            // three icons or more of the same icon type visible in each of four different colors
+                            numerator = 0;
+                            denominator = 4;
+                            for (var icon = 1; icon <= 6; icon++) {
+                                var num_piles = 0;
+                                for (var color = 0; color < 5; color++) {
+                                    var pile_zone = self.zone.board[self.player_id][color];
+                                    if (self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, icon) >= 3) {
+                                        num_piles++;
+                                    }
+                                }
+                                if (num_piles > numerator) {
+                                    numerator = num_piles;
+                                }
+                            }
+                            break;
+                    }
+                }
+                dojo.query(`#special_achievement_summary_${id} .special_achievement_status`)[0].innerHTML = (numerator >= 0 && denominator > 0) ? `${numerator}/${denominator}` : "";
+            });
         },
         
         /*
@@ -1293,6 +1737,17 @@ function (dojo, declare) {
         
         addTooltipForCard : function(card) {
             var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
+
+            // The score pile and forecast are a special case because both the front and back are rendered
+            if (card.owner == this.player_id && (card.location == 'score' || card.location == 'forecast')) {
+                var front_HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, 'M card');
+                this.addCustomTooltip(front_HTML_id, this.getTooltipForCard(card.id), "");
+                var back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+                var back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, 'S recto');
+                this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
+                return;
+            }
+
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
              // Special achievement
              if (card.age === null) {
@@ -1458,16 +1913,20 @@ function (dojo, declare) {
         },
         
         parseForRichedText : function(text, size) {
+            if (text == null) {
+                return null;
+            }
             text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
             text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
-            for (var age=1; age <= 10; age++) {
+            for (var age = 1; age <= 10; age++) {
                 text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age));
             }
-            for (var symbol=1; symbol <= 6; symbol++) {
+            for (var symbol = 0; symbol <= 6; symbol++) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol));
             }
+            text = text.replace(new RegExp("\\$\\{music_note\\}" , "g"), this.square(size, 'music', 'note'));
             return text;
         },
         
@@ -1487,6 +1946,10 @@ function (dojo, declare) {
         
         addTooltipsWithoutActionsToMyHand : function() {
             this.addTooltipsWithoutActionsTo(this.selectMyCardsInHand());
+        },
+
+        addTooltipsWithoutActionsToMyForecast : function() {
+            this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast());
         },
 
         addTooltipsWithoutActionsToMyBoard : function() {
@@ -1516,7 +1979,18 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
+            });
+        },
+
+        addTooltipsWithActionsToMyForecast : function(max_age_to_promote=null) {
+            var cards = this.selectMyCardsInForecast(max_age_to_promote);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            var self = this;
+            cards.forEach(function(card) {
+                var HTML_id = dojo.attr(card, "id");
+                var id = self.getCardIdFromHTMLId(HTML_id);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -1529,7 +2003,9 @@ function (dojo, declare) {
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var no_effect = dogma_effect_info[id].no_effect;
                 dojo.attr(HTML_id, 'no_effect', no_effect);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
+                dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
+                dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
             });
         },
 
@@ -1540,7 +2016,7 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                dojo.attr(HTML_id, 'card_name', self.cards[id].name);
+                dojo.attr(HTML_id, 'card_id', id);
             });
         },
 
@@ -1570,6 +2046,23 @@ function (dojo, declare) {
         },
         
         createActionTextForMeld : function(self, card) {
+            // Calculate new score (score pile + bonus icons)
+            var bonus_icons = [];
+            for (var i = 0; i < 5; i++) {
+                var pile_zone = self.zone.board[self.player_id][i];
+                var splay_direction = pile_zone.splay_direction;
+                // If there are no cards in the stack yet, treat the pile as unsplayed
+                if (pile_zone.items.length == 0) {
+                    splay_direction = 0;
+                }
+                if (i == card.color) {
+                    bonus_icons = bonus_icons.concat(self.getVisibleBonusIconsInPile(pile_zone.items, splay_direction, card));
+                } else {
+                    bonus_icons = bonus_icons.concat(self.getVisibleBonusIconsInPile(pile_zone.items, splay_direction));
+                }
+            }
+            var new_score = self.computeTotalScore(self.zone.score[self.player_id].items, bonus_icons);
+
             HTML_action = "<p class='possible_action'>" + _("Click to meld this card.") + "<p>";
             // See if melding this card would cover another one
             var pile = self.zone.board[self.player_id][card.color].items;
@@ -1578,61 +2071,80 @@ function (dojo, declare) {
                 var top_card = pile[pile.length - 1];
                 var top_card_id = self.getCardIdFromHTMLId(top_card.id);
                 var top_card = self.cards[top_card_id];
-                HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
-                    {
-                        'age': self.square('N', 'age', top_card.age, 'in_log'),
-                        'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
-                    });
-            }
-            else {
-                HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+                if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+                    HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>",
+                        {
+                            'age': self.square('N', 'age', top_card.age, 'in_log'),
+                            'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>",
+                            'score' : new_score
+                        });
+                } else {
+                    HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
+                        {
+                            'age': self.square('N', 'age', top_card.age, 'in_log'),
+                            'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
+                        });
+                }
+            } else {
+                if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+                    HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
+                } else {
+                    HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+                }
             }
             
             // Calculate new ressource count if this card is melded
             // Get current ressouce count
             var current_ressource_counts = {};
             var new_ressource_counts = {};
-            for(var icon=1; icon<=6; icon++) {
+            for (var icon = 1; icon <= 6; icon++) {
                 current_count = self.counter.ressource_count[self.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
             }
             
             // Add ressources brought by the new card
-            // TODO(CITIES): Account for more spots on the card.
-            new_ressource_counts[card.spot_1]++
-            new_ressource_counts[card.spot_2]++
-            new_ressource_counts[card.spot_3]++
-            new_ressource_counts[card.spot_4]++
+            new_ressource_counts[card.spot_1]++;
+            new_ressource_counts[card.spot_2]++;
+            new_ressource_counts[card.spot_3]++;
+            new_ressource_counts[card.spot_4]++;
+            new_ressource_counts[card.spot_5]++;
+            new_ressource_counts[card.spot_6]++;
             
             if (covered_card) { // Substract the ressources no longer visible
                 var splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
-                for (var direction=0; direction<=3; direction++) {
+                for (var direction = 0; direction <= 3; direction++) {
                     if (dojo.hasClass(splay_indicator, 'splay_' + direction)) {
                         var splay_direction = direction;
                         break;
                     }
                 }
                 
-                // TODO(CITIES): Account for more spots on the card.
-                switch(parseInt(splay_direction)) {
-                case 0: // All icons of the old top card are lost
-                    new_ressource_counts[top_card.spot_1]--
-                    new_ressource_counts[top_card.spot_2]--
-                    new_ressource_counts[top_card.spot_3]--
-                    new_ressource_counts[top_card.spot_4]--
+                switch (parseInt(splay_direction)) {
+                case 0: // No splay (all icons of the old top card are lost)
+                    new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_2]--;
+                    new_ressource_counts[top_card.spot_3]--;
+                    new_ressource_counts[top_card.spot_4]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
-                case 1: // Only the icon on bottom right can still be seen (spot_4)
-                    new_ressource_counts[top_card.spot_1]--
-                    new_ressource_counts[top_card.spot_2]--
-                    new_ressource_counts[top_card.spot_3]--
+                case 1: // Splayed left (only the icons on the right can still be seen)
+                    new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_2]--;
+                    new_ressource_counts[top_card.spot_3]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
-                case 2: // Icons on left can still be seen (spot_1 and spot_2)
-                    new_ressource_counts[top_card.spot_3]--
-                    new_ressource_counts[top_card.spot_4]--
+                case 2: // Splayed right (only the icons on the left can still be seen)
+                    new_ressource_counts[top_card.spot_3]--;
+                    new_ressource_counts[top_card.spot_4]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
-                case 3: // Icons on bottom can still be seen (spot_2, spot_3 and spot_4)
-                    new_ressource_counts[top_card.spot_1]--
+                case 3: // Splayed up (only the icons on the bottom can still be seen)
+                    new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
                     break;
                 }
             }
@@ -1645,14 +2157,10 @@ function (dojo, declare) {
         createActionTextForDogma : function(self, card, dogma_effect_info, card_location) {
             var info = dogma_effect_info[card.id];
 
-            // Use workaround to get this.player_id, since it is unfortunately not accessible from here.
-            var player_panel = dojo.query(".player:nth-of-type(1)")[0];
-            var player_id = dojo.attr(player_panel, 'id').substr(7);
-
             var on_display = card_location == 'display';
-            var exists_i_demand_effect = card.i_demand_effect_1 !== null && !card.i_demand_effect_1_is_compel;
+            var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
-            var exists_non_demand_effect = card.non_demand_effect_1 !== null;
+            var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
             
             if (info.no_effect) {
                 return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
@@ -1668,22 +2176,19 @@ function (dojo, declare) {
             HTML_action += "<p>" + _("If you do:") + "</p>";
             HTML_action += "<ul class='recap_dogma'>";
 
-            getOtherPlayersCommaSeparated = function(player_ids) {
-                var players = [];
-                for (var i = 0; i < player_ids.length; i++) {
-                    if (player_ids[i] != player_id) {
-                        var player = $('name_' + player_ids[i]).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
-                        players.push(player);
-                    }
+            if (info.num_echo_effects > 0) {
+                if (info.players_executing_echo_effects.length == 0) {
+                    HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>"
+                } else {
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_echo_effects)}) + "</li>"
                 }
-                return players.join(', ');
-            };
+            }
             
             if (exists_i_demand_effect) {
                 if (info.players_executing_i_demand_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects)}) + "</li>"
                 }
             }
 
@@ -1691,7 +2196,7 @@ function (dojo, declare) {
                 if (info.players_executing_i_compel_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)}) + "</li>"
                 }
             }
             
@@ -1699,7 +2204,7 @@ function (dojo, declare) {
                 if (info.players_executing_non_demand_effects.length == 1) {
                     HTML_action += "<li>" + _("You will execute the non-demand effect(s) alone.") + "</li>"
                 } else if (info.players_executing_non_demand_effects.length > 1) {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': this.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
                 }
             }
 
@@ -1711,11 +2216,19 @@ function (dojo, declare) {
 
             return HTML_action;
         },
+
+        getOtherPlayersCommaSeparated : function(player_ids) {
+            var players = [];
+            for (var i = 0; i < player_ids.length; i++) {
+                if (player_ids[i] != this.player_id) {
+                    var player = $('name_' + player_ids[i]).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
+                    players.push(player);
+                }
+            }
+            return players.join(', ');
+        },
         
         createActionTextForCardInSplayablePile : function(card, color_in_clear, splay_direction, splay_direction_in_clear) {
-            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
-            HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
-
             var pile = this.zone.board[this.player_id][card.color].items;
             
             var splay_indicator = 'splay_indicator_' + this.player_id + '_' + card.color;
@@ -1726,64 +2239,222 @@ function (dojo, declare) {
                 }
             }
             
-            // Calculate new ressource count if the splay direction changes
+            // Calculate new resource count if the splay direction changes
             // Get current ressouce count
             var current_ressource_counts = {};
             var new_ressource_counts = {};
-            for(var icon=1; icon<=6; icon++) {
+            for (var icon = 1; icon <= 6; icon++) {
                 current_count = this.counter.ressource_count[this.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
             }
             
             // Browse all the cards of the pîle except the one on top
-            for (var i=0; i<pile.length-1; i++) {
-                var pile_card = pile[i];
-                var pile_card_id = this.getCardIdFromHTMLId(pile_card.id);
-                var pile_card = this.cards[pile_card_id];
+            for (var i = 0; i < pile.length - 1; i++) {
+                var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)]
                 
-                // Remove ressources brought by the current splay
-                // TODO(CITIES): Account for more spots on the card.
-                switch(parseInt(current_splay_direction)) {
-                case 0: // Not currently splayed: no lost
+                // Remove resources which were granted by the current splay
+                switch (parseInt(current_splay_direction)) {
+                case 0: // Not currently splayed: no icons will be lost
                     break;
-                case 1: // Only the icon on bottom right can be seen (spot_4)
-                    new_ressource_counts[pile_card.spot_4]--
+                case 1: // The icons on the right will be lost (spot_4 and spot_5)
+                    new_ressource_counts[pile_card.spot_4]--;
+                    new_ressource_counts[pile_card.spot_5]--;
                     break;
-                case 2: // Icons on left can be seen (spot_1 and spot_2)
-                    new_ressource_counts[pile_card.spot_1]--
-                    new_ressource_counts[pile_card.spot_2]--
+                case 2: // The icons on the left will be lost (spot_1 and spot_2)
+                    new_ressource_counts[pile_card.spot_1]--;
+                    new_ressource_counts[pile_card.spot_2]--;
                     break;
-                case 3: // Icons on bottom can be seen (spot_2, spot_3 and spot_4)
-                    new_ressource_counts[pile_card.spot_2]--
-                    new_ressource_counts[pile_card.spot_3]--
-                    new_ressource_counts[pile_card.spot_4]--
+                case 3: // The icons on the bottom will be lost (spot_2, spot_3 and spot_4)
+                    new_ressource_counts[pile_card.spot_2]--;
+                    new_ressource_counts[pile_card.spot_3]--;
+                    new_ressource_counts[pile_card.spot_4]--;
                     break;
                 }
                 
-                // Add ressources granted by the new splay
-                // TODO(CITIES): Account for more spots on the card.
-                switch(parseInt(splay_direction)) {
+                // Add resources granted by the new splay
+                switch (parseInt(splay_direction)) {
                 case 0: // Not splayed (this should not happen)
                     break;
-                case 1: // Only the icon on bottom right will be revealed (spot_4)
-                    new_ressource_counts[pile_card.spot_4]++
+                case 1: // The icons on the right will be revealed (spot_4 and spot_5)
+                    new_ressource_counts[pile_card.spot_4]++;
+                    new_ressource_counts[pile_card.spot_5]++;
                     break;
-                case 2: // Icons on left will be revealed (spot_1 and spot_2)
-                    new_ressource_counts[pile_card.spot_1]++
-                    new_ressource_counts[pile_card.spot_2]++
+                case 2: // The icons on the left will be revealed (spot_1 and spot_2)
+                    new_ressource_counts[pile_card.spot_1]++;
+                    new_ressource_counts[pile_card.spot_2]++;
                     break;
-                case 3: // Icons on bottom will be revealed (spot_2, spot_3 and spot_4)
-                    new_ressource_counts[pile_card.spot_2]++
-                    new_ressource_counts[pile_card.spot_3]++
-                    new_ressource_counts[pile_card.spot_4]++
+                case 3: // The icons on the bottom will be revealed (spot_2, spot_3 and spot_4)
+                    new_ressource_counts[pile_card.spot_2]++;
+                    new_ressource_counts[pile_card.spot_3]++;
+                    new_ressource_counts[pile_card.spot_4]++;
                     break;
                 }
             }
-            
+
+            // Calculate new score (score pile + bonus icons)
+            var bonus_icons = [];
+            for (var i = 0; i < 5; i++) {
+                var pile_zone = this.zone.board[this.player_id][i];
+                if (i == card.color) {
+                    bonus_icons = bonus_icons.concat(this.getVisibleBonusIconsInPile(pile_zone.items, splay_direction));
+                } else {
+                    bonus_icons = bonus_icons.concat(this.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction));
+                }
+            }
+            var new_score = this.computeTotalScore(this.zone.score[this.player_id].items, bonus_icons);
+
+            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
+            if (this.cities_expansion_enabled || this.echoes_expansion_enabled) {
+                HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
+            } else {
+                HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
+            }
             HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
         
             return HTML_action;
+        },
+
+        /** Returns all visible bonus icons in a particular pile, optionally pretending a card is placed on top of the pile */
+        getVisibleBonusIconsInPile : function(pile, splay_direction, card_being_melded = null) {
+            var bonus_icons = [];
+
+            // Top card
+            var top_card = null;
+            if (pile.length > 0) {
+                top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
+            }
+            if (card_being_melded != null) {
+                top_card = card_being_melded;
+            }
+            if (top_card != null) {
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_1));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_2));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_3));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_4));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_5));
+                bonus_icons.push(this.getBonusIconValue(top_card.spot_6));
+            }
+
+            // Cards underneath
+            var pile_length = card_being_melded == null ? pile.length : pile.length + 1;
+            for (var i = 0; i < pile_length - 1; i++) {
+                var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+                switch (parseInt(splay_direction)) {
+                case 0: // Not splayed
+                    break;
+                case 1: // Splayed left (the icons on the right would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_5));
+                    break;
+                case 2: // Splayed right (the icons on the left would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    break;
+                case 3: // Splayed up (the icons on the bottom would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    break;
+                }
+            }
+
+            return bonus_icons.filter(val => val > 0); // Remove the zeroes
+        },
+
+        /** Computes what the player's total score would be given a score pile and list of bonus icons.  */
+        computeTotalScore : function(score_pile, bonus_icons) {
+            var score = 0;
+            for (var i = 0; i < score_pile.length; i++) {
+                score += this.getCardAgeFromHTMLId(score_pile[i].id);
+            }
+            if (bonus_icons.length > 0) {
+                var max_bonus = 0;
+                for (var i = 0; i < bonus_icons.length; i++) {
+                    if (bonus_icons[i] > max_bonus) {
+                        max_bonus = bonus_icons[i];
+                    }
+                }
+                score += max_bonus + bonus_icons.length - 1;
+            }
+            return score;
+        },
+
+        getBonusIconValue : function(icon) {
+            // TODO(EXPANSION): If there is ever a bonus icon with a value higher than 11, then this needs to be changed.
+            if (icon > 100 && icon <= 111) {
+                return icon - 100;
+            }
+            return 0;
+        },
+
+        /** Counts how many of a particular icon is visible in a specific pile */
+        countVisibleIconsInPile : function(pile, splay_direction, icon) {
+            var count = 0;
+
+            // Top card
+            var top_card = null;
+            if (pile.length > 0) {
+                top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
+            }
+            if (top_card != null) {
+                if (top_card.spot_1 == icon) {
+                    count++;
+                }
+                if (top_card.spot_2 == icon) {
+                    count++;
+                }
+                if (top_card.spot_3 == icon) {
+                    count++;
+                }
+                if (top_card.spot_4 == icon) {
+                    count++;
+                }
+                if (top_card.spot_5 == icon) {
+                    count++;
+                }
+                if (top_card.spot_6 == icon) {
+                    count++;
+                }
+            }
+
+            // Cards underneath
+            for (var i = 0; i < pile.length - 1; i++) {
+                var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+                switch (parseInt(splay_direction)) {
+                case 0: // Not splayed
+                    break;
+                case 1: // Splayed left (the icons on the right would be visible)
+                    if (pile_card.spot_4 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_5 == icon) {
+                        count++;
+                    }
+                    break;
+                case 2: // Splayed right (the icons on the left would be visible)
+                    if (pile_card.spot_1 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_2 == icon) {
+                        count++;
+                    }
+                    break;
+                case 3: // Splayed up (the icons on the bottom would be visible)
+                    if (pile_card.spot_2 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_3 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_4 == icon) {
+                        count++;
+                    }
+                    break;
+                }
+            }
+
+            return count;
         },
         
         createSimulatedRessourceTable : function(current_ressource_counts, new_ressource_counts) {
@@ -1810,6 +2481,28 @@ function (dojo, declare) {
         
         selectMyCardsInHand : function() {
             return dojo.query("#hand_" + this.player_id + " > .card");
+        },
+
+        selectMyCardsInForecast : function(max_age_to_promote) {
+            if (max_age_to_promote == null) {
+                return dojo.query("#my_forecast_verso > .M");
+            }
+            var queries = [];
+            for (var age = 1; age <= max_age_to_promote; age++) {
+                queries.push("#my_forecast_verso > .age_" + age);
+            }
+            return dojo.query(queries.join(","));
+        },
+
+        selectMyCardBacksInForecast : function(max_age_to_promote) {
+            if (max_age_to_promote == null) {
+                return dojo.query(`#forecast_${this.player_id} > .S`);
+            }
+            var queries = [];
+            for (var age = 1; age <= max_age_to_promote; age++) {
+                queries.push(`#forecast_${this.player_id} > .age_${age}`);
+            }
+            return dojo.query(queries.join(","));
         },
 
         selectArtifactOnDisplay : function() {
@@ -1864,9 +2557,8 @@ function (dojo, declare) {
             return dojo.query(identifiers.join(","));
         },
         
-        selectDrawableCard : function(age_to_draw) {
-            // Assumes that the player can only draw from the base deck.
-            var deck_to_draw_in = this.zone.deck[0][age_to_draw].items;
+        selectDrawableCard : function(age_to_draw, type_to_draw) {
+            var deck_to_draw_in = this.zone.deck[type_to_draw][age_to_draw].items;
             var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
             return dojo.query("#" + top_card.id);
         },
@@ -1903,9 +2595,9 @@ function (dojo, declare) {
         deactivateClickEvents : function() {
             this.deactivated_cards = dojo.query(".clickable");
             this.deactivated_cards.removeClass("clickable");
-            
-            this.deactivated_cards_important = dojo.query(".clickable_important");
-            this.deactivated_cards_important.removeClass("clickable_important");
+
+            this.deactivated_cards_mid_dogma = dojo.query(".mid_dogma");
+            this.deactivated_cards_mid_dogma.removeClass("mid_dogma");
             
             this.off(this.deactivated_cards, 'onclick');
 
@@ -1918,7 +2610,7 @@ function (dojo, declare) {
         
         resurrectClickEvents : function(revert_text) {
             this.deactivated_cards.addClass("clickable");
-            this.deactivated_cards_important.addClass("clickable_important");
+            this.deactivated_cards_mid_dogma.addClass("mid_dogma");
             
             this.restart(this.deactivated_cards, 'onclick');
             
@@ -1945,6 +2637,7 @@ function (dojo, declare) {
                     return this.zone.relics[0];
                 case "hand":
                 case "display":
+                case "forecast":
                 case "score":
                 case "revealed":
                 case "achievements":
@@ -2079,16 +2772,34 @@ function (dojo, declare) {
 
             var card_type = "";
             if (size == 'L') {
-                // TODO(ECHOES,CITIES,FIGURES): Update this.
-                if (type == 0) {
-                    card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
-                } else {
-                    card_type = "<div class='card_type'>" + _("This card is from the Artifacts of History expansion.") + "</div>";
+                // TODO(FIGURES): Update this.
+                switch (parseInt(type)) {
+                    case 0:
+                        card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
+                        break;
+                    case 1:
+                        card_type = "<div class='card_type'>" + _("This card is from the Artifacts of History expansion.") + "</div>";
+                        break;
+                    case 2:
+                        card_type = "<div class='card_type'>" + _("This card is from the Cities of Destiny expansion.") + "</div>";
+                        break;
+                    case 3:
+                        card_type = "<div class='card_type'>" + _("This card is from the Echoes of the Past expansion.") + "</div>";
+                        break;
                 }
             }
 
-            var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
+            var graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
             return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
+        },
+
+        createCardForCardBrowser : function(id) {
+            var card = this.cards[id];
+            var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, 'M card');
+            var HTML_inside = this.writeOverCard(card, 'M');
+            var simplified_card_back = this.prefs[110].value == 2;
+            var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
+            return `<div id = 'browse_card_id_${id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
         },
         
         writeOverCard : function(card, size) {
@@ -2097,36 +2808,50 @@ function (dojo, declare) {
             var icon2 = this.getIconDiv(card, card_data['spot_2'], 'bottom_left_icon', size);
             var icon3 = this.getIconDiv(card, card_data['spot_3'], 'bottom_center_icon', size);
             var icon4 = this.getIconDiv(card, card_data['spot_4'], 'bottom_right_icon', size);
+            var icon5 = this.getIconDiv(card, card_data['spot_5'], 'top_right_icon', size);
+            var icon6 = this.getIconDiv(card, card_data['spot_6'], 'top_center_icon', size);
 
-            var card_age = this.createAdjustedContent(card.faceup_age, 'card_age', size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
+            var card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
             var title = _(card_data.name).toUpperCase();
-            var card_title = this.createAdjustedContent(title, 'card_title', size, size == 'M' ? 11 : 30);
+            var card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30);
             
-            var i_demand_effect_1 = card_data.i_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
+            var i_demand_effect_1 = card_data.i_demand_effect_1 ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
-            var non_demand_effect_1 = card_data.non_demand_effect_1 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_1) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
-            var non_demand_effect_2 = card_data.non_demand_effect_2 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
-            var non_demand_effect_3 = card_data.non_demand_effect_3 !== null ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
+            var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color)  : "";
+            var non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color)  : "";
+            var non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3) , card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color)  : "";
             
             var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
             
-            return icon1 + icon2 + icon3 + icon4 + card_age + card_title + dogma_effects;
+            return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
         },
         
         getIconDiv: function (card, resource_icon_id, icon_location, size) {
             if (resource_icon_id == 0) {
                 return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
             }
-            return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+            if (resource_icon_id <= 6) {
+                return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+            }
+            if (resource_icon_id == 10) {
+                var card_data = this.cards[card.id];
+                var div = this.createAdjustedContent(this.parseForRichedText(_(card_data.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + resource_icon_id, size, size == 'M' ? 11 : 30);
+                // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
+                return div.replace("div class", "div style=\"display: table;\" class");
+            }
+            if (resource_icon_id >= 101) {
+                return '<div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_color color_' + card.color + '"></div><div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_value bonus_' + (resource_icon_id - 100) + '"></div>';
+            }
+            return '<div class="city_special_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
         },
         
         getSpecialAchievementText : function(card) {
             var card_data = this.cards[card.id];
-            var achievement_name = _(card_data.achievement_name).toUpperCase();
+            var name = _(card_data.name).toUpperCase();
             var is_monument = card.id == 106;
-            var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")
-            var div_condition_for_claiming = "<div><b>" + achievement_name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
+            var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
+            var div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
             var div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
             
@@ -2157,15 +2882,17 @@ function (dojo, declare) {
                 new_location = location;
             }
 
-            var HTML_class = this.HTML_class[new_location]
-            var card_dimensions = this.card_dimensions[HTML_class]
+            var HTML_class = this.HTML_class[new_location];
+            var card_dimensions = this.card_dimensions[HTML_class];
             
             // Width of the zone
             var zone_width;
             if(new_location == 'board') {
                 zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
+            } else if (new_location == 'forecast') {
+                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
             } else if (new_location == 'score') {
-                zone_width = dojo.position('score_container_' + owner).w;
+                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
             } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
                 var n = this.num_cards_in_row[new_location];
@@ -2173,7 +2900,7 @@ function (dojo, declare) {
             }
             
             // Id of the container
-            if (location == "my_score_verso") {
+            if (location == "my_score_verso" || location == "my_forecast_verso") {
                 var div_id = location;
             } else {
                 var div_id = location + owner_string + type_string + age_string + color_string;
@@ -2471,8 +3198,15 @@ function (dojo, declare) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 
-                var x = i * (w / 2 + 5);
-                var y = (i % 2) * (h + 5);
+                // Row of 3
+                if ((i % 5) < 3) {
+                    var x = (i % 5) * (w + 5);
+                    var y = parseInt(i / 5) * 2 * (h + 5);
+                // Row of 2
+                } else {
+                    var x = (w + 5) / 2 + (i % 5 % 2) * (w + 5);
+                    var y = h + 5 + parseInt(i / 5) * 2 * (h + 5);
+                }
                 
                 return {'x':x, 'y':y, 'w':w, 'h':h}
             }
@@ -2692,7 +3426,100 @@ function (dojo, declare) {
                              this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
                         );            
         },
+
+        action_clickForPassPromote : function() {
+            if (!this.checkAction('passPromoteCard')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/passPromoteCard.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clickForPromote : function(event) {
+            if (!this.checkAction('promoteCard')) {
+                return;
+            }
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            this.ajaxcall("/innovation/innovation/promoteCard.html",
+                {
+                    lock: true,
+                    card_id: card_id
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickCardBackForPromote : function(event) {
+            if (!this.checkAction('promoteCard')) {
+                return;
+            }
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            var age = this.getCardAgeFromHTMLId(HTML_id);
+            var type = this.getCardTypeFromHTMLId(HTML_id);
+            var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+            var owner = this.player_id;
+            var location = 'forecast';
+            var zone = this.getZone(location, owner, null, age);
+            var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+            this.ajaxcall("/innovation/innovation/promoteCardBack.html",
+                {
+                    lock: true,
+                    owner: owner,
+                    location: location,
+                    age: age,
+                    type: type,
+                    is_relic: is_relic,
+                    position: position
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickForPassDogmaPromoted : function() {
+            if (!this.checkAction('passDogmaPromotedCard')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/passDogmaPromotedCard.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
+
+        action_clickForDogmaPromoted : function() {
+            if (!this.checkAction('dogmaPromotedCard')) {
+                return;
+            }
+            this.deactivateClickEvents();
+            var self = this;
+            this.ajaxcall("/innovation/innovation/dogmaPromotedCard.html",
+                            {
+                                lock: true
+                            },
+                             this, function(result){}, function(is_error){if(is_error)self.resurrectClickEvents(true)}
+                        );            
+        },
         
+        // TODO(#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
+        // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
+        // The vast majority of the time, players won't notice or care, which is why we haven't implemented it yet.
         action_clicForAchieve : function(event) {
             if(!this.checkAction('achieve')){
                 return;
@@ -2737,7 +3564,8 @@ function (dojo, declare) {
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
-            var card_name = dojo.attr(HTML_id, 'card_name');
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card_name = this.cards[card_id].name;
 
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Meld ${card_name}?"), {'card_name' : _(card_name)});
 
@@ -2758,16 +3586,16 @@ function (dojo, declare) {
             // Short timer (3 seconds)
             if (this.prefs[101].value == 2) {
                 wait_time = 2;
-            
+
             // Medium timer (5 seconds)
             } else if (this.prefs[101].value == 3) {
                 wait_time = 4;
-            
+
             // Long timer (10 seconds)
             } else if (this.prefs[101].value == 4) {
                 wait_time = 9;
             }
-            
+
             this.startActionTimer("meld_confirm_button", wait_time, this.action_confirmMeld, HTML_id);
         },
 
@@ -2809,58 +3637,86 @@ function (dojo, declare) {
             this.deactivateClickEvents();
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
-            var no_effect = dojo.attr(HTML_id, 'no_effect');
-            var card_name = dojo.attr(HTML_id, 'card_name');
-
-            if (no_effect) {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${card_name}? It will have no effect."), {'card_name' : _(card_name)});
-            } else {
-                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${card_name}?"), {'card_name' : _(card_name)});
-            }
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name}?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
 
             // Add cancel button
             this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
             dojo.removeClass("dogma_cancel_button", 'bgabutton_blue');
             dojo.addClass("dogma_cancel_button", 'bgabutton_red');
 
-            // Add confirm button
-            this.addActionButton("dogma_confirm_button", _("Confirm"), "action_manuallyConfirmDogma");
+            // Add confirm button for timer
+            this.addActionButton("dogma_confirm_timer_button", _("Confirm"), "action_manuallyConfirmTimerDogma");
 
-            $("dogma_confirm_button").innerHTML = _("Confirm");
-            dojo.attr('dogma_confirm_button', 'html_id', HTML_id);
+            $("dogma_confirm_timer_button").innerHTML = _("Confirm");
+            dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
 
-            // If the card will not have an effect, force the player to manually click confirm
-            if (!no_effect) {
-                // When confirmation is disabled in game preferences, click the confirmation button instantly
-                var wait_time = 0;
+            // When confirmation is disabled in game preferences, click the confirmation button instantly
+            var wait_time = 0;
 
-                // Short timer (3 seconds)
-                if (this.prefs[100].value == 2) {
-                    wait_time = 2;
-                
-                // Medium timer (5 seconds)
-                } else if (this.prefs[100].value == 3) {
-                    wait_time = 4;
-                
-                // Long timer (10 seconds)
-                } else if (this.prefs[100].value == 4) {
-                    wait_time = 9;
-                }
-                
-                this.startActionTimer("dogma_confirm_button", wait_time, this.action_confirmDogma, HTML_id);
+            // Short timer (3 seconds)
+            if (this.prefs[100].value == 2) {
+                wait_time = 2;
+            
+            // Medium timer (5 seconds)
+            } else if (this.prefs[100].value == 3) {
+                wait_time = 4;
+            
+            // Long timer (10 seconds)
+            } else if (this.prefs[100].value == 4) {
+                wait_time = 9;
             }
+            
+            this.startActionTimer("dogma_confirm_timer_button", wait_time, this.action_manuallyConfirmTimerDogma, event);
         },
 
         action_cancelDogma : function(event) {
             this.stopActionTimer();
             this.resurrectClickEvents(true);
             dojo.destroy("dogma_cancel_button");
-            dojo.destroy("dogma_confirm_button");
+            dojo.destroy("dogma_confirm_timer_button");
+            dojo.destroy("dogma_confirm_warning_button");
         },
 
-        action_manuallyConfirmDogma : function(event) {
+        action_manuallyConfirmTimerDogma : function(event) {
             this.stopActionTimer();
-            var HTML_id = dojo.attr('dogma_confirm_button', 'html_id');
+            var HTML_id = dojo.attr('dogma_confirm_timer_button', 'html_id');
+
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            var sharing_players = dojo.attr(HTML_id, 'non_demand_effect_players');
+            if (sharing_players == '') {
+                sharing_players = dojo.attr(HTML_id, 'echo_effect_players');
+            }
+            if (dojo.attr(HTML_id, 'no_effect')) {
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? It will have no effect."),
+                    {
+                        'age': this.square('N', 'age', card.age, 'type_' + card.type),
+                        'card_name' : _(card.name)
+                    }
+                );
+                dojo.destroy("dogma_confirm_timer_button");
+                this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
+                dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
+            } else if (sharing_players.includes(',')) {
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? ${players} will share the effect(s)."),
+                    {
+                        'age': this.square('N', 'age', card.age, 'type_' + card.type),
+                        'card_name' : _(card.name),
+                        'players' : this.getOtherPlayersCommaSeparated(sharing_players.split(','))
+                    }
+                );
+                dojo.destroy("dogma_confirm_timer_button");
+                this.addActionButton("dogma_confirm_warning_button", _("Confirm"), "action_manuallyConfirmWarningDogma");
+                dojo.attr('dogma_confirm_warning_button', 'html_id', HTML_id);
+            } else {
+                this.action_confirmDogma(HTML_id);
+            }
+        },
+
+        action_manuallyConfirmWarningDogma : function(event) {
+            var HTML_id = dojo.attr('dogma_confirm_warning_button', 'html_id');
             this.action_confirmDogma(HTML_id);
         },
 
@@ -2870,7 +3726,8 @@ function (dojo, declare) {
             }
 
             dojo.destroy("dogma_cancel_button");
-            dojo.destroy("dogma_confirm_button");
+            dojo.destroy("dogma_confirm_timer_button");
+            dojo.destroy("dogma_confirm_warning_button");
 
             var card_id = this.getCardIdFromHTMLId(HTML_id);
             this.ajaxcall("/innovation/innovation/dogma.html",
@@ -2920,8 +3777,13 @@ function (dojo, declare) {
         },
 
         action_confirmChooseFront : function(HTML_id) {
-            if(!this.checkAction('choose')){
+            if (!this.checkAction('choose')){
                 return;
+            }
+            // If the piles were forcibly made visible, collapse them
+            for (var color = 0; color < 5; color++) {
+                var zone = this.zone.board[this.player_id][color];
+                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
             }
             
             var card_id = this.getCardIdFromHTMLId(HTML_id);
@@ -2938,10 +3800,6 @@ function (dojo, declare) {
         
         // TODO(LATER): Remove this once we have a personal preference for confirming card choices.
         action_clicForChoose : function(event) {
-            if (this.color_pile !== null) { // Special code where a stack needed to be selected
-                var zone = this.zone.board[this.player_id][this.color_pile];
-                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
-            }
             this.deactivateClickEvents();
             
             var HTML_id = this.getCardHTMLIdFromEvent(event);
@@ -2964,15 +3822,15 @@ function (dojo, declare) {
             var zone_container = event.currentTarget.parentNode;
             var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
             var location = zone_infos[0];
-            var owner = zone_infos[1];
+            var owner = location == 'deck' ? 0 : zone_infos[1];
             if (!owner) {
                 owner = 0;
             }
-            var zone = this.getZone(location, owner, null, age);
+            var zone = this.getZone(location, owner, type, age);
             
             // Search the position the card is
             var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
-            
+
             var self = this;
             this.ajaxcall("/innovation/innovation/chooseRecto.html",
                             {
@@ -3221,6 +4079,7 @@ function (dojo, declare) {
                 other_colors.splice(color, 1);
                 var cards = this.selectCardsOnMyBoardOfColors(other_colors);
                 cards.removeClass("clickable");
+                cards.removeClass("mid_dogma");
                 this.off(cards, 'onclick');
                 
                 // Mark info
@@ -3268,6 +4127,7 @@ function (dojo, declare) {
             
             var selectable_cards = this.selectAllCardsOnMyBoard();
             selectable_cards.addClass("clickable");
+            selectable_cards.addClass("mid_dogma");
             this.on(selectable_cards, 'onclick', 'publicationClicForMove');
             
             this.publication_permuted_zone = null;
@@ -3346,12 +4206,20 @@ function (dojo, declare) {
             
             zone.updateDisplay();
         },
+
+        click_display_forecast_window : function() {
+            this.my_forecast_verso_window.show();
+        },
         
-        clic_display_score_window : function() {
+        click_close_forecast_window : function() {
+            this.my_forecast_verso_window.hide();
+        },
+        
+        click_display_score_window : function() {
             this.my_score_verso_window.show();
         },
         
-        clic_close_score_window : function() {
+        click_close_score_window : function() {
             this.my_score_verso_window.hide();
         },
         
@@ -3415,6 +4283,99 @@ function (dojo, declare) {
                         );
             }
         },
+
+        click_open_card_browsing_window : function() {
+            this.card_browsing_window.show();
+        },
+
+        click_close_card_browsing_window : function() {
+            this.card_browsing_window.hide();
+        },
+
+        click_browse_cards : function(event) {
+            var id = dojo.getAttr(event.currentTarget, 'id');
+
+            dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
+
+            if (id.startsWith('browse_cards_type_')) {
+                dojo.query('#browse_cards_buttons_row_1 > .browse_cards_button').removeClass('selected');
+                dojo.query(`#${id}`).addClass('selected');
+                dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
+                if (this.relics_enabled) {
+                    dojo.byId('browse_relics').style.display = (id == 'browse_cards_type_1') ? 'inline-block' : 'none';
+                }
+                if (dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button.selected').length == 0) {
+                    dojo.query('#browse_cards_age_1').addClass('selected');
+                }
+            } else {
+                dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button').removeClass('selected');
+                dojo.query(`#${id}`).addClass('selected');
+            }
+
+            dojo.byId('browse_card_summaries').style.display = 'block';
+            dojo.query('#special_achievement_summaries').addClass('heightless');
+
+            var node = dojo.query('#browse_card_summaries')[0];
+            node.innerHTML = '';
+
+            // Special case for relics
+            if (dojo.query(`#browse_relics.selected`).length > 0) {
+                for (var i = 215; i <= 219; i++) {
+                    if (this.canShowCardTooltip(i)) {
+                        node.innerHTML += this.createCardForCardBrowser(i);
+                    }
+                }
+                return;
+            }
+
+            // Figure out which set is selected
+            var type = 0;
+            for (var i = 0; i <= 4; i++) {
+                if (dojo.query(`#browse_cards_type_${i}.selected`).length > 0) {
+                    type = i;
+                }
+            }
+
+            // Figure out which age is selected
+            var age = 1;
+            for (var i = 1; i <= 10; i++) {
+                if (dojo.query(`#browse_cards_age_${i}.selected`).length > 0) {
+                    age = i;
+                }
+            }
+
+            // Determine range of cards to render            
+            var min_id = type * 110 + age * 10 - 5;
+            var max_id = min_id + 9;
+            if (age == 1) {
+                min_id -= 5;
+            }
+
+            // Special case for relics
+            if (dojo.query(`#browse_relics.selected`).length > 0) {
+                min_id = 215;
+                max_id = 219;
+            }
+
+            // Add cards to popup
+            for (var i = min_id; i <= max_id; i++) {
+                node.innerHTML += this.createCardForCardBrowser(i);
+            }
+
+            // NOTE: For some reason the tooltips get removed when we add more HTLM to the node, so we need to use a
+            // separate loop to add them.
+            for (var i = min_id; i <= max_id; i++) {
+                this.addCustomTooltip(`browse_card_id_${i}`, this.getTooltipForCard(i), "");
+            }
+        },
+
+        click_browse_special_achievements : function() {
+            dojo.query('.browse_cards_button').removeClass('selected');
+            dojo.query('#browse_special_achievements').addClass('selected');
+            dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
+            dojo.byId('browse_card_summaries').style.display = 'none';
+            dojo.query('#special_achievement_summaries').removeClass('heightless');
+        },
         
         ///////////////////////////////////////////////////
         //// Reaction to cometD notifications
@@ -3446,6 +4407,7 @@ function (dojo, declare) {
             dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
+            dojo.subscribe('resetMonumentCounters', this, "notif_resetMonumentCounters");  // This kind of notification does not need any delay
             
             dojo.subscribe('log', this, "notif_log"); // This kind of notification does not change anything but log on the interface, no delay
             
@@ -3465,6 +4427,7 @@ function (dojo, declare) {
                 dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
                 dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('resetMonumentCounters_spectator', this, "notif_resetMonumentCounters_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('log_spectator', this, "notif_log_spectator"); // This kind of notification does not change anything but log on the interface, no delay
             };
@@ -3475,6 +4438,15 @@ function (dojo, declare) {
 
             if (parseInt(card.is_relic) == 1) {
                 card.id = 212 + parseInt(card.age);
+            }
+
+            // Special code for my forecast management
+            if (card.location_from == "forecast" && card.owner_from == this.player_id) {
+                // Remove the card from my forecast personal window
+                // NOTE: The button to look at the player's forecast is broken in archive mode.
+                if (!g_archive_mode) {
+                    this.removeFromZone(this.zone.my_forecast_verso, card.id, true, card.age, card.type, card.is_relic);
+                }
             }
 
             // Special code for my score management
@@ -3513,6 +4485,9 @@ function (dojo, declare) {
                     id_to = id_from; // recto -> recto
                 }
             }
+
+            // If this is a special achievement, marked it as unclaimed (if it is not, then this does nothing)
+            dojo.query('#special_achievement_summary_' + id_to).removeClass('unclaimed');
             
             // Update BGA score if needed
             if (card.owner_from != 0 && card.location_from == 'achievements') {
@@ -3571,14 +4546,29 @@ function (dojo, declare) {
             if(card.new_max_age_on_board_to !== undefined) {
                 this.counter.max_age_on_board[card.owner_to].setValue(card.new_max_age_on_board_to);
             }
+            if(card.monument_counters !== undefined && card.monument_counters[this.player_id] !== undefined) {
+                this.number_of_tucked_cards = card.monument_counters[this.player_id].number_of_tucked_cards;
+                this.number_of_scored_cards = card.monument_counters[this.player_id].number_of_scored_cards;
+            }
 
             // Handle case where card is being removed from the game.
             if (!zone_to) {
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+                this.refreshSpecialAchievementProgression();
                 return;
             }
 
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
+
+            // Special code for my forecast management
+            if (card.location_to == "forecast" && card.owner_to == this.player_id) {
+                // Add the card to my forecast personal window
+                // NOTE: The button to look at the player's forecast is broken in archive mode.
+                if (!g_archive_mode) {
+                    this.createAndAddToZone(this.zone.my_forecast_verso, card.position_to, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
+                }
+                visible_to = true;
+            }
             
             // Special code for my score management
             if (card.location_to == "score" && card.owner_to == this.player_id) {
@@ -3614,6 +4604,9 @@ function (dojo, declare) {
             if (this.canShowCardTooltip(card.id)) {
                 this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
             }
+            
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
 
         notif_logWithCardTooltips: function(notif) {
@@ -3632,6 +4625,7 @@ function (dojo, declare) {
             var splay_direction = notif.args.splay_direction;
             var splay_direction_in_clear = notif.args.splay_direction_in_clear;
             var forced_unsplay = notif.args.forced_unsplay;
+            var new_score = notif.args.new_score;
             
             // Change the splay mode of the matching zone on board
             this.setSplayMode(this.zone.board[player_id][color], splay_direction);
@@ -3651,6 +4645,11 @@ function (dojo, declare) {
             this.removeTooltip('splay_' + player_id + '_' + color);
             if (splay_direction > 0) {
                 this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This stack is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
+            }
+
+            // Update the score for that player
+            if (new_score !== undefined) {
+                this.counter.score[player_id].setValue(new_score);
             }
             
             // Update the ressource counts for that player
@@ -3673,6 +4672,9 @@ function (dojo, declare) {
                     this.enableButtonForSplayMode();
                 }
             }
+
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
         
         notif_rearrangedPile: function(notif) {
@@ -3693,6 +4695,9 @@ function (dojo, declare) {
                     this.publicationSwap(player_id, permuted_zone, permutation.position, permutation.delta);
                 }
             }
+            
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
         
         notif_removedHandsBoardsAndScores: function(notif) {
@@ -3739,6 +4744,9 @@ function (dojo, declare) {
             // Disable the button for splay mode
             this.disableButtonForSplayMode();
             this.number_of_splayed_piles = 0;
+
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
 
         notif_removedTopCardsAndHands: function(notif) {
@@ -3759,16 +4767,24 @@ function (dojo, declare) {
                     this.counter.ressource_count[player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
                 }
             }
+
+            // Update special achievements overview with progression towards each achievement
+            this.refreshSpecialAchievementProgression();
         },
 
         notif_removedPlayer: function(notif) {
             var player_id = notif.args.player_to_remove;
+            // NOTE: The button to look at the player's forecast is broken in archive mode.
+            if (!g_archive_mode) {
+                this.zone.my_forecast_verso.removeAll();
+            }
             // NOTE: The button to look at the player's score pile is broken in archive mode.
             if (!g_archive_mode) {
                 this.zone.my_score_verso.removeAll();
             }
             this.zone.revealed[player_id].removeAll();
             this.zone.hand[player_id].removeAll();
+            this.zone.forecast[player_id].removeAll();
             this.zone.score[player_id].removeAll();
             this.zone.achievements[player_id].removeAll();
             this.zone.display[player_id].removeAll();
@@ -3810,6 +4826,12 @@ function (dojo, declare) {
                     dojo.query(".player_info .ressource_" + icon).style("opacity", 1);
                 }
             }
+        },
+
+        notif_resetMonumentCounters: function(notif) {
+            this.number_of_scored_cards = 0;
+            this.number_of_tucked_cards = 0;
+            this.refreshSpecialAchievementProgression();
         },
         
         notif_log: function(notif) {
@@ -3886,6 +4908,14 @@ function (dojo, declare) {
             // Call normal notif
             this.notif_updateResourcesForArtifactOnDisplay(notif);
         },
+
+        notif_resetMonumentCounters_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+            
+            // Call normal notif
+            this.notif_resetMonumentCounters(notif);
+        },
         
         notif_log_spectator: function(notif) {
             // Put the message for the spectator in log
@@ -3952,8 +4982,11 @@ function (dojo, declare) {
         },
 
         canShowCardTooltip : function(card_id) {
-            // TODO(CITIES,ECHOES,FIGURES): Add tooltips for remaining relics once the cards are fully implemented.
-            return card_id !== undefined && this.cards[card_id].age !== null && card_id != 215 && card_id != 218 && card_id != 219;
+            return card_id !== undefined &&
+                this.cards[card_id].age !== null &&
+                (card_id != 215 || this.cities_expansion_enabled) &&
+                (card_id != 218 || this.figures_expansion_enabled) &&
+                (card_id != 219 || this.echoes_expansion_enabled);
         },
 
         // Returns true if the current player is a spectator or if the game is currently in replay mode
@@ -3961,7 +4994,7 @@ function (dojo, declare) {
             return this.isSpectator || this.isInReplayMode();
         },
 
-        // Returns true if the game is ongoing but the user clicked "reply from this move" in the log or the game is in archive mode after the game has ended
+        // Returns true if the game is ongoing but the user clicked "replay from this move" in the log or the game is in archive mode after the game has ended
         isInReplayMode : function () {
             return typeof g_replayFrom != 'undefined' || g_archive_mode;
         }
