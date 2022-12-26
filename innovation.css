@@ -1458,6 +1458,40 @@
   background-size: 83px auto;
   background-position-y: -42px;
 }
+.square.in_tooltip.icon_8, .square.in_tooltip.icon_9, .square.in_tooltip.icon_11, .square.in_tooltip.icon_12, .square.in_tooltip.icon_13 {
+  background-image: url("img/cities_special_icons.png");
+  filter: grayscale(1);
+  background-size: 115px auto;
+  width: 20px;
+  height: 20px;
+  top: 4px;
+  position: relative;
+}
+.square.in_tooltip.icon_8 {
+  background-position-y: -42px;
+}
+.square.in_tooltip.icon_8 {
+  background-position-y: -63px;
+}
+.square.in_tooltip.icon_11 {
+  background-position-y: -20px;
+}
+.square.in_tooltip.icon_12 {
+  background-position-y: -20px;
+  transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+}
+.square.in_tooltip.icon_13 {
+  background-position-y: -20px;
+  transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+}
 .square.in_tooltip.icon_1 {
   background-position-x: 0px;
 }
