@@ -118,10 +118,10 @@ $game_options = array(
 
     /* TODO(CITIES): Add game options.
     103 => array(
-        'name' => totranslate('Cities of Destiny expansion (NOT AVAILABLE YET)'),
+        'name' => totranslate('Cities of Destiny expansion'),
         'values' => array(
             1 => array('name' => totranslate('Disable')),
-            // 2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
         )
     ), */
 
