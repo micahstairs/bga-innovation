@@ -1462,12 +1462,6 @@
         &.icon_6 {
             background-position-x: -192.5px;
         }
-        &.icon_7 {
-            background-image: url("img/cities_special_icons.png");
-            width: 40px;
-            height: 40px;
-            background-position-x: -41px;
-        }
         &.icon_10 {
             background-image: none;
             // The following line will be added dynamically via JavaScript:
@@ -1594,9 +1588,36 @@
     }
 }
 
+.city_search_icon {
+    @include m.city-special-icon-background;
+    position: absolute;
+    background-position-y: -165px;
+    top: 0px;
+    left: 70px;
+    &.M {
+        width: 45px;
+        height: 45px;
+        background-size: 230px auto;
+        &.color_0 {
+            background-position-x: 0px;
+        }
+        &.color_1 {
+            background-position-x: -46px;
+        }
+        &.color_2 {
+            background-position-x: -92px;
+        }
+        &.color_3 {
+            background-position-x: -138px;
+        }
+        &.color_4 {
+            background-position-x: -184px;
+        }
+    }
+}
+
 .city_special_icon {
     @include m.city-special-icon-background;
-    background-image: url("img/cities_special_icons.png");
     position: absolute;
     &.icon_null {
         display: none;

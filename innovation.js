@@ -2832,7 +2832,11 @@ function (dojo, declare) {
                 return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
             }
             if (resource_icon_id <= 6) {
-                return '<div class="square_card_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+                var div = `<div class="square_card_icon ${size} color_${card.color} ${icon_location} icon_${resource_icon_id}"></div>`;
+                if (resource_icon_id != null && icon_location == 'top_center_icon') {
+                    div += `<div class="city_search_icon ${size} color_${card.color}"></div>`;
+                }
+                return div;
             }
             if (resource_icon_id == 10) {
                 var card_data = this.cards[card.id];
