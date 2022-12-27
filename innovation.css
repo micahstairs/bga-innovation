@@ -661,9 +661,13 @@
   margin-bottom: 5px;
   margin-right: 5px;
 }
-.deck_set > .deck_pile.condensed {
+.deck_set > .deck_pile.three_sets {
   padding-top: 10px;
   padding-left: 20px;
+}
+.deck_set > .deck_pile.four_sets {
+  padding-top: 10px;
+  padding-left: 5px;
 }
 .deck_set > .deck_pile > .deck {
   display: inline-block;
@@ -676,7 +680,7 @@
   width: 20px;
   display: flex;
 }
-.deck_set > .deck_pile > .deck_count.condensed {
+.deck_set > .deck_pile > .deck_count.three_sets, .deck_set > .deck_pile > .deck_count.four_sets {
   display: inline-block;
   text-align: center;
   position: absolute;
