@@ -1927,7 +1927,7 @@ function (dojo, declare) {
             for (var age = 1; age <= 10; age++) {
                 text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age));
             }
-            for (var symbol = 0; symbol <= 6; symbol++) {
+            for (var symbol = 0; symbol <= 13; symbol++) {
                 text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol));
             }
             text = text.replace(new RegExp("\\$\\{music_note\\}" , "g"), this.square(size, 'music', 'note'));
@@ -2861,7 +2861,10 @@ function (dojo, declare) {
             var note_for_monument = _("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.");
             var div_condition_for_claiming = "<div><b>" + name + "</b>: " + this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip') + "</div>" + (is_monument ? "<div></br>" + note_for_monument + "</div>" : "");
             
-            var div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
+            var div_alternative_condition_for_claiming = "";
+            if (card_data.alternative_condition_for_claiming != null) {
+                div_alternative_condition_for_claiming = "</br><div>" + this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip') + "</div>";
+            }
             
             return div_condition_for_claiming + div_alternative_condition_for_claiming;            
         },

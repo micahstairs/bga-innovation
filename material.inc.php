@@ -1185,23 +1185,23 @@ $this->textual_card_infos = array(
 /* Cities Special achievements */
 
 325 => array('name' => clienttranslate('Legend'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${left_arrow} on a color already splayed left.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_11} on a color already splayed left.'),
 ),
 
 326 => array('name' => clienttranslate('Repute'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${right_arrow} on a color already splayed right.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_12} on a color already splayed right.'),
 ),
 
 327 => array('name' => clienttranslate('Fame'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${up_arrow} on a color already splayed up.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_13} on a color already splayed up.'),
 ),
 
 328 => array('name' => clienttranslate('Glory'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${flag}.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_8}.'),
 ),
 
 329 => array('name' => clienttranslate('Victory'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${fountain}.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_9}.'),
 ),
     
 /* Echoes - Age 1 */

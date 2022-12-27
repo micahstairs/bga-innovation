@@ -1313,6 +1313,40 @@
             background-size: 83px auto;
             background-position-y: -42px;
         }
+        &.icon_8, &.icon_9, &.icon_11, &.icon_12, &.icon_13 {
+            background-image: url("img/cities_special_icons.png");
+            filter: grayscale(1);
+            background-size: 115px auto;
+            width: 20px;
+            height: 20px;
+            top: 4px;
+            position: relative;
+        }
+        &.icon_8 {
+            background-position-y: -42px;
+        }
+        &.icon_9 {
+            background-position-y: -63px;
+        }
+        &.icon_11 {
+            background-position-y: -20px;
+        }
+        &.icon_12 {
+            background-position-y: -20px;
+            transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+        }
+        &.icon_13 {
+            background-position-y: -20px;
+            transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+        }
         @include m.generate-icon-x-position(1, 6, 0, 14px);
     }
 }
