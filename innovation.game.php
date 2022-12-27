@@ -3576,6 +3576,10 @@ class Innovation extends Table
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
     }
 
+    function getAgeSquareWithType($age, $type) {
+        return self::format("<span title='{age}' class='square N age age_{age} type_{type}'>{age}</span>", array('age' => $age, 'type' => $type));
+    }
+
     function getMusicNoteIcon() {
         return "<span title='music note' class='square N music_note'></span>";
     }
@@ -7113,12 +7117,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
                 // Determine how many cards can be drawn.
                 $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
-                $num_cards_to_reveal = min($card['age'], $deck_count[$card['age']]);
+                $age_of_melded_card = $card['age'];
+                $num_cards_to_reveal = min($age_of_melded_card, $deck_count[$card['age']]);
 
                 if ($num_cards_to_reveal > 0) {
                     for ($i = 0; $i < $num_cards_to_reveal; $i++) {
                         self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
                     }
+                    if ($num_cards_to_reveal < $age_of_melded_card) {
+                        self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
+                    }
+                    self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be put in hand and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
                     $cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($cards as $card) {
                         // Put matches in hand
@@ -7143,7 +7152,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         return;
                     }
                 } else {
-                    // TODO(CITIES): Log message about how there aren't any eligible cards to reveal.
+                    self::notifyGeneralInfo(clienttranslate('The ${age} supply pile was empty, so no cards could be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
                 }
             }
         }
@@ -7153,12 +7162,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function stDigArtifact() {
+        $player_id = self::getActivePlayerId();
         $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
 
         if (self::getGameStateValue('cities_mode') > 1) {
             // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
-            if ($melded_card['position'] > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
+            if ($melded_card['position'] == 0) {
+                if (self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} took a meld action which added a new color to your board, so you get to draw a City.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} took a meld action which added a new color to his board, so he gets to draw a City.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} took a meld action which added a new color to your board, but you already had a City card in hand so you do not get to draw another one.'), array('You' => 'You'));
+                }
             }
         }
 
@@ -9532,6 +9548,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::incStat(1, 'sharing_effects_number', $player_id);
                 }
             }
+
+            // Indicate that no dogma effects are being executed anymore
+            self::setGameStateValue('current_nesting_index', -1);
 
             // Award the sharing bonus if needed
             $sharing_bonus = self::getGameStateValue('sharing_bonus');
