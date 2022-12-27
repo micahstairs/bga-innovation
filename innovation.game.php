@@ -3061,21 +3061,16 @@ class Innovation extends Table
     }
     
     function getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() {
-        $players = self::getCollectionFromDB("SELECT player_no, player_id, player_eliminated FROM player");
-        $num_players = count($players);
-
-        if (self::getGameStateValue('current_nesting_index') < 0) {
-            $current_player_id = self::getGameStateValue('active_player');
-        } else {
-            $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
-        }
-
+        $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         if ($current_player_id < 0) {
             // Pick an arbitrary player if it's not anyone's turn (e.g. initial meld)
             $current_player_no = 1;
         } else {
             $current_player_no = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
         }
+
+        $players = self::getCollectionFromDB("SELECT player_no, player_id, player_eliminated FROM player");
+        $num_players = count($players);
 
         $player_ids = [];
         for ($i = 0; $i < $num_players; $i++) {
@@ -3581,6 +3576,10 @@ class Innovation extends Table
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
     }
 
+    function getAgeSquareWithType($age, $type) {
+        return self::format("<span title='{age}' class='square N age age_{age} type_{type}'>{age}</span>", array('age' => $age, 'type' => $type));
+    }
+
     function getMusicNoteIcon() {
         return "<span title='music note' class='square N music_note'></span>";
     }
@@ -3681,6 +3680,9 @@ class Innovation extends Table
                 -intrisic properties,
                 -owner, location and position
         **/
+        if ($id < 0) {
+            return null;
+        }
         return self::getNonEmptyObjectFromDB(self::format("SELECT * FROM card WHERE id = {id}", array('id' => $id)));
     }
 
@@ -5886,7 +5888,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // This player will be active in the next interaction turn
         self::setGameStateValue('n', 0);
-        $this->gamestate->changeActivePlayer($player_id);
+        if (self::getActivePlayerId() != $player_id) {
+            $this->gamestate->changeActivePlayer($player_id);
+        }
     }
     
     function selectEligibleCards() {
@@ -6323,6 +6327,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Functions used for returning args to clients (Several states send these same things) **/
     function getArgForDogmaEffect() {
         $nested_card_state = self::getCurrentNestedCardState();
+
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        if ($nested_card_state == null) {
+            return array_merge([
+                'qualified_effect' => clienttranslate('search icon'),
+                'card_name' => 'card_name',
+                'i18n' => ['qualified_effect', 'card_name'],
+            ], self::getDogmaCardNames());
+        }
+
         $card_id = $nested_card_state['card_id'];
         $current_effect_type = $nested_card_state['current_effect_type'];
         $current_effect_number = $nested_card_state['current_effect_number'];
@@ -6363,12 +6377,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getDogmaCardNames() { // Returns the name of the current dogma card or all the names where there are nested dogma effects
-        $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        
-        $card_names = array();
-        
-        $i18n = array();
         $nesting_index = self::getGameStateValue('current_nesting_index');
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
+
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        if ($nesting_index < 0) {
+            return [
+                'card_0' => self::getCardName(self::getGameStateValue('melded_card_id')),
+                'ref_player_0' => $player_id,
+                'i18n' => ['card_0'],
+            ];
+        }
+
+        $card_names = array();
+        $i18n = array();
         for ($i = 0; $i <= $nesting_index; $i++) {
             $nested_card_state = self::getNestedCardState($i);
             $current_effect_type = $nested_card_state['current_effect_type'];
@@ -6381,7 +6403,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
                         array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
-            $card = self::getCardInfo($card_id);
             $card_names['card_'.$i] = self::getCardName($card_id);
             $card_names['ref_player_'.$i] = $player_id;
             $i18n[] = 'card_'.$i;
@@ -6673,7 +6694,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function getCurrentPlayerUnderDogmaEffect() {
-        $player_id = self::getCurrentNestedCardState()['current_player_id'];
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        $current_nested_state = self::getCurrentNestedCardState();
+        if ($current_nested_state == null) {
+            return self::getGameStateValue('active_player');
+        }
+
+        $player_id = $current_nested_state['current_player_id'];
         // TODO(LATER): Figure out why this workaround is necessary.
         if ($player_id == -1) {
             return self::getGameStateValue('active_player');
@@ -7036,7 +7063,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::updateActionAndTurnStats($player_id);
         self::incStat(1, 'meld_actions_number', $player_id);
         
-        $previous_top_card = self::getTopCardOnBoard($card['owner'], $card['color']);
         // Execute the meld
         try {
             self::transferCardFromTo($card, $card['owner'], 'board');
@@ -7055,33 +7081,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             $top_middle_icon = $card['spot_6'];
 
-            // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
-            // top-midddle of the card, that means that it is a Search icon.
-            if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
-                // Determine how many cards can be drawn.
-                $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
-                $num_cards_to_reveal = min($card['age'], $deck_count[$card['age']]);
-                
-                if ($num_cards_to_reveal > 0) {
-                    for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                        self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
-                    }
-                    $cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach ($cards as $card) {
-                        // Put matches in hand
-                        if (self::hasRessource($card, $top_middle_icon)) {
-                            self::transferCardFromTo($card, $player_id, 'hand');
-                        // Return the ones which don't have a matching icon
-                        } else {
-                            // TODO(CITIES#403): This return should be an interaction so that the player can choose the order.
-                            self::transferCardFromTo($card, 0, 'deck');
-                        }
-                    }
-                } else {
-                    // TODO(CITIES): Log message about how there aren't any eligible cards to reveal.
-                }
-            }
-            
             // NOTE: This logic relies on the (correct) assumption that the Plus/Arrow icons only appear in the top-middle or bottom-middle of cards.
             $icons_to_check = array($card['spot_3'], $card['spot_6']);
             for ($i = 0; $i < count($icons_to_check); $i++) {
@@ -7112,12 +7111,49 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                 }
             }
-        }
-        
-        if (self::getGameStateValue('cities_mode') > 1) {
-            // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
-            if ($previous_top_card === null && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', false, 2);
+
+            // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
+            // top-midddle of the card, that means that it is a Search icon.
+            if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
+                // Determine how many cards can be drawn.
+                $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
+                $age_of_melded_card = $card['age'];
+                $num_cards_to_reveal = min($age_of_melded_card, $deck_count[$card['age']]);
+
+                if ($num_cards_to_reveal > 0) {
+                    for ($i = 0; $i < $num_cards_to_reveal; $i++) {
+                        self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
+                    }
+                    if ($num_cards_to_reveal < $age_of_melded_card) {
+                        self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
+                    }
+                    self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be put in hand and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
+                    $cards = self::getCardsInLocation($player_id, 'revealed');
+                    foreach ($cards as $card) {
+                        // Put matches in hand
+                        if (self::hasRessource($card, $top_middle_icon)) {
+                            self::transferCardFromTo($card, $player_id, 'hand');
+                        }
+                    }
+                    // Return the ones which don't have a matching icon
+                    $num_remaining_cards = self::countCardsInLocation($player_id, 'revealed');
+                    if ($num_remaining_cards > 0) {
+                        $options = array(
+                            'player_id' => $player_id,
+                            'n' => $num_remaining_cards,
+                            'owner_from' => $player_id,
+                            'location_from' => 'revealed',
+                            'owner_to' => 0,
+                            'location_to' => 'deck',
+                        );
+                        self::setSelectionRange($options);
+                        self::trace('playerTurn->preSelectionMove');
+                        $this->gamestate->nextState('preSelectionMove');
+                        return;
+                    }
+                } else {
+                    self::notifyGeneralInfo(clienttranslate('The ${age} supply pile was empty, so no cards could be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
+                }
             }
         }
 
@@ -7126,7 +7162,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function stDigArtifact() {
+        $player_id = self::getActivePlayerId();
         $melded_card = self::getCardInfo(self::getGameStateValue('melded_card_id'));
+
+        if (self::getGameStateValue('cities_mode') > 1) {
+            // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
+            if ($melded_card['position'] == 0) {
+                if (self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} took a meld action which added a new color to your board, so you get to draw a City.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} took a meld action which added a new color to his board, so he gets to draw a City.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} took a meld action which added a new color to your board, but you already had a City card in hand so you do not get to draw another one.'), array('You' => 'You'));
+                }
+            }
+        }
+
         if (self::tryToDigArtifactAndSeizeRelic($melded_card)) {
             self::trace('digArtifact->relicPlayerTurn');
             $this->gamestate->nextState('relicPlayerTurn');
@@ -8294,18 +8345,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $special_type_of_choice = self::getGameStateValue('special_type_of_choice');
         
         $nested_card_state = self::getCurrentNestedCardState();
-        $card_id = $nested_card_state['card_id'];
-        $current_effect_type = $nested_card_state['current_effect_type'];
-        $current_effect_number = $nested_card_state['current_effect_number'];
-        
+
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        if ($nested_card_state == null) {
+            $card_id = self::getGameStateValue('melded_card_id');
+            $code = null;
+        } else {
+            $card_id = $nested_card_state['card_id'];
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            $step = self::getStep();
+            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+        }
+
         $card = self::getCardInfo($card_id);
         $card_name = self::getCardName($card['id']);
         
         $can_pass = self::getGameStateValue('can_pass') == 1;
         $can_stop = self::getGameStateValue('n_min') <= 0;
-
-        $step = self::getStep();
-        $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         
         if ($special_type_of_choice > 0) {
             switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
@@ -8367,8 +8424,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $message_args_for_player = array('You' => 'You', 'you' => 'you');
             $message_args_for_others = array('player_name' => $player_name);
             
-            //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-            // [S] SPECIFIC CODE: What is the special type of choice the player can make (message and values)?
             switch($code) {
             // id 18, age 2: Road building
             case "18N1B":
@@ -8900,7 +8955,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
             }
-            //[SS]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             
             $card_names = self::getDogmaCardNames();
 
@@ -9495,6 +9549,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
             }
 
+            // Indicate that no dogma effects are being executed anymore
+            self::setGameStateValue('current_nesting_index', -1);
+
             // Award the sharing bonus if needed
             $sharing_bonus = self::getGameStateValue('sharing_bonus');
             if ($sharing_bonus == 1) {
@@ -9613,6 +9670,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
                     array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
         }
+        $code = self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number);
         $step_max = null;
         $step = null;
         
@@ -9631,10 +9689,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $clock = self::getIconSquare(6);
         
         try {
-            //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-            // [A] SPECIFIC CODE: what are the automatic actions to make and/or is there interaction needed?
-            $code = self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number);
-            self::trace('[A]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
             switch($code) {
             // The first number is the id of the card
             // D1 means the first (and single) I demand effect
@@ -14373,7 +14427,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // the stack and there's nothing left to do.
                 break;
             }
-            //[AA]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         }
         catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
@@ -14454,6 +14507,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $step = self::getStep();
+        $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+
         $card_id_1 = self::getGameStateValue('card_id_1');
         $card_id_2 = self::getGameStateValue('card_id_2');
         $card_id_3 = self::getGameStateValue('card_id_3');
@@ -14464,11 +14519,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $tower = self::getIconSquare(4);
         $factory = self::getIconSquare(5);
         $clock = self::getIconSquare(6);
-        
-        //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-        // [B] SPECIFIC CODE: for effects where interaction is needed, what is the range of cards/colors/values among which the player has to make a choice? and what is to be done with that card?
-        $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-        self::trace('[B]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
 
         $options = null;
         switch($code) {
@@ -21257,7 +21307,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
             break;
         }
-        //[BB]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         
         // There wasn't an interaction needed in this step after all
         if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0)) {
@@ -21285,18 +21334,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $launcher_id = self::getLauncherId();
 
         $nested_card_state = self::getCurrentNestedCardState();
-        $card_id = $nested_card_state['card_id'];
-        $current_effect_type = $nested_card_state['current_effect_type'];
-        $current_effect_number = $nested_card_state['current_effect_number'];
-        // Echo effects are sometimes executed on cards other than the card being dogma'd
-        if ($current_effect_type == 3) {
-            $nesting_index = $nested_card_state['nesting_index'];
-            $card_id = self::getUniqueValueFromDB(
-                self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
-                    array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
+
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        if ($nested_card_state == null) {
+            $code = null;
+            $step = 1;
+            $step_max = 1;
+        } else {
+            $card_id = $nested_card_state['card_id'];
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            // Echo effects are sometimes executed on cards other than the card being dogma'd
+            if ($current_effect_type == 3) {
+                $nesting_index = $nested_card_state['nesting_index'];
+                $card_id = self::getUniqueValueFromDB(
+                    self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
+                        array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
+            }
+            $step = self::getStep();
+            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         }
 
-        $step = self::getStep();
         $n = self::getGameStateValue('n');
         
         $crown = self::getIconSquare(1);
@@ -21308,10 +21366,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
-                //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-                // [D] SPECIFIC CODE: what to be done after the player finished his selection of cards/colors/values?
-                $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-                self::trace('[D]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
                 switch($code) {
                 // The first number is the id of the card
                 // D1 means the first (and single) I demand effect
@@ -24033,7 +24087,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;                 
                 }
                 
-            //[DD]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
             } catch (EndOfGame $e) {
                 // End of the game: the exception has reached the highest level of code
                 self::trace('EOG bubbled from self::stInterInteractionStep');
@@ -24043,8 +24096,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        $step_max = self::getStepMax();
-        if ($step == $step_max) { // The last step has been completed
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        if ($nested_card_state == null) {
+            self::trace('interInteractionStep->digArtifact');
+            $this->gamestate->nextState('digArtifact');
+            return;
+        }
+
+        if ($step == self::getStepMax()) { // The last step has been completed
             // End of the turn for the player involved
             self::trace('interInteractionStep->interPlayerInvolvedTurn');
             $this->gamestate->nextState('interPlayerInvolvedTurn');
@@ -24080,11 +24139,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
 
             $nested_card_state = self::getCurrentNestedCardState();
-            $card_id = $nested_card_state['card_id'];
-            $current_effect_type = $nested_card_state['current_effect_type'];
-            $current_effect_number = $nested_card_state['current_effect_number'];
-            $step = self::getStep();
-            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+
+            // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+            if ($nested_card_state == null) {
+                $code = null;
+            } else {
+                $card_id = $nested_card_state['card_id'];
+                $current_effect_type = $nested_card_state['current_effect_type'];
+                $current_effect_number = $nested_card_state['current_effect_number'];
+                $step = self::getStep();
+                $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+            }
 
             // Special automation case for Periodic Table (it's broken into two interactions only because the choice is sometimes complex)
             if ($code == '175N1A' && $selection_size == 2) {
@@ -24333,10 +24398,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $launcher_id = self::getLauncherId();
         $nested_card_state = self::getCurrentNestedCardState();
-        $card_id = $nested_card_state['card_id'];
-        $current_effect_type = $nested_card_state['current_effect_type'];
-        $current_effect_number = $nested_card_state['current_effect_number'];
-        $step = self::getStep();
+
+        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        if ($nested_card_state == null) {
+            $code = null;
+        } else {
+            $card_id = $nested_card_state['card_id'];
+            $current_effect_type = $nested_card_state['current_effect_type'];
+            $current_effect_number = $nested_card_state['current_effect_number'];
+            $step = self::getStep();
+            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
+        }
         
         $crown = self::getIconSquare(1);
         $leaf = self::getIconSquare(2);
@@ -24346,10 +24418,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $clock = self::getIconSquare(6);
         
         try {
-            //||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-            // [C] SPECIFIC CODE: what is to be done with the card/color/value the player chose?
-            $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
-            self::trace('[C]'.$code.' '.self::getPlayerNameFromId($player_id).'('.$player_id.')'.' | '.self::getPlayerNameFromId($launcher_id).'('.$launcher_id.')');
             switch($code) {
             // The first number is the id of the card
             // D1 means the first (and single) I demand effect
@@ -25306,7 +25374,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             }
-        //[CC]||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
         }
         catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
