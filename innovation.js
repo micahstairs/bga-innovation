@@ -135,6 +135,7 @@ function (dojo, declare) {
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
             this.deactivated_cards_mid_dogma = null;
+            this.deactivated_cards_can_endorse = null;
             this.erased_pagemaintitle_text = null;
         },
         
@@ -1136,6 +1137,7 @@ function (dojo, declare) {
                     var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clickDogma');
+                    this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info).addClass("can_endorse");
                     
                     break;
                 case 'selectionMove':
@@ -2005,8 +2007,10 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                var no_effect = dogma_effect_info[id].no_effect;
-                dojo.attr(HTML_id, 'no_effect', no_effect);
+                if (dogma_effect_info[id].endorse_age != undefined) {
+                    dojo.attr(HTML_id, 'endorse_age', dogma_effect_info[id].endorse_age);
+                }
+                dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id].no_effect);
                 dojo.attr(HTML_id, 'card_id', id);
                 dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
                 dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
@@ -2544,8 +2548,26 @@ function (dojo, declare) {
                     continue;
                 }
                 var top_card = pile[pile.length - 1];
-                // Battleship Yamato does not have a dogma effect on it.
-                if (this.getCardIdFromHTMLId(top_card.id) != 188) {
+                // City cards and Battleship Yamato do not have a dogma effect on it.
+                var card_id = this.getCardIdFromHTMLId(top_card.id);
+                if (card_id != 188 && this.cards[card_id].type != 2) {
+                    selectable_list.push("#" + top_card.id);
+                }
+            }
+            return selectable_list.length > 0 ? dojo.query(selectable_list.join(",")) : new dojo.NodeList();
+        },
+
+        selectMyTopCardsEligibleForEndorsedDogma : function(dogma_effect_info) {
+            var player_board = this.zone.board[this.player_id];
+            var selectable_list = [];
+            for (var color = 0; color < 5; color++) {
+                var pile = player_board[color].items;
+                if (pile.length == 0) {
+                    continue;
+                }
+                var top_card = pile[pile.length - 1];
+                var card_id = this.getCardIdFromHTMLId(top_card.id);
+                if (dogma_effect_info[card_id].endorse_age != undefined) {
                     selectable_list.push("#" + top_card.id);
                 }
             }
@@ -2602,6 +2624,9 @@ function (dojo, declare) {
 
             this.deactivated_cards_mid_dogma = dojo.query(".mid_dogma");
             this.deactivated_cards_mid_dogma.removeClass("mid_dogma");
+
+            this.deactivated_cards_can_endorse = dojo.query(".can_endorse");
+            this.deactivated_cards_can_endorse.removeClass("can_endorse");
             
             this.off(this.deactivated_cards, 'onclick');
 
@@ -2615,6 +2640,7 @@ function (dojo, declare) {
         resurrectClickEvents : function(revert_text) {
             this.deactivated_cards.addClass("clickable");
             this.deactivated_cards_mid_dogma.addClass("mid_dogma");
+            this.deactivated_cards_can_endorse.addClass("can_endorse");
             
             this.restart(this.deactivated_cards, 'onclick');
             

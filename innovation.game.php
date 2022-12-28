@@ -6851,8 +6851,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
 
-        // Battleship Yamato does not have a dogma effect
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have a featured icon so it cannot be executed as a dogma effect
+        if ($card['dogma_icon'] == null) {
             self::throwInvalidChoiceException();
         }
 
@@ -7296,8 +7296,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!self::isTopBoardCard($card)) {
             self::throwInvalidChoiceException();
         }
-        // Battleship Yamato does not have any dogma effects on it to execute
-        if ($card['id'] == 188) {
+        // City cards and Battleship Yamato do not have a featured icon so they cannot be executed as a dogma effect
+        if ($card['dogma_icon'] == null) {
             self::throwInvalidChoiceException();
         }
         
@@ -7325,8 +7325,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function increaseResourcesForArtifactOnDisplay($player_id, $card) {
-        // Battleship Yamato does not have any resource symbols
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have a featured icon
+        if ($card['dogma_icon'] == null) {
             $resource_icon = null;
             $resource_count_delta = 0;
         } else {
@@ -7337,8 +7337,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function decreaseResourcesForArtifactOnDisplay($player_id, $card) {
-        // Battleship Yamato does not have any resource symbols
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have a featured icon
+        if ($card['dogma_icon'] == null) {
             $resource_icon = null;
             $resource_count_delta = 0;
         } else {
@@ -7832,8 +7832,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getDogmaEffectInfo($card, $launcher_id, $is_on_display = false) {
         $dogma_effect_info = array();
 
-        // Battleship Yamato cannot be triggered as a dogma effect, so we don't need to return anything
-        if ($card['id'] == 188) {
+        // If the card does not have a featured icon, then it cannot be triggered as a dogma effect.
+        if ($card['dogma_icon'] == null) {
             return $dogma_effect_info;
         }
 
@@ -7902,6 +7902,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $dogma_effect_info['players_executing_echo_effects'],
             $card_ids_with_visible_echo_effects
         );
+
+        if (self::getGameStateValue('cities_mode') > 1 && !$is_on_display) {
+            // To take an Endorse action, perform the following steps:
+            // 1) Choose the top card on your board that you want to Endorse, and note its featured icon.
+            // 2) Choose a top city on your board. It must have the featured icon on it.
+            // 3) Pay for the Endorse action by tucking a card from your hand of equal or lower value to
+            //    the city you chose. The tucked card’s color and icons are irrelevant.
+            $highest_city_with_featured_icon = null;
+            foreach (self::getTopCardsOnBoard($launcher_id) as $top_card) {
+                if ($top_card['type'] == 2 && self::hasRessource($top_card, $dogma_icon)) {
+                    if ($highest_city_with_featured_icon == null || $top_card['age'] > $highest_city_with_featured_icon) {
+                        $highest_city_with_featured_icon = $top_card['age'];
+                    }
+                }
+            }
+            $can_endorse = false;
+            if ($highest_city_with_featured_icon != null) {
+                foreach (self::getCardsInHand($launcher_id) as $card) {
+                    if ($card['age'] <= $highest_city_with_featured_icon) {
+                        $can_endorse = true;
+                        break;
+                    }
+                }
+            }
+            if ($can_endorse) {
+                $dogma_effect_info['endorse_age'] = $highest_city_with_featured_icon;
+            }
+        }
 
         return $dogma_effect_info;
     }
@@ -20178,7 +20206,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "395D1A":
             // "I demand you take the highest top card from your board into your hand!"
-            // TOOD(ECHOES): Test that this behaves correctly with Battleship Yamato.
+            // TODO(ECHOES): Test that this behaves correctly with Battleship Yamato.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -22820,7 +22848,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         
                         // "If the melded card has no effects, you win"
-                        if ($melded_card['type'] == 2 /* a City card */ || $melded_card['id'] == 188 /* Battleship Yamato */) {
+                        if ($melded_card['dogma_icon'] == null) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with no effects.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::getColoredPlayerName($player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);
