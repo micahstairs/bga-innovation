@@ -1137,7 +1137,12 @@ function (dojo, declare) {
                     var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clickDogma');
-                    this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info).addClass("can_endorse");
+
+                    // Cards on board (endorse action)
+                    var endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
+                    this.off(endorsable_cards, 'onclick');
+                    endorsable_cards.addClass("can_endorse");
+                    this.on(endorsable_cards, 'onclick', 'action_clickEndorse');
                     
                     break;
                 case 'selectionMove':
@@ -3669,13 +3674,16 @@ function (dojo, declare) {
             );
         },
         
-        action_clickDogma : function(event) {
-            this.stopActionTimer();
-            this.deactivateClickEvents();
+        action_clickDogma : function(event, via_endorse_prompt=false) {
+            if (!via_endorse_prompt) {
+                this.stopActionTimer();
+                this.deactivateClickEvents();
+            }
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var card_id = dojo.attr(HTML_id, 'card_id');
             var card = this.cards[card_id];
+
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name}?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
 
             // Add cancel button
@@ -3687,7 +3695,12 @@ function (dojo, declare) {
             this.addActionButton("dogma_confirm_timer_button", _("Confirm"), "action_manuallyConfirmTimerDogma");
 
             $("dogma_confirm_timer_button").innerHTML = _("Confirm");
-            dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
+            if (via_endorse_prompt) {
+                dojo.attr('dogma_confirm_timer_button', 'html_id', dojo.attr(HTML_id, 'HTML_id'));
+                dojo.destroy("dogma_without_endorse_button");
+            } else {
+                dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
+            }
 
             // When confirmation is disabled in game preferences, click the confirmation button instantly
             var wait_time = 0;
@@ -3771,6 +3784,65 @@ function (dojo, declare) {
                 {
                     lock: true,
                     card_id: card_id
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickEndorse : function(event) {
+            this.deactivateClickEvents();
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            var endorse_age = dojo.attr(HTML_id, 'endorse_age');
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by tucking a ${tuck_age} or lower from your hand?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', endorse_age)});
+
+            // Add cancel button
+            this.addActionButton("endorse_cancel_button", _("Cancel"), "action_cancelEndorse");
+            dojo.removeClass("endorse_cancel_button", 'bgabutton_blue');
+            dojo.addClass("endorse_cancel_button", 'bgabutton_red');
+
+            // Add button to dogma without endorsing
+            this.addActionButton("dogma_without_endorse_button", _("Dogma without endorse"), "action_dogmaWithoutEndorse");
+            dojo.attr('dogma_without_endorse_button', 'HTML_id', HTML_id);
+            dojo.attr('dogma_without_endorse_button', 'card_id', card_id);
+
+            // Add button to endorse
+            this.addActionButton("endorse_button", _("Endorse"), "action_confirmEndorse");
+        },
+
+        action_cancelEndorse : function(event) {
+            this.resurrectClickEvents(true);
+            dojo.destroy("endorse_cancel_button");
+            dojo.destroy("dogma_without_endorse_button");
+            dojo.destroy("endorse_button");
+        },
+
+        action_dogmaWithoutEndorse : function(event) {
+            $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
+            dojo.destroy("endorse_cancel_button");
+            dojo.destroy("endorse_button");
+            this.action_clickDogma(event, /*via_endorse_prompt=*/ true);
+        },
+
+        action_confirmEndorse : function(HTML_id) {
+            if (!this.checkAction('endorse')) {
+                return;
+            }
+
+            dojo.destroy("endorse_cancel_button");
+            dojo.destroy("dogma_without_endorse_button");
+            dojo.destroy("endorse_button");
+
+            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            this.ajaxcall("/innovation/innovation/endorse.html",
+                {
+                    lock: true,
+                    card_to_endorse_id: card_id,
+                    card_to_tuck_id: card_id
                 },
                 this,
                 function(result) { },

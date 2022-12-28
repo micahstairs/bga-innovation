@@ -7315,6 +7315,46 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('dogmaEffect');
     }
 
+    function endorse($card_to_endorse_id, $card_to_tuck_id) {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('endorse');
+        $player_id = self::getActivePlayerId();
+
+        $card_to_endorse = self::getCardInfo($card_to_endorse_id);
+
+        // Check that the player really has this card on his board
+        if ($card_to_endorse['owner'] != $player_id || $card_to_endorse['location'] != "board") {
+            self::throwInvalidChoiceException();
+        }
+        // Card is not at the top of a stack
+        if (!self::isTopBoardCard($card_to_endorse)) {
+            self::throwInvalidChoiceException();
+        }
+        // City cards and Battleship Yamato do not have a featured icon so they cannot be executed as a dogma effect
+        if ($card_to_endorse['dogma_icon'] == null) {
+            self::throwInvalidChoiceException();
+        }
+
+        // Check that the player really has a card to tuck
+        $tucked_card = self::getCardInfo($card_to_tuck_id);
+        if ($card_to_tuck['owner'] != $player_id || $card_to_tuck['location'] != "hand") {
+            self::throwInvalidChoiceException();
+        }
+
+        // Make sure the endorsement is valid given this card being tucked
+        $maximum_age_to_tuck = self::getEndorseAge($card_to_endorse);
+        if ($maximum_age_to_tuck == null || $card_to_tuck['age'] > $maximum_age_to_tuck) {
+            self::throwInvalidChoiceException();
+        }
+
+        self::tuckCard($card_to_tuck, $player_id);
+        self::setUpDogma($player_id, $card_to_endorse);
+
+        // Resolve the first dogma effect of the card
+        self::trace('playerTurn->dogmaEffect (dogma)');
+        $this->gamestate->nextState('dogmaEffect');
+    }
+
     function updateActionAndTurnStats($player_id) {
         if (self::getGameStateValue('current_action_number') == 1) {
             self::incStat(1, 'turns_number');
@@ -7904,23 +7944,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         );
 
         if (self::getGameStateValue('cities_mode') > 1 && !$is_on_display) {
-            // To take an Endorse action, perform the following steps:
-            // 1) Choose the top card on your board that you want to Endorse, and note its featured icon.
-            // 2) Choose a top city on your board. It must have the featured icon on it.
-            // 3) Pay for the Endorse action by tucking a card from your hand of equal or lower value to
-            //    the city you chose. The tucked card’s color and icons are irrelevant.
-            $highest_city_with_featured_icon = null;
-            foreach (self::getTopCardsOnBoard($launcher_id) as $top_card) {
-                if ($top_card['type'] == 2 && self::hasRessource($top_card, $dogma_icon)) {
-                    if ($highest_city_with_featured_icon == null || $top_card['age'] > $highest_city_with_featured_icon) {
-                        $highest_city_with_featured_icon = $top_card['age'];
-                    }
-                }
-            }
+            $highest_city_with_featured_icon = self::getEndorseAge($card);
             $can_endorse = false;
             if ($highest_city_with_featured_icon != null) {
-                foreach (self::getCardsInHand($launcher_id) as $card) {
-                    if ($card['age'] <= $highest_city_with_featured_icon) {
+                foreach (self::getCardsInHand($launcher_id) as $card_in_hand) {
+                    if ($card_in_hand['age'] <= $highest_city_with_featured_icon) {
                         $can_endorse = true;
                         break;
                     }
@@ -7932,6 +7960,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         return $dogma_effect_info;
+    }
+
+    /** Returns the maximum age card that can be tucked in order to endorse the card, or null if there are no City cards matching the featured icon. */
+    function getEndorseAge($card) {
+        // If the card does not have a featured icon, then it cannot be triggered as a dogma effect.
+        $dogma_icon = $card['dogma_icon'];
+        if ($dogma_icon == null) {
+            return null;
+        }
+        // To take an Endorse action, perform the following steps:
+        // 1) Choose the top card on your board that you want to Endorse, and note its featured icon.
+        // 2) Choose a top city on your board. It must have the featured icon on it.
+        // 3) Pay for the Endorse action by tucking a card from your hand of equal or lower value to
+        //    the city you chose. The tucked card’s color and icons are irrelevant.
+        $highest_city_with_featured_icon = null;
+        foreach (self::getTopCardsOnBoard($card['owner']) as $top_card) {
+            if ($top_card['type'] == 2 && self::hasRessource($top_card, $dogma_icon)) {
+                if ($highest_city_with_featured_icon == null || $top_card['age'] > $highest_city_with_featured_icon) {
+                    $highest_city_with_featured_icon = $top_card['age'];
+                }
+            }
+        }
+        return $highest_city_with_featured_icon;
     }
 
     /** Returns true if the dogma is guaranteed to have no effect (without revealing hidden info to the launching player). */

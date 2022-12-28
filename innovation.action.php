@@ -279,7 +279,20 @@
         
         self::ajaxResponse();
     }
-    
+
+    public function endorse() {
+        self::setAjaxMode();
+
+        // Retrieve arguments
+        $card_to_endorse_id = self::getArg("card_to_endorse_id", AT_posint, true);
+        $card_to_tuck_id = self::getArg("card_to_tuck_id", AT_posint, true);
+
+        // Call endorse from game logic
+        $this->game->endorse($card_to_endorse_id, $card_to_tuck_id);
+
+        self::ajaxResponse();
+    }
+
     public function choose() {
         self::setAjaxMode();
         
