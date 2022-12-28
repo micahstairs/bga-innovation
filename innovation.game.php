@@ -40,7 +40,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new \Innovation\GameState($this);
-        // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 49-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -51,6 +51,7 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
+            'has_endorse_action' => 19,
             'sharing_bonus' => 23,
             'special_type_of_choice' => 26,
             'choice' => 27,
@@ -119,6 +120,12 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
+        if ($this->innovationGameState->get('release_version') == 2) {
+            self::initGameStateLabels(array(
+                'has_endorse_action' => 19,
+            ));
+            self::setGameStateValue('has_endorse_action', 0);
+        }
         if ($this->innovationGameState->get('release_version') == 1) {
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
@@ -411,6 +418,11 @@ class Innovation extends Table
         self::setGameStateInitialValue('second_player_with_only_one_action', count($players) >= 4 ? 1 : 0); // used when >= 4 players only
         self::setGameStateInitialValue('has_second_action', 1);
         self::setGameStateInitialValue('current_action_number', -1);
+        if (self::getGameStateValue('cities_mode') > 1) {
+            self::setGameStateInitialValue('has_endorse_action', 1);
+        } else {
+            self::setGameStateInitialValue('has_endorse_action', 0);
+        }
         
         // Flags used when the game ends to know how it ended
         self::setGameStateInitialValue('game_end_type', -1); // 0 for game end by achievements, 1 for game end by score, -1 for game end by dogma
@@ -7318,8 +7330,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function endorse($card_to_endorse_id, $card_to_tuck_id) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('endorse');
-        $player_id = self::getActivePlayerId();
 
+        // Ensure that the player still has an endorse action to use this turn
+        if (self::getGameStateValue('has_endorse_action') != 1) {
+            self::throwInvalidChoiceException();
+        }
+
+        $player_id = self::getActivePlayerId();
         $card_to_endorse = self::getCardInfo($card_to_endorse_id);
 
         // Check that the player really has this card on his board
@@ -7347,6 +7364,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
+        self::setGameStateValue('has_endorse_action', 0);
         self::tuckCard($card_to_tuck, $player_id);
         self::setUpDogma($player_id, $card_to_endorse);
 
@@ -7943,7 +7961,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_ids_with_visible_echo_effects
         );
 
-        if (self::getGameStateValue('cities_mode') > 1 && !$is_on_display) {
+        if (self::getGameStateValue('has_endorse_action') == 1 && !$is_on_display) {
             $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
             $can_endorse = false;
             if ($max_age_to_tuck_for_endorse != null) {
@@ -9449,8 +9467,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setGameStateValue('has_second_action', 1);
         }
         if ($next_player) { // The turn for the current player is over
-            // Reset the flags for Monument special achievement
             self::resetFlagsForMonument();
+
+            if (self::getGameStateValue('cities_mode') > 1) {
+                self::setGameStateValue('has_endorse_action', 1);
+            }
             
             // Activate the next non-eliminated player in turn order
             do {
