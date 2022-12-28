@@ -7336,14 +7336,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // Check that the player really has a card to tuck
-        $tucked_card = self::getCardInfo($card_to_tuck_id);
+        $card_to_tuck = self::getCardInfo($card_to_tuck_id);
         if ($card_to_tuck['owner'] != $player_id || $card_to_tuck['location'] != "hand") {
             self::throwInvalidChoiceException();
         }
 
         // Make sure the endorsement is valid given this card being tucked
-        $maximum_age_to_tuck = self::getEndorseAge($card_to_endorse);
-        if ($maximum_age_to_tuck == null || $card_to_tuck['age'] > $maximum_age_to_tuck) {
+        $max_age_to_tuck = self::getMaxAgeToTuckForEndorse($card_to_endorse);
+        if ($max_age_to_tuck == null || $card_to_tuck['age'] > $max_age_to_tuck) {
             self::throwInvalidChoiceException();
         }
 
@@ -7944,18 +7944,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         );
 
         if (self::getGameStateValue('cities_mode') > 1 && !$is_on_display) {
-            $highest_city_with_featured_icon = self::getEndorseAge($card);
+            $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
             $can_endorse = false;
-            if ($highest_city_with_featured_icon != null) {
+            if ($max_age_to_tuck_for_endorse != null) {
                 foreach (self::getCardsInHand($launcher_id) as $card_in_hand) {
-                    if ($card_in_hand['age'] <= $highest_city_with_featured_icon) {
+                    if ($card_in_hand['age'] <= $max_age_to_tuck_for_endorse) {
                         $can_endorse = true;
                         break;
                     }
                 }
             }
             if ($can_endorse) {
-                $dogma_effect_info['endorse_age'] = $highest_city_with_featured_icon;
+                $dogma_effect_info['max_age_to_tuck_for_endorse'] = $max_age_to_tuck_for_endorse;
             }
         }
 
@@ -7963,7 +7963,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns the maximum age card that can be tucked in order to endorse the card, or null if there are no City cards matching the featured icon. */
-    function getEndorseAge($card) {
+    function getMaxAgeToTuckForEndorse($card) {
         // If the card does not have a featured icon, then it cannot be triggered as a dogma effect.
         $dogma_icon = $card['dogma_icon'];
         if ($dogma_icon == null) {

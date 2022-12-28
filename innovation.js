@@ -2012,8 +2012,8 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                if (dogma_effect_info[id].endorse_age != undefined) {
-                    dojo.attr(HTML_id, 'endorse_age', dogma_effect_info[id].endorse_age);
+                if (dogma_effect_info[id].max_age_to_tuck_for_endorse != undefined) {
+                    dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse', dogma_effect_info[id].max_age_to_tuck_for_endorse);
                 }
                 dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id].no_effect);
                 dojo.attr(HTML_id, 'card_id', id);
@@ -2572,11 +2572,19 @@ function (dojo, declare) {
                 }
                 var top_card = pile[pile.length - 1];
                 var card_id = this.getCardIdFromHTMLId(top_card.id);
-                if (dogma_effect_info[card_id].endorse_age != undefined) {
+                if (dogma_effect_info[card_id].max_age_to_tuck_for_endorse != undefined) {
                     selectable_list.push("#" + top_card.id);
                 }
             }
             return selectable_list.length > 0 ? dojo.query(selectable_list.join(",")) : new dojo.NodeList();
+        },
+
+        selectMyCardsEligibleToTuckForEndorsedDogma : function(max_age_to_tuck_for_endorse) {
+            var queries = [];
+            for (var age = 1; age <= max_age_to_tuck_for_endorse; age++) {
+                queries.push(`#hand_${this.player_id} > .age_${age}`);
+            }
+            return dojo.query(queries.join(","));
         },
         
         selectClaimableAchievements : function(claimable_ages) {
@@ -3696,7 +3704,7 @@ function (dojo, declare) {
 
             $("dogma_confirm_timer_button").innerHTML = _("Confirm");
             if (via_endorse_prompt) {
-                dojo.attr('dogma_confirm_timer_button', 'html_id', dojo.attr(HTML_id, 'HTML_id'));
+                dojo.attr('dogma_confirm_timer_button', 'html_id', dojo.attr(HTML_id, 'html_id'));
                 dojo.destroy("dogma_without_endorse_button");
             } else {
                 dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
@@ -3797,8 +3805,8 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var card_id = dojo.attr(HTML_id, 'card_id');
             var card = this.cards[card_id];
-            var endorse_age = dojo.attr(HTML_id, 'endorse_age');
-            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by tucking a ${tuck_age} or lower from your hand?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', endorse_age)});
+            var max_age_to_tuck_for_endorse = dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse');
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', max_age_to_tuck_for_endorse)});
 
             // Add cancel button
             this.addActionButton("endorse_cancel_button", _("Cancel"), "action_cancelEndorse");
@@ -3807,11 +3815,16 @@ function (dojo, declare) {
 
             // Add button to dogma without endorsing
             this.addActionButton("dogma_without_endorse_button", _("Dogma without endorse"), "action_dogmaWithoutEndorse");
-            dojo.attr('dogma_without_endorse_button', 'HTML_id', HTML_id);
+            dojo.attr('dogma_without_endorse_button', 'html_id', HTML_id);
             dojo.attr('dogma_without_endorse_button', 'card_id', card_id);
 
-            // Add button to endorse
-            this.addActionButton("endorse_button", _("Endorse"), "action_confirmEndorse");
+            // Make tuckable cards clickable
+            var cards_to_tuck = this.selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse);
+            cards_to_tuck.addClass("clickable");
+            this.on(cards_to_tuck, 'onclick', 'action_confirmEndorse');
+            cards_to_tuck.forEach(function(node) {
+                dojo.attr(node, 'card_to_endorse_id', card_id)
+            });
         },
 
         action_cancelEndorse : function(event) {
@@ -3824,25 +3837,26 @@ function (dojo, declare) {
         action_dogmaWithoutEndorse : function(event) {
             $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
             dojo.destroy("endorse_cancel_button");
-            dojo.destroy("endorse_button");
             this.action_clickDogma(event, /*via_endorse_prompt=*/ true);
         },
 
-        action_confirmEndorse : function(HTML_id) {
+        action_confirmEndorse : function(event) {
             if (!this.checkAction('endorse')) {
                 return;
             }
 
             dojo.destroy("endorse_cancel_button");
             dojo.destroy("dogma_without_endorse_button");
-            dojo.destroy("endorse_button");
 
-            var card_id = this.getCardIdFromHTMLId(HTML_id);
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
+            var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
+
             this.ajaxcall("/innovation/innovation/endorse.html",
                 {
                     lock: true,
-                    card_to_endorse_id: card_id,
-                    card_to_tuck_id: card_id
+                    card_to_endorse_id: card_to_endorse_id,
+                    card_to_tuck_id: card_to_tuck_id
                 },
                 this,
                 function(result) { },
