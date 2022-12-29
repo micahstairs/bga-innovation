@@ -3806,7 +3806,7 @@ function (dojo, declare) {
             var card_id = dojo.attr(HTML_id, 'card_id');
             var card = this.cards[card_id];
             var max_age_to_tuck_for_endorse = dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse');
-            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', max_age_to_tuck_for_endorse)});
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand to tuck"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', max_age_to_tuck_for_endorse)});
 
             // Add cancel button
             this.addActionButton("endorse_cancel_button", _("Cancel"), "action_cancelEndorse");

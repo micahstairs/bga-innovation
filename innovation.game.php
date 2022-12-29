@@ -51,7 +51,7 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
-            'has_endorse_action' => 19,
+            'endorse_action_state' => 19, // 0 = not allowed to do an endorse action, 1 = allowed to do an endorse action, 2 = currently doing an endorse action, 3 = already endorsed the current effect
             'sharing_bonus' => 23,
             'special_type_of_choice' => 26,
             'choice' => 27,
@@ -122,9 +122,9 @@ class Innovation extends Table
     function upgradeTableDb($from_version) {
         if ($this->innovationGameState->get('release_version') == 2) {
             self::initGameStateLabels(array(
-                'has_endorse_action' => 19,
+                'endorse_action_state' => 19,
             ));
-            self::setGameStateValue('has_endorse_action', 0);
+            self::setGameStateValue('endorse_action_state', 0);
         }
         if ($this->innovationGameState->get('release_version') == 1) {
             self::initGameStateLabels(array(
@@ -418,11 +418,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('second_player_with_only_one_action', count($players) >= 4 ? 1 : 0); // used when >= 4 players only
         self::setGameStateInitialValue('has_second_action', 1);
         self::setGameStateInitialValue('current_action_number', -1);
-        if (self::getGameStateValue('cities_mode') > 1) {
-            self::setGameStateInitialValue('has_endorse_action', 1);
-        } else {
-            self::setGameStateInitialValue('has_endorse_action', 0);
-        }
+        self::setGameStateInitialValue('endorse_action_state', 0);
         
         // Flags used when the game ends to know how it ended
         self::setGameStateInitialValue('game_end_type', -1); // 0 for game end by achievements, 1 for game end by score, -1 for game end by dogma
@@ -3600,9 +3596,14 @@ class Innovation extends Table
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];
         
-        $message_for_player = clienttranslate('${You} activate the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
-        $message_for_others = clienttranslate('${player_name} activates the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
-        
+        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 2) {
+            $message_for_player = clienttranslate('${You} endorse the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+            $message_for_others = clienttranslate('${player_name} endorses the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+        } else {
+            $message_for_player = clienttranslate('${You} activate the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+            $message_for_others = clienttranslate('${player_name} activates the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+        }
+
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card_id);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card_id);
         
@@ -3618,17 +3619,29 @@ class Innovation extends Table
     }
     
     function notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id) {
-        self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect}.</span>'), array(
-            'i18n' => array('qualified_effect'),
-            'You' => 'You',
-            'qualified_effect' => $qualified_effect
-        ));
-        
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">The ${qualified_effect} applies on ${player_name}</span>.'), array(
-            'i18n' => array('qualified_effect'),
-            'player_name' => self::getPlayerNameFromId($player_id),
-            'qualified_effect' => $qualified_effect
-        ));
+        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 2) {
+            self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'You' => 'You',
+                'qualified_effect' => $qualified_effect
+            ));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'qualified_effect' => $qualified_effect
+            ));
+        } else {
+            self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect}.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'You' => 'You',
+                'qualified_effect' => $qualified_effect
+            ));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect}.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'qualified_effect' => $qualified_effect
+            ));
+        }
     }
     
     function notifyPass($player_id) {
@@ -7332,7 +7345,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::checkAction('endorse');
 
         // Ensure that the player still has an endorse action to use this turn
-        if (self::getGameStateValue('has_endorse_action') != 1) {
+        if (self::getGameStateValue('endorse_action_state') == 0) {
             self::throwInvalidChoiceException();
         }
 
@@ -7364,7 +7377,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
-        self::setGameStateValue('has_endorse_action', 0);
+        self::setGameStateValue('endorse_action_state', 2);
         self::tuckCard($card_to_tuck, $player_id);
         self::setUpDogma($player_id, $card_to_endorse);
 
@@ -7961,7 +7974,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_ids_with_visible_echo_effects
         );
 
-        if (self::getGameStateValue('has_endorse_action') == 1 && !$is_on_display) {
+        if (self::getGameStateValue('endorse_action_state') == 1 && !$is_on_display) {
             $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
             $can_endorse = false;
             if ($max_age_to_tuck_for_endorse != null) {
@@ -9461,6 +9474,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // The player took his first action and has another one
             $next_player = false;
             self::setGameStateValue('has_second_action', 0);
+            if (self::getGameStateValue('endorse_action_state') >= 2) {
+                self::setGameStateValue('endorse_action_state', 0);
+            }
         } else {
             // The player took his second action
             $next_player = true;
@@ -9470,7 +9486,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::resetFlagsForMonument();
 
             if (self::getGameStateValue('cities_mode') > 1) {
-                self::setGameStateValue('has_endorse_action', 1);
+                self::setGameStateValue('endorse_action_state', 1);
             }
             
             // Activate the next non-eliminated player in turn order
@@ -14572,11 +14588,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::incStat(1, 'executed_echo_effect_number', $player_id);
         }
 
-        // If this is a nested card, don't allow other players to share the non-demand effect
         $nesting_index = self::getGameStateValue('current_nesting_index');
         self::updateCurrentNestedCardState('post_execution_index', 0);
         $nested_card_state = self::getNestedCardState($nesting_index);
-        $next_player = $nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1 ? null : self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+
+        // If this is a nested card, don't allow other players to share the non-demand effect
+        if ($nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1) {
+            $next_player = null;
+        // If the dogma is being endorsed, allow the launcher to execute the non-demand or echo effect again
+        } else if ($nesting_index == 0 && self::getGameStateValue('endorse_action_state') == 2 && $player_id == $launcher_id && ($current_effect_type == 1 || $current_effect_type == 3)) {
+            self::setGameStateValue('endorse_action_state', 3);
+            $next_player = $player_id;
+        } else {
+            $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+            // If the dogma is being endorsed and it's a demand (or compel) effect, go around a second time
+            if ($next_player == null && self::getGameStateValue('endorse_action_state') == 2 && ($current_effect_type == 0 || $current_effect_type == 2)) {
+                self::setGameStateValue('endorse_action_state', 3);
+                $next_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
+            }
+        }
 
         // There are no more players which are eligible to share this effect
         if ($next_player === null) {
@@ -14584,10 +14614,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->gamestate->nextState('interDogmaEffect');
             return;
         }
-        self::updateCurrentNestedCardState('current_player_id', $next_player);
-        $this->gamestate->changeActivePlayer($next_player);
         
         // Jump to this player
+        if ($player_id != $next_player) {
+            self::updateCurrentNestedCardState('current_player_id', $next_player);
+            $this->gamestate->changeActivePlayer($next_player);
+        }
         self::trace('interPlayerInvolvedTurn->playerInvolvedTurn');
         $this->gamestate->nextState('playerInvolvedTurn');
     }
