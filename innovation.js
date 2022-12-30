@@ -2524,7 +2524,7 @@ function (dojo, declare) {
 
         selectArtifactOnDisplayIfEligibleForDogma : function() {
             var cards = dojo.query("#display_" + this.player_id + " > .card");
-            // Battleship Yamato does not have any dogma effects on it
+            // Battleship Yamato does not have any icons on it so it cannot be executed
             if (cards.length > 0 && this.getCardIdFromHTMLId(cards[0].id) == 188) {
                 cards.pop();
             }
@@ -2553,9 +2553,9 @@ function (dojo, declare) {
                     continue;
                 }
                 var top_card = pile[pile.length - 1];
-                // City cards and Battleship Yamato do not have a dogma effect on it.
+                // Battleship Yamato does not have any icons on it so it cannot be executed
                 var card_id = this.getCardIdFromHTMLId(top_card.id);
-                if (card_id != 188 && this.cards[card_id].type != 2) {
+                if (card_id != 188) {
                     selectable_list.push("#" + top_card.id);
                 }
             }
