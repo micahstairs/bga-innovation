@@ -1631,6 +1631,9 @@
 .card.type_2 {
   background-image: url("img/card_backgrounds_cities.jpg");
 }
+.card.type_2.simplified {
+  background-image: url("img/simplified_card_backgrounds_cities.jpg");
+}
 .card.simplified {
   background-image: url("img/simplified_card_backgrounds.jpg");
 }
