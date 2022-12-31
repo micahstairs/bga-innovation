@@ -586,17 +586,7 @@
     margin-top: 30px;
     width: 208.45px;
 }
-#available_relics_container {
-    vertical-align: top;
-    margin-top: 30px;
-    width: 208.45px;
-}
-#available_achievements_container {
-    vertical-align: top;
-    margin-top: 30px;
-    width: 208.45px;
-}
-#available_special_achievements_container {
+#available_relics_container, #available_achievements_container, #available_special_achievements_container, #available_flags_and_fountains_container {
     vertical-align: top;
     margin-top: 30px;
     width: 208.45px;
@@ -1322,6 +1312,28 @@
             top: 4px;
             position: relative;
         }
+        &.icon_8, &.icon_9 {
+            &.fountain_flag_card {
+                top: 13px;
+                left: 6px;
+                filter: none;
+                &.color_0 {
+                    background-position-x: -0px;
+                }
+                &.color_1 {
+                    background-position-x: -21px;
+                }
+                &.color_2 {
+                    background-position-x: -42px;
+                }
+                &.color_3 {
+                    background-position-x: -63px;
+                }
+                &.color_4 {
+                    background-position-x: -84px;
+                }
+            }
+        }
         &.icon_8 {
             background-position-y: -42px;
         }
@@ -1946,7 +1958,7 @@
     border: solid 1px #ffffff;
     box-shadow: -1px 1px grey;
     border-radius: 3px;
-    &.S{
+    &.S {
         width: v.$recto-S-width;
         height: v.$recto-S-height;
         &.age_null {
@@ -1976,6 +1988,27 @@
         }
         &.item_109, &.item_329, &.item_439 {
             background-position-x: -141px;
+        }
+        // TODO(CITIES): Clean this up by introducing a new class so that we don't need to generate a bunch of class combinations that are never used.
+        @for $i from 1000 through 1013 {
+            &.item_#{$i}, &.item_#{$i+100} {
+                background-image: none;
+                &.color_0 {
+                    background-color: #94b1dd;
+                }
+                &.color_1 {
+                    background-color: #db7b84;
+                }
+                &.color_2 {
+                    background-color: #73bb64;
+                }
+                &.color_3 {
+                    background-color: #e3e47b;
+                }
+                &.color_4 {
+                    background-color: #9a58ba;
+                }
+            }
         }
         &.default_card_back {
             &.age_1, &.age_2, &.age_3, &.age_4, &.age_5, &.age_6, &.age_7, &.age_8, &.age_9, &.age_10 {

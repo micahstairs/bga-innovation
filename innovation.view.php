@@ -70,6 +70,7 @@
         $this->page->begin_block( "innovation_innovation", "available_relics" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
         $this->page->begin_block( "innovation_innovation", "special_achievements" );
+        $this->page->begin_block( "innovation_innovation", "available_flags_and_fountains" );
         
         // Players
         // Me
@@ -175,6 +176,7 @@
         $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );
         $this->page->insert_block( "available_achievements", array("AVAILABLE_ACHIEVEMENTS" => self::_("Available achievements")) );
         $this->page->insert_block( "special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")) );
+        $this->page->insert_block( "available_flags_and_fountains", array("AVAILABLE_FLAG_AND_FOUNTAINS" => self::_("Flags and fountains")) );
       }
   }
   

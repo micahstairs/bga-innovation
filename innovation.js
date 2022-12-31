@@ -63,6 +63,8 @@ function (dojo, declare) {
             this.HTML_class.relics = "S recto"
             this.HTML_class.achievements = "S recto"
             this.HTML_class.special_achievements = "S card"
+            this.HTML_class.fountains = "S recto"
+            this.HTML_class.flags = "S recto"
             
             this.num_cards_in_row = {};
             
@@ -77,6 +79,8 @@ function (dojo, declare) {
             // For board, this.num_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
             this.num_cards_in_row.revealed = 1;
             this.num_cards_in_row.achievements = null;
+            this.num_cards_in_row.fountains = 13;
+            this.num_cards_in_row.flags = 13;
             // For special achievements, this.num_cards_in_row is not defined because it has a custom pattern
             
             this.delta = {};
@@ -92,6 +96,8 @@ function (dojo, declare) {
             // For board, this.delta is not defined because it's managed by the splay system: the width is defined dynamically
             this.delta.revealed = {"x": 189, "y": 133}; // +7;
             this.delta.achievements = {"x": 35, "y": 49}; // + 2
+            this.delta.fountains = {"x": 3, "y": 3}; // overlap
+            this.delta.flags = {"x": 3, "y": 3}; // overlap
             // For special achievements, this.delta is not defined because it has a custom pattern
             
             this.incremental_id = 0;
@@ -323,7 +329,15 @@ function (dojo, declare) {
                 for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
                     var key = Object.keys(gamedatas.cards)[i];
                     var card = gamedatas.cards[key];
-                    $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
+                    // NOTE: The colors do not need to be translated because they only appear in the Studio anyway.
+                    var color = card.color == 0 ? "blue" : card.color == 1 ? "red" : card.color == 2 ? "green" : card.color == 3 ? "yellow" : "purple";
+                    if (card.id >= 1100) {
+                        $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Fountain (${color})</option>`;
+                    } else if (card.id >= 1000) {
+                        $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Flag (${color})</option>`;
+                    } else {
+                        $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
+                    }
                 }
                 $('debug_color_list').innerHTML += `<option value='0'>Blue</option>`;
                 $('debug_color_list').innerHTML += `<option value='1'>Red</option>`;
@@ -386,6 +400,7 @@ function (dojo, declare) {
                 dojo.style('available_relics_container', 'display', 'inline-block');
                 dojo.style('available_achievements_container', 'display', 'inline-block');
                 dojo.style('available_special_achievements_container', 'display', 'inline-block');
+                dojo.style('available_flags_and_fountains_container', 'display', 'inline-block');
             }
             
             // Defining the number of cards hand zone can host
@@ -544,7 +559,6 @@ function (dojo, declare) {
             }
 
             // AVAILABLE RELICS
-            // Creation of the zone
             this.zone.relics = {};
             this.zone.relics["0"] = this.createZone('relics', 0, null, null, null, grouped_by_age_type_and_is_relic = true);
             this.setPlacementRulesForRelics();
@@ -620,6 +634,28 @@ function (dojo, declare) {
             var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
             dojo.place(button, 'special_achievements', 'after');
             this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_card_browsing_window');
+
+            // AVAILABLE FLAGS AND FOUNTAINS
+            this.zone.flags = {};
+            this.zone.flags["0"] = this.createZone('flags', 0);
+            this.setPlacementRules(this.zone.flags["0"], left_to_right=true)
+            this.zone.fountains = {};
+            this.zone.fountains["0"] = this.createZone('fountains', 0);
+            this.setPlacementRules(this.zone.fountains["0"], left_to_right=true)
+            if (gamedatas.cities_expansion_enabled) {
+                for (var i = 0; i < gamedatas.unclaimed_flags.length; i++) {
+                    var flag = gamedatas.unclaimed_flags[i];
+                    this.createAndAddToZone(this.zone.flags["0"], i, flag.age, flag.type, flag.is_relic, flag.id, dojo.body(), flag);
+                    // TODO(CITIES): Add tooltip.
+                }
+                for (var i = 0; i < gamedatas.unclaimed_fountains.length; i++) {
+                    var fountain = gamedatas.unclaimed_fountains[i];
+                    this.createAndAddToZone(this.zone.fountains["0"], i, fountain.age, fountain.type, fountain.is_relic, fountain.id, dojo.body(), fountain);
+                    // TODO(CITIES): Add tooltip.
+                }
+            } else {
+                dojo.byId('available_fountains_and_flags_container').style.display = 'none';
+            }
             
             // PLAYERS' HANDS
             this.zone.hand = {};
@@ -774,7 +810,10 @@ function (dojo, declare) {
                 var achievements = gamedatas.claimed_achievements[player_id];
                 for(var i = 0; i < achievements.length; i++){
                     var achievement = achievements[i];
-                    if (achievement.age == null) { // Special achievement
+                    if (parseInt(achievement.id) >= 1000) { // Flag or fountain
+                        this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), achievement);
+                        // TODO(CITIES): Add tooltip.
+                    } else if (achievement.age == null) { // Special achievement
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                         this.addTooltipForCard(achievement);
                     } else {
@@ -1755,7 +1794,9 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
              // Special achievement
              if (card.age === null) {
-                this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
+                if (card.id < 1000) { // Filters out fountains and flags
+                    this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
+                }
                 return;
             }
             this.addCustomTooltip(HTML_id, this.getTooltipForCard(card.id), "");
@@ -2652,6 +2693,9 @@ function (dojo, declare) {
                     }
                 case "board":
                     return root[owner][color];
+                case "fountains":
+                case "flags":
+                    return root[owner];
             }
         },
         
@@ -2771,7 +2815,13 @@ function (dojo, declare) {
                     var HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
                 }
             } else {
-                var HTML_inside = this.writeOverCard(card, size);
+                if (card.id >= 1100) { // Fountains
+                    var HTML_inside = `<span class="square in_tooltip icon_9 fountain_flag_card color_${card.color}"></span>`;
+                } else if (card.id >= 1000) { // Flags
+                    var HTML_inside = `<span class="square in_tooltip icon_8 fountain_flag_card color_${card.color}"></span>`;
+                } else {
+                    var HTML_inside = this.writeOverCard(card, size);
+                }
             }
 
             var card_type = "";
@@ -2965,7 +3015,7 @@ function (dojo, declare) {
                 }
             } else {
                 // verso
-                if (zone.owner != 0 && zone['location'] == 'achievements') {
+                if (zone.owner != 0 && zone['location'] == 'achievements' && id < 1000) {
                     visible_card = false;
                 } else {
                     visible_card = true;
@@ -2983,7 +3033,7 @@ function (dojo, declare) {
             if (card.location_from == "board" && card.location_to == "board" && card.owner_from == card.owner_to) {
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
                 this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
-            } else if (id_from == id_to && card.age !== null && zone_from.HTML_class == zone_to.HTML_class) {
+            } else if (id_from == id_to && ((card.age !== null && zone_from.HTML_class == zone_to.HTML_class) || (1000 <= card.id && card.id <= 1199)))  {
                 this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
             } else {

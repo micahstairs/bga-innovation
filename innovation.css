@@ -634,19 +634,7 @@
   width: 208.45px;
 }
 
-#available_relics_container {
-  vertical-align: top;
-  margin-top: 30px;
-  width: 208.45px;
-}
-
-#available_achievements_container {
-  vertical-align: top;
-  margin-top: 30px;
-  width: 208.45px;
-}
-
-#available_special_achievements_container {
+#available_relics_container, #available_achievements_container, #available_special_achievements_container, #available_flags_and_fountains_container {
   vertical-align: top;
   margin-top: 30px;
   width: 208.45px;
@@ -1470,6 +1458,26 @@
   height: 20px;
   top: 4px;
   position: relative;
+}
+.square.in_tooltip.icon_8.fountain_flag_card, .square.in_tooltip.icon_9.fountain_flag_card {
+  top: 13px;
+  left: 6px;
+  filter: none;
+}
+.square.in_tooltip.icon_8.fountain_flag_card.color_0, .square.in_tooltip.icon_9.fountain_flag_card.color_0 {
+  background-position-x: 0px;
+}
+.square.in_tooltip.icon_8.fountain_flag_card.color_1, .square.in_tooltip.icon_9.fountain_flag_card.color_1 {
+  background-position-x: -21px;
+}
+.square.in_tooltip.icon_8.fountain_flag_card.color_2, .square.in_tooltip.icon_9.fountain_flag_card.color_2 {
+  background-position-x: -42px;
+}
+.square.in_tooltip.icon_8.fountain_flag_card.color_3, .square.in_tooltip.icon_9.fountain_flag_card.color_3 {
+  background-position-x: -63px;
+}
+.square.in_tooltip.icon_8.fountain_flag_card.color_4, .square.in_tooltip.icon_9.fountain_flag_card.color_4 {
+  background-position-x: -84px;
 }
 .square.in_tooltip.icon_8 {
   background-position-y: -42px;
@@ -2310,6 +2318,258 @@
 }
 .recto.S.item_109, .recto.S.item_329, .recto.S.item_439 {
   background-position-x: -141px;
+}
+.recto.S.item_1000, .recto.S.item_1100 {
+  background-image: none;
+}
+.recto.S.item_1000.color_0, .recto.S.item_1100.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1000.color_1, .recto.S.item_1100.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1000.color_2, .recto.S.item_1100.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1000.color_3, .recto.S.item_1100.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1000.color_4, .recto.S.item_1100.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1001, .recto.S.item_1101 {
+  background-image: none;
+}
+.recto.S.item_1001.color_0, .recto.S.item_1101.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1001.color_1, .recto.S.item_1101.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1001.color_2, .recto.S.item_1101.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1001.color_3, .recto.S.item_1101.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1001.color_4, .recto.S.item_1101.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1002, .recto.S.item_1102 {
+  background-image: none;
+}
+.recto.S.item_1002.color_0, .recto.S.item_1102.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1002.color_1, .recto.S.item_1102.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1002.color_2, .recto.S.item_1102.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1002.color_3, .recto.S.item_1102.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1002.color_4, .recto.S.item_1102.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1003, .recto.S.item_1103 {
+  background-image: none;
+}
+.recto.S.item_1003.color_0, .recto.S.item_1103.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1003.color_1, .recto.S.item_1103.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1003.color_2, .recto.S.item_1103.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1003.color_3, .recto.S.item_1103.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1003.color_4, .recto.S.item_1103.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1004, .recto.S.item_1104 {
+  background-image: none;
+}
+.recto.S.item_1004.color_0, .recto.S.item_1104.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1004.color_1, .recto.S.item_1104.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1004.color_2, .recto.S.item_1104.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1004.color_3, .recto.S.item_1104.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1004.color_4, .recto.S.item_1104.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1005, .recto.S.item_1105 {
+  background-image: none;
+}
+.recto.S.item_1005.color_0, .recto.S.item_1105.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1005.color_1, .recto.S.item_1105.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1005.color_2, .recto.S.item_1105.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1005.color_3, .recto.S.item_1105.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1005.color_4, .recto.S.item_1105.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1006, .recto.S.item_1106 {
+  background-image: none;
+}
+.recto.S.item_1006.color_0, .recto.S.item_1106.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1006.color_1, .recto.S.item_1106.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1006.color_2, .recto.S.item_1106.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1006.color_3, .recto.S.item_1106.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1006.color_4, .recto.S.item_1106.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1007, .recto.S.item_1107 {
+  background-image: none;
+}
+.recto.S.item_1007.color_0, .recto.S.item_1107.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1007.color_1, .recto.S.item_1107.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1007.color_2, .recto.S.item_1107.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1007.color_3, .recto.S.item_1107.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1007.color_4, .recto.S.item_1107.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1008, .recto.S.item_1108 {
+  background-image: none;
+}
+.recto.S.item_1008.color_0, .recto.S.item_1108.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1008.color_1, .recto.S.item_1108.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1008.color_2, .recto.S.item_1108.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1008.color_3, .recto.S.item_1108.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1008.color_4, .recto.S.item_1108.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1009, .recto.S.item_1109 {
+  background-image: none;
+}
+.recto.S.item_1009.color_0, .recto.S.item_1109.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1009.color_1, .recto.S.item_1109.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1009.color_2, .recto.S.item_1109.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1009.color_3, .recto.S.item_1109.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1009.color_4, .recto.S.item_1109.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1010, .recto.S.item_1110 {
+  background-image: none;
+}
+.recto.S.item_1010.color_0, .recto.S.item_1110.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1010.color_1, .recto.S.item_1110.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1010.color_2, .recto.S.item_1110.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1010.color_3, .recto.S.item_1110.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1010.color_4, .recto.S.item_1110.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1011, .recto.S.item_1111 {
+  background-image: none;
+}
+.recto.S.item_1011.color_0, .recto.S.item_1111.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1011.color_1, .recto.S.item_1111.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1011.color_2, .recto.S.item_1111.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1011.color_3, .recto.S.item_1111.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1011.color_4, .recto.S.item_1111.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1012, .recto.S.item_1112 {
+  background-image: none;
+}
+.recto.S.item_1012.color_0, .recto.S.item_1112.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1012.color_1, .recto.S.item_1112.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1012.color_2, .recto.S.item_1112.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1012.color_3, .recto.S.item_1112.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1012.color_4, .recto.S.item_1112.color_4 {
+  background-color: #9a58ba;
+}
+.recto.S.item_1013, .recto.S.item_1113 {
+  background-image: none;
+}
+.recto.S.item_1013.color_0, .recto.S.item_1113.color_0 {
+  background-color: #94b1dd;
+}
+.recto.S.item_1013.color_1, .recto.S.item_1113.color_1 {
+  background-color: #db7b84;
+}
+.recto.S.item_1013.color_2, .recto.S.item_1113.color_2 {
+  background-color: #73bb64;
+}
+.recto.S.item_1013.color_3, .recto.S.item_1113.color_3 {
+  background-color: #e3e47b;
+}
+.recto.S.item_1013.color_4, .recto.S.item_1113.color_4 {
+  background-color: #9a58ba;
 }
 .recto.S.default_card_back.age_1, .recto.S.default_card_back.age_2, .recto.S.default_card_back.age_3, .recto.S.default_card_back.age_4, .recto.S.default_card_back.age_5, .recto.S.default_card_back.age_6, .recto.S.default_card_back.age_7, .recto.S.default_card_back.age_8, .recto.S.default_card_back.age_9, .recto.S.default_card_back.age_10 {
   background-image: url("img/card_backs_portrait.jpg");

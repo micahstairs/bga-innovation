@@ -88,18 +88,20 @@
     </div>
     <div id="available_relics_container">
         <p class="text_center"><!-- BEGIN available_relics -->{AVAILABLE_RELICS}<!-- END available_relics --></p>
-        <div id="relics">
-        </div>
+        <div id="relics"></div>
     </div>
     <div id="available_achievements_container">
         <p class="text_center"><!-- BEGIN available_achievements -->{AVAILABLE_ACHIEVEMENTS}<!-- END available_achievements --></p>
-        <div id="achievements">
-        </div>
+        <div id="achievements"></div>
     </div>
     <div id="available_special_achievements_container">
         <p class="text_center"><!-- BEGIN special_achievements -->{SPECIAL_ACHIEVEMENTS}<!-- END special_achievements --></p>
-        <div id="special_achievements">
-        </div>
+        <div id="special_achievements"></div>
+    </div>
+    <div id="available_flags_and_fountains_container">
+        <p class="text_center"><!-- BEGIN available_flags_and_fountains -->{AVAILABLE_FLAG_AND_FOUNTAINS}<!-- END available_flags_and_fountains --></p>
+        <div id="flags"></div>
+        <div id="fountains"></div>
     </div>
 </div>
 

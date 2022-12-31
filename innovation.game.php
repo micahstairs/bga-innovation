@@ -208,7 +208,7 @@ class Innovation extends Table
             throw new BgaUserException("You already have this card as an achievement");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'score' || $card['location'] == 'achievements' || $card['location'] == 'relics') {
+        } else if ($card['owner'] == 0 || $card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score') {
             try {
                 self::transferCardFromTo($card, $player_id, "achievements");
             }
@@ -683,8 +683,12 @@ class Innovation extends Table
 
         // Unclaimed relics
         $result['unclaimed_relics'] = self::getCardsInLocation(0, 'relics');
+
+        // Unclaimed flags and fountains
+        $result['unclaimed_fountains'] = self::getCardsInLocation(0, 'fountains');
+        $result['unclaimed_flags'] = self::getCardsInLocation(0, 'flags');
         
-        // Unclaimed achivements
+        // Unclaimed achievements
         // TODO(#229): Deprecate this and add a new unclaimed_special_achievements entry.
         $result['unclaimed_achievements'] = self::getCardsInLocation(0, 'achievements');
         $result['unclaimed_standard_achievement_counts'] = array();
@@ -695,7 +699,7 @@ class Innovation extends Table
         }
         
         // Claimed achievements for each player
-        // TODO(#229): Pass counts instead of list of cards.
+        // TODO(#229): Pass counts instead of list of cards (the flags and fountains will still need the full cards passed).
         $result['claimed_achievements'] = array();
         foreach ($players as $player_id => $player) {
             $result['claimed_achievements'][$player_id] = self::getCardsInLocation($player_id, 'achievements');
@@ -2200,6 +2204,16 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
+        // TODO(CITIES): Add 'achievements->fountains' transition.
+        case 'fountains->achievements':
+            $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
+            $message_for_others = clienttranslate('A fountain became visible on ${player_name}\'s board so it now counts as an achievement.');
+            break;
+            // TODO(CITIES): Add 'achievements->flags' transition.
+        case 'flags->achievements':
+            $message_for_player = clienttranslate('A flag on ${your} board now counts as an achievement since no opponent has more cards of that color visible on their board.');
+            $message_for_others = clienttranslate('A flag on ${player_name}\'s board now counts as an achievement since none of their opponents has more cards of that color visible on their board.');
+            break;
         case 'forecast->deck':
             if ($bottom_to) {
                 $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
@@ -2951,7 +2965,7 @@ class Innovation extends Table
         $notif_args_for_player = array_merge($info, $delimiters_for_player);
         $notif_args_for_player['You'] = 'You';
         // Visibility for involved player
-        if (array_key_exists('<<', $delimiters_for_player)) {
+        if (array_key_exists('<<', $delimiters_for_player) || $card['id'] >= 1000) {
             // The player can see the front of the card
             $notif_args_for_player['i18n'] = array('name');
             $notif_args_for_player['name'] = self::getCardName($card['id']);
@@ -2980,7 +2994,7 @@ class Innovation extends Table
         $notif_args_for_others['player_name'] =  $player_name; // The color in the log will be defined automatically by the system
         
         // Visibility for others
-        if (array_key_exists('<<', $delimiters_for_others)) {
+        if (array_key_exists('<<', $delimiters_for_others) || $card['id'] >= 1000) {
             // Other players can see the front of the card
             $notif_args_for_others['i18n'] = array('name');
             $notif_args_for_others['name'] = self::getCardName($card['id']);
@@ -3720,6 +3734,9 @@ class Innovation extends Table
     }
 
     function getCardName($id) {
+        if ($id >= 1000) { // Flags and fountains
+            return null;
+        }
         return $this->textual_card_infos[$id]['name'];
     }
 
@@ -3752,6 +3769,10 @@ class Innovation extends Table
     function attachTextualInfo($card) {
         if ($card === null) {
             return null;
+        }
+
+        if (!array_key_exists($card['id'], $this->textual_card_infos)) {
+            return $card;
         }
         
         $textual_infos = $this->textual_card_infos[$card['id']];

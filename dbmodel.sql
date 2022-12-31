@@ -692,3 +692,34 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (323, 2,10, 4,   5,   6,   9,   5, 0,   9, 5, 'removed'),
 (324, 2,10, 4,   2,   3,  13,   3, 0,   9, 3, 'removed');
 
+/* Cities - Flags */
+INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
+(1000, 2, 0, 'flags', 0),
+(1001, 2, 1, 'flags', 1),
+(1002, 2, 1, 'flags', 2),
+(1003, 2, 1, 'flags', 3),
+(1004, 2, 1, 'flags', 4),
+(1005, 2, 2, 'flags', 5),
+(1006, 2, 2, 'flags', 6),
+(1007, 2, 3, 'flags', 7),
+(1008, 2, 3, 'flags', 8),
+(1009, 2, 3, 'flags', 9),
+(1010, 2, 4, 'flags', 10),
+(1011, 2, 4, 'flags', 11),
+(1012, 2, 4, 'flags', 12);
+
+/* Cities - Fountains */
+INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
+(1100, 2, 0, 'fountains', 0),
+(1101, 2, 0, 'fountains', 1),
+(1102, 2, 1, 'fountains', 2),
+(1103, 2, 1, 'fountains', 3),
+(1104, 2, 2, 'fountains', 4),
+(1105, 2, 2, 'fountains', 5),
+(1106, 2, 2, 'fountains', 6),
+(1107, 2, 3, 'fountains', 7),
+(1108, 2, 3, 'fountains', 8),
+(1109, 2, 4, 'fountains', 9),
+(1110, 2, 4, 'fountains', 10),
+(1111, 2, 4, 'fountains', 11),
+(1112, 2, 4, 'fountains', 12);
