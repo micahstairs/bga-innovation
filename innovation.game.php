@@ -235,6 +235,10 @@ class Innovation extends Table
             throw new BgaUserException("This card is already in the relics area");
         } else if ($card['location'] == 'removed') {
             throw new BgaUserException("This card is removed from the game");
+        } else if ($card['id'] >= 1100) {
+            self::transferCardFromTo($card, 0, 'fountains');
+        } else if ($card['id'] >= 1000) {
+            self::transferCardFromTo($card, 0, 'flags');
         } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements') {
             try {
                 self::returnCard($card);
@@ -2204,15 +2208,21 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
-        // TODO(CITIES): Add 'achievements->fountains' transition.
         case 'fountains->achievements':
             $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
             $message_for_others = clienttranslate('A fountain became visible on ${player_name}\'s board so it now counts as an achievement.');
             break;
-            // TODO(CITIES): Add 'achievements->flags' transition.
+        case 'achievements->fountains':
+            $message_for_player = clienttranslate('A fountain which was visible on ${your} board no longer counts as an achievement.');
+            $message_for_others = clienttranslate('A fountain which was visible on ${player_name}\'s board no longer counts as an achievement.');
+            break;
         case 'flags->achievements':
             $message_for_player = clienttranslate('A flag on ${your} board now counts as an achievement since no opponent has more cards of that color visible on their board.');
             $message_for_others = clienttranslate('A flag on ${player_name}\'s board now counts as an achievement since none of their opponents has more cards of that color visible on their board.');
+            break;
+        case 'achievements->flags':
+            $message_for_player = clienttranslate('A flag which was visible on ${your} board no longer counts as an achievement.');
+            $message_for_others = clienttranslate('A flag which was visible on ${player_name}\'s board no longer counts as an achievement.');
             break;
         case 'forecast->deck':
             if ($bottom_to) {

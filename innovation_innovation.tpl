@@ -99,7 +99,6 @@
         <div id="special_achievements"></div>
     </div>
     <div id="available_flags_and_fountains_container">
-        <p class="text_center"><!-- BEGIN available_flags_and_fountains -->{AVAILABLE_FLAG_AND_FOUNTAINS}<!-- END available_flags_and_fountains --></p>
         <div id="flags"></div>
         <div id="fountains"></div>
     </div>

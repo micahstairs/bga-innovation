@@ -653,9 +653,9 @@ function (dojo, declare) {
                     this.createAndAddToZone(this.zone.fountains["0"], i, fountain.age, fountain.type, fountain.is_relic, fountain.id, dojo.body(), fountain);
                     // TODO(CITIES): Add tooltip.
                 }
-            } else {
-                dojo.byId('available_fountains_and_flags_container').style.display = 'none';
             }
+            // We don't actually want this zone to be visible
+            dojo.byId('available_flags_and_fountains_container').style.display = 'none';
             
             // PLAYERS' HANDS
             this.zone.hand = {};
