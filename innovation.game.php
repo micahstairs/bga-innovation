@@ -51,7 +51,7 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
-            'endorse_action_state' => 19, // 0 = not allowed to do an endorse action, 1 = allowed to do an endorse action, 2 = currently doing an endorse action, 3 = already endorsed the current effect
+            'endorse_action_state' => 19, // 0 = not allowed to do an endorse action, 1 = allowed to do an endorse action, 2 = currently executing an effect for the 1st time, 3 = currently executing an effect for the 2nd time
             'sharing_bonus' => 23,
             'special_type_of_choice' => 26,
             'choice' => 27,
@@ -3273,13 +3273,13 @@ class Innovation extends Table
                 // Flags
                 $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
                 $num_visible_cards = self::countVisibleCards($player_id, $color);
-                $oppoent_has_more_visible_cards = false;
+                $opponent_has_more_visible_cards = false;
                 foreach ($opponent_ids as $opponent_id) {
                     if (self::countVisibleCards($opponent_id, $color) > $num_visible_cards) {
-                        $oppoent_has_more_visible_cards = true;
+                        $opponent_has_more_visible_cards = true;
                     }
                 }
-                $desired_flag_achievements = $oppoent_has_more_visible_cards ? 0 : $num_visible_flags;
+                $desired_flag_achievements = $opponent_has_more_visible_cards ? 0 : $num_visible_flags;
                 $current_flag_achievements = self::getUniqueValueFromDB(self::format("
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
                     array('owner' => $player_id, 'color' => $color)
@@ -3715,7 +3715,7 @@ class Innovation extends Table
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];
         
-        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 2) {
+        if (self::getGameStateValue('current_nesting_index') == -1 && self::getGameStateValue('endorse_action_state') == 2) {
             $message_for_player = clienttranslate('${You} endorse the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
             $message_for_others = clienttranslate('${player_name} endorses the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
         } else {
@@ -3738,7 +3738,7 @@ class Innovation extends Table
     }
     
     function notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id) {
-        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 2) {
+        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 3) {
             self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
                 'i18n' => array('qualified_effect'),
                 'You' => 'You',
@@ -9714,13 +9714,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stInterDogmaEffect() {
         // A effect of a dogma card has been resolved. Is there another one?
         $nested_card_state = self::getCurrentNestedCardState();
+        $nesting_index = $nested_card_state['nesting_index'];
         $card_id = $nested_card_state['card_id'];
         $previous_effect_type = $nested_card_state['current_effect_type'];
 
         $launcher_id = self::getGameStateValue('active_player');
         if ($previous_effect_type == 3) { // echo effect
             $previous_effect_number = $nested_card_state['current_effect_number'];
-            $nesting_index = $nested_card_state['nesting_index'];
 
             // After executing each buried echo effect, clear the auxiliary values.
             if ($nesting_index == 0) {
@@ -9765,7 +9765,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $next_effect_number = 1;
 
             // Update statistics about I demand and I compel execution.
-            if (self::getGameStateValue('current_nesting_index') == 0) {
+            if ($nesting_index == 0) {
                 $affected_players = self::getObjectListFromDB("SELECT player_id FROM player WHERE effects_had_impact IS TRUE", true);
                 foreach ($affected_players as $player_id) {
                     if ($previous_effect_type == 0) {
@@ -9796,7 +9796,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($next_effect_type == 1 && ($next_effect_number > 3 || self::getNonDemandEffect($card['id'], $next_effect_number) === null)) {
 
             // Finish executing the card which triggered this one
-            if (self::getGameStateValue('current_nesting_index') >= 1) {
+            if ($nesting_index >= 1) {
                 $card_args = self::getNotificationArgsForCardList([$card]);
                 self::notifyAll('logWithCardTooltips', clienttranslate('Execution of ${card_1} is complete.'),
                     ['card_1' => $card_args, 'card_ids' => [$card_id]]);
@@ -9922,9 +9922,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
         
-        // There is another (non-demand) effect to perform
+        // There is another effect to perform
         self::updateCurrentNestedCardState('current_effect_number', $next_effect_number);
         self::updateCurrentNestedCardState('current_effect_type', $next_effect_type);
+        if ($nesting_index == 0 && self::getGameStateValue('endorse_action_state') == 3) {
+            self::setGameStateValue('endorse_action_state', 2);
+        }
         
         // Jump to this effect
         self::trace('interDogmaEffect->dogmaEffect');
