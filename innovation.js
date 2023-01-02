@@ -3199,12 +3199,16 @@ function (dojo, declare) {
                 var h = self.card_dimensions[this.HTML_class].height;
                 
                 // Row of 3
-                if ((i % 5) < 3) {
+                if (i % 5 < 3) {
                     var x = (i % 5) * (w + 5);
                     var y = parseInt(i / 5) * 2 * (h + 5);
                 // Row of 2
                 } else {
-                    var x = (w + 5) / 2 + (i % 5 % 2) * (w + 5);
+                    if (i % 5 == 3) {
+                        var x = (w + 5) / 2;
+                    } else {
+                        var x = (w + 5) / 2 + (w + 5);
+                    }
                     var y = h + 5 + parseInt(i / 5) * 2 * (h + 5);
                 }
                 
