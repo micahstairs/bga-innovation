@@ -8113,6 +8113,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
+        // City cards do not have dogma effects on them
+        if ($card['type'] == 2) {
+            return true;
+        }
+
         // Check the card's demand and non-demand effects
         // NOTE: There is no point in adding any cases for cards which have an echo effect which ALWAYS has an effect (e.g. "Draw a 2"),
         // but for the sake of completeness, it also doesn't hurt to add them below (even though they will never get executed).
