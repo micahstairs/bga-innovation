@@ -1370,7 +1370,7 @@ function (dojo, declare) {
                             var action = "stop";
                             var message = _("Stop");    
                         }
-                        this.addActionButton(action, message, "action_clicForPassOrStop");    
+                        this.addActionButton(action, message, "action_clicForPassOrStop");
                     }
                     break;
                 }
@@ -4072,7 +4072,10 @@ function (dojo, declare) {
                 var done = dojo.create('a', {'id':'publication_done', 'class' : 'bgabutton bgabutton_blue'});
                 done.innerHTML = _("Done");
                 dojo.place(done, cancel, 'after')
-                dojo.connect(done, 'onclick', this, 'action_publicationClicForRearrange'); 
+                dojo.connect(done, 'onclick', this, 'action_publicationClicForRearrange');
+
+                // Add another done button to the action bar
+                this.addActionButton('publication_done_action_bar', _("Done"), "action_publicationClicForRearrange");
                 
                 // Deactivate click events for other colors
                 var other_colors = [0,1,2,3,4];
@@ -4124,6 +4127,7 @@ function (dojo, declare) {
             }
             dojo.destroy('publication_cancel');
             dojo.destroy('publication_done');
+            dojo.destroy('publication_done_action_bar');
             
             var selectable_cards = this.selectAllCardsOnMyBoard();
             selectable_cards.addClass("clickable");

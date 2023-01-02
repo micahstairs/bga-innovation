@@ -10561,7 +10561,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 66, age 7: Publications
             case "66N1":
-                $step_max = 1;
+                // Make sure there's at least one pile which can be rearranged
+                $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                for ($color = 0; $color < 5; $color++) {
+                    if ($number_of_cards_on_board[$color] > 1) {
+                        $step_max = 1;
+                        break;
+                    }
+                }
                 break;
             
             case "66N2":
