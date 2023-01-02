@@ -615,7 +615,7 @@ function (dojo, declare) {
             // Add another button here to open up the special achievements popup
             var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
             dojo.place(button, 'special_achievements', 'after');
-            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_card_browsing_window');
+            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievement_browsing_window');
             
             // PLAYERS' HANDS
             this.zone.hand = {};
@@ -4286,6 +4286,11 @@ function (dojo, declare) {
                              this, function(result){}, function(is_error){}
                         );
             }
+        },
+
+        click_open_special_achievement_browsing_window : function() {
+            this.click_open_card_browsing_window();
+            this.click_browse_special_achievements();
         },
 
         click_open_card_browsing_window : function() {
