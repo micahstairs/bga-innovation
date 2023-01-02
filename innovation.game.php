@@ -5709,9 +5709,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 owner = {player_id}
         ", array('player_id' => $player_id)));
 
-        // NOTE: It doesn't matter that we are technically zeroing the player's teammate's achievement count,
-        // because if the game is 2v2 then the game will instantly end and the score will be binarized.
-        self::DbQuery("
+        self::DbQuery(self::format("
             UPDATE
                 player
             SET
@@ -5723,7 +5721,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 player_icon_count_4 = 0,
                 player_icon_count_5 = 0,
                 player_icon_count_6 = 0
-        ");
+            WHERE
+                player_id = {player_id}
+        ", array('player_id' => $player_id)));
+
         self::setStat(0, 'achievements_number', $player_id);
         self::setStat(0, 'special_achievements_number', $player_id);
         self::setStat(0, 'score', $player_id);
@@ -10895,7 +10896,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 66, age 7: Publications
             case "66N1":
-                $step_max = 1;
+                // Make sure there's at least one pile which can be rearranged
+                $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                for ($color = 0; $color < 5; $color++) {
+                    if ($number_of_cards_on_board[$color] > 1) {
+                        $step_max = 1;
+                        break;
+                    }
+                }
                 break;
             
             case "66N2":

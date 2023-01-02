@@ -154,9 +154,9 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 /* TODO(LATER): See if we can start indexing the achievements at 0 instead of 10. */
 (105, 0, 'achievements', 11),
 (106, 0, 'achievements', 10),
-(107, 0, 'achievements', 14),
+(107, 0, 'achievements', 13),
 (108, 0, 'achievements', 12),
-(109, 0, 'achievements', 13),
+(109, 0, 'achievements', 14),
 
 /* Cities special achievements */
 (325, 2, 'removed', 15),
@@ -168,8 +168,8 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 /* Echoes special achievements */
 (435, 3, 'removed', 22),
 (436, 3, 'removed', 21),
-(437, 3, 'removed', 24),
-(438, 3, 'removed', 23),
+(437, 3, 'removed', 23),
+(438, 3, 'removed', 24),
 (439, 3, 'removed', 20);
 
 /* Insert relic cards */

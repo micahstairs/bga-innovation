@@ -634,7 +634,7 @@ function (dojo, declare) {
             // Add another button here to open up the special achievements popup
             var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
             dojo.place(button, 'special_achievements', 'after');
-            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_card_browsing_window');
+            this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievement_browsing_window');
 
             // AVAILABLE FLAGS AND FOUNTAINS
             this.zone.flags = {};
@@ -1420,7 +1420,7 @@ function (dojo, declare) {
                             var action = "stop";
                             var message = _("Stop");    
                         }
-                        this.addActionButton(action, message, "action_clicForPassOrStop");    
+                        this.addActionButton(action, message, "action_clicForPassOrStop");
                     }
                     break;
                 }
@@ -3299,12 +3299,16 @@ function (dojo, declare) {
                 var h = self.card_dimensions[this.HTML_class].height;
                 
                 // Row of 3
-                if ((i % 5) < 3) {
+                if (i % 5 < 3) {
                     var x = (i % 5) * (w + 5);
                     var y = parseInt(i / 5) * 2 * (h + 5);
                 // Row of 2
                 } else {
-                    var x = (w + 5) / 2 + (i % 5 % 2) * (w + 5);
+                    if (i % 5 == 3) {
+                        var x = (w + 5) / 2;
+                    } else {
+                        var x = (w + 5) / 2 + (w + 5);
+                    }
                     var y = h + 5 + parseInt(i / 5) * 2 * (h + 5);
                 }
                 
@@ -4245,7 +4249,10 @@ function (dojo, declare) {
                 var done = dojo.create('a', {'id':'publication_done', 'class' : 'bgabutton bgabutton_blue'});
                 done.innerHTML = _("Done");
                 dojo.place(done, cancel, 'after')
-                dojo.connect(done, 'onclick', this, 'action_publicationClicForRearrange'); 
+                dojo.connect(done, 'onclick', this, 'action_publicationClicForRearrange');
+
+                // Add another done button to the action bar
+                this.addActionButton('publication_done_action_bar', _("Done"), "action_publicationClicForRearrange");
                 
                 // Deactivate click events for other colors
                 var other_colors = [0,1,2,3,4];
@@ -4297,6 +4304,7 @@ function (dojo, declare) {
             }
             dojo.destroy('publication_cancel');
             dojo.destroy('publication_done');
+            dojo.destroy('publication_done_action_bar');
             
             var selectable_cards = this.selectAllCardsOnMyBoard();
             selectable_cards.addClass("clickable");
@@ -4468,6 +4476,11 @@ function (dojo, declare) {
                              this, function(result){}, function(is_error){}
                         );
             }
+        },
+
+        click_open_special_achievement_browsing_window : function() {
+            this.click_open_card_browsing_window();
+            this.click_browse_special_achievements();
         },
 
         click_open_card_browsing_window : function() {
