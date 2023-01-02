@@ -1035,6 +1035,9 @@
 .clickable.mid_dogma {
   box-shadow: 0 0 6px 3px #9a0505 !important;
 }
+.clickable.can_endorse {
+  box-shadow: 0 0 6px 3px #fc00b8 !important;
+}
 
 .selected {
   box-shadow: 0 0 6px 3px white !important;

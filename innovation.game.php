@@ -40,7 +40,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new \Innovation\GameState($this);
-        // NOTE: The following values are unused and safe to use: 19-22, 24-25, 49-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 49-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -51,6 +51,7 @@ class Innovation extends Table
             'player_who_could_not_draw' => 16,
             'winner_by_dogma' => 17,
             'active_player' => 18,
+            'endorse_action_state' => 19, // 0 = not allowed to do an endorse action, 1 = allowed to do an endorse action, 2 = currently doing an endorse action, 3 = already endorsed the current effect
             'sharing_bonus' => 23,
             'special_type_of_choice' => 26,
             'choice' => 27,
@@ -119,6 +120,12 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
+        if ($this->innovationGameState->get('release_version') == 2) {
+            self::initGameStateLabels(array(
+                'endorse_action_state' => 19,
+            ));
+            self::setGameStateValue('endorse_action_state', 0);
+        }
         if ($this->innovationGameState->get('release_version') == 1) {
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
@@ -415,6 +422,7 @@ class Innovation extends Table
         self::setGameStateInitialValue('second_player_with_only_one_action', count($players) >= 4 ? 1 : 0); // used when >= 4 players only
         self::setGameStateInitialValue('has_second_action', 1);
         self::setGameStateInitialValue('current_action_number', -1);
+        self::setGameStateInitialValue('endorse_action_state', 0);
         
         // Flags used when the game ends to know how it ended
         self::setGameStateInitialValue('game_end_type', -1); // 0 for game end by achievements, 1 for game end by score, -1 for game end by dogma
@@ -3612,9 +3620,14 @@ class Innovation extends Table
         $player_id = self::getActivePlayerId();
         $card_id = $card['id'];
         
-        $message_for_player = clienttranslate('${You} activate the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
-        $message_for_others = clienttranslate('${player_name} activates the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
-        
+        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 2) {
+            $message_for_player = clienttranslate('${You} endorse the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+            $message_for_others = clienttranslate('${player_name} endorses the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+        } else {
+            $message_for_player = clienttranslate('${You} activate the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+            $message_for_others = clienttranslate('${player_name} activates the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+        }
+
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card_id);
         $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card_id);
         
@@ -3630,17 +3643,29 @@ class Innovation extends Table
     }
     
     function notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id) {
-        self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect}.</span>'), array(
-            'i18n' => array('qualified_effect'),
-            'You' => 'You',
-            'qualified_effect' => $qualified_effect
-        ));
-        
-        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">The ${qualified_effect} applies on ${player_name}</span>.'), array(
-            'i18n' => array('qualified_effect'),
-            'player_name' => self::getPlayerNameFromId($player_id),
-            'qualified_effect' => $qualified_effect
-        ));
+        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 2) {
+            self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'You' => 'You',
+                'qualified_effect' => $qualified_effect
+            ));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'qualified_effect' => $qualified_effect
+            ));
+        } else {
+            self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect}.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'You' => 'You',
+                'qualified_effect' => $qualified_effect
+            ));
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('<span class="minor_information">${player_name} has to execute the ${qualified_effect}.</span>'), array(
+                'i18n' => array('qualified_effect'),
+                'player_name' => self::getPlayerNameFromId($player_id),
+                'qualified_effect' => $qualified_effect
+            ));
+        }
     }
     
     function notifyPass($player_id) {
@@ -6882,8 +6907,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
 
-        // Battleship Yamato does not have a dogma effect
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have any icons on it so it cannot be executed
+        if ($card['dogma_icon'] == null) {
             self::throwInvalidChoiceException();
         }
 
@@ -7327,8 +7352,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!self::isTopBoardCard($card)) {
             self::throwInvalidChoiceException();
         }
-        // Battleship Yamato does not have any dogma effects on it to execute
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have any icons on it so it cannot be executed
+        if ($card['dogma_icon'] == null) {
             self::throwInvalidChoiceException();
         }
         
@@ -7346,6 +7371,52 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('dogmaEffect');
     }
 
+    function endorse($card_to_endorse_id, $card_to_tuck_id) {
+        // Check that this is the player's turn and that it is a "possible action" at this game state
+        self::checkAction('endorse');
+
+        // Ensure that the player still has an endorse action to use this turn
+        if (self::getGameStateValue('endorse_action_state') == 0) {
+            self::throwInvalidChoiceException();
+        }
+
+        $player_id = self::getActivePlayerId();
+        $card_to_endorse = self::getCardInfo($card_to_endorse_id);
+
+        // Check that the player really has this card on his board
+        if ($card_to_endorse['owner'] != $player_id || $card_to_endorse['location'] != "board") {
+            self::throwInvalidChoiceException();
+        }
+        // Card is not at the top of a stack
+        if (!self::isTopBoardCard($card_to_endorse)) {
+            self::throwInvalidChoiceException();
+        }
+        // Battleship Yamato does not have any icons on it so it cannot be executed
+        if ($card_to_endorse['dogma_icon'] == null) {
+            self::throwInvalidChoiceException();
+        }
+
+        // Check that the player really has a card to tuck
+        $card_to_tuck = self::getCardInfo($card_to_tuck_id);
+        if ($card_to_tuck['owner'] != $player_id || $card_to_tuck['location'] != "hand") {
+            self::throwInvalidChoiceException();
+        }
+
+        // Make sure the endorsement is valid given this card being tucked
+        $max_age_to_tuck = self::getMaxAgeToTuckForEndorse($card_to_endorse);
+        if ($max_age_to_tuck == null || $card_to_tuck['age'] > $max_age_to_tuck) {
+            self::throwInvalidChoiceException();
+        }
+
+        self::setGameStateValue('endorse_action_state', 2);
+        self::tuckCard($card_to_tuck, $player_id);
+        self::setUpDogma($player_id, $card_to_endorse);
+
+        // Resolve the first dogma effect of the card
+        self::trace('playerTurn->dogmaEffect (dogma)');
+        $this->gamestate->nextState('dogmaEffect');
+    }
+
     function updateActionAndTurnStats($player_id) {
         if (self::getGameStateValue('current_action_number') == 1) {
             self::incStat(1, 'turns_number');
@@ -7356,8 +7427,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function increaseResourcesForArtifactOnDisplay($player_id, $card) {
-        // Battleship Yamato does not have any resource symbols
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have any icons on it
+        if ($card['dogma_icon'] == null) {
             $resource_icon = null;
             $resource_count_delta = 0;
         } else {
@@ -7368,8 +7439,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function decreaseResourcesForArtifactOnDisplay($player_id, $card) {
-        // Battleship Yamato does not have any resource symbols
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have any icons on it
+        if ($card['dogma_icon'] == null) {
             $resource_icon = null;
             $resource_count_delta = 0;
         } else {
@@ -7863,8 +7934,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getDogmaEffectInfo($card, $launcher_id, $is_on_display = false) {
         $dogma_effect_info = array();
 
-        // Battleship Yamato cannot be triggered as a dogma effect, so we don't need to return anything
-        if ($card['id'] == 188) {
+        // Battleship Yamato does not have any icons on it so it cannot be executed
+        if ($card['dogma_icon'] == null) {
             return $dogma_effect_info;
         }
 
@@ -7934,7 +8005,46 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_ids_with_visible_echo_effects
         );
 
+        if (self::getGameStateValue('endorse_action_state') == 1 && !$is_on_display) {
+            $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
+            $can_endorse = false;
+            if ($max_age_to_tuck_for_endorse != null) {
+                foreach (self::getCardsInHand($launcher_id) as $card_in_hand) {
+                    if ($card_in_hand['age'] <= $max_age_to_tuck_for_endorse) {
+                        $can_endorse = true;
+                        break;
+                    }
+                }
+            }
+            if ($can_endorse) {
+                $dogma_effect_info['max_age_to_tuck_for_endorse'] = $max_age_to_tuck_for_endorse;
+            }
+        }
+
         return $dogma_effect_info;
+    }
+
+    /** Returns the maximum age card that can be tucked in order to endorse the card, or null if there are no City cards matching the featured icon. */
+    function getMaxAgeToTuckForEndorse($card) {
+        // Battleship Yamato does not have any icons on it so it cannot be executed
+        $dogma_icon = $card['dogma_icon'];
+        if ($dogma_icon == null) {
+            return null;
+        }
+        // To take an Endorse action, perform the following steps:
+        // 1) Choose the top card on your board that you want to Endorse, and note its featured icon.
+        // 2) Choose a top city on your board. It must have the featured icon on it.
+        // 3) Pay for the Endorse action by tucking a card from your hand of equal or lower value to
+        //    the city you chose. The tucked card’s color and icons are irrelevant.
+        $highest_city_with_featured_icon = null;
+        foreach (self::getTopCardsOnBoard($card['owner']) as $top_card) {
+            if ($top_card['type'] == 2 && self::hasRessource($top_card, $dogma_icon)) {
+                if ($highest_city_with_featured_icon == null || $top_card['age'] > $highest_city_with_featured_icon) {
+                    $highest_city_with_featured_icon = $top_card['age'];
+                }
+            }
+        }
+        return $highest_city_with_featured_icon;
     }
 
     /** Returns true if the dogma is guaranteed to have no effect (without revealing hidden info to the launching player). */
@@ -8032,6 +8142,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
             }
+        }
+
+        // City cards do not have dogma effects on them
+        if ($card['type'] == 2) {
+            return true;
         }
 
         // Check the card's demand and non-demand effects
@@ -9395,14 +9510,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // The player took his first action and has another one
             $next_player = false;
             self::setGameStateValue('has_second_action', 0);
+            if (self::getGameStateValue('endorse_action_state') >= 2) {
+                self::setGameStateValue('endorse_action_state', 0);
+            }
         } else {
             // The player took his second action
             $next_player = true;
             self::setGameStateValue('has_second_action', 1);
         }
         if ($next_player) { // The turn for the current player is over
-            // Reset the flags for Monument special achievement
             self::resetFlagsForMonument();
+
+            if (self::getGameStateValue('cities_mode') > 1) {
+                self::setGameStateValue('endorse_action_state', 1);
+            }
             
             // Activate the next non-eliminated player in turn order
             do {
@@ -14503,11 +14624,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::incStat(1, 'executed_echo_effect_number', $player_id);
         }
 
-        // If this is a nested card, don't allow other players to share the non-demand effect
         $nesting_index = self::getGameStateValue('current_nesting_index');
         self::updateCurrentNestedCardState('post_execution_index', 0);
         $nested_card_state = self::getNestedCardState($nesting_index);
-        $next_player = $nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1 ? null : self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+
+        // If this is a nested card, don't allow other players to share the non-demand effect
+        if ($nesting_index >= 1 && $nested_card_state['current_effect_type'] == 1) {
+            $next_player = null;
+        // If the dogma is being endorsed, allow the launcher to execute the non-demand or echo effect again
+        } else if ($nesting_index == 0 && self::getGameStateValue('endorse_action_state') == 2 && $player_id == $launcher_id && ($current_effect_type == 1 || $current_effect_type == 3)) {
+            self::setGameStateValue('endorse_action_state', 3);
+            $next_player = $player_id;
+        } else {
+            $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
+            // If the dogma is being endorsed and it's a demand (or compel) effect, go around a second time
+            if ($next_player == null && self::getGameStateValue('endorse_action_state') == 2 && ($current_effect_type == 0 || $current_effect_type == 2)) {
+                self::setGameStateValue('endorse_action_state', 3);
+                $next_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
+            }
+        }
 
         // There are no more players which are eligible to share this effect
         if ($next_player === null) {
@@ -14515,10 +14650,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->gamestate->nextState('interDogmaEffect');
             return;
         }
-        self::updateCurrentNestedCardState('current_player_id', $next_player);
-        $this->gamestate->changeActivePlayer($next_player);
         
         // Jump to this player
+        if ($player_id != $next_player) {
+            self::updateCurrentNestedCardState('current_player_id', $next_player);
+            $this->gamestate->changeActivePlayer($next_player);
+        }
         self::trace('interPlayerInvolvedTurn->playerInvolvedTurn');
         $this->gamestate->nextState('playerInvolvedTurn');
     }
@@ -20209,7 +20346,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "395D1A":
             // "I demand you take the highest top card from your board into your hand!"
-            // TOOD(ECHOES): Test that this behaves correctly with Battleship Yamato.
+            // TODO(ECHOES): Test that this behaves correctly with Battleship Yamato.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -22851,7 +22988,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $melded_card = self::getCardInfo(self::getGameStateValue('id_last_selected'));
                         
                         // "If the melded card has no effects, you win"
-                        if ($melded_card['type'] == 2 /* a City card */ || $melded_card['id'] == 188 /* Battleship Yamato */) {
+                        if ($melded_card['dogma_icon'] == null) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with no effects.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::getColoredPlayerName($player_id)));
                             self::setGameStateValue('winner_by_dogma', $player_id);

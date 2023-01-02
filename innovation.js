@@ -141,6 +141,7 @@ function (dojo, declare) {
             // System to remember what node where last offed and what was their handlers to restore if needed
             this.deactivated_cards = null;
             this.deactivated_cards_mid_dogma = null;
+            this.deactivated_cards_can_endorse = null;
             this.erased_pagemaintitle_text = null;
         },
         
@@ -1175,6 +1176,12 @@ function (dojo, declare) {
                     var cards_on_board = this.selectMyTopCardsEligibleForDogma();
                     cards_on_board.addClass("clickable");
                     this.on(cards_on_board, 'onclick', 'action_clickDogma');
+
+                    // Cards on board (endorse action)
+                    var endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
+                    this.off(endorsable_cards, 'onclick');
+                    endorsable_cards.addClass("can_endorse");
+                    this.on(endorsable_cards, 'onclick', 'action_clickEndorse');
                     
                     break;
                 case 'selectionMove':
@@ -2046,8 +2053,10 @@ function (dojo, declare) {
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
-                var no_effect = dogma_effect_info[id].no_effect;
-                dojo.attr(HTML_id, 'no_effect', no_effect);
+                if (dogma_effect_info[id].max_age_to_tuck_for_endorse != undefined) {
+                    dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse', dogma_effect_info[id].max_age_to_tuck_for_endorse);
+                }
+                dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id].no_effect);
                 dojo.attr(HTML_id, 'card_id', id);
                 dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
                 dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
@@ -2556,7 +2565,7 @@ function (dojo, declare) {
 
         selectArtifactOnDisplayIfEligibleForDogma : function() {
             var cards = dojo.query("#display_" + this.player_id + " > .card");
-            // Battleship Yamato does not have any dogma effects on it
+            // Battleship Yamato does not have any icons on it so it cannot be executed
             if (cards.length > 0 && this.getCardIdFromHTMLId(cards[0].id) == 188) {
                 cards.pop();
             }
@@ -2585,12 +2594,38 @@ function (dojo, declare) {
                     continue;
                 }
                 var top_card = pile[pile.length - 1];
-                // Battleship Yamato does not have a dogma effect on it.
-                if (this.getCardIdFromHTMLId(top_card.id) != 188) {
+                // Battleship Yamato does not have any icons on it so it cannot be executed
+                var card_id = this.getCardIdFromHTMLId(top_card.id);
+                if (card_id != 188) {
                     selectable_list.push("#" + top_card.id);
                 }
             }
             return selectable_list.length > 0 ? dojo.query(selectable_list.join(",")) : new dojo.NodeList();
+        },
+
+        selectMyTopCardsEligibleForEndorsedDogma : function(dogma_effect_info) {
+            var player_board = this.zone.board[this.player_id];
+            var selectable_list = [];
+            for (var color = 0; color < 5; color++) {
+                var pile = player_board[color].items;
+                if (pile.length == 0) {
+                    continue;
+                }
+                var top_card = pile[pile.length - 1];
+                var card_id = this.getCardIdFromHTMLId(top_card.id);
+                if (dogma_effect_info[card_id].max_age_to_tuck_for_endorse != undefined) {
+                    selectable_list.push("#" + top_card.id);
+                }
+            }
+            return selectable_list.length > 0 ? dojo.query(selectable_list.join(",")) : new dojo.NodeList();
+        },
+
+        selectMyCardsEligibleToTuckForEndorsedDogma : function(max_age_to_tuck_for_endorse) {
+            var queries = [];
+            for (var age = 1; age <= max_age_to_tuck_for_endorse; age++) {
+                queries.push(`#hand_${this.player_id} > .age_${age}`);
+            }
+            return dojo.query(queries.join(","));
         },
         
         selectClaimableAchievements : function(claimable_ages) {
@@ -2643,6 +2678,9 @@ function (dojo, declare) {
 
             this.deactivated_cards_mid_dogma = dojo.query(".mid_dogma");
             this.deactivated_cards_mid_dogma.removeClass("mid_dogma");
+
+            this.deactivated_cards_can_endorse = dojo.query(".can_endorse");
+            this.deactivated_cards_can_endorse.removeClass("can_endorse");
             
             this.off(this.deactivated_cards, 'onclick');
 
@@ -2656,6 +2694,7 @@ function (dojo, declare) {
         resurrectClickEvents : function(revert_text) {
             this.deactivated_cards.addClass("clickable");
             this.deactivated_cards_mid_dogma.addClass("mid_dogma");
+            this.deactivated_cards_can_endorse.addClass("can_endorse");
             
             this.restart(this.deactivated_cards, 'onclick');
             
@@ -3693,13 +3732,16 @@ function (dojo, declare) {
             );
         },
         
-        action_clickDogma : function(event) {
-            this.stopActionTimer();
-            this.deactivateClickEvents();
+        action_clickDogma : function(event, via_endorse_prompt=false) {
+            if (!via_endorse_prompt) {
+                this.stopActionTimer();
+                this.deactivateClickEvents();
+            }
 
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             var card_id = dojo.attr(HTML_id, 'card_id');
             var card = this.cards[card_id];
+
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name}?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
 
             // Add cancel button
@@ -3711,7 +3753,12 @@ function (dojo, declare) {
             this.addActionButton("dogma_confirm_timer_button", _("Confirm"), "action_manuallyConfirmTimerDogma");
 
             $("dogma_confirm_timer_button").innerHTML = _("Confirm");
-            dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
+            if (via_endorse_prompt) {
+                dojo.attr('dogma_confirm_timer_button', 'html_id', dojo.attr(HTML_id, 'html_id'));
+                dojo.destroy("dogma_without_endorse_button");
+            } else {
+                dojo.attr('dogma_confirm_timer_button', 'html_id', HTML_id);
+            }
 
             // When confirmation is disabled in game preferences, click the confirmation button instantly
             var wait_time = 0;
@@ -3795,6 +3842,71 @@ function (dojo, declare) {
                 {
                     lock: true,
                     card_id: card_id
+                },
+                this,
+                function(result) { },
+                function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            );
+        },
+
+        action_clickEndorse : function(event) {
+            this.deactivateClickEvents();
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            var max_age_to_tuck_for_endorse = dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse');
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand to tuck"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', max_age_to_tuck_for_endorse)});
+
+            // Add cancel button
+            this.addActionButton("endorse_cancel_button", _("Cancel"), "action_cancelEndorse");
+            dojo.removeClass("endorse_cancel_button", 'bgabutton_blue');
+            dojo.addClass("endorse_cancel_button", 'bgabutton_red');
+
+            // Add button to dogma without endorsing
+            this.addActionButton("dogma_without_endorse_button", _("Dogma without endorse"), "action_dogmaWithoutEndorse");
+            dojo.attr('dogma_without_endorse_button', 'html_id', HTML_id);
+            dojo.attr('dogma_without_endorse_button', 'card_id', card_id);
+
+            // Make tuckable cards clickable
+            var cards_to_tuck = this.selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse);
+            cards_to_tuck.addClass("clickable");
+            this.on(cards_to_tuck, 'onclick', 'action_confirmEndorse');
+            cards_to_tuck.forEach(function(node) {
+                dojo.attr(node, 'card_to_endorse_id', card_id)
+            });
+        },
+
+        action_cancelEndorse : function(event) {
+            this.resurrectClickEvents(true);
+            dojo.destroy("endorse_cancel_button");
+            dojo.destroy("dogma_without_endorse_button");
+            dojo.destroy("endorse_button");
+        },
+
+        action_dogmaWithoutEndorse : function(event) {
+            $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
+            dojo.destroy("endorse_cancel_button");
+            this.action_clickDogma(event, /*via_endorse_prompt=*/ true);
+        },
+
+        action_confirmEndorse : function(event) {
+            if (!this.checkAction('endorse')) {
+                return;
+            }
+
+            dojo.destroy("endorse_cancel_button");
+            dojo.destroy("dogma_without_endorse_button");
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
+            var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
+
+            this.ajaxcall("/innovation/innovation/endorse.html",
+                {
+                    lock: true,
+                    card_to_endorse_id: card_to_endorse_id,
+                    card_to_tuck_id: card_to_tuck_id
                 },
                 this,
                 function(result) { },
