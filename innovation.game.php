@@ -6735,12 +6735,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function setIndexedAuxiliaryValue($index_id, $value) {
         $nesting_index = self::getGameStateValue('current_nesting_index');
-        self::DbQuery(self::format("
-            INSERT INTO indexed_auxiliary_value
-                (nesting_index, index_id, value)
-            VALUES
-                ({nesting_index}, {index_id}, {value})
-        ", array('nesting_index' => $nesting_index, 'index_id' => $index_id, 'value' => $value)));
+
+        // Check to see if a value already exists
+        $result = self::getUniqueValueFromDB(self::format("
+            SELECT
+                value
+            FROM
+                indexed_auxiliary_value
+            WHERE
+                nesting_index = {nesting_index} AND
+                index_id = {index_id}
+        ",
+            array('nesting_index' => $nesting_index, 'index_id' => $index_id)
+        ));
+
+        // If it doesn't already exist, insert it
+        if ($result == null) {
+            self::DbQuery(self::format("
+                INSERT INTO indexed_auxiliary_value
+                    (nesting_index, index_id, value)
+                VALUES
+                    ({nesting_index}, {index_id}, {value})
+            ", array('nesting_index' => $nesting_index, 'index_id' => $index_id, 'value' => $value)));
+        
+        // If it does, update it
+        } else {
+            self::DbQuery(self::format("
+                UPDATE
+                    indexed_auxiliary_value
+                SET
+                    value = {value}
+                WHERE
+                    nesting_index = {nesting_index} AND index_id = {index_id}
+            ", array('nesting_index' => $nesting_index, 'index_id' => $index_id, 'value' => $value)));
+        }
     }
 
     function getIndexedAuxiliaryValue($index_id) {
