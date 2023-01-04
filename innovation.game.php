@@ -120,29 +120,11 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
-        if (self::getGameStateValue('release_version') == 2) {
+        if ($from_version <= 2212252101) {
             self::initGameStateLabels(array(
                 'endorse_action_state' => 19,
             ));
             self::setGameStateValue('endorse_action_state', 0);
-        }
-        if ($this->innovationGameState->get('release_version') == 1) {
-            self::initGameStateLabels(array(
-                'bottom_from' => 86,
-                'with_bonus' => 87,
-                'without_bonus' => 88,
-                'card_ids_are_in_auxiliary_array' => 89,
-                'melded_card_id' => 94,
-                'cities_mode' => 103,
-                'echoes_mode' => 104,
-            ));
-            self::setGameStateValue('bottom_from', -1);
-            self::setGameStateValue('with_bonus', -1);
-            self::setGameStateValue('without_bonus', -1);
-            self::setGameStateValue('card_ids_are_in_auxiliary_array', -1);
-            self::setGameStateValue('melded_card_id', -1);
-            self::setGameStateValue('cities_mode', 1);
-            self::setGameStateValue('echoes_mode', 1);
         }
     }
 
