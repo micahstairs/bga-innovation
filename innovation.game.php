@@ -119,7 +119,7 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
-        if ($this->innovationGameState->get('release_version') == 1) {
+        if ($from_version <= 2209180421) {
             self::initGameStateLabels(array(
                 'bottom_from' => 86,
                 'with_bonus' => 87,
