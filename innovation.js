@@ -739,7 +739,7 @@ function (dojo, declare) {
                     }
                 }
             }
-            if (!this.echoes_expansion_enabled) {
+            if (!this.isSpectator && !this.echoes_expansion_enabled) {
                 dojo.byId('forecast_text_' + this.player_id).style.display = 'none';
             }
             
