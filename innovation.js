@@ -697,9 +697,10 @@ function (dojo, declare) {
                         }
                     }
                 }
-            }
-            if (!this.isSpectator && !this.echoes_expansion_enabled) {
-                dojo.byId('forecast_text_' + this.player_id).style.display = 'none';
+
+                if (!this.echoes_expansion_enabled) {
+                    dojo.byId('forecast_text_' + player_id).style.display = 'none';
+                }
             }
             
             // PLAYERS' SCORE
