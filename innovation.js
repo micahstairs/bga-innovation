@@ -919,9 +919,12 @@ function (dojo, declare) {
                     dojo.query('#special_achievement_summary_' + achievement.id).addClass('unclaimed');
                 }
             }
-            this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
-            this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
-            this.refreshSpecialAchievementProgression();
+            
+            if (!this.isSpectator) {
+                this.number_of_tucked_cards = gamedatas.monument_counters.number_of_tucked_cards;
+                this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
+                this.refreshSpecialAchievementProgression();
+            }
             
             // REFERENCE CARD
             this.addTooltipForReferenceCard();
