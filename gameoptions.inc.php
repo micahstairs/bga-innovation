@@ -128,7 +128,13 @@ $game_options = array(
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Echoes Expansion'))
-        )
+        ),
+        'startcondition' => array(
+            1 => array(/* No special condition here */),
+            2 => array(
+                array('type' => 'minplayers', 'value' => 9, 'message' => totranslate('This expansion is not available yet!'))
+            )
+        ),
     ),
 
     /* TODO(FIGURES): Add game options.
@@ -168,6 +174,15 @@ $game_preferences = array(
             4 => array('name' => totranslate('Enabled (long timer)')),
         ),
         'default' => 1
+    ),
+    102 => array(
+        'name' => totranslate('Sharing confirmation'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('Disabled')),
+            2 => array('name' => totranslate('Enabled')),
+        ),
+        'default' => 2
     ),
     101 => array(
         'name' => totranslate('Meld confirmation'),

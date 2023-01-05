@@ -24376,7 +24376,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     if (count(array_unique($card_counts)) == 1) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards n every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
                         self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
                         throw new EndOfGame();
@@ -25192,7 +25192,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($card, 0, 'deck');
                 } else {
                     // Do the transfer
-                    self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                    $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                    self::transferCardFromTo($card, 0, 'deck');
                 }
                 break;
                 
