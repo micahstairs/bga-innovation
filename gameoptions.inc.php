@@ -177,6 +177,15 @@ $game_preferences = array(
         ),
         'default' => 1
     ),
+    102 => array(
+        'name' => totranslate('Sharing confirmation'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('Disabled')),
+            2 => array('name' => totranslate('Enabled')),
+        ),
+        'default' => 2
+    ),
     101 => array(
         'name' => totranslate('Meld confirmation'),
         'needReload' => true,
