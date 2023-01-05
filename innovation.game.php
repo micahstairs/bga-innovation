@@ -24818,7 +24818,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::transferCardFromTo($card, 0, 'deck');
                 } else {
                     // Do the transfer
-                    self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                    $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                    self::transferCardFromTo($card, 0, 'deck');
                 }
                 break;
                 
