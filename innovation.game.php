@@ -7270,82 +7270,91 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Execute city's icon effect
         if ($card['type'] == 2) {
+            try {
             
-            $top_middle_icon = $card['spot_6'];
+                $top_middle_icon = $card['spot_6'];
+                $bottom_middle_icon = $card['spot_3'];
 
-            // NOTE: This logic relies on the (correct) assumption that the Plus/Arrow icons only appear in the top-middle or bottom-middle of cards.
-            $icons_to_check = array($card['spot_3'], $card['spot_6']);
-            for ($i = 0; $i < count($icons_to_check); $i++) {
-                switch ($icons_to_check[$i]) {
-                    case 7: // Plus: Draw a card of value one higher than the city's age
-                        self::executeDraw($player_id, $card['age'] + 1);
-                        break;
-                    case 11: // Left Arrow: Splay the city's color left
-                        if (self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
-                            self::claimSpecialAchievement($player_id, 325); // Legend
-                        } else {
-                            self::splayLeft($player_id, $player_id, $card['color']);
-                        }
-                        break;
-                    case 12: // Right Arrow: Splay the city's color right
-                        if ( self::getCurrentSplayDirection($player_id, $card['color']) == 2) {
-                            self::claimSpecialAchievement($player_id, 326); // Repute
-                        } else {
-                            self::splayRight($player_id, $player_id, $card['color']);
-                        }
-                        break;
-                    case 13: // Up Arrow: Splay the city's color up
-                        if ( self::getCurrentSplayDirection($player_id, $card['color']) == 3) {
-                            self::claimSpecialAchievement($player_id, 327); // Fame
-                        } else {
-                            self::splayUp($player_id, $player_id, $card['color']);
-                        }
-                        break;
+                // NOTE: This logic relies on the (correct) assumption that the Plus/Arrow icons only appear in the top-middle or bottom-middle of cards.
+                $icons_to_check = array($top_middle_icon, $bottom_middle_icon);
+                for ($i = 0; $i < count($icons_to_check); $i++) {
+                    switch ($icons_to_check[$i]) {
+                        case 7: // Plus: Draw a card of value one higher than the city's age
+                            self::executeDraw($player_id, $card['age'] + 1);
+                            break;
+                        case 11: // Left Arrow: Splay the city's color left
+                            if (self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
+                                self::claimSpecialAchievement($player_id, 325); // Legend
+                            } else {
+                                self::splayLeft($player_id, $player_id, $card['color']);
+                            }
+                            break;
+                        case 12: // Right Arrow: Splay the city's color right
+                            if ( self::getCurrentSplayDirection($player_id, $card['color']) == 2) {
+                                self::claimSpecialAchievement($player_id, 326); // Repute
+                            } else {
+                                self::splayRight($player_id, $player_id, $card['color']);
+                            }
+                            break;
+                        case 13: // Up Arrow: Splay the city's color up
+                            if ( self::getCurrentSplayDirection($player_id, $card['color']) == 3) {
+                                self::claimSpecialAchievement($player_id, 327); // Fame
+                            } else {
+                                self::splayUp($player_id, $player_id, $card['color']);
+                            }
+                            break;
+                    }
                 }
-            }
 
-            // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
-            // top-midddle of the card, that means that it is a Search icon.
-            if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
-                // Determine how many cards can be drawn.
-                $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
-                $age_of_melded_card = $card['age'];
-                $num_cards_to_reveal = min($age_of_melded_card, $deck_count[$card['age']]);
+                // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
+                // top-midddle of the card, that means that it is a Search icon.
+                if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
+                    // Determine how many cards can be drawn.
+                    $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
+                    $age_of_melded_card = $card['age'];
+                    $num_cards_to_reveal = min($age_of_melded_card, $deck_count[$card['age']]);
 
-                if ($num_cards_to_reveal > 0) {
-                    for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                        self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
-                    }
-                    if ($num_cards_to_reveal < $age_of_melded_card) {
-                        self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
-                    }
-                    self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be put in hand and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
-                    $cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach ($cards as $card) {
-                        // Put matches in hand
-                        if (self::hasRessource($card, $top_middle_icon)) {
-                            self::transferCardFromTo($card, $player_id, 'hand');
+                    if ($num_cards_to_reveal > 0) {
+                        for ($i = 0; $i < $num_cards_to_reveal; $i++) {
+                            self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
                         }
+                        if ($num_cards_to_reveal < $age_of_melded_card) {
+                            self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
+                        }
+                        self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be put in hand and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
+                        $cards = self::getCardsInLocation($player_id, 'revealed');
+                        foreach ($cards as $card) {
+                            // Put matches in hand
+                            if (self::hasRessource($card, $top_middle_icon)) {
+                                self::transferCardFromTo($card, $player_id, 'hand');
+                            }
+                        }
+                        // Return the ones which don't have a matching icon
+                        $num_remaining_cards = self::countCardsInLocation($player_id, 'revealed');
+                        if ($num_remaining_cards > 0) {
+                            $options = array(
+                                'player_id' => $player_id,
+                                'n' => $num_remaining_cards,
+                                'owner_from' => $player_id,
+                                'location_from' => 'revealed',
+                                'owner_to' => 0,
+                                'location_to' => 'deck',
+                            );
+                            self::setSelectionRange($options);
+                            self::trace('playerTurn->preSelectionMove');
+                            $this->gamestate->nextState('preSelectionMove');
+                            return;
+                        }
+                    } else {
+                        self::notifyGeneralInfo(clienttranslate('The ${age} supply pile was empty, so no cards could be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
                     }
-                    // Return the ones which don't have a matching icon
-                    $num_remaining_cards = self::countCardsInLocation($player_id, 'revealed');
-                    if ($num_remaining_cards > 0) {
-                        $options = array(
-                            'player_id' => $player_id,
-                            'n' => $num_remaining_cards,
-                            'owner_from' => $player_id,
-                            'location_from' => 'revealed',
-                            'owner_to' => 0,
-                            'location_to' => 'deck',
-                        );
-                        self::setSelectionRange($options);
-                        self::trace('playerTurn->preSelectionMove');
-                        $this->gamestate->nextState('preSelectionMove');
-                        return;
-                    }
-                } else {
-                    self::notifyGeneralInfo(clienttranslate('The ${age} supply pile was empty, so no cards could be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
                 }
+            } catch (EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::meld');
+                self::trace('playerTurn->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
             }
         }
 
