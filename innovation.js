@@ -3879,6 +3879,7 @@ function (dojo, declare) {
             // Make tuckable cards clickable
             var cards_to_tuck = this.selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse);
             cards_to_tuck.addClass("clickable");
+            cards_to_tuck.addClass("mid_dogma");
             this.on(cards_to_tuck, 'onclick', 'action_confirmEndorse');
             cards_to_tuck.forEach(function(node) {
                 dojo.attr(node, 'card_to_endorse_id', card_id)
@@ -3890,6 +3891,10 @@ function (dojo, declare) {
             dojo.destroy("endorse_cancel_button");
             dojo.destroy("dogma_without_endorse_button");
             dojo.destroy("endorse_button");
+            var cards_in_hand = this.selectMyCardsInHand();
+            cards_in_hand.removeClass("mid_dogma");
+            this.off(cards_in_hand, 'onclick');
+            this.on(cards_in_hand, 'onclick', 'action_clickMeld');
         },
 
         action_dogmaWithoutEndorse : function(event) {
