@@ -131,12 +131,6 @@ $game_options = array(
             1 => array('name' => totranslate('Disable')),
             2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Echoes Expansion'))
         ),
-        'startcondition' => array(
-            1 => array(/* No special condition here */),
-            2 => array(
-                array('type' => 'minplayers', 'value' => 9, 'message' => totranslate('This expansion is not available yet!'))
-            )
-        ),
     ),
 
     /* TODO(FIGURES): Add game options.
