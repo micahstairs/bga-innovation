@@ -2986,6 +2986,7 @@ class Innovation extends Table
         $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
         $notif_args_for_player = array_merge($info, $delimiters_for_player);
         $notif_args_for_player['You'] = 'You';
+        $notif_args_for_player['your'] = 'your';
         // Visibility for involved player
         if (array_key_exists('<<', $delimiters_for_player) || $card['id'] >= 1000) {
             // The player can see the front of the card
