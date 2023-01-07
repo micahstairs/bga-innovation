@@ -7369,14 +7369,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if (self::getGameStateValue('cities_mode') > 1) {
             // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
-            if ($melded_card['position'] == 0) {
-                if (self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} took a meld action which added a new color to your board, so you get to draw a City.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} took a meld action which added a new color to his board, so he gets to draw a City.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                    self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} took a meld action which added a new color to your board, but you already had a City card in hand so you do not get to draw another one.'), array('You' => 'You'));
-                }
+            if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
             }
         }
 
