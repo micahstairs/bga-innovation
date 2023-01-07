@@ -2078,14 +2078,14 @@ function (dojo, declare) {
                 if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
                     HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>",
                         {
-                            'age': self.square('N', 'age', top_card.age, 'in_log'),
+                            'age': self.square('N', 'age', top_card.age, 'type_' + top_card.type),
                             'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>",
                             'score' : new_score
                         });
                 } else {
                     HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
                         {
-                            'age': self.square('N', 'age', top_card.age, 'in_log'),
+                            'age': self.square('N', 'age', top_card.age, 'type_' + top_card.type),
                             'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
                         });
                 }
