@@ -13021,10 +13021,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($top_purple_card === null) {
                     // Need at least one purple card for the choice to have an effect.
                     self::notifyPlayer($player_id, 'log', 
-                        clienttranslate('${You} do not have a top purple top card.'), 
+                        clienttranslate('${You} do not have a purple card on your board.'),
                         array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', 
-                        clienttranslate('${player_name} does not have a purple card.'), 
+                        clienttranslate('${player_name} does not have a purple card on his board.'),
                         array('player_name' => self::getColoredPlayerName($player_id)));                    
                     break;
                 } else {
