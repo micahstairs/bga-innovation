@@ -647,12 +647,12 @@ function (dojo, declare) {
                 for (var i = 0; i < gamedatas.unclaimed_flags.length; i++) {
                     var flag = gamedatas.unclaimed_flags[i];
                     this.createAndAddToZone(this.zone.flags["0"], i, flag.age, flag.type, flag.is_relic, flag.id, dojo.body(), flag);
-                    // TODO(CITIES): Add tooltip.
+                    this.addTooltipForCard(flag);
                 }
                 for (var i = 0; i < gamedatas.unclaimed_fountains.length; i++) {
                     var fountain = gamedatas.unclaimed_fountains[i];
                     this.createAndAddToZone(this.zone.fountains["0"], i, fountain.age, fountain.type, fountain.is_relic, fountain.id, dojo.body(), fountain);
-                    // TODO(CITIES): Add tooltip.
+                    this.addTooltipForCard(fountain);
                 }
             }
             // We don't actually want this zone to be visible
@@ -814,7 +814,7 @@ function (dojo, declare) {
                     var achievement = achievements[i];
                     if (parseInt(achievement.id) >= 1000) { // Flag or fountain
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), achievement);
-                        // TODO(CITIES): Add tooltip.
+                        this.addTooltipForCard(achievement);
                     } else if (achievement.age == null) { // Special achievement
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), null);
                         this.addTooltipForCard(achievement);
@@ -1803,14 +1803,12 @@ function (dojo, declare) {
             }
 
             var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
-             // Special achievement
-             if (card.age === null) {
-                if (card.id < 1000) { // Filters out fountains and flags
-                    this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
-                }
-                return;
+            // Special achievement
+            if (card.age === null) {
+                this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
+            } else {
+                this.addCustomTooltip(HTML_id, this.getTooltipForCard(card.id), "");
             }
-            this.addCustomTooltip(HTML_id, this.getTooltipForCard(card.id), "");
         },
 
         getTooltipForCard : function(card_id) {
@@ -2948,6 +2946,11 @@ function (dojo, declare) {
         },
         
         getSpecialAchievementText : function(card) {
+            if (card.id >= 1100) {
+                return _("This represents a visible fountain on your board which currently counts as an achievement.");
+            } else if (card.id >= 1000) {
+                return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
+            }
             var card_data = this.cards[card.id];
             var name = _(card_data.name).toUpperCase();
             var is_monument = card.id == 106;
