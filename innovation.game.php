@@ -2507,6 +2507,7 @@ class Innovation extends Table
                 'i18n' => ['log'],
                 'log' => $message_for_player,
                 'args' => [
+                    'i18n' => ['targetable_players'],
                     'You_must' => [
                         'i18n' => ['log'],
                         'log' => $you_must,
@@ -2523,6 +2524,7 @@ class Innovation extends Table
                 'i18n' => ['log'],
                 'log' => $message_for_others,
                 'args' => [
+                    'i18n' => ['targetable_players'],
                     'player_must' => [
                         'i18n' => ['log'],
                         'log' => $player_must,
@@ -9532,14 +9534,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case 2:
-                $color_log = '${color_1} or ${color_2}';
+                $color_log = clienttranslate('${color_1} or ${color_2}');
                 $color_args['color_1'] = self::getColorInClear($colors[0]);
                 $color_args['color_2'] = self::getColorInClear($colors[1]);
                 $color_args['i18n'] = ['color_1', 'color_2'];
                 break;
 
             case 3:
-                $color_log = '${color_1}, ${color_2} or ${color_3}';
+                $color_log = clienttranslate('${color_1}, ${color_2} or ${color_3}');
                 $color_args['color_1'] = self::getColorInClear($colors[0]);
                 $color_args['color_2'] = self::getColorInClear($colors[1]);
                 $color_args['color_3'] = self::getColorInClear($colors[2]);
@@ -9547,7 +9549,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case 4:
-                $color_log = 'non-${color}';
+                $color_log = clienttranslate('non-${color}');
                 for ($color = 0; $color < 5; $color++) {
                     if (!in_array($color, $colors)) {
                         $color_args['color'] = self::getColorInClear($color);
