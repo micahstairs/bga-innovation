@@ -8587,9 +8587,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "337N1B":
                 $message_for_player = clienttranslate('${You} must make a choice');
                 $message_for_others = clienttranslate('${player_name} must make a choice among the two possibilities offered by the card');
+                // TODO(LATER): Use getAgeToDrawIn to alter the messages when supply piles are empty.
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Draw and meld a {age}"), array('age' => self::getAgeSquare(2)))),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Draw and foreshadow a {age}"), array('age' => self::getAgeSquare(3))))
+                                array('value' => 1, 'text' => clienttranslate('Draw and meld a ${age}'), 'age' => self::getAgeSquare(2)),
+                                array('value' => 0, 'text' => clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::getAgeSquare(3)),
                 );
                 break;
 
@@ -8623,9 +8624,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346E1A":
                 $message_for_player = clienttranslate('${You} may make a choice');
                 $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
+                // TODO(LATER): Use getAgeToDrawIn to alter the messages when supply piles are empty.
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Draw a {age}"), array('age' => self::getAgeSquare(3)))),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Draw and foreshadow a {age}"), array('age' => self::getAgeSquare(4))))
+                                array('value' => 1, 'text' => clienttranslate('Draw a ${age}'), 'age' => self::getAgeSquare(3)),
+                                array('value' => 0, 'text' => clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::getAgeSquare(4)),
                 );
                 break;
             
@@ -8674,9 +8676,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "359E1A":
                 $message_for_player = clienttranslate('${You} must make a choice');
                 $message_for_others = clienttranslate('${player_name} must make a choice among the two possibilities offered by the card');
+                // TODO(LATER): Use getAgeToDrawIn to alter the messages when supply piles are empty.
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Draw a {age}"), array('age' => self::getAgeSquare(3)))),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Draw a {age}"), array('age' => self::getAgeSquare(4))))
+                                array('value' => 1, 'text' => clienttranslate('Draw a ${age}'), 'age' => self::getAgeSquare(3)),
+                                array('value' => 0, 'text' => clienttranslate('Draw a ${age}'), 'age' => self::getAgeSquare(4)),
                 );
                 break;
 
@@ -8684,8 +8687,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('${You} must choose what to do with your top green card');
                 $message_for_others = clienttranslate('${player_name} must choose what to do with his top green card');
                 $options = array(
-                                array('value' => 1, 'text' => self::format(clienttranslate("Return"), array())),
-                                array('value' => 0, 'text' => self::format(clienttranslate("Achieve"), array()))
+                                array('value' => 1, 'text' => clienttranslate("Return")),
+                                array('value' => 0, 'text' => clienttranslate("Achieve")),
                 );
                 break;
 
@@ -8702,7 +8705,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (count($splayable_colors) > 0) {
                         $options = array(
                                         array('value' => 1, 'text' => clienttranslate("Splay your purple cards in the direction one of your other piles is splayed")),
-                                        array('value' => 0, 'text' => self::format(clienttranslate("Splay one of your non-purple piles {splay_direction}"), array('splay_direction' => self::getSplayDirectionInClear($splay_direction)))),
+                                        array('value' => 0, 'text' => clienttranslate('Splay one of your non-purple piles ${splay_direction}'), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)),
                         );
                     } else {
                         $options = array(
