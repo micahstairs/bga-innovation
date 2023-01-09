@@ -13847,6 +13847,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 386, Echoes age 6: Stethoscope
             case "386E1":
+                // Only reset the auxiliary value if the echo effect is not being repeated for a second time
+                if (!self::getGameStateValue('endorse_action_state') == 3) {
+                    self::setIndexedAuxiliaryValue($player_id, -1);
+                }
                 $step_max = 1;
                 break;
 
@@ -23903,8 +23907,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     if ($n > 0 && self::getGameStateValue('color_last_selected') == 0) {
                         self::setIndexedAuxiliaryValue($player_id, 1); // it is blue
-                    } else {
-                        self::setIndexedAuxiliaryValue($player_id, -1);
                     }
                     break;
 
