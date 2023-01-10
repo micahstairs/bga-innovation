@@ -1825,7 +1825,7 @@ class Innovation extends Table
             $end_of_game = true;
         }
 
-        if (self::getGameStateValue('cities_mode') > 1) {
+        if (self::getGameStateValue('cities_mode') > 1 && ($location_from == 'board' || $location_to == 'board')) {
             try {
                 self::updateFlagsAndFountains();
             } catch(EndOfGame $e) {
@@ -3269,7 +3269,7 @@ class Innovation extends Table
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
                     array('owner' => $player_id, 'color' => $color)
                 ));
-                for ($i = $current_flag_achievements; $i < $desired_flag_achievements ; $i++) {
+                for ($i = $current_flag_achievements; $i < $desired_flag_achievements; $i++) {
                     $flag_id = self::getUniqueValueFromDB(self::format("
                         SELECT MIN(id) FROM card WHERE owner = 0 AND location = 'flags' AND color = {color} AND 1000 <= id AND id <= 1099",
                         array('color' => $color)
@@ -3280,7 +3280,7 @@ class Innovation extends Table
                         $end_of_game = true;
                     }
                 }
-                for ($i = $desired_flag_achievements; $i < $current_flag_achievements ; $i++) {
+                for ($i = $desired_flag_achievements; $i < $current_flag_achievements; $i++) {
                     $flag_id = self::getUniqueValueFromDB(self::format("
                         SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
                         array('owner' => $player_id, 'color' => $color)
@@ -3294,7 +3294,7 @@ class Innovation extends Table
                     SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
                     array('owner' => $player_id, 'color' => $color)
                 ));
-                for ($i = $current_fountain_achievements; $i < $desired_fountain_achievements ; $i++) {
+                for ($i = $current_fountain_achievements; $i < $desired_fountain_achievements; $i++) {
                     $fountain_id = self::getUniqueValueFromDB(self::format("
                         SELECT MIN(id) FROM card WHERE owner = 0 AND location = 'fountains' AND color = {color} AND id >= 1100",
                         array('color' => $color)
@@ -3305,7 +3305,7 @@ class Innovation extends Table
                         $end_of_game = true;
                     }
                 }
-                for ($i = $desired_fountain_achievements; $i < $current_fountain_achievements ; $i++) {
+                for ($i = $desired_fountain_achievements; $i < $current_fountain_achievements; $i++) {
                     $fountain_id = self::getUniqueValueFromDB(self::format("
                         SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
                         array('owner' => $player_id, 'color' => $color)
