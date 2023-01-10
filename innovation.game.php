@@ -20962,7 +20962,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'owner_to' => $launcher_id,
+                'owner_to' => $player_id,
                 'location_to' => 'score',
                 
                 'score_keyword' => true,
