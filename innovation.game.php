@@ -13095,11 +13095,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 367, Echoes age 4: Kobukson
             case "367E1":
+                self::setAuxiliaryValue(0);
                 $step_max = 1;
                 break;
 
             case "367D1":
-                self::setAuxiliaryValue(0);
                 $step_max = 1;
                 break;
 
@@ -23317,7 +23317,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     //"Draw and tuck a 4!"
                     self::executeDrawAndTuck($player_id, 4);
                     
-                    self::setAuxiliaryValue($n); // track the number of cards returned
+                    self::setAuxiliaryValue(self::getAuxiliaryValue() + $n); // track the number of cards returned
                     break;
 
                 // id 368, Echoes age 4: Shuriken
