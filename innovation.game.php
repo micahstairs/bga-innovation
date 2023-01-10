@@ -14484,19 +14484,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 418, Echoes age 9: Jet
             case "418E1":
-                if ($player_id == $launcher_id) {
-                    self::setAuxiliaryValue(-1);
+                if ($player_id == $launcher_id && self::getGameStateValue('endorse_action_state') <= 2) {
+                    if (self::getGameStateValue('release_version') >= 3) {
+                        self::setAuxiliaryArray(array());
+                    } else {
+                        self::setAuxiliaryValue(-1);
+                    }
                 }
                 $step_max = 1;
                 break;
 
             case "418D1":
                 // "I demand you return your top card of the color I melded due to Jet's echo effect!"
-                $color = self::getAuxiliaryValue();
-                if ($color >= 0) {
-                    $card = self::getTopCardOnBoard($player_id, $color);
-                    if ($card !== null) {
-                        self::transferCardFromTo($card, 0, 'deck');
+                // NOTE: If the action was endorsed, there could be two colors (or the same color twice).
+                if (self::getGameStateValue('release_version') >= 3) {
+                    if (count(self::getAuxiliaryArray()) >= 1) {
+                        if (self::getGameStateValue('endorse_action_state') <= 2) {
+                            self::setIndexedAuxiliaryValue($player_id, -1);
+                        }
+                        $step_max = 1;
+                    }
+                } else {
+                    $color = self::getAuxiliaryValue();
+                    if ($color >= 0) {
+                        $card = self::getTopCardOnBoard($player_id, $color);
+                        if ($card !== null) {
+                            self::transferCardFromTo($card, 0, 'deck');
+                        }
                     }
                 }
                 break;
@@ -21168,6 +21182,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
             );
             break;
+
+        case "418D1A":
+            // "I demand you return your top card of the color I melded due to Jet's echo effect!"
+            $colors = self::getAuxiliaryArray();
+            $last_returned_color = self::getIndexedAuxiliaryValue($player_id);
+            if ($last_returned_color >= 0) {
+                if (count($colors) == 2 && $colors[0] == $colors[1]) {
+                    $colors = array($colors[0]);
+                } else {
+                    $colors = array_diff($colors, array($last_returned_color));
+                }
+            }
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'color' => array_unique($colors),
+            );
+            break;
         
         // id 419, Echoes age 9: Credit Card
         case "419N1A":
@@ -24225,7 +24263,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 418, Echoes age 9: Jet
                 case "418E1A":
                     if ($n > 0 && $player_id == $launcher_id) {
-                        self::setAuxiliaryValue(self::getGameStateValue('color_last_selected')); // Remember which color was melded
+                        // Remember which color was melded
+                        if (self::getGameStateValue('release_version') >= 3) {
+                            $colors = self::getAuxiliaryArray();
+                            $colors[] = self::getGameStateValue('color_last_selected');
+                            self::setAuxiliaryArray($colors);
+                        } else {
+                            self::setAuxiliaryValue(self::getGameStateValue('color_last_selected'));
+                        }
+                    }
+                    break;
+
+                case "418D1A":
+                    if ($n > 0) {
+                        self::setIndexedAuxiliaryValue($player_id, self::getGameStateValue('color_last_selected'));
                     }
                     break;
                     
