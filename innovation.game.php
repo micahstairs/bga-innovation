@@ -119,7 +119,9 @@ class Innovation extends Table
         return "innovation";
     }
 
+    // TODO(CITIES): Test this by simulating table migrations.
     function upgradeTableDb($from_version) {
+        // TODO(CITIES): Before launching to production, update the release that we are comparing it to.
         if ($from_version <= 2212252101) {
             self::initGameStateLabels(array(
                 'endorse_action_state' => 19,
@@ -9634,6 +9636,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stInterPlayerTurn() {
         // An action of the player has been fully resolved.
 
+        // Reset the counter used to track the cards returned by each player via Democracy during the action.
+        if (self::getGameStateValue('release_version') >= 3) {
+            self::DbQuery("UPDATE player SET democracy_counter = 0");
+        }
+
         // Give him extra time for his actions to come
         self::giveExtraTime(self::getActivePlayerId());
         
@@ -10890,8 +10897,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 63, age 6: Democracy          
             case "63N1":
-                if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
-                    self::setAuxiliaryValue(0);
+                if (self::getGameStateValue('release_version') <= 2) {
+                    if (self::getAuxiliaryValue() == -1) { // If this variable has not been set before
+                        self::setAuxiliaryValue(0);
+                    }
                 }
                 $step_max = 1;
                 break;
@@ -22047,9 +22056,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 63, age 6: Democracy
                 case "63N1A":
-                    if ($n > self::getAuxiliaryValue()) { // "If you returned more than any other player due to Democracy so far during this dogma action"
-                        self::executeDraw($player_id, 8, 'score'); // "Draw and score a 8"
-                        self::setAuxiliaryValue($n); // Set the new maximum
+                    // "If you have returned more cards than any other player due to Democracy so far during this dogma action, draw and score an 8."
+                    if (self::getGameStateValue('release_version') >= 3) {
+                        $num_cards_returned_by_this_player = $n + self::getUniqueValueFromDB(self::format("SELECT democracy_counter FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
+                        $max_cards_returned_by_another_player = self::getUniqueValueFromDB(self::format("SELECT MAX(democracy_counter) FROM player WHERE player_id != {player_id}", array('player_id' => $player_id)));
+                        if ($num_cards_returned_by_this_player > $max_cards_returned_by_another_player) {
+                            self::executeDraw($player_id, 8, 'score');
+                            self::DbQuery(self::format("UPDATE player SET democracy_counter = {count} WHERE player_id = {player_id}", array('count' => $num_cards_returned_by_this_player, 'player_id' => $player_id)));
+                        }
+                    } else {
+                        if ($n > self::getAuxiliaryValue()) {
+                            self::executeDraw($player_id, 8, 'score');
+                            self::setAuxiliaryValue($n); // Set the new maximum
+                        }
                     }
                     break;
                     
