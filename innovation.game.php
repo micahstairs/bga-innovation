@@ -9112,9 +9112,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         } else if ($n_min == $n_max) {
             $number_log = '${n_min}';
         } else if ($n_min + 1 == $n_max) {
-            $number_log = '${n_min} or ${n_max}';
+            $number_log = clienttranslate('${n_min} or ${n_max}');
         } else {
-            $number_log = '${n_min} to ${n_max}';
+            $number_log = clienttranslate('${n_min} to ${n_max}');
         }
         return [
             'i18n' => ['log'],
