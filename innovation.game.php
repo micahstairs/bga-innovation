@@ -12007,7 +12007,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($cards) > 0) {
                     // If the player has other cards in hand, we need to reveal the card first in order to prove to other players
                     // whether the card matched the color of another card in hand.
-                    $new_card = self::transferCardFromTo(self::executeDraw($player_id, 7, 'revealed'), $player_id);
+                    $new_card = self::transferCardFromTo(self::executeDraw($player_id, 7, 'revealed'), $player_id, 'hand');
                 } else {
                     $new_card = self::executeDraw($player_id, 7);
                 }
