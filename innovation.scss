@@ -736,6 +736,9 @@
         height: 25px;
         top: 26px;
         line-height: 14px;
+        &.type_2 {
+            top: 154px;
+        }
     }
 }
 .color_0 {
@@ -748,6 +751,9 @@
         }
         &.L {
             right: 21px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -761,6 +767,9 @@
         }
         &.L {
             right: 21px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -774,6 +783,9 @@
         }
         &.L {
             right: 20px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -787,6 +799,9 @@
         }
         &.L {
             right: 22px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -800,6 +815,9 @@
         }
         &.L {
             right: 22px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -833,6 +851,11 @@
         top: 18px;
         width: 230px;
         height: 37px;
+        &.type_2 {
+            left: 190px;
+            top: 142px;
+            width: 80px;
+        }
     }
 }
 .i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
@@ -1647,13 +1670,13 @@
 .city_search_icon {
     @include m.city-special-icon-background;
     position: absolute;
-    background-position-y: -165px;
-    top: 0px;
-    left: 70px;
     &.M {
+        top: 0px;
+        left: 70px;
         width: 45px;
         height: 45px;
         background-size: 230px auto;
+        background-position-y: -165px;
         &.color_0 {
             background-position-x: 0px;
         }
@@ -1670,6 +1693,29 @@
             background-position-x: -184px;
         }
     }
+    &.L {
+        top: 11px;
+        left: 191px;
+        width: 90px;
+        height: 90px;
+        background-size: 460px auto;
+        background-position-y: -330px;
+        &.color_0 {
+            background-position-x: 0px;
+        }
+        &.color_1 {
+            background-position-x: -92px;
+        }
+        &.color_2 {
+            background-position-x: -184px;
+        }
+        &.color_3 {
+            background-position-x: -276px;
+        }
+        &.color_4 {
+            background-position-x: -368px;
+        }
+    }
 }
 
 .city_special_icon {
@@ -1677,6 +1723,20 @@
     position: absolute;
     &.icon_null {
         display: none;
+    }
+    &.icon_12 {
+        transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+    }
+    &.icon_13 {
+        transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
     }
     &.M {
         width: 40px;
@@ -1694,20 +1754,6 @@
         &.icon_11, &.icon_12, &.icon_13 {
             background-position-y: -42px;
         }
-        &.icon_12 {
-            transform: rotate(180deg);
-            -moz-transform: rotate(180deg);
-            -webkit-transform: rotate(180deg);
-            -o-transform: rotate(180deg);
-            -ms-transform: rotate(180deg);
-        }
-        &.icon_13 {
-            transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -webkit-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-        }
         &.color_0 {
             background-position-x: -1px;
         }
@@ -1723,29 +1769,53 @@
         &.color_4 {
             background-position-x: -165px;
         }
-        &.top_left_icon {
-            top: 5px;
-            left: 5px;
-        }
-        &.bottom_left_icon {
-            bottom: 5px;
-            left: 5px;
-        }
         &.bottom_center_icon {
             bottom: 5px;
             left: 70px;
         }
-        &.bottom_right_icon {
-            bottom: 5px;
-            right: 5px;
-        }
-        &.top_right_icon {
-            top: 5px;
-            right: 5px;
-        }
         &.top_center_icon {
             top: 5px;
             left: 70px;
+        }
+    }
+    &.L {
+        width: 80px;
+        height: 80px;
+        background-size: 460px auto;
+        &.icon_7 {
+            background-position-y: -1px;
+        }
+        &.icon_8 {
+            background-position-y: -165px;
+        }
+        &.icon_9 {
+            background-position-y: -249px;
+        }
+        &.icon_11, &.icon_12, &.icon_13 {
+            background-position-y: -83px;
+        }
+        &.color_0 {
+            background-position-x: -1px;
+        }
+        &.color_1 {
+            background-position-x: -83px;
+        }
+        &.color_2 {
+            background-position-x: -165px;
+        }
+        &.color_3 {
+            background-position-x: -247px;
+        }
+        &.color_4 {
+            background-position-x: -331px;
+        }
+        &.bottom_center_icon {
+            bottom: 22px;
+            left: 192px;
+        }
+        &.top_center_icon {
+            top: 22px;
+            left: 192px;
         }
     }
 }
@@ -2112,7 +2182,7 @@
 $M_offset:        49;
 $M_x_position:     3;
 $M_y_position:     3;
-$L_offset:        101;
+$L_offset:     100.5;
 $L_x_position:     8;
 $L_y_position:     8;
 
