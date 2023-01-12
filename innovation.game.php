@@ -9878,7 +9878,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::resetPlayerTable();
             
             // [R] Disable the flags used when in dogma 
-            // NOTE: The implementation of Dancing Girl relies on the fact that the auxiliary_value is initialized to -1.
             self::DbQuery("
                 UPDATE
                     nested_card_execution
@@ -11715,16 +11714,37 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
              // id 119, Artifacts age 1: Dancing Girl
              case "119C1":
                 $card = self::getCardInfo(119); // Dancing Girl
-                self::transferCardFromTo($card, $player_id, 'board');
-                self::setAuxiliaryValue(self::getAuxiliaryValue() + 1); // Keep track of Dancing Girl's movements
+                if ($card['owner'] != $player_id) {
+                    self::transferCardFromTo($card, $player_id, 'board');
+                }
+                if (self::getGameStateValue('release_version') >= 3)  {
+                    if (self::getAuxiliaryValue() == -1) {
+                        $visited_boards = array();
+                    } else {
+                        $visited_boards = self::getAuxiliaryValueAsArray();
+                    }
+                    $visited_boards[] = self::playerIdToPlayerNo($player_id);
+                    self::setAuxiliaryValueFromArray(array_unique($visited_boards));
+                } else {
+                    self::setAuxiliaryValue(self::getAuxiliaryValue() + 1); // Keep track of Dancing Girl's movements
+                }
                 break;
             
             // id 119, Artifacts age 1: Dancing Girl
             case "119N1":
-                $num_movements = self::getAuxiliaryValue() + 1; // + 1 since the variable is initialized to -1, not 0
+                // Count the number of other boards that were visited (excluding the launcher's board)
+                if (self::getGameStateValue('release_version') >= 3)  {
+                    if (self::getAuxiliaryValue() == -1) { // The Dancing Girl didn't move at all
+                        $num_other_boards_visited = 0;
+                    } else {
+                        $num_other_boards_visited = count(self::getAuxiliaryValueAsArray());
+                    }
+                } else {
+                    $num_other_boards_visited = self::getAuxiliaryValue() + 1; // + 1 since the variable is initialized to -1, not 0
+                }
                 $initial_location = self::getCurrentNestedCardState()['card_location'];
                 if ($player_id == $launcher_id) {
-                    if ($num_movements == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
+                    if ($num_other_boards_visited == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
