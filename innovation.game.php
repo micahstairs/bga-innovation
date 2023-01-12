@@ -14540,7 +14540,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 418, Echoes age 9: Jet
             case "418E1":
-                if ($player_id == $launcher_id && self::getGameStateValue('endorse_action_state') <= 2) {
+                if ($player_id == $launcher_id && !self::isExecutingAgainDueToEndorsedAction()) {
                     if (self::getGameStateValue('release_version') >= 3) {
                         self::setAuxiliaryArray(array());
                     } else {
@@ -14555,7 +14555,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // NOTE: If the action was endorsed, there could be two colors (or the same color twice).
                 if (self::getGameStateValue('release_version') >= 3) {
                     if (count(self::getAuxiliaryArray()) >= 1) {
-                        if (self::getGameStateValue('endorse_action_state') <= 2) {
+                        if (!self::isExecutingAgainDueToEndorsedAction()) {
                             self::setIndexedAuxiliaryValue($player_id, -1);
                         }
                         $step_max = 1;
@@ -24394,11 +24394,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "423E1A":
                     $card = self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
                     // Save the card's ID for later
-                    if (self::getGameStateValue('endorse_action_state') <= 2) {
-                        self::setIndexedAuxiliaryValue($player_id, $card['id']);
-                    } else {
+                    if (self::isExecutingAgainDueToEndorsedAction()) {
                         // NOTE: This encoding assumes that highest card ID won't be more than 999. The +1 in the encoding is necessary since the lowest card ID is 0 (not 1).
                         self::setIndexedAuxiliaryValue($player_id, (self::getIndexedAuxiliaryValue($player_id) + 1) * 1000 + $card['id']);
+                    } else {
+                        self::setIndexedAuxiliaryValue($player_id, $card['id']);
                     }
                     break;
 
