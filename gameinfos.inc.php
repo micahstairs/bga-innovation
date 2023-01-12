@@ -48,7 +48,7 @@ $gameinfos = [
     'tie_breaker_description' => totranslate("Number of achievements if the game ended by score. Else this value is set to zero and is irrelevant: there is no tie breaker."),
 
     // The game end result will display "Winner" for the 1st player(s) and "Loser" for all other players
-    'losers_not_ranked' => false,
+    'losers_not_ranked' => true,
 
     // Game is "beta". A game MUST set is_beta=1 when published on BGA for the first time, and must remains like this until all bugs are fixed.
     'is_beta' => 1,                     
