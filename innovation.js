@@ -774,7 +774,7 @@ function (dojo, declare) {
 
             // My forecast: create an extra zone to show the versos of the cards at will in a windows
             if (!this.isSpectator && this.echoes_expansion_enabled) {
-                this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>Close</a>");
+                this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
                 this.zone.my_forecast_verso = this.createZone('my_forecast_verso', this.player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
                 this.setPlacementRules(this.zone.my_forecast_verso, left_to_right=true);
                 for (var i = 0; i < gamedatas.my_forecast.length; i++) {
@@ -1587,7 +1587,7 @@ function (dojo, declare) {
                 content += `</div></br>`;
             }
             content += `</div>`;
-            this.card_browsing_window.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>Close</a>");
+            this.card_browsing_window.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
             dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
 
             // Make everything clickable
