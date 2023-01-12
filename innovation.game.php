@@ -3723,7 +3723,7 @@ class Innovation extends Table
     }
     
     function notifyEffectOnPlayer($qualified_effect, $player_id, $launcher_id) {
-        if (self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 3) {
+        if (self::isExecutingAgainDueToEndorsedAction()) {
             self::notifyPlayer($player_id, 'log', clienttranslate('<span class="minor_information">${You} have to execute the ${qualified_effect} again because it was endorsed.</span>'), array(
                 'i18n' => array('qualified_effect'),
                 'You' => 'You',
@@ -6773,6 +6773,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $result = -1;
        }
        return $result;
+    }
+
+    /** Returns true if the ongoing effect is currently executing a second time due to an Endorse action */
+    // TODO(CITIES): Make sure this is being used in most places (otherwise we have a bug where cards executed
+    // during nested execution think that they are being executed a 2nd time when they aren't actually).
+    function isExecutingAgainDueToEndorsedAction() {
+        return self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 3;
     }
     
     /** Nested dogma excution management system: FIFO stack **/
@@ -9942,7 +9949,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // There is another effect to perform
         self::updateCurrentNestedCardState('current_effect_number', $next_effect_number);
         self::updateCurrentNestedCardState('current_effect_type', $next_effect_type);
-        if ($nesting_index == 0 && self::getGameStateValue('endorse_action_state') == 3) {
+        if (self::isExecutingAgainDueToEndorsedAction()) {
             self::setGameStateValue('endorse_action_state', 2);
         }
         
@@ -13848,7 +13855,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 386, Echoes age 6: Stethoscope
             case "386E1":
                 // Only reset the auxiliary value if the echo effect is not being repeated for a second time
-                if (!self::getGameStateValue('endorse_action_state') == 3) {
+                if (!self::isExecutingAgainDueToEndorsedAction()) {
                     self::setIndexedAuxiliaryValue($player_id, -1);
                 }
                 $step_max = 1;
@@ -14808,7 +14815,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         } else {
             $next_player = self::getNextPlayerUnderEffect($current_effect_type, $player_id, $launcher_id);
             // If the dogma is being endorsed and it's a demand (or compel) effect, go around a second time
-            if ($next_player == null && self::getGameStateValue('endorse_action_state') == 2 && ($current_effect_type == 0 || $current_effect_type == 2)) {
+            if ($next_player == null && $nesting_index == 0 && self::getGameStateValue('endorse_action_state') == 2 && ($current_effect_type == 0 || $current_effect_type == 2)) {
                 self::setGameStateValue('endorse_action_state', 3);
                 $next_player = self::getFirstPlayerUnderEffect($current_effect_type, $launcher_id);
             }
@@ -19606,6 +19613,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'card_id_1' => self::getIndexedAuxiliaryValue($player_id),
             );
+            // Special case if Charitable Trust was endorsed
+            if ($options['card_id_1'] >= 1000) {
+                $encoded_card_ids = $options['card_id_1'];
+                $options['card_id_1'] = $encoded_card_ids % 1000;
+                $options['card_id_2'] = (($encoded_card_ids - $options['card_id_1']) / 1000) - 1;
+            }
             break;
 
         case "359N1B":
@@ -23629,11 +23642,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     } else {
                         $card = self::executeDraw($player_id, 4);
                     }
-                    self::setIndexedAuxiliaryValue($player_id, $card['id']);
+                    if (self::isExecutingAgainDueToEndorsedAction()) {
+                        // NOTE: This encoding assumes that highest card ID won't be more than 999. The +1 in the encoding is necessary since the lowest card ID is 0 (not 1).
+                        self::setIndexedAuxiliaryValue($player_id, (self::getIndexedAuxiliaryValue($player_id) + 1) * 1000 + $card['id']);
+                    } else {
+                        self::setIndexedAuxiliaryValue($player_id, $card['id']);
+                    }
                     break;
 
                 case "359N1A":
-                    // "If you do, "
+                    // "If you do"
                     if ($n > 0) {
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
                         if ($top_green_card != null) {
