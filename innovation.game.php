@@ -122,8 +122,8 @@ class Innovation extends Table
     // TODO(CITIES): Test this by simulating table migrations.
     function upgradeTableDb($from_version) {
         // TODO(CITIES): Before launching to production, update the release that we are comparing it to.
-        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `card` LIKE 'democracy_counter'"))) {
-            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_card ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
         if ($from_version <= 2212252101) {
             self::initGameStateLabels(array(
