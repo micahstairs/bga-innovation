@@ -4342,6 +4342,13 @@ function (dojo, declare) {
                         node.innerHTML += this.createCardForCardBrowser(i);
                     }
                 }
+                // NOTE: For some reason the tooltips get removed when we add more HTML to the node, so we need to use a
+                // separate loop to add them.
+                for (var i = 215; i <= 219; i++) {
+                    if (this.canShowCardTooltip(i)) {
+                        this.addCustomTooltip(`browse_card_id_${i}`, this.getTooltipForCard(i), "");
+                    }
+                }
                 return;
             }
 
@@ -4379,7 +4386,7 @@ function (dojo, declare) {
                 node.innerHTML += this.createCardForCardBrowser(i);
             }
 
-            // NOTE: For some reason the tooltips get removed when we add more HTLM to the node, so we need to use a
+            // NOTE: For some reason the tooltips get removed when we add more HTML to the node, so we need to use a
             // separate loop to add them.
             for (var i = min_id; i <= max_id; i++) {
                 this.addCustomTooltip(`browse_card_id_${i}`, this.getTooltipForCard(i), "");
