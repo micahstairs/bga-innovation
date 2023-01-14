@@ -8705,7 +8705,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (count($splayable_colors) > 0) {
                         $options = array(
                                         array('value' => 1, 'text' => clienttranslate("Splay your purple cards in the direction one of your other piles is splayed")),
-                                        array('value' => 0, 'text' => clienttranslate('Splay one of your non-purple piles ${splay_direction}'), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)),
+                                        array('value' => 0, 'text' => clienttranslate('Splay one of your non-purple piles ${splay_direction}'), 'splay_direction' => self::getSplayDirectionInClear($splay_direction), 'i18n' => ['splay_direction']),
                         );
                     } else {
                         $options = array(
