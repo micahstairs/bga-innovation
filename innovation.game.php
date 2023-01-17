@@ -13157,7 +13157,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 if (count($color_array) > 0) {
-                    $step_max = 2;
+                    $step_max = 1;
                     self::setAuxiliaryValueFromArray($color_array);
                 }
                 break;
@@ -23332,6 +23332,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 // id 370, Echoes age 4: Globe
+                case "370N1A":
+                    // If you do not pass, proceed to color selection
+                    if (self::getGameStateValue('choice') >= 0) {
+                        self::incrementStepMax(1);
+                    }
+                    break;
+
                 case "370N1B":
                     // "If you do,"
                     if ($n > 0) {
