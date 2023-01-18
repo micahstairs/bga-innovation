@@ -25905,6 +25905,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case 0: // achievements
             self::notifyEndOfGameByAchievements();
             self::setStat(true, 'end_achievements');
+            self::notifyAll('endOfGame', '', array('end_of_game_type' => 'achievements'));
             break;
         case 1: // score
             // Important value for winning is no more the number of achievements but the score
@@ -25913,12 +25914,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::promoteScoreToBGAScore();
             self::notifyEndOfGameByScore();
             self::setStat(true, 'end_score');
+            self::notifyAll('endOfGame', '', array('end_of_game_type' => 'score'));
             break;
         case -1: // dogma
             // In that case, the score is modified so that the winner team got 1, the losers 0, there is no tie breaker
             self::binarizeBGAScore();
             self::notifyEndOfGameByDogma();
             self::setStat(true, 'end_dogma');
+            self::notifyAll('endOfGame', '', array('end_of_game_type' => 'dogma'));
             break;
         default:
             break;
