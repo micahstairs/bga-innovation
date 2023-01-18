@@ -1219,7 +1219,7 @@ function (dojo, declare) {
                     if (args.args.splay_direction !== null) {
                         var end_of_message = []
                         for (var i=0; i < args.args.splayable_colors_in_clear.length; i++) {
-                            end_of_message.push(dojo.string.substitute(_("splay his ${cards} ${direction}"), {'cards': args.args.splayable_colors_in_clear[i], 'direction': args.args.splay_direction_in_clear}))
+                            end_of_message.push(dojo.string.substitute(_("splay his ${cards} ${direction}"), {'cards': _(args.args.splayable_colors_in_clear[i]), 'direction': _(args.args.splay_direction_in_clear)}))
                         }
                         $('pagemaintitletext').innerHTML += " " + end_of_message.join(", ");  
                     }
@@ -1774,6 +1774,7 @@ function (dojo, declare) {
             var id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
             var HTML_id = this.getCardHTMLId(id, card.age, card.type, card.is_relic, zone.HTML_class);
             
+            // TODO(LATER): Update this tooltip when a player already has at least one of this age achieved.
             condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), {'age': this.square('N', 'age', card.age), 'n': 5 * card.age});
             this.addCustomTooltip(HTML_id, "<div class='under L_recto'>" + condition_for_claiming + "</div>", '');
         },
@@ -2308,7 +2309,7 @@ function (dojo, declare) {
             }
             var new_score = this.computeTotalScore(this.zone.score[this.player_id].items, bonus_icons);
 
-            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': color_in_clear, 'direction': splay_direction_in_clear}) + "<p>";
+            HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), {'color': _(color_in_clear), 'direction': _(splay_direction_in_clear)}) + "<p>";
             if (this.cities_expansion_enabled || this.echoes_expansion_enabled) {
                 HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), {'score' : new_score}) + "</p>";
             } else {
@@ -4668,7 +4669,7 @@ function (dojo, declare) {
             // Update the tooltip text if needed
             this.removeTooltip('splay_' + player_id + '_' + color);
             if (splay_direction > 0) {
-                this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This stack is splayed ${direction}.'), {'direction': '<b>' + splay_direction_in_clear + '</b>'}), '')
+                this.addCustomTooltip('splay_indicator_' + player_id + '_' + color, dojo.string.substitute(_('This stack is splayed ${direction}.'), {'direction': '<b>' + _(splay_direction_in_clear) + '</b>'}), '')
             }
 
             // Update the score for that player
