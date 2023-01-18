@@ -7563,8 +7563,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         self::setGameStateValue('endorse_action_state', 2);
-        self::tuckCard($card_to_tuck, $player_id);
-        self::setUpDogma($player_id, $card_to_endorse);
+
+        try {
+            // The tuck to pay for the Endorse action happens inside of setUpDogma
+            self::setUpDogma($player_id, $card_to_endorse, /*extra_icons_from_artifact_on_display=*/ 0, $card_to_tuck);
+        } catch (EndOfGame $e) {
+            // End of the game: the exception has reached the highest level of code
+            self::trace('EOG bubbled from self::endorse');
+            self::trace('playerTurn->justBeforeGameEnd');
+            $this->gamestate->nextState('justBeforeGameEnd');
+            return;
+        }
 
         // Resolve the first dogma effect of the card
         self::trace('playerTurn->dogmaEffect (dogma)');
@@ -7612,9 +7621,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
     
-    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0) {
+    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $card_to_tuck = null) {
 
         self::notifyDogma($card);
+
+        if ($card_to_tuck != null) {
+            try {
+                self::tuckCard($card_to_tuck, $player_id);
+            } catch (EndOfGame $e) {
+                self::trace('EOG bubbled from self::setUpDogma');
+                throw $e; // Re-throw exception to higher level
+            }
+        }
         
         $dogma_icon = $card['dogma_icon'];
         $ressource_column = 'player_icon_count_' . $dogma_icon;
