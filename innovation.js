@@ -450,7 +450,8 @@ function (dojo, declare) {
             }
             
             // PLAYER PANELS
-            for(var player_id in this.players) {
+            for (var player_id in this.players) {
+                dojo.place(`<span class='achievements_to_win'>/${this.number_of_achievements_needed_to_win}<span>`, $('player_score_' + player_id), "after");
                 dojo.place(this.format_block('jstpl_player_panel', {'player_id':player_id}), $('player_board_' + player_id));
                 for (var icon=1; icon<=6; icon++) {
                     var infos = {'player_id':player_id, 'icon': icon};
@@ -835,7 +836,6 @@ function (dojo, declare) {
                 }
                 dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
                 dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
-                dojo.query('#progress_' + this.player_id + ' .achievement_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(${n} needed to win)').replace('${n}', gamedatas.number_of_achievements_needed_to_win) + '</span>';
             }
             
             // PLAYER BOARD
@@ -4619,6 +4619,7 @@ function (dojo, declare) {
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
             dojo.subscribe('resetMonumentCounters', this, "notif_resetMonumentCounters");  // This kind of notification does not need any delay
+            dojo.subscribe('endOfGame', this, "notif_endOfGame");  // This kind of notification does not need any delay
             
             dojo.subscribe('log', this, "notif_log"); // This kind of notification does not change anything but log on the interface, no delay
             
@@ -4639,6 +4640,7 @@ function (dojo, declare) {
 
                 dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('resetMonumentCounters_spectator', this, "notif_resetMonumentCounters_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('endOfGame_spectator', this, "notif_endOfGame_spectator");  // This kind of notification does not need any delay
                 
                 dojo.subscribe('log_spectator', this, "notif_log_spectator"); // This kind of notification does not change anything but log on the interface, no delay
             };
@@ -5044,7 +5046,15 @@ function (dojo, declare) {
             this.number_of_tucked_cards = 0;
             this.refreshSpecialAchievementProgression();
         },
-        
+
+        notif_endOfGame: function(notif) {
+            if (notif.args.end_of_game_type != 'achievements') {
+                dojo.query(`.achievements_to_win`).forEach(function(node) {
+                    node.style.display = 'none';
+                });
+            }
+        },
+
         notif_log: function(notif) {
             // No change on the interface
             return;
@@ -5126,6 +5136,14 @@ function (dojo, declare) {
             
             // Call normal notif
             this.notif_resetMonumentCounters(notif);
+        },
+
+        notif_endOfGame_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+
+            // Call normal notif
+            this.notif_endOfGame(notif);
         },
         
         notif_log_spectator: function(notif) {
