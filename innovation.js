@@ -3334,43 +3334,86 @@ function (dojo, declare) {
                 // New width = width of a single card + (n - 1) * offset
                 this.updateZoneWidth(zone);
             }
+
+            // Determine which cards must remain visible (skip calculations if all cards are going to be visible anyway)
+            var card_must_remain_visible = [];
+            if (!full_visible) {
+                for (var i = 0; i < zone.items.length; i++) {
+                    var must_stay_visible = false;
+                    var card_id = this.getCardIdFromHTMLId(zone.items[i].id);
+                    var card = this.cards[card_id];
+                    if (i == zone.items.length - 1) { // top card
+                        must_stay_visible = true;
+                    } else if (splay_direction == 1 && card.spot_4 == 10) { // echo effect visible due to left splay
+                        must_stay_visible = true;
+                    } else if (splay_direction == 2 && (card.spot_1 == 10 || card.spot_2 == 10)) { // echo effect visible due to right splay
+                        must_stay_visible = true;
+                    } else if (splay_direction == 3 && (card.spot_2 == 10 || card.spot_3 == 10 || card.spot_4 == 10)) { // echo effect visible due to up splay
+                        must_stay_visible = true;
+                    }
+                    card_must_remain_visible[i] = must_stay_visible;
+                }
+            }
+
             var self = this;
             zone.itemIdToCoordsGrid = function(i, control_width) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
                 var overlap = self.overlap_for_splay[this.HTML_class][self.display_mode ? "expanded" : "compact"];
+                var num_cards_expanded = 0;
                 if (full_visible) {
                     var x_beginning = 0;
                     var delta_x = 0;
+                    var delta_x_if_expanded = 0;
                     var delta_y = h + 5;
-                }
-                else {
+                    var delta_y_if_expanded = h + 5;
+                    num_cards_expanded = i;
+                } else {
+                    for (var j = 0; j < i; j++) {
+                        if (card_must_remain_visible[j]) {
+                            num_cards_expanded++;
+                        }
+                    }
+                    var overlap_if_expanded = self.overlap_for_splay[this.HTML_class]["expanded"];
                     switch(parseInt(splay_direction)) {
                     case 0: // Unsplayed
                         var x_beginning = 0;
                         var delta_x = 0;
+                        var delta_x_if_expanded = 0;
                         var delta_y = self.overlap_for_unsplayed;
+                        var delta_y_if_expanded = self.overlap_for_unsplayed;
                         break;
                     case 1: // Splayed left
                         var x_beginning = control_width - w;
                         var delta_x = -overlap;
+                        var delta_x_if_expanded = -overlap_if_expanded;
                         var delta_y = 0;
+                        var delta_y_if_expanded = 0;
                         break;
                     case 2: // Splayed right
                         var x_beginning = 0;
                         var delta_x = overlap;
+                        var delta_x_if_expanded = overlap_if_expanded;
                         var delta_y = 0;
+                        var delta_y_if_expanded = 0;
                         break;
                     case 3: // Splayed up
                         var x_beginning = 0;
                         var delta_x = 0;
+                        var delta_x_if_expanded = 0;
                         var delta_y = overlap;
+                        var delta_y_if_expanded = overlap_if_expanded;
                         break;
                     default:
                         break;
                     }
                 }
-                return {'x':x_beginning + delta_x * i, 'y':delta_y * (full_visible || splay_direction == 3 ? this.items.length - 1 - i : i), 'w':w, 'h':h}
+                var num_cards_not_expanded = i - num_cards_expanded;
+                var x = x_beginning + (delta_x * num_cards_not_expanded) + (delta_x_if_expanded * num_cards_expanded);
+                var top_to_bottom = full_visible || splay_direction == 3;
+                var y = delta_y * (top_to_bottom ? this.items.length - 1 - num_cards_not_expanded : num_cards_not_expanded)
+                        + delta_y_if_expanded * (top_to_bottom ? this.items.length - 1 - num_cards_expanded : num_cards_expanded);
+                return {'x': x, 'y': y, 'w': w, 'h': h};
             }
 
             zone.updateDisplay();
