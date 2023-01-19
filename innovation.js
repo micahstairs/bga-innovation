@@ -63,8 +63,6 @@ function (dojo, declare) {
             this.HTML_class.relics = "S recto"
             this.HTML_class.achievements = "S recto"
             this.HTML_class.special_achievements = "S card"
-            this.HTML_class.fountains = "S recto"
-            this.HTML_class.flags = "S recto"
             
             this.num_cards_in_row = {};
             
@@ -78,10 +76,7 @@ function (dojo, declare) {
             this.num_cards_in_row.my_score_verso = null;
             // For board, this.num_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
             this.num_cards_in_row.revealed = 1;
-            this.num_cards_in_row.achievements = null;
-            this.num_cards_in_row.fountains = 13;
-            this.num_cards_in_row.flags = 13;
-            // For special achievements, this.num_cards_in_row is not defined because it has a custom pattern
+            this.num_cards_in_row.achievements = null; // This is not defined because it has a custom pattern
             
             this.delta = {};
             
@@ -96,9 +91,6 @@ function (dojo, declare) {
             // For board, this.delta is not defined because it's managed by the splay system: the width is defined dynamically
             this.delta.revealed = {"x": 189, "y": 133}; // +7;
             this.delta.achievements = {"x": 35, "y": 49}; // + 2
-            this.delta.fountains = {"x": 3, "y": 3}; // overlap
-            this.delta.flags = {"x": 3, "y": 3}; // overlap
-            // For special achievements, this.delta is not defined because it has a custom pattern
             
             this.incremental_id = 0;
             
@@ -332,9 +324,9 @@ function (dojo, declare) {
                     var card = gamedatas.cards[key];
                     // NOTE: The colors do not need to be translated because they only appear in the Studio anyway.
                     var color = card.color == 0 ? "blue" : card.color == 1 ? "red" : card.color == 2 ? "green" : card.color == 3 ? "yellow" : "purple";
-                    if (card.id >= 1100) {
+                    if (this.isFountain(card.id)) {
                         $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Fountain (${color})</option>`;
-                    } else if (card.id >= 1000) {
+                    } else if (this.isFlag(card.id)) {
                         $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Flag (${color})</option>`;
                     } else {
                         $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
@@ -401,7 +393,6 @@ function (dojo, declare) {
                 dojo.style('available_relics_container', 'display', 'inline-block');
                 dojo.style('available_achievements_container', 'display', 'inline-block');
                 dojo.style('available_special_achievements_container', 'display', 'inline-block');
-                dojo.style('available_flags_and_fountains_container', 'display', 'inline-block');
             }
             
             // Defining the number of cards hand zone can host
@@ -636,28 +627,6 @@ function (dojo, declare) {
             var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
             dojo.place(button, 'special_achievements', 'after');
             this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievement_browsing_window');
-
-            // AVAILABLE FLAGS AND FOUNTAINS
-            this.zone.flags = {};
-            this.zone.flags["0"] = this.createZone('flags', 0);
-            this.setPlacementRules(this.zone.flags["0"], left_to_right=true)
-            this.zone.fountains = {};
-            this.zone.fountains["0"] = this.createZone('fountains', 0);
-            this.setPlacementRules(this.zone.fountains["0"], left_to_right=true)
-            if (gamedatas.cities_expansion_enabled) {
-                for (var i = 0; i < gamedatas.unclaimed_flags.length; i++) {
-                    var flag = gamedatas.unclaimed_flags[i];
-                    this.createAndAddToZone(this.zone.flags["0"], i, flag.age, flag.type, flag.is_relic, flag.id, dojo.body(), flag);
-                    this.addTooltipForCard(flag);
-                }
-                for (var i = 0; i < gamedatas.unclaimed_fountains.length; i++) {
-                    var fountain = gamedatas.unclaimed_fountains[i];
-                    this.createAndAddToZone(this.zone.fountains["0"], i, fountain.age, fountain.type, fountain.is_relic, fountain.id, dojo.body(), fountain);
-                    this.addTooltipForCard(fountain);
-                }
-            }
-            // We don't actually want this zone to be visible
-            dojo.byId('available_flags_and_fountains_container').style.display = 'none';
             
             // PLAYERS' HANDS
             this.zone.hand = {};
@@ -813,7 +782,7 @@ function (dojo, declare) {
                 var achievements = gamedatas.claimed_achievements[player_id];
                 for(var i = 0; i < achievements.length; i++){
                     var achievement = achievements[i];
-                    if (parseInt(achievement.id) >= 1000) { // Flag or fountain
+                    if (this.isFlag(parseInt(achievement.id)) || this.isFountain(parseInt(achievement.id))) {
                         this.createAndAddToZone(this.zone.achievements[player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), achievement);
                         this.addTooltipForCard(achievement);
                     } else if (achievement.age == null) { // Special achievement
@@ -1802,7 +1771,8 @@ function (dojo, declare) {
                 return;
             }
 
-            var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone.HTML_class);
+            var HTML_class = this.isFountain(card.id) || this.isFlag(card.id) ? 'S recto' : zone.HTML_class;
+            var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, HTML_class);
             // Special achievement
             if (card.age === null) {
                 this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
@@ -1923,7 +1893,7 @@ function (dojo, declare) {
             this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
         },
         
-        createAdjustedContent : function(content, HTML_class, size, font_max, width_margin = 0, height_margin = 0) {
+        createAdjustedContent : function(content, HTML_class, size, font_max, width_margin = 0, height_margin = 0, div_id = null) {
             // Problem: impossible to get suitable text size because it is not possible to get the width and height of an element still unattached
             // Solution: first create the title hardly attached to the DOM, then destroy it and set the title in tooltip properly
             // Create temporary title hardly attached on the DOM
@@ -1959,7 +1929,10 @@ function (dojo, declare) {
             dojo.destroy(elementParent);
 
             // Create actual HTML which will be added in tooltip
-            return "<div class='" + HTML_class + " " + size + "'><span class='font_size_" + font_size + "'>" + content + "</span></div>";            
+            if (div_id == null) {
+                return `<div class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
+            }
+            return `<div id='${div_id}' class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
         },
         
         createDogmaEffectText : function(text, dogma_symbol, size, color, shade, other_classes) {
@@ -2734,9 +2707,6 @@ function (dojo, declare) {
                     }
                 case "board":
                     return root[owner][color];
-                case "fountains":
-                case "flags":
-                    return root[owner];
             }
         },
         
@@ -2856,12 +2826,12 @@ function (dojo, declare) {
                     var HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
                 }
             } else {
-                if (card.id >= 1100) { // Fountains
+                if (this.isFountain(card.id)) {
                     var HTML_inside = `<span class="square in_tooltip icon_9 fountain_flag_card color_${card.color}"></span>`;
-                } else if (card.id >= 1000) { // Flags
+                } else if (this.isFlag(card.id)) {
                     var HTML_inside = `<span class="square in_tooltip icon_8 fountain_flag_card color_${card.color}"></span>`;
                 } else {
-                    var HTML_inside = this.writeOverCard(card, size);
+                    var HTML_inside = this.writeOverCard(card, size, HTML_id);
                 }
             }
 
@@ -2891,13 +2861,14 @@ function (dojo, declare) {
         createCardForCardBrowser : function(id) {
             var card = this.cards[id];
             var HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, 'M card');
-            var HTML_inside = this.writeOverCard(card, 'M');
+            var HTML_id = `browse_card_id_${id}`;
+            var HTML_inside = this.writeOverCard(card, 'M', HTML_id);
             var simplified_card_back = this.prefs[110].value == 2;
             var graphics_class = simplified_card_back ? "simplified_card_back" : "default_card_back";
-            return `<div id = 'browse_card_id_${id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
+            return `<div id='${HTML_id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
         },
         
-        writeOverCard : function(card, size) {
+        writeOverCard : function(card, size, HTML_id) {
             var card_data = this.cards[card.id];
             var icon1 = this.getIconDiv(card, card_data['spot_1'], 'top_left_icon', size);
             var icon2 = this.getIconDiv(card, card_data['spot_2'], 'bottom_left_icon', size);
@@ -2909,7 +2880,7 @@ function (dojo, declare) {
             var card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
             var title = _(card_data.name).toUpperCase();
-            var card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30);
+            var card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30, /*width_margin=*/ 0, /*height_margin=*/ 0, HTML_id + '_card_title');
             
             var i_demand_effect_1 = card_data.i_demand_effect_1 ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', (card.i_demand_effect_1_is_compel ? 'is_compel_effect ' : '' ) + 'i_demand_effect_1 color_' + card.color)  : "";
 
@@ -2946,9 +2917,9 @@ function (dojo, declare) {
         },
         
         getSpecialAchievementText : function(card) {
-            if (card.id >= 1100) {
+            if (this.isFountain(card.id)) {
                 return _("This represents a visible fountain on your board which currently counts as an achievement.");
-            } else if (card.id >= 1000) {
+            } else if (this.isFlag(card.id)) {
                 return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
             }
             var card_data = this.cards[card.id];
@@ -3061,7 +3032,7 @@ function (dojo, declare) {
                 }
             } else {
                 // verso
-                if (zone.owner != 0 && zone['location'] == 'achievements' && id < 1000) {
+                if (zone.owner != 0 && zone['location'] == 'achievements' && !this.isFlag(id) && !this.isFountain(id)) {
                     visible_card = false;
                 } else {
                     visible_card = true;
@@ -3079,7 +3050,7 @@ function (dojo, declare) {
             if (card.location_from == "board" && card.location_to == "board" && card.owner_from == card.owner_to) {
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
                 this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
-            } else if (id_from == id_to && ((card.age !== null && zone_from.HTML_class == zone_to.HTML_class) || (1000 <= card.id && card.id <= 1199)))  {
+            } else if (id_from == id_to && card.age !== null && zone_from.HTML_class == zone_to.HTML_class)  {
                 this.addToZone(zone_to, id_to, card.position_to, card.age, card.type, card.is_relic);
                 this.removeFromZone(zone_from, id_from, false, card.age, card.type, card.is_relic);
             } else {
@@ -4674,9 +4645,10 @@ function (dojo, declare) {
             var zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
             var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
             
-            var visible_from = this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+            var is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
+            var visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
             // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
-            var visible_to = zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+            var visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
 
             var id_from;
             var id_to;
@@ -4765,13 +4737,24 @@ function (dojo, declare) {
             }
 
             // Handle case where card is being removed from the game.
-            if (!zone_to) {
+            if (card.location_to == 'removed') {
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
                 this.refreshSpecialAchievementProgression();
                 return;
             }
 
-            this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
+            var is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
+            if (is_fountain_or_flag && card.owner_from == 0) {
+                // Make the card appear that it is coming from the card with the fountain/flag icon
+                var pile = this.zone.board[card.owner_to][card.color].items;
+                var top_card = pile[pile.length - 1];
+                var center_of_top_card = dojo.query(`#${top_card.id} > .card_title`)[0];
+                this.createAndAddToZone(zone_to, i, null, card.type, card.is_relic, card.id, center_of_top_card.id, card);
+            } else if (is_fountain_or_flag && card.owner_to == 0) {
+                this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+            } else {
+                this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
+            }
 
             // Special code for my forecast management
             if (card.location_to == "forecast" && card.owner_to == this.player_id) {
@@ -5210,9 +5193,22 @@ function (dojo, declare) {
             return cards.join(arrow);
         },
 
+        isFlag : function(card_id) {
+            return 1000 <= card_id && card_id <= 1099;
+        },
+
+        isFountain : function(card_id) {
+            return 1100 <= card_id && card_id <= 1199;
+        },
+
         canShowCardTooltip : function(card_id) {
-            return card_id !== undefined &&
-                this.cards[card_id].age !== null &&
+            if (card_id == undefined) {
+                return false;
+            }
+            if (this.isFlag(card_id) || this.isFountain(card_id)) {
+                return true;
+            }
+            return this.cards[card_id].age !== null &&
                 (card_id != 215 || this.cities_expansion_enabled) &&
                 (card_id != 218 || this.figures_expansion_enabled) &&
                 (card_id != 219 || this.echoes_expansion_enabled);

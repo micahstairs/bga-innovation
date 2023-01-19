@@ -98,10 +98,6 @@
         <p class="text_center"><!-- BEGIN special_achievements -->{SPECIAL_ACHIEVEMENTS}<!-- END special_achievements --></p>
         <div id="special_achievements"></div>
     </div>
-    <div id="available_flags_and_fountains_container">
-        <div id="flags"></div>
-        <div id="fountains"></div>
-    </div>
 </div>
 
 <script type="text/javascript">
