@@ -45,7 +45,7 @@ function (dojo, declare) {
             
             this.overlap_for_unsplayed = 3;
             this.overlap_for_splay = {
-                "M card" : {"compact": 3, "expanded": 58}
+                "M card" : {"compact": 3, "expanded": 52}
             };
             
             this.HTML_class = {};
@@ -866,7 +866,6 @@ function (dojo, declare) {
                     
                     // Creation of the zone
                     this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color)
-                    this.setSplayMode(this.zone.board[player_id][color], splay_direction)
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
                     if (splay_direction > 0) {
@@ -883,6 +882,8 @@ function (dojo, declare) {
                         // Add tooltip
                         this.addTooltipForCard(card);
                     }
+
+                    this.refreshSplay(this.zone.board[player_id][color], splay_direction)
                 }
             }
             
@@ -1210,7 +1211,7 @@ function (dojo, declare) {
                         if (args.args._private.show_all_cards_on_board) {
                             for (var color = 0; color < 5; color++) {
                                 var zone = this.zone.board[this.player_id][color];
-                                this.setSplayMode(zone, zone.splay_direction, full_visible=true);
+                                this.refreshSplay(zone, zone.splay_direction, full_visible=true);
                             }
                         }
                         // Add special warning to Tools to prevent the player from accidentally returning a 3 in the first
@@ -1229,7 +1230,7 @@ function (dojo, declare) {
                         this.off(dojo.query('#change_display_mode_button'), 'onclick');
                         for(var color=0; color<5; color++) {
                             var zone = this.zone.board[this.player_id][color];
-                            this.setSplayMode(zone, zone.splay_direction, full_visible=true); // Show all cards
+                            this.refreshSplay(zone, zone.splay_direction, full_visible=true); // Show all cards
                         }
                         this.publication_permutations_done = [];
                         
@@ -1241,7 +1242,7 @@ function (dojo, declare) {
                     if (args.args.color_pile !== null) { // The selection involves cards in a stack
                         this.color_pile = args.args.color_pile;
                         var zone = this.zone.board[this.player_id][this.color_pile];
-                        this.setSplayMode(zone, zone.splay_direction, full_visible=true); // Show all cards of that stack
+                        this.refreshSplay(zone, zone.splay_direction, full_visible=true); // Show all cards of that stack
                     }
                     
                     if (args.args.splay_direction !== null) {
@@ -1318,7 +1319,7 @@ function (dojo, declare) {
                     }
                     for(var color=0; color<5; color++) {
                         var zone = this.zone.board[this.player_id][color];
-                        this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                        this.refreshSplay(zone, zone.splay_direction, force_full_visible=false);
                     }
                 }
             }
@@ -3137,8 +3138,8 @@ function (dojo, declare) {
             dojo.style(HTML_id, 'z-index', weight);
             zone.placeInZone(HTML_id, weight);
             
-            if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
-                this.updateZoneWidth(zone);
+            if (zone['location'] == 'board') { 
+                this.refreshSplay(zone, zone.splay_direction);
             }
             zone.updateDisplay();
             
@@ -3184,8 +3185,8 @@ function (dojo, declare) {
             zone.removeFromZone(HTML_id, destroy);
             
             // Remove the space occupied by the card if needed
-            if(zone['location'] == 'board' && (zone.splay_direction == 1 /* left */ || zone.splay_direction == 2 /* right */)) { 
-                this.updateZoneWidth(zone);
+            if (zone['location'] == 'board') {
+                this.refreshSplay(zone, zone.splay_direction);
             } else if (zone['location'] == 'revealed' && zone.items.length == 0) {
                 zone = this.createZone('revealed', zone.owner, null, null, null); // Recreate the zone (Dunno why it does not work if I don't do that)
                 dojo.style(zone.container_div, 'display', 'none');
@@ -3211,18 +3212,6 @@ function (dojo, declare) {
             }
 
             this.updateDeckOpacities();
-        },
-        
-        shrinkZoneForNoneOrUpSplay : function(zone) {
-            width = this.card_dimensions[zone.HTML_class].width
-            width += 'px';
-            dojo.setStyle(zone.container_div, 'width', width);
-        },
-        
-        updateZoneWidth : function(zone) {
-            width = this.card_dimensions[zone.HTML_class].width + (zone.items.length - 1) * this.overlap_for_splay[zone.HTML_class][this.display_mode ? "expanded" : "compact"];
-            width += 'px';
-            dojo.setStyle(zone.container_div, 'width', width);
         },
         
         setPlacementRules : function(zone, left_to_right) {
@@ -3322,59 +3311,68 @@ function (dojo, declare) {
                 return {'x':x, 'y':y, 'w':w, 'h':h}
             }
         },
+
+        getPileIndicesWhichMustRemainVisible(zone, splay_direction, full_visible) {
+            // Determine which cards must remain visible (skip calculations if all cards are going to be visible anyway)
+            var indices = [];
+            for (var i = 0; i < zone.items.length; i++) {
+                var must_stay_visible = false;
+                var card_id = this.getCardIdFromHTMLId(zone.items[i].id);
+                var card = this.cards[card_id];
+                if (full_visible) {
+                    must_stay_visible = true;
+                } else if (i == zone.items.length - 1) { // top card
+                    must_stay_visible = true;
+                } else if (splay_direction == 1 && card.spot_4 == 10) { // echo effect visible due to left splay
+                    must_stay_visible = true;
+                } else if (splay_direction == 2 && (card.spot_1 == 10 || card.spot_2 == 10)) { // echo effect visible due to right splay
+                    must_stay_visible = true;
+                } else if (splay_direction == 3 && (card.spot_2 == 10 || card.spot_3 == 10 || card.spot_4 == 10)) { // echo effect visible due to up splay
+                    must_stay_visible = true;
+                }
+                if (must_stay_visible) {
+                    indices.push(i);
+                }
+            }
+            return indices;
+        },
         
-        setSplayMode : function(zone, splay_direction, force_full_visible = null) {
+        refreshSplay : function(zone, splay_direction, force_full_visible = null) {
             var full_visible = force_full_visible || this.view_full;
             zone.splay_direction = splay_direction;
-            if (splay_direction == 0 || splay_direction == 3 || full_visible) {
-                // New width = width of a single card
-                this.shrinkZoneForNoneOrUpSplay(zone);
-            }
-            else {
-                // New width = width of a single card + (n - 1) * offset
-                this.updateZoneWidth(zone);
-            }
 
-            // Determine which cards must remain visible (skip calculations if all cards are going to be visible anyway)
-            var card_must_remain_visible = [];
-            if (!full_visible) {
-                for (var i = 0; i < zone.items.length; i++) {
-                    var must_stay_visible = false;
-                    var card_id = this.getCardIdFromHTMLId(zone.items[i].id);
-                    var card = this.cards[card_id];
-                    if (i == zone.items.length - 1) { // top card
-                        must_stay_visible = true;
-                    } else if (splay_direction == 1 && card.spot_4 == 10) { // echo effect visible due to left splay
-                        must_stay_visible = true;
-                    } else if (splay_direction == 2 && (card.spot_1 == 10 || card.spot_2 == 10)) { // echo effect visible due to right splay
-                        must_stay_visible = true;
-                    } else if (splay_direction == 3 && (card.spot_2 == 10 || card.spot_3 == 10 || card.spot_4 == 10)) { // echo effect visible due to up splay
-                        must_stay_visible = true;
-                    }
-                    card_must_remain_visible[i] = must_stay_visible;
-                }
+            var overlap = this.overlap_for_splay[zone.HTML_class][this.display_mode ? "expanded" : "compact"];
+            var overlap_if_expanded = this.overlap_for_splay[zone.HTML_class]["expanded"];
+
+            var visible_indices = this.getPileIndicesWhichMustRemainVisible(zone, splay_direction, full_visible);
+
+            // Update width of zone
+            if (splay_direction == 0 || splay_direction == 3 || full_visible) {
+                width = this.card_dimensions[zone.HTML_class].width;
+                dojo.setStyle(zone.container_div, 'width', width + "px");
+            } else {
+                width = this.card_dimensions[zone.HTML_class].width + (zone.items.length - visible_indices.length) * overlap + (visible_indices.length - 1) * overlap_if_expanded;
+                dojo.setStyle(zone.container_div, 'width', width + "px");
             }
 
             var self = this;
             zone.itemIdToCoordsGrid = function(i, control_width) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
-                var overlap = self.overlap_for_splay[this.HTML_class][self.display_mode ? "expanded" : "compact"];
-                var num_cards_expanded = 0;
                 if (full_visible) {
                     var x_beginning = 0;
                     var delta_x = 0;
                     var delta_x_if_expanded = 0;
                     var delta_y = h + 5;
                     var delta_y_if_expanded = h + 5;
-                    num_cards_expanded = i;
+                    var num_cards_expanded = i;
                 } else {
+                    var num_cards_expanded = 0;
                     for (var j = 0; j < i; j++) {
-                        if (card_must_remain_visible[j]) {
+                        if (visible_indices.includes(j)) {
                             num_cards_expanded++;
                         }
                     }
-                    var overlap_if_expanded = self.overlap_for_splay[this.HTML_class]["expanded"];
                     switch(parseInt(splay_direction)) {
                     case 0: // Unsplayed
                         var x_beginning = 0;
@@ -3410,9 +3408,23 @@ function (dojo, declare) {
                 }
                 var num_cards_not_expanded = i - num_cards_expanded;
                 var x = x_beginning + (delta_x * num_cards_not_expanded) + (delta_x_if_expanded * num_cards_expanded);
-                var top_to_bottom = full_visible || splay_direction == 3;
-                var y = delta_y * (top_to_bottom ? this.items.length - 1 - num_cards_not_expanded : num_cards_not_expanded)
-                        + delta_y_if_expanded * (top_to_bottom ? this.items.length - 1 - num_cards_expanded : num_cards_expanded);
+                if (full_visible) {
+                    var y = delta_y * (this.items.length - 1 - i);
+                } else if (splay_direction == 0) {
+                    var y = delta_y * i;
+                } else if (splay_direction == 1 || splay_direction == 2) {
+                    var y = 0;
+                } else {
+                    // When splayed up, we need to count the cards above instead of below
+                    var num_cards_expanded = 0;
+                    for (var j = i + 1; j < this.items.length; j++) {
+                        if (visible_indices.includes(j - 1)) {
+                            num_cards_expanded++;
+                        }
+                    }
+                    var num_cards_not_expanded = this.items.length - i - num_cards_expanded - 1;
+                    var y = delta_y * num_cards_not_expanded + delta_y_if_expanded * num_cards_expanded;
+                }
                 return {'x': x, 'y': y, 'w': w, 'h': h};
             }
 
@@ -4015,7 +4027,7 @@ function (dojo, declare) {
             // If the piles were forcibly made visible, collapse them
             for (var color = 0; color < 5; color++) {
                 var zone = this.zone.board[this.player_id][color];
-                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                this.refreshSplay(zone, zone.splay_direction, force_full_visible=false);
             }
             
             var card_id = this.getCardIdFromHTMLId(HTML_id);
@@ -4173,7 +4185,7 @@ function (dojo, declare) {
                 this.publicationClicForUndoingSwaps();
                 for(var color=0; color<5; color++) {
                     var zone = this.zone.board[this.player_id][color];
-                    this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                    this.refreshSplay(zone, zone.splay_direction, force_full_visible=false);
                 }
                 this.on(dojo.query('#change_display_mode_button'), 'onclick', 'toggle_displayMode');
                 //dojo.style('change_display_mode_button', {'display': 'initial'}); // Show back the button used for changing the display
@@ -4183,7 +4195,7 @@ function (dojo, declare) {
             }
             else if (this.color_pile !== null) { // Special code where a stack needed to be selected
                 var zone = this.zone.board[this.player_id][this.color_pile];
-                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                this.refreshSplay(zone, zone.splay_direction, force_full_visible=false);
             }
                 
             this.deactivateClickEvents();
@@ -4232,7 +4244,7 @@ function (dojo, declare) {
             
             for(var color=0; color<5; color++) {
                 var zone = this.zone.board[this.player_id][color];
-                this.setSplayMode(zone, zone.splay_direction, force_full_visible=false);
+                this.refreshSplay(zone, zone.splay_direction, force_full_visible=false);
             }
             this.on(dojo.query('#change_display_mode_button'), 'onclick', 'toggle_displayMode');
             //dojo.style('change_display_mode_button', {'display': 'initial'}); // Show back the button used for changing the display
@@ -4487,7 +4499,7 @@ function (dojo, declare) {
             for(var player_id in this.players) {
                 for(var color = 0; color < 5; color++){
                     var zone = this.zone.board[player_id][color];
-                    this.setSplayMode(zone, zone.splay_direction);
+                    this.refreshSplay(zone, zone.splay_direction);
                 }
             }
             
@@ -4517,7 +4529,7 @@ function (dojo, declare) {
             for(var player_id in this.players) {
                 for(var color = 0; color < 5; color++){
                     var zone = this.zone.board[player_id][color];
-                    this.setSplayMode(zone, zone.splay_direction);
+                    this.refreshSplay(zone, zone.splay_direction);
                 }
             }
             
@@ -4882,7 +4894,7 @@ function (dojo, declare) {
             var new_score = notif.args.new_score;
             
             // Change the splay mode of the matching zone on board
-            this.setSplayMode(this.zone.board[player_id][color], splay_direction);
+            this.refreshSplay(this.zone.board[player_id][color], splay_direction);
             
             // Update the splay indicator
             var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
@@ -4986,7 +4998,7 @@ function (dojo, declare) {
             // Unsplay all stacks and update the splay indicator (show nothing bacause there are no more splayed stacks)
             for(var player_id in this.players) {
                 for(var color=0; color<5; color++) {
-                    this.setSplayMode(this.zone.board[player_id][color], 0)
+                    this.refreshSplay(this.zone.board[player_id][color], 0)
                     var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
                     dojo.addClass(splay_indicator, 'splay_0');
                     for(var direction = 1; direction < 4; direction++) {
