@@ -2058,8 +2058,8 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your hand.');
                 $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his hand.');
             } else {
-                $message_for_player = clienttranslate('${You} topdeck ${<}${age}${>} ${<<}${name}${>>} from your hand.');
-                $message_for_others = clienttranslate('${player_name} topdecks a ${<}${age}${>} from his hand.');
+                $message_for_player = clienttranslate('${You} place ${<}${age}${>} ${<<}${name}${>>} from your hand on top of its deck.');
+                $message_for_others = clienttranslate('${player_name} places a ${<}${age}${>} from his hand on top of its deck.');
             }
             break;
         case 'hand->relics':
@@ -2246,8 +2246,8 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
                 $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his forecast.');
             } else {
-                $message_for_player = clienttranslate('${You} topdeck ${<}${age}${>} ${<<}${name}${>>} from your forecast.');
-                $message_for_others = clienttranslate('${player_name} topdecks a ${<}${age}${>} from his forecast.');
+                $message_for_player = clienttranslate('${You} place ${<}${age}${>} ${<<}${name}${>>} from your forecast on top of its deck.');
+                $message_for_others = clienttranslate('${player_name} places a ${<}${age}${>} from his forecast on top of its deck.');
             }
             break;
         case 'forecast->achievements':
@@ -2348,8 +2348,8 @@ class Innovation extends Table
                     $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand');
                     $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his hand');
                 } else {
-                    $message_for_player = clienttranslate('${You_must} topdeck ${number} ${card} from your hand');
-                    $message_for_others = clienttranslate('${player_must} topdeck ${number} ${card} from his hand');
+                    $message_for_player = clienttranslate('${You_must} place ${number} ${card} from your hand on top of its deck');
+                    $message_for_others = clienttranslate('${player_must} places ${number} ${card} from his hand on top of its deck');
                 }
                 break;
             case 'hand->board':
@@ -2476,8 +2476,8 @@ class Innovation extends Table
                     $message_for_others = clienttranslate('${player_must} returns ${number} ${card} from his forecast');
                 }
                 else {
-                    $message_for_player = clienttranslate('${You_must} topdeck ${number} ${card} from your forecast');
-                    $message_for_others = clienttranslate('${player_must} topdecks ${number} ${card} from his forecast');
+                    $message_for_player = clienttranslate('${You_must} place ${number} ${card} from your forecast on top of its deck');
+                    $message_for_others = clienttranslate('${player_must} places ${number} ${card} from his forecast on top of its deck');
                 }
                 break;
             case 'forecast->revealed,deck':
