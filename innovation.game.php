@@ -9071,7 +9071,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (count($splayable_colors) > 0) {
                         $options = array(
                                         array('value' => 1, 'text' => clienttranslate("Splay your purple cards in the direction one of your other piles is splayed")),
-                                        array('value' => 0, 'text' => clienttranslate('Splay one of your non-purple piles ${splay_direction}'), 'splay_direction' => self::getSplayDirectionInClear($splay_direction)),
+                                        array('value' => 0, 'text' => clienttranslate('Splay one of your non-purple piles ${splay_direction}'), 'splay_direction' => self::getSplayDirectionInClear($splay_direction), 'i18n' => ['splay_direction']),
                         );
                     } else {
                         $options = array(
@@ -13575,7 +13575,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 if (count($color_array) > 0) {
-                    $step_max = 2;
+                    $step_max = 1;
                     self::setAuxiliaryValueFromArray($color_array);
                 }
                 break;
@@ -17433,6 +17433,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
+                'owner_to' => $player_id,
                 'location_to' => 'none'
             );
             break;
@@ -23842,6 +23843,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 // id 370, Echoes age 4: Globe
+                case "370N1A":
+                    // If you do not pass, proceed to color selection
+                    if (self::getGameStateValue('choice') >= 0) {
+                        self::incrementStepMax(1);
+                    }
+                    break;
+
                 case "370N1B":
                     // "If you do,"
                     if ($n > 0) {
