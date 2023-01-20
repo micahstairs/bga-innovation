@@ -16980,6 +16980,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
+                'owner_to' => $player_id,
                 'location_to' => 'none'
             );
             break;
