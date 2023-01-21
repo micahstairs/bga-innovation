@@ -1125,6 +1125,7 @@
 
 .recap_dogma li {
   list-style-type: disc;
+  margin-left: 10px;
 }
 
 #logs .square {

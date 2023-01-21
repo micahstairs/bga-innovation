@@ -2191,58 +2191,87 @@ function (dojo, declare) {
             var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
+            var can_endorse = dogma_effect_info[card.id].max_age_to_tuck_for_endorse != undefined;
             
             if (info.no_effect) {
                 return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
             }
 
             var HTML_action = "<p class='possible_action'>";
+            var HTML_endorse_action = "<p class='possible_action'>";
             if (on_display) {
                 HTML_action += _("Click 'Dogma and Return' to execute the dogma effect(s) of this card.");
+            } else if (can_endorse) {
+                HTML_action += dojo.string.substitute(
+                    _("Click and you will be given the option to either use a Dogma action targeting this card, or to use an Endorse action by tucking a card of value ${age} or lower."),
+                    {'age' : self.square('N', 'age', dogma_effect_info[card.id].max_age_to_tuck_for_endorse)}
+                );
             } else {
                 HTML_action += _("Click to execute the dogma effect(s) of this card.");
             }
+
             HTML_action += "</p>";
-            HTML_action += "<p>" + _("If you do:") + "</p>";
+            if (can_endorse) {
+                HTML_action += "<p>" + _("If you use a Dogma action:") + "</p>";
+                HTML_endorse_action += "<p>" + _("If you use an Endorse action:") + "</p>";
+            } else {
+                HTML_action += "<p>" + _("If you do:") + "</p>";
+            }
             HTML_action += "<ul class='recap_dogma'>";
+            HTML_endorse_action += "<ul class='recap_dogma'>";
 
             if (info.num_echo_effects > 0) {
-                if (info.players_executing_echo_effects.length == 0) {
-                    HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>"
-                } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_echo_effects)}) + "</li>"
+                if (info.players_executing_echo_effects.length == 1) {
+                    HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>";
+                    HTML_endorse_action += "<li>" + _("You will execute the echo effect(s) alone twice.") + "</li>";
+                } else if (info.players_executing_echo_effects.length > 1) {
+                    var other_players = self.getOtherPlayersCommaSeparated(info.players_executing_echo_effects);
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': other_players}) + "</li>";
+                    HTML_endorse_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it twice."), {'players': other_players}) + "</li>";
                 }
             }
             
             if (exists_i_demand_effect) {
                 if (info.players_executing_i_demand_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
+                    HTML_endorse_action += "<li>" + _("Nobody will execute the I demand effect.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects)}) + "</li>"
+                    var other_players = self.getOtherPlayersCommaSeparated(info.players_executing_i_demand_effects);
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect."), {'players': other_players}) + "</li>"
+                    HTML_endorse_action += "<li>" + dojo.string.substitute(_("${players} will execute the I demand effect twice."), {'players': other_players}) + "</li>"
                 }
             }
 
             if (exists_i_compel_effect) {
                 if (info.players_executing_i_compel_effects.length == 0) {
                     HTML_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
+                    HTML_endorse_action += "<li>" + _("Nobody will execute the I compel effect.") + "</li>"
                 } else {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)}) + "</li>"
+                    var other_players = self.getOtherPlayersCommaSeparated(info.players_executing_i_compel_effects)
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect."), {'players': other_players}) + "</li>";
+                    HTML_endorse_action += "<li>" + dojo.string.substitute(_("${players} will execute the I compel effect twice."), {'players': other_players}) + "</li>";
                 }
             }
             
             if (exists_non_demand_effect) {
                 if (info.players_executing_non_demand_effects.length == 1) {
                     HTML_action += "<li>" + _("You will execute the non-demand effect(s) alone.") + "</li>"
+                    HTML_endorse_action += "<li>" + _("You will execute the non-demand effect(s) alone twice.") + "</li>"
                 } else if (info.players_executing_non_demand_effects.length > 1) {
-                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': self.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects)}) + "</li>"
+                    var other_players = self.getOtherPlayersCommaSeparated(info.players_executing_non_demand_effects);
+                    HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it."), {'players': other_players}) + "</li>";
+                    HTML_endorse_action += "<li>" + dojo.string.substitute(_("${players} will share each non-demand effect before you execute it twice."), {'players': other_players}) + "</li>";
                 }
             }
 
             if (on_display) {
-                HTML_action += "<li>" + _("You will return this Artifact afterwards.") + "</li>"
+                HTML_action += "<li>" + _("You will return this Artifact afterwards.") + "</li>";
             }
 
             HTML_action += "</ul>";
+            if (can_endorse) {
+                HTML_action += HTML_endorse_action + "</ul>";
+            }
 
             return HTML_action;
         },
