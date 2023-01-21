@@ -1367,19 +1367,6 @@ class Innovation extends Table
                 array('filter_to' => $filter_to)
            ));
             $position_to = 0;
-            
-            if (self::getGameStateValue('cities_mode') > 1) {
-                // Victory and Glory Cities special achievements require tucking a card
-                // with a particular symbol to get the special achievement.
-                if ($location_to == 'board') { // tuck a flag to board
-                    if (self::hasRessource($card, 8)) { // has a flag
-                        self::claimSpecialAchievement($owner_to, 328); // Glory
-                    }
-                    if (self::hasRessource($card, 9)) { // has a fountain
-                        self::claimSpecialAchievement($owner_to, 329); // Victory
-                    }
-                }
-            }
         } else { // $bottom_to is false
             // new_position = number of cards in the location
             $position_to = self::getUniqueValueFromDB(self::format("
@@ -1451,6 +1438,18 @@ class Innovation extends Table
         if ($current_state['name'] != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
+                if ($bottom_to && self::getGameStateValue('cities_mode') > 1) {
+                    // Victory and Glory Cities special achievements require tucking a card
+                    // with a particular symbol to get the special achievement.
+                    if ($location_to == 'board') { // tuck a flag to board
+                        if (self::hasRessource($card, 8)) { // has a flag
+                            self::claimSpecialAchievement($owner_to, 328); // Glory
+                        }
+                        if (self::hasRessource($card, 9)) { // has a fountain
+                            self::claimSpecialAchievement($owner_to, 329); // Victory
+                        }
+                    }
+                }
             }
             catch (EndOfGame $e) {
                 self::trace('EOG bubbled from self::transferCardFromTo');
