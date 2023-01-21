@@ -1132,7 +1132,8 @@ function (dojo, declare) {
                     }
                     
                     // Cards in hand (meld action)
-                    this.addTooltipsWithActionsToMyHand();
+                    var city_draw_type = args.args.city_draw_falls_back_to_other_type ? args.args.type_to_draw : 2;
+                    this.addTooltipsWithActionsToMyHand(args.args.colors_triggering_city_draw, args.args.age_to_draw, city_draw_type);
                     var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
@@ -1988,21 +1989,21 @@ function (dojo, declare) {
             this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
         },
 
-        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param_1, extra_param_2) {
+        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param_1, extra_param_2, extra_param_3) {
             var self = this;
             nodes.forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
                 var card = self.cards[id];
-                var HTML_action = action_text_function(self, card, extra_param_1, extra_param_2);
+                var HTML_action = action_text_function(self, card, extra_param_1, extra_param_2, extra_param_3);
                 self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
             });
         },
 
-        addTooltipsWithActionsToMyHand : function() {
+        addTooltipsWithActionsToMyHand : function(colors_triggering_city_draw = [], city_draw_age = null, city_draw_type = null) {
             var cards = this.selectMyCardsInHand();
-            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
@@ -2075,7 +2076,7 @@ function (dojo, declare) {
             });
         },
         
-        createActionTextForMeld : function(self, card) {
+        createActionTextForMeld : function(self, card, colors_triggering_city_draw, city_draw_age, city_draw_type) {
             // Calculate new score (score pile + bonus icons)
             var bonus_icons = [];
             for (var i = 0; i < 5; i++) {
@@ -2180,6 +2181,12 @@ function (dojo, declare) {
             }
 
             HTML_action += self.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+
+            if (colors_triggering_city_draw.includes(parseInt(card.color))) {
+                HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since this Meld action will add a new color to your board.") + "</p>",
+                    { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
+                );
+            }
             
             return HTML_action;
         },
