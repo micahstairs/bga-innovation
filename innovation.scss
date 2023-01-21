@@ -2063,7 +2063,7 @@
         &.item_109, &.item_329, &.item_439 {
             background-position-x: -141px;
         }
-        // TODO(CITIES): Clean this up by introducing a new class so that we don't need to generate a bunch of class combinations that are never used.
+        // TODO(LATER): Clean this up by introducing a new class so that we don't need to generate a bunch of class combinations that are never used.
         @for $i from 1000 through 1013 {
             &.item_#{$i}, &.item_#{$i+100} {
                 background-image: none;

@@ -119,9 +119,9 @@ class Innovation extends Table
         return "innovation";
     }
 
-    // TODO(CITIES): Test this by simulating table migrations.
+    // TODO(CITIES#910): Test this by simulating table migrations.
     function upgradeTableDb($from_version) {
-        // TODO(CITIES): Before launching to production, update the release that we are comparing it to.
+        // TODO(CITIES#910): Before launching to production, update the release that we are comparing it to.
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
@@ -6777,8 +6777,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns true if the ongoing effect is currently executing a second time due to an Endorse action */
-    // TODO(CITIES): Make sure this is being used in most places (otherwise we have a bug where cards executed
-    // during nested execution think that they are being executed a 2nd time when they aren't actually).
     function isExecutingAgainDueToEndorsedAction() {
         return self::getGameStateValue('current_nesting_index') == 0 && self::getGameStateValue('endorse_action_state') == 3;
     }
