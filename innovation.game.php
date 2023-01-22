@@ -23352,6 +23352,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "370N1C":
                     // "If you returned at least one card, draw and foreshadow a 6."
                     self::executeDrawAndForeshadow($player_id, 6);
+                    // TODO(LATER): Remove the following line. This was only necessary to fix a game which got stuck during a release push (https://boardgamearena.com/bug?id=79588).
+                    self::setStepMax(3);
                     break;
                     
                 // id 372, Echoes age 4: Pencil
