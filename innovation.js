@@ -38,9 +38,6 @@ function (dojo, declare) {
                 "L card" : {"width" : 456, "height" : 316},
             };
             
-            this.large_screen_width_limit = 1621;
-            this.main_area_width_limit = 1151;
-            
             this.my_hand_padding = 5; // Must be consistent to what is declared in CSS
             
             this.overlap_for_unsplayed = 3;
@@ -370,75 +367,6 @@ function (dojo, declare) {
             this.cards = gamedatas.cards;
             this.players = gamedatas.players; 
             this.number_of_achievements_needed_to_win = gamedatas.number_of_achievements_needed_to_win;
-            
-            var any_player_id = Object.keys(this.players)[0]; // This is used to get a referenced on any player (who that player is does not matter) for global design purposes
-                                                              // This is especially important because targetting this.player_id won't work in spectator mode
-            
-            // MAIN AREA
-            var window_width = dojo.window.getBox().w;
-            
-            // Positioning and sizing the main area, decks and achievements
-            var main_area_width;
-            var large_screen = window_width >= this.large_screen_width_limit;
-            if (large_screen) {
-                main_area_width = this.main_area_width_limit + (window_width - this.large_screen_width_limit);
-            }
-            else {
-                main_area_width = dojo.position('left-side').w;
-            }
-            dojo.style('main_area', 'width', main_area_width + 'px');
-            
-            if (!large_screen) {
-                dojo.style('decks', 'display', 'inline-block');
-                dojo.style('available_relics_container', 'display', 'inline-block');
-                dojo.style('available_achievements_container', 'display', 'inline-block');
-                dojo.style('available_special_achievements_container', 'display', 'inline-block');
-            }
-            
-            // Defining the number of cards hand zone can host
-            // 10 = 2 * padding
-            this.num_cards_in_row.my_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_hand.x - this.card_dimensions['M card'].width - 10) / (this.delta.my_hand.x));
-            this.num_cards_in_row.opponent_hand = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.opponent_hand.x - this.card_dimensions['S card'].width - 10) / (this.delta.opponent_hand.x));
-            
-            // Add achievements to win to achievement container and determine max cards per row for the achievement container
-            for(var player_id in this.players) {
-                dojo.addClass('achievement_container_' + player_id, 'to_win_' + this.number_of_achievements_needed_to_win)
-            }
-
-            var achievement_container_width = dojo.position('achievement_container_' + any_player_id).w
-            var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
-            var progress_width = dojo.position('progress_' + any_player_id).w;
-            var score_width = progress_width - achievement_container_width - 10 - reference_card_width;
-           
-            this.num_cards_in_row.achievements = 4;
-            if (achievement_container_width >= 140 && achievement_container_width <= 175 ) {
-                this.num_cards_in_row.achievements = 5;
-            } else if (achievement_container_width > 175) {
-                this.num_cards_in_row.achievements = this.number_of_achievements_needed_to_win;
-            }
-            
-            this.num_cards_in_row.score = parseInt(score_width / (this.delta.score.x));
-            this.num_cards_in_row.forecast =  this.num_cards_in_row.score;
-
-            // Split the space between the score and the forecast
-            if (gamedatas.echoes_expansion_enabled) {
-                this.num_cards_in_row.forecast = Math.floor(this.num_cards_in_row.forecast / 2);
-                this.num_cards_in_row.score = Math.floor(this.num_cards_in_row.score / 2);
-            }
-
-            // Defining the number of cards the window for forecast verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
-            this.num_cards_in_row.my_forecast_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
-            if (this.num_cards_in_row.my_forecast_verso > 5) {
-                this.num_cards_in_row.my_forecast_verso = 5;
-            }
-            
-            // Defining the number of cards the window for score verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
-            this.num_cards_in_row.my_score_verso = parseInt((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
-            if (this.num_cards_in_row.my_score_verso > 5) {
-                this.num_cards_in_row.my_score_verso = 5;
-            }
             
             // PLAYER PANELS
             for (var player_id in this.players) {
@@ -911,19 +839,22 @@ function (dojo, declare) {
                     dojo.byId('player_' + player_id).style.display = 'none';
                 }
             }
+
+            this.refreshLayout();
             
             // Force refresh page on resize if width changes
-            /*var window_width = dojo.window.getBox().w;
+            var window_width = dojo.window.getBox().w;
+            var self = this;
             window.onresize = function() {
                 if (window.RT) {
                     clearTimeout(window.RT);
                 }
                 window.RT = setTimeout(function() {
-                    if(window_width != dojo.window.getBox().w) { // If there is an actual change of the width of the viewport
-                        this.location.reload(false);
+                    if (window_width != dojo.window.getBox().w) { // If there is an actual change of the width of the viewport
+                        self.refreshLayout();
                     }
                 }, 100);
-            }*/
+            }
             
             // Setup game notifications to handle (see "setupNotifications" method below)
             this.setupNotifications();
@@ -956,6 +887,119 @@ function (dojo, declare) {
                     this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
                 }
             }
+        },
+
+        refreshLayout : function () {
+            var on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
+            var window_width = Math.max(dojo.window.getBox().w, 740); // 740 is set in game_interface_width.min in gameinfos.inc.php
+            var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
+            var decks_width = 240;
+
+            if (this.prefs[112].value == 2) {
+                var decks_on_right = true;
+            } else if (this.prefs[112].value == 3) {
+                var decks_on_right = false;
+            } else {
+                // By default, the large screen layout is used if we can place 3 cards on the board in one row and still have
+                // space for the decks and the player panel.
+                var decks_on_right = window_width - player_panel_width - decks_width >= 650;
+            }
+
+            if (decks_on_right) {
+                var main_area_width = window_width - player_panel_width - decks_width;
+                dojo.style('main_area', 'width', main_area_width + 'px');
+                dojo.style('decks', 'display', 'unset');
+                dojo.style('available_relics_and_achievements_container', 'display', 'unset');
+            } else if (on_mobile) {
+                var main_area_width = window_width;
+                dojo.style('main_area', 'width', 'fit-content');
+                dojo.style('decks', 'display', 'inline-block');
+                dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
+            } else {
+                var main_area_width = window_width - player_panel_width;
+                dojo.style('main_area', 'width', main_area_width + 'px');
+                dojo.style('decks', 'display', 'inline-block');
+                dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
+            }
+
+            // NOTE: This is used to get a reference on an arbitrary player. This is important because
+            // targeting this.player_id doesn't work in spectator mode.
+            var any_player_id = Object.keys(this.players)[0]; 
+
+            var main_area_inner_width = main_area_width - 14;
+            var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
+            // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
+            var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width) / this.delta.score.x);
+
+            if (this.echoes_expansion_enabled) {
+                if (num_forecast_score_achievements_cards <= 5) {
+                    this.num_cards_in_row.achievements = 1;
+                } else if (num_forecast_score_achievements_cards <= 8) {
+                    this.num_cards_in_row.achievements = 2;
+                } else if (num_forecast_score_achievements_cards <= 11) {
+                    this.num_cards_in_row.achievements = 3;
+                } else if (num_forecast_score_achievements_cards <= 14) {
+                    this.num_cards_in_row.achievements = 4;
+                } else {
+                    this.num_cards_in_row.achievements = 5;
+                }
+                this.num_cards_in_row.forecast = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row.forecast) / 2);
+                this.num_cards_in_row.score = this.num_cards_in_row.forecast;
+            } else {
+                if (num_forecast_score_achievements_cards <= 3) {
+                    this.num_cards_in_row.achievements = 1;
+                } else if (num_forecast_score_achievements_cards <= 5) {
+                    this.num_cards_in_row.achievements = 2;
+                } else if (num_forecast_score_achievements_cards <= 7) {
+                    this.num_cards_in_row.achievements = 3;
+                } else if (num_forecast_score_achievements_cards <= 9) {
+                    this.num_cards_in_row.achievements = 4;
+                } else {
+                    this.num_cards_in_row.achievements = 5;
+                }
+                this.num_cards_in_row.forecast = null;
+                this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row.forecast;
+            }
+
+            var forecast_container_width = this.num_cards_in_row.forecast == null ? 0 : this.num_cards_in_row.forecast * this.delta.forecast.x;
+            var achievement_container_width = this.num_cards_in_row.achievements * this.delta.achievements.x;
+            var score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
+            for (var player_id in this.players) {
+                dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
+                dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
+                dojo.style('score_container_' + player_id, 'width', score_container_width + 'px');
+                dojo.style('score_' + player_id, 'width', score_container_width + 'px');
+                dojo.style('achievement_container_' + player_id, 'width', achievement_container_width + 'px');
+                dojo.style('achievements_' + player_id, 'width', achievement_container_width + 'px');
+                dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
+            }
+
+            // Defining the number of cards hand zone can host
+            this.num_cards_in_row.my_hand = Math.floor(main_area_inner_width / this.delta.my_hand.x);
+            this.num_cards_in_row.opponent_hand = Math.floor(main_area_inner_width / this.delta.opponent_hand.x);
+
+            // Defining the number of cards the window for forecast verso can host
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
+            this.num_cards_in_row.my_forecast_verso = Math.floor((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
+            if (this.num_cards_in_row.my_forecast_verso > 5) {
+                this.num_cards_in_row.my_forecast_verso = 5;
+            }
+            
+            // Defining the number of cards the window for score verso can host
+            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
+            this.num_cards_in_row.my_score_verso = Math.floor((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
+            if (this.num_cards_in_row.my_score_verso > 5) {
+                this.num_cards_in_row.my_score_verso = 5;
+            }
+
+            for (var player_id in this.players) {
+                this.zone.forecast[player_id].updateDisplay();
+                this.zone.score[player_id].updateDisplay();
+                this.zone.achievements[player_id].updateDisplay();
+                this.zone.hand[player_id].updateDisplay();
+            }
+            this.zone.my_forecast_verso.updateDisplay();
+            this.zone.my_score_verso.updateDisplay();
         },
         
         ///////////////////////////////////////////////////

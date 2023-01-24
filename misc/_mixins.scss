@@ -1,15 +1,5 @@
 @use "variables" as v;
 @use 'sass:math';
-@mixin achievement-win-number($number) {
-	&.to_win_#{$number} {
-		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * $number;
-	}
-}
-@mixin generate_achievement_container_widths ($min, $max) {
-	@for $i from $min through $max {
-		@include achievement-win-number($i)
-	}
-}
 @mixin class-variable-position ($className, $number, $position, $axis) {
     &.#{$className}_#{$number} {
         background-position-#{$axis}: -$position;

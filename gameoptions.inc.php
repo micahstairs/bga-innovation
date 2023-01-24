@@ -158,6 +158,16 @@ $game_options = array(
 );
 
 $game_preferences = array(
+    112 => array(
+        'name' => totranslate('Position of decks and achievements'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('Automatic')),
+            2 => array('name' => totranslate('Right')),
+            3 => array('name' => totranslate('Bottom')),
+        ),
+        'default' => 1,
+    ),
     100 => array(
         'name' => totranslate('Dogma confirmation'),
         'needReload' => true,

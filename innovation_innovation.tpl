@@ -86,17 +86,19 @@
             <!-- END decks_group_5 -->
         </div>
     </div>
-    <div id="available_relics_container">
-        <p class="text_center"><!-- BEGIN available_relics -->{AVAILABLE_RELICS}<!-- END available_relics --></p>
-        <div id="relics"></div>
-    </div>
-    <div id="available_achievements_container">
-        <p class="text_center"><!-- BEGIN available_achievements -->{AVAILABLE_ACHIEVEMENTS}<!-- END available_achievements --></p>
-        <div id="achievements"></div>
-    </div>
-    <div id="available_special_achievements_container">
-        <p class="text_center"><!-- BEGIN special_achievements -->{SPECIAL_ACHIEVEMENTS}<!-- END special_achievements --></p>
-        <div id="special_achievements"></div>
+    <div id="available_relics_and_achievements_container">
+        <div id="available_relics_container">
+            <p class="text_center"><!-- BEGIN available_relics -->{AVAILABLE_RELICS}<!-- END available_relics --></p>
+            <div id="relics"></div>
+        </div>
+        <div id="available_achievements_container">
+            <p class="text_center"><!-- BEGIN available_achievements -->{AVAILABLE_ACHIEVEMENTS}<!-- END available_achievements --></p>
+            <div id="achievements"></div>
+        </div>
+        <div id="available_special_achievements_container">
+            <p class="text_center"><!-- BEGIN special_achievements -->{SPECIAL_ACHIEVEMENTS}<!-- END special_achievements --></p>
+            <div id="special_achievements"></div>
+        </div>
     </div>
 </div>
 
