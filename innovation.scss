@@ -238,13 +238,6 @@
     display: inline-block;
     position: relative;
     background-color: unset;
-    width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
-	@media (min-width: v.$width_tablet) {
-		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 5;
-	}
-	@media (min-width: v.$width_desktop) {
-		@include m.generate_achievement_container_widths(4,11)
-	}
     >p {
         font-style: italic;
         font-size: 0.8em;
@@ -305,6 +298,7 @@
     }
     &.S {
         width: 96px;
+        min-width: 96px;
         height: 69px;
         background-size: 100px auto;
         background-position: -2px -145px;
