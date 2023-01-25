@@ -999,7 +999,9 @@ function (dojo, declare) {
                 this.zone.achievements[player_id].updateDisplay();
                 this.zone.hand[player_id].updateDisplay();
             }
-            this.zone.my_forecast_verso.updateDisplay();
+            if (this.echoes_expansion_enabled) {
+                this.zone.my_forecast_verso.updateDisplay();
+            }
             this.zone.my_score_verso.updateDisplay();
         },
         
@@ -5127,7 +5129,7 @@ function (dojo, declare) {
         notif_removedPlayer: function(notif) {
             var player_id = notif.args.player_to_remove;
             // NOTE: The button to look at the player's forecast is broken in archive mode.
-            if (!g_archive_mode) {
+            if (this.echoes_expansion_enabled && !g_archive_mode) {
                 this.zone.my_forecast_verso.removeAll();
             }
             // NOTE: The button to look at the player's score pile is broken in archive mode.
