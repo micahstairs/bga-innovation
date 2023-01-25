@@ -2048,7 +2048,7 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipsWithActionsToMyHand : function(colors_triggering_city_draw = [], city_draw_age = null, city_draw_type = null) {
+        addTooltipsWithActionsToMyHand : function(colors_triggering_city_draw, city_draw_age, city_draw_type) {
             var cards = this.selectMyCardsInHand();
             this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
             var self = this;
@@ -2087,7 +2087,7 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipWithMeldActionToMyArtifactOnDisplay : function(colors_triggering_city_draw = [], city_draw_age = null, city_draw_type = null) {
+        addTooltipWithMeldActionToMyArtifactOnDisplay : function(colors_triggering_city_draw, city_draw_age, city_draw_type) {
             var cards = this.selectArtifactOnDisplay();
             this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
             var self = this;
@@ -2231,7 +2231,7 @@ function (dojo, declare) {
 
             var splay_icon_triggers_city_draw = false;
             var splay_icon_direction = 11 <= card.spot_3 && card.spot_3 <= 13 ? card.spot_3 - 10 : 11 <= card.spot_6 && card.spot_6 <= 13 ? card.spot_6 - 10 : null;
-            if (splay_icon_direction != null) {
+            if (city_draw_age != null && city_draw_type != null && splay_icon_direction != null) { // city_draw_age and city_draw_type will be null if this is a promotion (doesn't count as a Meld action)
                 var pile_zone = self.zone.board[self.player_id][card.color];
                 if (pile_zone.items.length >= 1 && splay_icon_direction != pile_zone.splay_direction) {
                     splay_icon_triggers_city_draw = true;
@@ -2242,7 +2242,7 @@ function (dojo, declare) {
                 HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since the arrow icon on this card will splay the pile in a new direction.") + "</p>",
                     { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
                 );
-            } else if (colors_triggering_city_draw.includes(parseInt(card.color))) {
+            } else if (colors_triggering_city_draw != undefined && colors_triggering_city_draw.includes(parseInt(card.color))) {
                 HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since this Meld action will add a new color to your board.") + "</p>",
                     { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
                 );
