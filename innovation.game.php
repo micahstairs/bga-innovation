@@ -5598,6 +5598,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             throw new EndOfGame();
         }
 
+        // "If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
+        // draw a base card of that value instead."
+        if ($type != null && self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ $type)[$age_to_draw] == 0) {
+            $type = null;
+        }
+
         // If the type isn't specified, then we are either drawing a Base or Echoes card.
         if ($type === null) {
             $type = self::getCardTypeToDraw($age_to_draw, $player_id);
@@ -8050,12 +8056,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'age_to_draw' => $age_to_draw,
             'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
+            'colors_triggering_city_draw' => self::getGameStateValue('cities_mode') > 1 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0 ? self::getEmptyPiles($player_id) : [],
+            'city_draw_falls_back_to_other_type' => self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
                     "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id)
                 )
             )
         );
+    }
+
+    /** Returns the colors which aren't present on a player's board */
+    function getEmptyPiles($player_id) {
+        $colors = array();
+        $pile_size_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
+        for ($color = 0; $color < 5; $color++) {
+            if ($pile_size_counts[$color] == 0) {
+                $colors[] = $color;
+            }
+        }
+        return $colors;
     }
 
     /** Returns the ages that are currently claimable from the standard achievements pile */

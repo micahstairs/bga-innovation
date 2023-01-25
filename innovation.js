@@ -1177,14 +1177,15 @@ function (dojo, declare) {
                     }
                     
                     // Cards in hand (meld action)
-                    this.addTooltipsWithActionsToMyHand();
+                    var city_draw_type = args.args.city_draw_falls_back_to_other_type ? args.args.type_to_draw : 2;
+                    this.addTooltipsWithActionsToMyHand(args.args.colors_triggering_city_draw, args.args.age_to_draw, city_draw_type);
                     var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clickMeld');
 
                     // Artifact on display (meld action)
-                    this.addTooltipWithMeldActionToMyArtifactOnDisplay();
+                    this.addTooltipWithMeldActionToMyArtifactOnDisplay(args.args.colors_triggering_city_draw, args.args.age_to_draw, city_draw_type);
                     var artifact_on_display = this.selectArtifactOnDisplay();
                     artifact_on_display.addClass("clickable");
                     this.on(artifact_on_display, 'onclick', 'action_clickMeld');
@@ -2033,21 +2034,21 @@ function (dojo, declare) {
             this.addTooltipsWithoutActionsTo(this.selectArtifactOnDisplay());
         },
 
-        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param_1, extra_param_2) {
+        addTooltipsWithActionsTo : function(nodes, action_text_function, extra_param_1, extra_param_2, extra_param_3) {
             var self = this;
             nodes.forEach(function(node) {
                 var HTML_id = dojo.attr(node, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
                 var HTML_help = self.saved_HTML_cards[id];
                 var card = self.cards[id];
-                var HTML_action = action_text_function(self, card, extra_param_1, extra_param_2);
+                var HTML_action = action_text_function(self, card, extra_param_1, extra_param_2, extra_param_3);
                 self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
             });
         },
 
-        addTooltipsWithActionsToMyHand : function() {
+        addTooltipsWithActionsToMyHand : function(colors_triggering_city_draw = [], city_draw_age = null, city_draw_type = null) {
             var cards = this.selectMyCardsInHand();
-            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
@@ -2084,9 +2085,9 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipWithMeldActionToMyArtifactOnDisplay : function() {
+        addTooltipWithMeldActionToMyArtifactOnDisplay : function(colors_triggering_city_draw = [], city_draw_age = null, city_draw_type = null) {
             var cards = this.selectArtifactOnDisplay();
-            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
@@ -2120,7 +2121,7 @@ function (dojo, declare) {
             });
         },
         
-        createActionTextForMeld : function(self, card) {
+        createActionTextForMeld : function(self, card, colors_triggering_city_draw, city_draw_age, city_draw_type) {
             // Calculate new score (score pile + bonus icons)
             var bonus_icons = [];
             for (var i = 0; i < 5; i++) {
@@ -2225,6 +2226,25 @@ function (dojo, declare) {
             }
 
             HTML_action += self.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+
+            var splay_icon_triggers_city_draw = false;
+            var splay_icon_direction = 11 <= card.spot_3 && card.spot_3 <= 13 ? card.spot_3 - 10 : 11 <= card.spot_6 && card.spot_6 <= 13 ? card.spot_6 - 10 : null;
+            if (splay_icon_direction != null) {
+                var pile_zone = self.zone.board[self.player_id][card.color];
+                if (pile_zone.items.length >= 1 && splay_icon_direction != pile_zone.splay_direction) {
+                    splay_icon_triggers_city_draw = true;
+                }
+            }
+
+            if (splay_icon_triggers_city_draw) {
+                HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since the arrow icon on this card will splay the pile in a new direction.") + "</p>",
+                    { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
+                );
+            } else if (colors_triggering_city_draw.includes(parseInt(card.color))) {
+                HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since this Meld action will add a new color to your board.") + "</p>",
+                    { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
+                );
+            }
             
             return HTML_action;
         },
