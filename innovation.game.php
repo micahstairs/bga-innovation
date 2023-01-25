@@ -7578,6 +7578,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'player_name' => self::getColoredPlayerName($player_id),
                     'color' => self::getColorInClear($color))
                 );
+
+                try {
+                    self::checkForSpecialAchievements();
+                } catch (EndOfGame $e) {
+                    self::trace('EOG bubbled from self::chooseSpecialOption');
+                    self::trace('selectionMove->justBeforeGameEnd');
+                    $this->gamestate->nextState('justBeforeGameEnd');
+                    return;
+                }
+
                 $choice = 1;
                 break;
             case 'choose_yes_or_no':
