@@ -929,8 +929,9 @@ function (dojo, declare) {
 
             var main_area_inner_width = main_area_width - 14;
             var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
+            var buffer = this.echoes_expansion_enabled ? 10 : 0;
             // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
-            var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width) / this.delta.score.x);
+            var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
 
             if (this.echoes_expansion_enabled) {
                 if (num_forecast_score_achievements_cards <= 5) {
@@ -944,7 +945,7 @@ function (dojo, declare) {
                 } else {
                     this.num_cards_in_row.achievements = 5;
                 }
-                this.num_cards_in_row.forecast = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row.forecast) / 2);
+                this.num_cards_in_row.forecast = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row.achievements) / 2);
                 this.num_cards_in_row.score = this.num_cards_in_row.forecast;
             } else {
                 if (num_forecast_score_achievements_cards <= 3) {
@@ -959,7 +960,7 @@ function (dojo, declare) {
                     this.num_cards_in_row.achievements = 5;
                 }
                 this.num_cards_in_row.forecast = null;
-                this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row.forecast;
+                this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row.achievements;
             }
 
             var forecast_container_width = this.num_cards_in_row.forecast == null ? 0 : this.num_cards_in_row.forecast * this.delta.forecast.x;
@@ -968,10 +969,13 @@ function (dojo, declare) {
             for (var player_id in this.players) {
                 dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
                 dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
+                dojo.setStyle(this.zone.forecast[player_id].container_div, 'width', forecast_container_width + "px");
                 dojo.style('score_container_' + player_id, 'width', score_container_width + 'px');
                 dojo.style('score_' + player_id, 'width', score_container_width + 'px');
+                dojo.setStyle(this.zone.score[player_id].container_div, 'width', score_container_width + "px");
                 dojo.style('achievement_container_' + player_id, 'width', achievement_container_width + 'px');
                 dojo.style('achievements_' + player_id, 'width', achievement_container_width + 'px');
+                dojo.setStyle(this.zone.achievements[player_id].container_div, 'width', achievement_container_width + "px");
                 dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
             }
 
@@ -993,9 +997,10 @@ function (dojo, declare) {
                 this.num_cards_in_row.my_score_verso = 5;
             }
 
+            // TODO(LATER): Figure out how to disable the animations while resizing the zones.
             for (var player_id in this.players) {
                 this.zone.forecast[player_id].updateDisplay();
-                this.zone.score[player_id].updateDisplay();
+                this.zone.score[player_id].updateDisplay(false);
                 this.zone.achievements[player_id].updateDisplay();
                 this.zone.hand[player_id].updateDisplay();
             }
@@ -3062,12 +3067,8 @@ function (dojo, declare) {
             
             // Width of the zone
             var zone_width;
-            if(new_location == 'board') {
-                zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
-            } else if (new_location == 'forecast') {
-                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
-            } else if (new_location == 'score') {
-                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
+            if (new_location == 'board' || new_location == 'score' || new_location == 'forecast') {
+                zone_width = card_dimensions.width; // Will change dynamically
             } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
                 var n = this.num_cards_in_row[new_location];
