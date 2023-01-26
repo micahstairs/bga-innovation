@@ -896,15 +896,7 @@ function (dojo, declare) {
             var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
             var decks_width = 240;
 
-            if (this.prefs[112].value == 2) {
-                var decks_on_right = true;
-            } else if (this.prefs[112].value == 3) {
-                var decks_on_right = false;
-            } else {
-                // By default, the large screen layout is used if we can place 3 cards on the board in one row and still have
-                // space for the decks and the player panel.
-                var decks_on_right = window_width - player_panel_width - decks_width >= 650;
-            }
+            var decks_on_right = this.prefs[112].value == 1;
 
             if (decks_on_right) {
                 var main_area_width = window_width - player_panel_width - decks_width;

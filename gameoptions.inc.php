@@ -162,9 +162,8 @@ $game_preferences = array(
         'name' => totranslate('Position of decks and achievements'),
         'needReload' => true,
         'values' => array(
-            1 => array('name' => totranslate('Automatic')),
-            2 => array('name' => totranslate('Right')),
-            3 => array('name' => totranslate('Bottom')),
+            1 => array('name' => totranslate('Right')),
+            2 => array('name' => totranslate('Bottom')),
         ),
         'default' => 1,
     ),
