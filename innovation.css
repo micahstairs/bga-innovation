@@ -17,6 +17,10 @@
  * color_3 - yellow
  * color_4 - purple
  */
+#main_area_wrapper {
+  display: flex;
+}
+
 #main_area {
   display: inline-block;
   vertical-align: top;
@@ -589,7 +593,8 @@
 }
 
 #decks_and_available_achievements {
-  display: inline-block;
+  display: flex;
+  width: 208.45px;
   margin-left: 10px;
 }
 #decks_and_available_achievements p {
@@ -597,9 +602,14 @@
   margin-right: 5px;
 }
 
+#decks_title {
+  margin-top: 30px;
+  width: 208.45px;
+}
+
 #decks {
   vertical-align: top;
-  margin-top: 30px;
+  justify-content: center;
   width: 208.45px;
 }
 
