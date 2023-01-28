@@ -287,7 +287,7 @@ function (dojo, declare) {
             dojo.destroy('debug_output');
             
             //****** CODE FOR DEBUG MODE
-            if (!this.isSpectator && gamedatas.debug_mode == 1 && false) {
+            if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
 
                 // Prepend UI elements for debug area
