@@ -1727,12 +1727,14 @@ class Innovation extends Table
         
         $max_age_on_board_from_update = $location_from == 'board';
         $max_age_on_board_to_update = $location_to == 'board';
+
+        $active_player_id = self::getActivePlayerId();
         
         $progressInfo = array();
         // Update player progression if applicable
         $no_players_involved = $owner_from == 0 && $owner_to == 0;
-        $one_player_involved = $owner_from == 0 || $owner_to == 0 || $owner_from == $owner_to;
-        
+        $one_player_involved = ($owner_from == 0 && $owner_to == $active_player_id) || ($owner_to == 0 && $owner_from == $active_player_id) || ($owner_from == $owner_to && $owner_from == $active_player_id);
+
         if ($no_players_involved) {
             self::notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo);
         } else if ($one_player_involved) {
@@ -1764,13 +1766,15 @@ class Innovation extends Table
             $transferInfo['monument_counters'][$player_id] = self::getFlagsForMonument($player_id);
             self::notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo);
         } else {
-            $player_id = self::getActivePlayerId(); // $player_id == $owner_from or $owner_to. It is also the one from whom this action is originated
-            if ($owner_from != 0 && $owner_to != 0) {
-                $opponent_id = $player_id == $owner_from ? $owner_to : $owner_from; // The other player involved in the action
-            }
-            else { // The action originated from a player which take no part in the transfer
-                $player_id = $launcher_id;
-                $opponent_id = $owner_from == 0 ? $owner_to : $owner_from;
+            $player_id = $active_player_id;
+            if ($owner_from == 0) {
+                $opponent_id = $owner_to;
+            } else if ($owner_to == 0) {
+                $opponent_id = $owner_from;
+            } else if ($owner_from == $player_id) {
+                $opponent_id = $owner_to;
+            } else {
+                $opponent_id = $owner_from;
             }
             $transferInfo['player_id'] = $player_id;
             $transferInfo['opponent_id'] = $opponent_id;
