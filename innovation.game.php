@@ -4122,7 +4122,18 @@ class Innovation extends Table
         $getFromDB = $count ? 'getUniqueValueFromDB' : 'getObjectListFromDB'; // If we count, we want to get an unique value, else, we want to get a list of cards
         $type_condition = $type === null ? "" : self::format("type = {type} AND", array('type' => $type));
         $is_relic_condition = $is_relic === null ? "" : self::format("is_relic = {is_relic} AND", array('is_relic' => ($is_relic ? 'TRUE' : 'FALSE')));
-                                                                    
+
+        if ($owner == -2) { // any player
+            $owner_condition = "owner != 0 AND";
+        } else if ($owner == -3) { // any opponent
+            $opponent_ids = self::getActiveOpponentIds(self::getActivePlayerId());
+            $owner_condition = self::format("owner IN ({owners}) AND", array('owners' => join($opponent_ids, ',')));
+        } else if ($owner == -4) { // any other player
+            $owner_condition = self::format("owner != 0 AND owner != {player_id} AND", array('player_id' => self::getActivePlayerId()));
+        } else {
+            $owner_condition = self::format("owner = {owner} AND", array('owner' => $owner));
+        }
+
         if ($key == 'age') {
             $num_min = 1;
             $num_max = 10;
@@ -4138,11 +4149,11 @@ class Innovation extends Table
                 WHERE
                     {type_condition}
                     {is_relic_condition}
-                    owner = {owner} AND
+                    {owner_condition}
                     location = '{location}'
                 {opt_order_by}
             ",
-                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner' => $owner, 'location' => $location, 'opt_order_by' => $opt_order_by)
+                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner_condition' => $owner_condition, 'location' => $location, 'opt_order_by' => $opt_order_by)
             ));
         }
         
@@ -4157,12 +4168,12 @@ class Innovation extends Table
                 WHERE
                     {type_condition}
                     {is_relic_condition}
-                    owner = {owner} AND
+                    {owner_condition}
                     location = '{location}' AND
                     {key} = {value}
                 {opt_order_by}
             ",
-                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner' => $owner, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
+                array('type_of_result' => $type_of_result, 'type_condition' => $type_condition, 'is_relic_condition' => $is_relic_condition, 'owner_condition' => $owner_condition, 'location' => $location, 'key' => $key, 'value' => $value, 'opt_order_by' => $opt_order_by)
            ));
         }
         return $result;
