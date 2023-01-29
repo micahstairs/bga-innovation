@@ -1006,7 +1006,7 @@ function (dojo, declare) {
             // TODO(LATER): Figure out how to disable the animations while resizing the zones.
             for (var player_id in this.players) {
                 this.zone.forecast[player_id].updateDisplay();
-                this.zone.score[player_id].updateDisplay(false);
+                this.zone.score[player_id].updateDisplay();
                 this.zone.achievements[player_id].updateDisplay();
                 this.zone.hand[player_id].updateDisplay();
             }
