@@ -904,13 +904,10 @@ function (dojo, declare) {
 
             if (decks_on_right) {
                 var main_area_width = window_width - player_panel_width - decks_width;
-                dojo.style('main_area', 'width', main_area_width + 'px');
             } else if (on_mobile) {
                 var main_area_width = window_width;
-                dojo.style('main_area', 'width', 'fit-content');
             } else {
                 var main_area_width = window_width - player_panel_width;
-                dojo.style('main_area', 'width', main_area_width + 'px');
             }
 
             if (decks_on_right) {
