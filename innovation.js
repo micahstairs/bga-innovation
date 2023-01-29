@@ -895,6 +895,8 @@ function (dojo, declare) {
         },
 
         refreshLayout : function () {
+            this.instantaneousMode = true;
+
             var on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
             var window_width = Math.max(dojo.window.getBox().w, 740); // 740 is set in game_interface_width.min in gameinfos.inc.php
             var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
@@ -1006,7 +1008,7 @@ function (dojo, declare) {
             // TODO(LATER): Figure out how to disable the animations while resizing the zones.
             for (var player_id in this.players) {
                 this.zone.forecast[player_id].updateDisplay();
-                this.zone.score[player_id].updateDisplay(false);
+                this.zone.score[player_id].updateDisplay();
                 this.zone.achievements[player_id].updateDisplay();
                 this.zone.hand[player_id].updateDisplay();
             }
@@ -1014,6 +1016,8 @@ function (dojo, declare) {
                 this.zone.my_forecast_verso.updateDisplay();
             }
             this.zone.my_score_verso.updateDisplay();
+
+            this.instantaneousMode = false;
         },
         
         ///////////////////////////////////////////////////
