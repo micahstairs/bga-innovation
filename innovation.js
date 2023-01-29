@@ -434,8 +434,8 @@ function (dojo, declare) {
             this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
             this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
 
-            var num_sets = 1 + this.artifacts_expansion_enabled + this.cities_expansion_enabled + this.echoes_expansion_enabled + this.figures_expansion_enabled;
-            if (num_sets > 2) {
+            this.num_sets_in_play = 1 + this.artifacts_expansion_enabled + this.cities_expansion_enabled + this.echoes_expansion_enabled + this.figures_expansion_enabled;
+            if (this.num_sets_in_play > 2) {
                 this.delta.deck = {"x": 0.25, "y": 0.25}; // overlap
             }
             
@@ -457,26 +457,30 @@ function (dojo, declare) {
                     // Current number of cards in the deck
                     $(`deck_count_${type}_${age}`).innerHTML = num_cards;
                     // TODO(FIGURES): Handle the case where there are 5 sets.
-                    if (num_sets == 3) {
+                    if (this.num_sets_in_play == 3) {
                         dojo.addClass(`deck_count_${type}_${age}`, 'three_sets');
                         dojo.addClass(`deck_pile_${type}_${age}`, 'three_sets');
-                    } else if (num_sets == 4) {
+                    } else if (this.num_sets_in_play == 4) {
                         dojo.addClass(`deck_count_${type}_${age}`, 'four_sets');
                         dojo.addClass(`deck_pile_${type}_${age}`, 'four_sets');
                     }
                 }
             }
             if (!gamedatas.artifacts_expansion_enabled) {
-                dojo.byId('deck_set_2').style.display = 'none';
+                dojo.byId('deck_set_2_1').style.display = 'none';
+                dojo.byId('deck_set_2_2').style.display = 'none';
             }
             if (!gamedatas.cities_expansion_enabled) {
-                dojo.byId('deck_set_3').style.display = 'none';
+                dojo.byId('deck_set_3_1').style.display = 'none';
+                dojo.byId('deck_set_3_2').style.display = 'none';
             }
             if (!gamedatas.echoes_expansion_enabled) {
-                dojo.byId('deck_set_4').style.display = 'none';
+                dojo.byId('deck_set_4_1').style.display = 'none';
+                dojo.byId('deck_set_4_2').style.display = 'none';
             }
             if (!gamedatas.figures_expansion_enabled) {
-                dojo.byId('deck_set_5').style.display = 'none';
+                dojo.byId('deck_set_5_1').style.display = 'none';
+                dojo.byId('deck_set_5_2').style.display = 'none';
             }
 
             // AVAILABLE RELICS
@@ -894,33 +898,35 @@ function (dojo, declare) {
             var on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
             var window_width = Math.max(dojo.window.getBox().w, 740); // 740 is set in game_interface_width.min in gameinfos.inc.php
             var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
-            var decks_width = 240;
+            var decks_width = 214;
 
-            if (this.prefs[112].value == 2) {
-                var decks_on_right = true;
-            } else if (this.prefs[112].value == 3) {
-                var decks_on_right = false;
-            } else {
-                // By default, the large screen layout is used if we can place 3 cards on the board in one row and still have
-                // space for the decks and the player panel.
-                var decks_on_right = window_width - player_panel_width - decks_width >= 650;
-            }
+            var decks_on_right = this.prefs[112].value == 1;
 
             if (decks_on_right) {
                 var main_area_width = window_width - player_panel_width - decks_width;
                 dojo.style('main_area', 'width', main_area_width + 'px');
-                dojo.style('decks', 'display', 'unset');
-                dojo.style('available_relics_and_achievements_container', 'display', 'unset');
             } else if (on_mobile) {
                 var main_area_width = window_width;
                 dojo.style('main_area', 'width', 'fit-content');
-                dojo.style('decks', 'display', 'inline-block');
-                dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
             } else {
                 var main_area_width = window_width - player_panel_width;
                 dojo.style('main_area', 'width', main_area_width + 'px');
-                dojo.style('decks', 'display', 'inline-block');
+            }
+
+            if (decks_on_right) {
+                dojo.style('main_area_wrapper', 'flex-direction', 'row');
+                dojo.style('decks_and_available_achievements', 'flex-direction', 'column');
+                dojo.style('available_relics_and_achievements_container', 'display', 'unset');
+            } else {
+                dojo.style('main_area_wrapper', 'flex-direction', 'column');
+                dojo.style('decks_and_available_achievements', 'flex-direction', 'row');
                 dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
+            }
+
+            if (this.num_sets_in_play == 1) {
+                dojo.style('decks', 'display', 'flex');
+            } else {
+                dojo.style('decks', 'display', 'inline-block');
             }
 
             // NOTE: This is used to get a reference on an arbitrary player. This is important because
@@ -929,8 +935,9 @@ function (dojo, declare) {
 
             var main_area_inner_width = main_area_width - 14;
             var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
+            var buffer = this.echoes_expansion_enabled ? 10 : 0;
             // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
-            var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width) / this.delta.score.x);
+            var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
 
             if (this.echoes_expansion_enabled) {
                 if (num_forecast_score_achievements_cards <= 5) {
@@ -944,7 +951,7 @@ function (dojo, declare) {
                 } else {
                     this.num_cards_in_row.achievements = 5;
                 }
-                this.num_cards_in_row.forecast = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row.forecast) / 2);
+                this.num_cards_in_row.forecast = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row.achievements) / 2);
                 this.num_cards_in_row.score = this.num_cards_in_row.forecast;
             } else {
                 if (num_forecast_score_achievements_cards <= 3) {
@@ -959,7 +966,7 @@ function (dojo, declare) {
                     this.num_cards_in_row.achievements = 5;
                 }
                 this.num_cards_in_row.forecast = null;
-                this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row.forecast;
+                this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row.achievements;
             }
 
             var forecast_container_width = this.num_cards_in_row.forecast == null ? 0 : this.num_cards_in_row.forecast * this.delta.forecast.x;
@@ -968,10 +975,13 @@ function (dojo, declare) {
             for (var player_id in this.players) {
                 dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
                 dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
+                dojo.setStyle(this.zone.forecast[player_id].container_div, 'width', forecast_container_width + "px");
                 dojo.style('score_container_' + player_id, 'width', score_container_width + 'px');
                 dojo.style('score_' + player_id, 'width', score_container_width + 'px');
+                dojo.setStyle(this.zone.score[player_id].container_div, 'width', score_container_width + "px");
                 dojo.style('achievement_container_' + player_id, 'width', achievement_container_width + 'px');
                 dojo.style('achievements_' + player_id, 'width', achievement_container_width + 'px');
+                dojo.setStyle(this.zone.achievements[player_id].container_div, 'width', achievement_container_width + "px");
                 dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
             }
 
@@ -993,9 +1003,10 @@ function (dojo, declare) {
                 this.num_cards_in_row.my_score_verso = 5;
             }
 
+            // TODO(LATER): Figure out how to disable the animations while resizing the zones.
             for (var player_id in this.players) {
                 this.zone.forecast[player_id].updateDisplay();
-                this.zone.score[player_id].updateDisplay();
+                this.zone.score[player_id].updateDisplay(false);
                 this.zone.achievements[player_id].updateDisplay();
                 this.zone.hand[player_id].updateDisplay();
             }
@@ -3062,12 +3073,8 @@ function (dojo, declare) {
             
             // Width of the zone
             var zone_width;
-            if(new_location == 'board') {
-                zone_width = card_dimensions.width; // Will change dynamically if splayed left or right
-            } else if (new_location == 'forecast') {
-                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
-            } else if (new_location == 'score') {
-                zone_width = (dojo.position('forecast_container_' + owner).w + dojo.position('score_container_' + owner).w) / 2;
+            if (new_location == 'board' || new_location == 'score' || new_location == 'forecast') {
+                zone_width = card_dimensions.width; // Will change dynamically
             } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
                 var delta_x = this.delta[new_location].x
                 var n = this.num_cards_in_row[new_location];

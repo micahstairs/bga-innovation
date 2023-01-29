@@ -24,7 +24,9 @@
  */
 
 
-
+#main_area_wrapper {
+    display: flex;
+}
 #main_area {
     display: inline-block;
     vertical-align: top;
@@ -568,16 +570,21 @@
     margin-left: 5px;
 }
 #decks_and_available_achievements {
-    display: inline-block;
+    display: flex;
+    width: 208.45px;
     margin-left: 10px;
     p {
         margin-bottom: 5px;
         margin-right: 5px;
     }
 }
+#decks_title {
+    margin-top: 30px;
+    width: 208.45px;
+}
 #decks {
     vertical-align: top;
-    margin-top: 30px;
+    justify-content: center;
     width: 208.45px;
 }
 #available_relics_container, #available_achievements_container, #available_special_achievements_container {
