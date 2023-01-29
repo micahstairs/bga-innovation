@@ -285,7 +285,7 @@ function (dojo, declare) {
         */
         setup: function (gamedatas) {
             dojo.destroy('debug_output');
-            
+
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
@@ -3434,8 +3434,7 @@ function (dojo, declare) {
                     return self.card_dimensions[zone.HTML_class].width + (zone.items.length - visible_indices.length) * small_overlap + (visible_indices.length - 1) * big_overlap;
                 };
                 // Shrink overlap if the pile is going to be too wide
-                var max_total_width = dojo.position('player_' + zone.owner).w - 12;
-                console.log(max_total_width);
+                var max_total_width = dojo.position('player_' + zone.owner).w - 15;
                 var compact_overlap = this.overlap_for_splay[zone.HTML_class]["compact"];
                 // If compact mode isn't enough, then we also need to reduce the visibility on cards with echo effects
                 if (calculateWidth(compact_overlap, overlap_if_expanded) > max_total_width) {
