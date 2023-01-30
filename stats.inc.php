@@ -182,6 +182,16 @@ $stats_type = array(
                     "name" => totranslate("Number of relics stolen from player"),
                     "type" => "int" ),
 
+        /* Cities-specific */
+
+        "endorse_actions_number" => array("id"=> 40,
+                    "name" => totranslate("Number of endorse actions"),
+                    "type" => "int" ),
+
+        "city_cards_drawn_number" => array("id"=> 41,
+                    "name" => totranslate("Number of city cards drawn"),
+                    "type" => "int" ),
+
         /* Echoes-specific */
 
         "foreshadowed_number" => array("id"=> 60,
