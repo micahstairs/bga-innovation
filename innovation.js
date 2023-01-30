@@ -454,8 +454,6 @@ function (dojo, declare) {
                         this.createAndAddToZone(this.zone.deck[type][age], i, age, type, /*is_relic=*/ 0, null, dojo.body(), null);
                     }
                     
-                    // Current number of cards in the deck
-                    $(`deck_count_${type}_${age}`).innerHTML = num_cards;
                     // TODO(FIGURES): Handle the case where there are 5 sets.
                     if (this.num_sets_in_play == 3) {
                         dojo.addClass(`deck_count_${type}_${age}`, 'three_sets');
@@ -766,7 +764,7 @@ function (dojo, declare) {
                     var splay_direction_in_clear = player_splay_directions_in_clear[color];
                     
                     // Creation of the zone
-                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color)
+                    this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age_type_and_is_relic=false, counter_method="COUNT", counter_display_zero=false);
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
                     if (splay_direction > 0) {
@@ -3102,7 +3100,12 @@ function (dojo, declare) {
             zone.grouped_by_age_type_and_is_relic = grouped_by_age_type_and_is_relic;
             
             if (counter_method != null) {
-                var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
+                if (location == 'board') {
+                    var counter_node = $('pile_count' + owner_string + color_string);
+                    console.log(counter_node);
+                } else {
+                    var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
+                }
                 zone.counter = new ebg.counter()
                 zone.counter.create(counter_node);
                 zone.counter.setValue(0);
