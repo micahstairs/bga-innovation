@@ -7951,6 +7951,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'player_name' => self::getColoredPlayerName($player_id),
                     'color' => self::getColorInClear($color))
                 );
+
+                try {
+                    self::checkForSpecialAchievements();
+                } catch (EndOfGame $e) {
+                    self::trace('EOG bubbled from self::chooseSpecialOption');
+                    self::trace('selectionMove->justBeforeGameEnd');
+                    $this->gamestate->nextState('justBeforeGameEnd');
+                    return;
+                }
+
                 $choice = 1;
                 break;
             case 'choose_yes_or_no':
@@ -23932,6 +23942,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "370N1C":
                     // "If you returned at least one card, draw and foreshadow a 6."
                     self::executeDrawAndForeshadow($player_id, 6);
+                    // TODO(LATER): Remove the following line. This was only necessary to fix a game which got stuck during a release push (https://boardgamearena.com/bug?id=79588).
+                    self::setStepMax(3);
                     break;
                     
                 // id 372, Echoes age 4: Pencil
@@ -24611,7 +24623,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     
-                    if (count(array_unique($card_counts)) == 1) {
+                    if (count(array_unique($card_counts)) <= 1) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::setGameStateValue('winner_by_dogma', $player_id); // "You win"
