@@ -18,7 +18,8 @@
                 <div id="board_{PLAYER_ID}" class="board">
                     <!-- BEGIN pile -->
                         <div class="pile_container">
-                            <div class="pile board_{PLAYER_ID}" id="board_{PLAYER_ID}_{COLOR}"></div>
+                            <div class="pile board_{PLAYER_ID}" id="board_{PLAYER_ID}_{COLOR}"><div class="pile_count" id="pile_count_{PLAYER_ID}_{COLOR}"></div>
+                            </div>
                             <div class="splay_indicator" id="splay_indicator_{PLAYER_ID}_{COLOR}"></div>
                         </div>
                     <!-- END pile -->
