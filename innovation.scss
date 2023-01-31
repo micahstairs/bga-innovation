@@ -604,6 +604,12 @@
     justify-content: center;
     width: 208.45px;
 }
+#decks_1, #decks_2 {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 3px;
+    padding-right: 3px;
+}
 #available_relics_container, #available_achievements_container, #available_special_achievements_container {
     vertical-align: top;
     margin-top: 30px;
