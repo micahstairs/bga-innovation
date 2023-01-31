@@ -1842,7 +1842,7 @@ class Innovation extends Table
         if ($owner_to != 0 && $location_to == 'achievements') {
             try {
                 // The number of achievements is the BGA score (not to be confused with the definition of score in an Innovation game)
-                self::incrementBGAScore($owner_to, $card['age'] === null);
+                self::incrementBGAScore($owner_to, /*is_special_achievement=*/ $card['age'] === null && $card['id'] < 1000); // Fountains and flags are not considered special achievements
             } catch(EndOfGame $e) {
                 $end_of_game = true;
             }
