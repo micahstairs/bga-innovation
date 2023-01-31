@@ -555,6 +555,12 @@ class Innovation extends Table
             }
         }
 
+        // Initialize Cities-specific statistics
+        if (self::getGameStateValue('cities_mode') > 1) {
+            self::initStat('player', 'endorse_actions_number', 0);
+            self::initStat('player', 'city_cards_drawn_number', 0);
+        }
+
         // Initialize Echoes-specific statistics
         if (self::getGameStateValue('echoes_mode') > 1) {
             self::initStat('player', 'foreshadowed_number', 0);
@@ -3732,6 +3738,7 @@ class Innovation extends Table
         if (self::getGameStateValue('current_nesting_index') == -1 && self::getGameStateValue('endorse_action_state') == 2) {
             $message_for_player = clienttranslate('${You} endorse the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
             $message_for_others = clienttranslate('${player_name} endorses the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
+            self::incStat(1, 'endorse_actions_number', $player_id);
         } else {
             $message_for_player = clienttranslate('${You} activate the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
             $message_for_others = clienttranslate('${player_name} activates the dogma of ${card} with ${[}${icon}${]} as the featured icon.');
@@ -5662,6 +5669,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::trace('EOG bubbled from self::executeDraw');
             throw $e; // Re-throw exception to higher level
         }
+
+        if ($type == 2) {
+            self::incStat(1, 'city_cards_drawn_number', $player_id);
+        }
+
         return $card;
     }
 
