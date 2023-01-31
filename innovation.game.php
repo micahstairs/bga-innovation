@@ -9930,6 +9930,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
 
             // Return the Artifact on display if the free dogma action was used
+            $this->gamestate->changeActivePlayer($launcher_id);
             $nested_card_state = self::getNestedCardState(0);
             if ($nested_card_state['card_location'] == 'display') {
                 $launcher_id = $nested_card_state['launcher_id'];
