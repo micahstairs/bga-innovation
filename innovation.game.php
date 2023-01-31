@@ -140,6 +140,7 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if ($card['location'] == 'achievements' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
             self::transferCardFromTo($card, $player_id, 'hand');
         } else if ($card['location'] == 'removed') {
@@ -155,9 +156,11 @@ class Innovation extends Table
         // The melding is being done in two steps because otherwise many of the transitions would not be supported.
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
             self::debug_draw($card_id);
             $card = self::getCardInfo($card_id);
+            $card['using_debug_buttons'] = true;
         }
         self::transferCardFromTo($card, $player_id, 'board');
     }
@@ -168,9 +171,11 @@ class Innovation extends Table
         // The tucking is being done in two steps because otherwise many of the transitions would not be supported.
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
             self::debug_draw($card_id);
             $card = self::getCardInfo($card_id);
+            $card['using_debug_buttons'] = true;
         }
         self::transferCardFromTo($card, $player_id, 'board', /*bottom_to=*/ true);
     }
@@ -180,6 +185,7 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck') {
             self::scoreCard($card, $player_id);
         } else if ($card['location'] == 'achievements') {
@@ -198,6 +204,7 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
             throw new BgaUserException("You already have this card as an achievement");
         } else if ($card['location'] == 'removed') {
@@ -223,6 +230,7 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if ($card['location'] == 'deck') {
             throw new BgaUserException("This card is already in the deck");
         } else if ($card['location'] == 'relics') {
@@ -254,9 +262,11 @@ class Innovation extends Table
         // The topdecking is being done in two steps because otherwise many of the transitions would not be supported.
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
             self::debug_draw($card_id);
             $card = self::getCardInfo($card_id);
+            $card['using_debug_buttons'] = true;
         }
         self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
     }
@@ -266,6 +276,7 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if (self::getArtifactOnDisplay($player_id) != null) {
             throw new BgaUserException("There is already an Artifact on display");
         } else if ($card['location'] == 'achievements') {
@@ -294,6 +305,7 @@ class Innovation extends Table
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
+        $card['using_debug_buttons'] = true;
         if ($card['location'] == 'achievements') {
             throw new BgaUserException("This card is used as an achievement");
         } else if ($card['location'] == 'relics') {
@@ -1261,7 +1273,11 @@ class Innovation extends Table
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false) {
 
         // Get updated state of card in case a stale reference was passed.
+        $using_debug_buttons = array_key_exists('using_debug_buttons', $card);
         $card = self::getCardInfo($card['id']);
+        if ($using_debug_buttons) {
+            $card['using_debug_buttons'] = true;
+        }
 
         // Do not move the card at all.
         if ($location_to == 'none') {
@@ -1733,7 +1749,10 @@ class Innovation extends Table
         $progressInfo = array();
         // Update player progression if applicable
         $no_players_involved = $owner_from == 0 && $owner_to == 0;
-        $one_player_involved = ($owner_from == 0 && $owner_to == $active_player_id) || ($owner_to == 0 && $owner_from == $active_player_id) || ($owner_from == $owner_to && $owner_from == $active_player_id);
+        $one_player_involved = array_key_exists('using_debug_buttons', $card) // Debug buttons can be used by non-active players
+            || ($owner_from == 0 && $owner_to == $active_player_id)
+            || ($owner_to == 0 && $owner_from == $active_player_id)
+            || ($owner_from == $owner_to && $owner_from == $active_player_id);
 
         if ($no_players_involved) {
             self::notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo);
