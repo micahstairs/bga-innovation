@@ -285,7 +285,7 @@ function (dojo, declare) {
         */
         setup: function (gamedatas) {
             dojo.destroy('debug_output');
-            
+
             //****** CODE FOR DEBUG MODE
             if (!this.isSpectator && gamedatas.debug_mode == 1) {
                 var main_area = $('main_area');
@@ -1013,7 +1013,12 @@ function (dojo, declare) {
                     this.zone.my_forecast_verso.updateDisplay();
                 }
             }
-            this.zone.my_score_verso.updateDisplay();
+            for (var player_id in this.players) {
+                for (var color = 0; color < 5; color++){
+                    var zone = this.zone.board[player_id][color];
+                    this.refreshSplay(zone, zone.splay_direction);
+                }
+            }
         },
         
         ///////////////////////////////////////////////////
@@ -3412,6 +3417,7 @@ function (dojo, declare) {
         },
         
         refreshSplay : function(zone, splay_direction, force_full_visible = null) {
+            var self = this;
             var full_visible = force_full_visible || this.view_full;
             zone.splay_direction = splay_direction;
 
@@ -3420,16 +3426,27 @@ function (dojo, declare) {
 
             var visible_indices = this.getPileIndicesWhichMustRemainVisible(zone, splay_direction, full_visible);
 
-            // Update width of zone
+            // Compute new width of zone
             if (splay_direction == 0 || splay_direction == 3 || full_visible) {
-                width = this.card_dimensions[zone.HTML_class].width;
-                dojo.setStyle(zone.container_div, 'width', width + "px");
+                var width = this.card_dimensions[zone.HTML_class].width;
             } else {
-                width = this.card_dimensions[zone.HTML_class].width + (zone.items.length - visible_indices.length) * overlap + (visible_indices.length - 1) * overlap_if_expanded;
-                dojo.setStyle(zone.container_div, 'width', width + "px");
+                var calculateWidth = function(small_overlap, big_overlap) {
+                    return self.card_dimensions[zone.HTML_class].width + (zone.items.length - visible_indices.length) * small_overlap + (visible_indices.length - 1) * big_overlap;
+                };
+                // Shrink overlap if the pile is going to be too wide
+                var max_total_width = dojo.position('player_' + zone.owner).w - 15;
+                var compact_overlap = this.overlap_for_splay[zone.HTML_class]["compact"];
+                // If compact mode isn't enough, then we also need to reduce the visibility on cards with echo effects
+                if (calculateWidth(compact_overlap, overlap_if_expanded) > max_total_width) {
+                    overlap = compact_overlap;
+                    overlap_if_expanded = (max_total_width - self.card_dimensions[zone.HTML_class].width - (zone.items.length - visible_indices.length) * compact_overlap)  / (visible_indices.length - 1);
+                } else if (calculateWidth(overlap, overlap_if_expanded) > max_total_width) {
+                    overlap = (max_total_width - self.card_dimensions[zone.HTML_class].width - (visible_indices.length - 1) * overlap_if_expanded)  / (zone.items.length - visible_indices.length);
+                }
+                var width = calculateWidth(overlap, overlap_if_expanded);
             }
+            dojo.setStyle(zone.container_div, 'width', width + "px");
 
-            var self = this;
             zone.itemIdToCoordsGrid = function(i, control_width) {
                 var w = self.card_dimensions[this.HTML_class].width;
                 var h = self.card_dimensions[this.HTML_class].height;
