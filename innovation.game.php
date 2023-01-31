@@ -1756,6 +1756,7 @@ class Innovation extends Table
         // Update player progression if applicable
         $no_players_involved = $owner_from == 0 && $owner_to == 0;
         $one_player_involved = array_key_exists('using_debug_buttons', $card) // Debug buttons can be used by non-active players
+            || $card['age'] === null // Flags, fountains, and special achievements only involve one player
             || ($owner_from == 0 && $owner_to == $active_player_id)
             || ($owner_to == 0 && $owner_from == $active_player_id)
             || ($owner_from == $owner_to && $owner_from == $active_player_id);

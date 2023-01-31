@@ -3107,7 +3107,6 @@ function (dojo, declare) {
             if (counter_method != null) {
                 if (location == 'board') {
                     var counter_node = $('pile_count' + owner_string + color_string);
-                    console.log(counter_node);
                 } else {
                     var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
                 }
