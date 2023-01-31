@@ -2127,8 +2127,14 @@ class Innovation extends Table
             }
             break;
         case 'board->score':
-            $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>} from your board.');
-            $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>} from his board.');
+            if ($score_keyword) {
+                $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>} from your board.');
+                $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>} from his board.');
+            }
+            else {
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to your score pile.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to his score pile.');
+            }
             break;
         case 'board->achievements':
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your board.');
