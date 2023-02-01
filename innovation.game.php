@@ -2841,7 +2841,7 @@ class Innovation extends Table
         self::sendNotificationWithTwoPlayersInvolved($message_for_player, $message_for_opponent, $message_for_others, $card, $transferInfo, $progressInfo);
     }
         
-    function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {
+    function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {
         // [*] ATTENTION: when modifying, modify notifyWithTwoPlayersInvolved at the same time
         if ($player_id_is_owner_from) {
             switch($location_from . '->' . $location_to) {
@@ -2916,8 +2916,7 @@ class Innovation extends Table
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
                 break;
             }
-        }
-        else { // $player_id_is_owner_to
+        } else if ($player_id_is_owner_to) {
             switch($location_from . '->' . $location_to) {
             case 'board->board':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from ${opponent_name}\'s board to your board');
@@ -2936,12 +2935,6 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
                 break;
-                
-            case 'score->board':
-                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
-                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
-                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
-                break;
 
             case 'score->achievements':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to your achievements');
@@ -2949,6 +2942,19 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s achievements');
                 break;
             
+            default:
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+                break;
+            }
+        } else {
+            switch($location_from . '->' . $location_to) {
+            case 'score->board':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                break;
+
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -9424,6 +9430,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $player_id_is_owner_from = $owner_from == $player_id;
+        $player_id_is_owner_to = $owner_to == $player_id;
         
         // Identification of the potential opponent(s)
         if ($splay_direction == -1 && ($owner_from == -2 || $owner_from == -3 || $owner_from == -4)) {
@@ -9515,7 +9522,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
             }
         } else {
-            $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
+            $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
             $splay_direction = null;
             $splay_direction_in_clear = null;
         }
@@ -22455,6 +22462,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 89, age 9: Collaboration
                 case "89D1A":
+                    $this->gamestate->changeActivePlayer($player_id);
                     $remaining_revealed_card = self::getCardsInLocation($player_id, 'revealed')[0]; // There is one card left revealed
                     self::transferCardFromTo($remaining_revealed_card, $player_id, 'board'); // "Meld the other one"
                     break;
@@ -22787,6 +22795,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 141, Artifacts age 3: Moylough Belt Shrine
                 case "141C1A":
                     // Return revealed cards back to player's hand.
+                    $this->gamestate->changeActivePlayer($player_id);
                     $cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($cards as $card) {
                         self::transferCardFromTo($card, $player_id, 'hand');
