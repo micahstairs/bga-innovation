@@ -401,15 +401,15 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('number_of_achievements_needed_to_win', $number_of_achievements_needed_to_win);
 
         // Add one required achievement for each expansion
-        if ($this->innovationGameState->get('artifacts_mode') > 1) {
+        if ($this->innovationGameState->artifactsExpansionEnabled()) {
             $this->innovationGameState->increment('number_of_achievements_needed_to_win');
         }
 
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             $this->innovationGameState->increment('number_of_achievements_needed_to_win');
         }
         
-        if ($this->innovationGameState->get('echoes_mode') > 1) {
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
             $this->innovationGameState->increment('number_of_achievements_needed_to_win');
         }
         // Add extra achievement to win
@@ -525,25 +525,25 @@ class Innovation extends Table
         self::initStat('player', 'sharing_effects_number', 0);
         
         // Add cards from expansions that are in use.
-        if ($this->innovationGameState->get('artifacts_mode') > 1) {
+        if ($this->innovationGameState->artifactsExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 110 <= id AND id <= 214");
-            if ($this->innovationGameState->get('artifacts_mode') == 3) {
+            if ($this->innovationGameState->artifactsExpansionEnabledWithRelics()) {
                 self::DbQuery("UPDATE card SET location = 'relics', position = 0 WHERE is_relic");
             }
         }
 
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
         }
 
-        if ($this->innovationGameState->get('echoes_mode') > 1) {
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
         }
         
         // Initialize Artifacts-specific statistics
-        if ($this->innovationGameState->get('artifacts_mode') > 1) {
+        if ($this->innovationGameState->artifactsExpansionEnabled()) {
             self::initStat('player', 'dig_events_number', 0);
             self::initStat('player', 'free_action_dogma_number', 0);
             self::initStat('player', 'free_action_return_number', 0);
@@ -553,20 +553,20 @@ class Innovation extends Table
             self::initStat('player', 'i_compel_effects_number', 0);
             
             // Initialize Relic-specific statistics
-            if ($this->innovationGameState->get('artifacts_mode') == 3) {
+            if ($this->innovationGameState->artifactsExpansionEnabledWithRelics()) {
                 self::initStat('player', 'relics_seized_number', 0);
                 self::initStat('player', 'relics_stolen_number', 0);
             }
         }
 
         // Initialize Cities-specific statistics
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             self::initStat('player', 'endorse_actions_number', 0);
             self::initStat('player', 'city_cards_drawn_number', 0);
         }
 
         // Initialize Echoes-specific statistics
-        if ($this->innovationGameState->get('echoes_mode') > 1) {
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
             self::initStat('player', 'foreshadowed_number', 0);
             self::initStat('player', 'promoted_number', 0);
             self::initStat('player', 'executed_echo_effect_number', 0);
@@ -622,10 +622,10 @@ class Innovation extends Table
         }
         $result['cards'] = $cards;
 
-        $result['artifacts_expansion_enabled'] = $this->innovationGameState->get('artifacts_mode') > 1;
-        $result['relics_enabled'] = $this->innovationGameState->get('artifacts_mode') == 3;
-        $result['cities_expansion_enabled'] = $this->innovationGameState->get('cities_mode') > 1;
-        $result['echoes_expansion_enabled'] = $this->innovationGameState->get('echoes_mode') > 1;
+        $result['artifacts_expansion_enabled'] = $this->innovationGameState->artifactsExpansionEnabled();
+        $result['relics_enabled'] = $this->innovationGameState->artifactsExpansionEnabledWithRelics();
+        $result['cities_expansion_enabled'] = $this->innovationGameState->citiesExpansionEnabled();
+        $result['echoes_expansion_enabled'] = $this->innovationGameState->echoesExpansionEnabled();
         // TODO(FIGURES): Update this when the expansion is added.
         $result['figures_expansion_enabled'] = false;
     
@@ -898,13 +898,13 @@ class Innovation extends Table
     /** Returns the card types in use by the current game **/
     function getActiveCardTypes() {
         $active_types = array(0);
-        if ($this->innovationGameState->get('artifacts_mode') > 1) {
+        if ($this->innovationGameState->artifactsExpansionEnabled()) {
             $active_types[] = 1;
         }
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             $active_types[] = 2;
         }
-         if ($this->innovationGameState->get('echoes_mode') > 1) {
+         if ($this->innovationGameState->echoesExpansionEnabled()) {
             $active_types[] = 3;
         }
         // TODO(FIGURES): Update this when implementing the expansion.
@@ -1395,7 +1395,7 @@ class Innovation extends Table
         if ($current_state['name'] != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
-                if ($bottom_to && $this->innovationGameState->get('cities_mode') > 1) {
+                if ($bottom_to && $this->innovationGameState->citiesExpansionEnabled()) {
                     // Victory and Glory Cities special achievements require tucking a card
                     // with a particular symbol to get the special achievement.
                     if ($location_to == 'board') { // tuck a flag to board
@@ -1484,7 +1484,7 @@ class Innovation extends Table
 
         $end_of_game = false;
 
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             try {
                 self::updateFlagsAndFountains();
             } catch(EndOfGame $e) {
@@ -1504,7 +1504,7 @@ class Innovation extends Table
         }
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
-        if ($this->innovationGameState->get('cities_mode') > 1 && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
+        if ($this->innovationGameState->citiesExpansionEnabled() && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
             self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
         }
         
@@ -1790,7 +1790,7 @@ class Innovation extends Table
             $end_of_game = true;
         }
 
-        if ($this->innovationGameState->get('cities_mode') > 1 && ($location_from == 'board' || $location_to == 'board')) {
+        if ($this->innovationGameState->citiesExpansionEnabled() && ($location_from == 'board' || $location_to == 'board')) {
             try {
                 self::updateFlagsAndFountains();
             } catch(EndOfGame $e) {
@@ -3118,7 +3118,7 @@ class Innovation extends Table
     function checkForSpecialAchievementsForPlayer($player_id) {
         // TODO(FIGURES): Update this once there are other special achievements to test for.
         $achievements_to_test = array(105, 106, 107, 108, 109);
-        if ($this->innovationGameState->get('echoes_mode') > 1) {
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
         $end_of_game = false;
@@ -5628,7 +5628,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getCardTypeToDraw($age_to_draw, $player_id) {
         $card_type = 0;
         // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
-        if ($this->innovationGameState->get('echoes_mode') == 2 &&
+        if ($this->innovationGameState->echoesExpansionEnabled() &&
                 (self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
                 self::countCardsInLocation($player_id, 'hand', /*type=*/ 3) == 0 && 
                 self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
@@ -5675,7 +5675,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setStat(0, 'max_age_on_board', $player_id);
         }
 
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             try {
                 self::updateFlagsAndFountains();
             } catch(EndOfGame $e) {
@@ -5807,7 +5807,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $end_of_game = false;
 
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             try {
                 self::updateFlagsAndFountains();
             } catch(EndOfGame $e) {
@@ -7380,7 +7380,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getActivePlayerId();
         $melded_card = self::getCardInfo($this->innovationGameState->get('melded_card_id'));
 
-        if ($this->innovationGameState->get('cities_mode') > 1) {
+        if ($this->innovationGameState->citiesExpansionEnabled()) {
             // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
             if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0) {
                 self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, /*type=*/ 2);
@@ -7397,7 +7397,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function stPromoteCard() {
-        if ($this->innovationGameState->get('echoes_mode') > 1) {
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
             $melded_card = self::getCardInfo($this->innovationGameState->get('melded_card_id'));
             $card_counts = self::countCardsInLocationKeyedByAge($melded_card['owner'], 'forecast');
             for ($age = 1; $age <= $melded_card['age']; $age++) {
@@ -7428,7 +7428,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /* Returns true if a relic is being seized */
     function tryToDigArtifactAndSeizeRelic($melded_card) {
         // The Artifacts expansion is not enabled.
-        if ($this->innovationGameState->get('artifacts_mode') <= 1) {
+        if (!$this->innovationGameState->artifactsExpansionEnabled()) {
             return false;
         }
 
@@ -7461,7 +7461,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::incStat(1, 'dig_events_number', $player_id);
                 
                 // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
-                if ($this->innovationGameState->get('artifacts_mode') == 3) {
+                if ($this->innovationGameState->artifactsExpansionEnabledWithRelics()) {
                     $relic = self::getRelicForAge($top_artifact_card['faceup_age']);
                     // "You may only do this if the Relic is next to its supply pile, or in any achievements pile (even your own!)."
                     if ($relic != null && (self::canSeizeRelicToHand($relic, $player_id) || self::canSeizeRelicToAchievements($relic, $player_id))) {
@@ -8019,11 +8019,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 0:
                 return true;
             case 1:
-                return $this->innovationGameState->get('artifacts_mode') > 1;
+                return $this->innovationGameState->artifactsExpansionEnabled();
             case 2:
-                return $this->innovationGameState->get('cities_mode') > 1;
+                return $this->innovationGameState->citiesExpansionEnabled();
             case 3:
-                return $this->innovationGameState->get('echoes_mode') > 1;
+                return $this->innovationGameState->echoesExpansionEnabled();
             // TODO(FIGURES): Add another case when we implement this expansion.
             default:
                 return false;
@@ -8087,7 +8087,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // Identify which cards will trigger a City draw when melded
-        $cities_expansion_enabled = self::getGameStateValue('cities_mode') > 1;
+        $cities_expansion_enabled = $this->innovationGameState->citiesExpansionEnabled();
         $pile_size_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
         $num_cities_in_hand = self::countCardsInLocation($player_id, 'hand', /*type=*/ 2);
         foreach ($cards_which_can_be_melded as $card) {
@@ -9754,7 +9754,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($next_player) { // The turn for the current player is over
             self::resetFlagsForMonument();
 
-            if ($this->innovationGameState->get('cities_mode') > 1) {
+            if ($this->innovationGameState->citiesExpansionEnabled()) {
                 $this->innovationGameState->set('endorse_action_state', 1);
             }
             
@@ -10145,7 +10145,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $num_echoes_cards_without_crowns++;
                     }
                 }
-                if ($this->innovationGameState->get('echoes_mode') > 1 && $num_cards_with_crowns >= 2 && $num_echoes_cards_without_crowns == 0) {
+                if ($this->innovationGameState->echoesExpansionEnabled() && $num_cards_with_crowns >= 2 && $num_echoes_cards_without_crowns == 0) {
                     $step_max = 1;
                 } else {
                     do {
