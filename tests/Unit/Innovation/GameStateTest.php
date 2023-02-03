@@ -37,21 +37,21 @@ class GameStateTest extends BaseTest
         $this->assertEquals(1, $this->state->get('test'));
     }
 
-    public function testInc()
+    public function testIncrement()
     {
         $this->game->expects($this->once())->method('incGameStateValue')->with('test', 1);
         $this->game->method('getGameStateValue')->with('test')->willReturn(1);
 
-        $this->state->inc('test');
+        $this->state->increment('test');
         $this->assertEquals(1, $this->state->get('test'));
     }
 
-    public function testIncWithCustomIncrement()
+    public function testIncrementWithCustomIncrement()
     {
         $this->game->expects($this->once())->method('incGameStateValue')->with('test', 2);
         $this->game->method('getGameStateValue')->with('test')->willReturn(2);
 
-        $this->state->inc('test', 2);
+        $this->state->increment('test', 2);
         $this->assertEquals(2, $this->state->get('test'));
     }
 

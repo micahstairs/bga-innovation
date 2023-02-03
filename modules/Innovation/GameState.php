@@ -43,7 +43,7 @@ class GameState
      * @param int $value
      * @return mixed
      */
-    public function inc(string $key, int $value = 1)
+    public function increment(string $key, int $value = 1)
     {
         return $this->game->incGameStateValue($key, $value);
     }
