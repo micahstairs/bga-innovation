@@ -8131,26 +8131,38 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'age_to_draw' => $age_to_draw,
             'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
-            'colors_triggering_city_draw' => self::getGameStateValue('cities_mode') > 1 && self::countCardsInLocation($player_id, 'hand', /*type=*/ 2) == 0 ? self::getEmptyPiles($player_id) : [],
-            'city_draw_falls_back_to_other_type' => self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
+            'city_draw_falls_back_to_other_type' => $age_to_draw > 10 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
-                    "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id)
+                    "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id),
+                    "meld_info" => self::getMeldInfo($player_id),
                 )
             )
         );
     }
 
-    /** Returns the colors which aren't present on a player's board */
-    function getEmptyPiles($player_id) {
-        $colors = array();
-        $pile_size_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
-        for ($color = 0; $color < 5; $color++) {
-            if ($pile_size_counts[$color] == 0) {
-                $colors[] = $color;
-            }
+    function getMeldInfo($player_id) {
+        $info_by_card_id = array();
+        
+        // Get list iof cards which can be melded right now
+        $cards_which_can_be_melded = self::getCardsInLocation($player_id, 'hand');
+        $artifact = self::getArtifactOnDisplay($player_id);
+        if ($artifact !== null) {
+            $cards_which_can_be_melded[] = $artifact; 
         }
-        return $colors;
+
+        // Identify which cards will trigger a City draw when melded
+        $cities_expansion_enabled = self::getGameStateValue('cities_mode') > 1;
+        $pile_size_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
+        $num_cities_in_hand = self::countCardsInLocation($player_id, 'hand', /*type=*/ 2);
+        foreach ($cards_which_can_be_melded as $card) {
+            $no_cities_in_hand_after_meld = $num_cities_in_hand == 0 || ($num_cities_in_hand == 1 && $card['type'] == 2);
+            $info_by_card_id[$card['id']] = [
+                'triggers_city_draw' => $cities_expansion_enabled && $pile_size_counts[$card['color']] == 0 && $no_cities_in_hand_after_meld,
+            ];
+        }
+
+        return $info_by_card_id;
     }
 
     /** Returns the ages that are currently claimable from the standard achievements pile */

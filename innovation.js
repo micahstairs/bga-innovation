@@ -1194,14 +1194,14 @@ function (dojo, declare) {
                     
                     // Cards in hand (meld action)
                     var city_draw_type = args.args.city_draw_falls_back_to_other_type ? args.args.type_to_draw : 2;
-                    this.addTooltipsWithActionsToMyHand(args.args.colors_triggering_city_draw, args.args.age_to_draw, city_draw_type);
+                    this.addTooltipsWithActionsToMyHand(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
                     var cards_in_hand = this.selectMyCardsInHand();
                     cards_in_hand.addClass("clickable");
                     this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                     this.on(cards_in_hand, 'onclick', 'action_clickMeld');
 
                     // Artifact on display (meld action)
-                    this.addTooltipWithMeldActionToMyArtifactOnDisplay(args.args.colors_triggering_city_draw, args.args.age_to_draw, city_draw_type);
+                    this.addTooltipWithMeldActionToMyArtifactOnDisplay(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
                     var artifact_on_display = this.selectArtifactOnDisplay();
                     artifact_on_display.addClass("clickable");
                     this.on(artifact_on_display, 'onclick', 'action_clickMeld');
@@ -2062,9 +2062,9 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipsWithActionsToMyHand : function(colors_triggering_city_draw, city_draw_age, city_draw_type) {
+        addTooltipsWithActionsToMyHand : function(meld_info, city_draw_age, city_draw_type) {
             var cards = this.selectMyCardsInHand();
-            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, meld_info, city_draw_age, city_draw_type);
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
@@ -2101,9 +2101,9 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipWithMeldActionToMyArtifactOnDisplay : function(colors_triggering_city_draw, city_draw_age, city_draw_type) {
+        addTooltipWithMeldActionToMyArtifactOnDisplay : function(meld_info, city_draw_age, city_draw_type) {
             var cards = this.selectArtifactOnDisplay();
-            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, colors_triggering_city_draw, city_draw_age, city_draw_type);
+            this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, meld_info, city_draw_age, city_draw_type);
             var self = this;
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
@@ -2137,7 +2137,7 @@ function (dojo, declare) {
             });
         },
         
-        createActionTextForMeld : function(self, card, colors_triggering_city_draw, city_draw_age, city_draw_type) {
+        createActionTextForMeld : function(self, card, meld_info, city_draw_age, city_draw_type) {
             // Calculate new score (score pile + bonus icons)
             var bonus_icons = [];
             for (var i = 0; i < 5; i++) {
@@ -2256,7 +2256,7 @@ function (dojo, declare) {
                 HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since the arrow icon on this card will splay the pile in a new direction.") + "</p>",
                     { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
                 );
-            } else if (colors_triggering_city_draw != undefined && colors_triggering_city_draw.includes(parseInt(card.color))) {
+            } else if (meld_info !== undefined && meld_info[card.id].triggers_city_draw) {
                 HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since this Meld action will add a new color to your board.") + "</p>",
                     { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
                 );
