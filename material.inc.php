@@ -1131,7 +1131,7 @@ $this->textual_card_infos = array(
 280 => array('name' => clienttranslate('Rio De Janeiro')),
 281 => array('name' => clienttranslate('Paris')),
 282 => array('name' => clienttranslate('Dublin')),
-283 => array('name' => clienttranslate('Viena')),
+283 => array('name' => clienttranslate('Vienna')),
 284 => array('name' => clienttranslate('New York City')),
 
 /* Cities - Age 7 */
