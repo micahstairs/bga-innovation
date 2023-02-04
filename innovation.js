@@ -2256,7 +2256,7 @@ function (dojo, declare) {
                 HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since the arrow icon on this card will splay the pile in a new direction.") + "</p>",
                     { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
                 );
-            } else if (meld_info !== undefined && meld_info[card.id].triggers_city_draw) {
+            } else if (meld_info !== undefined && meld_info[card.id] !== undefined && meld_info[card.id].triggers_city_draw) {
                 HTML_action += dojo.string.substitute("<p>" + _("You will also draw a ${age} since this Meld action will add a new color to your board.") + "</p>",
                     { 'age': self.square('N', 'age', city_draw_age, 'type_' + city_draw_type), }
                 );
@@ -5118,6 +5118,8 @@ function (dojo, declare) {
                     for(var direction = 1; direction < 4; direction++) {
                         dojo.removeClass(splay_indicator, 'splay_' + direction);
                     }
+                    this.zone.board[player_id][color].counter.setValue(0);
+                    dojo.style(this.zone.board[player_id][color].counter.span, 'visibility', 'hidden');
                 }
             }
             
