@@ -642,6 +642,7 @@ function (dojo, declare) {
 
                 if (!this.echoes_expansion_enabled) {
                     dojo.byId('forecast_text_' + player_id).style.display = 'none';
+                    dojo.byId('forecast_count_container_' + player_id).style.display = 'none';
                 }
             }
             
