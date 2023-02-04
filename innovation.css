@@ -722,11 +722,6 @@
   padding-right: 3px;
 }
 
-.sep {
-  display: inline-block;
-  width: 23px;
-}
-
 .player_info {
   margin-top: 5px;
   margin-left: 36px;
@@ -1164,6 +1159,10 @@
 
 .simple_stats {
   height: 19px;
+}
+
+.score_count, .hand_count, .max_age_on_board {
+  padding-right: 5px;
 }
 
 .square {
