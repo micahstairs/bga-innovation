@@ -92,4 +92,36 @@ class GameState
     {
         return $this->get('game_rules') == 1;
     }
+
+    /**
+     * @return bool
+     */
+    public function artifactsExpansionEnabled()
+    {
+        return $this->get('artifacts_mode') > 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function artifactsExpansionEnabledWithRelics()
+    {
+        return $this->get('artifacts_mode') == 3;
+    }
+
+    /**
+     * @return bool
+     */
+    public function citiesExpansionEnabled()
+    {
+        return $this->get('cities_mode') > 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function echoesExpansionEnabled()
+    {
+        return $this->get('echoes_mode') > 1;
+    }
 }
