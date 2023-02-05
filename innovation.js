@@ -68,9 +68,9 @@ function (dojo, declare) {
             this.num_cards_in_row.display = 1;
             this.num_cards_in_row.deck = 15;
             this.num_cards_in_row.forecast = null;
-            this.num_cards_in_row.my_forecast_verso = null;
+            this.num_cards_in_row.my_forecast_verso = 3;
             this.num_cards_in_row.score = null;
-            this.num_cards_in_row.my_score_verso = null;
+            this.num_cards_in_row.my_score_verso = 3;
             // For board, this.num_cards_in_row is not defined because it's managed by the splay system: the width is defined dynamically
             this.num_cards_in_row.revealed = 1;
             this.num_cards_in_row.achievements = null; // This is not defined because it has a custom pattern
@@ -984,32 +984,12 @@ function (dojo, declare) {
             this.num_cards_in_row.my_hand = Math.floor(main_area_inner_width / this.delta.my_hand.x);
             this.num_cards_in_row.opponent_hand = Math.floor(main_area_inner_width / this.delta.opponent_hand.x);
 
-            // Defining the number of cards the window for forecast verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
-            this.num_cards_in_row.my_forecast_verso = Math.floor((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_forecast_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_forecast_verso.x));
-            if (this.num_cards_in_row.my_forecast_verso > 5) {
-                this.num_cards_in_row.my_forecast_verso = 5;
-            }
-            
-            // Defining the number of cards the window for score verso can host
-            // Viewport size defined as minimum between the width of a hand container and the width needed to host 5 cards.
-            this.num_cards_in_row.my_score_verso = Math.floor((dojo.contentBox('hand_container_' + any_player_id).w + this.delta.my_score_verso.x - this.card_dimensions['M card'].width) / (this.delta.my_score_verso.x));
-            if (this.num_cards_in_row.my_score_verso > 5) {
-                this.num_cards_in_row.my_score_verso = 5;
-            }
-
             // TODO(LATER): Figure out how to disable the animations while resizing the zones.
             for (var player_id in this.players) {
                 this.zone.forecast[player_id].updateDisplay();
                 this.zone.score[player_id].updateDisplay();
                 this.zone.achievements[player_id].updateDisplay();
                 this.zone.hand[player_id].updateDisplay();
-            }
-            if (!this.isSpectator) {
-                this.zone.my_score_verso.updateDisplay();
-                if (this.echoes_expansion_enabled) {
-                    this.zone.my_forecast_verso.updateDisplay();
-                }
             }
             for (var player_id in this.players) {
                 for (var color = 0; color < 5; color++){
