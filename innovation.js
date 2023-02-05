@@ -907,6 +907,7 @@ function (dojo, declare) {
             } else {
                 var main_area_width = window_width - player_panel_width;
             }
+            dojo.style('main_area', 'width', main_area_width + 'px');
 
             if (decks_on_right) {
                 dojo.style('main_area_wrapper', 'flex-direction', 'row');
