@@ -688,10 +688,6 @@
     height: 32px !important;
     padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
 }
-.sep {
-    display: inline-block;
-    width: 23px;
-}
 .player_info {
     margin-top: 5px;
     margin-left: 36px;
@@ -1133,7 +1129,9 @@
     height: 19px;
 }
 
-
+.score_count, .hand_count, .max_age_on_board {
+    padding-right: 5px;
+}
 .square {
     display: inline-block;
     &.basic {

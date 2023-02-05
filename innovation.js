@@ -382,6 +382,7 @@ function (dojo, declare) {
             this.addCustomTooltipToClass("score_count", _("Score"), "");
             this.addCustomTooltipToClass("hand_count", _("Number of cards in hand"), "");
             this.addCustomTooltipToClass("max_age_on_board", _("Max age on board top cards"), "");
+            this.addCustomTooltipToClass("forecast_count", _("Number of cards in forecast"), "");
             
             for (var icon=1; icon<=6; icon++) {
                 this.addCustomTooltipToClass("ressource_" + icon, _("Number of visible ${icons} on the board").replace('${icons}', this.square('P', 'icon', icon, 'in_tooltip')), "");
@@ -623,7 +624,7 @@ function (dojo, declare) {
             this.zone.forecast = {};
             for (var player_id in this.players) {
                 // Creation of the zone
-                this.zone.forecast[player_id] = this.createZone('forecast', player_id, null, null, null, grouped_by_age_type_and_is_relic=true);
+                this.zone.forecast[player_id] = this.createZone('forecast', player_id, null, null, null, grouped_by_age_type_and_is_relic=true, counter_method="COUNT", counter_display_zero=true);
                 this.setPlacementRules(this.zone.forecast[player_id], left_to_right=true);
                     
                 // Add cards to zone according to the current situation
@@ -641,6 +642,7 @@ function (dojo, declare) {
 
                 if (!this.echoes_expansion_enabled) {
                     dojo.byId('forecast_text_' + player_id).style.display = 'none';
+                    dojo.byId('forecast_count_container_' + player_id).style.display = 'none';
                 }
             }
             

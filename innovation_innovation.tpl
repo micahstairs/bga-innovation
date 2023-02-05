@@ -141,7 +141,24 @@
 // Javascript HTML templates
 var jstpl_player_panel = '\
 <div class="player_info">\
-    <div class="simple_stats"><span class="score_count" id="score_count_container_${player_id}" ><span id="score_count_${player_id}"></span><span class="square basic icon_score"></span></span><span class="sep"></span><span class="hand_count" id="hand_count_container_${player_id}"><span id="hand_count_${player_id}"></span><span class="square basic icon_hand"></span></span></span><span class="sep"></span><span class="max_age_on_board" id="max_age_on_board_container_${player_id}"><span id="max_age_on_board_${player_id}"></span><span class="square basic icon_age_indicator"></span></span></div>\
+    <div class="simple_stats">\
+        <span class="score_count" id="score_count_container_${player_id}">\
+            <span id="score_count_${player_id}"></span>\
+            <span class="square basic icon_score"></span>\
+        </span>\
+        <span class="hand_count" id="hand_count_container_${player_id}">\
+            <span id="hand_count_${player_id}"></span>\
+            <span class="square basic icon_hand"></span>\
+        </span>\
+        <span class="max_age_on_board" id="max_age_on_board_container_${player_id}">\
+            <span id="max_age_on_board_${player_id}"></span>\
+            <span class="square basic icon_age_indicator"></span>\
+        </span>\
+        <span class="forecast_count" id="forecast_count_container_${player_id}">\
+            <span id="forecast_count_${player_id}"></span>\
+            <span><i class="fa fa-lg fa-eye"></i></span>\
+        </span>\
+    </div>\
     <table class="ressource_table" id="ressources_${player_id}">\
         <tr id="symbols_${player_id}"></tr>\
         <tr id="ressource_counts_${player_id}"></tr>\
