@@ -1395,15 +1395,24 @@ class Innovation extends Table
         if ($current_state['name'] != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
-                if ($bottom_to && $this->innovationGameState->citiesExpansionEnabled()) {
-                    // Victory and Glory Cities special achievements require tucking a card
-                    // with a particular symbol to get the special achievement.
-                    if ($location_to == 'board') { // tuck a flag to board
+                if ($card['type'] == 2 && $location_to == 'board') { // city card going on a board
+                    if ($bottom_to) { // tuck
                         if (self::hasRessource($card, 8)) { // has a flag
                             self::claimSpecialAchievement($owner_to, 328); // Glory
                         }
                         if (self::hasRessource($card, 9)) { // has a fountain
                             self::claimSpecialAchievement($owner_to, 329); // Victory
+                        }
+                    } else { // meld
+                        $current_splay_direction = self::getCurrentSplayDirection($owner_to, $card['color']);
+                        if (self::hasRessource($card, 11) && $current_splay_direction == 1) { // has a left arrow and already splayed left
+                            self::claimSpecialAchievement($owner_to, 325); // Legend
+                        }
+                        if (self::hasRessource($card, 12) && $current_splay_direction == 2) { // has a right arrow and already splayed right
+                            self::claimSpecialAchievement($owner_to, 326); // Repute
+                        }
+                        if (self::hasRessource($card, 13) && $current_splay_direction == 3) { // has an up arrow and already splayed up
+                            self::claimSpecialAchievement($owner_to, 327); // Fame
                         }
                     }
                 }
@@ -7297,25 +7306,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::executeDraw($player_id, $card['age'] + 1);
                             break;
                         case 11: // Left Arrow: Splay the city's color left
-                            if (self::getCurrentSplayDirection($player_id, $card['color']) == 1) {
-                                self::claimSpecialAchievement($player_id, 325); // Legend
-                            } else {
-                                self::splayLeft($player_id, $player_id, $card['color']);
-                            }
+                            self::splayLeft($player_id, $player_id, $card['color']);
                             break;
                         case 12: // Right Arrow: Splay the city's color right
-                            if ( self::getCurrentSplayDirection($player_id, $card['color']) == 2) {
-                                self::claimSpecialAchievement($player_id, 326); // Repute
-                            } else {
-                                self::splayRight($player_id, $player_id, $card['color']);
-                            }
+                            self::splayRight($player_id, $player_id, $card['color']);
                             break;
                         case 13: // Up Arrow: Splay the city's color up
-                            if ( self::getCurrentSplayDirection($player_id, $card['color']) == 3) {
-                                self::claimSpecialAchievement($player_id, 327); // Fame
-                            } else {
-                                self::splayUp($player_id, $player_id, $card['color']);
-                            }
+                            self::splayUp($player_id, $player_id, $card['color']);
                             break;
                     }
                 }
