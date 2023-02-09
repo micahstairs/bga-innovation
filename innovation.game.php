@@ -12074,6 +12074,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 187, Artifacts age 8: Battleship Bismarck
             case "187C1":
+                // "Draw and reveal an 8"
+                $card = self::executeDraw($player_id, 8, 'revealed');
+                self::transferCardFromTo($card, $player_id, 'hand');
+                self::setAuxiliaryValue($card['color']);
                 $step_max = 1;
                 break;
 
@@ -18082,10 +18086,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 187, Artifacts age 8: Battleship Bismarck
         case "187C1A":
-            // "Draw and reveal an 8"
-            $card = self::executeDraw($player_id, 8, 'revealed');
-            self::transferCardFromTo($card, $player_id, 'hand');
-
             // "Return all cards of the drawn color from your board"
             $options = array(
                 'player_id' => $player_id,
@@ -18095,7 +18095,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'color' => array($card['color']),
+                'color' => array(self::getAuxiliaryValue()),
             );
             break;
             
