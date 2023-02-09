@@ -13544,7 +13544,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 if ($count >= 2) {
-                    $step_max = 2;
+                    $step_max = 1;
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two different values in your score pile.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
@@ -23577,6 +23577,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                         }
                         self::setAuxiliaryArray($selectable_card_ids);
+                        self::incrementStepMax(1);
                     }
                     break;
 
