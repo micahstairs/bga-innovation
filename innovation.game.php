@@ -12287,7 +12287,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 206, Artifacts age 10: Higgs Boson
             case "206N1":
-                $step_max = 1;
+                // "Transfer all cards on your board to your score pile"
+                $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
+                for ($i = 0; $i < 5 ; $i++){
+                    $pile = $piles[$i];
+                    for ($j = count($pile) - 1; $j >= 0; $j--) {
+                        self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                    }
+                }
                 break;
                 
            // id 207, Artifacts age 10: Exxon Valdez
@@ -18307,18 +18314,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'hand'
             );
-            break;
-        
-        // id 206, Artifacts age 10: Higgs Boson
-        case "206N1A":
-            // "Transfer all cards on your board to your score pile"
-            $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
-            for ($i = 0; $i < 5 ; $i++){
-                $pile = $piles[$i];
-                for ($j = count($pile) - 1; $j >= 0; $j--) { 
-                    self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
-                }
-            }
             break;
             
         // id 208, Artifacts age 10: Maldives
