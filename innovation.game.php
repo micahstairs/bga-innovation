@@ -9471,23 +9471,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $splay_direction_in_clear = null;
         }
         
+        $must_show_score = false;
         if ($special_type_of_choice == 0 && $splay_direction == null && $location_from == 'score') {
             if ($owner_from == $player_id) {
                 $must_show_score = true;
             } else if ($owner_from == -2) {
                 $visible_cards = self::getVisibleSelectedCards($player_id);
-                $must_show_score = false;
-                foreach($visible_cards as $card) {
+                foreach ($visible_cards as $card) {
                     if ($card['owner'] == $player_id && $card['location'] == 'score') {
                         $must_show_score = true;
                         break;
                     }
                 }
-            } else {
-                $must_show_score = false;
             }
-        } else {
-            $must_show_score = false;
+        }
+
+        $must_show_forecast = false;
+        if ($special_type_of_choice == 0 && $splay_direction == null && $location_from == 'forecast') {
+            if ($owner_from == $player_id) {
+                $must_show_forecast = true;
+            } else if ($owner_from == -2) {
+                $visible_cards = self::getVisibleSelectedCards($player_id);
+                foreach ($visible_cards as $card) {
+                    if ($card['owner'] == $player_id && $card['location'] == 'forecast') {
+                        $must_show_forecast = true;
+                        break;
+                    }
+                }
+            }
         }
         
         $card_names = self::getDogmaCardNames();
@@ -9511,6 +9522,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     "visible_selectable_cards" => self::getVisibleSelectedCards($player_id),
                     "selectable_rectos" => self::getSelectableRectos($player_id), // Most of the time, the player choose among versos he can see this array is empty so this array is empty except for few dogma effects
                     "must_show_score" => $must_show_score,
+                    "must_show_forecast" => $must_show_forecast,
                     "show_all_cards_on_board" => $special_type_of_choice == 0 && $splay_direction == null && $location_from == 'board' && $bottom_from == 1,
                 )
             ))

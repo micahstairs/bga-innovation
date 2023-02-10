@@ -1215,6 +1215,9 @@ function (dojo, declare) {
                             if (args.args._private.must_show_score && !this.isInReplayMode()) {
                                 this.my_score_verso_window.show();
                             }
+                            if (args.args._private.must_show_forecast && !this.isInReplayMode()) {
+                                this.my_forecast_verso_window.show();
+                            }
                         }
                         var selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
                         if (selectable_rectos !== null) {
