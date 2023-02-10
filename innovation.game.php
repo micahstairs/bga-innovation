@@ -12520,6 +12520,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 187, Artifacts age 8: Battleship Bismarck
             case "187C1":
+                // "Draw and reveal an 8"
+                $card = self::executeDraw($player_id, 8, 'revealed');
+                self::transferCardFromTo($card, $player_id, 'hand');
+                self::setAuxiliaryValue($card['color']);
                 $step_max = 1;
                 break;
 
@@ -12733,7 +12737,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 206, Artifacts age 10: Higgs Boson
             case "206N1":
-                $step_max = 1;
+                // "Transfer all cards on your board to your score pile"
+                $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
+                for ($i = 0; $i < 5 ; $i++){
+                    $pile = $piles[$i];
+                    for ($j = count($pile) - 1; $j >= 0; $j--) {
+                        self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                    }
+                }
                 break;
                 
            // id 207, Artifacts age 10: Exxon Valdez
@@ -13994,7 +14005,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 if ($count >= 2) {
-                    $step_max = 2;
+                    $step_max = 1;
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two different values in your score pile.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
@@ -18563,10 +18574,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 187, Artifacts age 8: Battleship Bismarck
         case "187C1A":
-            // "Draw and reveal an 8"
-            $card = self::executeDraw($player_id, 8, 'revealed');
-            self::transferCardFromTo($card, $player_id, 'hand');
-
             // "Return all cards of the drawn color from your board"
             $options = array(
                 'player_id' => $player_id,
@@ -18576,7 +18583,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
                 
-                'color' => array($card['color']),
+                'color' => array(self::getAuxiliaryValue()),
             );
             break;
             
@@ -18788,18 +18795,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'hand'
             );
-            break;
-        
-        // id 206, Artifacts age 10: Higgs Boson
-        case "206N1A":
-            // "Transfer all cards on your board to your score pile"
-            $piles = self::getCardsInLocationKeyedByColor($player_id, 'board');
-            for ($i = 0; $i < 5 ; $i++){
-                $pile = $piles[$i];
-                for ($j = count($pile) - 1; $j >= 0; $j--) { 
-                    self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
-                }
-            }
             break;
             
         // id 208, Artifacts age 10: Maldives
@@ -24115,6 +24110,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             }
                         }
                         self::setAuxiliaryArray($selectable_card_ids);
+                        self::incrementStepMax(1);
                     }
                     break;
 
