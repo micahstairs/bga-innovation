@@ -8206,33 +8206,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         foreach ($active_players as $player_id) {
             $no_effect = true;
             if (in_array($player_id, $players_executing_non_demand_effects) || in_array($player_id, $players_executing_echo_effects)) {
-                $no_effect = $no_effect && self::sharingHasNoEffect(
-                    $card,
-                    $launcher_id,
-                    $player_id,
-                    $players_executing_non_demand_effects,
-                    $players_executing_echo_effects,
-                    $card_ids_with_visible_echo_effects
-                );
+                $no_effect = $no_effect && self::sharingHasNoEffect($card, $launcher_id, $player_id, $card_ids_with_visible_echo_effects);
                 if (!$no_effect) {
                     $effective_sharing_players[] = $player_id;
                 }
             }
             if (in_array($player_id, $players_executing_i_compel_effects)) {
-                $no_effect = $no_effect && self::compelHasNoEffect(
-                    $card,
-                    $launcher_id,
-                    $player_id,
-                    $players_executing_i_compel_effects
-                );
+                $no_effect = $no_effect && self::compelHasNoEffect($card, $launcher_id, $player_id);
             }
             if (in_array($player_id, $players_executing_i_demand_effects)) {
-                $no_effect = $no_effect && self::demandHasNoEffect(
-                    $card,
-                    $launcher_id,
-                    $player_id,
-                    $players_executing_i_demand_effects
-                );
+                $no_effect = $no_effect && self::demandHasNoEffect($card, $launcher_id, $player_id);
             }
             if ($no_effect) {
                 $players_with_no_effect[] = $player_id;
@@ -8289,7 +8272,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the non-demand and echo effects (without revealing hidden info to the launching player). */    
-    function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $non_demand_players, $echo_players, $card_ids_with_visible_echo_effects) {
+    function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects) {
 
         // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
@@ -8524,14 +8507,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the demand effect (without revealing hidden info to the launching player). */
-    function demandHasNoEffect($card, $launcher_id, $executing_player_id, $i_demand_players) {
+    function demandHasNoEffect($card, $launcher_id, $executing_player_id) {
 
         // Many cards do not have a demand effect on them
         if (self::getDemandEffect($card['id']) == null) {
             return true;
         }
 
-        // Check the card's demand effects (excludes compel effects even they are technically a type of demand)
+        // Check the card's demand effect (excludes compel effects even they are technically a type of demand)
         switch ($card['id']) {
 
             /*** Basic cases involving empty hands and/or empty score piles ***/
@@ -8564,7 +8547,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             /*** Other cases (sorted by card ID) ***/
 
             case 12: // City States
-                // The demand has no effect if the player has less than 4 towers on their board.
+                // This demand has no effect if the player has less than 4 towers on their board.
                 return self::getPlayerResourceCounts($executing_player_id)[4] < 4;
 
             case 20: // Mapmaking
@@ -8615,16 +8598,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the compel effect (without revealing hidden info to the launching player). */
-    function compelHasNoEffect($card, $launcher_id, $executing_player_id, $i_compel_players) {
+    function compelHasNoEffect($card, $launcher_id, $executing_player_id) {
 
         // Many cards do not have a compel effect on them
         if (self::getCompelEffect($card['id']) == null) {
             return true;
         }
-        
-        // All other cards with compel effects are assumed to have an effect.
-        return false;
 
+        // Check the card's compel effect
+        switch ($card['id']) {
+
+            /*** Basic cases involving empty hands and/or empty score piles ***/
+
+            case 118: // Jiskairumoko Necklace
+            case 141: // Moylough Belt Shrine
+                // This demand has no effect if the player has an empty hand.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
+
+            case 145: // Petition of Right
+            case 148: // Tortugas Galleon
+            case 167: // Frigate Constitution
+                // This demand has no effect if the player has an empty score pile.
+                return self::countCardsInLocation($executing_player_id, 'score') == 0;
+                
+            default:
+                // All other cards with compel effects are assumed to have an effect.
+                return false;
+
+        }
     }
     
     function argDogmaEffect() {
