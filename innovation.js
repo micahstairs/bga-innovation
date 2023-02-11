@@ -2084,6 +2084,7 @@ function (dojo, declare) {
                 dojo.attr(HTML_id, 'card_id', id);
                 dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
                 dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
+                dojo.attr(HTML_id, 'sharing_players', dogma_effect_info[id].sharing_players.join(','));
             });
         },
 
@@ -3938,10 +3939,7 @@ function (dojo, declare) {
 
             var card_id = dojo.attr(HTML_id, 'card_id');
             var card = this.cards[card_id];
-            var sharing_players = dojo.attr(HTML_id, 'non_demand_effect_players');
-            if (sharing_players == '') {
-                sharing_players = dojo.attr(HTML_id, 'echo_effect_players');
-            }
+            var sharing_players = dojo.attr(HTML_id, 'sharing_players');
             if (dojo.attr(HTML_id, 'no_effect')) {
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? It will have no effect."),
                     {
