@@ -8222,12 +8222,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        $dogma_effect_info['players_executing_non_demand_effects'] = $players_executing_non_demand_effects;
-        $dogma_effect_info['players_executing_echo_effects'] = $players_executing_echo_effects;
+        $dogma_effect_info['players_executing_i_demand_effects'] = $players_executing_i_demand_effects;
+        $dogma_effect_info['players_executing_i_compel_effects'] = $players_executing_i_compel_effects;
         $dogma_effect_info['players_executing_non_demand_effects'] = $players_executing_non_demand_effects;
         $dogma_effect_info['players_executing_echo_effects'] = $players_executing_echo_effects;
         $dogma_effect_info['sharing_players'] = $effective_sharing_players;
-        $dogma_effect_info['no_effect'] = $players_with_no_effect == count($active_players);
+        $dogma_effect_info['no_effect'] = count($players_with_no_effect) == count($active_players);
 
         if ($this->innovationGameState->get('endorse_action_state') == 1 && !$is_on_display) {
             $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
@@ -8601,7 +8601,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function compelHasNoEffect($card, $launcher_id, $executing_player_id) {
 
         // Many cards do not have a compel effect on them
-        if (self::getCompelEffect($card['id']) == null) {
+        if (!self::isCompelEffect($card['id'])) {
             return true;
         }
 
@@ -8610,11 +8610,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             /*** Basic cases involving empty hands and/or empty score piles ***/
 
-            case 118: // Jiskairumoko Necklace
             case 141: // Moylough Belt Shrine
                 // This demand has no effect if the player has an empty hand.
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0;
 
+            case 118: // Jiskairumoko Necklace
             case 145: // Petition of Right
             case 148: // Tortugas Galleon
             case 167: // Frigate Constitution
