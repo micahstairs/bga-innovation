@@ -9355,6 +9355,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $n_max = $this->innovationGameState->get("n_max");
         $n = $this->innovationGameState->get("n");
         $owner_from = $this->innovationGameState->get("owner_from");
+        $owner_to = $this->innovationGameState->get("owner_to");
         if ($splay_direction == -1) {
             $location_from = self::decodeLocation($this->innovationGameState->get("location_from"));
             $bottom_from = $this->innovationGameState->get("bottom_from");
