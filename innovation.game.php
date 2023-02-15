@@ -9373,8 +9373,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $n_min = 1;
         }
 
-        $player_id_is_owner_from = $owner_from == $player_id;
-        $player_id_is_owner_to = $owner_to == $player_id;
+        if ($splay_direction == -1) {
+            $player_id_is_owner_from = $owner_from == $player_id;
+            $player_id_is_owner_to = $owner_to == $player_id;
+        }
         
         // Identification of the potential opponent(s)
         if ($splay_direction == -1 && ($owner_from == -2 || $owner_from == -3 || $owner_from == -4)) {
