@@ -8147,13 +8147,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $resource_column = 'player_icon_count_' . $dogma_icon;
         $extra_icons = $is_on_display ? self::countIconsOnCard($card, $dogma_icon) : 0;
 
-        $dogma_effect_info['players_executing_i_compel_effects'] = [];
-        $dogma_effect_info['players_executing_i_demand_effects'] = [];
-        $dogma_effect_info['players_executing_non_demand_effects'] = [];
-        $dogma_effect_info['players_executing_echo_effects'] = [];
+        $players_executing_i_compel_effects = [];
+        $players_executing_i_demand_effects = [];
+        $players_executing_non_demand_effects = [];
+        $players_executing_echo_effects = [];
 
         if (self::isCompelEffect($card['id']) === true) {
-            $dogma_effect_info['players_executing_i_compel_effects'] =
+            $players_executing_i_compel_effects =
                 self::getObjectListFromDB(self::format("
                     SELECT
                         player_id
@@ -8165,7 +8165,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         AND player_eliminated = 0
                 ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         } else if (self::getDemandEffect($card['id']) !== null) { 
-            $dogma_effect_info['players_executing_i_demand_effects'] =
+            $players_executing_i_demand_effects =
                 self::getObjectListFromDB(self::format("
                         SELECT
                             player_id
@@ -8193,21 +8193,41 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($launcher_id, $card);
         $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
         if (self::getNonDemandEffect($card['id'], 1) !== null) {
-            $dogma_effect_info['players_executing_non_demand_effects'] = $sharing_players;
+            $players_executing_non_demand_effects = $sharing_players;
         }
         if ($dogma_effect_info['num_echo_effects'] > 0) {
-            $dogma_effect_info['players_executing_echo_effects'] = $sharing_players;
+            $players_executing_echo_effects = $sharing_players;
         }
 
-        $dogma_effect_info['no_effect'] = self::dogmaHasNoEffect(
-            $card,
-            $launcher_id,
-            $dogma_effect_info['players_executing_i_compel_effects'],
-            $dogma_effect_info['players_executing_i_demand_effects'],
-            $dogma_effect_info['players_executing_non_demand_effects'],
-            $dogma_effect_info['players_executing_echo_effects'],
-            $card_ids_with_visible_echo_effects
-        );
+        // NOTE: No effect detection is best effort. If in doubt, we assume it will have an effect.
+        $players_with_no_effect = [];
+        $effective_sharing_players = [];
+        $active_players = self::getAllActivePlayerIds();
+        foreach ($active_players as $player_id) {
+            $no_effect = true;
+            if (in_array($player_id, $players_executing_non_demand_effects) || in_array($player_id, $players_executing_echo_effects)) {
+                $no_effect = $no_effect && self::sharingHasNoEffect($card, $launcher_id, $player_id, $card_ids_with_visible_echo_effects);
+                if (!$no_effect) {
+                    $effective_sharing_players[] = $player_id;
+                }
+            }
+            if (in_array($player_id, $players_executing_i_compel_effects)) {
+                $no_effect = $no_effect && self::compelHasNoEffect($card, $launcher_id, $player_id);
+            }
+            if (in_array($player_id, $players_executing_i_demand_effects)) {
+                $no_effect = $no_effect && self::demandHasNoEffect($card, $launcher_id, $player_id);
+            }
+            if ($no_effect) {
+                $players_with_no_effect[] = $player_id;
+            }
+        }
+
+        $dogma_effect_info['players_executing_i_demand_effects'] = $players_executing_i_demand_effects;
+        $dogma_effect_info['players_executing_i_compel_effects'] = $players_executing_i_compel_effects;
+        $dogma_effect_info['players_executing_non_demand_effects'] = $players_executing_non_demand_effects;
+        $dogma_effect_info['players_executing_echo_effects'] = $players_executing_echo_effects;
+        $dogma_effect_info['sharing_players'] = $effective_sharing_players;
+        $dogma_effect_info['no_effect'] = count($players_with_no_effect) == count($active_players);
 
         if ($this->innovationGameState->get('endorse_action_state') == 1 && !$is_on_display) {
             $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
@@ -8251,26 +8271,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $highest_city_with_featured_icon;
     }
 
-    /** Returns true if the dogma is guaranteed to have no effect (without revealing hidden info to the launching player). */
-    function dogmaHasNoEffect($card, $launcher_id, $i_compel_players, $i_demand_players, $non_demand_players, $echo_players, $card_ids_with_visible_echo_effects) {
-
-        $i_compel_will_be_executed = count($i_compel_players) > 0;
-        $i_demand_will_be_executed = count($i_demand_players) > 0;
-        $non_demand_will_be_executed = count($non_demand_players) > 0;
-        $echo_will_be_executed = count($echo_players) > 0;
-
-        if (!$i_demand_will_be_executed && !$i_compel_will_be_executed && !$non_demand_will_be_executed && !$echo_will_be_executed) {
-            return true;
-        }
-
-        // NOTE: As a general rule, we should avoid making the any card-specific logic very complicated since it can
-        // introduce subtle bugs and may negatively affect performance. For example, there are technically a lot more cases
-        // where Clothing has no effect, but it is non-trivial to capture those cases in a concise way.
+    /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the non-demand and echo effects (without revealing hidden info to the launching player). */    
+    function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects) {
 
         // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
             // NOTE: All cards with echo effects must be included in this switch statement, otherwise it breaks the logic
-            // farther down in this method. Also, we can't return true anywhere here, since the echo effect is not the only
+            // farther down in this method. Also, we can't return true anywhere here, since an echo effect is not the only
             // thing being executed.
             switch ($card_id) {
                 case 219: // Safety Pin
@@ -8326,49 +8333,63 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // assume the cards have an effect.
                     return false;
 
+                case 383: // Piano
+                    // This card has no effect if all players have empty hands.
+                    foreach (self::getAllActivePlayerIds() as $player_id) {
+                        if (self::countCardsInLocation($player_id, 'hand') > 0) {
+                            return false;
+                        }
+                    }
+                    break;
+
                 case 333: // Bangle
                 case 338: // Umbrella
                 case 342: // Bell
                 case 349: // Glassblowing
                 case 351: // Toothbrush
                 case 364: // Sunglasses
-                case 383: // Piano
                 case 386: // Stethoscope
                 case 392: // Morphine
                 case 407: // Bandage
                 case 411: // Air Conditioner
                 case 418: // Jet
-                    // These cards have no effect if all players executing the echo effect have empty hands.
-                    foreach ($echo_players as $player_id) {
-                        if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                            return false;
-                        }
+                    // These echo effects have no effect if the player has an empty hand.
+                    if (self::countCardsInLocation($executing_player_id, 'hand') > 0) {
+                        return false;
                     }
                     break;
             }
         }
 
-        // City cards do not have dogma effects on them
-        if ($card['type'] == 2) {
+        // Many cards do not have a non-demand effect on them
+        if (self::getNonDemandEffect($card['id'], 1) == null) {
             return true;
         }
 
-        // Check the card's demand and non-demand effects
+        // Check the card's non-demand effects
         // NOTE: There is no point in adding any cases for cards which have an echo effect which ALWAYS has an effect (e.g. "Draw a 2"),
         // but for the sake of completeness, it also doesn't hurt to add them below (even though they will never get executed).
         switch ($card['id']) {
 
             // TODO(FIGURES): Add cases.
 
-            /*** Cards which have no effects on them ***/
+            /*** Non-demand effects which read "No effect." ***/
 
-            case 188: // Battleship Yamato
             case 332: // Ruler
             case 335: // Plumbing
             case 344: // Puppet
                 return true;
 
-            /*** Basic cases involving empty hands and/or empty score piles **/
+            /*** Cases where the execution of the non-demand depends on an earlier demand ***/
+
+            case 20: // Mapmaking
+            case 38: // Gunpowder
+            case 48: // The Pirate Code
+            case 62: // Vaccination
+                // We can ignore these non-demand effect, because if the demand has no effect, then this won't either.
+                return false;
+
+            /*** Basic cases involving empty hands and/or empty score piles ***/
 
             case 1: // Tools
             case 9: // Agriculture
@@ -8380,6 +8401,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 50: // Measurement
             case 59: // Classification
             case 63: // Democracy
+            case 71: // Refrigeration
             case 73: // Lighting
             case 75: // Quantum Theory
             case 81: // Antibiotics
@@ -8403,70 +8425,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 216: // Complex Numbers
             case 338: // Umbrella
             case 341: // Soap
+            case 347: // Crossbow
             case 352: // Watermill
             case 362: // Sandpaper
             case 370: // Globe
             case 372: // Pencil
             case 384: // Tuning Fork
-                // These cards have no effect if all players executing the non-demand have empty hands.
-                foreach ($non_demand_players as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 68: // Explosives
-            case 334: // Candles
-            case 408: // Parachute
-                // This card has no effect if all players executing the demand have empty hands.
-                foreach ($i_demand_players as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 71: // Refrigeration
-            case 72: // Sanitation
-            case 347: // Crossbow
-            case 393: // Indian Clubs
-                // These cards have no effect if all players have empty hands.
-                foreach (self::getAllActivePlayerIds() as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                        return false;
-                    }
-                }
-                return true;
+                // These non-demand effects have no effect if the player has an empty hand.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
 
             case 33: // Education
             case 56: // Encyclopedia
             case 146: // Delft Pocket Telescope
             case 217: // Newton‑Wickins Telescope
             case 401: // Elevator
-                // The card has no effect if all players executing the non-demand have empty score piles.
-                foreach ($non_demand_players as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'score') > 0) {
-                        return false;
-                    }
-                }
-                return true;
-        
-            case 41: // Anatomy
-            case 99: // Databases
-            case 411: // Air Conditioner
-                // These cards have no effect if all players executing the demand have empty score piles.
-                foreach ($i_demand_players as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'score') > 0) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 32: // Medicine
-            case 76: // Rocketry
             case 430: // Flash Drive
-                // The card has no effect if all players have empty score piles.
+                // These non-demand effects have no effect if the player has an empty score pile.
+                return self::countCardsInLocation($executing_player_id, 'score') == 0;
+
+            case 76: // Rocketry
+                // These non-demand effects have no effect if all players have empty score piles.
                 foreach (self::getAllActivePlayerIds() as $player_id) {
                     if (self::countCardsInLocation($player_id, 'score') > 0) {
                         return false;
@@ -8476,59 +8454,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 21: // Canal Building
             case 69: // Bicycle
-                // These cards have no effect if all players executing the non-demand have empty hands and empty score piles.
-                foreach ($non_demand_players as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'hand') > 0 || self::countCardsInLocation($player_id, 'score') > 0) {
-                        return false;
-                    }
-                }
-                return true;
+                // These non-demand effects have no effect if the player has an empty score pile and an empty hand.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
+            
+            case 393: // Indian Clubs
+                // These non-demands have no effect if the player has an empty hand or empty score pile.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 || self::countCardsInLocation($executing_player_id, 'score') == 0;
 
             /*** Other cases (sorted by card ID) **/
 
-            case 6: // Clothing
-                // The card has no effect if all players executing the non-demand have all 5 colors present on their board.
-                // TODO(LATER): Implement this.
-                break;
-
-            case 11: // Masonry
-                // The card has no effect if the launcher has no towers in their hand and all other players executing the non-demand have empty hands.
-                // TODO(LATER): Implement this.
-                break;
-
-            case 12: // City States
-                // The card has no effect if no player executing the demand effect has at least 4 towers on their board.
-                foreach ($i_demand_players as $player_id) {
-                    if (self::getPlayerResourceCounts($player_id)[4] >= 4) {
-                        return false;
-                    }
-                }
-                return true;
-
             case 15: // Calendar
-                // The card has no effect if no player executing the non-demand effect has more cards in their score pile than their hand.
-                foreach ($non_demand_players as $player_id) {
-                    if (self::countCardsInLocation($player_id, 'score') > self::countCardsInLocation($player_id, 'hand')) {
-                        return false;
-                    }
-                }
-                return true;
+                // The non-demand effect has no effect unless the player has more cards in their score pile than their hand.
+                return self::countCardsInLocation($executing_player_id, 'score') <= self::countCardsInLocation($executing_player_id, 'hand');
 
             case 17: // Construction
-                // This demand always has an effect
-                if ($i_demand_will_be_executed) {
-                    return false;
-                }
-
-                // The card has no effect if the Empire achievement was already awarded.
+                // The non-demand effect has no effect if the Empire achievement was already awarded.
                 if (self::getCardInfo(105)['owner'] != 0) {
                     return true;
                 }
 
-                // The card has no effect unless one of the players executing the non-demand effect is the only player with 5 top cards.
+                // The non-demand effect has no effect unless they are the only player with 5 top cards.
                 $boards = self::getBoards(self::getAllActivePlayerIds());
                 $num_players_with_five_top_cards = 0;
-                $non_demand_player_has_five_top_cards = false;
+                $executing_player_has_five_top_cards = false;
                 foreach ($boards as $player_id => $board) {
                     $number_of_top_cards = 0;
                     for ($color = 0; $color < 5; $color++) {
@@ -8538,121 +8486,146 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     if ($number_of_top_cards == 5) {
                         $num_players_with_five_top_cards += 1;
-                        if (in_array($player_id, $non_demand_players)) {
-                            $non_demand_player_has_five_top_cards = true;
+                        if ($player_id == $executing_player_id) {
+                            $executing_player_has_five_top_cards = true;
                         }
                     }
                 }
-                if ($num_players_with_five_top_cards != 1 || !$non_demand_player_has_five_top_cards) {
+                if ($num_players_with_five_top_cards != 1 || !$executing_player_has_five_top_cards) {
                     return true;
                 }
                 break;
 
+            case 175: // Periodic Table
+                // The non-demand effect has no effect if the player has top cards with unique values.
+                return count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id)) == 0;
+            
+            // All other cards with non-demand effects are assumed to have an effect.
+            default:
+                return false;
+        }
+    }
+
+    /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the demand effect (without revealing hidden info to the launching player). */
+    function demandHasNoEffect($card, $launcher_id, $executing_player_id) {
+
+        // Many cards do not have a demand effect on them
+        if (self::getDemandEffect($card['id']) == null) {
+            return true;
+        }
+
+        // Check the card's demand effect (excludes compel effects even they are technically a type of demand)
+        switch ($card['id']) {
+
+            /*** Basic cases involving empty hands and/or empty score piles ***/
+
+            case 68: // Explosives
+            case 71: // Refrigeration
+            case 334: // Candles
+            case 347: // Crossbow
+            case 408: // Parachute
+                // This demand has no effect if the player has an empty hand.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
+
+            case 72: // Sanitation
+                // This demand has no effect if both the launcher or executer have empty hands.
+                return self::countCardsInLocation($launcher_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'hand') == 0;
+        
+            case 41: // Anatomy
+            case 62: // Vaccination
+            case 99: // Databases
+            case 393: // Indian Clubs
+            case 411: // Air Conditioner
+            case 430: // Flash Drive
+                // This demand has no effect if the player has an empty score pile.
+                return self::countCardsInLocation($executing_player_id, 'score') == 0;
+
+            case 32: // Medicine
+                // This demand has no effect if both the launcher or executer have empty score piles.
+                return self::countCardsInLocation($launcher_id, 'score') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
+
+            /*** Other cases (sorted by card ID) ***/
+
+            case 12: // City States
+                // This demand has no effect if the player has less than 4 towers on their board.
+                return self::getPlayerResourceCounts($executing_player_id)[4] < 4;
+
             case 20: // Mapmaking
-                // This card has no effect unless at least one player executing the demand has a 1 in their score pile.
-                foreach ($i_demand_players as $player_id) {
-                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                    if ($num_cards_in_score_pile[1] > 0) {
-                        return false;
-                    }
-                }
-                return true;
-
-            case 22: // Fermenting
-                // The card has no effect if no player executing the non-demand has leaves on their board.
-                // TODO(LATER): Implement this.
-                break;
-
-            case 25: // Alchemy
-                // The card has no effect if all players executing the non-demand have empty hands and less than 3
-                // towers on their board.
-                // TODO(LATER): Implement this.
-                break;
-
-            case 26: // Translation
-                // The card has no effect if all players executing the non-demand have empty score piles and the World
-                // achievement cannot be claimed.
-                // TODO(LATER): Implement this.
-                break;
-
-            case 38: // Gunpowder
-                // The non-demand has no effect unless the I demand is also executed.
-                // TODO(LATER): Extend this check to also capture the case where there are no top cards with a tower on the
-                // board of any player executing the demand effect.
-                return !$i_demand_will_be_executed;
+                // This demand has no effect if the player has no 1s in their score pile.
+                return self::countCardsInLocationKeyedByAge($executing_player_id, 'score')[1] == 0;
 
             case 40: // Navigation
-                // The card has no effect unless a player executing the demand has a 2 or 3 in their score pile.
-                foreach ($i_demand_players as $player_id) {
-                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                    if ($num_cards_in_score_pile[2] > 0 || $num_cards_in_score_pile[3] > 0) {
-                        return false;
-                    }
-                }
-                return true;
+                // This demand has no effect if the player has no 2s or 3s in their score pile.
+                $age_counts = self::countCardsInLocationKeyedByAge($executing_player_id, 'score');
+                return $age_counts[2] == 0 && $age_counts[3] == 0;
 
             case 48: // The Pirate Code
-                // The card has no effect unless a player executing the demand has a 1, 2, 3, or 4 in their score pile.
-                foreach ($i_demand_players as $player_id) {
-                    $num_cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                    if ($num_cards_in_score_pile[1] > 0 || $num_cards_in_score_pile[2] > 0 || $num_cards_in_score_pile[3] > 0 || $num_cards_in_score_pile[4] > 0) {
-                        return false;
-                    }
-                }
-                return true;
+                // This demand has no effect if the player has no 1s, 2s, 3s, or 4s in their score pile.
+                $age_counts = self::countCardsInLocationKeyedByAge($executing_player_id, 'score');
+                return $age_counts[1] == 0 && $age_counts[2] == 0 && $age_counts[3] == 0 && $age_counts[4] == 0;
 
             case 54: // Societies
                 if ($this->innovationGameState->usingFirstEditionRules()) {
-                    // This card has no effect if no players executing the demand have a top non-purple card with a lightbulb.
+                    // This demand has no effect unless the player has a top non-purple card with a lightbulb.
                     for ($color = 0; $color < 4; $color++) {
-                        foreach ($i_demand_players as $player_id) {
-                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                            if (self::hasRessource($player_top_card, 3 /* lightbulb */)) {
-                                return false;
-                            }
+                        $top_card = self::getTopCardOnBoard($executing_player_id, $color);
+                        if (self::hasRessource($top_card, 3 /* lightbulb */)) {
+                            return false;
                         }
                     }
                     return true;
                 } else {
-                    // This card has no effect if no players executing the demand have a top card with a lightbulb
-                    // higher than the executor's top card of the same color.
+                    // This demand has no effect unless the player has a top card with a lightbulb higher than the
+                    // launcher's top card of the same color.
                     for ($color = 0; $color < 5; $color++) {
                         $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                        foreach ($i_demand_players as $player_id) {
-                            $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                            if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
-                                continue;
-                            }
-                            if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
-                                return false;
-                            }
+                        $player_top_card = self::getTopCardOnBoard($executing_player_id, $color);
+                        if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                            continue;
+                        }
+                        if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
+                            return false;
                         }
                     }
                     return true;
                 }
                 break;
+        
+            // All other cards with demand effects are assumed to have an effect.
+            default:
+                return false;
+        }
+    }
 
-            case 62: // Vaccination
-                // TODO(LATER): Extend this check to also capture the case where there are no cards in the score pile
-                // of any player executing the demand effect.
-                return !$i_demand_will_be_executed;
+    /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the compel effect (without revealing hidden info to the launching player). */
+    function compelHasNoEffect($card, $launcher_id, $executing_player_id) {
 
-            case 70: // Electricity
-                // The card has no effect if all players executing the non-demand have factories on all their top cards.
-                // TODO(LATER): Implement this.
-                break;
-
-            case 175: // Periodic Table
-                // The card has no effect if all players executing the non-demand have top cards with unique values.
-                foreach ($non_demand_players as $player_id) {
-                    if (count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id)) > 0) {
-                        return false;
-                    }
-                }
-                return true;
+        // Many cards do not have a compel effect on them
+        if (!self::isCompelEffect($card['id'])) {
+            return true;
         }
 
-        return false;
+        // Check the card's compel effect
+        switch ($card['id']) {
+
+            /*** Basic cases involving empty hands and/or empty score piles ***/
+
+            case 141: // Moylough Belt Shrine
+                // This demand has no effect if the player has an empty hand.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
+
+            case 118: // Jiskairumoko Necklace
+            case 145: // Petition of Right
+            case 148: // Tortugas Galleon
+            case 167: // Frigate Constitution
+                // This demand has no effect if the player has an empty score pile.
+                return self::countCardsInLocation($executing_player_id, 'score') == 0;
+                
+            default:
+                // All other cards with compel effects are assumed to have an effect.
+                return false;
+
+        }
     }
     
     function argDogmaEffect() {
