@@ -65,6 +65,7 @@ Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New
     "ignore": [
         ".vscode",
         ".git",
+        ".github",
         ".DS_Store",
         ".phpunit.result.cache",
         "misc/",
