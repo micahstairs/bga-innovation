@@ -50,7 +50,7 @@ git push -u origin johnsmith
 Then navigate to https://github.com/micahstairs/bga-innovation/pulls, click "New pull request", and follow the prompts there.
 
 #### Setting up VSCode
-- Install the SFTP extension (https://marketplace.visualstudio.com/items?itemName=liximomo.sftp)
+- Install the SFTP extension (https://marketplace.visualstudio.com/items?itemName=Natizyskunk.sftp)
 - Set up your `sftp.json` by using the command shortuct `Ctrl+Shift+P` and running `SFTP: config`. Paste the following, replacing `johnsmith` and `password` (SFTP password, _not_ BoardGameArena password) as appropriate.
 ```
 {
