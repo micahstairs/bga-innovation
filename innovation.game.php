@@ -9354,7 +9354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if ($splay_direction == -1) {
             $player_id_is_owner_from = $owner_from == $player_id;
-            $player_id_is_owner_to = $owner_to == $player_id;
+            $player_id_is_owner_to = $owner_to == $player_id || $location_to == 'none';
         }
         
         // Identification of the potential opponent(s)
@@ -17475,7 +17475,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'owner_to' => $player_id,
                 'location_to' => 'none'
             );
             break;
@@ -19443,7 +19442,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => $player_id,
                 'location_to' => 'none',
             );       
             break;
@@ -19467,7 +19465,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
-                'owner_to' => $player_id,
                 'location_to' => 'none',
             );       
             break;
