@@ -235,6 +235,12 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['using_debug_buttons'] = true;
+
+        if ($card['location'] == 'forecast') {
+            $card = self::transferCardFromTo($card, $player_id, 'revealed');
+            $card['using_debug_buttons'] = true;
+        }
+
         if ($card['location'] == 'deck') {
             throw new BgaUserException("This card is already in the deck");
         } else if ($card['location'] == 'relics') {
@@ -245,7 +251,7 @@ class Innovation extends Table
             self::transferCardFromTo($card, 0, 'fountains');
         } else if ($card['id'] >= 1000) {
             self::transferCardFromTo($card, 0, 'flags');
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements') {
+        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements' || $card['location'] == 'revealed') {
             try {
                 self::returnCard($card);
             }
