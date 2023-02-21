@@ -9354,7 +9354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if ($splay_direction == -1) {
             $player_id_is_owner_from = $owner_from == $player_id;
-            $player_id_is_owner_to = $owner_to == $player_id || $location_to == 'none';
+            $player_id_is_owner_to = $owner_to == $player_id;
         }
         
         // Identification of the potential opponent(s)
@@ -9432,7 +9432,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Creation of the message
-        if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4) {
+        if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4 || $location_to == 'none') {
             if ($splay_direction == -1) {
                 $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
