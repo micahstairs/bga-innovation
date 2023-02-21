@@ -896,9 +896,9 @@
   height: 37px;
 }
 .card_title.L.type_2 {
-  left: 190px;
+  left: 126px;
   top: 142px;
-  width: 80px;
+  width: 210px;
 }
 
 .i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
@@ -1042,23 +1042,23 @@
   box-shadow: 0px 0px 6px 2px #fff;
 }
 .current_effect.light {
-  background-color: white !important;
+  background-color: rgb(255, 255, 255) !important;
 }
 .current_effect.dark {
-  background-color: black !important;
+  background-color: rgb(0, 0, 0) !important;
 }
 
 .clickable {
-  box-shadow: 0 0 6px 3px #1b059a !important;
+  box-shadow: 0 0 6px 3px rgb(27, 5, 154) !important;
 }
 .clickable:hover {
   cursor: pointer;
 }
 .clickable.mid_dogma {
-  box-shadow: 0 0 6px 3px #9a0505 !important;
+  box-shadow: 0 0 6px 3px rgb(154, 5, 5) !important;
 }
 .clickable.can_endorse {
-  box-shadow: 0 0 6px 3px #fc00b8 !important;
+  box-shadow: 0 0 6px 3px rgb(252, 0, 184) !important;
 }
 
 .selected {
