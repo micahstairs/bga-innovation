@@ -746,7 +746,7 @@ $this->textual_card_infos = array(
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
     'i_demand_effect_1_is_compel' => true,
     // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
-    'non_demand_effect_1' => clienttranslate('Score a top card with a ${icon_1}.'),
+    'non_demand_effect_1' => clienttranslate('Score a top card on your board with a ${icon_1}.'),
 ),
 
 152 => array('name' => clienttranslate('Mona Lisa'),
