@@ -863,6 +863,11 @@
   right: 50px;
 }
 
+.alphabetical_order {
+  padding-top: 10px;
+  text-align: center;
+}
+
 .card_type {
   padding-top: 10px;
   font-style: italic;

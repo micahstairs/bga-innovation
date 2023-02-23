@@ -367,6 +367,7 @@ function (dojo, declare) {
             this.cards = gamedatas.cards;
             this.players = gamedatas.players; 
             this.number_of_achievements_needed_to_win = gamedatas.number_of_achievements_needed_to_win;
+            this.is_turn0 = gamedatas.turn0;
             
             // PLAYER PANELS
             for (var player_id in this.players) {
@@ -1311,6 +1312,12 @@ function (dojo, declare) {
         //
         onLeavingState: function (stateName) {
             this.deactivateClickEvents(); // If this was not done after a click event (game replay for instance)
+
+            if (stateName == 'turn0') {
+                this.is_turn0 = false;
+                this.addTooltipsWithoutActionsToMyHand();
+                this.addTooltipsWithoutActionsToMyBoard();
+            }
             
             // Was it a state I was supposed to play?
             if (this.isCurrentPlayerActive()) {
@@ -2933,6 +2940,7 @@ function (dojo, declare) {
             }
 
             var card_type = "";
+            var alphabetical_order = "";
             if (size == 'L') {
                 // TODO(FIGURES): Update this.
                 switch (parseInt(type)) {
@@ -2949,10 +2957,18 @@ function (dojo, declare) {
                         card_type = "<div class='card_type'>" + _("This card is from the Echoes of the Past expansion.") + "</div>";
                         break;
                 }
+                if (this.is_turn0) {
+                    var position = 5;
+                    if (this.echoes_expansion_enabled) {
+                        alphabetical_order = "<div class='alphabetical_order'>" + dojo.string.substitute(_("When the ${base_age} and ${echoes_age} cards are put in English alphabetical order, this card is in position ${position}."), {'base_age' : this.square('N', 'age', 1, 'type_0'), 'echoes_age' : this.square('N', 'age', 1, 'type_3'), 'position' : position}) + "</div>";
+                    } else {
+                        alphabetical_order = "<div class='alphabetical_order'>" + dojo.string.substitute(_("When the ${age} cards are put in English alphabetical order, this card is in position ${position}."), {'age' : this.square('N', 'age', 1, 'type_0'), 'position' : position}) + "</div>";
+                    }
+                }
             }
 
             var graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
-            return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
+            return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type + alphabetical_order;
         },
 
         createCardForCardBrowser : function(id) {
