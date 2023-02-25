@@ -1499,12 +1499,10 @@ class Innovation extends Table
 
         $end_of_game = false;
 
-        if ($this->innovationGameState->citiesExpansionEnabled()) {
-            try {
-                self::updateFlagsAndFountains();
-            } catch(EndOfGame $e) {
-                $end_of_game = true;
-            }
+        try {
+            self::updateFlagsAndFountains();
+        } catch(EndOfGame $e) {
+            $end_of_game = true;
         }
 
         try {
@@ -1805,7 +1803,7 @@ class Innovation extends Table
             $end_of_game = true;
         }
 
-        if ($this->innovationGameState->citiesExpansionEnabled() && ($location_from == 'board' || $location_to == 'board')) {
+        if ($location_from == 'board' || $location_to == 'board') {
             try {
                 self::updateFlagsAndFountains();
             } catch(EndOfGame $e) {
@@ -3248,6 +3246,10 @@ class Innovation extends Table
 
     /** Checks to see if any players gain or lose any flag/fountain achievements. **/
     function updateFlagsAndFountains() {
+        if (!$this->innovationGameState->citiesExpansionEnabled()) {
+            return;
+        }
+
         $end_of_game = false;
 
         foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
@@ -5690,13 +5692,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setStat(0, 'max_age_on_board', $player_id);
         }
 
-        if ($this->innovationGameState->citiesExpansionEnabled()) {
-            try {
-                self::updateFlagsAndFountains();
-            } catch(EndOfGame $e) {
-                self::trace('EOG bubbled from self::removeAllHandsBoardsAndScores');
+        try {
+            self::updateFlagsAndFountains();
+        } catch(EndOfGame $e) {
+            self::trace('EOG bubbled from self::removeAllHandsBoardsAndScores');
             throw $e; // Re-throw exception to higher level
-            }
         }
     }
 
@@ -5822,12 +5822,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $end_of_game = false;
 
-        if ($this->innovationGameState->citiesExpansionEnabled()) {
-            try {
-                self::updateFlagsAndFountains();
-            } catch(EndOfGame $e) {
-                $end_of_game = true;
-            }
+        try {
+            self::updateFlagsAndFountains();
+        } catch(EndOfGame $e) {
+            $end_of_game = true;
         }
 
         try {
@@ -7903,9 +7901,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'color' => self::getColorInClear($color))
                 );
 
+                $end_of_game = false;
+
+                try {
+                    self::updateFlagsAndFountains();
+                } catch(EndOfGame $e) {
+                    $end_of_game = true;
+                }
+
                 try {
                     self::checkForSpecialAchievements();
-                } catch (EndOfGame $e) {
+                } catch(EndOfGame $e) {
+                    $end_of_game = true;
+                }
+
+                if ($end_of_game) {
                     self::trace('EOG bubbled from self::chooseSpecialOption');
                     self::trace('selectionMove->justBeforeGameEnd');
                     $this->gamestate->nextState('justBeforeGameEnd');
