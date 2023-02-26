@@ -17483,7 +17483,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'location_to' => 'none'
+                'owner_to' => $player_id,
+                'location_to' => 'none',
             );
             break;
             
@@ -18059,6 +18060,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
+                'owner_to' => $player_id,
                 'location_to' => 'none',
                 
                 // Exclude the card currently being executed (it's possible for the effects of The Daily Courant to be executed as if it were on another card)
@@ -18363,6 +18365,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
+                'owner_to' => $player_id,
                 'location_to' => 'none',
 
                 'color' => self::getAuxiliaryValueAsArray(),
@@ -18378,6 +18381,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
+                'owner_to' => $player_id,
                 'location_to' => 'none',
 
                 'not_id' => $this->innovationGameState->get('id_last_selected'),
@@ -19450,6 +19454,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
+                'owner_to' => $player_id,
                 'location_to' => 'none',
             );       
             break;
@@ -19473,6 +19478,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
+                'owner_to' => $player_id,
                 'location_to' => 'none',
             );       
             break;
@@ -21361,6 +21367,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
+                'owner_to' => $player_id,
                 'location_to' => 'none',
                 
                 'age' => self::getAuxiliaryValue(), // lowest age
