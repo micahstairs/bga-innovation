@@ -123,13 +123,11 @@ class Innovation extends Table
         return "innovation";
     }
 
-    // TODO(CITIES#910): Test this by simulating table migrations.
     function upgradeTableDb($from_version) {
-        // TODO(CITIES#910): Before launching to production, update the release that we are comparing it to.
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
-        if ($from_version <= 2212252101) {
+        if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
                 'endorse_action_state' => 19,
             ));
