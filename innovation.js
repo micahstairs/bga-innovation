@@ -4035,6 +4035,12 @@ function (dojo, declare) {
         action_dogmaWithoutEndorse : function(event) {
             $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
             dojo.destroy("endorse_cancel_button");
+
+            // Do a partial this.deactivateClickEvents() without overwriting the saved state of the clickable elements
+            this.off(dojo.query(".mid_dogma"), 'onclick');
+            dojo.query(".clickable").removeClass("clickable");
+            dojo.query(".mid_dogma").removeClass("mid_dogma");
+
             this.action_clickDogma(event, /*via_endorse_prompt=*/ true);
         },
 
