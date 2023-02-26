@@ -37,21 +37,21 @@ class GameStateTest extends BaseTest
         $this->assertEquals(1, $this->state->get('test'));
     }
 
-    public function testInc()
+    public function testIncrement()
     {
         $this->game->expects($this->once())->method('incGameStateValue')->with('test', 1);
         $this->game->method('getGameStateValue')->with('test')->willReturn(1);
 
-        $this->state->inc('test');
+        $this->state->increment('test');
         $this->assertEquals(1, $this->state->get('test'));
     }
 
-    public function testIncWithCustomIncrement()
+    public function testIncrementWithCustomIncrement()
     {
         $this->game->expects($this->once())->method('incGameStateValue')->with('test', 2);
         $this->game->method('getGameStateValue')->with('test')->willReturn(2);
 
-        $this->state->inc('test', 2);
+        $this->state->increment('test', 2);
         $this->assertEquals(2, $this->state->get('test'));
     }
 
@@ -124,5 +124,75 @@ class GameStateTest extends BaseTest
         $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(1);
 
         $this->assertTrue($this->state->usingThirdEditionRules());
+    }
+
+    public function testArtifactsExpansionEnabled_disabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(1);
+
+        $this->assertFalse($this->state->artifactsExpansionEnabled());
+    }
+
+    public function testArtifactsExpansionEnabled_enabledWithoutRelics()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(2);
+
+        $this->assertTrue($this->state->artifactsExpansionEnabled());
+    }
+
+    public function testArtifactsExpansionEnabled_enabledWithRelics()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(3);
+
+        $this->assertTrue($this->state->artifactsExpansionEnabled());
+    }
+
+    public function testArtifactsExpansionEnabledWithRelics_disabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(1);
+
+        $this->assertFalse($this->state->artifactsExpansionEnabledWithRelics());
+    }
+
+    public function testArtifactsExpansionEnabledWithRelics_enabledWithoutRelics()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(2);
+
+        $this->assertFalse($this->state->artifactsExpansionEnabledWithRelics());
+    }
+
+    public function testArtifactsExpansionEnabledWithRelics_enabledWithRelics()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(3);
+
+        $this->assertTrue($this->state->artifactsExpansionEnabledWithRelics());
+    }
+
+    public function testCitiesExpansionEnabled_disabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('cities_mode')->willReturn(1);
+
+        $this->assertFalse($this->state->citiesExpansionEnabled());
+    }
+
+    public function testCitiesExpansionEnabled_enabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('cities_mode')->willReturn(2);
+
+        $this->assertTrue($this->state->citiesExpansionEnabled());
+    }
+
+    public function testEchoesExpansionEnabled_disabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('echoes_mode')->willReturn(1);
+
+        $this->assertFalse($this->state->echoesExpansionEnabled());
+    }
+
+    public function testEchoesExpansionEnabled_enabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('echoes_mode')->willReturn(2);
+
+        $this->assertTrue($this->state->echoesExpansionEnabled());
     }
 }

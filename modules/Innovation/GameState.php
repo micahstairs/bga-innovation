@@ -43,7 +43,7 @@ class GameState
      * @param int $value
      * @return mixed
      */
-    public function inc(string $key, int $value = 1)
+    public function increment(string $key, int $value = 1)
     {
         return $this->game->incGameStateValue($key, $value);
     }
@@ -91,5 +91,37 @@ class GameState
     public function usingThirdEditionRules()
     {
         return $this->get('game_rules') == 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function artifactsExpansionEnabled()
+    {
+        return $this->get('artifacts_mode') > 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function artifactsExpansionEnabledWithRelics()
+    {
+        return $this->get('artifacts_mode') == 3;
+    }
+
+    /**
+     * @return bool
+     */
+    public function citiesExpansionEnabled()
+    {
+        return $this->get('cities_mode') > 1;
+    }
+
+    /**
+     * @return bool
+     */
+    public function echoesExpansionEnabled()
+    {
+        return $this->get('echoes_mode') > 1;
     }
 }

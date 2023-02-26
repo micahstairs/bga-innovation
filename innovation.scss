@@ -24,7 +24,9 @@
  */
 
 
-
+#main_area_wrapper {
+    display: flex;
+}
 #main_area {
     display: inline-block;
     vertical-align: top;
@@ -186,9 +188,26 @@
 }
 .pile_container {
     margin-right: 30px;
-    margin-top: 3px;
+    margin-top: 10px;
+    margin-left: 10px;
     margin-bottom: 3px;
     display: inline-block;
+}
+.pile_count {
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    margin-right: 2px;
+    margin-left: -12.5px;
+    margin-top: -12.5px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    background: #f4f1f1;
+    color: #000000;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    z-index: 100;
 }
 .pile {
     min-height: 126px;
@@ -238,13 +257,6 @@
     display: inline-block;
     position: relative;
     background-color: unset;
-    width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 4;
-	@media (min-width: v.$width_tablet) {
-		width: (v.$recto-S-width + v.$achievment-container-recto-S-width-Buffer) * 5;
-	}
-	@media (min-width: v.$width_desktop) {
-		@include m.generate_achievement_container_widths(4,11)
-	}
     >p {
         font-style: italic;
         font-size: 0.8em;
@@ -305,6 +317,7 @@
     }
     &.S {
         width: 96px;
+        min-width: 96px;
         height: 69px;
         background-size: 100px auto;
         background-position: -2px -145px;
@@ -574,29 +587,30 @@
     margin-left: 5px;
 }
 #decks_and_available_achievements {
-    display: inline-block;
+    display: flex;
+    width: 208.45px;
     margin-left: 10px;
     p {
         margin-bottom: 5px;
         margin-right: 5px;
     }
 }
+#decks_title {
+    margin-top: 30px;
+    width: 208.45px;
+}
 #decks {
     vertical-align: top;
-    margin-top: 30px;
+    justify-content: center;
     width: 208.45px;
 }
-#available_relics_container {
-    vertical-align: top;
-    margin-top: 30px;
-    width: 208.45px;
+#decks_1, #decks_2 {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 3px;
+    padding-right: 3px;
 }
-#available_achievements_container {
-    vertical-align: top;
-    margin-top: 30px;
-    width: 208.45px;
-}
-#available_special_achievements_container {
+#available_relics_container, #available_achievements_container, #available_special_achievements_container {
     vertical-align: top;
     margin-top: 30px;
     width: 208.45px;
@@ -608,9 +622,13 @@
         height: 49px;
         margin-bottom: 5px;
         margin-right: 5px;
-        &.condensed {
+        &.three_sets {
             padding-top: 10px;
             padding-left: 20px;
+        }
+        &.four_sets {
+            padding-top: 10px;
+            padding-left: 5px;
         }
 
         >.deck {
@@ -623,7 +641,7 @@
             margin-right: 2px;
             width: 20px;
             display: flex;
-            &.condensed {
+            &.three_sets, &.four_sets {
                 display: inline-block;
                 text-align: center;
                 position: absolute;
@@ -669,10 +687,6 @@
     top: -16px !important;
     height: 32px !important;
     padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
-}
-.sep {
-    display: inline-block;
-    width: 23px;
 }
 .player_info {
     margin-top: 5px;
@@ -742,6 +756,9 @@
         height: 25px;
         top: 26px;
         line-height: 14px;
+        &.type_2 {
+            top: 154px;
+        }
     }
 }
 .color_0 {
@@ -754,6 +771,9 @@
         }
         &.L {
             right: 21px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -767,6 +787,9 @@
         }
         &.L {
             right: 21px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -780,6 +803,9 @@
         }
         &.L {
             right: 20px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -793,6 +819,9 @@
         }
         &.L {
             right: 22px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -806,6 +835,9 @@
         }
         &.L {
             right: 22px;
+            &.type_2 {
+                right: 50px;
+            }
         }
     }
 }
@@ -839,6 +871,11 @@
         top: 18px;
         width: 230px;
         height: 37px;
+        &.type_2 {
+            left: 126px;
+            top: 142px;
+            width: 210px;
+        }
     }
 }
 .i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
@@ -994,6 +1031,9 @@
     &.mid_dogma {
         box-shadow: 0 0 6px 3px rgb(154, 5, 5) !important;
     }
+    &.can_endorse {
+        box-shadow: 0 0 6px 3px rgb(252, 0, 184) !important;
+    }
 }
 .selected {
     box-shadow: 0 0 6px 3px white !important;
@@ -1054,6 +1094,7 @@
 .recap_dogma {
     li {
         list-style-type: disc;
+        margin-left:10px;
     }
 }
 #logs {
@@ -1088,7 +1129,9 @@
     height: 19px;
 }
 
-
+.score_count, .hand_count, .max_age_on_board {
+    padding-right: 5px;
+}
 .square {
     display: inline-block;
     &.basic {
@@ -1309,6 +1352,62 @@
             background-size: 83px auto;
             background-position-y: -42px;
         }
+        &.icon_8, &.icon_9, &.icon_11, &.icon_12, &.icon_13 {
+            background-image: url("img/cities_special_icons.png");
+            filter: grayscale(1);
+            background-size: 115px auto;
+            width: 20px;
+            height: 20px;
+            top: 4px;
+            position: relative;
+        }
+        &.icon_8, &.icon_9 {
+            &.fountain_flag_card {
+                top: 13px;
+                left: 6px;
+                filter: none;
+                &.color_0 {
+                    background-position-x: -0px;
+                }
+                &.color_1 {
+                    background-position-x: -21px;
+                }
+                &.color_2 {
+                    background-position-x: -42px;
+                }
+                &.color_3 {
+                    background-position-x: -63px;
+                }
+                &.color_4 {
+                    background-position-x: -84px;
+                }
+            }
+        }
+        &.icon_8 {
+            background-position-y: -42px;
+        }
+        &.icon_9 {
+            background-position-y: -63px;
+        }
+        &.icon_11 {
+            background-position-y: -20px;
+        }
+        &.icon_12 {
+            background-position-y: -20px;
+            transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -webkit-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            -ms-transform: rotate(180deg);
+        }
+        &.icon_13 {
+            background-position-y: -20px;
+            transform: rotate(90deg);
+            -moz-transform: rotate(90deg);
+            -webkit-transform: rotate(90deg);
+            -o-transform: rotate(90deg);
+            -ms-transform: rotate(90deg);
+        }
         @include m.generate-icon-x-position(1, 6, 0, 14px);
     }
 }
@@ -1361,6 +1460,9 @@
     background-image: url('img/card_backgrounds.jpg');
     &.type_2 {
         background-image: url('img/card_backgrounds_cities.jpg');
+        &.simplified {
+            background-image: url('img/simplified_card_backgrounds_cities.jpg');
+        }
     }
     position: relative;
     border: solid 1px #ffffff;
@@ -1461,12 +1563,6 @@
         }
         &.icon_6 {
             background-position-x: -192.5px;
-        }
-        &.icon_7 {
-            background-image: url("img/cities_special_icons.png");
-            width: 40px;
-            height: 40px;
-            background-position-x: -41px;
         }
         &.icon_10 {
             background-image: none;
@@ -1594,12 +1690,76 @@
     }
 }
 
+.city_search_icon {
+    @include m.city-special-icon-background;
+    position: absolute;
+    &.M {
+        top: 0px;
+        left: 70px;
+        width: 45px;
+        height: 45px;
+        background-size: 230px auto;
+        background-position-y: -165px;
+        &.color_0 {
+            background-position-x: 0px;
+        }
+        &.color_1 {
+            background-position-x: -46px;
+        }
+        &.color_2 {
+            background-position-x: -92px;
+        }
+        &.color_3 {
+            background-position-x: -138px;
+        }
+        &.color_4 {
+            background-position-x: -184px;
+        }
+    }
+    &.L {
+        top: 11px;
+        left: 191px;
+        width: 90px;
+        height: 90px;
+        background-size: 460px auto;
+        background-position-y: -330px;
+        &.color_0 {
+            background-position-x: 0px;
+        }
+        &.color_1 {
+            background-position-x: -92px;
+        }
+        &.color_2 {
+            background-position-x: -184px;
+        }
+        &.color_3 {
+            background-position-x: -276px;
+        }
+        &.color_4 {
+            background-position-x: -368px;
+        }
+    }
+}
+
 .city_special_icon {
     @include m.city-special-icon-background;
-    background-image: url("img/cities_special_icons.png");
     position: absolute;
     &.icon_null {
         display: none;
+    }
+    &.icon_12 {
+        transform: rotate(180deg);
+        -moz-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        -o-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+    }
+    &.icon_13 {
+        transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -webkit-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        -ms-transform: rotate(90deg);
     }
     &.M {
         width: 40px;
@@ -1617,20 +1777,6 @@
         &.icon_11, &.icon_12, &.icon_13 {
             background-position-y: -42px;
         }
-        &.icon_12 {
-            transform: rotate(180deg);
-            -moz-transform: rotate(180deg);
-            -webkit-transform: rotate(180deg);
-            -o-transform: rotate(180deg);
-            -ms-transform: rotate(180deg);
-        }
-        &.icon_13 {
-            transform: rotate(90deg);
-            -moz-transform: rotate(90deg);
-            -webkit-transform: rotate(90deg);
-            -o-transform: rotate(90deg);
-            -ms-transform: rotate(90deg);
-        }
         &.color_0 {
             background-position-x: -1px;
         }
@@ -1646,29 +1792,53 @@
         &.color_4 {
             background-position-x: -165px;
         }
-        &.top_left_icon {
-            top: 5px;
-            left: 5px;
-        }
-        &.bottom_left_icon {
-            bottom: 5px;
-            left: 5px;
-        }
         &.bottom_center_icon {
             bottom: 5px;
             left: 70px;
         }
-        &.bottom_right_icon {
-            bottom: 5px;
-            right: 5px;
-        }
-        &.top_right_icon {
-            top: 5px;
-            right: 5px;
-        }
         &.top_center_icon {
             top: 5px;
             left: 70px;
+        }
+    }
+    &.L {
+        width: 80px;
+        height: 80px;
+        background-size: 460px auto;
+        &.icon_7 {
+            background-position-y: -1px;
+        }
+        &.icon_8 {
+            background-position-y: -165px;
+        }
+        &.icon_9 {
+            background-position-y: -249px;
+        }
+        &.icon_11, &.icon_12, &.icon_13 {
+            background-position-y: -83px;
+        }
+        &.color_0 {
+            background-position-x: -1px;
+        }
+        &.color_1 {
+            background-position-x: -83px;
+        }
+        &.color_2 {
+            background-position-x: -165px;
+        }
+        &.color_3 {
+            background-position-x: -247px;
+        }
+        &.color_4 {
+            background-position-x: -331px;
+        }
+        &.bottom_center_icon {
+            bottom: 22px;
+            left: 192px;
+        }
+        &.top_center_icon {
+            top: 22px;
+            left: 192px;
         }
     }
 }
@@ -1884,7 +2054,7 @@
     border: solid 1px #ffffff;
     box-shadow: -1px 1px grey;
     border-radius: 3px;
-    &.S{
+    &.S {
         width: v.$recto-S-width;
         height: v.$recto-S-height;
         &.age_null {
@@ -1914,6 +2084,27 @@
         }
         &.item_109, &.item_329, &.item_439 {
             background-position-x: -141px;
+        }
+        // TODO(LATER): Clean this up by introducing a new class so that we don't need to generate a bunch of class combinations that are never used.
+        @for $i from 1000 through 1013 {
+            &.item_#{$i}, &.item_#{$i+100} {
+                background-image: none;
+                &.color_0 {
+                    background-color: #94b1dd;
+                }
+                &.color_1 {
+                    background-color: #db7b84;
+                }
+                &.color_2 {
+                    background-color: #73bb64;
+                }
+                &.color_3 {
+                    background-color: #e3e47b;
+                }
+                &.color_4 {
+                    background-color: #9a58ba;
+                }
+            }
         }
         &.default_card_back {
             &.age_1, &.age_2, &.age_3, &.age_4, &.age_5, &.age_6, &.age_7, &.age_8, &.age_9, &.age_10 {
@@ -2014,7 +2205,7 @@
 $M_offset:        49;
 $M_x_position:     3;
 $M_y_position:     3;
-$L_offset:        101;
+$L_offset:     100.5;
 $L_x_position:     8;
 $L_y_position:     8;
 

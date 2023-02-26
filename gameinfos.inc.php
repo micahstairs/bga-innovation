@@ -50,6 +50,9 @@ $gameinfos = [
     // The game end result will display "Winner" for the 1st player(s) and "Loser" for all other players
     'losers_not_ranked' => true,
 
+    // Randomize the order (solves the bug where a rematch with the same players wasn't actually randomizing the order and was only randomizing the starting player)
+    'disable_player_order_swap_on_rematch' => true,
+
     // Game is "beta". A game MUST set is_beta=1 when published on BGA for the first time, and must remains like this until all bugs are fixed.
     'is_beta' => 1,                     
 

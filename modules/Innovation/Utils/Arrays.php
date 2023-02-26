@@ -4,6 +4,17 @@ namespace Innovation\Utils;
 
 class Arrays
 {
+
+    /** Flatten an array (one level) **/
+    public static function flatten($array): array
+    {
+        $result = array();
+        foreach($array as $key => $subarray) {
+            $result = array_merge($result, $subarray);
+        }
+        return $result;
+    }
+
     /**
      * @param array $array
      * @return int

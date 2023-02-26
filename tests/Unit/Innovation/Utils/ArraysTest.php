@@ -7,6 +7,14 @@ use Innovation\Utils\Arrays;
 
 class ArraysTest extends BaseTest
 {
+
+    public function testFlatten()
+    {
+        $unflattened = [[10, 11], [20, 21, 22], []];
+        $flattened = Arrays::flatten($unflattened);
+        $this->assertEquals([10, 11, 20, 21, 22], $flattened);
+    }
+
     public function testGetArrayAsValue()
     {
         $a = [10, 20, 30];

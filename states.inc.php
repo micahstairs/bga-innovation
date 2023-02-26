@@ -88,16 +88,17 @@ $machinestates = array(
         "description" => clienttranslate('${actplayer} must take ${qualified_action}'),
         "descriptionmyturn" => clienttranslate('${You} must take ${qualified_action}:'),
         "type" => "activeplayer",
-        "possibleactions" => array("draw", "meld", "dogma", "achieve"),
+        "possibleactions" => array("draw", "meld", "dogma", "endorse", "achieve"),
         "args" => "argPlayerTurn",
         "transitions" => array(
             "interPlayerTurn" => 5,
             "dogmaEffect" => 6,
+            "preSelectionMove" => 12, // The search icons on Cities cards can trigger this transition
             // TODO(LATER): Remove this transition since it now comes from the new digArtifact state.
             "relicPlayerTurn" => 16,
             "digArtifact" => 17,
-            "justBeforeGameEnd" => 98
-        )
+            "justBeforeGameEnd" => 98,
+        ),
     ),
     
     5 => array(
@@ -183,7 +184,9 @@ $machinestates = array(
         "transitions" => array(
             "interPlayerInvolvedTurn" => 9,
             "interactionStep" => 10,
-            "justBeforeGameEnd" => 98)
+            "digArtifact" => 17, // The search icons on Cities cards can trigger this transition
+            "justBeforeGameEnd" => 98,
+        ),
     ),
     
     12 => array(

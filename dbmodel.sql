@@ -32,6 +32,7 @@ ALTER TABLE `player` ADD `number_of_scored_cards` TINYINT UNSIGNED NOT NULL DEFA
 ALTER TABLE `player` ADD `pile_display_mode` BOOLEAN DEFAULT TRUE COMMENT 'Player preference for how stacks on the board are displayed, TRUE for expanded, FALSE for compact';
 ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Player preference for whether to show all cards in a stack on the board, TRUE if yes, FALSE if no';
 ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Indicate if the player has changed the situation (TRUE) or not (FALSE) in the game when it was his turn to play within a dogma effect';
+ALTER TABLE `player` ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards that this player has returned so far during this action via Democracy';
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
 CREATE TABLE IF NOT EXISTS `card` (
@@ -692,3 +693,34 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (323, 2,10, 4,   5,   6,   9,   5, 0,   9, 5, 'removed'),
 (324, 2,10, 4,   2,   3,  13,   3, 0,   9, 3, 'removed');
 
+/* Cities - Flags */
+INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
+(1000, 2, 0, 'flags', 0),
+(1001, 2, 1, 'flags', 1),
+(1002, 2, 1, 'flags', 2),
+(1003, 2, 1, 'flags', 3),
+(1004, 2, 1, 'flags', 4),
+(1005, 2, 2, 'flags', 5),
+(1006, 2, 2, 'flags', 6),
+(1007, 2, 3, 'flags', 7),
+(1008, 2, 3, 'flags', 8),
+(1009, 2, 3, 'flags', 9),
+(1010, 2, 4, 'flags', 10),
+(1011, 2, 4, 'flags', 11),
+(1012, 2, 4, 'flags', 12);
+
+/* Cities - Fountains */
+INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
+(1100, 2, 0, 'fountains', 0),
+(1101, 2, 0, 'fountains', 1),
+(1102, 2, 1, 'fountains', 2),
+(1103, 2, 1, 'fountains', 3),
+(1104, 2, 2, 'fountains', 4),
+(1105, 2, 2, 'fountains', 5),
+(1106, 2, 2, 'fountains', 6),
+(1107, 2, 3, 'fountains', 7),
+(1108, 2, 3, 'fountains', 8),
+(1109, 2, 4, 'fountains', 9),
+(1110, 2, 4, 'fountains', 10),
+(1111, 2, 4, 'fountains', 11),
+(1112, 2, 4, 'fountains', 12);

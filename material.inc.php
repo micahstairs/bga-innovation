@@ -746,7 +746,7 @@ $this->textual_card_infos = array(
     'i_demand_effect_1' => clienttranslate('${I compel} you to transfer all top cards with a ${icon_1} from your board to my score pile!'),
     'i_demand_effect_1_is_compel' => true,
     // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
-    'non_demand_effect_1' => clienttranslate('Score a top card with a ${icon_1}.'),
+    'non_demand_effect_1' => clienttranslate('Score a top card on your board with a ${icon_1}.'),
 ),
 
 152 => array('name' => clienttranslate('Mona Lisa'),
@@ -1131,7 +1131,7 @@ $this->textual_card_infos = array(
 280 => array('name' => clienttranslate('Rio De Janeiro')),
 281 => array('name' => clienttranslate('Paris')),
 282 => array('name' => clienttranslate('Dublin')),
-283 => array('name' => clienttranslate('Viena')),
+283 => array('name' => clienttranslate('Vienna')),
 284 => array('name' => clienttranslate('New York City')),
 
 /* Cities - Age 7 */
@@ -1185,23 +1185,23 @@ $this->textual_card_infos = array(
 /* Cities Special achievements */
 
 325 => array('name' => clienttranslate('Legend'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${left_arrow} on a color already splayed left.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_11} on a color already splayed left.'),
 ),
 
 326 => array('name' => clienttranslate('Repute'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${right_arrow} on a color already splayed right.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_12} on a color already splayed right.'),
 ),
 
 327 => array('name' => clienttranslate('Fame'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${up_arrow} on a color already splayed up.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_13} on a color already splayed up.'),
 ),
 
 328 => array('name' => clienttranslate('Glory'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${flag}.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_8}.'),
 ),
 
 329 => array('name' => clienttranslate('Victory'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${fountain}.'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_9}.'),
 ),
     
 /* Echoes - Age 1 */

@@ -9,10 +9,11 @@ class GameTest extends BaseTest
         parent::setUp();
     }
 
-    public function testGetArrayAsValue()
+    public function testIntDivision()
     {
-        $array = [2,3,4];
         $game = $this->getInnovationInstance();
-        $this->assertEquals(28, $game->getArrayAsValue($array));
+        $this->assertEquals(2, $game->intDivision(7, 3));
+        $this->assertEquals(3, $game->intDivision(6, 2));
+        $this->assertEquals(4, $game->intDivision(4, 1));
     }
 }
