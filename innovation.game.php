@@ -23325,7 +23325,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $melded_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         
                         // "If the melded card has no effects, you win"
-                        if ($melded_card['dogma_icon'] == null) {
+                        if ($melded_card['dogma_icon'] == null || $melded_card['type'] == 2) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card with no effects.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card with no effects.'), array('player_name' => self::getColoredPlayerName($player_id)));
                             $this->innovationGameState->set('winner_by_dogma', $player_id);
