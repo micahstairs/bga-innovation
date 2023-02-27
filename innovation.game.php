@@ -2768,7 +2768,7 @@ class Innovation extends Table
             case 'score->board':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to ${opponent_name}\'s board.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfersss ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to ${opponent_name}\'s board.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to ${opponent_name}\'s board.');
                 break;
 
             case 'hand->score':
