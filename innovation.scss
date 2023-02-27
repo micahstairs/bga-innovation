@@ -1765,9 +1765,6 @@
         width: 40px;
         height: 40px;
         background-size: 230px auto;
-        &.icon_7 {
-            background-position-y: -1px;
-        }
         &.icon_8 {
             background-position-y: -83px;
         }
@@ -1776,6 +1773,9 @@
         }
         &.icon_11, &.icon_12, &.icon_13 {
             background-position-y: -42px;
+        }
+        &.icon_14 {
+            background-position-y: -1px;
         }
         &.color_0 {
             background-position-x: -1px;
@@ -1805,9 +1805,6 @@
         width: 80px;
         height: 80px;
         background-size: 460px auto;
-        &.icon_7 {
-            background-position-y: -1px;
-        }
         &.icon_8 {
             background-position-y: -165px;
         }
@@ -1816,6 +1813,9 @@
         }
         &.icon_11, &.icon_12, &.icon_13 {
             background-position-y: -83px;
+        }
+        &.icon_14 {
+            background-position-y: -1px;
         }
         &.color_0 {
             background-position-x: -1px;
