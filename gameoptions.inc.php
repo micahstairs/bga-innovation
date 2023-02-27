@@ -216,4 +216,13 @@ $game_preferences = array(
         ),
         'default' => 2,
     ),
+    113 => array(
+        'name' => totranslate('Pile size indicators on boards'),
+        'needReload' => true,
+        'values' => array(
+            1 => array('name' => totranslate('Disabled')),
+            2 => array('name' => totranslate('Enabled')),
+        ),
+        'default' => 2,
+    ),
 );

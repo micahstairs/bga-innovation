@@ -767,6 +767,12 @@ function (dojo, declare) {
                     
                     // Creation of the zone
                     this.zone.board[player_id][color] = this.createZone('board', player_id, null, null, color, grouped_by_age_type_and_is_relic=false, counter_method="COUNT", counter_display_zero=false);
+
+                    // Disable pile counters
+                    if (this.prefs[113].value == 1) {
+                        dojo.style(`pile_count_${player_id}_${color}`, 'display', 'none');
+                    }
+
                     // Splay indicator
                     dojo.addClass('splay_indicator_' + player_id + '_' + color, 'splay_' + splay_direction);
                     if (splay_direction > 0) {
