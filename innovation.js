@@ -269,6 +269,17 @@ function (dojo, declare) {
                 this, function (result) { }, function (is_error) {}
             );
         },
+        debug_splay_aslant: function() {
+            var debug_color_list = document.getElementById("debug_color_list");
+            this.ajaxcall("/innovation/innovation/debug_splay.html",
+                {
+                    lock: true,
+                    color: debug_color_list.value,
+                    direction: 4
+                },
+                this, function (result) { }, function (is_error) {}
+            );
+        },
         //******
                 
         /*
@@ -297,6 +308,7 @@ function (dojo, declare) {
                     + "<button id='debug_splay_left' class='action-button debug_button bgabutton bgabutton_red'>SPLAY LEFT</button>"
                     + "<button id='debug_splay_right' class='action-button debug_button bgabutton bgabutton_red'>SPLAY RIGHT</button>"
                     + "<button id='debug_splay_up' class='action-button debug_button bgabutton bgabutton_red'>SPLAY UP</button>"
+                    + "<button id='debug_splay_aslant' class='action-button debug_button bgabutton bgabutton_red'>SPLAY ASLANT</button>"
                     + main_area.innerHTML;
                 if (gamedatas.echoes_expansion_enabled) {
                     main_area.innerHTML = "<button id='debug_foreshadow' class='action-button debug_button bgabutton bgabutton_red'>FORESHADOW</button>" + main_area.innerHTML;
@@ -353,6 +365,7 @@ function (dojo, declare) {
                 dojo.connect($('debug_splay_left'), 'onclick', this, 'debug_splay_left');
                 dojo.connect($('debug_splay_right'), 'onclick', this, 'debug_splay_right');
                 dojo.connect($('debug_splay_up'), 'onclick', this, 'debug_splay_up');
+                dojo.connect($('debug_splay_aslant'), 'onclick', this, 'debug_splay_aslant');
             }
             //******
         
@@ -1656,6 +1669,7 @@ function (dojo, declare) {
                             denominator = 5;
                             for (var i = 0; i < 5; i++) {
                                 var splay_direction = self.zone.board[self.player_id][i].splay_direction;
+                                // TODO(4E#978): Possibly update this.
                                 if (splay_direction == 2 || splay_direction == 3) {
                                     numerator++;
                                 }
@@ -2197,7 +2211,7 @@ function (dojo, declare) {
             
             if (covered_card) { // Substract the ressources no longer visible
                 var splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
-                for (var direction = 0; direction <= 3; direction++) {
+                for (var direction = 0; direction <= 4; direction++) {
                     if (dojo.hasClass(splay_indicator, 'splay_' + direction)) {
                         var splay_direction = direction;
                         break;
@@ -2227,6 +2241,10 @@ function (dojo, declare) {
                     break;
                 case 3: // Splayed up (only the icons on the bottom can still be seen)
                     new_ressource_counts[top_card.spot_1]--;
+                    new_ressource_counts[top_card.spot_5]--;
+                    new_ressource_counts[top_card.spot_6]--;
+                    break;
+                case 4: // Splayed aslant (only the icons on the left and bottom can still be seen)
                     new_ressource_counts[top_card.spot_5]--;
                     new_ressource_counts[top_card.spot_6]--;
                     break;
@@ -2364,7 +2382,7 @@ function (dojo, declare) {
             var pile = this.zone.board[this.player_id][card.color].items;
             
             var splay_indicator = 'splay_indicator_' + this.player_id + '_' + card.color;
-            for (var direction=0; direction<=3; direction++) {
+            for (var direction=0; direction<=4; direction++) {
                 if (dojo.hasClass(splay_indicator, 'splay_' + direction)) {
                     var current_splay_direction = direction;
                     break;
@@ -2389,15 +2407,21 @@ function (dojo, declare) {
                 switch (parseInt(current_splay_direction)) {
                 case 0: // Not currently splayed: no icons will be lost
                     break;
-                case 1: // The icons on the right will be lost (spot_4 and spot_5)
+                case 1: // The icons on the right will be lost
                     new_ressource_counts[pile_card.spot_4]--;
                     new_ressource_counts[pile_card.spot_5]--;
                     break;
-                case 2: // The icons on the left will be lost (spot_1 and spot_2)
+                case 2: // The icons on the left will be lost
                     new_ressource_counts[pile_card.spot_1]--;
                     new_ressource_counts[pile_card.spot_2]--;
                     break;
-                case 3: // The icons on the bottom will be lost (spot_2, spot_3 and spot_4)
+                case 3: // The icons on the bottom will be lost
+                    new_ressource_counts[pile_card.spot_2]--;
+                    new_ressource_counts[pile_card.spot_3]--;
+                    new_ressource_counts[pile_card.spot_4]--;
+                    break;
+                case 4: // The icons on the left and bottom will be lost
+                    new_ressource_counts[pile_card.spot_1]--;    
                     new_ressource_counts[pile_card.spot_2]--;
                     new_ressource_counts[pile_card.spot_3]--;
                     new_ressource_counts[pile_card.spot_4]--;
@@ -2408,15 +2432,21 @@ function (dojo, declare) {
                 switch (parseInt(splay_direction)) {
                 case 0: // Not splayed (this should not happen)
                     break;
-                case 1: // The icons on the right will be revealed (spot_4 and spot_5)
+                case 1: // The icons on the right will be revealed
                     new_ressource_counts[pile_card.spot_4]++;
                     new_ressource_counts[pile_card.spot_5]++;
                     break;
-                case 2: // The icons on the left will be revealed (spot_1 and spot_2)
+                case 2: // The icons on the left will be revealed
                     new_ressource_counts[pile_card.spot_1]++;
                     new_ressource_counts[pile_card.spot_2]++;
                     break;
-                case 3: // The icons on the bottom will be revealed (spot_2, spot_3 and spot_4)
+                case 3: // The icons on the bottom will be revealed
+                    new_ressource_counts[pile_card.spot_2]++;
+                    new_ressource_counts[pile_card.spot_3]++;
+                    new_ressource_counts[pile_card.spot_4]++;
+                    break;
+                case 4: // The icons on the left and bottom will be revealed
+                    new_ressource_counts[pile_card.spot_1]++;
                     new_ressource_counts[pile_card.spot_2]++;
                     new_ressource_counts[pile_card.spot_3]++;
                     new_ressource_counts[pile_card.spot_4]++;
@@ -2484,6 +2514,12 @@ function (dojo, declare) {
                     bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
                     break;
                 case 3: // Splayed up (the icons on the bottom would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
+                    break;
+                case 4: // Splayed up (the icons on the left and bottom would be visible)
+                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
                     bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
                     bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
                     bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
@@ -2573,6 +2609,20 @@ function (dojo, declare) {
                     }
                     break;
                 case 3: // Splayed up (the icons on the bottom would be visible)
+                    if (pile_card.spot_2 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_3 == icon) {
+                        count++;
+                    }
+                    if (pile_card.spot_4 == icon) {
+                        count++;
+                    }
+                    break;
+                case 4: // Splayed aslant (the icons on the left and bottom would be visible)
+                    if (pile_card.spot_1 == icon) {
+                        count++;
+                    }
                     if (pile_card.spot_2 == icon) {
                         count++;
                     }
@@ -3402,6 +3452,8 @@ function (dojo, declare) {
                     must_stay_visible = true;
                 } else if (splay_direction == 3 && (card.spot_2 == 10 || card.spot_3 == 10 || card.spot_4 == 10)) { // echo effect visible due to up splay
                     must_stay_visible = true;
+                } else if (splay_direction == 4 && (card.spot_1 == 10 || card.spot_2 == 10 || card.spot_3 == 10 || card.spot_4 == 10)) { // echo effect visible due to aslant splay
+                    must_stay_visible = true;
                 }
                 if (must_stay_visible) {
                     indices.push(i);
@@ -3487,6 +3539,13 @@ function (dojo, declare) {
                         var delta_y = overlap;
                         var delta_y_if_expanded = overlap_if_expanded;
                         break;
+                    case 4: // Splayed aslant
+                        var x_beginning = 0;
+                        var delta_x = overlap;
+                        var delta_x_if_expanded = overlap_if_expanded;
+                        var delta_y = overlap;
+                        var delta_y_if_expanded = overlap_if_expanded;
+                        break;
                     default:
                         break;
                     }
@@ -3500,7 +3559,7 @@ function (dojo, declare) {
                 } else if (splay_direction == 1 || splay_direction == 2) {
                     var y = 0;
                 } else {
-                    // When splayed up, we need to count the cards above instead of below
+                    // When splayed up or aslant, we need to count the cards above instead of below
                     var num_cards_expanded = 0;
                     for (var j = i + 1; j < this.items.length; j++) {
                         if (visible_indices.includes(j - 1)) {
@@ -4545,6 +4604,14 @@ function (dojo, declare) {
                     ressource_counts[new_top_card.spot_5]++;
                     ressource_counts[new_top_card.spot_6]++;
                     break;
+                
+                case 4: // Icons on left and bottom can still be seen (spot_1, spot_2, spot_3 and spot_4)
+                    ressource_counts[old_top_card.spot_5]--;
+                    ressource_counts[old_top_card.spot_6]--;
+                    
+                    ressource_counts[new_top_card.spot_5]++;
+                    ressource_counts[new_top_card.spot_6]++;
+                    break;
                 }
                 
                 for(var icon=1; icon<=6; icon++) {
@@ -5007,7 +5074,7 @@ function (dojo, declare) {
             
             // Update the splay indicator
             var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
-            for(var direction = 0; direction < 4; direction++) {
+            for(var direction = 0; direction <= 4; direction++) {
                 if (direction == splay_direction) {
                     dojo.addClass(splay_indicator, 'splay_' + direction);
                 }
@@ -5110,7 +5177,7 @@ function (dojo, declare) {
                     this.refreshSplay(this.zone.board[player_id][color], 0)
                     var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
                     dojo.addClass(splay_indicator, 'splay_0');
-                    for(var direction = 1; direction < 4; direction++) {
+                    for(var direction = 1; direction <= 4; direction++) {
                         dojo.removeClass(splay_indicator, 'splay_' + direction);
                     }
                     this.zone.board[player_id][color].counter.setValue(0);
