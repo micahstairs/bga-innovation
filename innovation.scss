@@ -1043,10 +1043,21 @@
     margin-top: 5px;
     width: 16px;
     height: 16px;
-    &.splay_1,&.splay_2,&.splay_3 {
+    &.splay_1, &.splay_2, &.splay_3, &.splay_4 {
         @include m.squares-background;
     }
-    @include m.generate-splay-x-position(1, 3, 80, 16px);
+    &.splay_1 {
+        background-position-x: -80px;
+    }
+    &.splay_2 {
+        background-position-x: -96px;
+    }
+    &.splay_3, &.splay_4 {
+        background-position-x: -112px;
+    }
+    &.splay_4 {
+        transform: rotate(45deg);
+    }
 }
 .in_tooltip {
     display: inline-block;

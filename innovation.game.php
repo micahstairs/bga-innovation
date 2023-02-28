@@ -108,7 +108,7 @@ class Innovation extends Table
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
-            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 represents all base game only releases, 1 represents the Artifact expansion release)
+            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 = base game, 1 = Artifacts, 2 = Echoes, 3 = Cities, 4 = 4th edition base game)
             'debug_mode' => 99, // 0 for disabled, 1 for enabled
             
             'game_type' => 100, // 1 for normal game, 2 for team game
@@ -403,9 +403,9 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
-        // Indicate that this production game was created after the Cities expansions was released
+        // Indicate that this production game was created after the 4th edition base game was released
         // TODO(FIGURES): Update this before releasing future expansions.
-        $this->innovationGameState->setInitial('release_version', 3);
+        $this->innovationGameState->setInitial('release_version', 4);
 
         // Init global values with their initial values
         $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
@@ -3175,6 +3175,7 @@ class Innovation extends Table
             case 107: // Wonder: 5 colors, each being splayed right or up
                 $eligible = true;
                 for($color = 0; $color < 5 ; $color++) {
+                    // TODO(4E#978): Possibly update this.
                     if (self::getCurrentSplayDirection($player_id, $color) < 2) { // This color is missing, unsplayed or splayed left
                         $eligible = false;
                         break;
@@ -4779,6 +4780,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $has_visible_echo_efffect = $card['spot_1'] == 10 || $card['spot_2'] == 10;
             } else if ($splay_direction == 3) { // up
                 $has_visible_echo_efffect = $card['spot_2'] == 10 || $card['spot_3'] == 10 || $card['spot_4'] == 10;
+            } else if ($splay_direction == 4) { // aslant
+                $has_visible_echo_efffect = $card['spot_1'] == 10 || $card['spot_2'] == 10 || $card['spot_3'] == 10 || $card['spot_4'] == 10;
             }
 
             if ($has_visible_echo_efffect) {
@@ -4833,6 +4836,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
             }
             elseif ($splay_direction == 3) { // up
+                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_2'] - 100;
+                }
+                if ($card['spot_3'] >= 101 && $card['spot_3'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_3'] - 100;
+                }
+                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_4'] - 100;
+                }
+            }
+            elseif ($splay_direction == 4) { // aslant
+                if ($card['spot_1'] >= 101 && $card['spot_1'] <= 111) {
+                    $visible_bonus_icons[] = $card['spot_1'] - 100;
+                }
                 if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
                     $visible_bonus_icons[] = $card['spot_2'] - 100;
                 }
@@ -4930,7 +4947,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card = $pile[$i];
             if($splay_direction == 1 && ($card['spot_4'] == $icon || $card['spot_5'] == $icon) || 
                     $splay_direction == 2 && ($card['spot_1'] == $icon || $card['spot_2'] == $icon) || 
-                    $splay_direction == 3 && ($card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon)) {
+                    $splay_direction == 3 && ($card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon) ||
+                    $splay_direction == 4 && ($card['spot_1'] == $icon || $card['spot_2'] == $icon || $card['spot_3'] == $icon || $card['spot_4'] == $icon)) {
                 return true;
             }
         }
@@ -5087,6 +5105,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $splayed_left = $top_card['splay_direction'] == 1;
         $splayed_right = $top_card['splay_direction'] == 2;
         $splayed_up = $top_card['splay_direction'] == 3;
+        $splayed_aslant = $top_card['splay_direction'] == 4;
 
         // If unsplayed, only return the count of the icons on the top card
         if ($unsplayed == 1) {
@@ -5097,7 +5116,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         for ($i = 0; $i < $pile_size - 1; $i++) {
             $card = $pile[$i];
             
-            if ($splayed_right) {
+            if ($splayed_right || $splayed_aslant) {
                 if ($card['spot_1'] !== null && $card['spot_1'] == $icon) {
                     $count += 1;
                 }
@@ -5266,10 +5285,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     COALESCE(s1.count, 0) + COALESCE(s2.count, 0) + COALESCE(s3.count, 0) + COALESCE(s4.count, 0) + COALESCE(s5.count, 0) + COALESCE(s6.count, 0) AS count
                 FROM
                     base AS a
-                    LEFT JOIN (SELECT spot_1, COUNT(spot_1) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 2 GROUP BY spot_1) AS s1 ON a.icon = s1.spot_1
-                    LEFT JOIN (SELECT spot_2, COUNT(spot_2) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 2 OR splay_direction = 3 GROUP BY spot_2) AS s2 ON a.icon = s2.spot_2
-                    LEFT JOIN (SELECT spot_3, COUNT(spot_3) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 3 GROUP BY spot_3) AS s3 ON a.icon = s3.spot_3
-                    LEFT JOIN (SELECT spot_4, COUNT(spot_4) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 1 OR splay_direction = 3 GROUP BY spot_4) AS s4 ON a.icon = s4.spot_4
+                    LEFT JOIN (SELECT spot_1, COUNT(spot_1) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 2 OR splay_direction = 4 GROUP BY spot_1) AS s1 ON a.icon = s1.spot_1
+                    LEFT JOIN (SELECT spot_2, COUNT(spot_2) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 2 OR splay_direction = 3 OR splay_direction = 4 GROUP BY spot_2) AS s2 ON a.icon = s2.spot_2
+                    LEFT JOIN (SELECT spot_3, COUNT(spot_3) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 3 OR splay_direction = 4 GROUP BY spot_3) AS s3 ON a.icon = s3.spot_3
+                    LEFT JOIN (SELECT spot_4, COUNT(spot_4) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 1 OR splay_direction = 3 OR splay_direction = 4 GROUP BY spot_4) AS s4 ON a.icon = s4.spot_4
                     LEFT JOIN (SELECT spot_5, COUNT(spot_5) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE OR splay_direction = 1 OR splay_direction = 3 GROUP BY spot_5) AS s5 ON a.icon = s5.spot_5
                     LEFT JOIN (SELECT spot_6, COUNT(spot_6) AS count FROM card_with_top_card_indication WHERE is_top_card IS TRUE GROUP BY spot_6) AS s6 ON a.icon = s6.spot_6
         ");
@@ -5568,6 +5587,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return clienttranslate('right');
         case 3:
             return clienttranslate('up');
+        case 4:
+            return clienttranslate('aslant');
         }
     }
     
@@ -6043,7 +6064,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['has_demand_effect'] = false;
         }
         if (!array_key_exists('has_splay_direction', $rewritten_options)) {
-            $rewritten_options['has_splay_direction'] = array(0, 1, 2, 3); // Unsplayed, left, right, or up
+            $rewritten_options['has_splay_direction'] = array(0, 1, 2, 3, 4); // Unsplayed, left, right, up, or aslant
         }
         if (!array_key_exists('splay_direction', $rewritten_options)) {
              $rewritten_options['splay_direction'] = -1;
@@ -6257,7 +6278,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $condition_for_splay = "";
         if (count($splay_directions) == 0) {
             $condition_for_splay = "AND FALSE";
-        } else if (count($splay_directions) < 4) {
+        } else if ($this->innovationGameState->get('release_version') <= 3 && count($splay_directions) < 4 || $this->innovationGameState->get('release_version') >= 4 && count($splay_directions) < 5) {
             $condition_for_splay = "AND splay_direction IN (".join($splay_directions, ',').")";
         }
 
@@ -14550,22 +14571,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // Check Bell
                 $bell_card = self::getCardInfo(342);
-                if (self::getIfTopCardOnBoard(342) || ($bell_card['location'] == 'board' && $bell_card['splay_direction'] >= 2)) { // up or right
+                if (self::getIfTopCardOnBoard(342) || ($bell_card['location'] == 'board' && $bell_card['splay_direction'] >= 2)) { // up, right, or aslant
                     $cards_to_draw++;
                 }
                 // Check Flute
                 $flute_card = self::getCardInfo(343);
-                if (self::getIfTopCardOnBoard(343) || ($flute_card['location'] == 'board' && $flute_card['splay_direction'] >= 2)) { // up or right
+                if (self::getIfTopCardOnBoard(343) || ($flute_card['location'] == 'board' && $flute_card['splay_direction'] >= 2)) { // up, right, or aslant
                     $cards_to_draw++;
                 }                
                 // Check Piano
                 $piano_card = self::getCardInfo(383);
-                if (self::getIfTopCardOnBoard(383) || ($piano_card['location'] == 'board' && $piano_card['splay_direction'] == 3)) { // up only
+                if (self::getIfTopCardOnBoard(383) || ($piano_card['location'] == 'board' && $piano_card['splay_direction'] >= 3)) { // up or aslant
                     $cards_to_draw++;
                 }
                 // Check Saxophone
                 $sax_card = self::getCardInfo(404);
-                if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] == 3)) { // up only
+                if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] >= 3)) { // up or aslant
                     $cards_to_draw++;
                 }
                 self::notifyGeneralInfo(clienttranslate('There is ${n} ${music_note} visible across all player boards.'), array('n' => $cards_to_draw, 'music_note' => self::getMusicNoteIcon()));
@@ -17653,7 +17674,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'board',
                 'location_to' => 'none',
                 
-                'has_splay_direction' => array(1, 2, 3) // Left, right, or up
+                'has_splay_direction' => array(1, 2, 3, 4) // Left, right, up, or aslant
             );
             break;
 
