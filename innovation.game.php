@@ -8512,7 +8512,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 175: // Periodic Table
                 // The non-demand effect has no effect if the player has top cards with unique values.
-                return count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($player_id)) == 0;
+                return count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($executing_player_id)) == 0;
             
             // All other cards with non-demand effects are assumed to have an effect.
             default:
