@@ -82,16 +82,24 @@ $game_options = array(
     101 => array(
         'name' => totranslate('Game rules'),
         'values' => array(
-            1 => array('name' => totranslate('Last edition')),
-            2 => array('name' => totranslate('First edition'), 'tmdisplay' => totranslate('First edition')),
+            1 => array('name' => totranslate('3rd edition'), 'tmdisplay' => totranslate('3rd edition')),
+            /* TODO(4E): Retire 1st editiion. */
+            2 => array('name' => totranslate('1st edition'), 'tmdisplay' => totranslate('1st edition')),
+            3 => array('name' => totranslate('4th edition'), 'tmdisplay' => totranslate('4th edition')),
         ),
         'startcondition' => array(
             1 => array(/* No special condition here */),
             2 => array(
+                /* TODO(4E): Retire 1st editiion. */
+                array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+                array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+                array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+            ),
+            3 => array(
                 /* TODO(FIGURES): Add more conditions when other expansions are added. */
-                array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
-                array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
-                array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('First edition rules cannot be used when playing with expansions')),
+                array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('4th edition rules are not yet supported with expansions')),
+                array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('4th edition rules are not yet supported with expansions')),
+                array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('4th edition rules are not yet supported with expansions')),
             ),
         )
     ),

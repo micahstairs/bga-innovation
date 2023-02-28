@@ -112,6 +112,13 @@ class GameStateTest extends BaseTest
         $this->assertFalse($this->state->usingFirstEditionRules());
     }
 
+    public function testUsingFirstEditionRules_fourthEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(3);
+
+        $this->assertFalse($this->state->usingFirstEditionRules());
+    }
+
     public function testUsingThirdEditionRules_firstEdition()
     {
         $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
@@ -124,6 +131,34 @@ class GameStateTest extends BaseTest
         $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(1);
 
         $this->assertTrue($this->state->usingThirdEditionRules());
+    }
+
+    public function testUsingThirdEditionRules_fourthEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(3);
+
+        $this->assertFalse($this->state->usingThirdEditionRules());
+    }
+
+    public function testUsingFourthEditionRules_firstEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
+
+        $this->assertFalse($this->state->usingFourthEditionRules());
+    }
+
+    public function testUsingFourthEditionRules_thirdEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(1);
+
+        $this->assertFalse($this->state->usingFourthEditionRules());
+    }
+
+    public function testUsingFourthEditionRules_fourthEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(3);
+
+        $this->assertTrue($this->state->usingFourthEditionRules());
     }
 
     public function testArtifactsExpansionEnabled_disabled()
