@@ -7304,9 +7304,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $icons_to_check = array($top_middle_icon, $bottom_middle_icon);
                 for ($i = 0; $i < count($icons_to_check); $i++) {
                     switch ($icons_to_check[$i]) {
-                        case 7: // Plus: Draw a card of value one higher than the city's age
-                            self::executeDraw($player_id, $card['age'] + 1);
-                            break;
                         case 11: // Left Arrow: Splay the city's color left
                             self::splayLeft($player_id, $player_id, $card['color']);
                             break;
@@ -7315,6 +7312,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             break;
                         case 13: // Up Arrow: Splay the city's color up
                             self::splayUp($player_id, $player_id, $card['color']);
+                            break;
+                        case 14: // Plus: Draw a card of value one higher than the city's age
+                            self::executeDraw($player_id, $card['age'] + 1);
                             break;
                     }
                 }
