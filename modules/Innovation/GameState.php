@@ -96,6 +96,14 @@ class GameState
     /**
      * @return bool
      */
+    public function usingFourthEditionRules()
+    {
+        return $this->get('game_rules') == 3;
+    }
+
+    /**
+     * @return bool
+     */
     public function artifactsExpansionEnabled()
     {
         return $this->get('artifacts_mode') > 1;
