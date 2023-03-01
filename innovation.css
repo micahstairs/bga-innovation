@@ -1071,7 +1071,7 @@
   width: 16px;
   height: 16px;
 }
-.splay_indicator.splay_1, .splay_indicator.splay_2, .splay_indicator.splay_3 {
+.splay_indicator.splay_1, .splay_indicator.splay_2, .splay_indicator.splay_3, .splay_indicator.splay_4 {
   background-image: url("img/squares.png");
 }
 .splay_indicator.splay_1 {
@@ -1080,8 +1080,11 @@
 .splay_indicator.splay_2 {
   background-position-x: -96px;
 }
-.splay_indicator.splay_3 {
+.splay_indicator.splay_3, .splay_indicator.splay_4 {
   background-position-x: -112px;
+}
+.splay_indicator.splay_4 {
+  transform: rotate(45deg);
 }
 
 .in_tooltip {
