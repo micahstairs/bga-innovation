@@ -1,7 +1,7 @@
 
 -- ------
 -- BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
--- Innovation implementation : © Jean Portemer <jportemer@gmail.com>
+-- innovation implementation : © Jean Portemer <jportemer@gmail.com>
 -- 
 -- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -310,7 +310,19 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (101, 0, 10, 3, 0, 5, 5, 5, 5),
 (102, 0, 10, 3, 0, 2, 2, 2, 2),
 (103, 0, 10, 4, 3, 3, 6, 0, 3),
-(104, 0, 10, 4, 0, 6, 6, 3, 6);
+(104, 0, 10, 4, 0, 6, 6, 3, 6),
+
+/* Age 11 */
+(440, 0, 11, 0, 0, 2, 2, 2, 2),
+(441, 0, 11, 0, 3, 6, 0, 3, 3),
+(442, 0, 11, 1, 5, 0, 5, 1, 5),
+(443, 0, 11, 1, 6, 0, 6, 6, 6),
+(444, 0, 11, 2, 5, 5, 3, 0, 5),
+(445, 0, 11, 2, 1, 6, 0, 1, 1),
+(446, 0, 11, 3, 7, 7, 0, 1, 7),
+(447, 0, 11, 3, 1, 0, 2, 2, 2),
+(448, 0, 11, 4, 0, 7, 7, 7, 7),
+(449, 0, 11, 4, 3, 0, 7, 3, 3);
 
 INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `dogma_icon`, `location`) VALUES
 

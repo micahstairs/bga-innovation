@@ -2,7 +2,7 @@
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
- * Innovationnewgraphics implementation : © Jean Portemer <jportemer@gmail.com>
+ * Innovation implementation : © Jean Portemer <jportemer@gmail.com>
  * 
  * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
  * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -1773,6 +1773,52 @@ $this->textual_card_infos = array(
 439 => array('name' => clienttranslate('Supremacy'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Novel.')),
+
+/* Base - Age 11 */
+
+440 => array('name' => clienttranslate('Climatology'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return two top cards on your board each with the icon of my choice other than ${icon_2}!'),
+    'non_demand_effect_1' => clienttranslate('Return a top card on your board and all cards in your score pile of equal or higher value than the top card.'),
+),
+
+441 => array('name' => clienttranslate('Solar Sailing'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld an ${age_11}. If the color of the melded card is not splayed aslant on your board, return all but your top two cards of this color, and splay them aslant. If there are four or more cards of this color on your board, you win.'),
+),
+
+442 => array('name' => clienttranslate('Astrogeology'),
+    'non_demand_effect_1' => clienttranslate('Draw and reveal an ${age_11}. If the color of the drawn card is not splayed aslant on your board, transfer all but your top two cards of this color into your hand, and splay it aslant.'),
+    'non_demand_effect_2' => clienttranslate('If you have 11 or more cards in hand, you win.'),
+),
+
+443 => array('name' => clienttranslate('Fusion'),
+    'non_demand_effect_1' => clienttranslate('Score a top card of value ${age_11} on your board. If you do, repeat this dogma effect using a value one or two lower.'),
+),
+
+444 => array('name' => clienttranslate('Hypersonics'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return two top cards on your board of the same value! If you do, return all cards of that value or less in your hand and score pile!'),
+),
+
+445 => array('name' => clienttranslate('Space Traffic'),
+    'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_11}. If you tucked directly under an ${age_11}, you lose. Score all but your top three cards of the color of the tucked card, and splay that color aslant. If you do not have the highest score, repeat this dogma effect.'),
+),
+
+446 => array('name' => clienttranslate('Near-Field Comm'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer all the highest cards in your score pile to my score pile!'),
+    'non_demand_effect_1' => clienttranslate('Reveal the highest card in your score pile and execute its non-demand dogma effects. Do not share them.'),
+),
+
+447 => array('name' => clienttranslate('Reclamation'),
+    'non_demand_effect_1' => clienttranslate('Return your three bottom red cards. Draw and meld a card of value equal to half the total sum value of the returned cards, rounded up. If you returned three cards, repeat this dogma effect using the color of the melded card.'),
+),
+
+448 => array('name' => clienttranslate('Escapism'),
+    'non_demand_effect_1' => clienttranslate('Reveal a card in your hand and execute its non-demand dogma effects. Do not share them. Return from your hand all cards of value equal to the value of the revealed card. Draw three cards of that value.'),
+),
+
+449 => array('name' => clienttranslate('Whataboutism'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer all your top cards with a demand effect from your board to my board! If you do, exchange all cards in your score pile with all cards in my score pile!'),
+),
+
 
 );
 
