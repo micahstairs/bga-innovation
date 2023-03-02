@@ -2030,7 +2030,7 @@ function (dojo, declare) {
             text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
             text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
             text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
-            for (var age = 1; age <= 10; age++) {
+            for (var age = 1; age <= 11; age++) {
                 text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age));
             }
             for (var symbol = 0; symbol <= 13; symbol++) {
@@ -3065,7 +3065,7 @@ function (dojo, declare) {
             if (resource_icon_id == 0) {
                 return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
             }
-            if (resource_icon_id <= 6) {
+            if (resource_icon_id <= 7) {
                 var div = `<div class="square_card_icon ${size} color_${card.color} ${icon_location} icon_${resource_icon_id}"></div>`;
                 if (resource_icon_id != null && icon_location == 'top_center_icon') {
                     div += `<div class="city_search_icon ${size} color_${card.color}"></div>`;

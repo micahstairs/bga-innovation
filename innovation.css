@@ -1560,11 +1560,14 @@
   left: -3px;
   top: -1px;
 }
-.dogma_symbol.M.icon_1, .dogma_symbol.M.icon_2, .dogma_symbol.M.icon_3, .dogma_symbol.M.icon_4, .dogma_symbol.M.icon_5, .dogma_symbol.M.icon_6 {
+.dogma_symbol.M.icon_1, .dogma_symbol.M.icon_2, .dogma_symbol.M.icon_3, .dogma_symbol.M.icon_4, .dogma_symbol.M.icon_5, .dogma_symbol.M.icon_6, .dogma_symbol.M.icon_7 {
   width: 10px;
   height: 10px;
   background-image: url("img/resource_icons.jpg");
   background-size: 60px auto;
+}
+.dogma_symbol.M.icon_7 {
+  filter: brightness(0%);
 }
 .dogma_symbol.M.icon_1 {
   background-position-x: 0px;
@@ -1583,6 +1586,9 @@
 }
 .dogma_symbol.M.icon_6 {
   background-position-x: -50px;
+}
+.dogma_symbol.M.icon_7 {
+  background-position-x: -60px;
 }
 .dogma_symbol.M.color_0 {
   background-position-y: 0px;
@@ -1603,11 +1609,14 @@
   left: -4px;
   top: -4px;
 }
-.dogma_symbol.L.icon_1, .dogma_symbol.L.icon_2, .dogma_symbol.L.icon_3, .dogma_symbol.L.icon_4, .dogma_symbol.L.icon_5, .dogma_symbol.L.icon_6 {
+.dogma_symbol.L.icon_1, .dogma_symbol.L.icon_2, .dogma_symbol.L.icon_3, .dogma_symbol.L.icon_4, .dogma_symbol.L.icon_5, .dogma_symbol.L.icon_6, .dogma_symbol.L.icon_7 {
   width: 20px;
   height: 20px;
   background-image: url("img/resource_icons.jpg");
   background-size: 120px auto;
+}
+.dogma_symbol.L.icon_7 {
+  filter: brightness(0%);
 }
 .dogma_symbol.L.icon_1 {
   background-position-x: 0px;
@@ -1626,6 +1635,9 @@
 }
 .dogma_symbol.L.icon_6 {
   background-position-x: -100px;
+}
+.dogma_symbol.L.icon_7 {
+  background-position-x: -120px;
 }
 .dogma_symbol.L.color_0 {
   background-position-y: 0px;
@@ -1800,6 +1812,10 @@
 .square_card_icon.M.icon_6 {
   background-position-x: -192.5px;
 }
+.square_card_icon.M.icon_7 {
+  background-position-x: -1px;
+  filter: brightness(0%);
+}
 .square_card_icon.M.icon_10 {
   background-image: none;
 }
@@ -1870,6 +1886,10 @@
 }
 .square_card_icon.L.icon_6 {
   background-position-x: -393.5px;
+}
+.square_card_icon.L.icon_7 {
+  background-position-x: -1.5px;
+  filter: brightness(0%);
 }
 .square_card_icon.L.icon_10 {
   background-image: none;
@@ -5720,6 +5740,96 @@
 }
 .hexagon_card_icon.hexagon_icon_434.L {
   background-position: -912.5px -912.5px;
+}
+.hexagon_card_icon.hexagon_icon_440 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_440.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_440.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_441 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_441.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_441.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_442 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_442.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_442.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_443 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_443.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_443.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_444 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_444.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_444.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_445 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_445.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_445.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_446 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_446.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_446.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_447 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_447.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_447.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_448 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_448.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_448.L {
+  background-position: -8px -8px;
+}
+.hexagon_card_icon.hexagon_icon_449 {
+  filter: brightness(0%);
+}
+.hexagon_card_icon.hexagon_icon_449.M {
+  background-position: -3px -3px;
+}
+.hexagon_card_icon.hexagon_icon_449.L {
+  background-position: -8px -8px;
 }
 
 /*# sourceMappingURL=innovation.css.map */
