@@ -591,7 +591,7 @@ class Innovation extends Table
         // Card shuffling in decks
         self::shuffle();
         
-        // Isolate one base card of each age (except 10) to create the available age achievements
+        // Isolate one base card of each age (except the highest age) to create the available age achievements
         self::extractAgeAchievements();
         
         // Deal 2 cards of age 1 to each player
@@ -1181,7 +1181,7 @@ class Innovation extends Table
     function extractAgeAchievements() {
         /** Take the top card from each pile from age 1 to age 9, in the beginning of the game; these will be used as achievements **/
         if ($this->innovationGameState->get('release_version') >= 2) {
-            self::DbQuery("
+            self::DbQuery(self::format("
                 UPDATE
                     card as a
                     INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
@@ -1191,8 +1191,8 @@ class Innovation extends Table
                 WHERE
                     a.position = b.position AND
                     a.type = 0 AND
-                    a.age BETWEEN 1 AND 9
-                ");
+                    a.age BETWEEN 1 AND {max_achievement_age}
+                ", ["max_achievement_age" => $this->innovationGameState->usingFourthEditionRules() ? 10 : 9]));
         } else {
             self::DbQuery("
                 UPDATE
