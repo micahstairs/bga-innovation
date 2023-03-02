@@ -1427,25 +1427,31 @@
     &.M {
         left: -3px;
         top: -1px;
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6,&.icon_7 {
             width: 10px;
             height: 10px;
             @include m.icon-background;
             background-size: 60px auto;
         }
-        @include m.generate-icon-x-position(1, 6, 0, 10px);
+        &.icon_7 {
+            filter: brightness(0%);
+        }
+        @include m.generate-icon-x-position(1, 7, 0, 10px);
         @include m.generate-color-y-position(0, 4, 0, 10px);
     }
     &.L {
         left: -4px;
         top: -4px;
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6,&.icon_7 {
             width: 20px;
             height: 20px;
             @include m.icon-background;
             background-size: 120px auto;
         }
-        @include m.generate-icon-x-position(1, 6, 0, 20px);
+        &.icon_7 {
+            filter: brightness(0%);
+        }
+        @include m.generate-icon-x-position(1, 7, 0, 20px);
         @include m.generate-color-y-position(0, 4, 0, 20px);
     }
 }
@@ -1575,6 +1581,10 @@
         &.icon_6 {
             background-position-x: -192.5px;
         }
+        &.icon_7 {
+            background-position-x: -1px;
+            filter: brightness(0%);
+        }
         &.icon_10 {
             background-image: none;
             // The following line will be added dynamically via JavaScript:
@@ -1647,6 +1657,10 @@
         }
         &.icon_6 {
             background-position-x: -393.5px;
+        }
+        &.icon_7 {
+            background-position-x: -1.5px;
+            filter: brightness(0%);
         }
         &.icon_10 {
             background-image: none;
@@ -2334,6 +2348,18 @@ $L_y_position:     8;
                 &.L {
                     background-position: -#{$L_x_position + ($i - 345) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
                 }
+            }
+        }
+    }
+    // Age 11 cards
+    @for $i from 440 through 449 {
+        &.hexagon_icon_#{$i} {
+            filter: brightness(0%);
+            &.M {
+                background-position: -3px -3px;
+            }
+            &.L {
+                background-position: -8px -8px;
             }
         }
     }
