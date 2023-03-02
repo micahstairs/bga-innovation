@@ -851,6 +851,9 @@ function (dojo, declare) {
                 }
             }
 
+            this.default_viewport = "width=640"; // 640 is set in game_interface_width.min in gameinfos.inc.php
+            this.onScreenWidthChange();
+
             this.refreshLayout();
             
             // Force refresh page on resize if width changes
@@ -900,9 +903,17 @@ function (dojo, declare) {
             }
         },
 
+        onScreenWidthChange: function () {
+            // Remove broken "zoom" property added by BGA framework
+            this.gameinterface_zoomFactor = 1;
+            $("page-content").style.removeProperty("zoom");
+            $("page-title").style.removeProperty("zoom");
+            $("right-side-first-part").style.removeProperty("zoom");
+          },
+
         refreshLayout : function () {
             var on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
-            var window_width = Math.max(dojo.window.getBox().w, 740); // 740 is set in game_interface_width.min in gameinfos.inc.php
+            var window_width = Math.max(dojo.window.getBox().w, 640); // 640 is set in game_interface_width.min in gameinfos.inc.php
             var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
             var decks_width = 214;
 
