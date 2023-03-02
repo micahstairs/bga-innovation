@@ -626,6 +626,7 @@ class Innovation extends Table
         }
         $result['cards'] = $cards;
 
+        $result['fourth_edition'] = $this->innovationGameState->usingFourthEditionRules();
         $result['artifacts_expansion_enabled'] = $this->innovationGameState->artifactsExpansionEnabled();
         $result['relics_enabled'] = $this->innovationGameState->artifactsExpansionEnabledWithRelics();
         $result['cities_expansion_enabled'] = $this->innovationGameState->citiesExpansionEnabled();
@@ -4136,7 +4137,7 @@ class Innovation extends Table
 
         if ($key == 'age') {
             $num_min = 1;
-            $num_max = 10;
+            $num_max = 11;
         } else if ($key == 'color') {
             $num_min = 0;
             $num_max = 4;
