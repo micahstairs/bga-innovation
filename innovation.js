@@ -1606,8 +1606,10 @@ function (dojo, declare) {
             content += "</div>";
 
             content += "<div id='browse_cards_buttons_row_2'>";
-            for (var age = 1; age <= 10; age++) {
-                content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
+            for (var age = 1; age <= 11; age++) {
+                if (age < 11 || this.fourth_edition) {
+                    content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
+                }
             }
             if (this.relics_enabled) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_relics'>" + _("Relics") + "</div>";
@@ -4777,17 +4779,22 @@ function (dojo, declare) {
 
             // Figure out which age is selected
             var age = 1;
-            for (var i = 1; i <= 10; i++) {
+            for (var i = 1; i <= 11; i++) {
                 if (dojo.query(`#browse_cards_age_${i}.selected`).length > 0) {
                     age = i;
                 }
             }
 
-            // Determine range of cards to render            
-            var min_id = type * 110 + age * 10 - 5;
-            var max_id = min_id + 9;
-            if (age == 1) {
-                min_id -= 5;
+            // Determine range of cards to render
+            if (age == 11) {
+                var min_id = 440 + type * 10;
+                var max_id = min_id + 9;
+            } else {
+                var min_id = type * 110 + age * 10 - 5;
+                var max_id = min_id + 9;
+                if (age == 1) {
+                    min_id -= 5;
+                }
             }
 
             // Special case for relics
