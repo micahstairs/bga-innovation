@@ -385,7 +385,7 @@ function (dojo, declare) {
             for (var player_id in this.players) {
                 dojo.place(`<span class='achievements_to_win'>/${this.number_of_achievements_needed_to_win}<span>`, $('player_score_' + player_id), "after");
                 dojo.place(this.format_block('jstpl_player_panel', {'player_id':player_id}), $('player_board_' + player_id));
-                for (var icon=1; icon<=6; icon++) {
+                for (var icon=1; icon<=7; icon++) {
                     var infos = {'player_id':player_id, 'icon': icon};
                     dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
                     dojo.place(this.format_block('jstpl_ressource_count', infos), $('ressource_counts_' + player_id));
@@ -397,7 +397,7 @@ function (dojo, declare) {
             this.addCustomTooltipToClass("max_age_on_board", _("Max age on board top cards"), "");
             this.addCustomTooltipToClass("forecast_count", _("Number of cards in forecast"), "");
             
-            for (var icon=1; icon<=6; icon++) {
+            for (var icon=1; icon<=7; icon++) {
                 this.addCustomTooltipToClass("ressource_" + icon, _("Number of visible ${icons} on the board").replace('${icons}', this.square('P', 'icon', icon, 'in_tooltip')), "");
             }
             
@@ -421,7 +421,7 @@ function (dojo, declare) {
             this.counter.ressource_count = {};
             for (var player_id in this.players) {
                 this.counter.ressource_count[player_id] = {};
-                for (var icon = 1; icon <= 6; icon++) {
+                for (var icon = 1; icon <= 7; icon++) {
                     this.counter.ressource_count[player_id][icon] = new ebg.counter();
                     this.counter.ressource_count[player_id][icon].create($("ressource_count_" + player_id + "_" + icon));
                     this.counter.ressource_count[player_id][icon].setValue(gamedatas.ressource_counts[player_id][icon]);
@@ -1666,7 +1666,7 @@ function (dojo, declare) {
                             // three or more icons of all six types
                             numerator = 0;
                             denominator = 6;
-                            for (var i = 1; i <= 6; i++) {
+                            for (var i = 1; i <= 7; i++) {
                                 if (self.counter.ressource_count[self.player_id][i].getValue() >= 3) {
                                     numerator++;
                                 }
@@ -1751,7 +1751,7 @@ function (dojo, declare) {
                             // three icons or more of the same icon type visible in each of four different colors
                             numerator = 0;
                             denominator = 4;
-                            for (var icon = 1; icon <= 6; icon++) {
+                            for (var icon = 1; icon <= 7; icon++) {
                                 var num_piles = 0;
                                 for (var color = 0; color < 5; color++) {
                                     var pile_zone = self.zone.board[self.player_id][color];
@@ -2209,7 +2209,7 @@ function (dojo, declare) {
             // Get current ressouce count
             var current_ressource_counts = {};
             var new_ressource_counts = {};
-            for (var icon = 1; icon <= 6; icon++) {
+            for (var icon = 1; icon <= 7; icon++) {
                 current_count = self.counter.ressource_count[self.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
@@ -2407,7 +2407,7 @@ function (dojo, declare) {
             // Get current ressouce count
             var current_ressource_counts = {};
             var new_ressource_counts = {};
-            for (var icon = 1; icon <= 6; icon++) {
+            for (var icon = 1; icon <= 7; icon++) {
                 current_count = this.counter.ressource_count[this.player_id][icon].getValue();
                 current_ressource_counts[icon] = current_count;
                 new_ressource_counts[icon] = current_count;
@@ -2658,7 +2658,7 @@ function (dojo, declare) {
             var symbol_line = dojo.create('tr', null, table);
             var count_line = dojo.create('tr', null, table);
             
-            for(var icon=1; icon<=6; icon++) {
+            for(var icon=1; icon<=7; icon++) {
                 var current_count = current_ressource_counts[icon];
                 var new_count = new_ressource_counts[icon];
                 var comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
@@ -4566,7 +4566,7 @@ function (dojo, declare) {
                 new_top_card = this.cards[this.getCardIdFromHTMLId(new_top_item.id)];
                 
                 ressource_counts = {};
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     ressource_counts[icon] = this.counter.ressource_count[player_id][icon].getValue();
                 }
                 
@@ -4627,7 +4627,7 @@ function (dojo, declare) {
                     break;
                 }
                 
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     this.counter.ressource_count[player_id][icon].setValue(ressource_counts[icon]);
                 }
                 
@@ -4965,7 +4965,7 @@ function (dojo, declare) {
                 this.counter.score[card.player_id].setValue(card.new_score);
             }
             if(card.new_ressource_counts !== undefined) {
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     this.counter.ressource_count[card.player_id][icon].setValue(card.new_ressource_counts[icon]);
                 }
             }
@@ -4980,12 +4980,12 @@ function (dojo, declare) {
                 this.counter.score[card.owner_to].setValue(card.new_score_to);
             }
             if(card.new_ressource_counts_from !== undefined) {
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     this.counter.ressource_count[card.owner_from][icon].setValue(card.new_ressource_counts_from[icon]);
                 }
             }
             if(card.new_ressource_counts_to !== undefined) {
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     this.counter.ressource_count[card.owner_to][icon].setValue(card.new_ressource_counts_to[icon]);
                 }
             }
@@ -5114,7 +5114,7 @@ function (dojo, declare) {
             
             // Update the ressource counts for that player
             if (splay_direction > 0 || forced_unsplay) {
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     this.counter.ressource_count[player_id][icon].setValue(notif.args.new_ressource_counts[icon]);
                 }
             }
@@ -5184,7 +5184,7 @@ function (dojo, declare) {
             
             // Counters for ressources
             for(var player_id in this.players) {
-                for(var icon=1; icon<=6; icon++) {
+                for(var icon=1; icon<=7; icon++) {
                     this.counter.ressource_count[player_id][icon].setValue(0);
                 }
             }
@@ -5225,7 +5225,7 @@ function (dojo, declare) {
             for (var player_id in this.players) {
                 this.zone.hand[player_id].counter.setValue(0);
                 this.counter.max_age_on_board[player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
-                for (var icon = 1; icon <= 6; icon++) {
+                for (var icon = 1; icon <= 7; icon++) {
                     this.counter.ressource_count[player_id][icon].setValue(notif.args.new_resource_counts_by_player[player_id][icon]);
                 }
             }
@@ -5261,7 +5261,7 @@ function (dojo, declare) {
             if (this.echoes_expansion_enabled) {
                 this.zone.forecast[player_id].counter.setValue(0);
             }
-            for (var icon = 1; icon <= 6; icon++) {
+            for (var icon = 1; icon <= 7; icon++) {
                 this.counter.ressource_count[player_id][icon].setValue(0);
             }
 
@@ -5280,14 +5280,14 @@ function (dojo, declare) {
 
             // If icon count is increasing, then this is the start of the free action
             if (resource_count_delta > 0) {
-                for (var icon = 1; icon <= 6; icon++) {
+                for (var icon = 1; icon <= 7; icon++) {
                     opacity = icon == resource_icon ? 1 : 0.5;
                     dojo.query(".player_info .ressource_" + icon).style("opacity", opacity);
                 }
 
             // If icon count is decreasing, then this is the end of the free action
             } else {
-                for (var icon = 1; icon <= 6; icon++) {
+                for (var icon = 1; icon <= 7; icon++) {
                     dojo.query(".player_info .ressource_" + icon).style("opacity", 1);
                 }
             }
