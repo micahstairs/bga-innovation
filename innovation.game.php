@@ -123,7 +123,11 @@ class Innovation extends Table
         return "innovation";
     }
 
+    // TODO(4E): Simulate migration.
     function upgradeTableDb($from_version) {
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'player_icon_count_7'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `player_icon_count_7` SMALLINT UNSIGNED NOT NULL DEFAULT 0;");
+        }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
@@ -3208,7 +3212,7 @@ class Innovation extends Table
                 break;
             case 439: // Supremacy: 4 different piles have at least 3 of the same icon
                 $eligible = false;
-                for ($icon = 1; $icon <= 6 && !$eligible; $icon++) {
+                for ($icon = 1; $icon <= 7 && !$eligible; $icon++) {
                     $num_piles = 0;
                     for ($color = 0; $color < 5; $color++) {
                         if (self::countVisibleIconsInPile($player_id, $icon, $color) >= 3) {
@@ -5114,7 +5118,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getPlayerResourceCounts($player_id) {
         $table = self::getNonEmptyObjectFromDB(self::format("
         SELECT
-            player_icon_count_1, player_icon_count_2, player_icon_count_3, player_icon_count_4, player_icon_count_5, player_icon_count_6
+            player_icon_count_1, player_icon_count_2, player_icon_count_3, player_icon_count_4, player_icon_count_5, player_icon_count_6, player_icon_count_7
         FROM
             player
         WHERE
@@ -5125,23 +5129,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Convert to a numeric associative array
         $result = array();
-        for ($icon = 1; $icon <= 6; $icon++) {
+        for ($icon = 1; $icon <= 7; $icon++) {
             $result[$icon] = $table["player_icon_count_".$icon];
-        }
-        return $result;
-    }
-
-    function getPlayerResourceCountsOnDisplay($player_id) {
-        $result = array();
-        for ($icon = 1; $icon <= 6; $icon++) {
-            $result[$icon] = 0;
-        }
-
-        $card = self::getArtifactOnDisplay($player_id);
-        if ($card !== null) {
-            for ($icon = 1; $icon <= 6; $icon++) {
-                $result[$icon] = self::countIconsOnCard($card, $icon);
-            }
         }
         return $result;
     }
@@ -5203,7 +5192,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             INSERT INTO
                 base (icon)
             VALUES
-                (1), (2), (3), (4), (5), (6)
+                (1), (2), (3), (4), (5), (6), (7)
         ");
         
         self::DbQuery(self::format("
@@ -5255,13 +5244,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 LEFT JOIN icon_count AS i4 ON TRUE
                 LEFT JOIN icon_count AS i5 ON TRUE
                 LEFT JOIN icon_count AS i6 ON TRUE
+                LEFT JOIN icon_count AS i7 ON TRUE
             SET
                 a.player_icon_count_1 = i1.count,
                 a.player_icon_count_2 = i2.count,
                 a.player_icon_count_3 = i3.count,
                 a.player_icon_count_4 = i4.count,
                 a.player_icon_count_5 = i5.count,
-                a.player_icon_count_6 = i6.count
+                a.player_icon_count_6 = i6.count,
+                a.player_icon_count_7 = i7.count
             WHERE
                 a.player_id = {player_id} AND
                 i1.icon = 1 AND
@@ -5269,26 +5260,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 i3.icon = 3 AND
                 i4.icon = 4 AND
                 i5.icon = 5 AND
-                i6.icon = 6
+                i6.icon = 6 AND
+                i6.icon = 7
         ",
             array('player_id' => $player_id)
         ));
         
         // Delete all values of the auxiliary tables
-        self::DbQuery("
-        DELETE FROM
-            card_with_top_card_indication
-        ");
-        
-        self::DbQuery("
-        DELETE FROM
-            base
-        ");
-        
-        self::DbQuery("
-        DELETE FROM
-            icon_count
-        ");
+        self::DbQuery("DELETE FROM card_with_top_card_indication");
+        self::DbQuery("DELETE FROM base");
+        self::DbQuery("DELETE FROM icon_count");
         
         return self::getPlayerResourceCounts($player_id);
     }
@@ -5703,6 +5684,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 player_icon_count_4 = 0,
                 player_icon_count_5 = 0,
                 player_icon_count_6 = 0
+                player_icon_count_7 = 0
         ");
         
         // Stats
@@ -5746,7 +5728,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 player_icon_count_3 = 0,
                 player_icon_count_4 = 0,
                 player_icon_count_5 = 0,
-                player_icon_count_6 = 0
+                player_icon_count_6 = 0,
+                player_icon_count_7 = 0
             WHERE
                 player_id = {player_id}
         ", array('player_id' => $player_id)));
@@ -8771,7 +8754,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case 'choose_icon_type':
                 $options = array();
-                for ($i = 1; $i <= 6; $i++) {
+                // TODO(4E): Include avatar icon when using 4th edition.
+                for ($i = 1; $i <= 7; $i++) {
                     $options[] = array('value' => $i, 'text' => self::getIconSquare($i));
                 }
                 break;
@@ -10257,18 +10241,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 12, age 1: City states
             case "12D1":
-                $number_of_towers = self::getUniqueValueFromDB(self::format("
-                SELECT
-                    player_icon_count_4
-                FROM
-                    player
-                WHERE
-                    player_id = {player_id}
-                ",
-                    array('player_id' => $player_id)
-                ));
-                
-                if ($number_of_towers >= 4) { // "If you have at least four towers on your board"
+                if (self::getPlayerSingleRessourceCount($player_id, 4) >= 4) { // "If you have at least four towers on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least four ${icon} on your board.'), array('You' => 'You', 'icon' => $tower));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least four ${icon} on his board.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => $tower));
                     $step_max = 1;
@@ -13460,7 +13433,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $eligible = false;
                 $card_count = 0;
                 
-                for ($icon = 2; $icon <= 6 && !$eligible; $icon++) { // start after crown
+                for ($icon = 2; $icon <= 7 && !$eligible; $icon++) { // start after crown
                     $matching_icon = true;
                     for ($color = 0; $color < 4; $color++) {
                         $top_card = self::getTopCardOnBoard($player_id, $color);
@@ -22820,7 +22793,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $returned_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         $matching_icon_on_card_1 = false;
                         $matching_icon_on_card_2 = false;
-                        for ($icon = 1; $icon <= 6; $icon++) { 
+                        for ($icon = 1; $icon <= 7; $icon++) { 
                             $has_icon = self::hasRessource($returned_card, $icon);
                             if ($has_icon && self::hasRessource($card_1, $icon)) {
                                 $matching_icon_on_card_1 = true;
@@ -23091,7 +23064,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // "Draw a card of value equal to the highest number of symbols of the same type visible in that color on your board"
                         $color = $this->innovationGameState->get('color_last_selected');
                         $max_symbols = 0;
-                        for ($icon = 1; $icon <= 6; $icon++) {
+                        for ($icon = 1; $icon <= 7; $icon++) {
                             $icon_count = self::countVisibleIconsInPile($player_id, $icon, $color);
                             if ($icon_count > $max_symbols){
                                 $max_symbols = $icon_count;
@@ -24422,7 +24395,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $eligible_cards = array();
                         foreach (self::getCardsInHand($player_id) as $card) {
                             // TODO(LATER): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
-                            for ($icon = 1; $icon <= 6; $icon++) {
+                            for ($icon = 1; $icon <= 7; $icon++) {
                                 if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
                                     $eligible_cards[] = $card['id'];
                                     break; // only 1 icon needs to be common
