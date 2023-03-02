@@ -442,6 +442,7 @@ function (dojo, declare) {
                 this.givePlayerActionCard(gamedatas.active_player, gamedatas.action_number);
             }
 
+            this.fourth_edition = gamedatas.fourth_edition;
             this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
             this.relics_enabled = gamedatas.relics_enabled;
             this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
@@ -457,7 +458,13 @@ function (dojo, declare) {
             this.zone.deck = {};
             for (var type = 0; type <= 4; type++) {
                 this.zone.deck[type] = {};
-                for (var age = 1; age <= 10; age++) {
+                for (var age = 1; age <= 11; age++) {
+
+                    if (age == 11 && !this.fourth_edition) {
+                        dojo.style(`deck_pile_${type}_11`, 'display', 'none');
+                        continue;
+                    }
+
                     // Creation of the zone
                     this.zone.deck[type][age] = this.createZone('deck', 0, type, age, null, grouped_by_age_type_and_is_relic=false, counter_method="COUNT", counter_display_zero=false)
                     this.setPlacementRules(this.zone.deck[type][age], left_to_right=true)
@@ -951,7 +958,12 @@ function (dojo, declare) {
                 dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
             }
 
-            if (this.num_sets_in_play == 1) {
+            // Fourth edition has 11 decks, so we can't place them into two columns.
+            if (this.num_sets_in_play == 1 && this.fourth_edition) {
+                dojo.style('decks', 'display', 'inline-block');
+                dojo.style('decks_1', 'justify-content', 'center');
+                dojo.style('decks_2', 'justify-content', 'center');
+            } else if (this.num_sets_in_play == 1) {
                 dojo.style('decks', 'display', 'flex');
             } else {
                 dojo.style('decks', 'display', 'inline-block');

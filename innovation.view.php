@@ -176,19 +176,19 @@
         for ($age = 1; $age <= 5; $age++) {
             $this->page->insert_block("decks_group_5_1", array("TYPE" => 4, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
+        for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_1_2", array("TYPE" => 0, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
+        for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_2_2", array("TYPE" => 1, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
+        for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_3_2", array("TYPE" => 2, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
+        for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_4_2", array("TYPE" => 3, "AGE" => $age));
         }
-        for ($age = 6; $age <= 10; $age++) {
+        for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_5_2", array("TYPE" => 4, "AGE" => $age));
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
