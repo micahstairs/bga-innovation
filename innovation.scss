@@ -724,6 +724,9 @@
     .ressource_6 {
         background-color: #14247f;
     }
+    .ressource_7 {
+        background-color: #000000;
+    }
 }
 
 
@@ -1229,7 +1232,10 @@
         @include m.icon-background;
         background-size: 133px auto;
         background-position-y: -112px;
-        @include m.generate-icon-x-position(1, 6, 1, 22.1px);
+        @include m.generate-icon-x-position(1, 7, 1, 22.1px);
+        &.icon_7 {
+            filter: brightness(0%);
+        }
     }
     &.M {
         width: 9px;

@@ -759,6 +759,9 @@
 .ressource_table .ressource_6 {
   background-color: #14247f;
 }
+.ressource_table .ressource_7 {
+  background-color: #000000;
+}
 
 .equal {
   color: #AAAAAA !important;
@@ -1291,6 +1294,12 @@
 }
 .square.P.icon_6 {
   background-position-x: -111.5px;
+}
+.square.P.icon_7 {
+  background-position-x: -133.6px;
+}
+.square.P.icon_7 {
+  filter: brightness(0%);
 }
 .square.M {
   width: 9px;
