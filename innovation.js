@@ -3852,9 +3852,8 @@ function (dojo, declare) {
             var HTML_id = this.getCardHTMLIdFromEvent(event);
             if (HTML_id.substr(0, 4) == "item") { // The achievement card itself has been clicked
                 var age = this.getCardAgeFromHTMLId(HTML_id);
-            }
-            else { // This action has been take using the button
-                var age = HTML_id.substr(HTML_id.length-1, 1);
+            } else { // This action has been take using the button
+                var age = HTML_id.split("_")[1];
             }
             
             var self = this;
