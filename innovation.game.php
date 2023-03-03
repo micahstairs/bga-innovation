@@ -840,6 +840,7 @@ class Innovation extends Table
         $weight = 0;
         $total_weight = 0;
         
+        // TODO(4E): Update game progression calculations.
         $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
         for($age=1; $age<=10; $age++) {
             $n = $number_of_cards_in_decks[$age];
@@ -4011,7 +4012,8 @@ class Innovation extends Table
     
         $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
         $age_to_draw = $age_min;
-        while($age_to_draw <= 10 && $deck_count[$age_to_draw] == 0) {
+        $max_age = self::getMaxAge();
+        while ($age_to_draw <= $max_age && $deck_count[$age_to_draw] == 0) {
             $age_to_draw++;
         }
         return $age_to_draw;
@@ -5603,11 +5605,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
-        if ($age_to_draw > 10) {
+        $max_age = self::getMaxAge();
+        if ($age_to_draw > $max_age) {
             // Attempt to draw a card above 10 : end of the game by score
             $this->innovationGameState->set('game_end_type', 1);
             $this->innovationGameState->setInitial('player_who_could_not_draw', $player_id);
-            self::trace('EOG bubbled from self::executeDraw (age > 10');
+            self::trace('EOG bubbled from self::executeDraw (age higher than highest deck age');
             throw new EndOfGame();
         }
 
@@ -5658,6 +5661,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_type = 0;
         }
         return $card_type;
+    }
+
+    function getMaxAge() {
+        return $this->innovationGameState->usingFourthEditionRules() ? 11 : 10;
     }
     
     function removeAllHandsBoardsAndScores() {
@@ -7762,7 +7769,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($this->innovationGameState->get('special_type_of_choice') != 0) {
             self::throwInvalidChoiceException();
         }
-        if ((!in_array($owner, $players) && $owner != 0) || !in_array($location, self::getObjectListFromDB("SELECT DISTINCT location FROM card", true)) || $age < 1 || $age > 10) {
+        if ((!in_array($owner, $players) && $owner != 0) || !in_array($location, self::getObjectListFromDB("SELECT DISTINCT location FROM card", true)) || $age < 1 || $age > 11) {
             self::throwInvalidChoiceException();
         }
         
@@ -8082,7 +8089,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'age_to_draw' => $age_to_draw,
             'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
-            'city_draw_falls_back_to_other_type' => $age_to_draw > 10 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
+            'city_draw_falls_back_to_other_type' => self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
                     "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id),
@@ -8135,7 +8142,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
         
         $claimable_ages = array();
-        for ($age = 1; $age <= 10; $age++) {
+        for ($age = 1; $age <= 11; $age++) {
             // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
             if ($age <= $age_max && $player_score >= 5 * $age * ($claimed_achievement_count[$age] + 1)) {
                 $claimable_ages[] = $age;
@@ -8797,7 +8804,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "61N1A":
                 $age_to_draw = self::getAgeToDrawIn($player_id, 6);
                 $age_6 = self::getAgeSquare($age_to_draw);
-                $age_10 = self::getAgeSquare(10);
+                $max_age = self::getMaxAge();
+                $age_10 = self::getAgeSquare($max_age);
                 $icon_5 = self::getIconSquare(5);
                 $message_args_for_player['age_6'] = $age_6;
                 $message_args_for_player['age_10'] = $age_10;
@@ -8805,9 +8813,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_args_for_others['age_6'] = $age_6;
                 $message_args_for_others['age_10'] = $age_10;
                 $message_args_for_others['icon_5'] =$icon_5;
-                $message_for_player = $age_to_draw <= 10 ? clienttranslate('Do ${you} want to draw and tuck a ${age_6}, then score all your top cards without a ${icon_5}?')
+                $message_for_player = $age_to_draw <= $max_age ? clienttranslate('Do ${you} want to draw and tuck a ${age_6}, then score all your top cards without a ${icon_5}?')
                                                         : clienttranslate('Finish the game (attempt to draw above ${age_10})');
-                $message_for_others = $age_to_draw <= 10 ? clienttranslate('${player_name} may draw and tuck a ${age_6}, then score all his top cards without a ${icon_5}')
+                $message_for_others = $age_to_draw <= $max_age ? clienttranslate('${player_name} may draw and tuck a ${age_6}, then score all his top cards without a ${icon_5}')
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
@@ -8818,9 +8826,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
                 $age_to_score = self::getAgeToDrawIn($player_id, 8);
                 $age_to_draw = self::getAgeToDrawIn($player_id, self::getMaxAgeInScore($player_id) + 1);
+                $max_age = self::getMaxAge();
                 $options = [
-                    ['value' => 1, 'text' => $age_to_score <= 10 ? clienttranslate('Draw and score a ${age}, then return a card from your score pile') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_score)],
-                    ['value' => 0, 'text' => $age_to_draw <= 10 ? clienttranslate('Draw a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_draw)],
+                    ['value' => 1, 'text' => $age_to_score <= $max_age ? clienttranslate('Draw and score a ${age}, then return a card from your score pile') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_score)],
+                    ['value' => 0, 'text' => $age_to_draw <= $max_age ? clienttranslate('Draw a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_draw)],
                 ];
                 break;
             
@@ -8960,14 +8969,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "211N1B":
                 $age_to_draw = self::getAgeToDrawIn($player_id, 1);
                 $age_1 = self::getAgeSquare($age_to_draw);
-                $age_10 = self::getAgeSquare(10);
+                $max_age = self::getMaxAge();
+                $age_10 = self::getAgeSquare($max_age);
                 $message_args_for_player['age_1'] = $age_1;
                 $message_args_for_player['age_10'] = $age_10;
                 $message_args_for_others['age_1'] = $age_1;
                 $message_args_for_others['age_10'] = $age_10;
-                $message_for_player = $age_to_draw <= 10 ? clienttranslate('Do ${you} want to draw and tuck a ${age_1}?')
+                $message_for_player = $age_to_draw <= $max_age ? clienttranslate('Do ${you} want to draw and tuck a ${age_1}?')
                                                         : clienttranslate('Finish the game (attempt to draw above ${age_10})');
-                $message_for_others = $age_to_draw <= 10 ? clienttranslate('${player_name} may draw and tuck a ${age_1}')
+                $message_for_others = $age_to_draw <= $max_age ? clienttranslate('${player_name} may draw and tuck a ${age_1}')
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
@@ -11046,7 +11056,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $num_cards_in_hand = self::countCardsInLocation($player_id, 'hand');
                 $cards_by_age = self::getCardsInLocationKeyedByAge($player_id, 'hand');
                 $num_cards_left_to_transfer = 3;
-                for ($age = 10; $age >= 1; $age--) {
+                for ($age = 11; $age >= 1; $age--) {
                     if (count($cards_by_age[$age]) <= $num_cards_left_to_transfer) {
                         foreach ($cards_by_age[$age] as $card) {
                             self::transferCardFromTo($card, $launcher_id, 'hand');
@@ -13228,7 +13238,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "351E1":
                 $ages = array();
                 $cards = self::getCardsInLocationKeyedByAge($player_id, 'hand');
-                for ($age = 1; $age <= 10; $age++) {
+                for ($age = 1; $age <= 11; $age++) {
                     if (count($cards[$age]) > 0) {
                         $ages[] = $age;
                     }
@@ -13310,7 +13320,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "You may return three cards of equal value from your hand"
                 $cards_in_hand = self::getCardsInLocationKeyedByAge($player_id, 'hand');
                 $ages_with_3 = array();
-                for ($age = 1; $age <= 10; $age++) {
+                for ($age = 1; $age <= 11; $age++) {
                     if (count($cards_in_hand[$age]) >= 3) {
                         $ages_with_3[] = $age;
                     }
@@ -13898,7 +13908,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 foreach (self::getAllPlayerIds() as $this_player_id) {
                     $count_cards = self::countCardsInLocationKeyedByAge($this_player_id, 'hand');
                     
-                    for ($age = 1; $age <= 10; $age++) {
+                    for ($age = 1; $age <= 11; $age++) {
                         if ($count_cards[$age] > 0) {
                             $age_array[] = $age;
                         }
@@ -13994,7 +14004,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card_ages = array();
                 $score_cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
                 $count = 0;
-                for ($age = 1; $age <= 10; $age++) {
+                for ($age = 1; $age <= 11; $age++) {
                     if ($score_cards[$age] > 0) {
                         $count++;
                     }
@@ -14193,7 +14203,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
                 $cards_in_hand = self::countCardsInLocationKeyedByAge($player_id, 'hand');
                 $ages_to_score = array();
-                for ($age=1; $age < 11; $age++) {
+                for ($age=1; $age <= 11; $age++) {
                     if ($cards_in_score_pile[$age] > 0 && $cards_in_hand[$age] > 0) {
                         self::setAuxiliaryValue($age);
                         $step_max = 1;
@@ -14315,7 +14325,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "401N1":
                 $age_list = array();
                 $cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                for ($age = 1; $age < 11; $age++) {
+                for ($age = 1; $age <= 11; $age++) {
                     if ($cards[$age] > 0) {
                         $age_list[] = $age;
                     }
@@ -14451,7 +14461,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 2;
                 $score_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
                 $hand_counts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                for ($age = 10; $age >= 1; $age--) {
+                for ($age = 11; $age >= 1; $age--) {
                     if ($score_counts[$age] > 0 && $hand_counts[$age] == 0) {
                         self::setAuxiliaryValue($age);
                         break 2;
@@ -22461,7 +22471,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0 && $age_last_selected == 10) { // "If you returned a 10"
                         $number_of_cards_in_score = self::countCardsInLocationKeyedByAge($player_id, 'score');
                         $number_of_different_value = 0;
-                        for($age=1; $age<=10; $age++) {
+                        for($age=1; $age<=11; $age++) {
                             if ($number_of_cards_in_score[$age] > 0) {
                                 $number_of_different_value++;
                             }
@@ -22485,7 +22495,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::executeDraw($player_id, 10); // "Draw a 10"                    
                         }
                     }
-                    else if ($n > 0 && $age_last_selected < 10) {
+                    else if ($n > 0 && $age_last_selected != 10) {
                         self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}'), array('age' => self::getAgeSquare(10)));
                     }
                     break;
@@ -24150,7 +24160,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     $cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
                     $cards_in_hand = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                    for ($age=$prev_value+1; $age < 11; $age++) {
+                    for ($age=$prev_value+1; $age <= 11; $age++) {
                         if ($cards_in_score_pile[$age] > 0 && $cards_in_hand[$age] > 0) {
                             self::setAuxiliaryValue($age);
                             $step--;
@@ -24512,7 +24522,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $hand_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
                     $score_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
                     $eligible = true;
-                    for ($age = 1; $age <= 10; $age++) {
+                    for ($age = 1; $age <= 11; $age++) {
                         if ($hand_card_counts[$age] != $score_card_counts[$age]) {
                             $eligible = false;
                         }
