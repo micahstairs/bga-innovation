@@ -3730,6 +3730,9 @@ class Innovation extends Table
         case 6:
             $title=clienttranslate('clock');
             break;
+        case 7:
+            $title=clienttranslate('avatar');
+            break;
         }
         
         return self::format("<span title='{title}' class='square N icon_{icon}'></span>", array('icon' => $icon, 'title' => $title));
@@ -9471,6 +9474,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose a value');
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
+
+            // id 440, age 11: Climatology
+            case "440D1A":
+                $message_for_player = clienttranslate('Choose an icon');
+                $message_for_others = clienttranslate('${player_name} must choose an icon');
+                break;
 				
             default:
                 // This should not happen
@@ -15025,6 +15034,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "434N1":
                 $step_max = 1;
                 break;
+
+            // id 440, age 11: Climatology
+            case "440D1":
+                $step_max = 2;
+                break;
+
+            case "440N1":
+				$step_max = 1;
+				break;
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
@@ -17102,8 +17120,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
             );
-            break;
-
+            break;		
+			
          // id 110, Artifacts age 1: Treaty of Kadesh
          case "110C1A":
             // "Return all top cards from your board with a demand effect"
@@ -22009,7 +22027,62 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        
+        // id 440, age 11: Climatology
+        case "440D1A":
+            // "I demand you return two top cards on your board each with the icon of my choice other than leaf!"
+            $options = array(
+                'player_id' => $launcher_id,
+
+				/* TODO : Add a filter for leaves */
+                'choose_icon_type' => true, 
+             );
+            break;
+
+        case "440D1B":
+            // "I demand you return two top cards on your board each with the icon of my choice other than leaf!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'with_icon' => self::getAuxiliaryValue(),
+            );
+            break;
+
+        case "440N1A":
+            // "Return a top card on your board"
+            $options = array(
+				'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+			);
+            break;
+
+        case "440N1B":
+            // " and all cards in your score pile of equal or higher value than the top card."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 2,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+
+			
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -24842,7 +24915,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     // "Execute each of the melded card's non-demand dogma effects. Do not share them."
                     self::executeNonDemandEffects($card);
-                    break;                 
+                    break;        
+
+				// id 440, age 11: Climatology
+				case "440N1A":
+					
+					$cards_in_score = self::getCardsInLocation($player_id, 'score');
+					
+					$card_ids_to_return = array();
+					foreach ($cards_in_score as $card) {
+						if ($card['age'] >= $this->innovationGameState->get('age_last_selected')) {
+							$card_ids_to_return[] = $card['id'];
+						}
+					}
+					
+					if (count($card_ids_to_return) > 0) {
+						self::incrementStepMax(1);
+						self::setAuxiliaryArray($card_ids_to_return); // store ids for later
+					}
+					break;					
                 }
                 
             } catch (EndOfGame $e) {
@@ -26127,7 +26218,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
-                                
+                            
+			// id 440, age 11: Climatology
+            case "440D1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${icon}.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+							
             default:
                 if ($splay_direction == -1) {
                     if ($location_to == 'revealed,deck') {
