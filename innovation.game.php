@@ -5309,7 +5309,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 i4.icon = 4 AND
                 i5.icon = 5 AND
                 i6.icon = 6 AND
-                i6.icon = 7
+                i7.icon = 7
         ",
             array('player_id' => $player_id)
         ));
