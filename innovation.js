@@ -528,7 +528,7 @@ function (dojo, declare) {
                 this.setPlacementRulesForAchievements();
                 for (var type = 0; type <= 4; type++) {
                     for (var is_relic = 0; is_relic <= 1; is_relic++) {
-                        for (var age = 1; age <= 10; age++) {
+                        for (var age = 1; age <= 11; age++) {
                             var num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
                             for (var i = 0; i < num_cards; i++) {
                                 this.createAndAddToZone(this.zone.achievements["0"], i, age, type, is_relic, null, dojo.body(), null);
@@ -601,7 +601,7 @@ function (dojo, declare) {
                 } else {
                     for (var type = 0; type <= 4; type++) {
                         for (var is_relic = 0; is_relic <= 1; is_relic++) {
-                            for (var age = 1; age <= 10; age++) {
+                            for (var age = 1; age <= 11; age++) {
                                 var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
                                 for (var i = 0; i < num_cards; i++) {
                                     this.createAndAddToZone(zone, i, age, type, is_relic, null, dojo.body(), null);
@@ -651,7 +651,7 @@ function (dojo, declare) {
                 for (var type = 0; type <= 4; type++) {
                     for (var is_relic = 0; is_relic <= 1; is_relic++) {
                         var forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
-                        for (var age = 1; age <= 10; age++) {
+                        for (var age = 1; age <= 11; age++) {
                             var num_cards = forecast_count[age];
                             for(var i = 0; i < num_cards; i++) {
                                 this.createAndAddToZone(this.zone.forecast[player_id], i, age, type, is_relic, null, dojo.body(), null);
@@ -677,7 +677,7 @@ function (dojo, declare) {
                 for (var type = 0; type <= 4; type++) {
                     for (var is_relic = 0; is_relic <= 1; is_relic++) {
                         var score_count = gamedatas.score_counts[player_id][type][is_relic];
-                        for (var age = 1; age <= 10; age++) {
+                        for (var age = 1; age <= 11; age++) {
                             var num_cards = score_count[age];
                             for(var i = 0; i < num_cards; i++) {
                                 this.createAndAddToZone(this.zone.score[player_id], i, age, type, is_relic, null, dojo.body(), null);
@@ -1199,7 +1199,8 @@ function (dojo, declare) {
                     }
                     
                     // Top drawable card on deck (draw action)
-                    if (args.args.age_to_draw <= 10) {
+                    var max_age = this.fourth_edition ? 11 : 10;
+                    if (args.args.age_to_draw <= max_age) {
                         var drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
                         drawable_card.addClass("clickable");
                         this.on(drawable_card, 'onclick', 'action_clicForDraw');
@@ -1414,11 +1415,12 @@ function (dojo, declare) {
                     }
                     
                     // Blue buttons for draw action (or red if taking this action would finish the game)
-                    if (args.age_to_draw <= 10) {
+                    var max_age = this.fourth_edition ? 11 : 10;
+                    if (args.age_to_draw <= max_age) {
                         this.addActionButton("take_draw_action", _("Draw a ${age}").replace("${age}", this.square('N', 'age', args.age_to_draw, 'type_' + args.type_to_draw)), "action_clicForDraw");
                     }
                     else {
-                        this.addActionButton("take_draw_action", _("Finish the game (attempt to draw above ${age_10})").replace('${age_10}', this.square('N', 'age', 10)), "action_clicForDraw")
+                        this.addActionButton("take_draw_action", _("Finish the game (attempt to draw above ${age_10})").replace('${age_10}', this.square('N', 'age', max_age)), "action_clicForDraw")
                     }
                     dojo.place("<span class='extra_text'> , " + _("meld or dogma") + "</span>", "take_draw_action", "after")
                     break;
@@ -3400,7 +3402,7 @@ function (dojo, declare) {
             // we discover that this is buggy or if we want to build a less hacky solution, we should pass
             // data from the server side instead of calculating the deck sizes using childElementCount.
             setTimeout(function () {
-                for (var a = 1; a <= 10; a++) {
+                for (var a = 1; a <= 11; a++) {
                     var opacity = document.getElementById(`deck_0_${a}`).childElementCount > 0 ? 1.0 : 0.35;
                     for (var t = 1; t <= 4; t++) {
                         var deck = document.getElementById(`deck_${t}_${a}`);
