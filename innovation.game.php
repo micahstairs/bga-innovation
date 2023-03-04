@@ -2,7 +2,7 @@
  /**
   *------
   * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
-  * innovation implementation : © Jean Portemer <jportemer@gmail.com>
+  * Innovation implementation : © Jean Portemer <jportemer@gmail.com>
   * 
   * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
   * See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -29,7 +29,7 @@ use Innovation\GameState;
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
 
-class innovation extends Table
+class Innovation extends Table
 {
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
     private GameState $innovationGameState;
@@ -15097,7 +15097,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::countCardsInLocation($player_id, 'hand') >= 11) { 
                     // If you have 11 or more cards in hand, you win.
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 11 or more cards in hand.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has more than 11 cards in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 11 or more cards in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     $this->innovationGameState->set('winner_by_dogma', $player_id);
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Astrogeology');
                     throw new EndOfGame();										
