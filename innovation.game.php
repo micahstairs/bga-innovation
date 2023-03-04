@@ -369,7 +369,7 @@ class Innovation extends Table
         // Set the colors of the players with HTML color code
         // The available colors are blue, red, green and yellow
         // There are compatible with player preferences
-        $default_colors = array("0000ff", "ff0000", "008000", "ffa500");
+        $default_colors = array("0000ff", "ff0000", "008000", "ffa500", "0000000");
         
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
