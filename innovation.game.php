@@ -15065,6 +15065,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+<<<<<<< HEAD
             // id 442, age 11: Astrogeology
             case "442N1":
                 // "Draw and reveal an 11."
@@ -15102,6 +15103,35 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Astrogeology');
                     throw new EndOfGame();										
                 }
+=======
+            // id 447, age 11: Reclamation
+            case "447N1":
+                // "Return your three bottom red cards."
+				$color = 1; // start with red
+				
+				$keep_going = true;
+				do {
+					$card_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
+					if ($card_counts[$color] >= 3) {
+						// "If you returned three cards, repeat this dogma effect using the color of the melded card."
+						$return_card_cnt = 3;
+					} else {
+						$return_card_cnt = $card_counts[$color];
+						$keep_going  = false; // stop the loop.  not enough cards returned
+					}
+					
+					$total_age_value = 0;
+					for ($i = 0; $i < $return_card_cnt; $i++) {
+						$bottom_card = self::getBottomCardOnBoard($player_id, $color);
+						self::transferCardFromTo($bottom_card, $player_id, 'deck'); // return the cards
+						
+						$total_age_value += $bottom_card['age'];
+					}
+					// "Draw and meld a card of value equal to half the total sum value of the returned cards, rounded up."
+					$melded_card = self::executeDrawAndMeld($player_id, ceil($total_age_value / 2));
+					$color = $melded_card['color']; // assign a new color for the next loop (if necessary)
+				} while ($keep_going);
+>>>>>>> ddc3f1e (#967 reclamation)
                 break;
 
                 
