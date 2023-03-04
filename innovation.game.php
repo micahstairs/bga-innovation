@@ -559,8 +559,14 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
         }
 
-        // Remove age 11 cards from play when using an earlier edition
-        if (!$this->innovationGameState->usingFourthEditionRules()) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            // Certain cards have new symbols in the 4th edition
+            self::DbQuery("UPDATE card SET spot_2 = 7 WHERE id = 96"); // Software
+            self::DbQuery("UPDATE card SET spot_3 = 7 WHERE id = 98"); // Robotics
+            self::DbQuery("UPDATE card SET spot_3 = 7 WHERE id = 100"); // Self Service
+            self::DbQuery("UPDATE card SET spot_3 = 7, spot_4 = 7, dogma_icon = 7 WHERE id = 104"); // The Internet
+        } else {
+            // Remove age 11 cards from play when using an earlier edition
             self::DbQuery("UPDATE card SET location = 'removed' WHERE age = 11");
         }
         
