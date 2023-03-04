@@ -1483,6 +1483,10 @@ class Innovation extends Table
         self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3);
     }
 
+    function splayAslant($player_id, $target_player_id, $color) {
+        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 4);
+    }
+
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
 
         // Return early if the stack is already splayed in the requested direction.
@@ -14911,6 +14915,46 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "440N1":
                 $step_max = 1;
                 break;
+
+            // id 442, age 11: Astrogeology
+            case "442N1":
+                // "Draw and reveal an 11."
+                $card = self::executeDraw($player_id, 11, 'revealed');
+                
+                if ($card['splay_direction'] != 4) { // aslant
+                    // "If the color of the drawn card is not splayed aslant on your board, "
+                    $color = $card['color'];
+                    
+                    $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                    $num_color_cards = $board_cards[$color];
+                    if ($num_color_cards > 2) { // verify that at least two cards are there so transfer can occur
+                        $num_cards_transferred = 0;
+                        do {
+                            // "transfer all but your top two cards of this color into your hand, "
+                            $card = self::getBottomCardOnBoard($player_id, $color);
+                            if ($card != null) {
+                                self::transferCardFromTo($card, $player_id, 'hand');
+                            }
+                            $num_cards_transferred++;
+                        } while ($num_cards_transferred < $num_color_cards - 2);
+                    }
+                    self::splayAslant($player_id, $player_id, $card['color']); // "and splay it aslant."				
+                }
+                self::transferCardFromTo($card, $player_id, 'hand'); // put revealed card in hand
+                break;
+
+            case "442N2":
+                
+                if (self::countCardsInLocation($player_id, 'hand') >= 11) { 
+                    // If you have 11 or more cards in hand, you win.
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 11 or more cards in hand.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 11 or more cards in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    $this->innovationGameState->set('winner_by_dogma', $player_id);
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Astrogeology');
+                    throw new EndOfGame();										
+                }
+                break;
+
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
