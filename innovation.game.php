@@ -15096,6 +15096,42 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 441, age 11: Solar Sailing
+            case "441N1":
+                // "Draw and meld an 11."
+                $card = self::executeDraw($player_id, 11, 'board');
+                $color = $card['color'];
+                    
+                if ($card['splay_direction'] != 4) { // aslant
+                    // "If the color of the melded card is not splayed aslant on your board, return all but your top two cards of this color "
+                    $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                    $num_color_cards = $board_cards[$color];
+                    if ($num_color_cards > 2) { // verify that at least two cards are there so transfer can occur
+                        $num_cards_transferred = 0;
+                        do {
+                            // "return all but your top two cards of this color "
+                            $card = self::getBottomCardOnBoard($player_id, $color);
+                            if ($card != null) {
+                                self::transferCardFromTo($card, $player_id, 'deck');
+                            }
+                            $num_cards_transferred++;
+                        } while ($num_cards_transferred < $num_color_cards - 2);
+                    }
+                    self::splayAslant($player_id, $player_id, $card['color']); // "and splay them aslant."				
+                }
+                
+                // Need to recount the cards to verify that the number of cards is right. 
+                $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                if ($board_cards[$color] >= 4) {
+                    // "If there are four or more cards of this color on your board, you win."
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 4 or more ${color} cards on your board.'), array('You' => 'You', 'color' => self::getColorInClear($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 4 or more ${color} cards on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
+                    $this->innovationGameState->set('winner_by_dogma', $player_id);
+                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Solar Sailing');
+                    throw new EndOfGame();
+                }
+                break;
+
             // id 442, age 11: Astrogeology
             case "442N1":
                 // "Draw and reveal an 11."
@@ -20529,7 +20565,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/472): This needs to have the "choose_draw_value" when
+            // TODO(https://github.com/micahstairs/bga.innovationkahlia/issues/472): This needs to have the "choose_draw_value" when
             // that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
