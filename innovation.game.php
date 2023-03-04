@@ -90,6 +90,7 @@ class Innovation extends Table
             'has_splay_direction' => 74,
             'owner_last_selected' => 75,
             'type_array' => 76,
+            'icon_array' => 49,
             'age_array' => 77,
             'player_array' => 78,
             'icon_hash_1' => 79,
@@ -134,13 +135,20 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2302100853) {
+            self::initGameStateLabels(array(
+                'icon_array' => 49,
+            ));
+            $this->innovationGameState->set('icon_array', Arrays::getArrayAsValue([1,2,3,4,5,6]));
+        }
+        // TODO(LATER): Remove this.
         if ($from_version <= 2303050253) {
             self::initGameStateLabels(array(
                 'meld_keyword' => 49,
             ));
             $this->innovationGameState->set('meld_keyword', -1);
         }
-        // TODO(LATER): Remove this.
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
                 'endorse_action_state' => 19,
@@ -486,6 +494,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('age_array', -1); // List of selectable ages encoded in a single value
         $this->innovationGameState->setInitial('color_array', -1); // List of selectable colors encoded in a single value
         $this->innovationGameState->setInitial('type_array', -1); // List of selectable types encoded in a single value
+        $this->innovationGameState->setInitial('icon_array', -1); // List of selectable icons encoded in a single value
         $this->innovationGameState->setInitial('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 'player_no', not their 'player_id')
         $this->innovationGameState->setInitial('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         $this->innovationGameState->setInitial('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
@@ -5942,6 +5951,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('type', $rewritten_options)) {
             $rewritten_options['type'] = self::getActiveCardTypes();
         }
+        if (!array_key_exists('icon', $rewritten_options)) {
+            $rewritten_options['icon'] = $this->innovationGameState->usingFourthEditionRules() ? array(1, 2, 3, 4, 5, 6, 7) : array(1, 2, 3, 4, 5, 6);
+        }
         if (!array_key_exists('age', $rewritten_options)) {
             $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         }
@@ -5970,6 +5982,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->setFromArray('age_array', $rewritten_options['age']); // used by 'choose_value'
                 $this->innovationGameState->setFromArray('color_array', $rewritten_options['color']); // used by 'choose_color', 'choose_two_colors', and 'choose_three_colors'
                 $this->innovationGameState->setFromArray('type_array', $rewritten_options['type']); // used by 'choose_type'
+                $this->innovationGameState->setFromArray('icon_array', $rewritten_options['icon']); // used by 'choose_icon_type'
                 $this->innovationGameState->setFromArray('player_array', $rewritten_options['players']); // used by 'choose_player'
                 return;
             }
@@ -6118,6 +6131,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'type':
                 $this->innovationGameState->setFromArray('type_array', $value);
                 break;
+            case 'icon':
+                $this->innovationGameState->setFromArray('icon_array', $value);
+                break;
             case 'players':
                 $this->innovationGameState->setFromArray('player_array', $value);
                 break;
@@ -6125,7 +6141,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->setFromArray('has_splay_direction', $value);
                 break;
             }
-            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'players' && $key <> 'has_splay_direction') {
+            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'has_splay_direction') {
                 $this->innovationGameState->set($key, $value);
             }
         }
@@ -8003,9 +8019,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             case 'choose_icon_type':
-                if (!ctype_digit($choice) || $choice < 1 || $choice > 6) {
+                if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('icon_array'))) {
                     self::throwInvalidChoiceException();
                 }
+                break;
             default:
                 break;
         }
@@ -8919,9 +8936,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case 'choose_icon_type':
                 $options = array();
-                // TODO(4E): Include avatar icon when using 4th edition.
-                for ($i = 1; $i <= 7; $i++) {
-                    $options[] = array('value' => $i, 'text' => self::getIconSquare($i));
+                foreach ($this->innovationGameState->getAsArray('icon_array') as $icon) {
+                    $options[] = array('value' => $icon, 'text' => self::getIconSquare($icon));
                 }
                 break;
             default:
@@ -10195,6 +10211,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('age_array', -1);
             $this->innovationGameState->set('color_array', -1);
             $this->innovationGameState->set('type_array', -1);
+            $this->innovationGameState->set('icon_array', -1);
             $this->innovationGameState->set('player_array', -1);
             $this->innovationGameState->set('with_icon', -1);
             $this->innovationGameState->set('without_icon', -1);
@@ -22068,8 +22085,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $launcher_id,
 
-				/* TODO : Add a filter for leaves */
-                'choose_icon_type' => true, 
+                'choose_icon_type' => true,
+                'icon' => [1, 3, 4, 5, 6, 7],
              );
             break;
 
