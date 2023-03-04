@@ -5728,6 +5728,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getMaxAge() {
         return $this->innovationGameState->usingFourthEditionRules() ? 11 : 10;
     }
+
+    function removeBaseDeck($age) {
+        self::DbQuery(self::format("
+            UPDATE
+                card
+            SET
+                location = 'removed',
+                position = NULL
+            WHERE
+                owner = 0
+                AND location = 'deck'
+                AND age = {age}
+                AND type = 0
+        ", ["age" => $age]));
+        if (self::DbAffectedRow() > 0) {
+            self::recordThatChangeOccurred();
+        }
+        self::notifyAll('removedBaseDeck', clienttranslate('All cards in the ${age} deck were junked.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
+    }
     
     function removeAllHandsBoardsAndScores() {
         self::DbQuery("
@@ -8160,7 +8179,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'age_to_draw' => $age_to_draw,
             'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
             'claimable_ages' => self::getClaimableAges($player_id),
-            'city_draw_falls_back_to_other_type' => self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
+            'city_draw_falls_back_to_other_type' => $age_to_draw > 11 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
                     "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id),
