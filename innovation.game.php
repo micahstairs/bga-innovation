@@ -5959,6 +5959,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['players'] = self::getAllActivePlayers();
         }
 
+        if (self::getActivePlayerId() != $player_id) {
+            $this->gamestate->changeActivePlayer($player_id);
+        }
+
         $possible_special_types_of_choice = [
             'choose_value',
             'choose_color',
@@ -6147,11 +6151,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Set the selection on DB side
         self::selectEligibleCards();
         
-        // This player will be active in the next interaction turn
         $this->innovationGameState->set('n', 0);
-        if (self::getActivePlayerId() != $player_id) {
-            $this->gamestate->changeActivePlayer($player_id);
-        }
     }
     
     function selectEligibleCards() {
@@ -9478,7 +9478,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose an icon');
                 $message_for_others = clienttranslate('${player_name} must choose an icon');
                 break;
-Climatology
+
             // id 432, Echoes age 10: MP3
             case "432N2A":
                 $message_for_player = clienttranslate('Choose a value to draw and score');
