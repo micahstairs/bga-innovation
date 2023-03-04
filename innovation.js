@@ -871,6 +871,9 @@ function (dojo, declare) {
                 }
             }
 
+            this.default_viewport = "width=640"; // 640 is set in game_interface_width.min in gameinfos.inc.php
+            this.onScreenWidthChange();
+
             this.refreshLayout();
             
             // Force refresh page on resize if width changes
@@ -920,9 +923,17 @@ function (dojo, declare) {
             }
         },
 
+        onScreenWidthChange: function () {
+            // Remove broken "zoom" property added by BGA framework
+            this.gameinterface_zoomFactor = 1;
+            $("page-content").style.removeProperty("zoom");
+            $("page-title").style.removeProperty("zoom");
+            $("right-side-first-part").style.removeProperty("zoom");
+          },
+
         refreshLayout : function () {
             var on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
-            var window_width = Math.max(dojo.window.getBox().w, 740); // 740 is set in game_interface_width.min in gameinfos.inc.php
+            var window_width = Math.max(dojo.window.getBox().w, 640); // 640 is set in game_interface_width.min in gameinfos.inc.php
             var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
             var decks_width = 214;
 
@@ -967,33 +978,21 @@ function (dojo, declare) {
             var buffer = this.echoes_expansion_enabled ? 10 : 0;
             // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
             var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
-
+            this.num_cards_in_row.achievements = Math.floor(num_forecast_score_achievements_cards / 3);
+            if (this.num_cards_in_row.achievements < 1) {
+                this.num_cards_in_row.achievements = 1;
+            }
+            if (this.num_cards_in_row.achievements > this.number_of_achievements_needed_to_win) {
+                this.num_cards_in_row.achievements = this.number_of_achievements_needed_to_win;
+            }
+            // If we're splitting the achievements across two rows, let's make the rows as even as possible
+            if (this.number_of_achievements_needed_to_win / 2 < this.num_cards_in_row.achievements && this.num_cards_in_row.achievements < this.number_of_achievements_needed_to_win) {
+                this.num_cards_in_row.achievements = Math.ceil(this.number_of_achievements_needed_to_win / 2);
+            }
             if (this.echoes_expansion_enabled) {
-                if (num_forecast_score_achievements_cards <= 5) {
-                    this.num_cards_in_row.achievements = 1;
-                } else if (num_forecast_score_achievements_cards <= 8) {
-                    this.num_cards_in_row.achievements = 2;
-                } else if (num_forecast_score_achievements_cards <= 11) {
-                    this.num_cards_in_row.achievements = 3;
-                } else if (num_forecast_score_achievements_cards <= 14) {
-                    this.num_cards_in_row.achievements = 4;
-                } else {
-                    this.num_cards_in_row.achievements = 5;
-                }
                 this.num_cards_in_row.forecast = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row.achievements) / 2);
                 this.num_cards_in_row.score = this.num_cards_in_row.forecast;
             } else {
-                if (num_forecast_score_achievements_cards <= 3) {
-                    this.num_cards_in_row.achievements = 1;
-                } else if (num_forecast_score_achievements_cards <= 5) {
-                    this.num_cards_in_row.achievements = 2;
-                } else if (num_forecast_score_achievements_cards <= 7) {
-                    this.num_cards_in_row.achievements = 3;
-                } else if (num_forecast_score_achievements_cards <= 9) {
-                    this.num_cards_in_row.achievements = 4;
-                } else {
-                    this.num_cards_in_row.achievements = 5;
-                }
                 this.num_cards_in_row.forecast = null;
                 this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row.achievements;
             }
