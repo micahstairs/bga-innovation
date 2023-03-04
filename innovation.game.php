@@ -14923,13 +14923,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color = $card['color'];
                     
                 if ($card['splay_direction'] != 4) { // aslant
-                    // "If the color of the melded card is not splayed aslant on your board, return all but your top two cards of this color "
+                    // "If the color of the melded card is not splayed aslant on your board, return all but your top two cards of this color"
                     $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
                     $num_color_cards = $board_cards[$color];
-                    if ($num_color_cards > 2) { // verify that at least two cards are there so transfer can occur
+                    if ($num_color_cards > 2) { // verify that more than two cards are there so transfer can occur
                         $num_cards_transferred = 0;
                         do {
-                            // "return all but your top two cards of this color "
+                            // "return all but your top two cards of this color"
                             $card = self::getBottomCardOnBoard($player_id, $color);
                             if ($card != null) {
                                 self::transferCardFromTo($card, $player_id, 'deck');
@@ -14941,8 +14941,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 // Need to recount the cards to verify that the number of cards is right. 
-                $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                if ($board_cards[$color] >= 4) {
+                if (self::countCardsInLocationKeyedByColor($player_id, 'board')[$color] >= 4) {
                     // "If there are four or more cards of this color on your board, you win."
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 4 or more ${color} cards on your board.'), array('You' => 'You', 'color' => self::getColorInClear($color)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 4 or more ${color} cards on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
