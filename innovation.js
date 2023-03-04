@@ -4852,6 +4852,7 @@ function (dojo, declare) {
             
             dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
             dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
+            dojo.subscribe('removedBaseDeck', this, "notif_removedBaseDeck");  // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
@@ -4873,6 +4874,7 @@ function (dojo, declare) {
                 
                 dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('removedBaseDeck_spectator', this, "notif_removedBaseDeck_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
                 dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
@@ -5236,6 +5238,17 @@ function (dojo, declare) {
             this.refreshSpecialAchievementProgression();
         },
 
+        notif_removedBaseDeck: function(notif) {
+            var zone = this.zone.deck[0][notif.args.age_to_junk];
+            zone.removeAll();
+            zone.counter.setValue(0);
+            if (!zone.counter.display_zero) {
+                dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
+            }
+
+            this.updateDeckOpacities();
+        },
+
         notif_removedPlayer: function(notif) {
             var player_id = notif.args.player_to_remove;
             // NOTE: The button to look at the player's forecast is broken in archive mode.
@@ -5366,6 +5379,14 @@ function (dojo, declare) {
             
             // Call normal notif
             this.notif_removedTopCardsAndHands(notif);
+        },
+
+        notif_removedBaseDeck_spectator: function(notif) {
+            // Put the message for the spectator in log
+            this.log_for_spectator(notif);
+
+            // Call normal notif
+            this.notif_removedBaseDeck(notif);
         },
 
         notif_removedPlayer_spectator: function(notif) {
