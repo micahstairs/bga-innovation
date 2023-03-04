@@ -88,12 +88,15 @@ $game_options = array(
             3 => array('name' => totranslate('4th edition'), 'tmdisplay' => totranslate('4th edition')),
         ),
         'startcondition' => array(
-            1 => array(/* No special condition here */),
+            1 => array(
+                array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
+            ),
             2 => array(
                 /* TODO(4E): Retire 1st editiion. */
                 array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
                 array('type' => 'otheroption', 'id' => 103, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
                 array('type' => 'otheroption', 'id' => 104, 'value' => 1, 'message' => totranslate('1st edition rules cannot be used when playing with expansions')),
+                array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
             ),
             3 => array(
                 /* TODO(FIGURES): Add more conditions when other expansions are added. */
