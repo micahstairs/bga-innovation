@@ -567,6 +567,11 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
         }
+
+        // Remove age 11 cards from play when using an earlier edition
+        if (!$this->innovationGameState->usingFourthEditionRules()) {
+            self::DbQuery("UPDATE card SET location = 'removed' WHERE age = 11");
+        }
         
         // Initialize Artifacts-specific statistics
         if ($this->innovationGameState->artifactsExpansionEnabled()) {
