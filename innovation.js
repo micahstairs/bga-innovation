@@ -2987,7 +2987,8 @@ function (dojo, declare) {
             var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
             var size = this.getCardSizeInZone(zone_HTML_class);
             
-            var simplified_card_back = this.prefs[110].value == 2;
+            // TODO(4E): Use real 4th edition card back
+            var simplified_card_back = this.prefs[110].value == 2 || age == 11;
 
             if (card === null) {
                 if (age === null || !simplified_card_back) {
