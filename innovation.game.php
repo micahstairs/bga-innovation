@@ -44,7 +44,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new GameState($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 49-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 50-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -88,6 +88,7 @@ class Innovation extends Table
             'has_splay_direction' => 74,
             'owner_last_selected' => 75,
             'type_array' => 76,
+            'icon_array' => 49,
             'age_array' => 77,
             'player_array' => 78,
             'icon_hash_1' => 79,
@@ -130,6 +131,13 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
+        }
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2302100853) {
+            self::initGameStateLabels(array(
+                'icon_array' => 49,
+            ));
+            $this->innovationGameState->set('icon_array', Arrays::getArrayAsValue([1,2,3,4,5,6]));
         }
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
@@ -476,6 +484,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('age_array', -1); // List of selectable ages encoded in a single value
         $this->innovationGameState->setInitial('color_array', -1); // List of selectable colors encoded in a single value
         $this->innovationGameState->setInitial('type_array', -1); // List of selectable types encoded in a single value
+        $this->innovationGameState->setInitial('icon_array', -1); // List of selectable icons encoded in a single value
         $this->innovationGameState->setInitial('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 'player_no', not their 'player_id')
         $this->innovationGameState->setInitial('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         $this->innovationGameState->setInitial('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
@@ -3684,6 +3693,9 @@ class Innovation extends Table
         case 6:
             $title=clienttranslate('clock');
             break;
+        case 7:
+            $title=clienttranslate('avatar');
+            break;
         }
         
         return self::format("<span title='{title}' class='square N icon_{icon}'></span>", array('icon' => $icon, 'title' => $title));
@@ -5895,11 +5907,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('type', $rewritten_options)) {
             $rewritten_options['type'] = self::getActiveCardTypes();
         }
+        if (!array_key_exists('icon', $rewritten_options)) {
+            $rewritten_options['icon'] = $this->innovationGameState->usingFourthEditionRules() ? array(1, 2, 3, 4, 5, 6, 7) : array(1, 2, 3, 4, 5, 6);
+        }
         if (!array_key_exists('age', $rewritten_options)) {
             $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
         }
         if (!array_key_exists('players', $rewritten_options)) {
             $rewritten_options['players'] = self::getAllActivePlayers();
+        }
+
+        if (self::getActivePlayerId() != $player_id) {
+            $this->gamestate->changeActivePlayer($player_id);
         }
 
         $possible_special_types_of_choice = [
@@ -5923,6 +5942,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->setFromArray('age_array', $rewritten_options['age']); // used by 'choose_value'
                 $this->innovationGameState->setFromArray('color_array', $rewritten_options['color']); // used by 'choose_color', 'choose_two_colors', and 'choose_three_colors'
                 $this->innovationGameState->setFromArray('type_array', $rewritten_options['type']); // used by 'choose_type'
+                $this->innovationGameState->setFromArray('icon_array', $rewritten_options['icon']); // used by 'choose_icon_type'
                 $this->innovationGameState->setFromArray('player_array', $rewritten_options['players']); // used by 'choose_player'
                 return;
             }
@@ -6067,6 +6087,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'type':
                 $this->innovationGameState->setFromArray('type_array', $value);
                 break;
+            case 'icon':
+                $this->innovationGameState->setFromArray('icon_array', $value);
+                break;
             case 'players':
                 $this->innovationGameState->setFromArray('player_array', $value);
                 break;
@@ -6074,7 +6097,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->setFromArray('has_splay_direction', $value);
                 break;
             }
-            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'players' && $key <> 'has_splay_direction') {
+            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'has_splay_direction') {
                 $this->innovationGameState->set($key, $value);
             }
         }
@@ -6082,11 +6105,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Set the selection on DB side
         self::selectEligibleCards();
         
-        // This player will be active in the next interaction turn
         $this->innovationGameState->set('n', 0);
-        if (self::getActivePlayerId() != $player_id) {
-            $this->gamestate->changeActivePlayer($player_id);
-        }
     }
     
     function selectEligibleCards() {
@@ -7946,9 +7965,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             case 'choose_icon_type':
-                if (!ctype_digit($choice) || $choice < 1 || $choice > 6) {
+                if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('icon_array'))) {
                     self::throwInvalidChoiceException();
                 }
+                break;
             default:
                 break;
         }
@@ -8761,9 +8781,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case 'choose_icon_type':
                 $options = array();
-                // TODO(4E): Include avatar icon when using 4th edition.
-                for ($i = 1; $i <= 7; $i++) {
-                    $options[] = array('value' => $i, 'text' => self::getIconSquare($i));
+                foreach ($this->innovationGameState->getAsArray('icon_array') as $icon) {
+                    $options[] = array('value' => $icon, 'text' => self::getIconSquare($icon));
                 }
                 break;
             default:
@@ -9323,7 +9342,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose a value');
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
-				
+
+            // id 440, age 11: Climatology
+            case "440D1A":
+                $message_for_player = clienttranslate('Choose an icon');
+                $message_for_others = clienttranslate('${player_name} must choose an icon');
+                break;
+
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -10013,6 +10038,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('age_array', -1);
             $this->innovationGameState->set('color_array', -1);
             $this->innovationGameState->set('type_array', -1);
+            $this->innovationGameState->set('icon_array', -1);
             $this->innovationGameState->set('player_array', -1);
             $this->innovationGameState->set('with_icon', -1);
             $this->innovationGameState->set('without_icon', -1);
@@ -14876,6 +14902,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "434N1":
                 $step_max = 1;
                 break;
+
+            // id 440, age 11: Climatology
+            case "440D1":
+                $step_max = 2;
+                break;
+
+            case "440N1":
+                $step_max = 1;
+                break;
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
@@ -16941,7 +16976,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-
+            
          // id 110, Artifacts age 1: Treaty of Kadesh
          case "110C1A":
             // "Return all top cards from your board with a demand effect"
@@ -21799,7 +21834,62 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        
+        // id 440, age 11: Climatology
+        case "440D1A":
+            // "I demand you return two top cards on your board each with the icon of my choice other than leaf!"
+            $options = array(
+                'player_id' => $launcher_id,
+
+                'choose_icon_type' => true,
+                'icon' => [1, 3, 4, 5, 6, 7],
+             );
+            break;
+
+        case "440D1B":
+            // "I demand you return two top cards on your board each with the icon of my choice other than leaf!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'with_icon' => self::getAuxiliaryValue(),
+            );
+            break;
+
+        case "440N1A":
+            // "Return a top card on your board"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "440N1B":
+            // " and all cards in your score pile of equal or higher value than the top card."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 2,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -22703,7 +22793,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "135N1A":
                     // "Draw a card of value equal to the number of cards returned"
                     self::executeDraw($player_id, $n);
-                	break;
+                    break;
 
                 // id 136, Artifacts age 3: Charter of Liberties
                 case "136N1A":
@@ -23337,7 +23427,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Garlands Ruby Slippers');
                             throw new EndOfGame();
                         } else {
-                        	// "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
+                            // "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
                             self::executeAllEffects($melded_card);
                         }
                     }
@@ -23507,7 +23597,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $drawn_cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($drawn_cards as $card) {
                         if ($card['color'] == self::getAuxiliaryValue()) {
-                        	$card = self::getCardInfo($card['id']);
+                            $card = self::getCardInfo($card['id']);
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
                     }
@@ -24632,7 +24722,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     // "Execute each of the melded card's non-demand dogma effects. Do not share them."
                     self::executeNonDemandEffects($card);
-                    break;                 
+                    break;        
+
+                // id 440, age 11: Climatology
+                case "440N1A":
+                    
+                    $cards_in_score = self::getCardsInLocation($player_id, 'score');
+                    
+                    $card_ids_to_return = array();
+                    foreach ($cards_in_score as $card) {
+                        if ($card['age'] >= $this->innovationGameState->get('age_last_selected')) {
+                            $card_ids_to_return[] = $card['id'];
+                        }
+                    }
+                    
+                    if (count($card_ids_to_return) > 0) {
+                        self::incrementStepMax(1);
+                        self::setAuxiliaryArray($card_ids_to_return); // store ids for later
+                    }
+                    break;
                 }
                 
             } catch (EndOfGame $e) {
@@ -25916,7 +26024,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
-                                
+                            
+            // id 440, age 11: Climatology
+            case "440D1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${icon}.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+
+                            
             default:
                 if ($splay_direction == -1) {
                     if ($location_to == 'revealed,deck') {
