@@ -9503,7 +9503,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose an icon');
                 $message_for_others = clienttranslate('${player_name} must choose an icon');
                 break;
-
+Climatology
             // id 432, Echoes age 10: MP3
             case "432N2A":
                 $message_for_player = clienttranslate('Choose a value to draw and score');
@@ -9521,7 +9521,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose an icon');
                 $message_for_others = clienttranslate('${player_name} must choose an icon');
                 break;
-				
+
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -15089,8 +15089,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "440N1":
-				$step_max = 1;
-				break;
+                $step_max = 1;
+                break;
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
@@ -17167,8 +17167,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
             );
-            break;		
-			
+            break;
+            
          // id 110, Artifacts age 1: Treaty of Kadesh
          case "110C1A":
             // "Return all top cards from your board with a demand effect"
@@ -22108,14 +22108,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "440N1A":
             // "Return a top card on your board"
             $options = array(
-				'player_id' => $player_id,
+                'player_id' => $player_id,
                 'n' => 1,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
                 'owner_to' => 0,
                 'location_to' => 'deck',
-			);
+            );
             break;
 
         case "440N1B":
@@ -22134,7 +22134,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
 
-			
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -23038,7 +23038,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "135N1A":
                     // "Draw a card of value equal to the number of cards returned"
                     self::executeDraw($player_id, $n);
-                	break;
+                    break;
 
                 // id 136, Artifacts age 3: Charter of Liberties
                 case "136N1A":
@@ -23672,7 +23672,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::trace('EOG bubbled from self::stPlayerInvolvedTurn Garlands Ruby Slippers');
                             throw new EndOfGame();
                         } else {
-                        	// "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
+                            // "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
                             self::executeAllEffects($melded_card);
                         }
                     }
@@ -23842,7 +23842,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $drawn_cards = self::getCardsInLocation($player_id, 'revealed');
                     foreach ($drawn_cards as $card) {
                         if ($card['color'] == self::getAuxiliaryValue()) {
-                        	$card = self::getCardInfo($card['id']);
+                            $card = self::getCardInfo($card['id']);
                             self::transferCardFromTo($card, $player_id, 'hand');
                         }
                     }
@@ -24977,23 +24977,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeNonDemandEffects($card);
                     break;        
 
-				// id 440, age 11: Climatology
-				case "440N1A":
-					
-					$cards_in_score = self::getCardsInLocation($player_id, 'score');
-					
-					$card_ids_to_return = array();
-					foreach ($cards_in_score as $card) {
-						if ($card['age'] >= $this->innovationGameState->get('age_last_selected')) {
-							$card_ids_to_return[] = $card['id'];
-						}
-					}
-					
-					if (count($card_ids_to_return) > 0) {
-						self::incrementStepMax(1);
-						self::setAuxiliaryArray($card_ids_to_return); // store ids for later
-					}
-					break;					
+                // id 440, age 11: Climatology
+                case "440N1A":
+                    
+                    $cards_in_score = self::getCardsInLocation($player_id, 'score');
+                    
+                    $card_ids_to_return = array();
+                    foreach ($cards_in_score as $card) {
+                        if ($card['age'] >= $this->innovationGameState->get('age_last_selected')) {
+                            $card_ids_to_return[] = $card['id'];
+                        }
+                    }
+                    
+                    if (count($card_ids_to_return) > 0) {
+                        self::incrementStepMax(1);
+                        self::setAuxiliaryArray($card_ids_to_return); // store ids for later
+                    }
+                    break;
                 }
                 
             } catch (EndOfGame $e) {
@@ -26298,14 +26298,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
                             
-			// id 440, age 11: Climatology
+            // id 440, age 11: Climatology
             case "440D1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${icon}.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
-							
+                            
             default:
                 if ($splay_direction == -1) {
                     if ($location_to == 'revealed,deck') {
