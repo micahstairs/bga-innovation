@@ -15229,6 +15229,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } while ($keep_going);
                 break;
 
+            // id 449, age 11: Whataboutism
+            case "449D1":
+                $step_max = 1;
+                break;
+
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
@@ -22271,7 +22276,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+         // id 449, age 11: Whataboutism
+         case "449D1A":
+            // "I demand you transfer all your top cards with a demand effect from your board to my board!"
+            $options = array(
+                'player_id' => $player_id,
 
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $launcher_id,
+                'location_to' => 'board',
+
+                'has_demand_effect' => true,
+            );
+            break;
+            
             
         default:
             // This should not happens
@@ -25132,6 +25151,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryArray($card_ids_to_return); // store ids for later
                     }
                     break;
+
+                // id 449, age 11: Whataboutism
+                case "449D1A":
+                    if ($n > 0) { // "if you do"
+                        // exchange all cards in your score pile with all cards in my score pile!
+                        $launcher_score_cards = self::getCardsInScorePile($launcher_id);
+                        $player_score_cards = self::getCardsInScorePile($player_id);
+                        
+                        foreach ($launcher_score_cards as $card) {
+                            self::transferCardFromTo($card, $player_id, 'score');
+                        }
+                        
+                        foreach ($player_score_cards as $card) {
+                            self::transferCardFromTo($card, $launcher_id, 'score');
+                        }
+                    }
+                    break;
+
+
                 }
                 
             } catch (EndOfGame $e) {
