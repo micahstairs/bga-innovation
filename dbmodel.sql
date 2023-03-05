@@ -177,7 +177,7 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 
 INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, `spot_4`, `spot_5`, `spot_6`, `dogma_icon`, `is_relic`, `location`) VALUES
 
-(215, 2, 3, 2, 3, 1, 1, 1,    0,    7, 1, TRUE, 'removed'),
+(215, 2, 3, 2, 3, 1, 1, 1,    0,   14, 1, TRUE, 'removed'),
 (216, 0, 4, 0, 5, 0, 3, 3, NULL, NULL, 3, TRUE, 'removed'),
 (217, 1, 5, 4, 5, 3, 5, 0, NULL, NULL, 5, TRUE, 'removed'),
 (218, 4, 6, 1, 6, 6, 0, 2, NULL, NULL, 6, TRUE, 'removed'),
