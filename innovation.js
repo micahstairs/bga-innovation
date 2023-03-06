@@ -5265,7 +5265,9 @@ function (dojo, declare) {
             this.zone.forecast[player_id].removeAll();
             this.zone.score[player_id].removeAll();
             this.zone.achievements[player_id].removeAll();
-            this.zone.display[player_id].removeAll();
+            if (this.artifacts_expansion_enabled) {
+                this.zone.display[player_id].removeAll();
+            }
             for (var color = 0; color < 5; color++) {
                 this.zone.board[player_id][color].removeAll();
             }
