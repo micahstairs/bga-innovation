@@ -13007,11 +13007,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else { // Team play
                     // Entire team loses if one player loses 
                     $teammate_id = self::getPlayerTeammate($player_id);
-                    $winning_team = array($player_id, $teammate_id);
+                    $losing_team = array($player_id, $teammate_id);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
                     self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                    self::notifyAllPlayersBut($winning_team, 'log', clienttranslate('The other team loses.'), array());
+                    self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
                     self::eliminatePlayer($player_id);
+                    self::eliminatePlayer($teammate_id);
                     $this->innovationGameState->set('winner_by_dogma', $launcher_id);
                     self::trace('EOG bubbled from self::stInterInteractionStep Exxon Valdez');
                     throw new EndOfGame();
@@ -15202,10 +15203,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 445, age 11: Space Traffic
             case "445N1":
-                
+            
+                $keep_going = false;
                 do {
-                    $keep_going = false;
-                    
                     // "Draw and tuck an 11."
                     $card = self::executeDraw($player_id, 11);
                     $color = $card['color'];
@@ -15217,18 +15217,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             // "If you tucked directly under an 11, you lose."
                         
                             self::removeAllCardsFromPlayer($player_id);
-                            // "You lose! If there is only one player remaining in the game, that player wins"
                             if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
+                                // If there is only one player remaining in the game, that player wins
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
                                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
                                     'player_name' => self::getColoredPlayerName($player_id)
                                 ));
                                 self::eliminatePlayer($player_id);
                                 if (count(self::getAllActivePlayers()) == 1) {
-                                    $this->innovationGameState->set('winner_by_dogma', self::getAllActivePlayerIds());
+                                    $this->innovationGameState->set('winner_by_dogma', self::getAllActivePlayerIds()[0]);
                                     self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
                                     throw new EndOfGame();
                                 }
+                                break; // Stop the effect if the player loses
                             } else { // Team play
                                 // Entire team loses if one player loses 
                                 $teammate_id = self::getPlayerTeammate($player_id);
@@ -15237,6 +15238,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
                                 self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
                                 self::eliminatePlayer($player_id);
+                                self::eliminatePlayer($teammate_id);
                                 $this->innovationGameState->set('winner_by_dogma', self::getAllActivePlayerIds()[0]);
                                 self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
                                 throw new EndOfGame();
@@ -15245,11 +15247,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         
                         // "Score all but your top three cards of the color of the tucked card,"
                         $card_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                        if ($card_counts[$color] > 3) {
-                            for ($i = 0; $i < $card_counts[$color] - 3; $i++) {
-                                $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                                self::transferCardFromTo($bottom_card, $player_id, 'score'); // score the cards
-                            }
+                        for ($i = 0; $i < $card_counts[$color] - 3; $i++) {
+                            $bottom_card = self::getBottomCardOnBoard($player_id, $color);
+                            self::transferCardFromTo($bottom_card, $player_id, 'score'); // score the cards
                         }
                         self::splayAslant($player_id, $player_id, $color); // "and splay that color aslant."
                     }
