@@ -3578,7 +3578,7 @@ class Innovation extends Table
         $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
 
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-            if ($dogma_card_id == 207 /* Exxon Valdez */ ) {
+            if ($dogma_card_id == 207 /* Exxon Valdez */ || $dogma_card_id == 445 /* Space Traffic */) {
                 self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} is the only remaining player. He wins!'), array(
                     'player_name' => self::getPlayerNameFromId($player_id)
                 ));
@@ -3593,7 +3593,7 @@ class Innovation extends Table
             $teammate_id = self::getPlayerTeammate($player_id);
             $winning_team = array($player_id, $teammate_id);
             
-            if ($dogma_card_id == 207 /* Exxon Valdez */ ) {
+            if ($dogma_card_id == 207 /* Exxon Valdez */ || $dogma_card_id == 445 /* Space Traffic */) {
                 self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: The other team is the only remaining team. They win!'), array());
                 self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining team. You win!'), array());
                 self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining team. You win!'), array());
@@ -15018,6 +15018,70 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::trace('EOG bubbled from self::stPlayerInvolvedTurn Astrogeology');
                     throw new EndOfGame();
                 }
+                break;
+
+            // id 445, age 11: Space Traffic
+            case "445N1":
+                
+                do {
+                    $keep_going = false;
+                    
+                    // "Draw and tuck an 11."
+                    $card = self::executeDraw($player_id, 11);
+                    $color = $card['color'];
+                    $bottom_card = self::getBottomCardOnBoard($player_id, $color);
+                    self::tuckCard($card, $player_id);
+                    
+                    if ($bottom_card !== null) {
+                        if ($bottom_card['age'] == 11) {
+                            // "If you tucked directly under an 11, you lose."
+                        
+                            self::removeAllCardsFromPlayer($player_id);
+                            // "You lose! If there is only one player remaining in the game, that player wins"
+                            if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
+                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
+                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
+                                    'player_name' => self::getColoredPlayerName($player_id)
+                                ));
+                                self::eliminatePlayer($player_id);
+                                if (count(self::getAllActivePlayers()) == 1) {
+                                    $this->innovationGameState->set('winner_by_dogma', self::getAllActivePlayerIds());
+                                    self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
+                                    throw new EndOfGame();
+                                }
+                            } else { // Team play
+                                // Entire team loses if one player loses 
+                                $teammate_id = self::getPlayerTeammate($player_id);
+                                $losing_team = array($player_id, $teammate_id);
+                                self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
+                                self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
+                                self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
+                                self::eliminatePlayer($player_id);
+                                $this->innovationGameState->set('winner_by_dogma', self::getAllActivePlayerIds()[0]);
+                                self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
+                                throw new EndOfGame();
+                            }
+                        }
+                        
+                        // "Score all but your top three cards of the color of the tucked card,"
+                        $card_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                        if ($card_counts[$color] > 3) {
+                            for ($i = 0; $i < $card_counts[$color] - 3; $i++) {
+                                $bottom_card = self::getBottomCardOnBoard($player_id, $color);
+                                self::transferCardFromTo($bottom_card, $player_id, 'score'); // score the cards
+                            }
+                        }
+                        self::splayAslant($player_id, $player_id, $color); // "and splay that color aslant."
+                    }
+                    
+                    // "If you do not have the highest score, repeat this dogma effect."
+                    $player_score = self::getPlayerScore($player_id);
+                    foreach (self::getAllActivePlayerIds() as $players) {
+                        if (self::getPlayerScore($players) > $player_score)  {
+                            $keep_going = true;
+                        }
+                    }
+                } while ($keep_going);
                 break;
 
             // id 447, age 11: Reclamation
