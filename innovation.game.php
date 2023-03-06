@@ -25155,14 +25155,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 449, age 11: Whataboutism
                 case "449D1A":
                     if ($n > 0) { // "if you do"
-                        // exchange all cards in your score pile with all cards in my score pile!
+                        // "exchange all cards in your score pile with all cards in my score pile!"
                         $launcher_score_cards = self::getCardsInScorePile($launcher_id);
                         $player_score_cards = self::getCardsInScorePile($player_id);
-                        
                         foreach ($launcher_score_cards as $card) {
                             self::transferCardFromTo($card, $player_id, 'score');
                         }
-                        
                         foreach ($player_score_cards as $card) {
                             self::transferCardFromTo($card, $launcher_id, 'score');
                         }
