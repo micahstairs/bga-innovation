@@ -1799,7 +1799,7 @@ $this->textual_card_infos = array(
 ),
 
 445 => array('name' => clienttranslate('Space Traffic'),
-    'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_11}. If you tucked directly under an ${age_11}, you lose. Score all but your top three cards of the color of the tucked card, and splay that color aslant. If you do not have the highest score, repeat this dogma effect.'),
+    'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_11}. If you tucked directly under an ${age_11}, you lose. Score all but your top three cards of the color of the tucked card, and splay that color aslant, and if you do not have the highest score, repeat this dogma effect.'),
 ),
 
 446 => array('name' => clienttranslate('Near-Field Comm'),
