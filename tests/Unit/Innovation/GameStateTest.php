@@ -161,6 +161,27 @@ class GameStateTest extends BaseTest
         $this->assertTrue($this->state->usingFourthEditionRules());
     }
 
+    public function testGetEdition_firstEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(2);
+
+        $this->assertEquals(1, $this->state->getEdition());
+    }
+
+    public function testGetEdition_thirdEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(1);
+
+        $this->assertEquals(3, $this->state->getEdition());
+    }
+
+    public function testGetEdition_fourthEdition()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('game_rules')->willReturn(3);
+
+        $this->assertEquals(4, $this->state->getEdition());
+    }
+
     public function testArtifactsExpansionEnabled_disabled()
     {
         $this->game->expects($this->once())->method('getGameStateValue')->with('artifacts_mode')->willReturn(1);
