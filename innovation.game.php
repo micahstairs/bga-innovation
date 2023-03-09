@@ -3549,26 +3549,26 @@ class Innovation extends Table
     
     function notifyEndOfGameByScore() {
         $player_id = $this->innovationGameState->get('player_who_could_not_draw');
-        $age_10 = self::getAgeSquare(10);
+        $max_age = self::getMaxAge();
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
             self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The player with the greatest score win.'), array(
                 'player_name' => self::getPlayerNameFromId($player_id),
-                'age_10' => $age_10
+                'age_10' => $max_age
             ));
             
             self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The player with the greatest score win.'), array(
                 'You' => 'You',
-                'age_10' => $age_10
+                'age_10' => $max_age
             ));
         } else { // Team play
             self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${player_name} attempts to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'player_name' => self::getPlayerNameFromId($player_id),
-                'age_10' => $age_10
+                'age_10' => $max_age
             ));
             
             self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY SCORE: ${You} attempt to draw a card above ${age_10}. The team with the greatest combined score win.'), array(
                 'You' => 'You',
-                'age_10' => $age_10
+                'age_10' => $max_age
             ));
         }
     }
@@ -5634,7 +5634,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $max_age = self::getMaxAge();
         if ($age_to_draw > $max_age) {
-            // Attempt to draw a card above 10 : end of the game by score
+            // Attempt to draw a card above the max age : end of the game by score
             $this->innovationGameState->set('game_end_type', 1);
             $this->innovationGameState->setInitial('player_who_could_not_draw', $player_id);
             self::trace('EOG bubbled from self::executeDraw (age higher than highest deck age');
@@ -5945,7 +5945,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['icon'] = $this->innovationGameState->usingFourthEditionRules() ? array(1, 2, 3, 4, 5, 6, 7) : array(1, 2, 3, 4, 5, 6);
         }
         if (!array_key_exists('age', $rewritten_options)) {
-            $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+            $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
         }
         if (!array_key_exists('players', $rewritten_options)) {
             $rewritten_options['players'] = self::getAllActivePlayers();
@@ -5996,7 +5996,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['age_min'] = 1;
         }
         if (!array_key_exists('age_max', $rewritten_options)) {
-            $rewritten_options['age_max'] = 10;
+            $rewritten_options['age_max'] = 11;
         }
         if (!array_key_exists('with_icon', $rewritten_options)) {
             $rewritten_options['with_icon'] = 0;
@@ -6206,7 +6206,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // TODO(LATER): Take 'age_array' into account if there are any cards which need to rely on this mechanism.
 
         // Condition for age because of achievement eligibility
-        $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
         if ($this->innovationGameState->get('require_achievement_eligibility') == 1) {
             $claimable_ages = self::getClaimableAgesIgnoringAvailability($player_id);
             if (count($claimable_ages) == 0) {
@@ -9640,7 +9640,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_args['with_icon'] = '';
         $card_args['with_demand'] = '';
 
-        if ($age_min != 1 || $age_max != 10) {
+        if ($age_min != 1 || $age_max != 11) {
             if ($age_min == $age_max) {
                 $of_age_log = clienttranslate(' of value ${<}${age_min}${>}');
             } else if ($age_min + 1 == $age_max) {
@@ -17936,7 +17936,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'choose_value' => true,
 
-                'age' => array(1, 2, 3, 4, 6, 7, 8, 9, 10)
+                'age' => array(1, 2, 3, 4, 6, 7, 8, 9, 10, 11)
             );
             break;
 
@@ -18856,9 +18856,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "191N1A":
             // "Choose a value"
             $selectable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-            // The value 11 should only be an option when Battleship Yamato is a top card on the player's board.
+            // The value 11 should only be an option when Battleship Yamato is a top card on the player's board or if
+            // 4th edition is in use.
             $battleship_yamato = self::getCardInfo(188);
-            if (self::isTopBoardCard($battleship_yamato) && $battleship_yamato['owner'] === $player_id) {
+            if ($this->innovationGameState->usingFourthEditionRules() || (self::isTopBoardCard($battleship_yamato) && $battleship_yamato['owner'] === $player_id)) {
                 $selectable_ages[] = 11;
             }
             
