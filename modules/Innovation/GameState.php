@@ -102,6 +102,21 @@ class GameState
     }
 
     /**
+     * @return int
+     */
+    public function getEdition()
+    {
+        $value = $this->get('game_rules');
+        if ($value == 2) {
+            return 1;
+        }
+        if ($value == 1) {
+            return 3;
+        }
+        return 4;
+    }
+
+    /**
      * @return bool
      */
     public function artifactsExpansionEnabled()

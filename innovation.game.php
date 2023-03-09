@@ -626,7 +626,7 @@ class Innovation extends Table
 
         // Add information to the database about which cards have a demand.
         foreach ($this->textual_card_infos as $id => $card_info) {
-            if (array_key_exists('i_demand_effect_1', $card_info) && $card_info['i_demand_effect_1'] !== null) {
+            if (self::getDemandEffect($id) !== null) {
                 self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
             }
         }
@@ -3934,18 +3934,11 @@ class Innovation extends Table
     }
 
     function getNonDemandEffect($id, $effect_number) {
-        $effect_name = 'non_demand_effect_'.$effect_number;
-        if (array_key_exists($effect_name, $this->textual_card_infos[$id]) && $this->textual_card_infos[$id][$effect_name] !== null) {
-            return $this->textual_card_infos[$id][$effect_name];
-        }
-        return null;
+        return self::getCurrentVersionOfEffect('non_demand_effect_'.$effect_number, $id);
     }
 
     function getDemandEffect($id) {
-        if (array_key_exists('i_demand_effect_1', $this->textual_card_infos[$id]) && $this->textual_card_infos[$id]['i_demand_effect_1'] !== null) {
-            return $this->textual_card_infos[$id]['i_demand_effect_1'];
-        }
-        return null;
+        return self::getCurrentVersionOfEffect('i_demand_effect_1', $id);
     }
 
     function isCompelEffect($id) {
@@ -3953,8 +3946,32 @@ class Innovation extends Table
     }
 
     function getEchoEffect($id) {
-        if (array_key_exists('echo_effect_1', $this->textual_card_infos[$id]) && $this->textual_card_infos[$id]['echo_effect_1'] !== null) {
+        if (array_key_exists('echo_effect_1', $this->textual_card_infos[$id])) {
             return $this->textual_card_infos[$id]['echo_effect_1'];
+        }
+        return null;
+    }
+
+    function getCurrentVersionOfEffect($prefix, $id) {
+        $card_info = $this->textual_card_infos[$id];
+        $edition = $this->innovationGameState->getEdition();
+        if (array_key_exists($prefix, $card_info)) {
+            return $card_info[$prefix];
+        }
+        if ($edition == 1 && array_key_exists($prefix . '_first', $card_info)) {
+            return $card_info[$prefix . '_first'];
+        }
+        if ($edition <= 3 && array_key_exists($prefix . '_first_and_third', $card_info)) {
+            return $card_info[$prefix . '_first_and_third'];
+        }
+        if ($edition == 3 && array_key_exists($prefix . '_third', $card_info)) {
+            return $card_info[$prefix . '_third'];
+        }
+        if ($edition >= 3 && array_key_exists($prefix . '_third_and_fourth', $card_info)) {
+            return $card_info[$prefix . '_third_and_fourth'];
+        }
+        if ($edition == 4 && array_key_exists($prefix . '_fourth', $card_info)) {
+            return $card_info[$prefix . '_fourth'];
         }
         return null;
     }
@@ -3968,21 +3985,32 @@ class Innovation extends Table
             return $card;
         }
         
-        $textual_infos = $this->textual_card_infos[$card['id']];
-        if ($this->innovationGameState->usingFirstEditionRules()) {
-            // Inverse the rules used for effects if there is any difference. Then, only the non-alt version wil be used.
-            if (array_key_exists('i_demand_effect_1_alt', $textual_infos)) {
-                $unused_rule = $textual_infos['i_demand_effect_1'];
-                $textual_infos['i_demand_effect_1'] = $textual_infos['i_demand_effect_1_alt'];
-                $textual_infos['i_demand_effect_1_alt'] = $unused_rule;
+        $id = $card['id'];
+        $textual_infos = $this->textual_card_infos[$id];
+
+        // Make sure the demand effect reflects the current edition
+        $textual_infos['i_demand_effect_1'] = self::getDemandEffect($id);
+        if ($textual_infos['i_demand_effect_1'] === null) {
+            unset($textual_infos['i_demand_effect_1']);
+        }
+        unset($textual_infos['i_demand_effect_1_first']);
+        unset($textual_infos['i_demand_effect_1_first_and_third']);
+        unset($textual_infos['i_demand_effect_1_third']);
+        unset($textual_infos['i_demand_effect_1_third_and_fourth']);
+        unset($textual_infos['i_demand_effect_1_fourth']);
+
+        // Make sure the non-demand effects reflects the current edition
+        for ($i = 1; $i <= 3; $i++) {
+            $non_demand = 'non_demand_effect_' . $i;
+            $textual_infos[$non_demand] = self::getNonDemandEffect($id, $i);
+            if ($textual_infos[$non_demand] === null) {
+                unset($textual_infos[$non_demand]);
             }
-            for($i=1; $i<=3; $i++) {
-                if (array_key_exists('non_demand_effect_'.$i.'_alt', $textual_infos)) {
-                    $unused_rule = $textual_infos['non_demand_effect_'.$i];
-                    $textual_infos['non_demand_effect_'.$i] = $textual_infos['non_demand_effect_'.$i.'_alt'];
-                    $textual_infos['non_demand_effect_'.$i.'_alt'] = $unused_rule;
-                }
-            }
+            unset($textual_infos[$non_demand . '_first']);
+            unset($textual_infos[$non_demand . '_first_and_third']);
+            unset($textual_infos[$non_demand . '_third']);
+            unset($textual_infos[$non_demand . '_third_and_fourth']);
+            unset($textual_infos[$non_demand . '_fourth']);
         }
         return array_merge($card, $textual_infos);
     }
