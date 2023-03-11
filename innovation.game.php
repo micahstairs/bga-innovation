@@ -15316,6 +15316,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            // id 444, age 11: Hypersonics
+            case "444D1":
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                $matching_cards = array();
+                
+                foreach ($top_cards as $first_card) {
+                    foreach ($top_cards as $second_card) {
+                        if ($first_card['id'] != $second_card['id'] && $first_card['age'] == $second_card['age']) {
+                            $matching_cards[] = $first_card['id']; // it matches something
+                        }
+                    }
+                }
+                
+                if (count($matching_cards) > 0) {
+                    $step_max = 2;
+                    self::setAuxiliaryArray($matching_cards);
+                } else {
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two cards of matching age on your board.'),  
+                        array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two cards of matching age on your board.'), 
+                        array('player_name' => self::getColoredPlayerName($player_id)));
+                }
+                break;
+                
             // id 445, age 11: Space Traffic
             case "445N1":
             
@@ -22489,6 +22513,52 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'score_keyword' => true,
              );
             break;
+
+        // id 444, age 11: Hypersonics
+        case "444D1A":
+            // "I demand you return two top cards on your board of the same value!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "444D1B":
+            // "I demand you return two top cards on your board of the same value!"  (second card)
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'age' => $this->innovationGameState->get('age_last_selected'), // matches previous selection
+            );
+            break;
+
+        case "444D1C":
+            // "return all cards of that value or less in your hand and score pile!"
+            // omit location_from intentionally
+            $options = array(
+                'player_id' => $player_id,                
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand', // TODO: needs to be 'score,hand' to remove both simultaneously
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
         
         // id 446, age 11: Near-Field Comm
         case "446D1A":
@@ -25419,6 +25489,38 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${lower_age} or ${upper_age} on your board.'), array('You' => 'You', 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${lower_age} or ${upper_age} on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));                                 
                         }
+                    }
+                    break;
+                
+                // id 444, age 11: Hypersonics
+                case "444D1B":
+                    if ($n > 0) { // "if you do"
+                        $returned_age = $this->innovationGameState->get('age_last_selected');
+
+                        $hand_cards = self::getCardsInHand($player_id);
+                        $return_cards = array();
+                        foreach ($hand_cards as $card) {
+                            if ($card['age'] <= $returned_age) {
+                                $return_cards[] = $card['id']; // it matches something
+                            }
+                        }
+
+                        $score_cards = self::getCardsInScorePile($player_id);
+                        foreach ($score_cards as $card) {
+                            if ($card['age'] <= $returned_age) {
+                                $return_cards[] = $card['id']; // it matches something
+                            }
+                        }
+                        if (count($return_cards) > 0) {
+                            self::incrementStepMax(1); // cards to return, move to next step
+                            self::setAuxiliaryArray($return_cards);
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in hand or score below ${age}.'),  
+                                array('You' => 'You', 'age' => self::getAgeSquare($returned_age)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in hand or score below ${age}.'), 
+                                array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($returned_age)));
+                        }
+
                     }
                     break;
 
