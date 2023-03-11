@@ -2447,7 +2447,7 @@ class Innovation extends Table
                 break;
             case 'score->revealed':
                 $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your score pile');
-                $message_for_others = clienttranslate('${player_must} reveals ${number} ${card} from his score pile');
+                $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his score pile');
                 break;
             case 'score->achievements':
                 $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your score pile');
@@ -15027,15 +15027,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 443, age 11: Fusion
             case "443N1":
-                $card_ids_to_score= array();
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                foreach ($top_cards as $card) {
-                    if ($card['age'] == 11) {
+                $card_ids_to_score = array();
+                foreach (self::getTopCardsOnBoard($player_id) as $card) {
+                    if ($card['faceup_age'] == 11) {
                         $card_ids_to_score[] = $card['id'];
                     }
                 }
                 if (count($card_ids_to_score) > 0) {
-                    self::setAuxiliaryArray($card_ids_to_score); // store ids for later
+                    self::setAuxiliaryArray($card_ids_to_score);
                     $step_max = 1;
                 }
                 break;
@@ -15113,12 +15112,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "446N1+":
-                // put all of the cards in the revealed area back in the score pile
-                //$card = self::getCardsInLocation($player_id, 'revealed');
-                //if ($card != null) {
-                    // If there is a card there, then put it back.  Otherwise skip this step.
-                    //self::transferCardFromTo($card, $player_id, 'score');
-                //}
+                // "If there is a card there, then put it back."
+                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                    self::transferCardFromTo($card, $player_id, 'score');
+                }
                 break;
 
             // id 447, age 11: Reclamation
@@ -25067,19 +25064,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                         if (count($card_ids_to_score) > 0) {
                             self::setStep(0); $step=0;
-                            self::setAuxiliaryArray($card_ids_to_score); // store ids for later
-                        }
-                        else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${age1} or ${age2} on your board.'), array('You' => 'You', 'age1' => self::getAgeSquare($upper_age), 'age2' => self::getAgeSquare($lower_age)));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${age1} or ${age2} on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'age1' => self::getAgeSquare($upper_age), 'age2' => self::getAgeSquare($lower_age)));                                 
+                            self::setAuxiliaryArray($card_ids_to_score);
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${lower_age} or ${upper_age} on your board.'), array('You' => 'You', 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${lower_age} or ${upper_age} on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));                                 
                         }
                     }
                     break;
 
                 // id 446, age 11: Near-Field Comm
                 case "446N1A":
-                    if($n > 0) { // "If you do, "
-                        // "and execute its non-demand dogma effects. Do not share them."
+                    // "Reveal the highest card in your score pile and execute its non-demand dogma effects. Do not share them."
+                    if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         self::executeNonDemandEffects($card);
                     }
