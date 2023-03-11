@@ -1220,13 +1220,21 @@ function (dojo, declare) {
                     artifact_on_display.addClass("clickable");
                     this.on(artifact_on_display, 'onclick', 'action_clickMeld');
                     
-                    // Cards on board (dogma action)
-                    this.addTooltipsWithActionsToMyBoard(args.args._private.dogma_effect_info);
-                    var cards_on_board = this.selectMyTopCardsEligibleForDogma();
-                    cards_on_board.addClass("clickable");
-                    this.on(cards_on_board, 'onclick', 'action_clickDogma');
+                    // Cards on my board (dogma action)
+                    var cards_on_my_board = this.selectTopCardsEligibleForDogma([this.player_id]);
+                    this.addTooltipsWithActionsToBoard(cards_on_my_board, args.args._private.dogma_effect_info);
+                    cards_on_my_board.addClass("clickable");
+                    this.on(cards_on_my_board, 'onclick', 'action_clickDogma');
+
+                    // Cards on non-adjacent board (dogma action)
+                    var cards_on_non_adjacent_board = this.selectTopCardsEligibleForDogma(args.args._private.non_adjacent_player_ids);
+                    this.addTooltipsWithActionsToBoard(cards_on_non_adjacent_board, args.args._private.dogma_effect_info);
+                    cards_on_non_adjacent_board.addClass("clickable");
+                    this.on(cards_on_non_adjacent_board, 'onclick', 'action_clickNonAdjacentDogma');
+                    
 
                     // Cards on board (endorse action)
+                    // TODO(4E): Make it possible to endorse dogmas on non-adjacent boards.
                     var endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
                     this.off(endorsable_cards, 'onclick');
                     endorsable_cards.addClass("can_endorse");
@@ -2105,8 +2113,7 @@ function (dojo, declare) {
             });
         },
 
-        addTooltipsWithActionsToMyBoard : function(dogma_effect_info) {
-            var cards = this.selectMyTopCardsEligibleForDogma();
+        addTooltipsWithActionsToBoard : function(cards, dogma_effect_info) {
             this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info, 'board');
             var self = this;
             cards.forEach(function(card) {
@@ -2120,6 +2127,7 @@ function (dojo, declare) {
                 dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
                 dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
                 dojo.attr(HTML_id, 'sharing_players', dogma_effect_info[id].sharing_players.join(','));
+                dojo.attr(HTML_id, 'on_non_adjacent_board', dogma_effect_info[id].on_non_adjacent_board);
             });
         },
 
@@ -2299,6 +2307,7 @@ function (dojo, declare) {
             var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
             var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
             var can_endorse = dogma_effect_info[card.id].max_age_to_tuck_for_endorse != undefined;
+            var on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
             
             if (info.no_effect) {
                 return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
@@ -2313,6 +2322,8 @@ function (dojo, declare) {
                     _("Click and you will be given the option to either use a Dogma action targeting this card, or to use an Endorse action by tucking a card of value ${age} or lower."),
                     {'age' : self.square('N', 'age', dogma_effect_info[card.id].max_age_to_tuck_for_endorse)}
                 );
+            } else if (on_non_adjacent_board) {
+                HTML_action += _("Click and you will be given the option to choose a card to return from your hand in order to execute the dogma effect(s) of this card.");
             } else {
                 HTML_action += _("Click to execute the dogma effect(s) of this card.");
             }
@@ -2729,19 +2740,21 @@ function (dojo, declare) {
             return dojo.query(queries.join(","));
         },
         
-        selectMyTopCardsEligibleForDogma : function() {
-            var player_board = this.zone.board[this.player_id];
+        selectTopCardsEligibleForDogma : function(player_ids) {
             var selectable_list = [];
-            for (var color = 0; color < 5; color++) {
-                var pile = player_board[color].items;
-                if (pile.length == 0) {
-                    continue;
-                }
-                var top_card = pile[pile.length - 1];
-                // Battleship Yamato does not have any icons on it so it cannot be executed
-                var card_id = this.getCardIdFromHTMLId(top_card.id);
-                if (card_id != 188) {
-                    selectable_list.push("#" + top_card.id);
+            for (var i = 0; i < player_ids.length; i++) {
+                var player_board = this.zone.board[player_ids[i]];
+                for (var color = 0; color < 5; color++) {
+                    var pile = player_board[color].items;
+                    if (pile.length == 0) {
+                        continue;
+                    }
+                    var top_card = pile[pile.length - 1];
+                    // Battleship Yamato does not have any icons on it so it cannot be executed
+                    var card_id = this.getCardIdFromHTMLId(top_card.id);
+                    if (card_id != 188) {
+                        selectable_list.push("#" + top_card.id);
+                    }
                 }
             }
             return selectable_list.length > 0 ? dojo.query(selectable_list.join(",")) : new dojo.NodeList();
@@ -3958,17 +3971,37 @@ function (dojo, declare) {
             );
         },
         
-        action_clickDogma : function(event, via_endorse_prompt=false) {
-            if (!via_endorse_prompt) {
+        action_clickDogma : function(event_or_html_id, via_alternate_prompt=null, card_id_to_return=null) {
+            if (via_alternate_prompt == null) {
                 this.stopActionTimer();
                 this.deactivateClickEvents();
             }
 
-            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var HTML_id = event_or_html_id.currentTarget ? this.getCardHTMLIdFromEvent(event_or_html_id) : event_or_html_id;
+            dojo.attr(HTML_id, 'card_id_to_return', card_id_to_return);
             var card_id = dojo.attr(HTML_id, 'card_id');
             var card = this.cards[card_id];
 
-            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name}?"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
+            if (card_id_to_return == null) {
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(
+                    _("Dogma ${age} ${card_name}?"),
+                    {
+                        'age' : this.square('N', 'age', card.age, 'type_' + card.type),
+                        'card_name' : _(card.name)
+                    }
+                );
+            } else {
+                var card_to_return = this.cards[card_id_to_return];
+                $('pagemaintitletext').innerHTML = dojo.string.substitute(
+                    _("Dogma ${dogma_age} ${dogma_card_name} by returning ${return_age} ${return_card_name}?"),
+                    {
+                        'dogma_age' : this.square('N', 'age', card.age, 'type_' + card.type),
+                        'dogma_card_name' : _(card.name),
+                        'return_age' : this.square('N', 'age', card_to_return.age, 'type_' + card_to_return.type),
+                        'return_card_name' : _(card_to_return.name)
+                    }
+                );
+            }
 
             // Add cancel button
             this.addActionButton("dogma_cancel_button", _("Cancel"), "action_cancelDogma");
@@ -3979,7 +4012,7 @@ function (dojo, declare) {
             this.addActionButton("dogma_confirm_timer_button", _("Confirm"), "action_manuallyConfirmTimerDogma");
 
             $("dogma_confirm_timer_button").innerHTML = _("Confirm");
-            if (via_endorse_prompt) {
+            if (via_alternate_prompt == 'endorse') {
                 dojo.attr('dogma_confirm_timer_button', 'html_id', dojo.attr(HTML_id, 'html_id'));
                 dojo.destroy("dogma_without_endorse_button");
             } else {
@@ -4002,7 +4035,7 @@ function (dojo, declare) {
                 wait_time = 9;
             }
             
-            this.startActionTimer("dogma_confirm_timer_button", wait_time, this.action_manuallyConfirmTimerDogma, event);
+            this.startActionTimer("dogma_confirm_timer_button", wait_time, this.action_manuallyConfirmTimerDogma);
         },
 
         action_cancelDogma : function(event) {
@@ -4061,15 +4094,65 @@ function (dojo, declare) {
             dojo.destroy("dogma_confirm_warning_button");
 
             var card_id = this.getCardIdFromHTMLId(HTML_id);
+            var payload  = {
+                lock: true,
+                card_id: card_id,
+            };
+            var card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
+            if (card_id_to_return != "null") {
+                payload["card_id_to_return"] = parseInt(card_id_to_return);
+            }
             this.ajaxcall("/innovation/innovation/dogma.html",
-                {
-                    lock: true,
-                    card_id: card_id
-                },
+                payload,
                 this,
                 function(result) { },
                 function(is_error) { if (is_error) this.resurrectClickEvents(true); }
             );
+        },
+
+        action_clickNonAdjacentDogma : function(event) {
+            this.deactivateClickEvents();
+
+            var HTML_id = this.getCardHTMLIdFromEvent(event);
+            var card_id = dojo.attr(HTML_id, 'card_id');
+            var card = this.cards[card_id];
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name} by returning a card from your hand"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
+
+            // Add cancel button
+            this.addActionButton("non_adjacent_dogma_cancel_button", _("Cancel"), "action_cancelNonAdjacentDogma");
+            dojo.removeClass("non_adjacent_dogma_cancel_button", 'bgabutton_blue');
+            dojo.addClass("non_adjacent_dogma_cancel_button", 'bgabutton_red');
+
+            // Make cards in hand clickable
+            var cards_to_return = this.selectMyCardsInHand();
+            cards_to_return.addClass("clickable");
+            cards_to_return.addClass("mid_dogma");
+            this.on(cards_to_return, 'onclick', 'action_confirmNonAdjacentDogma');
+            cards_to_return.forEach(function(node) {
+                dojo.attr(node, 'card_to_dogma_html_id', HTML_id);
+            });
+            this.addTooltipsWithoutActionsToMyHand();
+        },
+
+        action_cancelNonAdjacentDogma : function(event) {
+            this.resurrectClickEvents(true);
+            dojo.destroy("non_adjacent_dogma_cancel_button");
+            dojo.destroy("non_adjacent_dogma_button");
+        },
+
+        action_confirmNonAdjacentDogma : function(event) {
+            $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;
+            dojo.destroy("non_adjacent_dogma_cancel_button");
+
+            // Do a partial this.deactivateClickEvents() without overwriting the saved state of the clickable elements
+            this.off(dojo.query(".mid_dogma"), 'onclick');
+            dojo.query(".clickable").removeClass("clickable");
+            dojo.query(".mid_dogma").removeClass("mid_dogma");
+
+            var card_to_return_html_id = this.getCardHTMLIdFromEvent(event);
+            var card_to_dogma_html_id = dojo.attr(card_to_return_html_id, 'card_to_dogma_html_id');
+            var card_id_to_return = this.getCardIdFromHTMLId(card_to_return_html_id);
+            this.action_clickDogma(card_to_dogma_html_id, /*via_alternate_prompt=*/ 'nonAdjacentDogma', card_id_to_return);
         },
 
         action_clickEndorse : function(event) {
@@ -4097,7 +4180,7 @@ function (dojo, declare) {
             cards_to_tuck.addClass("mid_dogma");
             this.on(cards_to_tuck, 'onclick', 'action_confirmEndorse');
             cards_to_tuck.forEach(function(node) {
-                dojo.attr(node, 'card_to_endorse_id', card_id)
+                dojo.attr(node, 'card_to_endorse_id', card_id);
             });
         },
 
@@ -4121,7 +4204,7 @@ function (dojo, declare) {
             dojo.query(".clickable").removeClass("clickable");
             dojo.query(".mid_dogma").removeClass("mid_dogma");
 
-            this.action_clickDogma(event, /*via_endorse_prompt=*/ true);
+            this.action_clickDogma(event, /*via_alternate_prompt=*/ 'endorse');
         },
 
         action_confirmEndorse : function(event) {

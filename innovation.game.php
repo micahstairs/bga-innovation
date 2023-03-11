@@ -3125,7 +3125,22 @@ class Innovation extends Table
         self::notifyPlayer($opponent_id, "transferedCard", $message_for_opponent, $notif_args_for_opponent);
         self::notifyAllPlayersBut(array($player_id, $opponent_id), "transferedCard", $message_for_others, $notif_args_for_others);
     }
-    
+
+    /** Returns the list of player IDs which are not adjacent to the current player (i.e. the players used for the 4th edition distance rule) */
+    function getPlayerIdsAffectedByDistanceRule() {
+        if (!$this->innovationGameState->usingFourthEditionRules()) {
+            return [];
+        }
+        if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'team') {
+            return [];
+        }
+        $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
+        if (count($player_ids) <= 3) {
+            return [];
+        }
+        return array_slice($player_ids, 2, count($player_ids) - 3);
+    }
+
     function getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() {
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         if ($current_player_id < 0) {
@@ -4767,13 +4782,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return count($visible_bonus_icons) == 0 ? 0 : max($visible_bonus_icons);
     }
 
-    function getCardsWithVisibleEchoEffects($player_id, $dogma_card) {
+    function getCardsWithVisibleEchoEffects($dogma_card) {
         /**
         Gets the list of cards with visible echo effects given a specific card being executed (from top to bottom)
         **/
 
         $color = $dogma_card['color'];
-        $pile = self::getCardsInLocationKeyedByColor($player_id, 'board')[$color];
+        $pile = self::getCardsInLocationKeyedByColor($dogma_card['owner'], 'board')[$color];
 
         $visible_echo_effects = array();
 
@@ -7584,18 +7599,41 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::getObjectFromDB(self::format("SELECT * FROM card WHERE age = {age} AND is_relic", array('age' => $age)));
     }
 
-    function dogma($card_id) {
+    function dogma($card_id, $card_id_to_return) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('dogma');
         $player_id = self::getActivePlayerId();
         
-        // Check if the player has this card really on his board
         $card = self::getCardInfo($card_id);
-        
-        // Player does not have this card on their board
-        if ($card['owner'] != $player_id || $card['location'] != "board") {
-            self::throwInvalidChoiceException();
+
+        $card_to_return = null;
+        if ($card_id_to_return === null) {
+            if ($card['owner'] != $player_id) {
+                self::throwInvalidChoiceException();
+            }
+        } else {
+
+            $card_to_return = self::getCardInfo($card_id_to_return);
+
+            // The distance rule is only in effect when using the 4th edition
+            if (!$this->innovationGameState->usingFourthEditionRules()) {
+                self::throwInvalidChoiceException();
+            }
+            if ($card_to_return['owner'] != $player_id || $card_to_return['location'] != 'hand') {
+                self::throwInvalidChoiceException();
+            }
+            $found_owner = false;
+            foreach (self::getPlayerIdsAffectedByDistanceRule() as $opponent_id) {
+                if ($card['owner'] == $opponent_id) {
+                    $found_owner = true;
+                    break;
+                }
+            }
+            if (!$found_owner) {
+                self::throwInvalidChoiceException();
+            }
         }
+        
         // Card is not at the top of a stack
         if (!self::isTopBoardCard($card)) {
             self::throwInvalidChoiceException();
@@ -7612,7 +7650,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::incStat(1, 'dogma_actions_number_targeting_artifact_on_board', $player_id);
         }
 
-        self::setUpDogma($player_id, $card);
+        self::setUpDogma($player_id, $card, /*extra_icons_from_artifact_on_display=*/ 0, /*card_to_tuck=*/ null, $card_to_return);
 
         // Resolve the first dogma effect of the card
         self::trace('playerTurn->dogmaEffect (dogma)');
@@ -7715,9 +7753,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
     
-    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $card_to_tuck = null) {
+    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $card_to_tuck = null, $card_to_return = null) {
 
         self::notifyDogma($card);
+
+        if ($card_to_return != null) {
+            try {
+                self::returnCard($card_to_return, $player_id);
+            } catch (EndOfGame $e) {
+                self::trace('EOG bubbled from self::setUpDogma');
+                throw $e; // Re-throw exception to higher level
+            }
+        }
 
         if ($card_to_tuck != null) {
             try {
@@ -7761,7 +7808,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ));
         }
 
-        $visible_echo_effects = self::getCardsWithVisibleEchoEffects($player_id, $card);
+        $visible_echo_effects = self::getCardsWithVisibleEchoEffects($card);
         if (!empty($visible_echo_effects)) {
             $current_effect_type = 3; // echo
             $current_effect_number = count($visible_echo_effects);
@@ -8164,6 +8211,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function argPlayerTurn() {
         $player_id = $this->innovationGameState->get('active_player');
+        // In the 4th edition, a card can be returned in order to dogma a top card on a non-adjacent player's board
+        $non_adjacent_player_ids = self::countCardsInHand($player_id) > 0 ? self::getPlayerIdsAffectedByDistanceRule() : [];
         $age_to_draw = self::getAgeToDrawIn($player_id);
         return array(
             'i18n' => array('qualified_action'),
@@ -8177,7 +8226,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'city_draw_falls_back_to_other_type' => $age_to_draw > 11 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 2)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
-                    "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id),
+                    "non_adjacent_player_ids" => $non_adjacent_player_ids,
+                    "dogma_effect_info" => self::getDogmaEffectInfoOfTopCards($player_id, $non_adjacent_player_ids),
                     "meld_info" => self::getMeldInfo($player_id),
                 )
             )
@@ -8236,11 +8286,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $claimable_ages;
     }
 
-    /** Returns dogma effect information about the top cards belonging to the specified player. */
-    function getDogmaEffectInfoOfTopCards($launcher_id) {
+    /** Returns dogma effect information about the top cards belonging to the specified player or non-adjacent players. */
+    function getDogmaEffectInfoOfTopCards($launcher_id, $non_adjacent_player_ids=[]) {
         $dogma_effect_info = array();
         foreach (self::getTopCardsOnBoard($launcher_id) as $top_card) {
             $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+        }
+        foreach ($non_adjacent_player_ids as $player_id) {
+            foreach (self::getTopCardsOnBoard($player_id) as $top_card) {
+                $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+            }
         }
         return $dogma_effect_info;
     }
@@ -8301,7 +8356,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
                         AND player_eliminated = 0
                 ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
-        $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($launcher_id, $card);
+        $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($card);
         $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
         if (self::getNonDemandEffect($card['id'], 1) !== null) {
             $players_executing_non_demand_effects = $sharing_players;
@@ -8310,7 +8365,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $players_executing_echo_effects = $sharing_players;
         }
 
-        // NOTE: No effect detection is best effort. If in doubt, we assume it will have an effect.
+        // NOTE: No-op detection is best effort. If in doubt, we assume it will have an effect.
         $players_with_no_effect = [];
         $effective_sharing_players = [];
         $active_players = self::getAllActivePlayerIds();
@@ -8339,6 +8394,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $dogma_effect_info['players_executing_echo_effects'] = $players_executing_echo_effects;
         $dogma_effect_info['sharing_players'] = $effective_sharing_players;
         $dogma_effect_info['no_effect'] = count($players_with_no_effect) == count($active_players);
+        $dogma_effect_info['on_non_adjacent_board'] = $card['owner'] != $launcher_id;
 
         if ($this->innovationGameState->get('endorse_action_state') == 1 && !$is_on_display) {
             $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
@@ -9777,6 +9833,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stTurn0() {
         // All players must choose a card for initial meld
         $this->gamestate->setAllPlayersMultiactive();
+
+        // If in debug mode, automatically choose arbitrary initial cards for other players (speeds up manual testing).
+        if ($this->innovationGameState->get('debug_mode') == 1) {
+            $other_player_ids = self::getObjectListFromDB("SELECT player_id FROM player WHERE player_id != (SELECT MIN(player_id) FROM player)", true);
+            foreach ($other_player_ids as $player_id) {
+                $card_1 = self::getCardsInHand($player_id)[0];
+                $card_2 = self::getCardsInHand($player_id)[1];
+                $card_id = self::comesAlphabeticallyBefore($card_1, $card_2) ? $card_2['id'] : $card_1['id'];
+                self::markAsSelected($card_id, $player_id);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                $this->gamestate->setPlayerNonMultiactive($player_id, '');
+            }
+        }
     }
     
     function stWhoBegins() {
