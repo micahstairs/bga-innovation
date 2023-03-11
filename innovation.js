@@ -2116,7 +2116,6 @@ function (dojo, declare) {
         addTooltipsWithActionsToBoard : function(cards, dogma_effect_info) {
             this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info, 'board');
             var self = this;
-            console.log(dogma_effect_info);
             cards.forEach(function(card) {
                 var HTML_id = dojo.attr(card, "id");
                 var id = self.getCardIdFromHTMLId(HTML_id);
@@ -3973,7 +3972,7 @@ function (dojo, declare) {
         },
         
         action_clickDogma : function(event_or_html_id, via_alternate_prompt=null, card_id_to_return=null) {
-            if (via_alternate_prompt != 'endorse') {
+            if (via_alternate_prompt == null) {
                 this.stopActionTimer();
                 this.deactivateClickEvents();
             }
@@ -4100,10 +4099,9 @@ function (dojo, declare) {
                 card_id: card_id,
             };
             var card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
-            if (card_id_to_return != null) {
-                payload["card_id_to_return"] = card_id_to_return;
+            if (card_id_to_return != "null") {
+                payload["card_id_to_return"] = parseInt(card_id_to_return);
             }
-            console.log(payload);
             this.ajaxcall("/innovation/innovation/dogma.html",
                 payload,
                 this,
@@ -4133,16 +4131,13 @@ function (dojo, declare) {
             cards_to_return.forEach(function(node) {
                 dojo.attr(node, 'card_to_dogma_html_id', HTML_id);
             });
+            this.addTooltipsWithoutActionsToMyHand();
         },
 
         action_cancelNonAdjacentDogma : function(event) {
             this.resurrectClickEvents(true);
             dojo.destroy("non_adjacent_dogma_cancel_button");
             dojo.destroy("non_adjacent_dogma_button");
-            var cards_in_hand = this.selectMyCardsInHand();
-            cards_in_hand.removeClass("mid_dogma");
-            this.off(cards_in_hand, 'onclick');
-            this.on(cards_in_hand, 'onclick', 'action_clickMeld');
         },
 
         action_confirmNonAdjacentDogma : function(event) {
