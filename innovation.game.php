@@ -2349,6 +2349,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your achievements');
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his achievements');
                 break;
+            case 'achievements->removed':
+                if ($location_from == 0) {
+                    $message_for_player = clienttranslate('${You_must} junk a ${number} ${card} from the available achievements');
+                    $message_for_others = clienttranslate('${player_must} junk a ${number} ${card} from the available achievements');
+                }
+                break;
             case 'hand->deck':
                 if ($bottom_to) {
                     $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand');
@@ -10220,6 +10226,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            case "3N1":
+                // This only occurs in the 4th edition and beyond
+                $achievement_cards = self::getCardsInLocation(0, 'achievements');
+                $cards_to_return = array();
+                foreach($achievement_cards as $card) {
+                    if ($card['age'] == 1 || $card['age'] == 2) {
+                        $cards_to_return[] = $card['id'];
+                    }
+                }
+                
+                if (count($cards_to_return) > 0) {
+                    self::setAuxiliaryArray($cards_to_return);
+                    $step_max = 1;
+                }
+                break;
+                
             // id 4, age 1: Metalworking
             case "4N1":
                 while(true) {
@@ -15368,6 +15390,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'hand',
                 
                 'age' => self::getMaxAgeInHand($player_id)
+            );
+            break;
+
+        case "3N1A":
+            // "Junk an available achievement of value 1 or 2"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'removed',
+                
+                'card_ids_are_in_auxiliary_array' => true,
             );
             break;
             
