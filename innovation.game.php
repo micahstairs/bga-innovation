@@ -15174,6 +15174,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } while ($keep_going);
                 break;
 
+            // id 448, age 11: Escapism
+            case "448N1":
+                $step_max = 1;
+                break;
+
+            case "448N1+":
+                // If there is a card there, then put it back.
+                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                    $step_max = 1; // card was revealed, thus the second half of this effect should be executed.
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                }                
+                break;
+                
             // id 449, age 11: Whataboutism
             case "449D1":
                 $step_max = 1;
@@ -22205,8 +22218,37 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-         // id 449, age 11: Whataboutism
-         case "449D1A":
+            
+        // id 448, age 11: Escapism
+        case "448N1A":
+            // "Reveal a card in your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed',
+            );
+            break;
+
+        case "448N1+A":
+            // "Return from your hand all cards of value equal to the value of the revealed card."
+            $options = array(
+                'player_id' => $player_id,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+
+                'age' => $this->innovationGameState->get('age_last_selected')
+            );
+            break;
+            
+        // id 449, age 11: Whataboutism
+        case "449D1A":
             // "I demand you transfer all your top cards with a demand effect from your board to my board!"
             $options = array(
                 'player_id' => $player_id,
@@ -25108,6 +25150,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 448, age 11: Escapism
+                case "448N1A":
+                    // "and execute its non-demand dogma effects. Do not share them."
+                    if ($n > 0) {
+                        $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
+                        self::setAuxiliaryValue($card['age']);
+                        self::executeNonDemandEffects($card);
+                    }
+                    break;
+
+                case "448N1+A":
+                    // "Draw three cards of that value."
+                    $age = self::getAuxiliaryValue();
+                    self::executeDraw($player_id, $age);
+                    self::executeDraw($player_id, $age);
+                    self::executeDraw($player_id, $age);
+                    break;
+                    
                 // id 449, age 11: Whataboutism
                 case "449D1A":
                     if ($n > 0) { // "if you do"
