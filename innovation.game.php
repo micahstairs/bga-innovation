@@ -2444,6 +2444,10 @@ class Innovation extends Table
                     $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his score pile');
                 }
                 break;
+            case 'score->revealed':
+                $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your score pile');
+                $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his score pile');
+                break;
             case 'score->achievements':
                 $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your score pile');
                 $message_for_others = clienttranslate('${player_must} achieve ${number} ${card} from his score pile');
@@ -15047,6 +15051,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     throw new EndOfGame();
                 }
                 break;
+            
+            // id 443, age 11: Fusion
+            case "443N1":
+                $card_ids_to_score = array();
+                foreach (self::getTopCardsOnBoard($player_id) as $card) {
+                    if ($card['faceup_age'] == 11) {
+                        $card_ids_to_score[] = $card['id'];
+                    }
+                }
+                if (count($card_ids_to_score) > 0) {
+                    self::setAuxiliaryArray($card_ids_to_score);
+                    $step_max = 1;
+                }
+                break;
 
             // id 445, age 11: Space Traffic
             case "445N1":
@@ -15109,6 +15127,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                 } while ($keep_going);
+                break;
+
+            // id 446, age 11: Near-Field Comm
+            case "446D1":
+                $step_max = 1;
+                break;
+
+            case "446N1":
+                $step_max = 1;
+                break;
+
+            case "446N1+":
+                // "If there is a card there, then put it back."
+                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
+                    self::transferCardFromTo($card, $player_id, 'score');
+                }
                 break;
 
             // id 447, age 11: Reclamation
@@ -22123,6 +22157,54 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 443, age 11: Fusion
+        case "443N1A":
+            // "Score a top card of value 11 on your board."    
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'card_ids_are_in_auxiliary_array' => true,
+                
+                'score_keyword' => true,
+             );
+            break;
+        
+        // id 446, age 11: Near-Field Comm
+        case "446D1A":
+            // "I demand you transfer all the highest cards in your score pile to my score pile!"
+            $options = array(
+                'player_id' => $player_id,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $launcher_id,
+                'location_to' => 'score',
+                
+                'age' => self::getMaxAgeInScore($player_id),
+            );
+            break;
+
+        case "446N1A":
+            // "Reveal the highest card in your score pile and execute its non-demand dogma effects. Do not share them."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed',
+                
+                'age' => self::getMaxAgeInScore($player_id),
+            );
+            break;
+            
          // id 449, age 11: Whataboutism
          case "449D1A":
             // "I demand you transfer all your top cards with a demand effect from your board to my board!"
@@ -24988,6 +25070,41 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (count($card_ids_to_return) > 0) {
                         self::incrementStepMax(1);
                         self::setAuxiliaryArray($card_ids_to_return); // store ids for later
+                    }
+                    break;
+
+                // id 443, age 11: Fusion
+                case "443N1A":
+                    if($n > 0) { // "If you do, "
+                        // "repeat this dogma effect using a value one or two lower."
+                        $last_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
+                        $age_last_selected = $last_card['age'];
+                        $card_ids_to_score = array();
+                        $top_cards = self::getTopCardsOnBoard($player_id);
+                        $upper_age = $age_last_selected - 1;
+                        $lower_age = $age_last_selected - 2;
+                        
+                        foreach ($top_cards as $card) {
+                            if ($card['age'] == $upper_age || $card['age'] == $lower_age) {
+                                $card_ids_to_score[] = $card['id'];
+                            }
+                        }
+                        if (count($card_ids_to_score) > 0) {
+                            self::setStep(0); $step=0;
+                            self::setAuxiliaryArray($card_ids_to_score);
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${lower_age} or ${upper_age} on your board.'), array('You' => 'You', 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${lower_age} or ${upper_age} on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));                                 
+                        }
+                    }
+                    break;
+
+                // id 446, age 11: Near-Field Comm
+                case "446N1A":
+                    // "Reveal the highest card in your score pile and execute its non-demand dogma effects. Do not share them."
+                    if ($n > 0) {
+                        $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
+                        self::executeNonDemandEffects($card);
                     }
                     break;
 
