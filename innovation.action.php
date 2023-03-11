@@ -273,7 +273,7 @@
         
         // Retrieve arguments
         $card_id = self::getArg("card_id", AT_posint, true);
-        $card_id_to_return = self::getArg("card_id", AT_posint, false, null);
+        $card_id_to_return = self::getArg("card_id_to_return", AT_posint, false, null);
         
         // Call dogma from game logic
         $this->game->dogma($card_id, $card_id_to_return);

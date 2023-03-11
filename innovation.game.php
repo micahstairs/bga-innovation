@@ -3146,6 +3146,9 @@ class Innovation extends Table
         if (!$this->innovationGameState->usingFourthEditionRules()) {
             return [];
         }
+        if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'team') {
+            return [];
+        }
         $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
         if (count($player_ids) <= 3) {
             return [];
@@ -7654,13 +7657,36 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::checkAction('dogma');
         $player_id = self::getActivePlayerId();
         
-        // Check if the player has this card really on his board
         $card = self::getCardInfo($card_id);
-        
-        // Player does not have this card on their board
-        if ($card['owner'] != $player_id || $card['location'] != "board") {
-            self::throwInvalidChoiceException();
+
+        $card_to_return = null;
+        if ($card_id_to_return === null) {
+            if ($card['owner'] != $player_id) {
+                self::throwInvalidChoiceException();
+            }
+        } else {
+
+            $card_to_return = self::getCardInfo($card_id_to_return);
+
+            // The distance rule is only in effect when using the 4th edition
+            if (!$this->innovationGameState->usingFourthEditionRules()) {
+                self::throwInvalidChoiceException();
+            }
+            if ($card_to_return['owner'] != $player_id || $card_to_return['location'] != 'hand') {
+                self::throwInvalidChoiceException();
+            }
+            $found_owner = false;
+            foreach (self::getPlayerIdsAffectedByDistanceRule() as $opponent_id) {
+                if ($card['owner'] == $opponent_id) {
+                    $found_owner = true;
+                    break;
+                }
+            }
+            if (!$found_owner) {
+                self::throwInvalidChoiceException();
+            }
         }
+        
         // Card is not at the top of a stack
         if (!self::isTopBoardCard($card)) {
             self::throwInvalidChoiceException();
@@ -7677,7 +7703,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::incStat(1, 'dogma_actions_number_targeting_artifact_on_board', $player_id);
         }
 
-        self::setUpDogma($player_id, $card);
+        self::setUpDogma($player_id, $card, /*extra_icons_from_artifact_on_display=*/ 0, /*card_to_tuck=*/ null, $card_to_return);
 
         // Resolve the first dogma effect of the card
         self::trace('playerTurn->dogmaEffect (dogma)');
@@ -7780,9 +7806,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
     
-    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $card_to_tuck = null) {
+    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $card_to_tuck = null, $card_to_return = null) {
 
         self::notifyDogma($card);
+
+        if ($card_to_return != null) {
+            try {
+                self::returnCard($card_to_return, $player_id);
+            } catch (EndOfGame $e) {
+                self::trace('EOG bubbled from self::setUpDogma');
+                throw $e; // Re-throw exception to higher level
+            }
+        }
 
         if ($card_to_tuck != null) {
             try {
