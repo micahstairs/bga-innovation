@@ -2373,6 +2373,10 @@ class Innovation extends Table
                     $message_for_others = clienttranslate('${player_must} places ${number} ${card} from his hand on top of its deck');
                 }
                 break;
+            case 'hand,score->deck':
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand and score pile');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his hand and score pile');
+                break;
             case 'hand->board':
                 if ($bottom_to) {
                     $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your hand');
@@ -6287,6 +6291,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $condition_for_location = "location IN ('revealed', 'hand')";
         } else if ($location_from == 'revealed,score') {
             $condition_for_location = "location IN ('revealed', 'score')";
+        } else if ($location_from == 'hand,score') {
+            $condition_for_location = "location IN ('hand', 'score')";
         } else if ($location_from == 'pile') {
             $condition_for_location = "location = 'board'";
         } else {
@@ -6560,7 +6566,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 13;
         case 'forecast':
             return 14;
-       default:
+        case 'hand,score':
+            return 15;
+        default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
             break;
@@ -6599,6 +6607,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'removed';
         case 14:
             return 'forecast';
+        case 15:
+            return 'hand,score';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -15320,11 +15330,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "444D1":
                 $top_cards = self::getTopCardsOnBoard($player_id);
                 $matching_cards = array();
-                
                 foreach ($top_cards as $first_card) {
                     foreach ($top_cards as $second_card) {
-                        if ($first_card['id'] != $second_card['id'] && $first_card['age'] == $second_card['age']) {
-                            $matching_cards[] = $first_card['id']; // it matches something
+                        if ($first_card['id'] != $second_card['id'] && $first_card['faceup_age'] == $second_card['faceup_age']) {
+                            $matching_cards[] = $first_card['id'];
                         }
                     }
                 }
@@ -15333,9 +15342,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 2;
                     self::setAuxiliaryArray($matching_cards);
                 } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two cards of matching age on your board.'),  
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two top cards of matching value on your board.'),  
                         array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two cards of matching age on your board.'), 
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two top cards of matching value on his board.'), 
                         array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 break;
@@ -22547,12 +22556,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "444D1C":
             // "return all cards of that value or less in your hand and score pile!"
-            // omit location_from intentionally
             $options = array(
                 'player_id' => $player_id,                
 
                 'owner_from' => $player_id,
-                'location_from' => 'hand', // TODO: needs to be 'score,hand' to remove both simultaneously
+                'location_from' => 'hand,score',
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
@@ -25495,32 +25503,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 444, age 11: Hypersonics
                 case "444D1B":
                     if ($n > 0) { // "if you do"
+                        // TODO(4E): There might be a Battleship Yamato bug here which could be solved with a faceup_age_last_selected global variable.
                         $returned_age = $this->innovationGameState->get('age_last_selected');
 
                         $hand_cards = self::getCardsInHand($player_id);
-                        $return_cards = array();
+                        $cards_to_return = array();
                         foreach ($hand_cards as $card) {
                             if ($card['age'] <= $returned_age) {
-                                $return_cards[] = $card['id']; // it matches something
+                                $cards_to_return[] = $card['id'];
                             }
                         }
 
                         $score_cards = self::getCardsInScorePile($player_id);
                         foreach ($score_cards as $card) {
                             if ($card['age'] <= $returned_age) {
-                                $return_cards[] = $card['id']; // it matches something
+                                $cards_to_return[] = $card['id'];
                             }
                         }
-                        if (count($return_cards) > 0) {
-                            self::incrementStepMax(1); // cards to return, move to next step
-                            self::setAuxiliaryArray($return_cards);
+                        if (count($cards_to_return) > 0) {
+                            self::incrementStepMax(1);
+                            self::setAuxiliaryArray($cards_to_return);
                         } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in hand or score below ${age}.'),  
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${age} or less in your hand or score pile.'),  
                                 array('You' => 'You', 'age' => self::getAgeSquare($returned_age)));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in hand or score below ${age}.'), 
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${age} or less in his hand or score pile.'), 
                                 array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($returned_age)));
                         }
-
                     }
                     break;
 
