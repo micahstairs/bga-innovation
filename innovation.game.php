@@ -1764,9 +1764,9 @@ class Innovation extends Table
         } else if ($one_player_involved) {
             $player_id = $active_player_id;
             if ($owner_to != 0) {
-                $player_id = $owner_from;
-            } else if ($owner_from != 0) {
                 $player_id = $owner_to;
+            } else if ($owner_from != 0) {
+                $player_id = $owner_from;
             }
             $transferInfo['player_id'] = $player_id;
             
