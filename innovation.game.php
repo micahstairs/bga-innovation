@@ -1307,6 +1307,9 @@ class Innovation extends Table
         case 'board':
             $filter_from .= self::format(" AND color = {color}", array('color' => $color));
             break;
+        case 'removed':
+            $filter_from = self::format("id = {id}", array('id' => $id)); // Always use position 0
+            break;
         default:
             break;
         }
@@ -1334,6 +1337,9 @@ class Innovation extends Table
             break;
         case 'board':
             $filter_to .= self::format(" AND color = {color}", array('color' => $color));
+            break;
+        case 'removed':
+            $filter_to = self::format("id = {id}", array('id' => $id)); // Always use position 0
             break;
         default:
             break;
@@ -1729,17 +1735,24 @@ class Innovation extends Table
         
         $progressInfo = array();
         // Update player progression if applicable
-        $no_players_involved = $owner_from == 0 && $owner_to == 0;
+        // TODO(4E): Remove the no_players_involved case. There is always a player which initiates the action.
+        $no_players_involved = $owner_from == 0 && $owner_to == 0 && $location_to != 'removed';
         $one_player_involved = array_key_exists('using_debug_buttons', $card) // Debug buttons can be used by non-active players
             || $card['age'] === null // Flags, fountains, and special achievements only involve one player
             || ($owner_from == 0 && $owner_to == $active_player_id)
             || ($owner_to == 0 && $owner_from == $active_player_id)
-            || ($owner_from == $owner_to && $owner_from == $active_player_id);
+            || ($owner_from == $owner_to && $owner_from == $active_player_id)
+            || ($owner_from == 0 && $owner_to == 0);
 
         if ($no_players_involved) {
             self::notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo);
         } else if ($one_player_involved) {
-            $player_id = $owner_to == 0 ? $owner_from : $owner_to; // The player whom transfer will change something on the cards he owns
+            $player_id = $active_player_id;
+            if ($owner_to != 0) {
+                $player_id = $owner_from;
+            } else if ($owner_from != 0) {
+                $player_id = $owner_to;
+            }
             $transferInfo['player_id'] = $player_id;
             
             if ($score_from_update) {
@@ -2231,6 +2244,10 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
+        case 'achievements->removed':
+            $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
+            $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
+            break;
         case 'fountains->achievements':
             $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
             $message_for_others = clienttranslate('A fountain became visible on ${player_name}\'s board so it now counts as an achievement.');
@@ -2348,6 +2365,12 @@ class Innovation extends Table
             case 'achievements->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your achievements');
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his achievements');
+                break;
+            case 'achievements->removed':
+                if ($location_from == 0) {
+                    $message_for_player = clienttranslate('${You_must} junk ${number} ${card} from the available achievements');
+                    $message_for_others = clienttranslate('${player_must} junk ${number} ${card} from the available achievements');
+                }
                 break;
             case 'hand->deck':
                 if ($bottom_to) {
@@ -10300,6 +10323,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            case "3N1":
+                $step_max = 1;
+                break;
+                
             // id 4, age 1: Metalworking
             case "4N1":
                 while(true) {
@@ -15484,6 +15511,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'hand',
                 
                 'age' => self::getMaxAgeInHand($player_id)
+            );
+            break;
+
+        case "3N1A":
+            // "Junk an available achievement of value 1 or 2"
+            // NOTE: This only occurs in the 4th edition and beyond
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'removed',
+                
+                'age_min' => 1,
+                'age_max' => 2,
             );
             break;
             
