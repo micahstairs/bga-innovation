@@ -3703,25 +3703,11 @@ class Innovation extends Table
         ));
     }
     
-    // NOTE: This is only executed by a deprecated code path.
-    function getExecutingPlayers() {
-        return self::getCollectionFromDB("
-            SELECT
-                player_id, stronger_or_equal
-            FROM
-                player
-            WHERE
-                effects_had_impact IS TRUE
-        
-        ", true);
-    }
-    
     function resetPlayerTable() {
         self::DbQuery("
             UPDATE
                 player
             SET
-                stronger_or_equal = NULL,
                 featured_icon_count = NULL,
                 effects_had_impact = FALSE
         ");
