@@ -2367,10 +2367,8 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his achievements');
                 break;
             case 'achievements->removed':
-                if ($location_from == 0) {
-                    $message_for_player = clienttranslate('${You_must} junk ${number} ${card} from the available achievements');
-                    $message_for_others = clienttranslate('${player_must} junk ${number} ${card} from the available achievements');
-                }
+                $message_for_player = clienttranslate('${You_must} junk ${number} ${card} from the available achievements');
+                $message_for_others = clienttranslate('${player_must} junk ${number} ${card} from the available achievements');
                 break;
             case 'hand->deck':
                 if ($bottom_to) {
