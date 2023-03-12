@@ -1824,7 +1824,7 @@ $this->textual_card_infos = array(
 ),
 
 444 => array('name' => clienttranslate('Hypersonics'),
-    'i_demand_effect_1' => clienttranslate('${I demand} you return two top cards on your board of the same value! If you do, return all cards of that value or less in your hand and score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return two top cards of different color on your board of the same value! If you do, return all cards of that value or less in your hand and score pile!'),
 ),
 
 445 => array('name' => clienttranslate('Space Traffic'),
