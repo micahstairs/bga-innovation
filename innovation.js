@@ -4936,7 +4936,7 @@ function (dojo, declare) {
             
             dojo.subscribe('removedHandsBoardsAndScores', this, "notif_removedHandsBoardsAndScores");  // This kind of notification does not need any delay
             dojo.subscribe('removedTopCardsAndHands', this, "notif_removedTopCardsAndHands");  // This kind of notification does not need any delay
-            dojo.subscribe('removedBaseDeck', this, "notif_removedBaseDeck");  // This kind of notification does not need any delay
+            dojo.subscribe('junkedBaseDeck', this, "notif_junkedBaseDeck");  // This kind of notification does not need any delay
             dojo.subscribe('removedPlayer', this, "notif_removedPlayer");  // This kind of notification does not need any delay
 
             dojo.subscribe('updateResourcesForArtifactOnDisplay', this, "notif_updateResourcesForArtifactOnDisplay");  // This kind of notification does not need any delay
@@ -4958,7 +4958,7 @@ function (dojo, declare) {
                 
                 dojo.subscribe('removedHandsBoardsAndScores_spectator', this, "notif_removedHandsBoardsAndScores_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('removedTopCardsAndHands_spectator', this, "notif_removedTopCardsAndHands_spectator");  // This kind of notification does not need any delay
-                dojo.subscribe('removedBaseDeck_spectator', this, "notif_removedBaseDeck_spectator");  // This kind of notification does not need any delay
+                dojo.subscribe('junkedBaseDeck_spectator', this, "notif_junkedBaseDeck_spectator");  // This kind of notification does not need any delay
                 dojo.subscribe('removedPlayer_spectator', this, "notif_removedPlayer_spectator");  // This kind of notification does not need any delay
 
                 dojo.subscribe('updateResourcesForArtifactOnDisplay_spectator', this, "notif_updateResourcesForArtifactOnDisplay_spectator");  // This kind of notification does not need any delay
@@ -5091,6 +5091,9 @@ function (dojo, declare) {
             // Handle case where card is being removed from the game.
             if (card.location_to == 'removed' || card.location_to == 'junk') {
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+                if (this.canShowCardTooltip(card.id)) {
+                    this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
+                }
                 this.refreshSpecialAchievementProgression();
                 return;
             }
@@ -5322,7 +5325,7 @@ function (dojo, declare) {
             this.refreshSpecialAchievementProgression();
         },
 
-        notif_removedBaseDeck: function(notif) {
+        notif_junkedBaseDeck: function(notif) {
             var zone = this.zone.deck[0][notif.args.age_to_junk];
             zone.removeAll();
             zone.counter.setValue(0);
@@ -5467,12 +5470,12 @@ function (dojo, declare) {
             this.notif_removedTopCardsAndHands(notif);
         },
 
-        notif_removedBaseDeck_spectator: function(notif) {
+        notif_junkedBaseDeck_spectator: function(notif) {
             // Put the message for the spectator in log
             this.log_for_spectator(notif);
 
             // Call normal notif
-            this.notif_removedBaseDeck(notif);
+            this.notif_junkedBaseDeck(notif);
         },
 
         notif_removedPlayer_spectator: function(notif) {
