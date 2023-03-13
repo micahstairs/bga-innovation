@@ -13623,6 +13623,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "350N2":
                 // "If Paper is a top card on any player's board, transfer it to your score pile."
+                // NOTE: This only occurs in the 4th edition and beyond
                 $paper_card = self::getCardInfo(30);
                 if (self::isTopBoardCard($paper_card)) {
                     self::transferCardFromTo($paper_card, $player_id, 'score', false, /*score_keyword*/false);
@@ -23085,6 +23086,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 case "34N1A":
                     // "If you do, draw a 3"
+                    // NOTE: This only occurs in the 4th edition and beyond
                     if ($n > 0 && $this->innovationGameState->usingFourthEditionRules()) {
                         self::executeDraw($player_id, 3);
                     }
