@@ -2250,12 +2250,7 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
-<<<<<<< HEAD
         case 'achievements->junk':
-            $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
-            $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
-=======
-        case 'achievements->removed':
             if ($card['age'] === null) { // Special achievement
                 $message_for_player = clienttranslate('${You} junk ${<<<}${name}${>>>} from the available achievements.');
                 $message_for_others = clienttranslate('${player_name} junks ${<<<}${name}${>>>} from the available achievements.');
@@ -2263,7 +2258,6 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
                 $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
             }
->>>>>>> 6ac8ce3 (#971 - ages 1-3)
             break;
         case 'fountains->achievements':
             $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
