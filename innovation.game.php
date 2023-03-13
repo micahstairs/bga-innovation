@@ -1323,6 +1323,7 @@ class Innovation extends Table
             $filter_from .= self::format(" AND color = {color}", array('color' => $color));
             break;
         case 'removed':
+        case 'junk':
             $filter_from = self::format("id = {id}", array('id' => $id)); // Always use position 0
             break;
         default:
@@ -1354,6 +1355,7 @@ class Innovation extends Table
             $filter_to .= self::format(" AND color = {color}", array('color' => $color));
             break;
         case 'removed':
+        case 'junk':
             $filter_to = self::format("id = {id}", array('id' => $id)); // Always use position 0
             break;
         default:
@@ -1753,7 +1755,7 @@ class Innovation extends Table
         $progressInfo = array();
         // Update player progression if applicable
         // TODO(4E): Remove the no_players_involved case. There is always a player which initiates the action.
-        $no_players_involved = $owner_from == 0 && $owner_to == 0 && $location_to != 'removed';
+        $no_players_involved = $owner_from == 0 && $owner_to == 0 && $location_to != 'junk';
         $one_player_involved = array_key_exists('using_debug_buttons', $card) // Debug buttons can be used by non-active players
             || $card['age'] === null // Flags, fountains, and special achievements only involve one player
             || ($owner_from == 0 && $owner_to == $active_player_id)
@@ -2259,7 +2261,7 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
-        case 'achievements->removed':
+        case 'achievements->junk':
             $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
             $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
             break;
@@ -2381,7 +2383,7 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your achievements');
                 $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his achievements');
                 break;
-            case 'achievements->removed':
+            case 'achievements->junk':
                 $message_for_player = clienttranslate('${You_must} junk ${number} ${card} from the available achievements');
                 $message_for_others = clienttranslate('${player_must} junk ${number} ${card} from the available achievements');
                 break;
@@ -5804,7 +5806,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             UPDATE
                 card
             SET
-                location = 'removed',
+                location = 'junk',
                 position = NULL
             WHERE
                 owner = 0
@@ -6575,6 +6577,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 14;
         case 'hand,score':
             return 15;
+        case 'junk':
+            return 16;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -6616,6 +6620,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'forecast';
         case 15:
             return 'hand,score';
+        case 16:
+            return 'junk';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -15687,7 +15693,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => 0,
                 'location_from' => 'achievements',
                 'owner_to' => 0,
-                'location_to' => 'removed',
+                'location_to' => 'junk',
                 
                 'age_min' => 1,
                 'age_max' => 2,

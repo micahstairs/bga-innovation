@@ -5089,7 +5089,7 @@ function (dojo, declare) {
             }
 
             // Handle case where card is being removed from the game.
-            if (card.location_to == 'removed') {
+            if (card.location_to == 'removed' || card.location_to == 'junk') {
                 this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
                 this.refreshSpecialAchievementProgression();
                 return;
