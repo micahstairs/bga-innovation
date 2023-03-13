@@ -5827,7 +5827,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::recordThatChangeOccurred();
             self::notifyAll('junkedBaseDeck', clienttranslate('All cards in the ${age} deck were junked.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
         } else {
-            self::notifyGeneralInfo(clienttranslate('No cards were in the ${age} deck.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
+            self::notifyGeneralInfo(clienttranslate('No cards were in the ${age} deck.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0)));
         }
         
     }
@@ -9115,7 +9115,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "21N1A":
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     $message_args_for_player['age_3'] = self::getAgeSquare(3);
-					$message_args_for_others['age_3'] = self::getAgeSquare(3);
+                    $message_args_for_others['age_3'] = self::getAgeSquare(3);
                     $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile or junk the ${age_3} pile?');
                     $message_for_others = clienttranslate('${player_name} may exchange all his highest cards in his hand with all the highest cards in his score pile or junk the ${age_3} pile?');
                     $options = array(array('value' => 1, 'text' => clienttranslate("Exchange")), array('value' => 0, 'text' => clienttranslate("Junk")));
@@ -23021,6 +23021,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 22, age 2: Fermenting        
                 case "22N2A":
                     // "If you don't, junk Fermenting and all cards in the 2 deck."
+                    // NOTE: This only occurs in the 4th edition and beyond
                     if ($n == 0) {
                         self::transferCardFromTo(self::getCardInfo(22), 0, 'junk');
                         self::junkBaseDeck(2);
@@ -23036,11 +23037,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 30, age 3: Paper        
                 case "30N3A":
-                    if ($n == 0) { // "If you don't"
-                        // "score Paper if it's a top card."
+                    // "If you don't, score Paper if it's a top card"
+                    // NOTE: This only occurs in the 4th edition and beyond
+                    if ($n == 0) {
                         $paper_card = self::getCardInfo(30);
                         if (self::isTopBoardCard($paper_card)) {
-                            self::transferCardFromTo($paper_card, $player_id, 'score', /*score_keyword*/true);
+                            self::scoreCard($paper_card, $player_id);
                         }
                     }
                     break;
