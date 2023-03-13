@@ -2156,6 +2156,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
+        case 'board->removed':
+            $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from your board.');
+            $message_for_others = clienttranslate('${player_name} junk ${<}${age}${>} ${<<}${name}${>>} from his board.');
+            break;
         case 'score->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his score pile.');
@@ -2246,9 +2250,20 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>}.');
             }
             break;
+<<<<<<< HEAD
         case 'achievements->junk':
             $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
             $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
+=======
+        case 'achievements->removed':
+            if ($card['age'] === null) { // Special achievement
+                $message_for_player = clienttranslate('${You} junk ${<<<}${name}${>>>} from the available achievements.');
+                $message_for_others = clienttranslate('${player_name} junks ${<<<}${name}${>>>} from the available achievements.');
+            } else {
+                $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
+                $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
+            }
+>>>>>>> 6ac8ce3 (#971 - ages 1-3)
             break;
         case 'fountains->achievements':
             $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
@@ -5768,8 +5783,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ", ["age" => $age]));
         if (self::DbAffectedRow() > 0) {
             self::recordThatChangeOccurred();
+            self::notifyAll('removedBaseDeck', clienttranslate('All cards in the ${age} deck were junked.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
+        } else {
+            self::notifyAll('removedBaseDeck', clienttranslate('No cards are in the ${age} deck.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
         }
-        self::notifyAll('removedBaseDeck', clienttranslate('All cards in the ${age} deck were junked.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
+        
     }
     
     function removeAllHandsBoardsAndScores() {
@@ -8946,9 +8964,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 21, age 2: Canal building  
             case "21N1A":
-                $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile?');
-                $message_for_others = clienttranslate('${player_name} may exchange all his highest cards in his hand with all the highest cards in his score pile');
-                $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    $message_args_for_player['age_3'] = self::getAgeSquare(3);
+					$message_args_for_others['age_3'] = self::getAgeSquare(3);
+                    $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile or junk the ${age_3} pile?');
+                    $message_for_others = clienttranslate('${player_name} may exchange all his highest cards in his hand with all the highest cards in his score pile or junk the ${age_3} pile?');
+                    $options = array(array('value' => 1, 'text' => clienttranslate("Exchange")), array('value' => 0, 'text' => clienttranslate("Junk")));
+                } else {
+                    $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile?');
+                    $message_for_others = clienttranslate('${player_name} may exchange all his highest cards in his hand with all the highest cards in his score pile');
+                    $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
+                }
                 break;
                 
             // id 28, age 3: Optics        
@@ -10592,6 +10618,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 2); // "Draw a 2"
                 }
                 break;
+
+            case "22N2":
+                $step_max = 1; // fourth edition and beyond only
+                break;
                 
             // id 23, age 2: Monotheism        
             case "23D1":
@@ -10740,6 +10770,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 4); // Draw a 4
                 }
                 break;
+
+            case "30N3":
+                $step_max = 1;
+                break;
                 
             // id 31, age 3: Machinery        
             case "31D1":
@@ -10781,6 +10815,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 32, age 3: Medicine        
             case "32D1":
                 $step_max = 2;
+                break;
+
+            case "32N1":
+                $step_max = 1;
                 break;
                 
             // id 33, age 3: Education        
@@ -15757,6 +15795,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'choose_yes_or_no' => true
             );
             break;
+
+       // id 22, age 2: Fermenting
+        case "22N2A":
+            // "You may tuck a green card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                'bottom_to' => true,
+                
+                'color' => array(2)
+            );
+            break;
             
         // id 23, age 2: Monotheism        
         case "23D1A":
@@ -15950,6 +16006,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
+        case "30N3A":
+            // "Return a top card with a leaf."
+            // NOTE: This is only present in 4th edition and beyond
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'with_icon' => 2 /* with a leaf */
+            );
+            break;
+            
         // id 31, age 3: Machinery        
         case "31N1A":
             // "Score a card from your hand with a tower"
@@ -15993,6 +16065,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'score',
                 
                 'age' => self::getMinAgeInScore($launcher_id)
+            );
+            break;
+
+        case "32N1A":
+            // "Junk an available achievement of value 3 or 4"
+            // NOTE: This only occurs in the 4th edition and beyond
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'removed',
+                
+                'age_min' => 3,
+                'age_max' => 4,
             );
             break;
             
@@ -22680,11 +22769,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryValue(1); // A transfer has been made, flag it
                     }
                     break;
-                
+
+                // id 22, age 2: Fermenting        
+                case "22N2A":
+                    if ($n == 0) { // "If you don't"
+                        // "junk Fermenting and all cards in the 2 deck."
+                        self::transferCardFromTo(self::getCardInfo(22), 0, 'removed');
+                        self::removeBaseDeck(2);
+                    }
+                    break;
+                    
                 // id 23, age 2: Monotheism        
                 case "23D1A":
                     if ($n > 0) { // "If you do"
                         self::executeDrawAndTuck($player_id, 1); // "Draw an tuck a 1"
+                    }
+                    break;
+
+                // id 30, age 3: Paper        
+                case "30N3A":
+                    if ($n == 0) { // "If you don't"
+                        // "score Paper if it's a top card."
+                        $paper_card = self::getCardInfo(30);
+                        if (self::isTopBoardCard($paper_card)) {
+                            self::transferCardFromTo($paper_card, $player_id, 'score', /*score_keyword*/true);
+                        }
                     }
                     break;
                             
@@ -22709,13 +22818,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 34, age 3: Feudalism        
                 case "34D1A":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
+                    if ($this->innovationGameState->usingThirdEditionRules()) {
                         if ($n > 0) { // "If you do"
                             self::unsplay($player_id, $player_id, $this->innovationGameState->get('color_last_selected')); // "Unsplay that color of your cards"
                         }
+                    } elseif ($this->innovationGameState->usingFourthEditionRules()) {
+                        // "junk all available special achievements!"
+                        $achievement_cards = self::getCardsInLocation(0, 'achievements');
+                        foreach ($achievement_cards as $card) {
+                            if ($card['age'] == null) {
+                                self::transferCardFromTo($card, 0, 'removed');
+                            }
+                        }
                     }
                     break;
-                
+
+                case "34N1A":
+                    if ($this->innovationGameState->usingFourthEditionRules()) {
+                        if ($n > 0) {
+                            self::executeDraw($player_id, 3);
+                        }
+                    }
+                    break;
+                    
                 // id 36, age 4: Printing press        
                 case "36N1A":
                     if ($n > 0) { // "If you do"
@@ -25774,8 +25899,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "21N1A":
                 // $choice is yes or no
                 if ($choice == 0) { // No exchange
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to exchange.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    if ($this->innovationGameState->usingFourthEditionRules()) {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to junk the ${age_3} pile.'), array('You' => 'You', 'age_3' => self::getAgeSquare(3)));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides to junk the ${age_3} pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age_3' => self::getAgeSquare(3)));
+                        self::removeBaseDeck(3);
+                    } else {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide not to exchange.'), array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} decides not to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
+                    }
                 }
                 else { // "Exchange all the highest cards in your hand with all the highest cards in your score pile"
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} decide to exchange.'), array('You' => 'You'));
