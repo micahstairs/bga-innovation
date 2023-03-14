@@ -303,8 +303,8 @@ $this->textual_card_infos = array(
 ),
 
 56 => array('name' => clienttranslate('Encyclopedia'),
-    'non_demand_effect_1_first_and_third' => clienttranslate('You may meld all the highest cards in your score pile. If you meld one of the highest, you must meld all of the highest.'),
-    'non_demand_effect_1_fourth' => clienttranslate('You may junk an available achievement of value ${age_5}, ${age_6}, or ${age_7}.'),
+    'non_demand_effect_1' => clienttranslate('You may meld all the highest cards in your score pile. If you meld one of the highest, you must meld all of the highest.'),
+    'non_demand_effect_2_fourth' => clienttranslate('You may junk an available achievement of value ${age_5}, ${age_6}, or ${age_7}.'),
 ),
 
 57 => array('name' => clienttranslate('Industrialization'),
@@ -386,7 +386,7 @@ $this->textual_card_infos = array(
 
 72 => array('name' => clienttranslate('Sanitation'),
     'i_demand_effect_1' => clienttranslate('${I demand} you exchange the two highest cards in your hand with the lowest card in my hand!'),
-    'i_demand_effect_2_fourth' => clienttranslate('Choose ${age_7} or ${age_8}. Junk all cards in that deck.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Choose ${age_7} or ${age_8}. Junk all cards in that deck.'),
 ),
 
 73 => array('name' => clienttranslate('Lighting'),
