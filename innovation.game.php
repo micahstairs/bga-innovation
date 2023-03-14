@@ -8690,8 +8690,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // These non-demand effects have no effect if the player has an empty hand.
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0;
 
-            case 33: // Education
-            case 56: // Encyclopedia
+            case 33: // Education            
             case 146: // Delft Pocket Telescope
             case 217: // Newton‑Wickins Telescope
             case 401: // Elevator
@@ -8699,6 +8698,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // These non-demand effects have no effect if the player has an empty score pile.
                 return self::countCardsInLocation($executing_player_id, 'score') == 0;
 
+            case 56: // Encyclopedia
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    return false; // 4th edition has a second effect
+                }
+                return self::countCardsInLocation($executing_player_id, 'score') == 0;
+                
             case 76: // Rocketry
                 // These non-demand effects have no effect if all players have empty score piles.
                 foreach (self::getAllActivePlayerIds() as $player_id) {
@@ -9183,7 +9188,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} may exchange all his cards in his hand with all the cards in his score pile');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-            
+
+            // id 72, age 7: Sanitation
+            case "72N1A":
+                $message_for_player = clienttranslate('Choose a deck to junk');
+                $message_for_others = clienttranslate('${player_name} must choose a deck to junk');
+                break; 
+                
             // id 80, age 8: Mass media
             case "80N1B":
                 $message_for_player = clienttranslate('Choose a value');
@@ -11033,9 +11044,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 37, age 4: Colonialism
             case "37N1":
+                $tucked_green = false;
                 do {
                     $card = self::executeDrawAndTuck($player_id, 3); // "Draw and tuck a 3"
+                    if ($card['color'] == 2) {
+                        $tucked_green = true; // "If you tucked a green card due to Colonialism,"
+                    }
                 } while (self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this dogma effect"
+                
+                if ($this->innovationGameState->usingFourthEditionRules() && $tucked_green) {
+                    // "junk all cards in the 5 deck."
+                    self::junkBaseDeck(5);
+                }
                 break;
             
             // id 38, age 4: Gunpowder
@@ -11215,14 +11235,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 52, age 5: Steam engine
             case "52N1":
+                self::setAuxiliaryValue(0);
                 self::executeDrawAndTuck($player_id, 4); // "Draw and tuck two 4s"
                 self::executeDrawAndTuck($player_id, 4); //
                 $card = self::getBottomCardOnBoard($player_id, 3 /* yellow */);
                 if ($card !== null) {
                     self::scoreCard($card, $player_id);
+                    if ($card['id'] == 52 && $this->innovationGameState->usingFourthEditionRules()) { // steam engine
+                        self::setAuxiliaryValue(1);
+                    }
                 }
                 break;
-            
+
+            case "52N2":
+                // This is only for the 4th edition and beyond
+                if (self::getAuxiliaryValue() == 1) {
+                    // "If you scored Steam Engine due to Steam Engine, junk all cards in the 6 deck."
+                    self::junkBaseDeck(6);
+                }
+                break;
+                
             // id 53, age 5: Astronomy
             case "53N1":
                 while (true) {
@@ -11295,7 +11327,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "56N1":
                 $step_max = 1;
                 break;
-            
+
+            case "56N2":
+                // NOTE : only in 4th edition and beyond
+                $step_max = 1;
+                break;
+                
             // id 57, age 6: Industrialisation
             case "57N1":
                 if ($this->innovationGameState->usingFirstEditionRules()) {
@@ -11321,9 +11358,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${factories}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'factories' => $factory));
                     }
                 }
-                
+
+                $tuck_clock_ctr = 0;
                 for($i=0; $i<$number; $i++) {
-                    self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
+                    $card = self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
+                    if (self::hasRessource($card, 6)) {
+                        $tuck_clock_ctr++;
+                    }
+
+                }
+                $industrialization_card = self::getCardInfo(57);
+                if ($this->innovationGameState->usingFourthEditionRules() && 
+                    self::isTopBoardCard($industrialization_card) && 
+                    $tuck_clock_ctr > 1) {
+                    // "If you tuck more than one card with a clock, tuck Industrialization if its a top card."
+                    self::tuckCard($industrialization_card);
                 }
                 break;
                 
@@ -11509,6 +11558,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 72, age 7: Sanitation        
             case "72D1":
                 $step_max = 3;
+                break;
+
+            case "72N1":
+                $step_max = 1;
                 break;
                 
             // id 73, age 7: Lighting        
@@ -16786,7 +16839,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age' => self::getMaxAgeInScore($player_id),
             );
             break;
-        
+
+        case "56N2A":
+            // "You may junk an available achievement of value 5, 6, or 7."
+            // NOTE: This only occurs in the 4th edition and beyond
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'junk',
+                
+                'age_min' => 5,
+                'age_max' => 7,
+            );
+            break;
+            
         // id 57, age 6: Industrialisation
         case "57N2A":
             // "You may splay your red or purple cards right"
@@ -17039,10 +17110,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // id 71, age 7: Refrigeration
         case "71D1A":
-            // "Return half (rounded down) of the cards in your hand"
+            $hand_count = self::countCardsInLocation($player_id, 'hand');
+            if ($this->innovationGameState->usingFourthEditionRules()) {
+                // "I demand you return all but one of the cards in your hand!"
+                $return_count = $hand_count - 1;
+            } else {  
+                // "Return half (rounded down) of the cards in your hand"
+                $return_count = self::intDivision($hand_count, 2);
+            }
+            
             $options = array(
                 'player_id' => $player_id,
-                'n' => self::intDivision(self::countCardsInLocation($player_id, 'hand'), 2), // Half (rounded down)
+                'n' => $return_count,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
@@ -17098,7 +17177,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age' => self::getMaxAgeInHand($player_id)
             );
             break;
-        
+
+        case "72N1A":
+            // "Choose 7 or 8."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'choose_value' => true,
+                'age' => array(7, 8),
+             );
+            break;
+            
         // id 73, age 7: Lighting        
         case "73N1A":
             // "You may tuck up to three cards from your hand"
@@ -23126,7 +23216,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStepMax(1);
                     }
                     break;
-
+                    
+                case "41D1B":
+                    if ($n > 0 && $this->innovationGameState->usingFourthEditionRules()) { // "If you do"
+                        self::junkBaseDeck(4); // junk all cards in the 4 deck!
+                    }
+                    break;
+                
                 // id 42, age 4: Perspective
                 case "42N1A":
                     if ($n > 0) { // "If you do"
@@ -23299,6 +23395,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
+                case "72N1A":
+                    // "Junk all cards in that deck."
+                    self::junkBaseDeck(self::getAuxiliaryValue());
+                    break;
+    
                 // id 73, age 7: Lighting
                 case "73N1A":
                     if ($n > 0) { // "If you do"
@@ -26287,6 +26388,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($card['id']);
                 break;
             
+            case "72N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+                    
             // id 73, age 7: Lighting
             case "73N1A":
                 $different_values_selected_so_far = self::getAuxiliaryValueAsArray();
