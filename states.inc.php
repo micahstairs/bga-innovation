@@ -220,9 +220,11 @@ $machinestates = array(
         "args" => "argInterSelectionMove",
         "updateGameProgression" => true,
         "transitions" => array(
-            "preSelectionMove" => 12,
+            "playerInvolvedTurn" => 8, // Used when returning to effect due to 4th edition distance rule
+            "interPlayerInvolvedTurn" => 9, // Used when skipping effect due to 4th edition distance rule
             "interInteractionStep" => 11,
-            "justBeforeGameEnd" => 98
+            "preSelectionMove" => 12,
+            "justBeforeGameEnd" => 98,
         )
     ),
 

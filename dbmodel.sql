@@ -30,6 +30,8 @@ ALTER TABLE `player` ADD `pile_display_mode` BOOLEAN DEFAULT TRUE COMMENT 'Playe
 ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Player preference for whether to show all cards in a stack on the board, TRUE if yes, FALSE if no';
 ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Indicate if the player has changed the situation (TRUE) or not (FALSE) in the game when it was his turn to play within a dogma effect';
 ALTER TABLE `player` ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards that this player has returned so far during this action via Democracy';
+ALTER TABLE `player` ADD `distance_rule_share_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to share effect, 1 = Is currently being prompted, 2 = Decided NOT to return card, 3 = Decided to return card';
+ALTER TABLE `player` ADD `distance_rule_demand_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to avoid demand, 1 = Is currently being prompted, 2 = Decided NOT to return card, 3 = Decided to return card';
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
 CREATE TABLE IF NOT EXISTS `card` (
