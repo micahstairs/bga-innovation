@@ -135,6 +135,12 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'distance_rule_share_state'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `distance_rule_share_state` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'distance_rule_demand_state'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `distance_rule_demand_state` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
+        }
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
@@ -2321,7 +2327,7 @@ class Innovation extends Table
         self::sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo);
     }
     
-    function getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
+    function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
         if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
             // TODO(LATER): We can simplify Self Service to use "board->none", guarded by release_version.
@@ -2397,7 +2403,13 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} junk ${number} ${card} from the available achievements');
                 break;
             case 'hand->deck':
-                if ($bottom_to) {
+                if (self::getPlayerTableColumn($owner_from, 'distance_rule_share_state') == 1) {
+                    $message_for_player = clienttranslate('${You_must} return one card from your hand in order to share in the dogma effect');
+                    $message_for_others = clienttranslate('${player_must} return one card from his hand in order to share in the dogma effect');
+                } else if (self::getPlayerTableColumn($owner_from, 'distance_rule_demand_state') == 1) {
+                    $message_for_player = clienttranslate('${You_must} return one card from your hand in order to avoid executing the demand effect');
+                    $message_for_others = clienttranslate('${player_must} return one card from his hand in order to avoid executing the demand effect');
+                } else if ($bottom_to) {
                     $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your hand');
                     $message_for_others = clienttranslate('${player_must} return ${number} ${card} from his hand');
                 } else {
@@ -3177,15 +3189,15 @@ class Innovation extends Table
         self::notifyAllPlayersBut(array($player_id, $opponent_id), "transferedCard", $message_for_others, $notif_args_for_others);
     }
 
-    /** Returns the list of player IDs which are not adjacent to the current player (i.e. the players used for the 4th edition distance rule) */
-    function getPlayerIdsAffectedByDistanceRule() {
+    /** Returns the list of player IDs which are not adjacent to the launcher (i.e. the players used for the 4th edition distance rule) */
+    function getPlayerIdsAffectedByDistanceRule($launcher_id) {
         if (!$this->innovationGameState->usingFourthEditionRules()) {
             return [];
         }
         if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'team') {
             return [];
         }
-        $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
+        $player_ids = self::getActivePlayerIdsInTurnOrder($launcher_id);
         if (count($player_ids) <= 3) {
             return [];
         }
@@ -3194,6 +3206,10 @@ class Innovation extends Table
 
     function getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() {
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
+        return self::getActivePlayerIdsInTurnOrder($current_player_id);
+    }
+
+    function getActivePlayerIdsInTurnOrder($current_player_id) {
         if ($current_player_id < 0) {
             // Pick an arbitrary player if it's not anyone's turn (e.g. initial meld)
             $current_player_no = 1;
@@ -5579,19 +5595,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // I demand
         if ($dogma_effect_type == 0) {
             $player_query = self::format(
-                "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
+                "featured_icon_count < {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
                 array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
             );
         // I compel
         } else if ($dogma_effect_type == 2) {
             $player_query = self::format(
-                "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})",
+                "featured_icon_count >= {launcher_icon_count} AND player_id != {launcher_id} AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id}) AND distance_rule_demand_state != 3",
                 array('launcher_id' => $launcher_id, 'launcher_icon_count' => $launcher_icon_count)
             );
-        // Non-demand
+        // Non-demand or echo effect
         } else {
             $player_query = self::format(
-                "featured_icon_count >= {launcher_icon_count}",
+                "featured_icon_count >= {launcher_icon_count} AND distance_rule_share_state != 2",
                 array('launcher_icon_count' => $launcher_icon_count)
             );
         }
@@ -6986,6 +7002,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
        return $result;
     }
 
+    // TODO(LATER): Use this more widely.
+    function getPlayerTableColumn($player_id, $column) {
+        return self::getUniqueValueFromDB(self::format("SELECT {column} FROM player WHERE player_id = {player_id}", array('player_id' => $player_id, 'column' => $column)));
+    }
+
+    // TODO(LATER): Use this more widely.
+    function setPlayerTableColumn($player_id, $column, $value) {
+        self::DbQuery(self::format("UPDATE player SET {column} = {val} WHERE player_id = {player_id}", array('player_id' => $player_id, 'column' => $column, 'val' => $value)));
+    }
+
     /** Returns true if the ongoing effect is currently executing a second time due to an Endorse action */
     function isExecutingAgainDueToEndorsedAction() {
         return $this->innovationGameState->get('current_nesting_index') == 0 && $this->innovationGameState->get('endorse_action_state') == 3;
@@ -7711,7 +7737,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::throwInvalidChoiceException();
             }
             $found_owner = false;
-            foreach (self::getPlayerIdsAffectedByDistanceRule() as $opponent_id) {
+            foreach (self::getPlayerIdsAffectedByDistanceRule($player_id) as $opponent_id) {
                 if ($card['owner'] == $opponent_id) {
                     $found_owner = true;
                     break;
@@ -7941,6 +7967,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 array('card_id' => $card['id'], 'card_location' => $card['location'], 'launcher_id' => $player_id, 'effect_type' => $current_effect_type, 'effect_number' => $current_effect_number))
         );
         $this->innovationGameState->set('sharing_bonus', 0);
+        self::DbQuery("UPDATE player SET distance_rule_share_state = 0");
+        self::DbQuery("UPDATE player SET distance_rule_demand_state = 0");
     }
 
     function choose($card_id) {
@@ -8301,7 +8329,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function argPlayerTurn() {
         $player_id = $this->innovationGameState->get('active_player');
         // In the 4th edition, a card can be returned in order to dogma a top card on a non-adjacent player's board
-        $non_adjacent_player_ids = self::countCardsInHand($player_id) > 0 ? self::getPlayerIdsAffectedByDistanceRule() : [];
+        $non_adjacent_player_ids = self::countCardsInHand($player_id) > 0 ? self::getPlayerIdsAffectedByDistanceRule($player_id) : [];
         $age_to_draw = self::getAgeToDrawIn($player_id);
         return array(
             'i18n' => array('qualified_action'),
@@ -8433,6 +8461,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
         }
 
+        // Identify opponents affected by the 4th edition distance rule which have an empty hand, since they means they cannot share.
+        $opponents_which_cannot_afford_to_share = [];
+        // NOTE: Colt Paterson Revolver and Battleship Bismarck are exceptions since the compel effect causes the player to draw cards before
+        // they would need to return a card in order to share.
+        if ($card['id'] != 181 && $card['id'] != 187) {
+            foreach (self::getPlayerIdsAffectedByDistanceRule($launcher_id) as $opponent_id) {
+                if (self::countCardsInHand($opponent_id) == 0) {
+                    $opponents_which_cannot_afford_to_share[] = $opponent_id;
+                }
+            }
+            $distance_rule_condition = "";
+            if (count($opponents_which_cannot_afford_to_share) > 0) {
+                $distance_rule_condition = self::format("AND player_id NOT IN ({player_ids})", array("player_ids" => join($opponents_which_cannot_afford_to_share, ',')));
+            }
+        }
+
         // NOTE: We slightly abuse the term "sharing" here since the following can include a player's teammate (even though
         // that wouldn't trigger a sharing bonus)
         $sharing_players =
@@ -8444,7 +8488,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     WHERE
                         player_id = {launcher_id} OR {col} >= {extra_icons} + (SELECT {col} FROM player WHERE player_id = {launcher_id})
                         AND player_eliminated = 0
-                ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
+                        {distance_rule_condition}
+                ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons, 'distance_rule_condition' => $distance_rule_condition)), true);
         $card_ids_with_visible_echo_effects = self::getCardsWithVisibleEchoEffects($card);
         $dogma_effect_info['num_echo_effects'] = count($card_ids_with_visible_echo_effects);
         if (self::getNonDemandEffect($card['id'], 1) !== null) {
@@ -9831,7 +9876,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Creation of the message
         if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4 || $location_to == 'none') {
             if ($splay_direction == -1) {
-                $messages = self::getTransferInfoWithOnePlayerInvolved($location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
+                $messages = self::getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
                 $splay_direction_in_clear = null;
             } else {
@@ -10461,6 +10506,35 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::format("SELECT card_id FROM echo_execution WHERE nesting_index = {nesting_index} AND execution_index = {effect_number}",
                     array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
         }
+
+        // The distance rule allows non-adjacent players to return a card from hand in order share or to avoid a demand
+        $is_non_demand_or_echo_effect = $current_effect_type == 1 || $current_effect_type == 3;
+        $column = $is_non_demand_or_echo_effect ? 'distance_rule_share_state' : 'distance_rule_demand_state';
+        if (self::getPlayerTableColumn($player_id, $column) == 0) {
+            foreach (self::getPlayerIdsAffectedByDistanceRule($launcher_id) as $opponent_id) {
+                if ($opponent_id == $player_id) {
+                    if (self::countCardsInHand($opponent_id) == 0) {
+                        // Player does not have cards in hand so they are unable to return a card in order to share the effect or avoid a demand
+                        self::setPlayerTableColumn($player_id, $column, 3);
+                        if ($is_non_demand_or_echo_effect) {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not have any cards in your hand so you could not share the effect.'), array('You' => 'You'));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not have any cards in his hand so he could not share the effect.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not have any cards in your hand so you could not avoid the demand.'), array('You' => 'You'));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not have any cards in his hand so he could not avoid the demand.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                        }
+                        break;
+                    } else {
+                        // Player will be given the opportunity to return a card in order to share the effect or avoid a demand
+                        self::setPlayerTableColumn($player_id, $column, 1);
+                        self::trace('playerInvolvedTurn->interactionStep');
+                        $this->gamestate->nextState('interactionStep');
+                        return;
+                    }
+                }
+            }
+        }
+
         $code = self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number);
         $step_max = null;
         $step = null;
@@ -15657,6 +15731,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stInteractionStep() {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $launcher_id = self::getLauncherId();
+
+        if (self::getPlayerTableColumn($player_id, 'distance_rule_share_state') == 1 || self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1) {
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            self::setSelectionRange($options);
+            self::trace('interactionStep->preSelectionMove');
+            $this->gamestate->nextState('preSelectionMove');
+            return;
+        }
 
         $nested_card_state = self::getCurrentNestedCardState();
         $card_id = $nested_card_state['card_id'];
@@ -26158,15 +26249,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function stInterSelectionMove() {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $special_type_of_choice = $this->innovationGameState->get('special_type_of_choice');
-        if ($special_type_of_choice == 0) { // The player had to choose a card
+        if ($special_type_of_choice == 0) { // The player was prompted to choose a card
             $selected_card_id = $this->innovationGameState->get('id_last_selected');
             if ($selected_card_id == -1) {
+                // Unset the selection
+                self::deselectAllCards();
+
+                // Indicate that the player decided not to return a card in order to share in an effect
+                if (self::getPlayerTableColumn($player_id, 'distance_rule_share_state') == 1) {
+                    self::setPlayerTableColumn($player_id, 'distance_rule_share_state', 2);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to return a card from your hand in order to share the effect.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return a card from his hand in order to share the effect.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                    // Skip sharing
+                    self::trace('interSelectionMove->interPlayerInvolvedTurn');
+                    $this->gamestate->nextState('interPlayerInvolvedTurn');
+                    return;
+                }
+
+                // Indicate that the player decided not to return a card in order to avoid a demand
+                if (self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1) {
+                    self::setPlayerTableColumn($player_id, 'distance_rule_demand_state', 2);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to return a card from your hand in order to avoid the demand.'), array('You' => 'You'));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return a card from his hand in order to avoid the demand.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                    // Return to demand
+                    self::trace('interSelectionMove->playerInvolvedTurn');
+                    $this->gamestate->nextState('playerInvolvedTurn');
+                    return;
+                }
+                
                 // The player passed or stopped
                 if ($this->innovationGameState->get('can_pass') == 1) {
                     self::notifyPass($player_id);
                 }
-                // Unset the selection
-                self::deselectAllCards();
+
                 self::trace('interSelectionMove->interInteractionStep');
                 $this->gamestate->nextState('interInteractionStep');
                 return;
@@ -27229,15 +27344,37 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         if ($special_type_of_choice == 0) {
-            // Mark that one more card has been chosen and proceeded in that step
-            $this->innovationGameState->increment('n');
-            $this->innovationGameState->increment('n_min', -1);
-            $this->innovationGameState->increment('n_max', -1);
-            
             // Mark extra information about this chosen card
             $this->innovationGameState->set("age_last_selected", $card['age']);
             $this->innovationGameState->set("color_last_selected", $card['color']);
             $this->innovationGameState->set("owner_last_selected", $card['owner']);
+
+            // Indicate that the player decided to return a card in order to avoid a demand
+            if (self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1) {
+                self::setPlayerTableColumn($player_id, 'distance_rule_demand_state', 3);
+                // Skip demand
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned a card from your hand in order to avoid the demand.'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned a card from his hand in order to avoid the demand.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                self::trace('interSelectionMove->interPlayerInvolvedTurn');
+                $this->gamestate->nextState('interPlayerInvolvedTurn');
+                return;
+            }
+
+            // Indicate that the player decided to return a card in order to share in an effect
+            if (self::getPlayerTableColumn($player_id, 'distance_rule_share_state') == 1) {
+                self::setPlayerTableColumn($player_id, 'distance_rule_share_state', 3);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned a card from your hand in order to share the effect.'), array('You' => 'You'));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned a card from his hand in order to share the effect.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                // Return to effect
+                self::trace('interSelectionMove->playerInvolvedTurn');
+                $this->gamestate->nextState('playerInvolvedTurn');
+                return;
+            }
+
+            // Mark that one more card has been chosen and proceeded in that step
+            $this->innovationGameState->increment('n');
+            $this->innovationGameState->increment('n_min', -1);
+            $this->innovationGameState->increment('n_max', -1);
         }
         // Check if another selection is to be done
         if ($special_type_of_choice != 0 || $this->innovationGameState->get('n_max') == 0) { // No more choice can be made
