@@ -8463,6 +8463,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Identify opponents affected by the 4th edition distance rule which have an empty hand, since they means they cannot share.
         $opponents_which_cannot_afford_to_share = [];
+        $distance_rule_condition = "";
         // NOTE: Colt Paterson Revolver and Battleship Bismarck are exceptions since the compel effect causes the player to draw cards before
         // they would need to return a card in order to share.
         if ($card['id'] != 181 && $card['id'] != 187) {
@@ -8471,7 +8472,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $opponents_which_cannot_afford_to_share[] = $opponent_id;
                 }
             }
-            $distance_rule_condition = "";
             if (count($opponents_which_cannot_afford_to_share) > 0) {
                 $distance_rule_condition = self::format("AND player_id NOT IN ({player_ids})", array("player_ids" => join($opponents_which_cannot_afford_to_share, ',')));
             }
