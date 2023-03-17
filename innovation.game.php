@@ -14493,7 +14493,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     if ($green_tucked) {
-                        self::notifyGeneralInfo("At least one of the tucked cards were green so the dogma effect is repeating.");
+                        self::notifyGeneralInfo(clienttranslate("At least one of the tucked cards was green so the dogma effect is repeating."));
                     }
                 } while ($green_tucked);
                 break;
