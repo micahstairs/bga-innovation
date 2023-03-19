@@ -5173,6 +5173,9 @@ function (dojo, declare) {
             this.counter.score[player_id].setValue(0);
             this.zone.hand[player_id].counter.setValue(0);
             this.counter.max_age_on_board[player_id].setValue(0);
+            if (this.echoes_expansion_enabled) {
+                this.zone.forecast[player_id].counter.setValue(0);
+            }
             for (var icon = 1; icon <= 6; icon++) {
                 this.counter.ressource_count[player_id][icon].setValue(0);
             }
