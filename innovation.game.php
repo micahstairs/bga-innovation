@@ -44,7 +44,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new GameState($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 49-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 50-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -80,6 +80,7 @@ class Innovation extends Table
             'age_last_selected' => 46,
             'color_last_selected' => 47,
             'score_keyword' => 48,
+            'meld_keyword' => 49,
             'card_id_1' => 69,
             'card_id_2' => 70,
             'card_id_3' => 71,
@@ -127,6 +128,13 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
+        if ($from_version <= 2303050253) {
+            self::initGameStateLabels(array(
+                'meld_keyword' => 49,
+            ));
+            $this->innovationGameState->set('meld_keyword', -1);
+        }
+        // TODO(LATER): Remove this.
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
                 'endorse_action_state' => 19,
@@ -164,7 +172,7 @@ class Innovation extends Table
             $card = self::getCardInfo($card_id);
             $card['using_debug_buttons'] = true;
         }
-        self::transferCardFromTo($card, $player_id, 'board');
+        self::meldCard($card, $player_id);
     }
     function debug_tuck($card_id) {
         if ($this->innovationGameState->get('debug_mode') == 0) {
@@ -495,7 +503,8 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('age_last_selected', -1); // Age of the last selected card
         $this->innovationGameState->setInitial('color_last_selected', -1); // Color of the last selected card
         $this->innovationGameState->setInitial('owner_last_selected', -1); // Owner of the last selected card
-        $this->innovationGameState->setInitial('score_keyword', -1); // 1 if the action with the chosen card will be scoring, else 0
+        $this->innovationGameState->setInitial('score_keyword', -1); // 1 if the selected card is being scored, else 0
+        $this->innovationGameState->setInitial('meld_keyword', -1); // 1 if the selected card is being melded, else 0
         $this->innovationGameState->setInitial('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         $this->innovationGameState->setInitial('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         $this->innovationGameState->setInitial('has_splay_direction', -1); // List of splay directions encoded in a single value
@@ -1208,6 +1217,10 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
     }
 
+    function meldCard($card, $owner_to) {
+    return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ false, /*score_keyword=*/ false, /*bottom_from=*/ false, /*meld_keyword=*/ true);
+    }
+
     function returnCard($card) {
         return self::transferCardFromTo($card, 0, 'deck');
     }
@@ -1215,7 +1228,7 @@ class Innovation extends Table
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false) {
 
         // Get updated state of card in case a stale reference was passed.
         $using_debug_buttons = array_key_exists('using_debug_buttons', $card);
@@ -1387,6 +1400,7 @@ class Innovation extends Table
             'bottom_from' => $bottom_from,
             'bottom_to' => $bottom_to,
             'score_keyword' => $score_keyword,
+            'meld_keyword' => $meld_keyword,
         );
         
         // Update the current state of the card
@@ -1407,7 +1421,7 @@ class Innovation extends Table
                         if (self::hasRessource($card, 9)) { // has a fountain
                             self::claimSpecialAchievement($owner_to, 329); // Victory
                         }
-                    } else { // meld
+                    } else if ($meld_keyword) { // meld
                         $current_splay_direction = self::getCurrentSplayDirection($owner_to, $card['color']);
                         if (self::hasRessource($card, 11) && $current_splay_direction == 1) { // has a left arrow and already splayed left
                             self::claimSpecialAchievement($owner_to, 325); // Legend
@@ -1945,9 +1959,6 @@ class Innovation extends Table
     function notifyWithNoPlayersInvolved($card, $transferInfo, $progressInfo) {
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
-        $bottom_from = $transferInfo['bottom_from'];
-        $bottom_to = $transferInfo['bottom_to'];
-        $score_keyword = $transferInfo['score_keyword'];
 
         switch($location_from . '->' . $location_to) {
         case 'deck->achievements':
@@ -5589,7 +5600,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function executeDrawAndMeld($player_id, $age_min = null, $type = null) {
-        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ false, $type);
+        return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ false, $type, /*bottom_from=*/ false, /*meld_keyword=*/ true);
     }
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
@@ -5597,7 +5608,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
-    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false) {
+    function executeDraw($player_id, $age_min = null, $location_to = 'hand', $bottom_to = false, $type = null, $bottom_from = false, $meld_keyword = false) {
         $age_to_draw = self::getAgeToDrawIn($player_id, $age_min);
         
         if ($age_to_draw > 10) {
@@ -5989,6 +6000,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('score_keyword', $rewritten_options)) {
             $rewritten_options['score_keyword'] = false;
         }
+        if (!array_key_exists('meld_keyword', $rewritten_options)) {
+            $rewritten_options['meld_keyword'] = false;
+        }
         if (!array_key_exists('require_achievement_eligibility', $rewritten_options)) {
             $rewritten_options['require_achievement_eligibility'] = false;
         }
@@ -6030,6 +6044,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             switch($key) {
             case 'can_pass':
             case 'score_keyword':
+            case 'meld_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
             case 'has_demand_effect':
@@ -7146,7 +7161,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         try {
-            self::transferCardFromTo($promoted_card, $player_id, "board");
+            self::meldCard($promoted_card, $player_id);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::promoteCard');
@@ -7282,7 +7297,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Execute the meld
         try {
-            self::transferCardFromTo($card, $card['owner'], 'board');
+            self::meldCard($card, $card['owner']);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::meld');
@@ -9683,7 +9698,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Execute the melds planned by players
         foreach($cards as $card) {
             $this->gamestate->changeActivePlayer($card['owner']);
-            self::transferCardFromTo($card, $card['owner'], 'board');
+            self::meldCard($card, $card['owner']);
         }
         
         // The first active player is the one who chose for meld the first card in (English) alphabetical order
@@ -10018,6 +10033,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('color_last_selected', -1);
             $this->innovationGameState->set('owner_last_selected', -1);
             $this->innovationGameState->set('score_keyword', -1);
+            $this->innovationGameState->set('meld_keyword', -1);
             $this->innovationGameState->set('require_achievement_eligibility', -1);
             $this->innovationGameState->set('has_demand_effect', -1);
             $this->innovationGameState->set('has_splay_direction', -1);
@@ -10269,7 +10285,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::hasThisColorOnBoard($player_id, $color)) { // "If it is the same color of any card on your board"
                     self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => self::getColorInClear($color)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
-                    self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
+                    self::meldCard($card, $player_id); // "Meld it"
                     self::executeDraw($player_id, 1); // "Draw a 1"
                 }
                 else {
@@ -10833,7 +10849,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break; // "Otherwise"
                     };
                     // "If the card is green or blue"
-                    self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
+                    self::meldCard($card, $player_id); // "Meld it"
                 }
                 self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
                 break;
@@ -11783,7 +11799,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card == null) { // "If you do not have a top card of the drawn card's color"
-                        self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
+                        self::meldCard($card, $player_id); // "Meld it"
                         continue; // "Repeat this effect"
                     }
                     break;
@@ -11879,7 +11895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
                 if ($number_of_cards > 1) {
                     $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
-                    $melded_card = self::transferCardFromTo($bottom_card, $player_id, 'board');
+                    $melded_card = self::meldCard($bottom_card, $player_id);
                 }
 
                 // "Execute its non-demand dogma effects. Do not share them."
@@ -13758,7 +13774,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Meld your bottom green card. Maintain its splay."
                 $bottom_card = self::getBottomCardOnBoard($player_id, 2);
                 if ($bottom_card != null) {
-                    self::transferCardFromTo($bottom_card, $player_id, 'board');
+                    self::meldCard($bottom_card, $player_id);
                 }
                 break;
 
@@ -13794,7 +13810,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     else {
                         // "If it has a factory, meld it"
-                        self::transferCardFromTo($card, $player_id, 'board');
+                        self::meldCard($card, $player_id);
                     }
                 } // "and repeat this dogma effect"
                 break;
@@ -15098,7 +15114,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'color' => $selectable_colors
+                'color' => $selectable_colors,
+                'meld_keyword' => true,
             );
             break;
         
@@ -15130,7 +15147,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'age' => $age
+                'age' => $age,
+                'meld_keyword' => true,
             );
             break;
         
@@ -15147,7 +15165,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'with_icon' => 4 
+                'with_icon' => 4,
+                'meld_keyword' => true,
             );
             break;
         
@@ -15244,7 +15263,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
             
@@ -15374,6 +15395,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
             
@@ -15403,6 +15426,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'score',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
         
@@ -16042,7 +16067,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'score',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
-                
+
+                'meld_keyword' => true,
                 'age' => self::getMaxAgeInScore($player_id),
             );
             break;
@@ -16083,7 +16109,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
-                
+
+                'meld_keyword' => true,
                 'color' => array(self::getAuxiliaryValue()), /* The color the player has revealed */
             );
             break;
@@ -16743,7 +16770,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;        
 
@@ -17135,6 +17164,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board'
+
+                'meld_keyword' => true,
             );
             break;
         
@@ -17231,7 +17262,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'color' => array(self::getAuxiliaryValue())
+                'color' => array(self::getAuxiliaryValue()),
+
+                'meld_keyword' => true,
             );
             break;
         
@@ -17258,7 +17291,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
 
                 'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2
+                'card_id_2' => $card_id_2,
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -17317,6 +17352,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -17760,7 +17797,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
 
-                'color' => array(0) // blue
+                'color' => array(0), // blue
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -17822,7 +17861,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'owner_from' => $player_id,
                     'location_from' => 'hand',
                     'owner_to' => $player_id,
-                    'location_to' => 'board'
+                    'location_to' => 'board',
+
+                    'meld_keyword' => true,
                 );
             }
             break;
@@ -18005,7 +18046,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
             
@@ -18094,7 +18137,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -18444,6 +18489,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
 
                 'color' => array(0),
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -18514,7 +18561,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'score',
                 'owner_to' => $player_id,
-                'location_to' => 'board'
+                'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
             
@@ -18666,7 +18715,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'board',
                 
-                'age' => 8
+                'age' => 8,
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -18886,7 +18937,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'owner_to' => $player_id,
                     'location_to' => 'board',
 
-                    'age' => self::getMaxAgeInHand($player_id)
+                    'age' => self::getMaxAgeInHand($player_id),
+
+                    'meld_keyword' => true,
                 );
             }
             break;
@@ -18905,7 +18958,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'owner_to' => $player_id,
             'location_to' => 'board',
 
-            'color' => self::getAuxiliaryValueAsArray()
+            'color' => self::getAuxiliaryValueAsArray(),
+
+            'meld_keyword' => true,
         );
         break;
 
@@ -19202,6 +19257,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -19604,6 +19661,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
 
                 'with_bonus' => true,
+
+                'meld_keyword' => true,
             );            
             break;
 
@@ -19721,6 +19780,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
 
                 'card_id_1' => self::getIndexedAuxiliaryValue($player_id),
+
+                'meld_keyword' => true,
             );
             // Special case if Charitable Trust was endorsed
             if ($options['card_id_1'] >= 1000) {
@@ -19792,6 +19853,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -20425,6 +20488,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'color' => array(0,3), /* blue or yellow */
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -20633,6 +20698,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'forecast',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -20775,6 +20842,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'revealed',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -20946,6 +21015,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
 
                 'card_ids_are_in_auxiliary_array' => true,
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -21000,6 +21071,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'with_icon' => 2, /* leaf */
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -21302,6 +21375,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_from' => 'hand',
                 'owner_to' => $player_id,
                 'location_to' => 'board',
+
+                'meld_keyword' => true,
             );
             break;
 
@@ -21569,6 +21644,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'age' => 9,
+
+                'meld_keyword' => true,
              );
             break;
 
@@ -22408,7 +22485,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "89D1A":
                     $this->gamestate->changeActivePlayer($player_id);
                     $remaining_revealed_card = self::getCardsInLocation($player_id, 'revealed')[0]; // There is one card left revealed
-                    self::transferCardFromTo($remaining_revealed_card, $player_id, 'board'); // "Meld the other one"
+                    self::meldCard($remaining_revealed_card, $player_id); // "Meld the other one"
                     break;
                     
                 // id 90, age 9: Satellites
@@ -22925,7 +23002,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "173N1A":
                     // "Meld the bottom card on your board of that color"
                     $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                    self::transferCardFromTo($bottom_card, $player_id, 'board');
+                    self::meldCard($bottom_card, $player_id;
                     break;
                     
                 // id 152, Artifacts age 4: Mona Lisa
@@ -23649,7 +23726,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     if ($choice == 1) {
                         // meld
-                        self::transferCardFromTo($card, $player_id, 'board');
+                        self::meldCard($card, $player_id);
                     } else {
                         // score
                         self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword*/true);
@@ -23670,7 +23747,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     if ($choice == 1) {
                         // meld
-                        self::transferCardFromTo($card, $player_id, 'board');
+                        self::meldCard($card, $player_id);
                     } else {
                         // score
                         self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword*/true);
@@ -23715,7 +23792,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "353N1A":
                     // "and meld the drawn card."
                     $card = self::getCardsInLocation($player_id, 'revealed');
-                    self::transferCardFromTo($card[0], $player_id, 'board');
+                    self::meldCard($card[0], $player_id);
                     break;
 
                 // id 354, Echoes age 2: Chaturanga
@@ -24057,7 +24134,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $top_card_by_color = self::getTopCardOnBoard($player_id, $card['color']);
                         if ($top_card_by_color == null || $card['faceup_age'] > $top_card_by_color['faceup_age']) {
                             // "and meld it if it is higher than a top card of the same color on your board. "
-                            self::transferCardFromTo($card, $player_id, 'board');
+                            self::meldCard($card, $player_id);
                         } else {
                             // "Otherwise, return it."
                             self::returnCard($card);
@@ -24073,7 +24150,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $top_card_by_color = self::getTopCardOnBoard($player_id, $card['color']);
                         if ($top_card_by_color == null || $card['faceup_age'] > $top_card_by_color['faceup_age']) {
                             // "and meld it if it is higher than a top card of the same color on your board. "
-                            self::transferCardFromTo($card, $player_id, 'board');
+                            self::meldCard($card, $player_id);
                         } else {
                             // "Otherwise, return it."
                             self::returnCard($card);
@@ -24925,6 +25002,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $score_keyword = $this->innovationGameState->get('score_keyword') == 1;
+            $meld_keyword = $this->innovationGameState->get('meld_keyword') == 1;
             
             $splay_direction = $this->innovationGameState->get('splay_direction'); // -1 if that was not a choice for splay
         }
@@ -24997,7 +25075,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
             
             // id 21, age 2: Canal building         
@@ -25134,7 +25212,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (tuck)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
             
             // id 80, age 8, Mass media
@@ -25152,7 +25230,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (tuck)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
             
             // id 83, age 8: Empiricism     
@@ -25169,7 +25247,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 else { // "If it is either of the colors you chose"
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
-                    self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
+                    self::meldCard($card, $player_id); // "Meld it"
                     self::setAuxiliaryValue($card['color']); // Flag the sucessful colors
                     self::incrementStepMax(1);
                 }
@@ -25181,7 +25259,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValue(1); // Flag that
                 }
                 // Do the transfer as stated in B (tuck)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
             
             // id 100, age 10: Self service
@@ -25217,7 +25295,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $age_to_draw_in = $this->innovationGameState->get('age_last_selected') + 2;
                 $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed', /*bottom_to=*/ false, /*type=*/ $choice);
                 if ($card['color'] == 4) { // "If the drawn card is purple"
-                    self::transferCardFromTo($card, $player_id, 'board'); // "Meld it"
+                    self::meldCard($card, $player_id); // "Meld it"
                     self::executeNonDemandEffects($card); // "Execute each of its non-demand effects. Do not share them."
                     break;
                 } else {
@@ -25271,7 +25349,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::setAuxiliaryValue2FromArray($different_values_selected_so_far);
                 }
                 // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
@@ -25302,12 +25380,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // Log the card that is melded first
                     $card_id = $this->innovationGameState->get('id_last_selected');
                     self::setAuxiliaryValue($card_id);
-                    self::transferCardFromTo(self::getCardInfo($card_id), $player_id, 'board');
+                    self::meldCard(self::getCardInfo($card_id), $player_id);
                 } else {
                     // If you melded two of the same color and they are of different types
                     $first_card = self::getCardInfo(self::getAuxiliaryValue());
                     $second_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                    self::transferCardFromTo($second_card, $player_id, 'board');
+                    self::meldCard($second_card, $player_id);
                     if ($first_card['type'] == $second_card['type']) {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose cards from the same card set.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('player_name' => self::getColoredPlayerName($player_id)));
@@ -25511,7 +25589,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryArray($age_counts);
 
                 // Do the transfer (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             case "345N1B":
@@ -25589,7 +25667,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue(self::getAuxiliaryValue() + self::countIconsOnCard($card, 4));
                 
                 // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             // id 359, Echoes age 3: Charitable Trust
@@ -25668,7 +25746,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             // id 379, Echoes age 5: Palampore
@@ -25756,7 +25834,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     $card = self::getBottomCardOnBoard($player_id, 2); /* green */
                 }
-                self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
+                self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             case "401N1A":
@@ -25846,7 +25924,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card_values = self::getAuxiliaryArray();
                 $card_values[] = $card['faceup_age'];
                 self::setAuxiliaryArray($card_values);
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             // id 421, Echoes age 9: ATM
@@ -25892,7 +25970,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 431, Echoes age 10: Cell Phone
             case "431N3A":
                 // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 
                 // "splaying up each color you tucked into."
                 self::splayUp($player_id, $player_id, $card['color']);                
@@ -25921,7 +25999,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
                         self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
                     } else {
-                        self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword);
+                        self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                     }
                 }
                 else {
