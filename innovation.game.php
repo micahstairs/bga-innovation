@@ -23002,7 +23002,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "173N1A":
                     // "Meld the bottom card on your board of that color"
                     $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                    self::meldCard($bottom_card, $player_id;
+                    self::meldCard($bottom_card, $player_id);
                     break;
                     
                 // id 152, Artifacts age 4: Mona Lisa
