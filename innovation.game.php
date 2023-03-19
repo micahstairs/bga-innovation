@@ -339,7 +339,7 @@ class Innovation extends Table
             return; // Not in debug mode
         }
         $player_id = self::getCurrentPlayerId();
-        self::splay($player_id, $player_id, $color, $direction);
+        self::splay($player_id, $player_id, $color, $direction, /*force_unsplay=*/ $direction == 0);
     }
     //******
     
@@ -3361,7 +3361,7 @@ class Innovation extends Table
 
         $new_score = self::updatePlayerScore($target_player_id);
 
-        if ($splay_direction == 0 && !$force_unsplay) { // Unsplay event
+        if ($splay_direction == 0 && !$force_unsplay) {
             $color_in_clear = self::getColorInClear($color);
 
             if ($player_id != $target_player_id) {
@@ -3390,7 +3390,6 @@ class Innovation extends Table
             return;
         }
         
-        // $splay_direction > 0: actual splay or forced unsplay
         $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
         $colored_cards = self::getColorInClearWithCards($color);
         
@@ -23834,9 +23833,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $splayable_colors = self::getAuxiliaryValue2AsArray();
                         if (count($splayable_colors) > 0) {
                             self::incrementStepMax(1);
-                        }
-                        else {
-                            self::splay($player_id, $player_id, 4, 0); // matching an unsplay
+                        } else {
+                            self::unsplay($player_id, $player_id, 4); // matching an unsplay
                         }
                     } else if ($choice == 0) { // Proceed to selecting a matching color to splay purple's direction
                         self::incrementStepMax(2);
@@ -23846,7 +23844,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 case "364N1B":
                     $color_chosen = self::getAuxiliaryValue();
-                    self::splay($player_id, $player_id, 4, self::getCurrentSplayDirection($player_id, $color_chosen));
+                    $direction = self::getCurrentSplayDirection($player_id, $color_chosen);
+                    self::splay($player_id, $player_id, 4, $direction, /*force_unsplay=*/ $direction == 0);
                     break;
                     
                 // id 366, Echoes age 4: Telescope
@@ -24206,7 +24205,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 400 Echoes age 7: Telegraph
                 case "400N1B":
                     $splay_direction = self::getCurrentSplayDirection(self::getAuxiliaryValue(), self::getAuxiliaryValue2());
-                    self::splay($player_id, $player_id, self::getAuxiliaryValue2(), $splay_direction);
+                    self::splay($player_id, $player_id, self::getAuxiliaryValue2(), $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
                     break;
 
                 // id 401, Echoes age 7: Elevator
@@ -25926,7 +25925,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 else {
                     // Do the splay as stated in B
-                    self::splay($player_id, $card['owner'], $card['color'], $splay_direction);
+                    self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
                 }
                 break;
             }
