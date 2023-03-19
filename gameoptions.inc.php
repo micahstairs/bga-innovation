@@ -103,13 +103,11 @@ $game_options = array(
             2 => array(
                 'name' => totranslate('Enable without Relics'),
                 'no_beginner' => true,
-                'beta' => true,
                 'tmdisplay' => totranslate('Artifacts Expansion'),
             ),
             3 => array(
                 'name' => totranslate('Enable with Relics'),
                 'no_beginner' => true,
-                'beta' => true,
                 'tmdisplay' => totranslate('Artifacts Expansion with Relics')
             ),
         )
