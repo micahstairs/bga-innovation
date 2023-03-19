@@ -503,13 +503,13 @@ $this->textual_card_infos = array(
 ),
 
 91 => array('name' => clienttranslate('Ecology'),
-    'non_demand_effect_1_first_and_third' => clienttranslate('You may return a card from your hand. If you do, score a card from your hand and draw two ${age_10}.'),
-    'non_demand_effect_1_fourth' => clienttranslate('You may junk all cards in the ${age_10} deck.'),
+    'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, score a card from your hand and draw two ${age_10}.'),
+    'non_demand_effect_2_fourth' => clienttranslate('You may junk all cards in the ${age_10} deck.'),
 ),
 
 92 => array('name' => clienttranslate('Suburbia'),
-    'non_demand_effect_1_first_and_third' => clienttranslate('You may tuck any number of cards from your hand. Draw and score a ${age_1} for each card you tucked.'),
-    'non_demand_effect_1_fourth' => clienttranslate('You may junk all cards in the ${age_9} deck.'),
+    'non_demand_effect_1' => clienttranslate('You may tuck any number of cards from your hand. Draw and score a ${age_1} for each card you tucked.'),
+    'non_demand_effect_2_fourth' => clienttranslate('You may junk all cards in the ${age_9} deck.'),
 ),
 
 93 => array('name' => clienttranslate('Services'),
@@ -568,7 +568,7 @@ $this->textual_card_infos = array(
 
 102 => array('name' => clienttranslate('Stem cells'),
     'non_demand_effect_1' => clienttranslate('You may score all cards from your hand. If you score one, you must score them all.'),
-    'non_demand_effect_1_fourth' => clienttranslate('Draw an ${age_11}.'),
+    'non_demand_effect_2_fourth' => clienttranslate('Draw an ${age_11}.'),
 ),
 
 103 => array('name' => clienttranslate('A. I.'),
