@@ -1511,8 +1511,9 @@ class Innovation extends Table
 
         $end_of_game = false;
 
+        self::removeOldFlagsAndFountains();
         try {
-            self::updateFlagsAndFountains();
+            self::addNewFlagsAndFountains();
         } catch(EndOfGame $e) {
             $end_of_game = true;
         }
@@ -1809,18 +1810,19 @@ class Innovation extends Table
             }
         }
 
+        if ($location_from == 'board' || $location_to == 'board') {
+            self::removeOldFlagsAndFountains();
+            try {
+                self::addNewFlagsAndFountains();
+            } catch(EndOfGame $e) {
+                $end_of_game = true;
+            }
+        }
+
         try {
             self::checkForSpecialAchievements();
         } catch(EndOfGame $e) {
             $end_of_game = true;
-        }
-
-        if ($location_from == 'board' || $location_to == 'board') {
-            try {
-                self::updateFlagsAndFountains();
-            } catch(EndOfGame $e) {
-                $end_of_game = true;
-            }
         }
 
         if ($end_of_game) {
@@ -3253,8 +3255,56 @@ class Innovation extends Table
         }
     }
 
-    /** Checks to see if any players gain or lose any flag/fountain achievements. **/
-    function updateFlagsAndFountains() {
+    /** Checks to see if any players lose any flag/fountain achievements. **/
+    function removeOldFlagsAndFountains() {
+        if (!$this->innovationGameState->citiesExpansionEnabled()) {
+            return;
+        }
+
+        foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
+            $opponent_ids = self::getActiveOpponentIds($player_id);
+            for ($color = 0; $color < 5 ; $color++) {
+                // Flags
+                $num_visible_flags = self::countVisibleIconsInPile($player_id, 8 /* flag */, $color);
+                $num_visible_cards = self::countVisibleCards($player_id, $color);
+                $opponent_has_more_visible_cards = false;
+                foreach ($opponent_ids as $opponent_id) {
+                    if (self::countVisibleCards($opponent_id, $color) > $num_visible_cards) {
+                        $opponent_has_more_visible_cards = true;
+                    }
+                }
+                $desired_flag_achievements = $opponent_has_more_visible_cards ? 0 : $num_visible_flags;
+                $current_flag_achievements = self::getUniqueValueFromDB(self::format("
+                    SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
+                    array('owner' => $player_id, 'color' => $color)
+                ));
+                for ($i = $desired_flag_achievements; $i < $current_flag_achievements; $i++) {
+                    $flag_id = self::getUniqueValueFromDB(self::format("
+                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
+                        array('owner' => $player_id, 'color' => $color)
+                    ));
+                    self::transferCardFromTo(self::getCardInfo($flag_id), 0, 'flags');
+                }
+
+                // Fountains
+                $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */, $color);
+                $current_fountain_achievements = self::getUniqueValueFromDB(self::format("
+                    SELECT COUNT(*) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
+                    array('owner' => $player_id, 'color' => $color)
+                ));
+                for ($i = $desired_fountain_achievements; $i < $current_fountain_achievements; $i++) {
+                    $fountain_id = self::getUniqueValueFromDB(self::format("
+                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
+                        array('owner' => $player_id, 'color' => $color)
+                    ));
+                    self::transferCardFromTo(self::getCardInfo($fountain_id), 0, 'fountains');
+                }
+            }
+        }
+    }
+
+    /** Checks to see if any players gain any flag/fountain achievements. **/
+    function addNewFlagsAndFountains() {
         if (!$this->innovationGameState->citiesExpansionEnabled()) {
             return;
         }
@@ -3289,13 +3339,6 @@ class Innovation extends Table
                         $end_of_game = true;
                     }
                 }
-                for ($i = $desired_flag_achievements; $i < $current_flag_achievements; $i++) {
-                    $flag_id = self::getUniqueValueFromDB(self::format("
-                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND 1000 <= id AND id <= 1099",
-                        array('owner' => $player_id, 'color' => $color)
-                    ));
-                    self::transferCardFromTo(self::getCardInfo($flag_id), 0, 'flags');
-                }
 
                 // Fountains
                 $desired_fountain_achievements = self::countVisibleIconsInPile($player_id, 9 /* fountain */, $color);
@@ -3314,18 +3357,11 @@ class Innovation extends Table
                         $end_of_game = true;
                     }
                 }
-                for ($i = $desired_fountain_achievements; $i < $current_fountain_achievements; $i++) {
-                    $fountain_id = self::getUniqueValueFromDB(self::format("
-                        SELECT MIN(id) FROM card WHERE owner = {owner} AND location = 'achievements' AND color = {color} AND id >= 1100",
-                        array('owner' => $player_id, 'color' => $color)
-                    ));
-                    self::transferCardFromTo(self::getCardInfo($fountain_id), 0, 'fountains');
-                }
             }
         }
 
         if ($end_of_game) { // End of game has been detected
-            self::trace('EOG bubbled from self::updateFlagsAndFountains');
+            self::trace('EOG bubbled from self::addNewFlagsAndFountains');
             throw $e; // Re-throw the flag
         }
     }
@@ -5700,12 +5736,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::setStat(0, 'max_age_on_board', $player_id);
         }
 
-        try {
-            self::updateFlagsAndFountains();
-        } catch(EndOfGame $e) {
-            self::trace('EOG bubbled from self::removeAllHandsBoardsAndScores');
-            throw $e; // Re-throw exception to higher level
-        }
+        self::removeOldFlagsAndFountains();
     }
 
     function removeAllCardsFromPlayer($player_id) {
@@ -5830,8 +5861,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $end_of_game = false;
 
+        self::removeOldFlagsAndFountains();
         try {
-            self::updateFlagsAndFountains();
+            self::addNewFlagsAndFountains();
         } catch(EndOfGame $e) {
             $end_of_game = true;
         }
@@ -7915,8 +7947,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 $end_of_game = false;
 
+                self::removeOldFlagsAndFountains();
                 try {
-                    self::updateFlagsAndFountains();
+                    self::addNewFlagsAndFountains();
                 } catch(EndOfGame $e) {
                     $end_of_game = true;
                 }
