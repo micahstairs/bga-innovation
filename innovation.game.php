@@ -44,7 +44,7 @@ class Innovation extends Table
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
         $this->innovationGameState = new GameState($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 50-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 51-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -81,7 +81,7 @@ class Innovation extends Table
             'age_last_selected' => 46,
             'color_last_selected' => 47,
             'score_keyword' => 48,
-            'meld_keyword' => 49,
+            'meld_keyword' => 50,
             'card_id_1' => 69,
             'card_id_2' => 70,
             'card_id_3' => 71,
@@ -145,7 +145,7 @@ class Innovation extends Table
         // TODO(LATER): Remove this.
         if ($from_version <= 2303050253) {
             self::initGameStateLabels(array(
-                'meld_keyword' => 49,
+                'meld_keyword' => 50,
             ));
             $this->innovationGameState->set('meld_keyword', -1);
         }
