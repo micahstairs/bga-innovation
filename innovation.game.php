@@ -6800,7 +6800,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function executeNonDemandEffects($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $card_args = self::getNotificationArgsForCardList([$card]);
-        if (self::getNonDemandEffect($card['id'], 1) === null && self::getEchoEffect($card['id']) === null) {
+        if (self::getNonDemandEffect($card['id'], 1) === null) {
             self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
             return;
         }
