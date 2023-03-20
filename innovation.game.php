@@ -8509,6 +8509,74 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            case 24: // Philosophy
+                // The non-demand effects have no effect if the player has no cards in hand and no piles that can be splayed left
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && count(self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1)) == 0;
+
+            case 27: // Engineering
+                // The non-demand effect has no effect if the player cannot splay their red pile left
+                return !in_array(1 /* red */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1));
+
+            case 31: // Machinery
+                // The non-demand effect has no effect if the player has no cards in hand and cannot splay their red pile left
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(1 /* red */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1));
+
+            case 34: // Feudalism
+                // The non-demand effect has no effect if the player cannot splay their yellow or purple piles left
+                $left_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1);
+                return !in_array(3 /* yellow */,  $left_splayable_colors) && !in_array(4 /* purple */,  $left_splayable_colors);
+
+            case 36: // Printing Press
+                // The non-demand effect has no effect if the player has no cards in their score pile and cannot splay their blue pile right
+                return self::countCardsInLocation($executing_player_id, 'score') == 0 && !in_array(0 /* blue */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2));
+
+            case 43: // Enterprise
+                // The non-demand effect has no effect if the player cannot splay their green pile right
+                return !in_array(2 /* green */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2));
+
+            case 44: // Reformation
+                // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or purple piles right
+                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2);
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(3 /* yellow */,  $right_splayable_colors) && !in_array(4 /* purple */,  $right_splayable_colors);
+
+            case 49: // Banking
+                // The non-demand effect has no effect if the player cannot splay their green pile right
+                return !in_array(2 /* green */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2));
+
+            case 51: // Statistics
+                // The non-demand effect has no effect if the player cannot splay their yellow pile right
+                return !in_array(3 /* yellow */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2));
+
+            case 60: // Metric System
+                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2);
+                $top_green_card = self::getTopCardOnBoard($executing_player_id, 2 /* green */);
+                // The second non-demand effect has no effect if the player's green pile is not or cannot be splayed right
+                if ($top_green_card['splay_direction'] != 2 && !in_array(2 /* green */, $right_splayable_colors)) {
+                    return true;
+                }
+                // The non-demand effects have no effect if the player has no piles that can be splayed right
+                return count($right_splayable_colors) == 0;
+
+            case 64: // Emancipation
+                // The non-demand effect has no effect if the player cannot splay their red or purple piles right
+                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2);
+                return !in_array(1 /* red */,  $right_splayable_colors) && !in_array(4 /* purple */,  $right_splayable_colors);
+
+            case 77: // Flight
+                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 3);
+                $top_red_card = self::getTopCardOnBoard($executing_player_id, 1 /* red */);
+                // The second non-demand effect has no effect if the player's red pile is not or cannot be splayed up
+                if ($top_red_card['splay_direction'] != 3 && !in_array(1 /* red */, $up_splayable_colors)) {
+                    return true;
+                }
+                // The non-demand effects have no effect if the player has no piles that can be splayed up
+                return count($up_splayable_colors) == 0;
+            
+            case 94: // Specialization
+                // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or blue piles up
+                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 3);
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(0 /* blue */,  $up_splayable_colors) && !in_array(3 /* yellow */,  $up_splayable_colors);
+
             case 175: // Periodic Table
                 // The non-demand effect has no effect if the player has top cards with unique values.
                 return count(self::getColorsOfRepeatedValueOfTopCardsOnBoard($executing_player_id)) == 0;
@@ -8532,25 +8600,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             /*** Basic cases involving empty hands and/or empty score piles ***/
 
+            case 34: // Feudalism
+            case 64: // Emancipation
             case 68: // Explosives
             case 71: // Refrigeration
             case 334: // Candles
             case 347: // Crossbow
             case 408: // Parachute
-                // This demand has no effect if the player has an empty hand.
+                // This demand has no effect if the executer has an empty hand.
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0;
 
+            case 31: // Machinery
             case 72: // Sanitation
-                // This demand has no effect if both the launcher or executer have empty hands.
+                // This demand has no effect if both the launcher amd executer have empty hands.
                 return self::countCardsInLocation($launcher_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'hand') == 0;
         
             case 41: // Anatomy
+            case 51: // Statistics
             case 62: // Vaccination
             case 99: // Databases
             case 393: // Indian Clubs
             case 411: // Air Conditioner
             case 430: // Flash Drive
-                // This demand has no effect if the player has an empty score pile.
+                // This demand has no effect if the executer has an empty score pile.
                 return self::countCardsInLocation($executing_player_id, 'score') == 0;
 
             case 32: // Medicine
@@ -8567,15 +8639,44 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // This demand has no effect if the player has no 1s in their score pile.
                 return self::countCardsInLocationKeyedByAge($executing_player_id, 'score')[1] == 0;
 
+            case 27: // Engineering
+                // This demand has no effect unless the player has a top card with a tower.
+                foreach (self::getTopCardsOnBoard($executing_player_id) as $top_card) {
+                    if (self::hasRessource($top_card, 4)) {
+                        return false;
+                    }
+                }
+                return true;
+
             case 40: // Navigation
                 // This demand has no effect if the player has no 2s or 3s in their score pile.
                 $age_counts = self::countCardsInLocationKeyedByAge($executing_player_id, 'score');
                 return $age_counts[2] == 0 && $age_counts[3] == 0;
 
+            case 43: // Enterprise
+                // This demand has no effect unless the player has a top non-purple card with a crown.
+                for ($color = 0; $color < 4; $color++) {
+                    $top_card = self::getTopCardOnBoard($executing_player_id, $color);
+                    if (self::hasRessource($top_card, 1 /* crown */)) {
+                        return false;
+                    }
+                }
+                return true;
+
             case 48: // The Pirate Code
                 // This demand has no effect if the player has no 1s, 2s, 3s, or 4s in their score pile.
                 $age_counts = self::countCardsInLocationKeyedByAge($executing_player_id, 'score');
                 return $age_counts[1] == 0 && $age_counts[2] == 0 && $age_counts[3] == 0 && $age_counts[4] == 0;
+
+            case 49: // Banking
+                // This demand has no effect unless the player has a top non-green card with a factory.
+                foreach ([0, 1, 3, 4] as $color) {
+                    $top_card = self::getTopCardOnBoard($executing_player_id, $color);
+                    if (self::hasRessource($top_card, 5 /* factory */)) {
+                        return false;
+                    }
+                }
+                return true;
 
             case 54: // Societies
                 if ($this->innovationGameState->usingFirstEditionRules()) {
