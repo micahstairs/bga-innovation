@@ -6914,6 +6914,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::updateCurrentNestedCardState('post_execution_index', 'post_execution_index + 1');
     }
 
+    function echoEffectWasExecuted() {
+        $nested_card_state = self::getCurrentNestedCardState();
+        // Every card that says "execute the effects" also says "as if they were on this card". However, if the card says
+        // "execute all of the non-demand dogma effects" then the echo effects will be skipped.
+        return $nested_card_state['nesting_index']  == 0 || $nested_card_state['executing_as_if_on_card_id'] != $nested_card_state['card_id'];
+    }
+
     function getNestedCardState($nesting_index) {
         return self::getObjectFromDB(
             self::format("
@@ -13516,7 +13523,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "359N1":
                 // Only execute the non-demand if the echo effect was executed
-                if (self::getIndexedAuxiliaryValue($player_id) >= 0) {
+                if (self::echoEffectWasExecuted()) {
                     $step_max = 1;
                 }
                 break;
@@ -14130,7 +14137,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw a 7."
                 self::executeDraw($player_id, 7);
                 //  "If you melded a blue card due to Stethoscope's echo effect, draw an 8."
-                if (self::getIndexedAuxiliaryValue($player_id) == 1) {
+                if (self::echoEffectWasExecuted() && self::getIndexedAuxiliaryValue($player_id) == 1) {
                     self::executeDraw($player_id, 8);
                 }
                 break;
@@ -14258,7 +14265,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "391N1":
                 // "Score the top two non-bottom cards of the color of the last card you tucked due to Dentures."
-                $color = self::getIndexedAuxiliaryValue($player_id); // NOTE: The color is -1 if the Echo effect was not executed
+                if (self::echoEffectWasExecuted()) {
+                    $color = self::getIndexedAuxiliaryValue($player_id);
+                } else {
+                    $color = -1;
+                }
                 $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 
                 $continue = false;
@@ -14862,13 +14873,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "423N1":
                 // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
-                $melded_card_id = self::getIndexedAuxiliaryValue($player_id);
-                if ($melded_card_id != null) { // This check is required since the echo effect is not always executed during nested execution
-                    // If two cards were melded as part of the Endorse action, then let the player choose which one to execute
-                    if ($melded_card_id >= 1000) {
-                        $step_max = 1;
-                    } else {
-                        self::executeNonDemandEffects(self::getCardInfo($melded_card_id));
+                if (self::echoEffectWasExecuted()) {
+                    $melded_card_id = self::getIndexedAuxiliaryValue($player_id);
+                    if ($melded_card_id != null) { // This check is required since the echo effect is not always executed during nested execution
+                        // If two cards were melded as part of the Endorse action, then let the player choose which one to execute
+                        if ($melded_card_id >= 1000) {
+                            $step_max = 1;
+                        } else {
+                            self::executeNonDemandEffects(self::getCardInfo($melded_card_id));
+                        }
                     }
                 }
                 break;
