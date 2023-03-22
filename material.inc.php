@@ -556,7 +556,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_1_first_and_third' => clienttranslate('Execute each of the non-demand dogma effects of any other top card on your board. Do not share them.'),
     'non_demand_effect_1_fourth' => clienttranslate('Self-execute any other top card on your board.'),
     'non_demand_effect_2_first_and_third' => clienttranslate('If you have more achievements than each other player, you win.'),
-    'non_demand_effect_2_fourth' => clienttranslate('If you have at least twice as many achievements thasan each opponent, you win.'),
+    'non_demand_effect_2_fourth' => clienttranslate('If you have at least twice as many achievements as each opponent, you win.'),
 ),
 
 101 => array('name' => clienttranslate('Globalization'),
