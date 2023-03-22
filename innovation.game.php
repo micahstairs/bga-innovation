@@ -11044,19 +11044,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 37, age 4: Colonialism
             case "37N1":
-                $tucked_green = false;
                 do {
-                    $card = self::executeDrawAndTuck($player_id, 3); // "Draw and tuck a 3"
-                    if ($card['color'] == 2) {
-                        $tucked_green = true;
+                    // "Draw and tuck a 3"
+                    $card = self::executeDrawAndTuck($player_id, 3);
+                    // "If it is green, junk all cards in the 5 deck"
+                    if ($card['color'] == 2 && $this->innovationGameState->usingFourthEditionRules()) {
+                        self::junkBaseDeck(5);
                     }
-                } while (self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this dogma effect"
-                
-                // "If you tucked a green card due to Colonialism, junk all cards in the 5 deck."
-                // TODO(4E): There might be an endorse bug here.
-                if ($this->innovationGameState->usingFourthEditionRules() && $tucked_green) {
-                    self::junkBaseDeck(5);
-                }
+                } while (self::hasRessource($card, 1 /* crown */)); // "If it has a crown, repeat this effect"
                 break;
             
             // id 38, age 4: Gunpowder
@@ -11242,18 +11237,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::getBottomCardOnBoard($player_id, 3 /* yellow */);
                 if ($card !== null) {
                     self::scoreCard($card, $player_id);
-                    // "If you scored Steam Engine due to Steam Engine"
+                    // "If it is Steam Engine, junk all cards in the 6 deck."
                     if ($card['id'] == 52 && $this->innovationGameState->usingFourthEditionRules()) {
-                        self::setIndexedAuxiliaryValue($player_id, 1);
+                        self::junkBaseDeck(6);
                     }
-                }
-                break;
-
-            case "52N2":
-                // "If you scored Steam Engine due to Steam Engine, junk all cards in the 6 deck."
-                // NOTE: This only occurs in the 4th edition and beyond
-                if (self::getIndexedAuxiliaryValue($player_id) == 1) {
-                    self::junkBaseDeck(6);
                 }
                 break;
                 
@@ -15979,13 +15966,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "18N1B":
-            // "You may transfer your top red card to another player's board. If you do, transfer that player's top green card to your board.
+            // "You may transfer your top red card to another player's board. If you do, meld that player's top green card."
             $options = array(
                 'player_id' => $player_id,
                 'can_pass' => true,
                 
                 'choose_player' => true,
-                'players' => self::getOtherActivePlayers($player_id)
+                'players' => self::getOtherActivePlayers($player_id),
+
+                // 4th edition says "meld that player's top green card" but earlier editions say "transfer that player's top green card to your board"
+                'meld_keyword' => $this->innovationGameState->usingFourthEditionRules(),
             );
             break;
             
@@ -17684,7 +17674,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
                 
-                'with_icon' => 2 /* leaf */
+                'with_icon' => 2, /* leaf */
+
+                'score_keyword' => $this->innovationGameState->usingFourthEditionRules(),
             );
             break;
         
