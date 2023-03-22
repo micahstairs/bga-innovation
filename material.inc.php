@@ -305,7 +305,7 @@ $this->textual_card_infos = array(
 ),
 
 59 => array('name' => clienttranslate('Classification'),
-    'non_demand_effect_1' => clienttranslate('Reveal the color of a card in your hand. Take into your hand all cards of that color from all other player\'s hands. Then meld all cards of that color from your hand.'),
+    'non_demand_effect_1' => clienttranslate('Reveal the color of a card in your hand. Take into your hand all cards of that color from all opponent\'s hands. Then meld all cards of that color from your hand.'),
 ),
 
 60 => array('name' => clienttranslate('Metric system'),
