@@ -9245,8 +9245,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 91, age 9: Ecology
             case "91N2A":
-                $message_args_for_player['age_10'] = self::getAgeSquare(10);
-                $message_args_for_others['age_10'] = self::getAgeSquare(10);
+                $message_args_for_player['age_10'] = self::getAgeSquareWithType(10, 0);
+                $message_args_for_others['age_10'] = self::getAgeSquareWithType(10, 0);
                 $message_for_player = clienttranslate('Do ${you} want to junk the ${age_10} pile?');
                 $message_for_others = clienttranslate('${player_name} may junk the ${age_10} pile?');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
@@ -9254,8 +9254,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 92, age 9: Suburbia
             case "92N2A":
-                $message_args_for_player['age_9'] = self::getAgeSquare(9);
-                $message_args_for_others['age_9'] = self::getAgeSquare(9);
+                $message_args_for_player['age_9'] = self::getAgeSquareWithType(9, 0);
+                $message_args_for_others['age_9'] = self::getAgeSquareWithType(9, 0);
                 $message_for_player = clienttranslate('Do ${you} want to junk the ${age_9} pile?');
                 $message_for_others = clienttranslate('${player_name} may junk the ${age_9} pile?');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
@@ -11780,7 +11780,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
                     self::notifyAll('removedHandsBoardsAndScores', clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'), array());
 
-                    
+                    // TODO(4E): Create new bulk notification for 4th edition.
                     if ($this->innovationGameState->usingFourthEditionRules()) {
                         // "junk each player's non-achievement cards, and the dogma action is complete!"
                         // The above action already removes the hands, boards, and score piles.
@@ -23636,9 +23636,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 case "82D1B":
                     if ($this->innovationGameState->usingFourthEditionRules()) {
-                        $skyscrapers_card = self::getCardInfo(82);
-                        if (self::getIfTopCardOnBoard(82)) {
-                            // " and transfer Skyscrapers to my hand if it is a top card!"
+                        $skyscrapers_card = self::getIfTopCardOnBoard(82);
+                        if ($skyscrapers_card !== null) {
+                            // "transfer Skyscrapers to my hand if it is a top card!"
                             self::transferCardFromTo($skyscrapers_card, $launcher_id, 'hand');
                         }
                     }
@@ -23728,8 +23728,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 97, age 10: Miniaturization
                 case "97N1A":
+                    // Only proceed if a card was returned
+                    if ($n <= 0) {
+                        break;
+                    }
+
                     $age_last_selected = $this->innovationGameState->get('age_last_selected') == 10;
-                    if ($n > 0 && $age_last_selected == 10) { // "If you returned a 10"
+                    if ($age_last_selected == 10) { // "If you returned a 10"
                         $number_of_cards_in_score = self::countCardsInLocationKeyedByAge($player_id, 'score');
                         $number_of_different_value = 0;
                         for($age=1; $age<=11; $age++) {
@@ -23755,17 +23760,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         for($i=0; $i<$number_of_different_value; $i++) { // "For every different value of card in your score pile"
                             self::executeDraw($player_id, 10); // "Draw a 10"                    
                         }
-                    }
-                    else if ($n > 0 && $age_last_selected != 10) {
-                        if (!$this->innovationGameState->usingFourthEditionRules()) {
-                            self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}'), array('age' => self::getAgeSquare(10)));
-                        } else {
-                            if  ($age_last_selected != 11) {
-                                self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age10} or ${age11}'), array('age10' => self::getAgeSquare(10), 'age11' => self::getAgeSquare(11)));
-                            } else {
+                    } else {
+                        if ($this->innovationGameState->usingFourthEditionRules()) {
+                            if  ($age_last_selected == 11) {
                                 // "If you returned an 11, junk all cards in the 11 deck."
                                 self::junkBaseDeck(11);
+                            } else {
+                                self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age10} or ${age11}.'), array('age10' => self::getAgeSquare(10), 'age11' => self::getAgeSquare(11)));
                             }
+                        } else {
+                            self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
                     }
                     break;
@@ -26615,20 +26619,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 91, age 9: Ecology   
             case "91N2A":
-                if ($choice == 0) {
-                    // Do nothing
-                }
-                else {
+                if ($choice == 1) {
                     self::junkBaseDeck(10);
                 }
                 break;
 
             // id 92, age 9: Suburbia
             case "92N2A":
-                if ($choice == 0) {
-                    // Do nothing
-                }
-                else {
+                if ($choice == 1) {
                     self::junkBaseDeck(9);
                 }
                 break;
