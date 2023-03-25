@@ -12023,10 +12023,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "101N1":
-                if (!$this->innovationGameState->usingFourthEditionRules()) {
-                    self::executeDraw($player_id, 6, 'score'); // "Draw and score a 6"
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    self::executeDrawAndMeld($player_id, 11); // "Draw and meld an 11"
                 } else {
-                    self::executeDrawAndMeld($player_id, 11); // "Draw and meld an 11."
+                    self::executeDraw($player_id, 6, 'score'); // "Draw and score a 6"
                 }
                 
                 $player_ids = self::getAllActivePlayerIds();
