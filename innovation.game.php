@@ -11774,12 +11774,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 86, age 9: Genetics     
             case "86N1":
-                if (!$this->innovationGameState->usingFourthEditionRules()) {
-                    // "Draw and meld a 10"
-                    $card = self::executeDrawAndMeld($player_id, 10);
-                } else {
+                if ($this->innovationGameState->usingFourthEditionRules()) {
                     // "Draw and meld a 11"
                     $card = self::executeDrawAndMeld($player_id, 11);
+                } else {
+                    // "Draw and meld a 10"
+                    $card = self::executeDrawAndMeld($player_id, 10);
                 }
                 $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                 $pile = $board[$card['color']];
