@@ -101,13 +101,13 @@ var Innovation = /** @class */ (function (_super) {
         _this.selected_card = null;
         _this.display_mode = null;
         _this.view_full = null;
-        _this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
-        _this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
-        _this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
-        _this.text_for_expanded_mode = _("Show compact");
-        _this.text_for_compact_mode = _("Show expanded");
-        _this.text_for_view_normal = _("Look at all cards in piles");
-        _this.text_for_view_full = _("Resume normal view");
+        _this.card_browsing_window = null;
+        _this.my_score_verso_window = null;
+        _this.my_forecast_verso_window = null;
+        _this.text_for_expanded_mode = '';
+        _this.text_for_compact_mode = '';
+        _this.text_for_view_normal = '';
+        _this.text_for_view_full = '';
         // Counters used to track progress of the Monument special achievement
         _this.number_of_tucked_cards = 0;
         _this.number_of_scored_cards = 0;
@@ -348,6 +348,13 @@ var Innovation = /** @class */ (function (_super) {
             dojo.connect($('debug_splay_aslant'), 'onclick', this, 'debugSplayAslant');
         }
         //******
+        this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
+        this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
+        this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
+        this.text_for_expanded_mode = _("Show compact");
+        this.text_for_compact_mode = _("Show expanded");
+        this.text_for_view_normal = _("Look at all cards in piles");
+        this.text_for_view_full = _("Resume normal view");
         // GENERAL INFO
         this.cards = gamedatas.cards;
         this.players = gamedatas.players;
