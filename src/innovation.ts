@@ -101,13 +101,13 @@ class Innovation extends GameGui {
     display_mode = null;
     view_full = null;
 
-    card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
-    my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
-    my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
-    text_for_expanded_mode = _("Show compact");
-    text_for_compact_mode = _("Show expanded");
-    text_for_view_normal = _("Look at all cards in piles");
-    text_for_view_full = _("Resume normal view");
+    card_browsing_window: dijit.Dialog = null;
+    my_score_verso_window : dijit.Dialog = null;
+    my_forecast_verso_window : dijit.Dialog = null;
+    text_for_expanded_mode: string = '';
+    text_for_compact_mode: string = '';
+    text_for_view_normal: string = '';
+    text_for_view_full: string = '';
 
     // Counters used to track progress of the Monument special achievement
     number_of_tucked_cards = 0;
@@ -426,6 +426,14 @@ class Innovation extends GameGui {
             dojo.connect($('debug_splay_aslant'), 'onclick', this, 'debugSplayAslant');
         }
         //******
+
+        this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
+        this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
+        this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
+        this.text_for_expanded_mode = _("Show compact");
+        this.text_for_compact_mode = _("Show expanded");
+        this.text_for_view_normal = _("Look at all cards in piles");
+        this.text_for_view_full = _("Resume normal view");
         
         // GENERAL INFO
         this.cards = gamedatas.cards;
