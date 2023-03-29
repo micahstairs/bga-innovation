@@ -10,8 +10,25 @@ declare type eventhandler = (event?: any) => void;
 
 type ElementOrId = Element | string;
 
+declare type innovationGameDatas = {
+	players: {
+		[player_id: number]: {
+			color: string,
+			achievement_count: number,
+		}
+	};
+	current_player_id: number;
+	number_of_achievements_needed_to_win: number;
+	fourth_edition: boolean;
+	artifacts_expansion_enabled: boolean;
+	relics_enabled: boolean;
+	cities_expansion_enabled: boolean;
+	echoes_expansion_enabled: boolean;
+	figures_expansion_enabled: boolean;
+};
+
 declare class GameGui {
-	gamedatas: any;
+	gamedatas: innovationGameDatas;
 	player_id: number;
 	isSpectator: boolean;
 	notifqueue: GameNotifQueue;
