@@ -135,13 +135,6 @@ var Innovation = /** @class */ (function (_super) {
         _this.deactivated_cards_mid_dogma = null;
         _this.deactivated_cards_can_endorse = null;
         _this.erased_pagemaintitle_text = null;
-        // Expansions
-        _this.fourth_edition = false;
-        _this.relics_enabled = false;
-        _this.artifacts_expansion_enabled = false;
-        _this.cities_expansion_enabled = false;
-        _this.echoes_expansion_enabled = false;
-        _this.figures_expansion_enabled = false;
         _this.num_sets_in_play = 1;
         _this._actionTimerLabel = "";
         _this._actionTimerSeconds = 0;
@@ -358,10 +351,9 @@ var Innovation = /** @class */ (function (_super) {
         // GENERAL INFO
         this.cards = gamedatas.cards;
         this.players = gamedatas.players;
-        this.number_of_achievements_needed_to_win = gamedatas.number_of_achievements_needed_to_win;
         // PLAYER PANELS
         for (var player_id in this.players) {
-            dojo.place("<span class='achievements_to_win'>/".concat(this.number_of_achievements_needed_to_win, "<span>"), $('player_score_' + player_id), "after");
+            dojo.place("<span class='achievements_to_win'>/".concat(this.gamedatas.number_of_achievements_needed_to_win, "<span>"), $('player_score_' + player_id), "after");
             dojo.place(this.format_block('jstpl_player_panel', { 'player_id': player_id }), $('player_board_' + player_id));
             for (var icon = 1; icon <= 7; icon++) {
                 var infos = { 'player_id': player_id, 'icon': icon };
@@ -410,22 +402,22 @@ var Innovation = /** @class */ (function (_super) {
         if (gamedatas.active_player !== null) {
             this.givePlayerActionCard(gamedatas.active_player, gamedatas.action_number);
         }
-        this.fourth_edition = gamedatas.fourth_edition;
-        this.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
-        this.relics_enabled = gamedatas.relics_enabled;
-        this.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
-        this.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
-        this.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
-        if (this.artifacts_expansion_enabled) {
+        this.gamedatas.fourth_edition = gamedatas.fourth_edition;
+        this.gamedatas.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
+        this.gamedatas.relics_enabled = gamedatas.relics_enabled;
+        this.gamedatas.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
+        this.gamedatas.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
+        this.gamedatas.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
+        if (this.gamedatas.artifacts_expansion_enabled) {
             this.num_sets_in_play++;
         }
-        if (this.cities_expansion_enabled) {
+        if (this.gamedatas.cities_expansion_enabled) {
             this.num_sets_in_play++;
         }
-        if (this.echoes_expansion_enabled) {
+        if (this.gamedatas.echoes_expansion_enabled) {
             this.num_sets_in_play++;
         }
-        if (this.figures_expansion_enabled) {
+        if (this.gamedatas.figures_expansion_enabled) {
             this.num_sets_in_play++;
         }
         if (this.num_sets_in_play > 2) {
@@ -436,7 +428,7 @@ var Innovation = /** @class */ (function (_super) {
         for (var type = 0; type <= 4; type++) {
             this.zone["deck"][type] = {};
             for (var age = 1; age <= 11; age++) {
-                if (age == 11 && !this.fourth_edition) {
+                if (age == 11 && !this.gamedatas.fourth_edition) {
                     dojo.style("deck_pile_".concat(type, "_11"), 'display', 'none');
                     continue;
                 }
@@ -623,7 +615,7 @@ var Innovation = /** @class */ (function (_super) {
                     }
                 }
             }
-            if (!this.echoes_expansion_enabled) {
+            if (!this.gamedatas.echoes_expansion_enabled) {
                 dojo.byId('forecast_text_' + player_id).style.display = 'none';
                 dojo.byId('forecast_count_container_' + player_id).style.display = 'none';
             }
@@ -655,7 +647,7 @@ var Innovation = /** @class */ (function (_super) {
             }
         }
         // My forecast: create an extra zone to show the versos of the cards at will in a windows
-        if (!this.isSpectator && this.echoes_expansion_enabled) {
+        if (!this.isSpectator && this.gamedatas.echoes_expansion_enabled) {
             this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
             this.zone["my_forecast_verso"] = this.createZone('my_forecast_verso', this.player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["my_forecast_verso"], /*left_to_right=*/ true);
@@ -709,7 +701,7 @@ var Innovation = /** @class */ (function (_super) {
             }
         }
         if (!this.isSpectator) {
-            if (this.echoes_expansion_enabled) {
+            if (this.gamedatas.echoes_expansion_enabled) {
                 dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
                 dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
             }
@@ -888,7 +880,7 @@ var Innovation = /** @class */ (function (_super) {
             dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
         }
         // Fourth edition has 11 decks, so we can't place them into two columns.
-        if (this.num_sets_in_play == 1 && this.fourth_edition) {
+        if (this.num_sets_in_play == 1 && this.gamedatas.fourth_edition) {
             dojo.style('decks', 'display', 'inline-block');
             dojo.style('decks_1', 'justify-content', 'center');
             dojo.style('decks_2', 'justify-content', 'center');
@@ -904,21 +896,21 @@ var Innovation = /** @class */ (function (_super) {
         var any_player_id = Object.keys(this.players)[0];
         var main_area_inner_width = main_area_width - 14;
         var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
-        var buffer = this.echoes_expansion_enabled ? 10 : 0;
+        var buffer = this.gamedatas.echoes_expansion_enabled ? 10 : 0;
         // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
         var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
         this.num_cards_in_row["achievements"] = Math.floor(num_forecast_score_achievements_cards / 3);
         if (this.num_cards_in_row["achievements"] < 1) {
             this.num_cards_in_row["achievements"] = 1;
         }
-        if (this.num_cards_in_row["achievements"] > this.number_of_achievements_needed_to_win) {
-            this.num_cards_in_row["achievements"] = this.number_of_achievements_needed_to_win;
+        if (this.num_cards_in_row["achievements"] > this.gamedatas.number_of_achievements_needed_to_win) {
+            this.num_cards_in_row["achievements"] = this.gamedatas.number_of_achievements_needed_to_win;
         }
         // If we're splitting the achievements across two rows, let's make the rows as even as possible
-        if (this.number_of_achievements_needed_to_win / 2 < this.num_cards_in_row["achievements"] && this.num_cards_in_row["achievements"] < this.number_of_achievements_needed_to_win) {
-            this.num_cards_in_row["achievements"] = Math.ceil(this.number_of_achievements_needed_to_win / 2);
+        if (this.gamedatas.number_of_achievements_needed_to_win / 2 < this.num_cards_in_row["achievements"] && this.num_cards_in_row["achievements"] < this.gamedatas.number_of_achievements_needed_to_win) {
+            this.num_cards_in_row["achievements"] = Math.ceil(this.gamedatas.number_of_achievements_needed_to_win / 2);
         }
-        if (this.echoes_expansion_enabled) {
+        if (this.gamedatas.echoes_expansion_enabled) {
             this.num_cards_in_row["forecast"] = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"]) / 2);
             this.num_cards_in_row.score = this.num_cards_in_row["forecast"];
         }
@@ -995,8 +987,8 @@ var Innovation = /** @class */ (function (_super) {
         console.log(args);
         if (this.initializing) { // Here, do things that have to be done on setup but that cannot be done inside the function
             for (var player_id in this.players) { // Displaying player BGA scores
-                this.scoreCtrl[player_id].setValue(this.players[player_id].player_score); // BGA score = number of claimed achievements
-                var tooltip_help = _("Number of achievements. ${n} needed to win").replace('${n}', this.number_of_achievements_needed_to_win.toString());
+                this.scoreCtrl[player_id].setValue(this.gamedatas.players[player_id].achievement_count); // BGA score = number of claimed achievements
+                var tooltip_help = _("Number of achievements. ${n} needed to win").replace('${n}', this.gamedatas.number_of_achievements_needed_to_win.toString());
                 this.addCustomTooltip('player_score_' + player_id, tooltip_help, "");
                 this.addCustomTooltip('icon_point_' + player_id, tooltip_help, "");
             }
@@ -1038,15 +1030,15 @@ var Innovation = /** @class */ (function (_super) {
                 var result = args.args.result;
                 for (var p = 0; p < result.length; p++) {
                     var player_result = result[p];
-                    var player_id_2 = player_result.player;
+                    var player_id = player_result.player;
                     var player_score = player_result.score;
                     var player_score_aux = player_result.score_aux;
                     // Gold star => BGA score: remove the tooltip which says that it's the number of achievements because it is not the case in end by score or by dogma and set the counter to its appropriate value
-                    this.removeTooltip('player_score_' + player_id_2);
-                    this.scoreCtrl[player_id_2].setValue(player_score);
+                    this.removeTooltip('player_score_' + player_id);
+                    this.scoreCtrl[player_id].setValue(player_score);
                     // Silver star => BGA tie breaker: remove the tooltip and set the counter to its appropriate value
-                    this.removeTooltip('score_count_container_' + player_id_2);
-                    this.counter["score"][player_id_2].setValue(player_score_aux);
+                    this.removeTooltip('score_count_container_' + player_id);
+                    this.counter["score"][player_id].setValue(player_score_aux);
                 }
                 break;
         }
@@ -1103,7 +1095,7 @@ var Innovation = /** @class */ (function (_super) {
                         this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
                     }
                     // Top drawable card on deck (draw action)
-                    var max_age = this.fourth_edition ? 11 : 10;
+                    var max_age = this.gamedatas.fourth_edition ? 11 : 10;
                     if (args.args.age_to_draw <= max_age) {
                         var drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
                         drawable_card.addClass("clickable");
@@ -1309,7 +1301,7 @@ var Innovation = /** @class */ (function (_super) {
                         dojo.addClass(HTML_id, 'bgabutton_red');
                     }
                     // Blue buttons for draw action (or red if taking this action would finish the game)
-                    var max_age = this.fourth_edition ? 11 : 10;
+                    var max_age = this.gamedatas.fourth_edition ? 11 : 10;
                     if (args.age_to_draw <= max_age) {
                         this.addActionButton("take_draw_action", _("Draw a ${age}").replace("${age}", this.square('N', 'age', args.age_to_draw, 'type_' + args.type_to_draw)), "action_clicForDraw");
                     }
@@ -1456,23 +1448,23 @@ var Innovation = /** @class */ (function (_super) {
         this.addCustomTooltip('browse_all_cards_button', '<p>' + _('Browse the full list of cards, including special achievement.') + '</p>', "");
         // Build popup box
         var ids = [106, 105, 108, 107, 109];
-        if (this.cities_expansion_enabled) {
+        if (this.gamedatas.cities_expansion_enabled) {
             ids.push(325, 326, 327, 328, 329);
         }
-        if (this.echoes_expansion_enabled) {
+        if (this.gamedatas.echoes_expansion_enabled) {
             ids.push(439, 436, 435, 437, 438);
         }
         // TODO(FIGURES): Add special achievements.
         var content = "";
         content += "<div id='browse_cards_buttons_row_1'>";
         content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_0'>" + _("Base Set") + "</div>";
-        if (this.artifacts_expansion_enabled) {
+        if (this.gamedatas.artifacts_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_1'>" + _("Artifacts") + "</div>";
         }
-        if (this.cities_expansion_enabled) {
+        if (this.gamedatas.cities_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_2'>" + _("Cities") + "</div>";
         }
-        if (this.echoes_expansion_enabled) {
+        if (this.gamedatas.echoes_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_3'>" + _("Echoes") + "</div>";
         }
         content += "<div class='browse_cards_button bgabutton bgabutton_gray selected' id='browse_special_achievements'>" + _("Special Achievements") + "</div>";
@@ -1480,11 +1472,11 @@ var Innovation = /** @class */ (function (_super) {
         content += "</div>";
         content += "<div id='browse_cards_buttons_row_2'>";
         for (var age = 1; age <= 11; age++) {
-            if (age < 11 || this.fourth_edition) {
+            if (age < 11 || this.gamedatas.fourth_edition) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
             }
         }
-        if (this.relics_enabled) {
+        if (this.gamedatas.relics_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_relics'>" + _("Relics") + "</div>";
         }
         content += "</div>";
@@ -2273,7 +2265,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         var new_score = this.computeTotalScore(this.zone["score"][this.player_id].items, bonus_icons);
         var HTML_action = "<p class='possible_action'>" + dojo.string.substitute(_("Click to splay your ${color} stack ${direction}."), { 'color': _(color_in_clear), 'direction': _(splay_direction_in_clear) }) + "<p>";
-        if (this.cities_expansion_enabled || this.echoes_expansion_enabled) {
+        if (this.gamedatas.cities_expansion_enabled || this.gamedatas.echoes_expansion_enabled) {
             HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), { 'score': new_score }) + "</p>";
         }
         else {
@@ -4262,7 +4254,7 @@ var Innovation = /** @class */ (function (_super) {
             dojo.query('#browse_cards_buttons_row_1 > .browse_cards_button').removeClass('selected');
             dojo.query("#".concat(id)).addClass('selected');
             dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
-            if (this.relics_enabled) {
+            if (this.gamedatas.relics_enabled) {
                 dojo.byId('browse_relics').style.display = (id == 'browse_cards_type_1') ? 'inline-block' : 'none';
             }
             if (dojo.query('#browse_cards_buttons_row_2 > .browse_cards_button.selected').length == 0) {
@@ -4719,7 +4711,7 @@ var Innovation = /** @class */ (function (_super) {
     Innovation.prototype.notif_removedPlayer = function (notif) {
         var player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
-        if (this.echoes_expansion_enabled && !g_archive_mode) {
+        if (this.gamedatas.echoes_expansion_enabled && !g_archive_mode) {
             this.zone["my_forecast_verso"].removeAll();
         }
         // NOTE: The button to look at the player's score pile is broken in archive mode.
@@ -4731,7 +4723,7 @@ var Innovation = /** @class */ (function (_super) {
         this.zone["forecast"][player_id].removeAll();
         this.zone["score"][player_id].removeAll();
         this.zone["achievements"][player_id].removeAll();
-        if (this.artifacts_expansion_enabled) {
+        if (this.gamedatas.artifacts_expansion_enabled) {
             this.zone["display"][player_id].removeAll();
         }
         for (var color = 0; color < 5; color++) {
@@ -4741,7 +4733,7 @@ var Innovation = /** @class */ (function (_super) {
         this.counter["score"][player_id].setValue(0);
         this.zone["hand"][player_id].counter.setValue(0);
         this.counter["max_age_on_board"][player_id].setValue(0);
-        if (this.echoes_expansion_enabled) {
+        if (this.gamedatas.echoes_expansion_enabled) {
             this.zone["forecast"][player_id].counter.setValue(0);
         }
         for (var icon = 1; icon <= 7; icon++) {
@@ -4929,9 +4921,9 @@ var Innovation = /** @class */ (function (_super) {
             return true;
         }
         return this.cards[card_id].age !== null &&
-            (card_id != 215 || this.cities_expansion_enabled) &&
-            (card_id != 218 || this.figures_expansion_enabled) &&
-            (card_id != 219 || this.echoes_expansion_enabled);
+            (card_id != 215 || this.gamedatas.cities_expansion_enabled) &&
+            (card_id != 218 || this.gamedatas.figures_expansion_enabled) &&
+            (card_id != 219 || this.gamedatas.echoes_expansion_enabled);
     };
     // Returns true if the current player is a spectator or if the game is currently in replay mode
     Innovation.prototype.isReadOnly = function () {
