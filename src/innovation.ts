@@ -1233,20 +1233,20 @@ class Innovation extends GameGui {
                 if (!this.isInReplayMode()) {
                     this.my_forecast_verso_window.show();
                 }
-                var max_age_to_promote = parseInt(args.args.max_age_to_promote);
+                let max_age_to_promote = parseInt(args.args.max_age_to_promote);
                 // Make it possible to click or hover on the front of the cards in the forecast
                 this.addTooltipsWithActionsToMyForecast(max_age_to_promote);
-                var cards_in_forecast = this.selectMyCardsInForecast(max_age_to_promote);
+                let cards_in_forecast = this.selectMyCardsInForecast(max_age_to_promote);
                 cards_in_forecast.addClass("clickable");
                 this.on(cards_in_forecast, 'onclick', 'action_clickForPromote');
                 // Make it possible to click the backs of the cards in the forecast
-                var card_backs_in_forecast = this.selectMyCardBacksInForecast(max_age_to_promote);
+                let card_backs_in_forecast = this.selectMyCardBacksInForecast(max_age_to_promote);
                 card_backs_in_forecast.addClass("clickable");
                 this.on(card_backs_in_forecast, 'onclick', 'action_clickCardBackForPromote');
                 break;
             case 'dogmaPromotedPlayerTurn':
-                var card_id = parseInt(args.args.promoted_card_id);
-                var promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
+                let card_id = parseInt(args.args.promoted_card_id);
+                let promoted_card = dojo.query("#board_" + this.player_id + " .item_" + card_id);
                 promoted_card.addClass("clickable");
                 this.on(promoted_card, 'onclick', 'action_clickForDogmaPromoted');
                 break;
@@ -2107,9 +2107,9 @@ class Innovation extends GameGui {
     addTooltipsWithoutActionsTo(nodes) {
         let self = this;
         nodes.forEach(function(node) {
-            var HTML_id = dojo.attr(node, "id");
-            var id = self.getCardIdFromHTMLId(HTML_id);
-            var HTML_help = self.saved_HTML_cards[id];
+            let HTML_id = dojo.attr(node, "id");
+            let id = self.getCardIdFromHTMLId(HTML_id);
+            let HTML_help = self.saved_HTML_cards[id];
             self.addCustomTooltip(HTML_id, HTML_help, "");
         });
     }
@@ -2119,7 +2119,7 @@ class Innovation extends GameGui {
     }
 
     addTooltipsWithoutActionsToMyForecast() {
-        this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast());
+        this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast(11));
     }
 
     addTooltipsWithoutActionsToMyBoard() {
@@ -2133,33 +2133,33 @@ class Innovation extends GameGui {
     addTooltipsWithActionsTo(nodes, action_text_function, extra_param_1?, extra_param_2?, extra_param_3?) {
         let self = this;
         nodes.forEach(function(node) {
-            var HTML_id = dojo.attr(node, "id");
-            var id = self.getCardIdFromHTMLId(HTML_id);
-            var HTML_help = self.saved_HTML_cards[id];
-            var card = self.cards[id];
-            var HTML_action = action_text_function(self, card, extra_param_1, extra_param_2, extra_param_3);
+            let HTML_id = dojo.attr(node, "id");
+            let id = self.getCardIdFromHTMLId(HTML_id);
+            let HTML_help = self.saved_HTML_cards[id];
+            let card = self.cards[id];
+            let HTML_action = action_text_function(self, card, extra_param_1, extra_param_2, extra_param_3);
             self.addCustomTooltip(HTML_id, HTML_help, HTML_action);
         });
     }
 
     addTooltipsWithActionsToMyHand(meld_info?, city_draw_age?, city_draw_type?) {
-        var cards = this.selectMyCardsInHand();
+        let cards = this.selectMyCardsInHand();
         this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, meld_info, city_draw_age, city_draw_type);
         let self = this;
         cards.forEach(function(card) {
-            var HTML_id = dojo.attr(card, "id");
-            var id = self.getCardIdFromHTMLId(HTML_id);
+            let HTML_id = dojo.attr(card, "id");
+            let id = self.getCardIdFromHTMLId(HTML_id);
             dojo.attr(HTML_id, 'card_id', id);
         });
     }
 
-    addTooltipsWithActionsToMyForecast(max_age_to_promote?) {
-        var cards = this.selectMyCardsInForecast(max_age_to_promote);
+    addTooltipsWithActionsToMyForecast(max_age_to_promote: number) {
+        let cards = this.selectMyCardsInForecast(max_age_to_promote);
         this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld);
         let self = this;
         cards.forEach(function(card) {
-            var HTML_id = dojo.attr(card, "id");
-            var id = self.getCardIdFromHTMLId(HTML_id);
+            let HTML_id = dojo.attr(card, "id");
+            let id = self.getCardIdFromHTMLId(HTML_id);
             dojo.attr(HTML_id, 'card_id', id);
         });
     }
@@ -2168,8 +2168,8 @@ class Innovation extends GameGui {
         this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info, 'board');
         let self = this;
         cards.forEach(function(card) {
-            var HTML_id = dojo.attr(card, "id");
-            var id = self.getCardIdFromHTMLId(HTML_id);
+            let HTML_id = dojo.attr(card, "id");
+            let id = self.getCardIdFromHTMLId(HTML_id);
             if (dogma_effect_info[id].max_age_to_tuck_for_endorse != undefined) {
                 dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse', dogma_effect_info[id].max_age_to_tuck_for_endorse);
             }
@@ -2183,12 +2183,12 @@ class Innovation extends GameGui {
     }
 
     addTooltipWithMeldActionToMyArtifactOnDisplay(meld_info, city_draw_age, city_draw_type) {
-        var cards = this.selectArtifactOnDisplay();
+        let cards = this.selectArtifactOnDisplay();
         this.addTooltipsWithActionsTo(cards, this.createActionTextForMeld, meld_info, city_draw_age, city_draw_type);
         let self = this;
         cards.forEach(function(card) {
-            var HTML_id = dojo.attr(card, "id");
-            var id = self.getCardIdFromHTMLId(HTML_id);
+            let HTML_id = dojo.attr(card, "id");
+            let id = self.getCardIdFromHTMLId(HTML_id);
             dojo.attr(HTML_id, 'card_id', id);
         });
     }
@@ -2745,22 +2745,16 @@ class Innovation extends GameGui {
         return dojo.query("#hand_" + this.player_id + " > .card");
     }
 
-    selectMyCardsInForecast(max_age_to_promote = null) {
-        if (max_age_to_promote == null) {
-            return dojo.query("#my_forecast_verso > .M");
-        }
-        var queries: string[] = [];
-        for (var age = 1; age <= max_age_to_promote; age++) {
+    selectMyCardsInForecast(max_age_to_promote: number) {
+        let queries: string[] = [];
+        for (let age = 1; age <= max_age_to_promote; age++) {
             queries.push("#my_forecast_verso > .age_" + age);
         }
         return dojo.query(queries.join(","));
     }
 
-    selectMyCardBacksInForecast(max_age_to_promote: number) {
-        if (max_age_to_promote == null) {
-            return dojo.query(`#forecast_${this.player_id} > .S`);
-        }
-        let queries = [];
+    selectMyCardBacksInForecast(max_age_to_promote: number = 11) {
+        let queries: string[] = [];
         for (let age = 1; age <= max_age_to_promote; age++) {
             queries.push(`#forecast_${this.player_id} > .age_${age}`);
         }
@@ -2772,7 +2766,7 @@ class Innovation extends GameGui {
     }
 
     selectArtifactOnDisplayIfEligibleForDogma() {
-        var cards = dojo.query("#display_" + this.player_id + " > .card");
+        let cards = dojo.query("#display_" + this.player_id + " > .card");
         // Battleship Yamato does not have any icons on it so it cannot be executed
         if (cards.length > 0 && this.getCardIdFromHTMLId(cards[0].id) == 188) {
             cards.pop();
@@ -2785,71 +2779,71 @@ class Innovation extends GameGui {
     }
     
     selectCardsOnMyBoardOfColors(colors) {
-        var queries = []
-        for(var i=0; i<colors.length; i++) {
-            var color = colors[i];
+        let queries: string[] = []
+        for(let i=0; i<colors.length; i++) {
+            let color = colors[i];
             queries.push("#board_" + this.player_id + "_" + color +  " .card")
         }
         return dojo.query(queries.join(","));
     }
     
-    selectTopCardsEligibleForDogma(player_ids) {
-        var selectable_list = [];
+    selectTopCardsEligibleForDogma(player_ids): DojoNodeList {
+        let list: DojoNodeList = new dojo.NodeList();
         for (let i = 0; i < player_ids.length; i++) {
-            var player_board = this.zone["board"][player_ids[i]];
-            for (var color = 0; color < 5; color++) {
-                var pile = player_board[color].items;
+            let player_board = this.zone["board"][player_ids[i]];
+            for (let color = 0; color < 5; color++) {
+                let pile = player_board[color].items;
                 if (pile.length == 0) {
                     continue;
                 }
-                var top_card = pile[pile.length - 1];
+                let top_card = pile[pile.length - 1];
                 // Battleship Yamato does not have any icons on it so it cannot be executed
-                var card_id = this.getCardIdFromHTMLId(top_card.id);
+                let card_id = this.getCardIdFromHTMLId(top_card.id);
                 if (card_id != 188) {
-                    selectable_list.push("#" + top_card.id);
+                    list.push(dojo.byId(top_card.id));
                 }
             }
         }
-        return dojo.query(selectable_list.join(","));
+        return list;
     }
 
     selectMyTopCardsEligibleForEndorsedDogma(dogma_effect_info) {
-        var player_board = this.zone["board"][this.player_id];
-        var selectable_list = [];
-        for (var color = 0; color < 5; color++) {
-            var pile = player_board[color].items;
+        let player_board = this.zone["board"][this.player_id];
+        let list: DojoNodeList = new dojo.NodeList();
+        for (let color = 0; color < 5; color++) {
+            let pile = player_board[color].items;
             if (pile.length == 0) {
                 continue;
             }
-            var top_card = pile[pile.length - 1];
-            var card_id = this.getCardIdFromHTMLId(top_card.id);
+            let top_card = pile[pile.length - 1];
+            let card_id = this.getCardIdFromHTMLId(top_card.id);
             if (dogma_effect_info[card_id].max_age_to_tuck_for_endorse != undefined) {
-                selectable_list.push("#" + top_card.id);
+                list.push(dojo.byId(top_card.id));
             }
         }
-        return dojo.query(selectable_list.join(","));
+        return list;
     }
 
-    selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse) {
-        var queries = [];
-        for (var age = 1; age <= max_age_to_tuck_for_endorse; age++) {
+    selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse: number) {
+        let queries: string[] = [];
+        for (let age = 1; age <= max_age_to_tuck_for_endorse; age++) {
             queries.push(`#hand_${this.player_id} > .age_${age}`);
         }
         return dojo.query(queries.join(","));
     }
     
     selectClaimableAchievements(claimable_ages) {
-        let identifiers = [];
+        let identifiers: string[] = [];
         for (let i=0; i<claimable_ages.length; i++) {
-            var age = claimable_ages[i];
+            let age = claimable_ages[i];
             identifiers.push("#achievements > .age_" + age);
         }
         return dojo.query(identifiers.join(","));
     }
     
     selectDrawableCard(age_to_draw, type_to_draw) {
-        var deck_to_draw_in = this.zone["deck"][type_to_draw][age_to_draw].items;
-        var top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
+        let deck_to_draw_in = this.zone["deck"][type_to_draw][age_to_draw].items;
+        let top_card = deck_to_draw_in[deck_to_draw_in.length - 1];
         return dojo.query("#" + top_card.id);
     }
     
@@ -2857,7 +2851,7 @@ class Innovation extends GameGui {
         if (cards.length == 0) {
             return null;
         }
-        let identifiers = [];
+        let identifiers: string[] = [];
         for (let i=0; i<cards.length; i++) {
             let card = cards[i];
             identifiers.push("#" + this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, "M card"));
@@ -2869,11 +2863,11 @@ class Innovation extends GameGui {
         if (recto_positional_infos_array.length == 0) {
             return null;
         }
-        var identifiers = [];
+        let identifiers: string[] = [];
         for (let i=0; i<recto_positional_infos_array.length; i++) {
-            var card = recto_positional_infos_array[i];
-            var zone = this.getZone(card['location'], card.owner, card.type, card.age);
-            var id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic)
+            let card = recto_positional_infos_array[i];
+            let zone = this.getZone(card['location'], card.owner, card.type, card.age);
+            let id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic)
             identifiers.push("#" + this.getCardHTMLId(id, card.age, card.type, card.is_relic, zone.HTML_class));
         }
         return dojo.query(identifiers.join(","));

@@ -1874,7 +1874,7 @@ var Innovation = /** @class */ (function (_super) {
         this.addTooltipsWithoutActionsTo(this.selectMyCardsInHand());
     };
     Innovation.prototype.addTooltipsWithoutActionsToMyForecast = function () {
-        this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast());
+        this.addTooltipsWithoutActionsTo(this.selectMyCardsInForecast(11));
     };
     Innovation.prototype.addTooltipsWithoutActionsToMyBoard = function () {
         this.addTooltipsWithoutActionsTo(this.selectAllCardsOnMyBoard());
@@ -2450,10 +2450,6 @@ var Innovation = /** @class */ (function (_super) {
         return dojo.query("#hand_" + this.player_id + " > .card");
     };
     Innovation.prototype.selectMyCardsInForecast = function (max_age_to_promote) {
-        if (max_age_to_promote === void 0) { max_age_to_promote = null; }
-        if (max_age_to_promote == null) {
-            return dojo.query("#my_forecast_verso > .M");
-        }
         var queries = [];
         for (var age = 1; age <= max_age_to_promote; age++) {
             queries.push("#my_forecast_verso > .age_" + age);
@@ -2461,9 +2457,7 @@ var Innovation = /** @class */ (function (_super) {
         return dojo.query(queries.join(","));
     };
     Innovation.prototype.selectMyCardBacksInForecast = function (max_age_to_promote) {
-        if (max_age_to_promote == null) {
-            return dojo.query("#forecast_".concat(this.player_id, " > .S"));
-        }
+        if (max_age_to_promote === void 0) { max_age_to_promote = 11; }
         var queries = [];
         for (var age = 1; age <= max_age_to_promote; age++) {
             queries.push("#forecast_".concat(this.player_id, " > .age_").concat(age));
@@ -2493,7 +2487,7 @@ var Innovation = /** @class */ (function (_super) {
         return dojo.query(queries.join(","));
     };
     Innovation.prototype.selectTopCardsEligibleForDogma = function (player_ids) {
-        var selectable_list = [];
+        var list = new dojo.NodeList();
         for (var i = 0; i < player_ids.length; i++) {
             var player_board = this.zone["board"][player_ids[i]];
             for (var color = 0; color < 5; color++) {
@@ -2505,15 +2499,15 @@ var Innovation = /** @class */ (function (_super) {
                 // Battleship Yamato does not have any icons on it so it cannot be executed
                 var card_id = this.getCardIdFromHTMLId(top_card.id);
                 if (card_id != 188) {
-                    selectable_list.push("#" + top_card.id);
+                    list.push(dojo.byId(top_card.id));
                 }
             }
         }
-        return dojo.query(selectable_list.join(","));
+        return list;
     };
     Innovation.prototype.selectMyTopCardsEligibleForEndorsedDogma = function (dogma_effect_info) {
         var player_board = this.zone["board"][this.player_id];
-        var selectable_list = [];
+        var list = new dojo.NodeList();
         for (var color = 0; color < 5; color++) {
             var pile = player_board[color].items;
             if (pile.length == 0) {
@@ -2522,10 +2516,10 @@ var Innovation = /** @class */ (function (_super) {
             var top_card = pile[pile.length - 1];
             var card_id = this.getCardIdFromHTMLId(top_card.id);
             if (dogma_effect_info[card_id].max_age_to_tuck_for_endorse != undefined) {
-                selectable_list.push("#" + top_card.id);
+                list.push(dojo.byId(top_card.id));
             }
         }
-        return dojo.query(selectable_list.join(","));
+        return list;
     };
     Innovation.prototype.selectMyCardsEligibleToTuckForEndorsedDogma = function (max_age_to_tuck_for_endorse) {
         var queries = [];
@@ -4936,7 +4930,8 @@ var Innovation = /** @class */ (function (_super) {
     return Innovation;
 }(GameGui));
 define([
-    "dojo", "dojo/_base/declare",
+    "dojo",
+    "dojo/_base/declare",
     "ebg/core/gamegui",
     "ebg/counter",
     "ebg/zone"
