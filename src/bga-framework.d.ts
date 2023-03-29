@@ -145,18 +145,28 @@ interface Dojo {
 	byId: Function;
 	destroy: Function;
 	window: Dojo.Window;
+	NodeList: Dojo.Constructor<DojoNodeList>;
 }
 
 declare module Dojo {
 	interface Window {
 		getBox: any;
 	}
+	interface Constructor<T> {
+		new(): T;
+	}
+	var NodeList: Constructor<NodeList>;
+}
+
+declare class DojoNodeList {
+	push(element: any): void;
+	addClass(name: string): void;
 }
 
 declare module dijit {
 	interface Constructor<T> {
-		new (props?: any, id?: string): T;
-		new (props?: any, element?: HTMLElement): T;
+		new(props?: any, id?: string): T;
+		new(props?: any, element?: HTMLElement): T;
 	}
 
 	interface Dialog {
