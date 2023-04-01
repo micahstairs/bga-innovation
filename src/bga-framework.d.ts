@@ -10,12 +10,24 @@ declare type eventhandler = (event?: any) => void;
 
 type ElementOrId = Element | string;
 
-declare type innovationGameDatas = {
+declare type Player = {
+	// Populated by BGA automatically
+    name: string;
+	beginner: boolean;
+    color: string;
+    color_back: any | null;
+    eliminated: number;
+    id: string;
+    zombie: number;
+
+	// Populated by Innovation::getAllDatas
+	achievement_count: number;
+	player_team: number;
+}
+
+declare type InnovationGameDatas = {
 	players: {
-		[player_id: number]: {
-			color: string,
-			achievement_count: number,
-		}
+		[player_id: number]: Player
 	};
 	current_player_id: number;
 	number_of_achievements_needed_to_win: number;
@@ -28,7 +40,7 @@ declare type innovationGameDatas = {
 };
 
 declare class GameGui {
-	gamedatas: innovationGameDatas;
+	gamedatas: InnovationGameDatas;
 	player_id: number;
 	isSpectator: boolean;
 	notifqueue: GameNotifQueue;
@@ -64,6 +76,10 @@ declare class GameGui {
 	removeTooltip(nodeId: string): void;
 }
 
+declare interface Zone {
+	container_div: string;
+}
+
 declare class Counter {
 	speed: number;
 
@@ -83,18 +99,6 @@ interface Notif<T> {
     time: number;
     type: string;
     uid: string;
-}
-
-interface Player {
-    beginner: boolean;
-    color: string;
-    color_back: any | null;
-    eliminated: number;
-    id: string;
-    is_ai: string;
-    name: string;
-    score: string;
-    zombie: number;
 }
 
 declare class GameNotifQueue {

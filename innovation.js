@@ -99,8 +99,8 @@ var Innovation = /** @class */ (function (_super) {
         };
         _this.incremental_id = 0;
         _this.selected_card = null;
-        _this.display_mode = null;
-        _this.view_full = null;
+        _this.display_mode = true;
+        _this.view_full = false;
         _this.card_browsing_window = null;
         _this.my_score_verso_window = null;
         _this.my_forecast_verso_window = null;
@@ -113,10 +113,10 @@ var Innovation = /** @class */ (function (_super) {
         _this.number_of_scored_cards = 0;
         _this.arrows_for_expanded_mode = "&gt;&gt; &lt;&lt;"; // >> <<
         _this.arrows_for_compact_mode = "&lt;&lt; &gt;&gt;"; // << >>
-        _this.number_of_splayed_piles = null;
-        _this.players = null;
+        _this.number_of_splayed_piles = 0;
+        _this.players = [];
         _this.saved_HTML_cards = {};
-        _this.initializing = null;
+        _this.initializing = true;
         // Special flags used for Publication
         _this.publication_permuted_zone = null;
         _this.publication_permutations_done = null;
@@ -134,9 +134,9 @@ var Innovation = /** @class */ (function (_super) {
         _this.deactivated_cards = null;
         _this.deactivated_cards_mid_dogma = null;
         _this.deactivated_cards_can_endorse = null;
-        _this.erased_pagemaintitle_text = null;
+        _this.erased_pagemaintitle_text = '';
         _this.num_sets_in_play = 1;
-        _this._actionTimerLabel = "";
+        _this._actionTimerLabel = '';
         _this._actionTimerSeconds = 0;
         _this._callback = null;
         _this._callbackParam = null;
@@ -710,13 +710,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         // PLAYER BOARD
         // Display mode
-        if (this.isSpectator) { // The wishes for splaying can't be saved if the spectator refreshes
-            // We set manually a default value
-            // The spectator can later change this using the buttons, the same way the players do
-            this.display_mode = true; // Show expanded by default
-            this.view_full = false; // Don't show view full by default
-        }
-        else {
+        if (!this.isSpectator) {
             this.display_mode = gamedatas.display_mode;
             this.view_full = gamedatas.view_full;
         }
@@ -798,7 +792,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         // Hide player's area if they have been eliminated from the game (e.g. Exxon Valdez)
         for (var player_id in this.players) {
-            if (this.players[player_id].player_eliminated == 1) {
+            if (this.players[player_id].eliminated == 1) {
                 dojo.byId('player_' + player_id).style.display = 'none';
             }
         }
@@ -820,7 +814,6 @@ var Innovation = /** @class */ (function (_super) {
         };
         // Setup game notifications to handle (see "setupNotifications" method below)
         this.setupNotifications();
-        this.initializing = true;
         console.log("Ending game setup");
     };
     /* [Undocumented] Override BGA framework functions to call onLoadingComplete when loading is done */
@@ -1644,18 +1637,24 @@ var Innovation = /** @class */ (function (_super) {
     */
     Innovation.prototype.square = function (size, type, key, context) {
         if (context === void 0) { context = null; }
-        var age = null, agetype = null;
+        var age = null;
+        var agetype = null;
         if (type === 'age') {
-            age = key;
+            age = String(key);
             agetype = type;
         }
-        var ret = "<span class='square";
-        ret += " " + size;
-        ret += (agetype !== null ? " " + agetype : "");
-        ret += " " + type + "_" + key;
-        ret += (context !== null ? " " + context : "");
+        var ret = "<span class='square ".concat(size);
+        if (agetype !== null) {
+            ret += " " + agetype;
+        }
+        ret += " ".concat(type, "_").concat(key);
+        if (context !== null) {
+            ret += " " + context;
+        }
         ret += "'>";
-        ret += (age !== null ? " " + age : "");
+        if (age !== null) {
+            ret += " " + age;
+        }
         ret += "</span>";
         return ret;
     };
@@ -3169,7 +3168,7 @@ var Innovation = /** @class */ (function (_super) {
         return indices;
     };
     Innovation.prototype.refreshSplay = function (zone, splay_direction, force_full_visible) {
-        if (force_full_visible === void 0) { force_full_visible = null; }
+        if (force_full_visible === void 0) { force_full_visible = false; }
         var self = this;
         var full_visible = force_full_visible || this.view_full;
         zone.splay_direction = splay_direction;
@@ -3942,7 +3941,6 @@ var Innovation = /** @class */ (function (_super) {
                 this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
             }
             this.on(dojo.query('#change_display_mode_button'), 'onclick', 'toggle_displayMode');
-            //dojo.style('change_display_mode_button', {'display': 'initial'}); // Show back the button used for changing the display
             this.publication_permuted_zone = null;
             this.publication_permutations_done = null;
             this.publication_original_items = null;
@@ -4026,7 +4024,7 @@ var Innovation = /** @class */ (function (_super) {
         // Search position in zone
         var zone = this.zone["board"][this.player_id][color];
         var items = zone.items;
-        var position;
+        var position = -1;
         for (var p = 0; p < items.length; p++) {
             if (zone.items[p].id == HTML_id) {
                 position = p;
@@ -4077,9 +4075,11 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.publicationClicForUndoingSwaps = function () {
         // Undo publicationSwaps
-        for (var i = this.publication_permutations_done.length - 1; i >= 0; i--) {
-            var permutation = this.publication_permutations_done[i];
-            this.publicationSwap(this.player_id, this.publication_permuted_zone, permutation.position, permutation.delta); // Re-appliying a permutation cancels it
+        if (this.publication_permutations_done != null) {
+            for (var i = this.publication_permutations_done.length - 1; i >= 0; i--) {
+                var permutation = this.publication_permutations_done[i];
+                this.publicationSwap(this.player_id, this.publication_permuted_zone, permutation.position, permutation.delta); // Re-appliying a permutation cancels it
+            }
         }
         // Reset interface
         this.publicationResetInterface();
