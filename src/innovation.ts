@@ -2968,6 +2968,8 @@ class Innovation extends GameGui {
             }
             p++;
         }
+
+        return undefined;
     }
     
     getCardPositionFromId(zone, id, age, type, is_relic) {
@@ -2996,6 +2998,8 @@ class Innovation extends GameGui {
             }
             p++;
         }
+
+        return undefined;
     }
     
     getCardHTMLIdFromEvent(event) {
