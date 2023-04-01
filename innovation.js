@@ -1,3 +1,4 @@
+"use strict";
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -2647,6 +2648,7 @@ var Innovation = /** @class */ (function (_super) {
             }
             p++;
         }
+        return undefined;
     };
     Innovation.prototype.getCardPositionFromId = function (zone, id, age, type, is_relic) {
         if (!zone.grouped_by_age_type_and_is_relic) {
@@ -2674,6 +2676,7 @@ var Innovation = /** @class */ (function (_super) {
             }
             p++;
         }
+        return undefined;
     };
     Innovation.prototype.getCardHTMLIdFromEvent = function (event) {
         return dojo.getAttr(event.currentTarget, 'id');
