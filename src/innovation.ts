@@ -96,14 +96,14 @@ class Innovation extends GameGui {
     
     incremental_id = 0;
     
-    selected_card = null;
+    selected_card: Card | null = null;
     
     display_mode = true;
     view_full = false;
 
-    card_browsing_window: dijit.Dialog = null;
-    my_score_verso_window : dijit.Dialog = null;
-    my_forecast_verso_window : dijit.Dialog = null;
+    card_browsing_window: dijit.Dialog | null = null;
+    my_score_verso_window: dijit.Dialog | null = null;
+    my_forecast_verso_window: dijit.Dialog | null = null;
     text_for_expanded_mode: string = '';
     text_for_compact_mode: string = '';
     text_for_view_normal: string = '';
@@ -132,28 +132,28 @@ class Innovation extends GameGui {
     color_pile = null;
     
     // Special flags to indicate that multiple colors must be chosen
-    choose_two_colors = null;
-    choose_three_colors = null;
+    choose_two_colors = false;
+    choose_three_colors = false;
     first_chosen_color = null;
     second_chosen_color = null;
 
     // Special flag used by Mona Lisa
-    choose_integer = null;
+    choose_integer = false;
     
     // System to remember what node where last offed and what was their handlers to restore if needed
-    deactivated_cards = null;
-    deactivated_cards_mid_dogma = null;
-    deactivated_cards_can_endorse = null;
+    deactivated_cards: DojoNodeList = new dojo.NodeList();
+    deactivated_cards_mid_dogma: DojoNodeList = new dojo.NodeList();
+    deactivated_cards_can_endorse: DojoNodeList = new dojo.NodeList();
     erased_pagemaintitle_text = '';
 
     num_sets_in_play = 1;
 
     _actionTimerLabel = '';
     _actionTimerSeconds = 0;
-    _callback = null;
+    _callback = (val) => {};
     _callbackParam = null;
-    _actionTimerFunction = null;
-    _actionTimerId = 0;
+    _actionTimerFunction = () => {};
+    _actionTimerId: number | undefined = undefined;
 
     isLoadingComplete = false;
 
@@ -756,7 +756,7 @@ class Innovation extends GameGui {
 
         // My forecast: create an extra zone to show the versos of the cards at will in a windows
         if (!this.isSpectator && this.gamedatas.echoes_expansion_enabled) {
-            this.my_forecast_verso_window.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
+            this.my_forecast_verso_window!.attr("content", "<div id='my_forecast_verso'></div><a id='forecast_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
             this.zone["my_forecast_verso"] = this.createZone('my_forecast_verso', this.player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["my_forecast_verso"], /*left_to_right=*/ true);
             for (let i = 0; i < gamedatas.my_forecast.length; i++) {
@@ -771,7 +771,7 @@ class Innovation extends GameGui {
         
         // My score: create an extra zone to show the versos of the cards at will in a windows
         if (!this.isSpectator) {
-            this.my_score_verso_window.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
+            this.my_score_verso_window!.attr("content", "<div id='my_score_verso'></div><a id='score_close_window' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
             this.zone["my_score_verso"] = this.createZone('my_score_verso', this.player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["my_score_verso"], /*left_to_right=*/ true);
             for (let i = 0; i < gamedatas.my_score.length; i++) {
@@ -1046,11 +1046,11 @@ class Innovation extends GameGui {
             this.num_cards_in_row["forecast"] = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"]) / 2);
             this.num_cards_in_row.score = this.num_cards_in_row["forecast"];
         } else {
-            this.num_cards_in_row["forecast"] = null;
+            this.num_cards_in_row["forecast"] = 0;
             this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"];
         }
 
-        let forecast_container_width = this.num_cards_in_row["forecast"] == null ? 0 : this.num_cards_in_row["forecast"] * this.delta.forecast.x;
+        let forecast_container_width = this.gamedatas.echoes_expansion_enabled ? this.num_cards_in_row["forecast"] * this.delta.forecast.x : 0;
         let achievement_container_width = this.num_cards_in_row["achievements"] * this.delta.achievements.x;
         let score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
         for (let player_id in this.players) {
@@ -1224,7 +1224,7 @@ class Innovation extends GameGui {
                 break;    
             case 'promoteCardPlayerTurn':
                 if (!this.isInReplayMode()) {
-                    this.my_forecast_verso_window.show();
+                    this.my_forecast_verso_window!.show();
                 }
                 let max_age_to_promote = parseInt(args.args.max_age_to_promote);
                 // Make it possible to click or hover on the front of the cards in the forecast
@@ -1305,10 +1305,10 @@ class Innovation extends GameGui {
                         visible_selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
                         if (args.args._private.must_show_score && !this.isInReplayMode()) {
-                            this.my_score_verso_window.show();
+                            this.my_score_verso_window!.show();
                         }
                         if (args.args._private.must_show_forecast && !this.isInReplayMode()) {
-                            this.my_forecast_verso_window.show();
+                            this.my_forecast_verso_window!.show();
                         }
                     }
                     let selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
@@ -1409,7 +1409,7 @@ class Innovation extends GameGui {
             switch (stateName) {
             case 'promoteCardPlayerTurn':
                 if (!this.isInReplayMode()) {
-                    this.my_forecast_verso_window.hide();
+                    this.my_forecast_verso_window!.hide();
                 }
                 this.addTooltipsWithoutActionsToMyForecast();
                 break;
@@ -1421,7 +1421,7 @@ class Innovation extends GameGui {
                 // Reset tooltips for board (in case there was a splaying choice)
                 this.addTooltipsWithoutActionsToMyBoard();
                 if (!this.isInReplayMode()) {
-                    this.my_score_verso_window.hide();
+                    this.my_score_verso_window!.hide();
                 }
                 for(let color=0; color<5; color++) {
                     let zone = this.zone["board"][this.player_id][color];
@@ -1579,7 +1579,7 @@ class Innovation extends GameGui {
     }
 
     stopActionTimer() {
-        if (this._actionTimerId != null) {
+        if (this._actionTimerId != undefined) {
             window.clearInterval(this._actionTimerId);
             delete this._actionTimerId;
         }
@@ -1690,7 +1690,7 @@ class Innovation extends GameGui {
             content += `</div></br>`;
         }
         content += `</div>`;
-        this.card_browsing_window.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
+        this.card_browsing_window!.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
         dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
 
         // Make everything clickable
@@ -2035,7 +2035,7 @@ class Innovation extends GameGui {
         this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
     }
     
-    createAdjustedContent(content, HTML_class, size, font_max, width_margin = 0, height_margin = 0, div_id = null) {
+    createAdjustedContent(content, HTML_class, size, font_max, width_margin = 0, height_margin = 0, div_id: string | null = null) {
         // Problem: impossible to get suitable text size because it is not possible to get the width and height of an element still unattached
         // Solution: first create the title hardly attached to the DOM, then destroy it and set the title in tooltip properly
         // Create temporary title hardly attached on the DOM
@@ -2205,7 +2205,7 @@ class Innovation extends GameGui {
             let card = self.cards[id];
             
             // Search for the name of the color in clear
-            let color_in_clear: string;
+            let color_in_clear = '';
             for (let i=0; i<colors.length; i++) {
                 if (colors[i] = card.color) {
                     color_in_clear = colors_in_clear[i];
@@ -2220,7 +2220,7 @@ class Innovation extends GameGui {
     
     createActionTextForMeld(self, card, meld_info?, city_draw_age?, city_draw_type?) {
         // Calculate new score (score pile + bonus icons)
-        let bonus_icons = [];
+        let bonus_icons: number[] = [];
         for (let i = 0; i < 5; i++) {
             let pile_zone = self.zone["board"][self.player_id][i];
             let splay_direction = pile_zone.splay_direction;
@@ -2239,22 +2239,22 @@ class Innovation extends GameGui {
         let HTML_action = "<p class='possible_action'>" + _("Click to meld this card.") + "<p>";
         // See if melding this card would cover another one
         let pile = self.zone["board"][self.player_id][card.color].items;
-        let top_card = null;
+        let top_card: Card | null = null;
         if (pile.length > 0) {
             let top_card_id = self.getCardIdFromHTMLId(pile[pile.length - 1].id);
             top_card = self.cards[top_card_id];
             if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>",
                     {
-                        'age': self.square('N', 'age', top_card.age, 'type_' + top_card.type),
-                        'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>",
+                        'age': self.square('N', 'age', top_card!.age, 'type_' + top_card!.type),
+                        'card_name': "<span class='card_name'>" + _(top_card!.name) + "</span>",
                         'score' : new_score
                     });
             } else {
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name} and your new ressource counts will be:") + "<p>",
                     {
-                        'age': self.square('N', 'age', top_card.age, 'type_' + top_card.type),
-                        'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>"
+                        'age': self.square('N', 'age', top_card!.age, 'type_' + top_card!.type),
+                        'card_name': "<span class='card_name'>" + _(top_card!.name) + "</span>"
                     });
             }
         } else {
@@ -2446,7 +2446,7 @@ class Innovation extends GameGui {
     }
 
     getOtherPlayersCommaSeparated(player_ids) {
-        let players = [];
+        let players: string[] = [];
         for (let i = 0; i < player_ids.length; i++) {
             if (player_ids[i] != this.player_id) {
                 let player = $('name_' + player_ids[i]).outerHTML.replace("<p", "<span class='name_in_tooltip'").replace("</p", "</span");
@@ -2561,7 +2561,7 @@ class Innovation extends GameGui {
         let bonus_icons: number[] = [];
 
         // Top card
-        let top_card = null;
+        let top_card: Card | null = null;
         if (pile.length > 0) {
             top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
         }
@@ -2640,7 +2640,7 @@ class Innovation extends GameGui {
         let count = 0;
 
         // Top card
-        let top_card = null;
+        let top_card: Card | null = null;
         if (pile.length > 0) {
             top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
         }
@@ -3169,7 +3169,7 @@ class Innovation extends GameGui {
     /*
     * Zone management systemcard
     */
-    createZone(location, owner, type = null, age = null, color = null, grouped_by_age_type_and_is_relic = null, counter_method = null, counter_display_zero = null) {
+    createZone(location: string, owner: string | number, type: number | null = null, age: number | null = null, color: number | null = null, grouped_by_age_type_and_is_relic: boolean | null = null, counter_method: string | null = null, counter_display_zero: boolean | null = null) {
         let owner_string = owner != 0 ? '_' + owner : '';
         let type_string = type !== null ? '_' + type : '';
         let age_string = age !== null ? '_' + age : '';
@@ -4002,7 +4002,7 @@ class Innovation extends GameGui {
         );
     }
     
-    action_clickDogma(event_or_html_id, via_alternate_prompt: string | null = null, card_id_to_return = null) {
+    action_clickDogma(event_or_html_id, via_alternate_prompt: string | null = null, card_id_to_return: number | null = null) {
         if (via_alternate_prompt == null) {
             this.stopActionTimer();
             this.deactivateClickEvents();
@@ -4753,19 +4753,19 @@ class Innovation extends GameGui {
     }
 
     click_display_forecast_window() {
-        this.my_forecast_verso_window.show();
+        this.my_forecast_verso_window!.show();
     }
     
     click_close_forecast_window() {
-        this.my_forecast_verso_window.hide();
+        this.my_forecast_verso_window!.hide();
     }
     
     click_display_score_window() {
-        this.my_score_verso_window.show();
+        this.my_score_verso_window!.show();
     }
     
     click_close_score_window() {
-        this.my_score_verso_window.hide();
+        this.my_score_verso_window!.hide();
     }
     
     toggle_displayMode() {
@@ -4835,11 +4835,11 @@ class Innovation extends GameGui {
     }
 
     click_open_card_browsing_window() {
-        this.card_browsing_window.show();
+        this.card_browsing_window!.show();
     }
 
     click_close_card_browsing_window() {
-        this.card_browsing_window.hide();
+        this.card_browsing_window!.hide();
     }
 
     click_browse_cards(event) {

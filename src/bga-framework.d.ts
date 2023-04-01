@@ -17,7 +17,6 @@ declare type Player = {
     color: string;
     color_back: any | null;
     eliminated: number;
-    id: string;
     zombie: number;
 
 	// Populated by Innovation::getAllDatas
@@ -165,6 +164,7 @@ declare module Dojo {
 declare class DojoNodeList {
 	push(element: any): void;
 	addClass(name: string): void;
+	removeClass(name: string): void;
 }
 
 declare module dijit {

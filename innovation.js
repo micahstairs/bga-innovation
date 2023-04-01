@@ -124,24 +124,24 @@ var Innovation = /** @class */ (function (_super) {
         // Special flag used when a selection has to be made within a stack
         _this.color_pile = null;
         // Special flags to indicate that multiple colors must be chosen
-        _this.choose_two_colors = null;
-        _this.choose_three_colors = null;
+        _this.choose_two_colors = false;
+        _this.choose_three_colors = false;
         _this.first_chosen_color = null;
         _this.second_chosen_color = null;
         // Special flag used by Mona Lisa
-        _this.choose_integer = null;
+        _this.choose_integer = false;
         // System to remember what node where last offed and what was their handlers to restore if needed
-        _this.deactivated_cards = null;
-        _this.deactivated_cards_mid_dogma = null;
-        _this.deactivated_cards_can_endorse = null;
+        _this.deactivated_cards = new dojo.NodeList();
+        _this.deactivated_cards_mid_dogma = new dojo.NodeList();
+        _this.deactivated_cards_can_endorse = new dojo.NodeList();
         _this.erased_pagemaintitle_text = '';
         _this.num_sets_in_play = 1;
         _this._actionTimerLabel = '';
         _this._actionTimerSeconds = 0;
-        _this._callback = null;
+        _this._callback = function (val) { };
         _this._callbackParam = null;
-        _this._actionTimerFunction = null;
-        _this._actionTimerId = 0;
+        _this._actionTimerFunction = function () { };
+        _this._actionTimerId = undefined;
         _this.isLoadingComplete = false;
         console.log('innovation constructor');
         return _this;
@@ -909,10 +909,10 @@ var Innovation = /** @class */ (function (_super) {
             this.num_cards_in_row.score = this.num_cards_in_row["forecast"];
         }
         else {
-            this.num_cards_in_row["forecast"] = null;
+            this.num_cards_in_row["forecast"] = 0;
             this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"];
         }
-        var forecast_container_width = this.num_cards_in_row["forecast"] == null ? 0 : this.num_cards_in_row["forecast"] * this.delta.forecast.x;
+        var forecast_container_width = this.gamedatas.echoes_expansion_enabled ? this.num_cards_in_row["forecast"] * this.delta.forecast.x : 0;
         var achievement_container_width = this.num_cards_in_row["achievements"] * this.delta.achievements.x;
         var score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
         for (var player_id in this.players) {
@@ -1398,7 +1398,7 @@ var Innovation = /** @class */ (function (_super) {
         this._actionTimerId = window.setInterval(this._actionTimerFunction, 1000);
     };
     Innovation.prototype.stopActionTimer = function () {
-        if (this._actionTimerId != null) {
+        if (this._actionTimerId != undefined) {
             window.clearInterval(this._actionTimerId);
             delete this._actionTimerId;
         }
@@ -1951,7 +1951,7 @@ var Innovation = /** @class */ (function (_super) {
             var HTML_help = self.saved_HTML_cards[id];
             var card = self.cards[id];
             // Search for the name of the color in clear
-            var color_in_clear;
+            var color_in_clear = '';
             for (var i = 0; i < colors.length; i++) {
                 if (colors[i] = card.color) {
                     color_in_clear = colors_in_clear[i];
