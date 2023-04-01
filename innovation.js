@@ -3317,10 +3317,11 @@ var Innovation = /** @class */ (function (_super) {
         var cards_in_hand = this.selectMyCardsInHand();
         this.off(cards_in_hand, 'onclick');
         this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
+        var self = this;
         this.ajaxcall("/innovation/innovation/initialMeld.html", {
             lock: true,
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { this.resurrectClickEvents(is_error); });
+        }, this, function (result) { }, function (is_error) { self.resurrectClickEvents(is_error); });
     };
     Innovation.prototype.action_clickForUpdatedInitialMeld = function (event) {
         this.deactivateClickEvents();
@@ -3330,10 +3331,11 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         dojo.addClass(HTML_id, "selected");
+        var self = this;
         this.ajaxcall("/innovation/innovation/updateInitialMeld.html", {
             lock: true,
             card_id: card_id
-        }, this, function (result) { }, function (is_error) { this.resurrectClickEvents(is_error); });
+        }, this, function (result) { }, function (is_error) { self.resurrectClickEvents(is_error); });
     };
     Innovation.prototype.action_clicForSeizeRelicToHand = function () {
         if (!this.checkAction('seizeRelicToHand')) {
@@ -3418,11 +3420,12 @@ var Innovation = /** @class */ (function (_super) {
         }
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var card_id = this.getCardIdFromHTMLId(HTML_id);
+        var self = this;
         this.ajaxcall("/innovation/innovation/promoteCard.html", {
             lock: true,
             card_id: card_id
         }, this, function (result) { }, function (is_error) { if (is_error)
-            this.resurrectClickEvents(true); });
+            self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickCardBackForPromote = function (event) {
         if (!this.checkAction('promoteCard')) {
@@ -3437,6 +3440,7 @@ var Innovation = /** @class */ (function (_super) {
         var location = 'forecast';
         var zone = this.getZone(location, owner, null, age);
         var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+        var self = this;
         this.ajaxcall("/innovation/innovation/promoteCardBack.html", {
             lock: true,
             owner: owner,
@@ -3446,7 +3450,7 @@ var Innovation = /** @class */ (function (_super) {
             is_relic: is_relic,
             position: position
         }, this, function (result) { }, function (is_error) { if (is_error)
-            this.resurrectClickEvents(true); });
+            self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForPassDogmaPromoted = function () {
         if (!this.checkAction('passDogmaPromotedCard')) {
@@ -3553,11 +3557,12 @@ var Innovation = /** @class */ (function (_super) {
         dojo.destroy("meld_cancel_button");
         dojo.destroy("meld_confirm_button");
         var card_id = this.getCardIdFromHTMLId(HTML_id);
+        var self = this;
         this.ajaxcall("/innovation/innovation/meld.html", {
             lock: true,
             card_id: card_id
         }, this, function (result) { }, function (is_error) { if (is_error)
-            this.resurrectClickEvents(true); });
+            self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickDogma = function (event_or_html_id, via_alternate_prompt, card_id_to_return) {
         if (via_alternate_prompt === void 0) { via_alternate_prompt = null; }
@@ -3671,8 +3676,9 @@ var Innovation = /** @class */ (function (_super) {
         if (card_id_to_return != "null") {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
+        var self = this;
         this.ajaxcall("/innovation/innovation/dogma.html", payload, this, function (result) { }, function (is_error) { if (is_error)
-            this.resurrectClickEvents(true); });
+            self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickNonAdjacentDogma = function (event) {
         this.deactivateClickEvents();
@@ -3763,12 +3769,13 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
         var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
+        var self = this;
         this.ajaxcall("/innovation/innovation/endorse.html", {
             lock: true,
             card_to_endorse_id: card_to_endorse_id,
             card_to_tuck_id: card_to_tuck_id
         }, this, function (result) { }, function (is_error) { if (is_error)
-            this.resurrectClickEvents(true); });
+            self.resurrectClickEvents(true); });
     };
     Innovation.prototype.action_clickForChooseFront = function (event) {
         this.stopActionTimer();
