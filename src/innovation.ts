@@ -172,7 +172,7 @@ class Innovation extends GameGui {
     
     //****** CODE FOR DEBUG MODE
     debugDraw() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_draw.html",
             {
                 lock: true,
@@ -183,7 +183,7 @@ class Innovation extends GameGui {
     }
 
     debugMeld() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_meld.html",
             {
                 lock: true,
@@ -194,7 +194,7 @@ class Innovation extends GameGui {
     }
 
     debugTuck() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_tuck.html",
             {
                 lock: true,
@@ -205,7 +205,7 @@ class Innovation extends GameGui {
     }
 
     debugScore() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_score.html",
             {
                 lock: true,
@@ -216,7 +216,7 @@ class Innovation extends GameGui {
     }
 
     debugAchieve() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_achieve.html",
             {
                 lock: true,
@@ -227,7 +227,7 @@ class Innovation extends GameGui {
     }
 
     debugReturn() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_return.html",
             {
                 lock: true,
@@ -238,7 +238,7 @@ class Innovation extends GameGui {
     }
 
     debugTopdeck() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_topdeck.html",
             {
                 lock: true,
@@ -249,7 +249,7 @@ class Innovation extends GameGui {
     }
 
     debugDig() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_dig.html",
             {
                 lock: true,
@@ -260,7 +260,7 @@ class Innovation extends GameGui {
     }
 
     debugForeshadow() {
-        var debug_card_list = this.getDebugCardList();
+        let debug_card_list = this.getDebugCardList();
         this.ajaxcall("/innovation/innovation/debug_foreshadow.html",
             {
                 lock: true,
@@ -271,7 +271,7 @@ class Innovation extends GameGui {
     }
 
     debugUnsplay() {
-        var debug_color_list = this.getDebugColorList();
+        let debug_color_list = this.getDebugColorList();
         this.ajaxcall("/innovation/innovation/debug_splay.html",
             {
                 lock: true,
@@ -283,7 +283,7 @@ class Innovation extends GameGui {
     }
 
     debugSplayLeft() {
-        var debug_color_list = this.getDebugColorList();
+        let debug_color_list = this.getDebugColorList();
         this.ajaxcall("/innovation/innovation/debug_splay.html",
             {
                 lock: true,
@@ -295,7 +295,7 @@ class Innovation extends GameGui {
     }
 
     debugSplayRight() {
-        var debug_color_list = this.getDebugColorList();
+        let debug_color_list = this.getDebugColorList();
         this.ajaxcall("/innovation/innovation/debug_splay.html",
             {
                 lock: true,
@@ -307,7 +307,7 @@ class Innovation extends GameGui {
     }
 
     debugSplayUp() {
-        var debug_color_list = this.getDebugColorList();
+        let debug_color_list = this.getDebugColorList();
         this.ajaxcall("/innovation/innovation/debug_splay.html",
             {
                 lock: true,
@@ -319,7 +319,7 @@ class Innovation extends GameGui {
     }
 
     debugSplayAslant() {
-        var debug_color_list = this.getDebugColorList();
+        let debug_color_list = this.getDebugColorList();
         this.ajaxcall("/innovation/innovation/debug_splay.html",
             {
                 lock: true,
@@ -348,7 +348,7 @@ class Innovation extends GameGui {
 
         //****** CODE FOR DEBUG MODE
         if (!this.isSpectator && gamedatas.debug_mode == 1) {
-            var main_area = $('main_area');
+            let main_area = $('main_area');
 
             // Prepend UI elements for debug area
             main_area.innerHTML =
@@ -378,10 +378,10 @@ class Innovation extends GameGui {
 
             // Populate dropdown lists
             for (let i = 0; i < Object.keys(gamedatas.cards).length; i++) {
-                var key = Object.keys(gamedatas.cards)[i];
-                var card = gamedatas.cards[key];
+                let key = Object.keys(gamedatas.cards)[i];
+                let card = gamedatas.cards[key];
                 // NOTE: The colors do not need to be translated because they only appear in the Studio anyway.
-                var color = card.color == 0 ? "blue" : card.color == 1 ? "red" : card.color == 2 ? "green" : card.color == 3 ? "yellow" : "purple";
+                let color = card.color == 0 ? "blue" : card.color == 1 ? "red" : card.color == 2 ? "green" : card.color == 3 ? "yellow" : "purple";
                 if (this.isFountain(card.id)) {
                     $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Fountain (${color})</option>`;
                 } else if (this.isFlag(card.id)) {
@@ -431,11 +431,11 @@ class Innovation extends GameGui {
         this.players = gamedatas.players; 
         
         // PLAYER PANELS
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             dojo.place(`<span class='achievements_to_win'>/${this.gamedatas.number_of_achievements_needed_to_win}<span>`, $('player_score_' + player_id), "after");
             dojo.place(this.format_block('jstpl_player_panel', {'player_id':player_id}), $('player_board_' + player_id));
-            for (var icon=1; icon<=7; icon++) {
-                var infos = {'player_id':player_id, 'icon': icon};
+            for (let icon=1; icon<=7; icon++) {
+                let infos = {'player_id':player_id, 'icon': icon};
                 dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
                 dojo.place(this.format_block('jstpl_ressource_count', infos), $('ressource_counts_' + player_id));
             }
@@ -446,13 +446,13 @@ class Innovation extends GameGui {
         this.addCustomTooltipToClass("max_age_on_board", _("Max age on board top cards"), "");
         this.addCustomTooltipToClass("forecast_count", _("Number of cards in forecast"), "");
         
-        for (var icon=1; icon<=7; icon++) {
+        for (let icon=1; icon<=7; icon++) {
             this.addCustomTooltipToClass("ressource_" + icon, _("Number of visible ${icons} on the board").replace('${icons}', this.square('P', 'icon', icon, 'in_tooltip')), "");
         }
         
         // Counters for score
         this.counter["score"] = {};
-        for(var player_id in this.players) {
+        for(let player_id in this.players) {
             this.counter["score"][player_id] = new ebg.counter();
             this.counter["score"][player_id].create($("score_count_" + player_id));
             this.counter["score"][player_id].setValue(gamedatas.score[player_id]);
@@ -460,7 +460,7 @@ class Innovation extends GameGui {
         
         // Counters for max age on board
         this.counter["max_age_on_board"] = {};
-        for(var player_id in this.players) {
+        for(let player_id in this.players) {
             this.counter["max_age_on_board"][player_id] = new ebg.counter();
             this.counter["max_age_on_board"][player_id].create($("max_age_on_board_" + player_id));
             this.counter["max_age_on_board"][player_id].setValue(gamedatas.max_age_on_board[player_id]);
@@ -468,7 +468,7 @@ class Innovation extends GameGui {
         
         // Counters for ressources
         this.counter["resource_count"] = {};
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             this.counter["resource_count"][player_id] = {};
             for (let icon = 1; icon <= 7; icon++) {
                 this.counter["resource_count"][player_id][icon] = new ebg.counter();
@@ -484,7 +484,7 @@ class Innovation extends GameGui {
         }
         
         // Action indicator
-        for(var player_id in this.players) {
+        for(let player_id in this.players) {
             dojo.place("<div id='action_indicator_" + player_id + "' class='action_indicator'></div>", $('ressources_' + player_id), 'after');
         }
         if (gamedatas.active_player !== null) {
@@ -516,9 +516,9 @@ class Innovation extends GameGui {
         
         // DECKS
         this.zone["deck"] = {};
-        for (var type = 0; type <= 4; type++) {
+        for (let type = 0; type <= 4; type++) {
             this.zone["deck"][type] = {};
-            for (var age = 1; age <= 11; age++) {
+            for (let age = 1; age <= 11; age++) {
 
                 if (age == 11 && !this.gamedatas.fourth_edition) {
                     dojo.style(`deck_pile_${type}_11`, 'display', 'none');
@@ -530,7 +530,7 @@ class Innovation extends GameGui {
                 this.setPlacementRules(this.zone["deck"][type][age], /*left_to_right=*/ true)
                 
                 // Add cards to zone according to the current situation
-                var num_cards = gamedatas.deck_counts[type][age];
+                let num_cards = gamedatas.deck_counts[type][age];
                 for (let i=0; i<num_cards; i++) {
                     this.createAndAddToZone(this.zone["deck"][type][age], i, age, type, /*is_relic=*/ 0, null, dojo.body(), null);
                 }
@@ -568,7 +568,7 @@ class Innovation extends GameGui {
         this.setPlacementRulesForRelics();
         if (gamedatas.relics_enabled) {
             for (let i = 0; i < gamedatas.unclaimed_relics.length; i++) {
-                var relic = gamedatas.unclaimed_relics[i];
+                let relic = gamedatas.unclaimed_relics[i];
                 this.createAndAddToZone(this.zone["relics"]["0"], i, relic.age, relic.type, relic.is_relic, null, dojo.body(), null);
                 if (this.canShowCardTooltip(relic['id'])) {
                     this.addTooltipForCard(relic);
@@ -586,16 +586,16 @@ class Innovation extends GameGui {
         if (gamedatas.unclaimed_standard_achievement_counts !== null) {
             this.zone["achievements"]["0"] = this.createZone('achievements', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRulesForAchievements();
-            for (var type = 0; type <= 4; type++) {
-                for (var is_relic = 0; is_relic <= 1; is_relic++) {
-                    for (var age = 1; age <= 11; age++) {
-                        var num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
+            for (let type = 0; type <= 4; type++) {
+                for (let is_relic = 0; is_relic <= 1; is_relic++) {
+                    for (let age = 1; age <= 11; age++) {
+                        let num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
                         for (let i = 0; i < num_cards; i++) {
                             this.createAndAddToZone(this.zone["achievements"]["0"], i, age, type, is_relic, null, dojo.body(), null);
                             if (!this.isSpectator) {
                                 // Construct card object so that we can add a tooltip to the achievement
                                 // TODO(LATER): Simplify addTooltipForStandardAchievement once the other callsite is removed.
-                                var achievement = {'location': 'achievements', 'owner': 0, 'type': type, 'age': age, 'is_relic': is_relic};
+                                let achievement = {'location': 'achievements', 'owner': 0, 'type': type, 'age': age, 'is_relic': is_relic};
                                 this.addTooltipForStandardAchievement(achievement);
                             }
                         }
@@ -606,7 +606,7 @@ class Innovation extends GameGui {
             // TODO(LATER): Remove this once it is safe to do so.
             this.zone["achievements"]["0"] = this.createZone('achievements', 0);
             this.setPlacementRulesForAchievements();
-            for(var i=0; i<gamedatas.unclaimed_achievements.length; i++) {
+            for(let i=0; i<gamedatas.unclaimed_achievements.length; i++) {
                 let achievement = gamedatas.unclaimed_achievements[i];
                 if (achievement.age === null) {
                     continue;
@@ -635,7 +635,7 @@ class Innovation extends GameGui {
         }
 
         // Add another button here to open up the special achievements popup
-        var button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
+        let button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", {'button_text': _("Browse"), 'i18n': ['button_text']});
         dojo.place(button, 'special_achievements', 'after');
         this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievement_browsing_window');
         
@@ -650,7 +650,7 @@ class Innovation extends GameGui {
             // Add cards to zone according to the current situation
             if (Number(player_id) == this.player_id) {
                 for (let i=0; i<gamedatas.my_hand.length; i++) {
-                    var card = gamedatas.my_hand[i];
+                    let card = gamedatas.my_hand[i];
                     this.createAndAddToZone(zone, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
                     if (gamedatas.turn0 && card.selected == 1) {
                         this.selected_card = card;
@@ -659,10 +659,10 @@ class Innovation extends GameGui {
                     this.addTooltipForCard(card);
                 }
             } else {
-                for (var type = 0; type <= 4; type++) {
-                    for (var is_relic = 0; is_relic <= 1; is_relic++) {
-                        for (var age = 1; age <= 11; age++) {
-                            var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
+                for (let type = 0; type <= 4; type++) {
+                    for (let is_relic = 0; is_relic <= 1; is_relic++) {
+                        for (let age = 1; age <= 11; age++) {
+                            let num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
                             for (let i = 0; i < num_cards; i++) {
                                 this.createAndAddToZone(zone, i, age, type, is_relic, null, dojo.body(), null);
                                 if (is_relic) {
@@ -681,19 +681,19 @@ class Innovation extends GameGui {
 
         // PLAYERS' ARTIFACTS ON DISPLAY
         this.zone["display"] = {};
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             if (!gamedatas.artifacts_expansion_enabled) {
                 dojo.byId('display_container_' + player_id).style.display = 'none';
                 continue;
             }
 
             // Creation of the zone
-            var zone = this.createZone('display', player_id, null, null, null);
+            let zone = this.createZone('display', player_id, null, null, null);
             this.zone["display"][player_id] = zone;
             this.setPlacementRules(zone, /*left_to_right=*/ true);
                     
             // Add card to zone if it exists
-            var card = gamedatas.artifacts_on_display[player_id];
+            let card = gamedatas.artifacts_on_display[player_id];
             if (card != null) {
                 this.createAndAddToZone(zone, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
                 this.addTooltipForCard(card);
@@ -702,18 +702,18 @@ class Innovation extends GameGui {
 
         // PLAYERS' FORECAST
         this.zone["forecast"] = {};
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             // Creation of the zone
             this.zone["forecast"][player_id] = this.createZone('forecast', player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ true);
             this.setPlacementRules(this.zone["forecast"][player_id], /*left_to_right=*/ true);
                 
             // Add cards to zone according to the current situation
-            for (var type = 0; type <= 4; type++) {
-                for (var is_relic = 0; is_relic <= 1; is_relic++) {
-                    var forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
-                    for (var age = 1; age <= 11; age++) {
-                        var num_cards = forecast_count[age];
-                        for(var i = 0; i < num_cards; i++) {
+            for (let type = 0; type <= 4; type++) {
+                for (let is_relic = 0; is_relic <= 1; is_relic++) {
+                    let forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
+                    for (let age = 1; age <= 11; age++) {
+                        let num_cards = forecast_count[age];
+                        for(let i = 0; i < num_cards; i++) {
                             this.createAndAddToZone(this.zone["forecast"][player_id], i, age, type, is_relic, null, dojo.body(), null);
                         }
                     }
@@ -728,18 +728,18 @@ class Innovation extends GameGui {
         
         // PLAYERS' SCORE
         this.zone["score"] = {};
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             // Creation of the zone
             this.zone["score"][player_id] = this.createZone('score', player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["score"][player_id], /*left_to_right=*/ false);
                 
             // Add cards to zone according to the current situation
-            for (var type = 0; type <= 4; type++) {
-                for (var is_relic = 0; is_relic <= 1; is_relic++) {
-                    var score_count = gamedatas.score_counts[player_id][type][is_relic];
-                    for (var age = 1; age <= 11; age++) {
-                        var num_cards = score_count[age];
-                        for(var i = 0; i < num_cards; i++) {
+            for (let type = 0; type <= 4; type++) {
+                for (let is_relic = 0; is_relic <= 1; is_relic++) {
+                    let score_count = gamedatas.score_counts[player_id][type][is_relic];
+                    for (let age = 1; age <= 11; age++) {
+                        let num_cards = score_count[age];
+                        for(let i = 0; i < num_cards; i++) {
                             this.createAndAddToZone(this.zone["score"][player_id], i, age, type, is_relic, null, dojo.body(), null);
                             if (is_relic) {
                                 // Construct card object so that we can add a tooltip to the relic
@@ -760,7 +760,7 @@ class Innovation extends GameGui {
             this.zone["my_forecast_verso"] = this.createZone('my_forecast_verso', this.player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["my_forecast_verso"], /*left_to_right=*/ true);
             for (let i = 0; i < gamedatas.my_forecast.length; i++) {
-                var card = gamedatas.my_forecast[i];
+                let card = gamedatas.my_forecast[i];
                 this.createAndAddToZone(this.zone["my_forecast_verso"], card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
                 this.addTooltipForCard(card);
             }
@@ -775,7 +775,7 @@ class Innovation extends GameGui {
             this.zone["my_score_verso"] = this.createZone('my_score_verso', this.player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["my_score_verso"], /*left_to_right=*/ true);
             for (let i = 0; i < gamedatas.my_score.length; i++) {
-                var card = gamedatas.my_score[i];
+                let card = gamedatas.my_score[i];
                 this.createAndAddToZone(this.zone["my_score_verso"], card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
                 this.addTooltipForCard(card);
             }
@@ -785,14 +785,14 @@ class Innovation extends GameGui {
         }
         
         // PLAYERS' ACHIEVEMENTS
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             // Creation of the zone
             this.zone["achievements"][player_id] = this.createZone('achievements', player_id);
             this.setPlacementRules(this.zone["achievements"][player_id], /*left_to_right=*/ true);
                 
             // Add cards to zone according to the current situation
             let achievements = gamedatas.claimed_achievements[player_id];
-            for(var i = 0; i < achievements.length; i++){
+            for(let i = 0; i < achievements.length; i++){
                 let achievement = achievements[i];
                 if (this.isFlag(parseInt(achievement.id)) || this.isFountain(parseInt(achievement.id))) {
                     this.createAndAddToZone(this.zone["achievements"][player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), achievement);
@@ -835,15 +835,15 @@ class Innovation extends GameGui {
         // Stacks
         this.zone["board"] = {};
         this.number_of_splayed_piles = 0;
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             this.zone["board"][player_id] = {};
-            var player_board = gamedatas.board[player_id];
-            var player_splay_directions = gamedatas.board_splay_directions[player_id];
-            var player_splay_directions_in_clear = gamedatas.board_splay_directions_in_clear[player_id];
+            let player_board = gamedatas.board[player_id];
+            let player_splay_directions = gamedatas.board_splay_directions[player_id];
+            let player_splay_directions_in_clear = gamedatas.board_splay_directions_in_clear[player_id];
             
             for(let color = 0; color < 5; color++){
-                var splay_direction = player_splay_directions[color];
-                var splay_direction_in_clear = player_splay_directions_in_clear[color];
+                let splay_direction = player_splay_directions[color];
+                let splay_direction_in_clear = player_splay_directions_in_clear[color];
                 
                 // Creation of the zone
                 this.zone["board"][player_id][color] = this.createZone('board', player_id, null, null, color, /*grouped_by_age_type_and_is_relic=*/ false, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ false);
@@ -861,9 +861,9 @@ class Innovation extends GameGui {
                 }
                 
                 // Add cards to zone according to the current situation
-                var cards_in_pile = player_board[color];
-                for(var i = 0; i < cards_in_pile.length; i++){
-                    var card = cards_in_pile[i];
+                let cards_in_pile = player_board[color];
+                for(let i = 0; i < cards_in_pile.length; i++){
+                    let card = cards_in_pile[i];
                     this.createAndAddToZone(this.zone["board"][player_id][color], card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card)
                     
                     // Add tooltip
@@ -876,15 +876,15 @@ class Innovation extends GameGui {
         
         // REVEALED ZONE
         this.zone["revealed"] = {};    
-        for (var player_id in this.players) {
-            var zone = this.createZone('revealed', player_id, null, null, null);
+        for (let player_id in this.players) {
+            let zone = this.createZone('revealed', player_id, null, null, null);
             this.zone["revealed"][player_id] = zone;
             dojo.style(zone.container_div, 'display', 'none');
             this.setPlacementRules(zone, /*left_to_right=*/ true);
             
-            var revealed_cards = gamedatas.revealed[player_id];
-            for(var i = 0; i < revealed_cards.length; i++){
-                var card = revealed_cards[i];
+            let revealed_cards = gamedatas.revealed[player_id];
+            for(let i = 0; i < revealed_cards.length; i++){
+                let card = revealed_cards[i];
                 this.createAndAddToZone(zone, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), card)
                     
                 // Add tooltip
@@ -925,7 +925,7 @@ class Innovation extends GameGui {
         }
 
         // Hide player's area if they have been eliminated from the game (e.g. Exxon Valdez)
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             if (this.players[player_id].player_eliminated == 1) {
                 dojo.byId('player_' + player_id).style.display = 'none';
             }
@@ -937,7 +937,7 @@ class Innovation extends GameGui {
         this.refreshLayout();
         
         // Force refresh page on resize if width changes
-        var window_width = dojo.window.getBox().w;
+        let window_width = dojo.window.getBox().w;
         let self = this;
         window.onresize = function() {
             if (window.RT) {
@@ -970,13 +970,13 @@ class Innovation extends GameGui {
     onLoadingComplete() {
         // Add card tooltips to existing game log messages
         for (let i = 0; i < this.cards.length; i++) {
-            var card_id = this.cards[i].id;
+            let card_id = this.cards[i].id;
             // For some reason, after a page refresh, each entry in the game log is located in two diffferent
             // spots on the page, meaning that each span holding a card name no longer has a unique ID (since
             // it appears exactly twice), and BGA's framework to add a tooltip requires that it has a unique ID.
             // The workaround here is to first remove the extra IDs, before trying to add the tooltips.
             dojo.query("#chatbar .card_id_" + card_id).removeAttr('id');
-            var elements = dojo.query(".card_id_" + card_id);
+            let elements = dojo.query(".card_id_" + card_id);
             if (elements.length > 0 && this.canShowCardTooltip(card_id)) {
                 this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
             }
@@ -992,19 +992,20 @@ class Innovation extends GameGui {
     }
 
     refreshLayout() {
-        var on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
-        var window_width = Math.max(dojo.window.getBox().w, 640); // 640 is set in game_interface_width.min in gameinfos.inc.php
-        var player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
-        var decks_width = 214;
+        let on_mobile = dojo.hasClass('ebd-body', 'mobile_version');
+        let window_width = Math.max(dojo.window.getBox().w, 640); // 640 is set in game_interface_width.min in gameinfos.inc.php
+        let player_panel_width = on_mobile ? 0 : dojo.position('right-side').w + 10;
+        let decks_width = 214;
 
-        var decks_on_right = this.prefs[112].value == 1;
+        let decks_on_right = this.prefs[112].value == 1;
 
+        let main_area_width: number;
         if (decks_on_right) {
-            var main_area_width = window_width - player_panel_width - decks_width;
+            main_area_width = window_width - player_panel_width - decks_width;
         } else if (on_mobile) {
-            var main_area_width = window_width;
+            main_area_width = window_width;
         } else {
-            var main_area_width = window_width - player_panel_width;
+            main_area_width = window_width - player_panel_width;
         }
         dojo.style('main_area', 'width', main_area_width + 'px');
 
@@ -1031,13 +1032,13 @@ class Innovation extends GameGui {
 
         // NOTE: This is used to get a reference on an arbitrary player. This is important because
         // targeting this.player_id doesn't work in spectator mode.
-        var any_player_id = Object.keys(this.players)[0]; 
+        let any_player_id = Object.keys(this.players)[0]; 
 
-        var main_area_inner_width = main_area_width - 14;
-        var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
-        var buffer = this.gamedatas.echoes_expansion_enabled ? 10 : 0;
+        let main_area_inner_width = main_area_width - 14;
+        let reference_card_width = dojo.position('reference_card_' + any_player_id).w;
+        let buffer = this.gamedatas.echoes_expansion_enabled ? 10 : 0;
         // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
-        var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
+        let num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
         this.num_cards_in_row["achievements"] = Math.floor(num_forecast_score_achievements_cards / 3);
         if (this.num_cards_in_row["achievements"] < 1) {
             this.num_cards_in_row["achievements"] = 1;
@@ -1057,10 +1058,10 @@ class Innovation extends GameGui {
             this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"];
         }
 
-        var forecast_container_width = this.num_cards_in_row["forecast"] == null ? 0 : this.num_cards_in_row["forecast"] * this.delta.forecast.x;
-        var achievement_container_width = this.num_cards_in_row["achievements"] * this.delta.achievements.x;
-        var score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
-        for (var player_id in this.players) {
+        let forecast_container_width = this.num_cards_in_row["forecast"] == null ? 0 : this.num_cards_in_row["forecast"] * this.delta.forecast.x;
+        let achievement_container_width = this.num_cards_in_row["achievements"] * this.delta.achievements.x;
+        let score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
+        for (let player_id in this.players) {
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
             dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
             dojo.setStyle(this.zone["forecast"][player_id].container_div, 'width', forecast_container_width + "px");
@@ -1078,15 +1079,15 @@ class Innovation extends GameGui {
         this.num_cards_in_row["opponent_hand"] = Math.floor(main_area_inner_width / this.delta.opponent_hand.x);
 
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             this.zone["forecast"][player_id].updateDisplay();
             this.zone["score"][player_id].updateDisplay();
             this.zone["achievements"][player_id].updateDisplay();
             this.zone["hand"][player_id].updateDisplay();
         }
-        for (var player_id in this.players) {
-            for (var color = 0; color < 5; color++){
-                var zone = this.zone["board"][player_id][color];
+        for (let player_id in this.players) {
+            for (let color = 0; color < 5; color++){
+                let zone = this.zone["board"][player_id][color];
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
@@ -1186,7 +1187,7 @@ class Innovation extends GameGui {
         case 'gameEnd':
             // Set player panels for the last time properly        
             let result = args.args.result;
-            for (var p=0; p<result.length;p++) {
+            for (let p=0; p<result.length;p++) {
                 let player_result = result[p];
                 let player_id = player_result.player;
                 let player_score = player_result.score;
@@ -1210,7 +1211,7 @@ class Innovation extends GameGui {
         case 'interInteractionStep':
         case 'preSelectionMove':
         case 'interSelectionMove':
-            var player_name = args.args.player_id == this.player_id ? args.args.player_name_as_you : args.args.player_name;
+            let player_name = args.args.player_id == this.player_id ? args.args.player_name_as_you : args.args.player_name;
             $('pagemaintitletext').innerHTML = $('pagemaintitletext').innerHTML.replace('${player}', player_name);
             break;
         }
@@ -1222,9 +1223,9 @@ class Innovation extends GameGui {
             switch (stateName) {
             case 'turn0':
                 this.addTooltipsWithActionsToMyHand();
-                var cards_in_hand = this.selectMyCardsInHand();
-                cards_in_hand.addClass("clickable");
-                this.on(cards_in_hand, 'onclick', 'action_clicForInitialMeld');
+                let cards_in_initial_hand = this.selectMyCardsInHand();
+                cards_in_initial_hand.addClass("clickable");
+                this.on(cards_in_initial_hand, 'onclick', 'action_clicForInitialMeld');
                 break;
             case 'artifactPlayerTurn':
                 this.addTooltipWithDogmaActionToMyArtifactOnDisplay(args.args._private.dogma_effect_info);
@@ -1253,41 +1254,41 @@ class Innovation extends GameGui {
             case 'playerTurn':
                 // Claimable achievements (achieve action)
                 if (args.args.claimable_ages.length > 0) {
-                    var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
+                    let claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
                     claimable_achievements.addClass("clickable");
                     this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
                 }
                 
                 // Top drawable card on deck (draw action)
-                var max_age = this.gamedatas.fourth_edition ? 11 : 10;
+                let max_age = this.gamedatas.fourth_edition ? 11 : 10;
                 if (args.args.age_to_draw <= max_age) {
-                    var drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
+                    let drawable_card = this.selectDrawableCard(args.args.age_to_draw, args.args.type_to_draw);
                     drawable_card.addClass("clickable");
                     this.on(drawable_card, 'onclick', 'action_clicForDraw');
                 }
                 
                 // Cards in hand (meld action)
-                var city_draw_type = args.args.city_draw_falls_back_to_other_type ? args.args.type_to_draw : 2;
+                let city_draw_type = args.args.city_draw_falls_back_to_other_type ? args.args.type_to_draw : 2;
                 this.addTooltipsWithActionsToMyHand(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
-                var cards_in_hand = this.selectMyCardsInHand();
+                let cards_in_hand = this.selectMyCardsInHand();
                 cards_in_hand.addClass("clickable");
                 this.off(cards_in_hand, 'onclick'); // Remove possible stray handler from initial meld.
                 this.on(cards_in_hand, 'onclick', 'action_clickMeld');
 
                 // Artifact on display (meld action)
                 this.addTooltipWithMeldActionToMyArtifactOnDisplay(args.args._private.meld_info, args.args.age_to_draw, city_draw_type);
-                var artifact_on_display = this.selectArtifactOnDisplay();
+                let artifact_on_display = this.selectArtifactOnDisplay();
                 artifact_on_display.addClass("clickable");
                 this.on(artifact_on_display, 'onclick', 'action_clickMeld');
                 
                 // Cards on my board (dogma action)
-                var cards_on_my_board = this.selectTopCardsEligibleForDogma([this.player_id]);
+                let cards_on_my_board = this.selectTopCardsEligibleForDogma([this.player_id]);
                 this.addTooltipsWithActionsToBoard(cards_on_my_board, args.args._private.dogma_effect_info);
                 cards_on_my_board.addClass("clickable");
                 this.on(cards_on_my_board, 'onclick', 'action_clickDogma');
 
                 // Cards on non-adjacent board (dogma action)
-                var cards_on_non_adjacent_board = this.selectTopCardsEligibleForDogma(args.args._private.non_adjacent_player_ids);
+                let cards_on_non_adjacent_board = this.selectTopCardsEligibleForDogma(args.args._private.non_adjacent_player_ids);
                 this.addTooltipsWithActionsToBoard(cards_on_non_adjacent_board, args.args._private.dogma_effect_info);
                 cards_on_non_adjacent_board.addClass("clickable");
                 this.on(cards_on_non_adjacent_board, 'onclick', 'action_clickNonAdjacentDogma');
@@ -1295,7 +1296,7 @@ class Innovation extends GameGui {
 
                 // Cards on board (endorse action)
                 // TODO(4E): Make it possible to endorse dogmas on non-adjacent boards.
-                var endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
+                let endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
                 this.off(endorsable_cards, 'onclick');
                 endorsable_cards.addClass("can_endorse");
                 this.on(endorsable_cards, 'onclick', 'action_clickEndorse');
@@ -1307,7 +1308,7 @@ class Innovation extends GameGui {
                 this.choose_integer = args.args.special_type_of_choice == 11; // choose_non_negative_integer
                 if (args.args.special_type_of_choice == 0) {
                     // Allowed selected cards by the server
-                    var visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
+                    let visible_selectable_cards = this.selectCardsFromList(args.args._private.visible_selectable_cards);
                     if (visible_selectable_cards !== null) {
                         visible_selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
@@ -1318,24 +1319,24 @@ class Innovation extends GameGui {
                             this.my_forecast_verso_window.show();
                         }
                     }
-                    var selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
+                    let selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
                     if (selectable_rectos !== null) {
                         selectable_rectos.addClass("clickable").addClass('mid_dogma');
                         this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
                     }
                     if (args.args._private.show_all_cards_on_board) {
-                        for (var color = 0; color < 5; color++) {
-                            var zone = this.zone["board"][this.player_id][color];
+                        for (let color = 0; color < 5; color++) {
+                            let zone = this.zone["board"][this.player_id][color];
                             this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true);
                         }
                     }
                     // Add special warning to Tools to prevent the player from accidentally returning a 3 in the first
                     // part of the interaction in an attempt to draw 3 cards.
                     if (args.args.card_interaction == "1N1A" && parseInt(args.args.num_cards_already_chosen) == 0) {
-                        var age_3s_in_hand = dojo.query("#hand_" + this.player_id + " > .card.age_3");
+                        let age_3s_in_hand = dojo.query("#hand_" + this.player_id + " > .card.age_3");
                         this.off(age_3s_in_hand, 'onclick');
                         this.on(age_3s_in_hand, 'onclick', 'action_clickForChooseFront');
-                        var warning = _("Are you sure you want to return a ${age_3}? This won't allow you to draw three cards.").replace("${age_3}", this.square('N', 'age', 3));
+                        let warning = _("Are you sure you want to return a ${age_3}? This won't allow you to draw three cards.").replace("${age_3}", this.square('N', 'age', 3));
                         age_3s_in_hand.forEach(function(card) {
                             dojo.attr(card, 'warning', warning);
                         });
@@ -1343,20 +1344,20 @@ class Innovation extends GameGui {
                 }
                 else if (args.args.special_type_of_choice == 6 /* rearrange */) {
                     this.off(dojo.query('#change_display_mode_button'), 'onclick');
-                    for(var color=0; color<5; color++) {
-                        var zone = this.zone["board"][this.player_id][color];
+                    for(let color=0; color<5; color++) {
+                        let zone = this.zone["board"][this.player_id][color];
                         this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true); // Show all cards
                     }
                     this.publication_permutations_done = [];
                     
-                    var selectable_cards = this.selectAllCardsOnMyBoard();
+                    let selectable_cards = this.selectAllCardsOnMyBoard();
                     selectable_cards.addClass("clickable").addClass('mid_dogma');
                     this.on(selectable_cards, 'onclick', 'publicationClicForMove');
                 }
                 
                 if (args.args.color_pile !== null) { // The selection involves cards in a stack
                     this.color_pile = args.args.color_pile;
-                    var zone = this.zone["board"][this.player_id][this.color_pile];
+                    let zone = this.zone["board"][this.player_id][this.color_pile];
                     this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true); // Show all cards of that stack
                 }
                 
@@ -1512,7 +1513,7 @@ class Innovation extends GameGui {
                 } else if (special_type_of_choice_with_buttons) {
                     // Add a button for each available options
                     for(let i=0; i<args.options.length; i++) {
-                        var option = args.options[i];
+                        let option = args.options[i];
                         // NOTE: The option.age substitution is used by cards such as Evolution, option.splay_direction is used by Sunglasses, and option.name is used by Karaoke.
                         this.addActionButton("choice_" + option.value, dojo.string.substitute(_(option.text), {'age': option.age, 'name': option.name, 'splay_direction': option.splay_direction, 'i18n': option.i18n}), "action_clicForChooseSpecialOption")
                     }
@@ -1667,7 +1668,7 @@ class Innovation extends GameGui {
         content += "</div>";
 
         content += "<div id='browse_cards_buttons_row_2'>";
-        for (var age = 1; age <= 11; age++) {
+        for (let age = 1; age <= 11; age++) {
             if (age < 11 || this.gamedatas.fourth_edition) {
                 content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_age_" + age + "'>" + age + "</div>";
             }
@@ -1680,11 +1681,11 @@ class Innovation extends GameGui {
 
         content += "<div id='special_achievement_summaries'>";
         for (let i = 0; i < ids.length; i++) {
-            var card_id = ids[i];
-            var card_data = this.cards[card_id];
+            let card_id = ids[i];
+            let card_data = this.cards[card_id];
 
-            var name = _(card_data.name).toUpperCase();
-            var text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
+            let name = _(card_data.name).toUpperCase();
+            let text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
             if (card_id == 106) {
                 text += ` ${_("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")}`;
             }
@@ -1743,7 +1744,7 @@ class Innovation extends GameGui {
                         numerator = 0;
                         denominator = 5;
                         for (let i = 0; i < 5; i++) {
-                            var splay_direction = self.zone["board"][self.player_id][i].splay_direction;
+                            let splay_direction = self.zone["board"][self.player_id][i].splay_direction;
                             // TODO(4E#978): Possibly update this.
                             if (splay_direction == 2 || splay_direction == 3) {
                                 numerator++;
@@ -1760,10 +1761,10 @@ class Innovation extends GameGui {
                         numerator = 0;
                         denominator = 5;
                         for (let i = 0; i < 5; i++) {
-                            var items = self.zone["board"][self.player_id][i].items;
+                            let items = self.zone["board"][self.player_id][i].items;
                             if (items.length > 0) {
-                                var top_card_id = self.getCardIdFromHTMLId(items[items.length - 1].id);
-                                var top_card = self.cards[top_card_id];
+                                let top_card_id = self.getCardIdFromHTMLId(items[items.length - 1].id);
+                                let top_card = self.cards[top_card_id];
                                 if (top_card.age >= 8) {
                                     numerator++;
                                 }
@@ -1775,7 +1776,7 @@ class Innovation extends GameGui {
                         numerator = 0;
                         denominator = 8;
                         for (let i = 0; i < 5; i++) {
-                            var pile_zone = self.zone["board"][self.player_id][i];
+                            let pile_zone = self.zone["board"][self.player_id][i];
                             numerator += self.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction).length;
                         }
                         break;
@@ -1789,8 +1790,8 @@ class Innovation extends GameGui {
                         numerator = 0;
                         denominator = 8;
                         for (let i = 0; i < 5; i++) {
-                            var pile_zone = self.zone["board"][self.player_id][i];
-                            var num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 0 /* hex icon */);
+                            let pile_zone = self.zone["board"][self.player_id][i];
+                            let num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 0 /* hex icon */);
                             if (num_icons > numerator) {
                                 numerator = num_icons;
                             }
@@ -1801,8 +1802,8 @@ class Innovation extends GameGui {
                         numerator = 0;
                         denominator = 4;
                         for (let i = 0; i < 5; i++) {
-                            var pile_zone = self.zone["board"][self.player_id][i];
-                            var num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 10 /* echo icon */);
+                            let pile_zone = self.zone["board"][self.player_id][i];
+                            let num_icons = self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, 10 /* echo icon */);
                             if (num_icons > numerator) {
                                 numerator = num_icons;
                             }
@@ -1813,9 +1814,9 @@ class Innovation extends GameGui {
                         numerator = 0;
                         denominator = 4;
                         for (let icon = 1; icon <= 7; icon++) {
-                            var num_piles = 0;
-                            for (var color = 0; color < 5; color++) {
-                                var pile_zone = self.zone["board"][self.player_id][color];
+                            let num_piles = 0;
+                            for (let color = 0; color < 5; color++) {
+                                let pile_zone = self.zone["board"][self.player_id][color];
                                 if (self.countVisibleIconsInPile(pile_zone.items, pile_zone.splay_direction, icon) >= 3) {
                                     num_piles++;
                                 }
@@ -1877,9 +1878,9 @@ class Innovation extends GameGui {
         * Tooltip management
         */
     shapeTooltip(help_HTML, action_HTML) {
-        var help_string_passed = help_HTML != "";
-        var action_string_passed = action_HTML != "";
-        var HTML = "<table class='tooltip'>";
+        let help_string_passed = help_HTML != "";
+        let action_string_passed = action_HTML != "";
+        let HTML = "<table class='tooltip'>";
         if (help_string_passed) {
             HTML += "<tr><td>" + this.square('basic', 'icon', 'help', 'in_tooltip') + "</td><td class='help in_tooltip'>" + help_HTML + "</td></tr>";
         }
@@ -1901,20 +1902,20 @@ class Innovation extends GameGui {
     }
     
     addTooltipForCard(card) {
-        var zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
+        let zone = this.getZone(card['location'], card.owner, card.type, card.age, card.color);
 
         // The score pile and forecast are a special case because both the front and back are rendered
         if (card.owner == this.player_id && (card.location == 'score' || card.location == 'forecast')) {
-            var front_HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, 'M card');
+            let front_HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, 'M card');
             this.addCustomTooltip(front_HTML_id, this.getTooltipForCard(card.id), "");
-            var back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
-            var back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, 'S recto');
+            let back_id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+            let back_HTML_id = this.getCardHTMLId(back_id, card.age, card.type, card.is_relic, 'S recto');
             this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
             return;
         }
 
-        var HTML_class = this.isFountain(card.id) || this.isFlag(card.id) ? 'S recto' : zone.HTML_class;
-        var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, HTML_class);
+        let HTML_class = this.isFountain(card.id) || this.isFlag(card.id) ? 'S recto' : zone.HTML_class;
+        let HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, HTML_class);
         // Special achievement
         if (card.age === null) {
             this.addCustomTooltip(HTML_id, this.getSpecialAchievementText(card), "");
@@ -1925,16 +1926,16 @@ class Innovation extends GameGui {
 
     getTooltipForCard(card_id) {
         if (this.saved_HTML_cards[card_id] === undefined) {
-            var card = this.cards[card_id];
+            let card = this.cards[card_id];
             this.saved_HTML_cards[card_id] = this.createCard(card_id, card.age, card.type, card.is_relic, "L card", card);
         }
         return this.saved_HTML_cards[card_id];
     }
     
     addTooltipForStandardAchievement(card) {
-        var zone = this.getZone(card['location'], card.owner, card.type, card.age);
-        var id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
-        var HTML_id = this.getCardHTMLId(id, card.age, card.type, card.is_relic, zone.HTML_class);
+        let zone = this.getZone(card['location'], card.owner, card.type, card.age);
+        let id = this.getCardIdFromPosition(zone, card.position, card.age, card.type, card.is_relic);
+        let HTML_id = this.getCardHTMLId(id, card.age, card.type, card.is_relic, zone.HTML_class);
         
         // TODO(LATER): Update this tooltip when a player already has at least one of this age achieved.
         let condition_for_claiming = dojo.string.substitute(_('You can take an action to claim this age if you have at least ${n} points in your score pile and at least one top card of value equal or higher than ${age} on your board.'), {'age': this.square('N', 'age', card.age), 'n': 5 * card.age});
@@ -1942,73 +1943,73 @@ class Innovation extends GameGui {
     }
     
     addTooltipForReferenceCard() {
-        var actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
+        let actions_text = _("${Actions} You must take two actions on your turn, in any order. You may perform the same action twice.");
         actions_text = dojo.string.substitute(actions_text, {'Actions' : "<span class='actions_header'>" + _("Actions:").toUpperCase() + "</span>"})
-        var actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
+        let actions_div = this.createAdjustedContent(actions_text, 'actions_txt reference_card_block', '', 12);
         
-        var meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);
-        var meld_parag_text = _("Play a card from your hand to your board, on a stack of matching color. Continue any splay if present.");
-        var meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag reference_card_block', '', 12);
+        let meld_title = this.createAdjustedContent(_("Meld").toUpperCase(), 'meld_title reference_card_block', '', 30);
+        let meld_parag_text = _("Play a card from your hand to your board, on a stack of matching color. Continue any splay if present.");
+        let meld_parag = this.createAdjustedContent(meld_parag_text, 'meld_parag reference_card_block', '', 12);
         
-        var draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title reference_card_block', '', 30);
-        var draw_parag_text = _("Take a card of value equal to your highest top card from the supply piles. If empty, draw from the next available higher pile.");
-        var draw_parag = this.createAdjustedContent(draw_parag_text, 'draw_parag reference_card_block', '', 12);
+        let draw_title = this.createAdjustedContent(_("Draw").toUpperCase(), 'draw_title reference_card_block', '', 30);
+        let draw_parag_text = _("Take a card of value equal to your highest top card from the supply piles. If empty, draw from the next available higher pile.");
+        let draw_parag = this.createAdjustedContent(draw_parag_text, 'draw_parag reference_card_block', '', 12);
         
-        var achieve_title = this.createAdjustedContent(_("Achieve").toUpperCase(), 'achieve_title reference_card_block', '', 30);
-        var achieve_parag_text = _("To claim, must have score of at least 5x the age number in points, and a top card of equal or higher value. Points are kept, not spent.");
-        var achieve_parag = this.createAdjustedContent(achieve_parag_text, 'achieve_parag reference_card_block', '', 12);
+        let achieve_title = this.createAdjustedContent(_("Achieve").toUpperCase(), 'achieve_title reference_card_block', '', 30);
+        let achieve_parag_text = _("To claim, must have score of at least 5x the age number in points, and a top card of equal or higher value. Points are kept, not spent.");
+        let achieve_parag = this.createAdjustedContent(achieve_parag_text, 'achieve_parag reference_card_block', '', 12);
         
-        var dogma_title = this.createAdjustedContent(_("Dogma").toUpperCase(), 'dogma_title reference_card_block', '', 30);
-        var big_bullet = "&#9679;"
-        var dogma_parag_text = _("Pick a top card on your board. Execute each effect on it, in order.") +
+        let dogma_title = this.createAdjustedContent(_("Dogma").toUpperCase(), 'dogma_title reference_card_block', '', 30);
+        let big_bullet = "&#9679;"
+        let dogma_parag_text = _("Pick a top card on your board. Execute each effect on it, in order.") +
                                 "<ul><li>" + big_bullet + " " + _("I Demand effects are executed by each player with fewer of the featured icon than you, going clockwise. Read effects aloud to them.") + "</li>" +
                                 "<li>" + big_bullet + " " + _("Non-demand effects are executed by opponents before you, if they have at leadt as many or more of the featured icon, going clockwise.") + "</li>" +
                                 "<li>" + big_bullet + " " + _("If any opponent shared a non-demand effect, take a single free Draw action at the conclusion of your Dogma action.") + "</li></ul>";
-        var dogma_parag = this.createAdjustedContent(dogma_parag_text, 'dogma_parag reference_card_block', '', 12);
+        let dogma_parag = this.createAdjustedContent(dogma_parag_text, 'dogma_parag reference_card_block', '', 12);
         
-        var tuck_title = this.createAdjustedContent(_("Tuck").toUpperCase(), 'tuck_title reference_card_block', '', 30);
-        var tuck_parag_text = _("A tucked card goes to the bottom of the pile of its color. Tucking a card into an empty pile starts a new one.");
-        var tuck_parag = this.createAdjustedContent(tuck_parag_text, 'tuck_parag reference_card_block', '', 12);
+        let tuck_title = this.createAdjustedContent(_("Tuck").toUpperCase(), 'tuck_title reference_card_block', '', 30);
+        let tuck_parag_text = _("A tucked card goes to the bottom of the pile of its color. Tucking a card into an empty pile starts a new one.");
+        let tuck_parag = this.createAdjustedContent(tuck_parag_text, 'tuck_parag reference_card_block', '', 12);
         
-        var return_title = this.createAdjustedContent(_("Return").toUpperCase(), 'return_title reference_card_block', '', 30);
-        var return_parag_text = _("To return a card, place it at the bottom of its matching supply pile. If you return many cards, you choose the order.");
-        var return_parag = this.createAdjustedContent(return_parag_text, 'return_parag reference_card_block', '', 12);
+        let return_title = this.createAdjustedContent(_("Return").toUpperCase(), 'return_title reference_card_block', '', 30);
+        let return_parag_text = _("To return a card, place it at the bottom of its matching supply pile. If you return many cards, you choose the order.");
+        let return_parag = this.createAdjustedContent(return_parag_text, 'return_parag reference_card_block', '', 12);
         
-        var draw_and_x_title = this.createAdjustedContent(_("DRAW and X"), 'draw_and_x_title reference_card_block', '', 30);
-        var draw_and_x_parag_text = _("If instructed to Draw and Meld, Score, or tuck, you must use the specific card drawn for the indicated action.");
-        var draw_and_x_parag = this.createAdjustedContent(draw_and_x_parag_text, 'draw_and_x_parag reference_card_block', '', 12);
+        let draw_and_x_title = this.createAdjustedContent(_("DRAW and X"), 'draw_and_x_title reference_card_block', '', 30);
+        let draw_and_x_parag_text = _("If instructed to Draw and Meld, Score, or tuck, you must use the specific card drawn for the indicated action.");
+        let draw_and_x_parag = this.createAdjustedContent(draw_and_x_parag_text, 'draw_and_x_parag reference_card_block', '', 12);
         
-        var splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title reference_card_block', '', 30);
-        var splay_parag_text = _("To splay, fan out the color as shown below. A color is only ever splayed in one direction. New cards tucked or melded continue the splay.");
-        var splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag reference_card_block', '', 12);
+        let splay_title = this.createAdjustedContent(_("Splay").toUpperCase(), 'splay_title reference_card_block', '', 30);
+        let splay_parag_text = _("To splay, fan out the color as shown below. A color is only ever splayed in one direction. New cards tucked or melded continue the splay.");
+        let splay_parag = this.createAdjustedContent(splay_parag_text, 'splay_parag reference_card_block', '', 12);
 
-        var splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example reference_card_block', '', 12);
-        var splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example reference_card_block', '', 12);
-        var splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example reference_card_block', '', 12);
+        let splayed_left_example = this.createAdjustedContent(_("Splayed left"), 'splayed_left_example reference_card_block', '', 12);
+        let splayed_right_example = this.createAdjustedContent(_("Splayed right"), 'splayed_right_example reference_card_block', '', 12);
+        let splayed_up_example = this.createAdjustedContent(_("Splayed up"), 'splayed_up_example reference_card_block', '', 12);
         
-        var empty_piles_title = this.createAdjustedContent(_("Empty piles").toUpperCase(), 'empty_piles_title reference_card_block', '', 30);
-        var empty_piles_parag_text = _("When drawing from an empty pile for <b>any reason</b>, draw from the next higher pile.");
-        var empty_piles_parag = this.createAdjustedContent(empty_piles_parag_text, 'empty_piles_parag reference_card_block', '', 12);
+        let empty_piles_title = this.createAdjustedContent(_("Empty piles").toUpperCase(), 'empty_piles_title reference_card_block', '', 30);
+        let empty_piles_parag_text = _("When drawing from an empty pile for <b>any reason</b>, draw from the next higher pile.");
+        let empty_piles_parag = this.createAdjustedContent(empty_piles_parag_text, 'empty_piles_parag reference_card_block', '', 12);
         
-        var age_1_3 = _("Age 1-3");
-        var age_4_10 = _("Age 4-10");
-        var age_7_10 = _("Age 7-10");
-        var age_1_10= _("Age 1-10");
+        let age_1_3 = _("Age 1-3");
+        let age_4_10 = _("Age 4-10");
+        let age_7_10 = _("Age 7-10");
+        let age_1_10= _("Age 1-10");
         
-        var icon_4_ages = this.createAdjustedContent(age_1_3, 'icon_4_ages reference_card_block', '', 12);
-        var icon_5_ages = this.createAdjustedContent(age_4_10, 'icon_5_ages reference_card_block', '', 12);
-        var icon_6_ages = this.createAdjustedContent(age_7_10, 'icon_6_ages reference_card_block', '', 12);
+        let icon_4_ages = this.createAdjustedContent(age_1_3, 'icon_4_ages reference_card_block', '', 12);
+        let icon_5_ages = this.createAdjustedContent(age_4_10, 'icon_5_ages reference_card_block', '', 12);
+        let icon_6_ages = this.createAdjustedContent(age_7_10, 'icon_6_ages reference_card_block', '', 12);
         
-        var icon_1_ages = this.createAdjustedContent(age_1_10, 'icon_1_ages reference_card_block', '', 12);
-        var icon_2_ages = this.createAdjustedContent(age_1_10, 'icon_2_ages reference_card_block', '', 12);
-        var icon_3_ages = this.createAdjustedContent(age_1_10, 'icon_3_ages reference_card_block', '', 12);
+        let icon_1_ages = this.createAdjustedContent(age_1_10, 'icon_1_ages reference_card_block', '', 12);
+        let icon_2_ages = this.createAdjustedContent(age_1_10, 'icon_2_ages reference_card_block', '', 12);
+        let icon_3_ages = this.createAdjustedContent(age_1_10, 'icon_3_ages reference_card_block', '', 12);
         
-        var colors_title = this.createAdjustedContent(_("Colors:"), 'colors_title reference_card_block', '', 12);
-        var blue_icon = this.createAdjustedContent(_("Blue"), 'blue_icon reference_card_block', '', 12);
-        var yellow_icon = this.createAdjustedContent(_("Yellow"), 'yellow_icon reference_card_block', '', 12);
-        var red_icon = this.createAdjustedContent(_("Red"), 'red_icon reference_card_block', '', 12);
-        var green_icon = this.createAdjustedContent(_("Green"), 'green_icon reference_card_block', '', 12);
-        var purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon reference_card_block', '', 12);
+        let colors_title = this.createAdjustedContent(_("Colors:"), 'colors_title reference_card_block', '', 12);
+        let blue_icon = this.createAdjustedContent(_("Blue"), 'blue_icon reference_card_block', '', 12);
+        let yellow_icon = this.createAdjustedContent(_("Yellow"), 'yellow_icon reference_card_block', '', 12);
+        let red_icon = this.createAdjustedContent(_("Red"), 'red_icon reference_card_block', '', 12);
+        let green_icon = this.createAdjustedContent(_("Green"), 'green_icon reference_card_block', '', 12);
+        let purple_icon = this.createAdjustedContent(_("Purple"), 'purple_icon reference_card_block', '', 12);
         
         let side_1_content = actions_div;
         
@@ -2031,8 +2032,8 @@ class Innovation extends GameGui {
         side_2_content += colors_title + red_icon + purple_icon + blue_icon + green_icon + yellow_icon;
         
         // Assembling
-        var div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
-        var div_side_2 = "<div class='reference_card side_2 M'>" + side_2_content + "</div>"
+        let div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
+        let div_side_2 = "<div class='reference_card side_2 M'>" + side_2_content + "</div>"
         this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
     }
     
@@ -2090,10 +2091,10 @@ class Innovation extends GameGui {
         text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
         text = text.replace(new RegExp("\\$\\{immediately\\}" , "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
         text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}" , "g"), this.all_icons('in_tooltip'));
-        for (var age = 1; age <= 11; age++) {
+        for (let age = 1; age <= 11; age++) {
             text = text.replace(new RegExp("\\$\\{age_" + age + "\\}" , "g"), this.square(size, 'age', age));
         }
-        for (var symbol = 0; symbol <= 13; symbol++) {
+        for (let symbol = 0; symbol <= 13; symbol++) {
             text = text.replace(new RegExp("\\$\\{icon_" + symbol + "\\}" , "g"), this.square(size, 'icon', symbol));
         }
         text = text.replace(new RegExp("\\$\\{music_note\\}" , "g"), this.square(size, 'music', 'note'));
@@ -2206,9 +2207,10 @@ class Innovation extends GameGui {
             let card = self.cards[id];
             
             // Search for the name of the color in clear
+            let color_in_clear: string;
             for (let i=0; i<colors.length; i++) {
                 if (colors[i] = card.color) {
-                    var color_in_clear = colors_in_clear[i];
+                    color_in_clear = colors_in_clear[i];
                     break;
                 }
             }
@@ -2238,12 +2240,11 @@ class Innovation extends GameGui {
 
         let HTML_action = "<p class='possible_action'>" + _("Click to meld this card.") + "<p>";
         // See if melding this card would cover another one
-        var pile = self.zone["board"][self.player_id][card.color].items;
-        var covered_card = pile.length > 0;
-        if (covered_card) {
-            var top_card = pile[pile.length - 1];
-            var top_card_id = self.getCardIdFromHTMLId(top_card.id);
-            var top_card = self.cards[top_card_id];
+        let pile = self.zone["board"][self.player_id][card.color].items;
+        let top_card = null;
+        if (pile.length > 0) {
+            let top_card_id = self.getCardIdFromHTMLId(pile[pile.length - 1].id);
+            top_card = self.cards[top_card_id];
             if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>",
                     {
@@ -2284,10 +2285,10 @@ class Innovation extends GameGui {
         new_ressource_counts[card.spot_5]++;
         new_ressource_counts[card.spot_6]++;
         
-        if (covered_card) { // Substract the ressources no longer visible
+        if (top_card != null) { // Substract the ressources no longer visible
             let splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
             let splay_direction = 0;
-            for (var direction = 0; direction <= 4; direction++) {
+            for (let direction = 0; direction <= 4; direction++) {
                 if (dojo.hasClass(splay_indicator, 'splay_' + direction)) {
                     splay_direction = direction;
                     break;
@@ -2395,7 +2396,7 @@ class Innovation extends GameGui {
                 HTML_action += "<li>" + _("You will execute the echo effect(s) alone.") + "</li>";
                 HTML_endorse_action += "<li>" + _("You will execute the echo effect(s) alone twice.") + "</li>";
             } else if (info.players_executing_echo_effects.length > 1) {
-                var other_players = self.getOtherPlayersCommaSeparated(info.players_executing_echo_effects);
+                let other_players = self.getOtherPlayersCommaSeparated(info.players_executing_echo_effects);
                 HTML_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it."), {'players': other_players}) + "</li>";
                 HTML_endorse_action += "<li>" + dojo.string.substitute(_("${players} will share each echo effect before you execute it twice."), {'players': other_players}) + "</li>";
             }
@@ -2579,9 +2580,9 @@ class Innovation extends GameGui {
         }
 
         // Cards underneath
-        var pile_length = card_being_melded == null ? pile.length : pile.length + 1;
+        let pile_length = card_being_melded == null ? pile.length : pile.length + 1;
         for (let i = 0; i < pile_length - 1; i++) {
-            var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+            let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
             switch (parseInt(splay_direction)) {
             case 0: // Not splayed
                 break;
@@ -2668,7 +2669,7 @@ class Innovation extends GameGui {
 
         // Cards underneath
         for (let i = 0; i < pile.length - 1; i++) {
-            var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+            let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
             switch (parseInt(splay_direction)) {
             case 0: // Not splayed
                 break;
@@ -2720,14 +2721,14 @@ class Innovation extends GameGui {
     }
     
     createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts) {
-        var table = dojo.create('table', { 'class': 'ressource_table' });
-        var symbol_line = dojo.create('tr', null, table);
-        var count_line = dojo.create('tr', null, table);
+        let table = dojo.create('table', { 'class': 'ressource_table' });
+        let symbol_line = dojo.create('tr', null, table);
+        let count_line = dojo.create('tr', null, table);
         
-        for(var icon=1; icon<=7; icon++) {
-            var current_count = current_ressource_counts[icon];
-            var new_count = new_ressource_counts[icon];
-            var comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
+        for(let icon=1; icon<=7; icon++) {
+            let current_count = current_ressource_counts[icon];
+            let new_count = new_ressource_counts[icon];
+            let comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
             dojo.place('<td><div class="ressource with_white_border ressource_' + icon + ' square P icon_' + icon + '"></div></td>', symbol_line);
             dojo.place('<td><div class="ressource with_white_border' + icon + ' ' + comparator + '">&nbsp;&#8239;' + new_count + '</div></td>', count_line);
         }
@@ -2917,7 +2918,7 @@ class Innovation extends GameGui {
     }
     
     getZone(location, owner, type, age = null, color = null) {
-        var root = this.zone[location];
+        let root = this.zone[location];
         switch(location) {
             case "deck":
                 return root[type][age];
@@ -2951,15 +2952,15 @@ class Innovation extends GameGui {
 
         // A relative position makes it easy to decide if this new card should go before or after another card.
         // The cards are sorted by age, breaking ties by their type, and then breaking ties with non-relics first.
-        var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
+        let relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
 
-        var p = 0;
+        let p = 0;
         for (let i=0; i<zone.items.length; i++) {
-            var item = zone.items[i];
-            var item_age = this.getCardAgeFromHTMLId(item.id);
-            var item_type = this.getCardTypeFromHTMLId(item.id);
-            var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
-            var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
+            let item = zone.items[i];
+            let item_age = this.getCardAgeFromHTMLId(item.id);
+            let item_type = this.getCardTypeFromHTMLId(item.id);
+            let item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
+            let item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
             
             if (item_relative_position < relative_position) {
                 continue;
@@ -2973,16 +2974,16 @@ class Innovation extends GameGui {
     
     getCardPositionFromId(zone, id, age, type, is_relic) {
         if (!zone.grouped_by_age_type_and_is_relic) {
-            for (var p = 0; p < zone.items.length; p++) {
-                var item = zone.items[p];
+            for (let p = 0; p < zone.items.length; p++) {
+                let item = zone.items[p];
                 if (this.getCardIdFromHTMLId(item.id) == id) {
                     return p;
                 }
             }
         }
-        var p = 0;
+        let p = 0;
         for (let i = 0; i < zone.items.length; i++) {
-            var item = zone.items[i];
+            let item = zone.items[i];
             if (this.getCardAgeFromHTMLId(item.id) != age) {
                 continue;
             }
@@ -3008,7 +3009,7 @@ class Innovation extends GameGui {
     }
     
     getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class) {
-        var simplified_card_layout = this.prefs[111].value == 1;
+        let simplified_card_layout = this.prefs[111].value == 1;
         let classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
         if (parseInt(is_relic)) {
             classes.push("relic");
@@ -3042,12 +3043,12 @@ class Innovation extends GameGui {
     * Card creation
     */
     createCard(id, age, type, is_relic, zone_HTML_class, card) {
-        var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone_HTML_class);
-        var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
-        var size = this.getCardSizeInZone(zone_HTML_class);
+        let HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone_HTML_class);
+        let HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
+        let size = this.getCardSizeInZone(zone_HTML_class);
         
         // TODO(4E): Use real 4th edition card back
-        var simplified_card_back = this.prefs[110].value == 2 || age == 11;
+        let simplified_card_back = this.prefs[110].value == 2 || age == 11;
 
         let HTML_inside = '';
         if (card === null) {
@@ -3066,7 +3067,7 @@ class Innovation extends GameGui {
             }
         }
 
-        var card_type = "";
+        let card_type = "";
         if (size == 'L') {
             // TODO(FIGURES): Update this.
             switch (parseInt(type)) {
@@ -3085,7 +3086,7 @@ class Innovation extends GameGui {
             }
         }
 
-        var graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
+        let graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";
         return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
     }
 
@@ -3177,9 +3178,7 @@ class Innovation extends GameGui {
         let color_string = color !== null ? '_' + color : '';
     
         // Dimension of a card in the zone
-        var HTML_class;
-        
-        var new_location;
+        let new_location;
         if (location == "hand") {
             if (owner == this.player_id) {
                 new_location = 'my_hand';
@@ -3191,16 +3190,16 @@ class Innovation extends GameGui {
             new_location = location;
         }
 
-        var HTML_class = this.HTML_class[new_location];
-        var card_dimensions = this.card_dimensions[HTML_class];
+        let HTML_class = this.HTML_class[new_location];
+        let card_dimensions = this.card_dimensions[HTML_class];
         
         // Width of the zone
-        var zone_width;
+        let zone_width;
         if (new_location == 'board' || new_location == 'score' || new_location == 'forecast') {
             zone_width = card_dimensions.width; // Will change dynamically
         } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
-            var delta_x = this.delta[new_location].x
-            var n = this.num_cards_in_row[new_location];
+            let delta_x = this.delta[new_location].x
+            let n = this.num_cards_in_row[new_location];
             zone_width = card_dimensions.width + (n - 1) * delta_x;
         }
         
@@ -3215,7 +3214,7 @@ class Innovation extends GameGui {
         // Creation of the zone
         dojo.style(div_id, 'width', zone_width + 'px');
         dojo.style(div_id, 'height', card_dimensions.height + 'px');
-        var zone =  new ebg.zone();
+        let zone =  new ebg.zone();
         zone.create(this, div_id, card_dimensions.width, card_dimensions.height);
         zone.setPattern('grid');
         
@@ -3226,10 +3225,11 @@ class Innovation extends GameGui {
         zone.grouped_by_age_type_and_is_relic = grouped_by_age_type_and_is_relic;
         
         if (counter_method != null) {
+            let counter_node: HTMLElement;
             if (location == 'board') {
-                var counter_node = $('pile_count' + owner_string + color_string);
+                counter_node = $('pile_count' + owner_string + color_string);
             } else {
-                var counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
+                counter_node = $(location + '_count' + owner_string + type_string + age_string + color_string);
             }
             zone.counter = new ebg.counter()
             zone.counter.create(counter_node);
@@ -3249,7 +3249,7 @@ class Innovation extends GameGui {
 
     createAndAddToZone(zone, position, age, type, is_relic, id, start, card) {
         // id of the new item
-        var visible_card
+        let visible_card
         if (id === null) {
             // Recto
             visible_card = false;
@@ -3270,7 +3270,7 @@ class Innovation extends GameGui {
             }
         }
         // Create a new card and place it on start position
-        var node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
+        let node = this.createCard(id, age, type, is_relic, zone.HTML_class, visible_card ? card : null);
         dojo.place(node, start);
         
         this.addToZone(zone, id, position, age, type, is_relic);
@@ -3292,7 +3292,7 @@ class Innovation extends GameGui {
     }
     
     addToZone(zone, id, position, age, type, is_relic) {
-        var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
+        let HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
         dojo.style(HTML_id, 'position', 'absolute');
         
         if (zone['location'] == 'revealed' && zone.items.length == 0) {
@@ -3301,17 +3301,17 @@ class Innovation extends GameGui {
 
         // A relative position makes it easy to decide if this new card should go before or after another card.
         // We want the cards sorted by age, breaking ties by their type, and then breaking ties by placing non-relics first.
-        var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
+        let relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
         
         // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
         let weight: number = -1;
-        var p = 0;
+        let p = 0;
         for (let i=0; i<zone.items.length; i++) {
-            var item = zone.items[i];
-            var item_age = this.getCardAgeFromHTMLId(item.id);
-            var item_type = this.getCardTypeFromHTMLId(item.id);
-            var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
-            var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
+            let item = zone.items[i];
+            let item_age = this.getCardAgeFromHTMLId(item.id);
+            let item_type = this.getCardTypeFromHTMLId(item.id);
+            let item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
+            let item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
 
             // We have not reached the group the card can be put into
             if (zone.grouped_by_age_type_and_is_relic && item_relative_position < relative_position) {
@@ -3346,7 +3346,7 @@ class Innovation extends GameGui {
         // Update count if applicable
         if (zone.counter !== null) {
             // Update the value in the associated counter
-            var delta;
+            let delta;
             switch(zone.counter.method) {
             case("COUNT"):
                 delta = 1;
@@ -3365,12 +3365,12 @@ class Innovation extends GameGui {
     }
     
     removeFromZone(zone, id, destroy, age, type, is_relic) {
-        var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
+        let HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
         
         // Update weights before removing
-        var found = false;
+        let found = false;
         for (let i=0; i<zone.items.length; i++) {
-            var item = zone.items[i];
+            let item = zone.items[i];
             if (found) {
                 item.weight--;
                 dojo.style(item.id, 'z-index', item.weight);
@@ -3396,7 +3396,7 @@ class Innovation extends GameGui {
         // Update count if applicable
         if (zone.counter !== null) {
             // Update the value in the associated counter
-            var delta;
+            let delta;
             switch(zone.counter.method) {
             case("COUNT"):
                 delta = -1;
@@ -3436,7 +3436,7 @@ class Innovation extends GameGui {
     setPlacementRulesForRelics() {
         let self = this;
         this.zone["relics"]["0"].itemIdToCoordsGrid = function(i, control_width) {                
-            var w = self.card_dimensions[this.HTML_class].width;
+            let w = self.card_dimensions[this.HTML_class].width;
             let h = self.card_dimensions[this.HTML_class].height;
             
             let x = (i % 3) * (w + 5);
@@ -3544,15 +3544,16 @@ class Innovation extends GameGui {
         let visible_indices = this.getPileIndicesWhichMustRemainVisible(zone, splay_direction, full_visible);
 
         // Compute new width of zone
+        let width: number;
         if (splay_direction == 0 || splay_direction == 3 || full_visible) {
-            var width = this.card_dimensions[zone.HTML_class].width;
+            width = this.card_dimensions[zone.HTML_class].width;
         } else {
-            var calculateWidth = function(small_overlap, big_overlap) {
+            let calculateWidth = function(small_overlap, big_overlap) {
                 return self.card_dimensions[zone.HTML_class].width + (zone.items.length - visible_indices.length) * small_overlap + (visible_indices.length - 1) * big_overlap;
             };
             // Shrink overlap if the pile is going to be too wide
-            var max_total_width = dojo.position('player_' + zone.owner).w - 15;
-            var compact_overlap = this.overlap_for_splay[zone.HTML_class]["compact"];
+            let max_total_width = dojo.position('player_' + zone.owner).w - 15;
+            let compact_overlap = this.overlap_for_splay[zone.HTML_class]["compact"];
             // If compact mode isn't enough, then we also need to reduce the visibility on cards with echo effects
             if (calculateWidth(compact_overlap, overlap_if_expanded) > max_total_width) {
                 overlap = compact_overlap;
@@ -3560,13 +3561,13 @@ class Innovation extends GameGui {
             } else if (calculateWidth(overlap, overlap_if_expanded) > max_total_width) {
                 overlap = (max_total_width - self.card_dimensions[zone.HTML_class].width - (visible_indices.length - 1) * overlap_if_expanded)  / (zone.items.length - visible_indices.length);
             }
-            var width = calculateWidth(overlap, overlap_if_expanded);
+            width = calculateWidth(overlap, overlap_if_expanded);
         }
         dojo.setStyle(zone.container_div, 'width', width + "px");
 
         zone.itemIdToCoordsGrid = function(i: number, control_width) {
-            var w = self.card_dimensions[this.HTML_class].width;
-            var h = self.card_dimensions[this.HTML_class].height;
+            let w = self.card_dimensions[this.HTML_class].width;
+            let h = self.card_dimensions[this.HTML_class].height;
             let x_beginning = 0;
             let delta_x = 0;
             let delta_x_if_expanded = 0;
@@ -3643,8 +3644,8 @@ class Innovation extends GameGui {
     */
     givePlayerActionCard(player_id, action_number) {
         dojo.addClass('action_indicator_' + player_id, 'action_card');
-        var action_text = action_number == 0 ? _('Free Action') : action_number == 1 ? _('First Action') : _('Second Action');
-        var div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12, 2);
+        let action_text = action_number == 0 ? _('Free Action') : action_number == 1 ? _('First Action') : _('Second Action');
+        let div_action_text = this.createAdjustedContent(action_text, 'action_text', '', 12, 2);
         $('action_indicator_' + player_id).innerHTML = div_action_text;
     }
 
@@ -3817,8 +3818,8 @@ class Innovation extends GameGui {
             return;
         }
 
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
         this.ajaxcall("/innovation/innovation/promoteCard.html",
             {
                 lock: true,
@@ -3835,15 +3836,15 @@ class Innovation extends GameGui {
             return;
         }
 
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
-        var age = this.getCardAgeFromHTMLId(HTML_id);
-        var type = this.getCardTypeFromHTMLId(HTML_id);
-        var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
-        var owner = this.player_id;
-        var location = 'forecast';
-        var zone = this.getZone(location, owner, null, age);
-        var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let age = this.getCardAgeFromHTMLId(HTML_id);
+        let type = this.getCardTypeFromHTMLId(HTML_id);
+        let is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+        let owner = this.player_id;
+        let location = 'forecast';
+        let zone = this.getZone(location, owner, null, age);
+        let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
         this.ajaxcall("/innovation/innovation/promoteCardBack.html",
             {
                 lock: true,
@@ -3934,9 +3935,9 @@ class Innovation extends GameGui {
         this.stopActionTimer();
         this.deactivateClickEvents();
 
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_id = dojo.attr(HTML_id, 'card_id');
-        var card_name = this.cards[card_id].name;
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = dojo.attr(HTML_id, 'card_id');
+        let card_name = this.cards[card_id].name;
 
         $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Meld ${card_name}?"), {'card_name' : _(card_name)});
 
@@ -3952,7 +3953,7 @@ class Innovation extends GameGui {
         dojo.attr('meld_confirm_button', 'html_id', HTML_id);
 
         // When confirmation is disabled in game preferences, click the confirmation button instantly
-        var wait_time = 0;
+        let wait_time = 0;
 
         // Short timer (3 seconds)
         if (this.prefs[101].value == 2) {
@@ -3979,7 +3980,7 @@ class Innovation extends GameGui {
 
     action_manuallyConfirmMeld(event) {
         this.stopActionTimer();
-        var HTML_id = dojo.attr('meld_confirm_button', 'html_id');
+        let HTML_id = dojo.attr('meld_confirm_button', 'html_id');
         this.action_confirmMeld(HTML_id);
     }
 
@@ -3991,7 +3992,7 @@ class Innovation extends GameGui {
         dojo.destroy("meld_cancel_button");
         dojo.destroy("meld_confirm_button");
 
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
         this.ajaxcall("/innovation/innovation/meld.html",
             {
                 lock: true,
@@ -4009,10 +4010,10 @@ class Innovation extends GameGui {
             this.deactivateClickEvents();
         }
 
-        var HTML_id = event_or_html_id.currentTarget ? this.getCardHTMLIdFromEvent(event_or_html_id) : event_or_html_id;
+        let HTML_id = event_or_html_id.currentTarget ? this.getCardHTMLIdFromEvent(event_or_html_id) : event_or_html_id;
         dojo.attr(HTML_id, 'card_id_to_return', card_id_to_return);
-        var card_id = dojo.attr(HTML_id, 'card_id');
-        var card = this.cards[card_id];
+        let card_id = dojo.attr(HTML_id, 'card_id');
+        let card = this.cards[card_id];
 
         if (card_id_to_return == null) {
             $('pagemaintitletext').innerHTML = dojo.string.substitute(
@@ -4023,7 +4024,7 @@ class Innovation extends GameGui {
                 }
             );
         } else {
-            var card_to_return = this.cards[card_id_to_return];
+            let card_to_return = this.cards[card_id_to_return];
             $('pagemaintitletext').innerHTML = dojo.string.substitute(
                 _("Dogma ${dogma_age} ${dogma_card_name} by returning ${return_age} ${return_card_name}?"),
                 {
@@ -4052,7 +4053,7 @@ class Innovation extends GameGui {
         }
 
         // When confirmation is disabled in game preferences, click the confirmation button instantly
-        var wait_time = 0;
+        let wait_time = 0;
 
         // Short timer (3 seconds)
         if (this.prefs[100].value == 2) {
@@ -4080,11 +4081,11 @@ class Innovation extends GameGui {
 
     action_manuallyConfirmTimerDogma(event) {
         this.stopActionTimer();
-        var HTML_id = dojo.attr('dogma_confirm_timer_button', 'html_id');
+        let HTML_id = dojo.attr('dogma_confirm_timer_button', 'html_id');
 
-        var card_id = dojo.attr(HTML_id, 'card_id');
-        var card = this.cards[card_id];
-        var sharing_players = dojo.attr(HTML_id, 'sharing_players');
+        let card_id = dojo.attr(HTML_id, 'card_id');
+        let card = this.cards[card_id];
+        let sharing_players = dojo.attr(HTML_id, 'sharing_players');
         if (dojo.attr(HTML_id, 'no_effect')) {
             $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Are you sure you want to dogma ${age} ${card_name}? It will have no effect."),
                 {
@@ -4112,7 +4113,7 @@ class Innovation extends GameGui {
     }
 
     action_manuallyConfirmWarningDogma(event) {
-        var HTML_id = dojo.attr('dogma_confirm_warning_button', 'html_id');
+        let HTML_id = dojo.attr('dogma_confirm_warning_button', 'html_id');
         this.action_confirmDogma(HTML_id);
     }
 
@@ -4125,12 +4126,12 @@ class Innovation extends GameGui {
         dojo.destroy("dogma_confirm_timer_button");
         dojo.destroy("dogma_confirm_warning_button");
 
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
-        var payload  = {
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let payload  = {
             lock: true,
             card_id: card_id,
         };
-        var card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
+        let card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
         if (card_id_to_return != "null") {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
@@ -4145,9 +4146,9 @@ class Innovation extends GameGui {
     action_clickNonAdjacentDogma(event) {
         this.deactivateClickEvents();
 
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_id = dojo.attr(HTML_id, 'card_id');
-        var card = this.cards[card_id];
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = dojo.attr(HTML_id, 'card_id');
+        let card = this.cards[card_id];
         $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Dogma ${age} ${card_name} by returning a card from your hand"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name)});
 
         // Add cancel button
@@ -4156,7 +4157,7 @@ class Innovation extends GameGui {
         dojo.addClass("non_adjacent_dogma_cancel_button", 'bgabutton_red');
 
         // Make cards in hand clickable
-        var cards_to_return = this.selectMyCardsInHand();
+        let cards_to_return = this.selectMyCardsInHand();
         cards_to_return.addClass("clickable");
         cards_to_return.addClass("mid_dogma");
         this.on(cards_to_return, 'onclick', 'action_confirmNonAdjacentDogma');
@@ -4181,19 +4182,19 @@ class Innovation extends GameGui {
         dojo.query(".clickable").removeClass("clickable");
         dojo.query(".mid_dogma").removeClass("mid_dogma");
 
-        var card_to_return_html_id = this.getCardHTMLIdFromEvent(event);
-        var card_to_dogma_html_id = dojo.attr(card_to_return_html_id, 'card_to_dogma_html_id');
-        var card_id_to_return = this.getCardIdFromHTMLId(card_to_return_html_id);
+        let card_to_return_html_id = this.getCardHTMLIdFromEvent(event);
+        let card_to_dogma_html_id = dojo.attr(card_to_return_html_id, 'card_to_dogma_html_id');
+        let card_id_to_return = this.getCardIdFromHTMLId(card_to_return_html_id);
         this.action_clickDogma(card_to_dogma_html_id, /*via_alternate_prompt=*/ 'nonAdjacentDogma', card_id_to_return);
     }
 
     action_clickEndorse(event) {
         this.deactivateClickEvents();
 
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_id = dojo.attr(HTML_id, 'card_id');
-        var card = this.cards[card_id];
-        var max_age_to_tuck_for_endorse = dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse');
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = dojo.attr(HTML_id, 'card_id');
+        let card = this.cards[card_id];
+        let max_age_to_tuck_for_endorse = dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse');
         $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand to tuck"), {'age' : this.square('N', 'age', card.age, 'type_' + card.type), 'card_name' : _(card.name), 'tuck_age' : this.square('N', 'age', max_age_to_tuck_for_endorse)});
 
         // Add cancel button
@@ -4207,7 +4208,7 @@ class Innovation extends GameGui {
         dojo.attr('dogma_without_endorse_button', 'card_id', card_id);
 
         // Make tuckable cards clickable
-        var cards_to_tuck = this.selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse);
+        let cards_to_tuck = this.selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse);
         cards_to_tuck.addClass("clickable");
         cards_to_tuck.addClass("mid_dogma");
         this.on(cards_to_tuck, 'onclick', 'action_confirmEndorse');
@@ -4221,7 +4222,7 @@ class Innovation extends GameGui {
         dojo.destroy("endorse_cancel_button");
         dojo.destroy("dogma_without_endorse_button");
         dojo.destroy("endorse_button");
-        var cards_in_hand = this.selectMyCardsInHand();
+        let cards_in_hand = this.selectMyCardsInHand();
         cards_in_hand.removeClass("mid_dogma");
         this.off(cards_in_hand, 'onclick');
         this.on(cards_in_hand, 'onclick', 'action_clickMeld');
@@ -4247,9 +4248,9 @@ class Innovation extends GameGui {
         dojo.destroy("endorse_cancel_button");
         dojo.destroy("dogma_without_endorse_button");
 
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
-        var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
+        let card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
 
         this.ajaxcall("/innovation/innovation/endorse.html",
             {
@@ -4267,8 +4268,8 @@ class Innovation extends GameGui {
         this.stopActionTimer();
         this.deactivateClickEvents();
         
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var warning = dojo.attr(HTML_id, 'warning');
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let warning = dojo.attr(HTML_id, 'warning');
 
         $('pagemaintitletext').innerHTML = warning;
 
@@ -4294,7 +4295,7 @@ class Innovation extends GameGui {
 
     action_manuallyConfirmChooseFront(event) {
         this.stopActionTimer();
-        var HTML_id = dojo.attr('choose_front_confirm_button', 'html_id');
+        let HTML_id = dojo.attr('choose_front_confirm_button', 'html_id');
         this.action_confirmChooseFront(HTML_id);
     }
 
@@ -4303,12 +4304,12 @@ class Innovation extends GameGui {
             return;
         }
         // If the piles were forcibly made visible, collapse them
-        for (var color = 0; color < 5; color++) {
-            var zone = this.zone["board"][this.player_id][color];
+        for (let color = 0; color < 5; color++) {
+            let zone = this.zone["board"][this.player_id][color];
             this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
         }
         
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
         
         let self = this;
         this.ajaxcall("/innovation/innovation/choose.html",
@@ -4324,7 +4325,7 @@ class Innovation extends GameGui {
     action_clicForChoose(event) {
         this.deactivateClickEvents();
         
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
         this.action_confirmChooseFront(HTML_id);
     }
     
@@ -4334,24 +4335,24 @@ class Innovation extends GameGui {
         }
         this.deactivateClickEvents();
         
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
-        var age = this.getCardAgeFromHTMLId(HTML_id);
-        var type = this.getCardTypeFromHTMLId(HTML_id);
-        var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let age = this.getCardAgeFromHTMLId(HTML_id);
+        let type = this.getCardTypeFromHTMLId(HTML_id);
+        let is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
         
         // Search the zone containing that card
-        var zone_container = event.currentTarget.parentNode;
-        var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
-        var location = zone_infos[0];
-        var owner = location == 'deck' ? 0 : zone_infos[1];
+        let zone_container = event.currentTarget.parentNode;
+        let zone_infos = dojo.getAttr(zone_container, 'id').split('_');
+        let location = zone_infos[0];
+        let owner = location == 'deck' ? 0 : zone_infos[1];
         if (!owner) {
             owner = 0;
         }
-        var zone = this.getZone(location, owner, type, age);
+        let zone = this.getZone(location, owner, type, age);
         
         // Search the position the card is
-        var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+        let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
 
         let self = this;
         this.ajaxcall("/innovation/innovation/chooseRecto.html",
@@ -4372,7 +4373,7 @@ class Innovation extends GameGui {
         if (!this.checkAction('choose')) {
             return;
         }
-        var current_lowest_integer = parseInt(document.getElementById("choice_0")!.innerText);
+        let current_lowest_integer = parseInt(document.getElementById("choice_0")!.innerText);
         if (current_lowest_integer > 0) {
             for (let i = 0; i < 6; i++) {
                 document.getElementById("choice_" + i)!.innerText = (current_lowest_integer - 1 + i).toString();
@@ -4388,7 +4389,7 @@ class Innovation extends GameGui {
         if (!this.checkAction('choose')) {
             return;
         }
-        var current_lowest_integer = parseInt(document.getElementById("choice_0")!.innerText);
+        let current_lowest_integer = parseInt(document.getElementById("choice_0")!.innerText);
         if (current_lowest_integer < 995) {
             for (let i = 0; i < 6; i++) {
                 document.getElementById("choice_" + i)!.innerText = (current_lowest_integer + 1 + i).toString();
@@ -4405,15 +4406,15 @@ class Innovation extends GameGui {
             return;
         }
         
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var choice = HTML_id.substr(7)
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let choice = HTML_id.substr(7)
         
         if (this.choose_two_colors) {
             if (this.first_chosen_color === null) {
                 this.first_chosen_color = choice;
                 dojo.destroy(event.target); // Destroy the button
-                var query = dojo.query('#pagemaintitletext > span[style]');
-                var You = query[query.length - 1].outerHTML;
+                let query = dojo.query('#pagemaintitletext > span[style]');
+                let You = query[query.length - 1].outerHTML;
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose one color"), {'You':You});
                 return;
             }
@@ -4423,16 +4424,16 @@ class Innovation extends GameGui {
             if (this.first_chosen_color === null) {
                 this.first_chosen_color = choice;
                 dojo.destroy(event.target); // Destroy the button
-                var query = dojo.query('#pagemaintitletext > span[style]');
-                var You = query[query.length - 1].outerHTML;
+                let query = dojo.query('#pagemaintitletext > span[style]');
+                let You = query[query.length - 1].outerHTML;
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose two colors"), {'You':You});
                 return;
             }
             if (this.second_chosen_color === null) {
                 this.second_chosen_color = choice;
                 dojo.destroy(event.target); // Destroy the button
-                var query = dojo.query('#pagemaintitletext > span[style]');
-                var You = query[query.length - 1].outerHTML;
+                let query = dojo.query('#pagemaintitletext > span[style]');
+                let You = query[query.length - 1].outerHTML;
                 $('pagemaintitletext').innerHTML = dojo.string.substitute(_("${You} still must choose one color"), {'You':You});
                 return;
             }
@@ -4461,8 +4462,8 @@ class Innovation extends GameGui {
         }
         if (this.publication_permutations_done !== null) { // Special code for Publication: undo the changes the player made to his board
             this.publicationClicForUndoingSwaps();
-            for(var color=0; color<5; color++) {
-                var zone = this.zone["board"][this.player_id][color];
+            for(let color=0; color<5; color++) {
+                let zone = this.zone["board"][this.player_id][color];
                 this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
             }
             this.on(dojo.query('#change_display_mode_button'), 'onclick', 'toggle_displayMode');
@@ -4472,7 +4473,7 @@ class Innovation extends GameGui {
             this.publication_original_items = null;
         }
         else if (this.color_pile !== null) { // Special code where a stack needed to be selected
-            var zone = this.zone["board"][this.player_id][this.color_pile];
+            let zone = this.zone["board"][this.player_id][this.color_pile];
             this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
         }
             
@@ -4493,8 +4494,8 @@ class Innovation extends GameGui {
         }
         this.deactivateClickEvents();
         
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var color = HTML_id.substr(6)
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let color = HTML_id.substr(6)
         let self = this;
         this.ajaxcall("/innovation/innovation/choose.html",
                         {
@@ -4510,17 +4511,17 @@ class Innovation extends GameGui {
             return;
         }
         
-        var permuted_color = this.publication_permuted_zone.container_div.slice(-1);
+        let permuted_color = this.publication_permuted_zone.container_div.slice(-1);
         let permutations_done : string[] = [];
-        for(var i=0; i<this.publication_permutations_done.length; i++) {
-            var permutation =this.publication_permutations_done[i];
+        for(let i=0; i<this.publication_permutations_done.length; i++) {
+            let permutation =this.publication_permutations_done[i];
             permutations_done.push(permutation.position + "," + permutation.delta);
         }
         
         this.publicationResetInterface();
         
-        for(var color=0; color<5; color++) {
-            var zone = this.zone["board"][this.player_id][color];
+        for(let color=0; color<5; color++) {
+            let zone = this.zone["board"][this.player_id][color];
             this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
         }
         this.on(dojo.query('#change_display_mode_button'), 'onclick', 'toggle_displayMode');
@@ -4544,10 +4545,10 @@ class Innovation extends GameGui {
     }
     
     publicationClicForMove(event) {          
-        var HTML_id = this.getCardHTMLIdFromEvent(event);
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
         
-        var arrow_up = $('publication_arrow_up');
-        var arrow_down = $('publication_arrow_down');
+        let arrow_up = $('publication_arrow_up');
+        let arrow_down = $('publication_arrow_down');
         if (!arrow_up) {
             arrow_up = dojo.create('button', {'id': 'publication_arrow_up'});
             arrow_up.innerHTML = "<span>&#8593;</span>"; // Code for arrow up
@@ -4561,19 +4562,19 @@ class Innovation extends GameGui {
     }
     
     publicationClicForSwap(event) {
-        var arrow = event.currentTarget;
-        var delta = arrow == $('publication_arrow_up') ? 1 : -1; // Change of position requested
-        var HTML_id = dojo.getAttr(arrow.parentNode, 'id');
-        var card_id = this.getCardIdFromHTMLId(HTML_id);
-        var color = this.cards[card_id].color;
+        let arrow = event.currentTarget;
+        let delta = arrow == $('publication_arrow_up') ? 1 : -1; // Change of position requested
+        let HTML_id = dojo.getAttr(arrow.parentNode, 'id');
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let color = this.cards[card_id].color;
         
         // Search position in zone
-        var zone = this.zone["board"][this.player_id][color];
-        var items = zone.items;
-        for(var p=0; p<items.length; p++) {
-            var it = zone.items[p] 
-            if (it.id == HTML_id) {
-                var position = p;
+        let zone = this.zone["board"][this.player_id][color];
+        let items = zone.items;
+        let position: number;
+        for(let p=0; p<items.length; p++) {
+            if (zone.items[p].id == HTML_id) {
+                position = p;
                 break;
             }
         }
@@ -4583,13 +4584,13 @@ class Innovation extends GameGui {
 
         if (this.publication_permutations_done.length == 0) { // First change
             // Add cancel button
-            var cancel = dojo.create('a', {'id':'publication_cancel', 'class' : 'bgabutton bgabutton_red'});
+            let cancel = dojo.create('a', {'id':'publication_cancel', 'class' : 'bgabutton bgabutton_red'});
             cancel.innerHTML = _("Cancel");
             dojo.place(cancel, $('splay_indicator_' + this.player_id + '_' + color), 'after')
             dojo.connect(cancel, 'onclick', this, 'publicationClicForUndoingSwaps');
             
             // Add done button
-            var done = dojo.create('a', {'id':'publication_done', 'class' : 'bgabutton bgabutton_blue'});
+            let done = dojo.create('a', {'id':'publication_done', 'class' : 'bgabutton bgabutton_blue'});
             done.innerHTML = _("Done");
             dojo.place(done, cancel, 'after')
             dojo.connect(done, 'onclick', this, 'action_publicationClicForRearrange');
@@ -4598,9 +4599,9 @@ class Innovation extends GameGui {
             this.addActionButton('publication_done_action_bar', _("Done"), "action_publicationClicForRearrange");
             
             // Deactivate click events for other colors
-            var other_colors = [0,1,2,3,4];
+            let other_colors = [0,1,2,3,4];
             other_colors.splice(color, 1);
-            var cards = this.selectCardsOnMyBoardOfColors(other_colors);
+            let cards = this.selectCardsOnMyBoardOfColors(other_colors);
             cards.removeClass("clickable");
             cards.removeClass("mid_dogma");
             this.off(cards, 'onclick');
@@ -4611,13 +4612,13 @@ class Innovation extends GameGui {
         }
         
         // Mark info
-        this.publication_permutations_done.push({'position':position, 'delta':delta});
+        this.publication_permutations_done.push({'position': position, 'delta':delta});
         
         // Swap positions
         this.publicationSwap(this.player_id, zone, position, delta)
         
         let no_change = true;
-        for(var p=0; p<items.length; p++) {
+        for(let p=0; p<items.length; p++) {
             if (items[p] != this.publication_original_items[p]) {
                 no_change = false;
             }
@@ -4631,8 +4632,8 @@ class Innovation extends GameGui {
     
     publicationClicForUndoingSwaps() {
         // Undo publicationSwaps
-        for(var i=this.publication_permutations_done.length-1; i>=0; i--) {
-            var permutation = this.publication_permutations_done[i]
+        for(let i=this.publication_permutations_done.length-1; i>=0; i--) {
+            let permutation = this.publication_permutations_done[i]
             this.publicationSwap(this.player_id, this.publication_permuted_zone, permutation.position, permutation.delta); // Re-appliying a permutation cancels it
         }
         
@@ -4649,7 +4650,7 @@ class Innovation extends GameGui {
         dojo.destroy('publication_done');
         dojo.destroy('publication_done_action_bar');
         
-        var selectable_cards = this.selectAllCardsOnMyBoard();
+        let selectable_cards = this.selectAllCardsOnMyBoard();
         selectable_cards.addClass("clickable");
         selectable_cards.addClass("mid_dogma");
         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
@@ -4661,8 +4662,8 @@ class Innovation extends GameGui {
     publicationSwap(player_id, zone, position, delta) {
         position = parseInt(position);
         delta = parseInt(delta);
-        var item = zone.items[position];
-        var other_item = zone.items[position+delta];
+        let item = zone.items[position];
+        let other_item = zone.items[position+delta];
         item.weight += delta;
         other_item.weight -= delta;
         
@@ -4682,7 +4683,7 @@ class Innovation extends GameGui {
             let new_top_card = this.cards[this.getCardIdFromHTMLId(new_top_item.id)];
             
             let ressource_counts = {};
-            for(var icon=1; icon<=7; icon++) {
+            for(let icon=1; icon<=7; icon++) {
                 ressource_counts[icon] = this.counter["resource_count"][player_id][icon].getValue();
             }
             
@@ -4743,7 +4744,7 @@ class Innovation extends GameGui {
                 break;
             }
             
-            for(var icon=1; icon<=7; icon++) {
+            for(let icon=1; icon<=7; icon++) {
                 this.counter["resource_count"][player_id][icon].setValue(ressource_counts[icon]);
             }
             
@@ -4772,17 +4773,17 @@ class Innovation extends GameGui {
         // Indicate the change of display mode
         this.display_mode = !this.display_mode;
         
-        var button_text = this.display_mode ? this.text_for_expanded_mode : this.text_for_compact_mode;
-        var arrows =  this.display_mode ? this.arrows_for_expanded_mode : this.arrows_for_compact_mode;
+        let button_text = this.display_mode ? this.text_for_expanded_mode : this.text_for_compact_mode;
+        let arrows =  this.display_mode ? this.arrows_for_expanded_mode : this.arrows_for_compact_mode;
         
-        var inside_button = this.format_string_recursive("${arrows} ${button_text}", {'arrows':arrows, 'button_text':button_text, 'i18n':['button_text']});
+        let inside_button = this.format_string_recursive("${arrows} ${button_text}", {'arrows':arrows, 'button_text':button_text, 'i18n':['button_text']});
         
         $('change_display_mode_button').innerHTML = inside_button;
         
         // Update the display of the stacks
-        for(var player_id in this.players) {
-            for(var color = 0; color < 5; color++){
-                var zone = this.zone["board"][player_id][color];
+        for(let player_id in this.players) {
+            for(let color = 0; color < 5; color++){
+                let zone = this.zone["board"][player_id][color];
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
@@ -4803,16 +4804,16 @@ class Innovation extends GameGui {
         // Indicate the change of view
         this.view_full = !this.view_full;
         
-        var button_text = this.view_full ? this.text_for_view_full : this.text_for_view_normal;
+        let button_text = this.view_full ? this.text_for_view_full : this.text_for_view_normal;
         
-        var inside_button = this.format_string_recursive("${button_text}", {'button_text':button_text, 'i18n':['button_text']});
+        let inside_button = this.format_string_recursive("${button_text}", {'button_text':button_text, 'i18n':['button_text']});
         
         $('change_view_full_button').innerHTML = inside_button;
         
         // Update the display of the stacks
-        for(var player_id in this.players) {
-            for(var color = 0; color < 5; color++){
-                var zone = this.zone["board"][player_id][color];
+        for(let player_id in this.players) {
+            for(let color = 0; color < 5; color++){
+                let zone = this.zone["board"][player_id][color];
                 this.refreshSplay(zone, zone.splay_direction);
             }
         }
@@ -4843,7 +4844,7 @@ class Innovation extends GameGui {
     }
 
     click_browse_cards(event) {
-        var id = dojo.getAttr(event.currentTarget, 'id');
+        let id = dojo.getAttr(event.currentTarget, 'id');
 
         dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
 
@@ -4865,7 +4866,7 @@ class Innovation extends GameGui {
         dojo.byId('browse_card_summaries').style.display = 'block';
         dojo.query('#special_achievement_summaries').addClass('heightless');
 
-        var node = dojo.query('#browse_card_summaries')[0];
+        let node = dojo.query('#browse_card_summaries')[0];
         node.innerHTML = '';
 
         // Special case for relics
@@ -4886,7 +4887,7 @@ class Innovation extends GameGui {
         }
 
         // Figure out which set is selected
-        var type = 0;
+        let type = 0;
         for (let i = 0; i <= 4; i++) {
             if (dojo.query(`#browse_cards_type_${i}.selected`).length > 0) {
                 type = i;
@@ -4894,7 +4895,7 @@ class Innovation extends GameGui {
         }
 
         // Figure out which age is selected
-        var age = 1;
+        let age = 1;
         for (let i = 1; i <= 11; i++) {
             if (dojo.query(`#browse_cards_age_${i}.selected`).length > 0) {
                 age = i;
@@ -4902,12 +4903,14 @@ class Innovation extends GameGui {
         }
 
         // Determine range of cards to render
+        let min_id: number;
+        let max_id: number;
         if (age == 11) {
-            var min_id = 440 + type * 10;
-            var max_id = min_id + 9;
+            min_id = 440 + type * 10;
+            max_id = min_id + 9;
         } else {
-            var min_id = type * 110 + age * 10 - 5;
-            var max_id = min_id + 9;
+            min_id = type * 110 + age * 10 - 5;
+            max_id = min_id + 9;
             if (age == 1) {
                 min_id -= 5;
             }
@@ -4952,7 +4955,7 @@ class Innovation extends GameGui {
     
     */
     setupNotifications() {
-        var reasonnable_delay = 1000;
+        let reasonnable_delay = 1000;
         
         dojo.subscribe('transferedCard', this, "notif_transferedCard");
         this.notifqueue.setSynchronous( 'transferedCard', reasonnable_delay );   // Wait X milliseconds after executing the transferedCard handler
@@ -5000,7 +5003,7 @@ class Innovation extends GameGui {
     }
     
     notif_transferedCard(notif) {
-        var card = notif.args;
+        let card = notif.args;
 
         if (parseInt(card.is_relic) == 1) {
             card.id = 212 + parseInt(card.age);
@@ -5024,13 +5027,13 @@ class Innovation extends GameGui {
             }
         }
 
-        var zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
-        var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
+        let zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
+        let zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
         
-        var is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
-        var visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+        let is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
+        let visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
-        var visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
+        let visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
 
         let id_from: number;
         let id_to: number;
@@ -5059,8 +5062,8 @@ class Innovation extends GameGui {
         // Update BGA score if needed
         if (card.owner_from != 0 && card.location_from == 'achievements') {
             // Decrement player BGA score (all the team in team game)
-            var player_team = this.players[card.owner_from].player_team;
-            for (var player_id in this.players) {
+            let player_team = this.players[card.owner_from].player_team;
+            for (let player_id in this.players) {
                 if (this.players[player_id].player_team == player_team) {
                     this.scoreCtrl[player_id].incValue(-1);
                 }
@@ -5068,8 +5071,8 @@ class Innovation extends GameGui {
         }            
         if (card.owner_to != 0 && card.location_to == 'achievements') {
             // Increment player BGA score (all the team in team game)
-            var player_team = this.players[card.owner_to].player_team;
-            for (var player_id in this.players) {
+            let player_team = this.players[card.owner_to].player_team;
+            for (let player_id in this.players) {
                 if (this.players[player_id].player_team == player_team) {
                     this.scoreCtrl[player_id].incValue(1);
                 }
@@ -5083,7 +5086,7 @@ class Innovation extends GameGui {
             this.counter["score"][card.player_id].setValue(card.new_score);
         }
         if(card.new_ressource_counts !== undefined) {
-            for(var icon=1; icon<=7; icon++) {
+            for(let icon=1; icon<=7; icon++) {
                 this.counter["resource_count"][card.player_id][icon].setValue(card.new_ressource_counts[icon]);
             }
         }
@@ -5098,12 +5101,12 @@ class Innovation extends GameGui {
             this.counter["score"][card.owner_to].setValue(card.new_score_to);
         }
         if(card.new_ressource_counts_from !== undefined) {
-            for(var icon=1; icon<=7; icon++) {
+            for(let icon=1; icon<=7; icon++) {
                 this.counter["resource_count"][card.owner_from][icon].setValue(card.new_ressource_counts_from[icon]);
             }
         }
         if(card.new_ressource_counts_to !== undefined) {
-            for(var icon=1; icon<=7; icon++) {
+            for(let icon=1; icon<=7; icon++) {
                 this.counter["resource_count"][card.owner_to][icon].setValue(card.new_ressource_counts_to[icon]);
             }
         }
@@ -5128,12 +5131,11 @@ class Innovation extends GameGui {
             return;
         }
 
-        var is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
         if (is_fountain_or_flag && card.owner_from == 0) {
             // Make the card appear that it is coming from the card with the fountain/flag icon
-            var pile = this.zone["board"][card.owner_to][card.color].items;
-            var top_card = pile[pile.length - 1];
-            var center_of_top_card = dojo.query(`#${top_card.id} > .card_title`)[0];
+            let pile = this.zone["board"][card.owner_to][card.color].items;
+            let top_card = pile[pile.length - 1];
+            let center_of_top_card = dojo.query(`#${top_card.id} > .card_title`)[0];
             this.createAndAddToZone(zone_to, null, null, card.type, card.is_relic, card.id, center_of_top_card.id, card);
         } else if (is_fountain_or_flag && card.owner_to == 0) {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
@@ -5169,7 +5171,7 @@ class Innovation extends GameGui {
             card.splay_direction = card.splay_direction_to;
             this.addTooltipForCard(card);
         } else if (card.location_to == 'achievements' && card.age !== null) {
-            var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone_from.HTML_class);
+            let HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, zone_from.HTML_class);
             this.removeTooltip(HTML_id);
             card.owner = card.owner_to;
             card['location'] = card.location_to;
@@ -5193,7 +5195,7 @@ class Innovation extends GameGui {
     notif_logWithCardTooltips(notif) {
         // Add tooltips to game log
         for (let i = 0; i < notif.args.card_ids.length; i++) {
-            var card_id = notif.args.card_ids[i];
+            let card_id = notif.args.card_ids[i];
             if (this.canShowCardTooltip(card_id)) {
                 this.addCustomTooltipToClass("card_id_" + card_id, this.getTooltipForCard(card_id), "");
             }
@@ -5201,19 +5203,19 @@ class Innovation extends GameGui {
     }
     
     notif_splayedPile(notif) {
-        var player_id = notif.args.player_id;
-        var color = notif.args.color;
-        var splay_direction = notif.args.splay_direction;
-        var splay_direction_in_clear = notif.args.splay_direction_in_clear;
-        var forced_unsplay = notif.args.forced_unsplay;
-        var new_score = notif.args.new_score;
+        let player_id = notif.args.player_id;
+        let color = notif.args.color;
+        let splay_direction = notif.args.splay_direction;
+        let splay_direction_in_clear = notif.args.splay_direction_in_clear;
+        let forced_unsplay = notif.args.forced_unsplay;
+        let new_score = notif.args.new_score;
         
         // Change the splay mode of the matching zone on board
         this.refreshSplay(this.zone["board"][player_id][color], splay_direction);
         
         // Update the splay indicator
-        var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
-        for(var direction = 0; direction <= 4; direction++) {
+        let splay_indicator = 'splay_indicator_' + player_id + '_' + color;
+        for(let direction = 0; direction <= 4; direction++) {
             if (direction == splay_direction) {
                 dojo.addClass(splay_indicator, 'splay_' + direction);
             }
@@ -5235,7 +5237,7 @@ class Innovation extends GameGui {
         
         // Update the ressource counts for that player
         if (splay_direction > 0 || forced_unsplay) {
-            for(var icon=1; icon<=7; icon++) {
+            for(let icon=1; icon<=7; icon++) {
                 this.counter["resource_count"][player_id][icon].setValue(notif.args.new_ressource_counts[icon]);
             }
         }
@@ -5259,20 +5261,20 @@ class Innovation extends GameGui {
     }
     
     notif_rearrangedPile(notif) {
-        var player_id = notif.args.player_id;
+        let player_id = notif.args.player_id;
         this.counter["max_age_on_board"][player_id].setValue(notif.args.new_max_age_on_board);
         
         // Apply the permutations if either an opponent rearranged their stack or the game is being
         // replayed (which eliminates a bug where Publications doesn't rearrange cards during replays)
         if (this.player_id != player_id || this.isInReplayMode()) {
 
-            var rearrangement = notif.args.rearrangement;
-            var color = rearrangement.color;
-            var permutations_done = rearrangement.permutations_done;
-            var permuted_zone = this.zone["board"][player_id][color];
+            let rearrangement = notif.args.rearrangement;
+            let color = rearrangement.color;
+            let permutations_done = rearrangement.permutations_done;
+            let permuted_zone = this.zone["board"][player_id][color];
 
             for (let i=0; i < permutations_done.length; i++) {
-                var permutation = permutations_done[i];
+                let permutation = permutations_done[i];
                 this.publicationSwap(player_id, permuted_zone, permutation.position, permutation.delta);
             }
         }
@@ -5286,37 +5288,37 @@ class Innovation extends GameGui {
         if (!g_archive_mode) {
             this.zone["my_score_verso"].removeAll();
         }
-        for(var player_id in this.players) {
+        for(let player_id in this.players) {
             this.zone["revealed"][player_id].removeAll();
             this.zone["hand"][player_id].removeAll();
             this.zone["score"][player_id].removeAll();
-            for(var color=0; color<5; color++) {
+            for(let color=0; color<5; color++) {
                 this.zone["board"][player_id][color].removeAll();
             }
         }
         
         // Reset counters
         // Counters for score, number of cards in hand and max age
-        for(var player_id in this.players) {
+        for(let player_id in this.players) {
             this.counter["score"][player_id].setValue(0);
             this.zone["hand"][player_id].counter.setValue(0);
             this.counter["max_age_on_board"][player_id].setValue(0);
         }
         
         // Counters for ressources
-        for(var player_id in this.players) {
-            for(var icon=1; icon<=7; icon++) {
+        for(let player_id in this.players) {
+            for(let icon=1; icon<=7; icon++) {
                 this.counter["resource_count"][player_id][icon].setValue(0);
             }
         }
         
         // Unsplay all stacks and update the splay indicator (show nothing bacause there are no more splayed stacks)
-        for(var player_id in this.players) {
-            for(var color=0; color<5; color++) {
+        for(let player_id in this.players) {
+            for(let color=0; color<5; color++) {
                 this.refreshSplay(this.zone["board"][player_id][color], 0)
-                var splay_indicator = 'splay_indicator_' + player_id + '_' + color;
+                let splay_indicator = 'splay_indicator_' + player_id + '_' + color;
                 dojo.addClass(splay_indicator, 'splay_0');
-                for(var direction = 1; direction <= 4; direction++) {
+                for(let direction = 1; direction <= 4; direction++) {
                     dojo.removeClass(splay_indicator, 'splay_' + direction);
                 }
                 this.zone["board"][player_id][color].counter.setValue(0);
@@ -5334,16 +5336,16 @@ class Innovation extends GameGui {
 
     notif_removedTopCardsAndHands(notif) {
         // Remove cards
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             this.zone["hand"][player_id].removeAll();
         }
         for (let i = 0; i < notif.args.top_cards_to_remove.length; i++) {
-            var card = notif.args.top_cards_to_remove[i];
+            let card = notif.args.top_cards_to_remove[i];
             this.removeFromZone(this.zone["board"][card.owner][card.color], card.id, true, card.age, card.type, card.is_relic);
         }
         
         // Update counters
-        for (var player_id in this.players) {
+        for (let player_id in this.players) {
             this.zone["hand"][player_id].counter.setValue(0);
             this.counter["max_age_on_board"][player_id].setValue(notif.args.new_max_age_on_board_by_player[player_id]);
             for (let icon = 1; icon <= 7; icon++) {
@@ -5356,7 +5358,7 @@ class Innovation extends GameGui {
     }
 
     notif_junkedBaseDeck(notif) {
-        var zone = this.zone["deck"][0][notif.args.age_to_junk];
+        let zone = this.zone["deck"][0][notif.args.age_to_junk];
         zone.removeAll();
         zone.counter.setValue(0);
         if (!zone.counter.display_zero) {
@@ -5367,7 +5369,7 @@ class Innovation extends GameGui {
     }
 
     notif_removedPlayer(notif) {
-        var player_id = notif.args.player_to_remove;
+        let player_id = notif.args.player_to_remove;
         // NOTE: The button to look at the player's forecast is broken in archive mode.
         if (this.gamedatas.echoes_expansion_enabled && !g_archive_mode) {
             this.zone["my_forecast_verso"].removeAll();
@@ -5384,7 +5386,7 @@ class Innovation extends GameGui {
         if (this.gamedatas.artifacts_expansion_enabled) {
             this.zone["display"][player_id].removeAll();
         }
-        for (var color = 0; color < 5; color++) {
+        for (let color = 0; color < 5; color++) {
             this.zone["board"][player_id][color].removeAll();
         }
 
@@ -5551,7 +5553,7 @@ class Innovation extends GameGui {
     log_for_spectator(notif) {
         notif.args = this.notifqueue.playerNameFilterGame(notif.args);
         notif.args.log = this.format_string_recursive(notif.args.log, notif.args); // Enable translation
-        var log = "<div class='log' style='height: auto; display: block; color: rgb(0, 0, 0);'><div class='roundedbox'>" + notif.args.log + "</div></div>"
+        let log = "<div class='log' style='height: auto; display: block; color: rgb(0, 0, 0);'><div class='roundedbox'>" + notif.args.log + "</div></div>"
         dojo.place(log, $('logs'), 'first');
     }
     
@@ -5591,8 +5593,8 @@ class Innovation extends GameGui {
     }
     
     getCardChain(args) {
-        var cards = [];
-        var i = 0;
+        let cards = [];
+        let i = 0;
         while (true) {
             if (typeof args['card_'+i] != 'string') {
                 break;
@@ -5600,7 +5602,7 @@ class Innovation extends GameGui {
             cards.push(this.getColoredText(_(args['card_'+i]), args['ref_player_'+i]));
             i++;
         }
-        var arrow = '&rarr;';
+        let arrow = '&rarr;';
         return cards.join(arrow);
     }
 
