@@ -3689,12 +3689,13 @@ class Innovation extends GameGui {
         this.off(cards_in_hand, 'onclick');
         this.on(cards_in_hand, 'onclick', 'action_clickForUpdatedInitialMeld');
         
+        let self = this;
         this.ajaxcall("/innovation/innovation/initialMeld.html",
                         {
                             lock: true,
                             card_id: card_id
                         },
-                            this, function(result){}, function(is_error){this.resurrectClickEvents(is_error);}
+                            this, function(result){}, function(is_error){self.resurrectClickEvents(is_error);}
                     );
     }
 
@@ -3708,12 +3709,13 @@ class Innovation extends GameGui {
         let card_id = this.getCardIdFromHTMLId(HTML_id);
         dojo.addClass(HTML_id, "selected");
         
+        let self = this;
         this.ajaxcall("/innovation/innovation/updateInitialMeld.html",
                         {
                             lock: true,
                             card_id: card_id
                         },
-                            this, function(result){}, function(is_error){this.resurrectClickEvents(is_error);}
+                            this, function(result){}, function(is_error){self.resurrectClickEvents(is_error);}
                     );
     }
 
@@ -3822,6 +3824,7 @@ class Innovation extends GameGui {
 
         let HTML_id = this.getCardHTMLIdFromEvent(event);
         let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let self = this;
         this.ajaxcall("/innovation/innovation/promoteCard.html",
             {
                 lock: true,
@@ -3829,7 +3832,7 @@ class Innovation extends GameGui {
             },
             this,
             function(result) { },
-            function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            function(is_error) { if (is_error) self.resurrectClickEvents(true); }
         );
     }
 
@@ -3847,6 +3850,7 @@ class Innovation extends GameGui {
         let location = 'forecast';
         let zone = this.getZone(location, owner, null, age);
         let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+        let self = this;
         this.ajaxcall("/innovation/innovation/promoteCardBack.html",
             {
                 lock: true,
@@ -3859,7 +3863,7 @@ class Innovation extends GameGui {
             },
             this,
             function(result) { },
-            function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            function(is_error) { if (is_error) self.resurrectClickEvents(true); }
         );
     }
 
@@ -3995,6 +3999,7 @@ class Innovation extends GameGui {
         dojo.destroy("meld_confirm_button");
 
         let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let self = this;
         this.ajaxcall("/innovation/innovation/meld.html",
             {
                 lock: true,
@@ -4002,7 +4007,7 @@ class Innovation extends GameGui {
             },
             this,
             function(result) { },
-            function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            function(is_error) { if (is_error) self.resurrectClickEvents(true); }
         );
     }
     
@@ -4137,11 +4142,12 @@ class Innovation extends GameGui {
         if (card_id_to_return != "null") {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
+        let self = this;
         this.ajaxcall("/innovation/innovation/dogma.html",
             payload,
             this,
             function(result) { },
-            function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            function(is_error) { if (is_error) self.resurrectClickEvents(true); }
         );
     }
 
@@ -4254,6 +4260,7 @@ class Innovation extends GameGui {
         let card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
         let card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
 
+        let self = this;
         this.ajaxcall("/innovation/innovation/endorse.html",
             {
                 lock: true,
@@ -4262,7 +4269,7 @@ class Innovation extends GameGui {
             },
             this,
             function(result) { },
-            function(is_error) { if (is_error) this.resurrectClickEvents(true); }
+            function(is_error) { if (is_error) self.resurrectClickEvents(true); }
         );
     }
 
