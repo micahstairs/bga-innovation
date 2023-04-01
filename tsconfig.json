@@ -107,6 +107,7 @@
     // "skipLibCheck": true                              /* Skip type checking all .d.ts files. */
   },
   "files": [
+    "src/global.d.ts",
     "src/bga-framework.d.ts",
     "src/innovation.d.ts",
     "src/innovation.ts",
