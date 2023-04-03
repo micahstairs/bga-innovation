@@ -1720,6 +1720,7 @@ class Innovation extends GameGui {
                         // three or more icons of all six types
                         numerator = 0;
                         denominator = 6;
+                        // TODO(4E): Update this.
                         for (let i = 1; i <= 7; i++) {
                             if (self.counter["resource_count"][self.player_id][i].getValue() >= 3) {
                                 numerator++;
@@ -2266,24 +2267,15 @@ class Innovation extends GameGui {
         }
         
         // Calculate new ressource count if this card is melded
-        // Get current ressouce count
-        let current_ressource_counts = {};
-        let new_ressource_counts = {};
+        let current_icon_counts = new Map<number, number>();
+        let new_icon_counts = new Map<number, number>();
         for (let icon = 1; icon <= 7; icon++) {
-            let current_count = self.counter["resource_count"][self.player_id][icon].getValue();
-            current_ressource_counts[icon] = current_count;
-            new_ressource_counts[icon] = current_count;
+            let icon_count = this.counter["resource_count"][self.player_id][icon].getValue();
+            current_icon_counts.set(icon, icon_count);
+            new_icon_counts.set(icon, icon_count);
         }
-        
-        // Add ressources brought by the new card
-        new_ressource_counts[card.spot_1]++;
-        new_ressource_counts[card.spot_2]++;
-        new_ressource_counts[card.spot_3]++;
-        new_ressource_counts[card.spot_4]++;
-        new_ressource_counts[card.spot_5]++;
-        new_ressource_counts[card.spot_6]++;
-        
-        if (top_card != null) { // Substract the ressources no longer visible
+        this.incrementMap(new_icon_counts, getAllIcons(card));
+        if (top_card != null) {
             let splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
             let splay_direction = 0;
             for (let direction = 0; direction <= 4; direction++) {
@@ -2292,41 +2284,10 @@ class Innovation extends GameGui {
                     break;
                 }
             }
-            
-            switch (splay_direction) {
-            case 0: // No splay (all icons of the old top card are lost)
-                new_ressource_counts[top_card.spot_1]--;
-                new_ressource_counts[top_card.spot_2]--;
-                new_ressource_counts[top_card.spot_3]--;
-                new_ressource_counts[top_card.spot_4]--;
-                new_ressource_counts[top_card.spot_5]--;
-                new_ressource_counts[top_card.spot_6]--;
-                break;
-            case 1: // Splayed left (only the icons on the right can still be seen)
-                new_ressource_counts[top_card.spot_1]--;
-                new_ressource_counts[top_card.spot_2]--;
-                new_ressource_counts[top_card.spot_3]--;
-                new_ressource_counts[top_card.spot_6]--;
-                break;
-            case 2: // Splayed right (only the icons on the left can still be seen)
-                new_ressource_counts[top_card.spot_3]--;
-                new_ressource_counts[top_card.spot_4]--;
-                new_ressource_counts[top_card.spot_5]--;
-                new_ressource_counts[top_card.spot_6]--;
-                break;
-            case 3: // Splayed up (only the icons on the bottom can still be seen)
-                new_ressource_counts[top_card.spot_1]--;
-                new_ressource_counts[top_card.spot_5]--;
-                new_ressource_counts[top_card.spot_6]--;
-                break;
-            case 4: // Splayed aslant (only the icons on the left and bottom can still be seen)
-                new_ressource_counts[top_card.spot_5]--;
-                new_ressource_counts[top_card.spot_6]--;
-                break;
-            }
+            this.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(top_card, splay_direction));
         }
 
-        HTML_action += self.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+        HTML_action += self.createSimulatedRessourceTable(current_icon_counts, new_icon_counts);
 
         let splay_icon_triggers_city_draw = false;
         let splay_icon_direction = 11 <= card.spot_3 && card.spot_3 <= 13 ? card.spot_3 - 10 : 11 <= card.spot_6 && card.spot_6 <= 13 ? card.spot_6 - 10 : null;
@@ -2469,68 +2430,17 @@ class Innovation extends GameGui {
         }
         
         // Calculate new resource count if the splay direction changes
-        // Get current ressouce count
-        let current_ressource_counts = {};
-        let new_ressource_counts = {};
+        let current_icon_counts = new Map<number, number>();
+        let new_icon_counts = new Map<number, number>();
         for (let icon = 1; icon <= 7; icon++) {
-            let current_count = this.counter["resource_count"][this.player_id][icon].getValue();
-            current_ressource_counts[icon] = current_count;
-            new_ressource_counts[icon] = current_count;
+            let icon_count = this.counter["resource_count"][this.player_id][icon].getValue();
+            current_icon_counts.set(icon, icon_count);
+            new_icon_counts.set(icon, icon_count);
         }
-        
-        // Browse all the cards of the pîle except the one on top
-        for (let i = 0; i < pile.length - 1; i++) {
+        for (let i = 0; i < pile.length - 1; i++) { // all cards except top one
             let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)]
-            
-            // Remove resources which were granted by the current splay
-            switch (current_splay_direction) {
-            case 0: // Not currently splayed: no icons will be lost
-                break;
-            case 1: // The icons on the right will be lost
-                new_ressource_counts[pile_card.spot_4]--;
-                new_ressource_counts[pile_card.spot_5]--;
-                break;
-            case 2: // The icons on the left will be lost
-                new_ressource_counts[pile_card.spot_1]--;
-                new_ressource_counts[pile_card.spot_2]--;
-                break;
-            case 3: // The icons on the bottom will be lost
-                new_ressource_counts[pile_card.spot_2]--;
-                new_ressource_counts[pile_card.spot_3]--;
-                new_ressource_counts[pile_card.spot_4]--;
-                break;
-            case 4: // The icons on the left and bottom will be lost
-                new_ressource_counts[pile_card.spot_1]--;    
-                new_ressource_counts[pile_card.spot_2]--;
-                new_ressource_counts[pile_card.spot_3]--;
-                new_ressource_counts[pile_card.spot_4]--;
-                break;
-            }
-            
-            // Add resources granted by the new splay
-            switch (parseInt(splay_direction)) {
-            case 0: // Not splayed (this should not happen)
-                break;
-            case 1: // The icons on the right will be revealed
-                new_ressource_counts[pile_card.spot_4]++;
-                new_ressource_counts[pile_card.spot_5]++;
-                break;
-            case 2: // The icons on the left will be revealed
-                new_ressource_counts[pile_card.spot_1]++;
-                new_ressource_counts[pile_card.spot_2]++;
-                break;
-            case 3: // The icons on the bottom will be revealed
-                new_ressource_counts[pile_card.spot_2]++;
-                new_ressource_counts[pile_card.spot_3]++;
-                new_ressource_counts[pile_card.spot_4]++;
-                break;
-            case 4: // The icons on the left and bottom will be revealed
-                new_ressource_counts[pile_card.spot_1]++;
-                new_ressource_counts[pile_card.spot_2]++;
-                new_ressource_counts[pile_card.spot_3]++;
-                new_ressource_counts[pile_card.spot_4]++;
-                break;
-            }
+            this.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(pile_card, current_splay_direction));
+            this.incrementMap(new_icon_counts, getHiddenIconsWhenSplayed(pile_card, splay_direction));
         }
 
         // Calculate new score (score pile + bonus icons)
@@ -2551,7 +2461,7 @@ class Innovation extends GameGui {
         } else {
             HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
         }
-        HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+        HTML_action += this.createSimulatedRessourceTable(current_icon_counts, new_icon_counts);
     
         return HTML_action;
     }
@@ -2569,41 +2479,14 @@ class Innovation extends GameGui {
             top_card = card_being_melded;
         }
         if (top_card != null) {
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_1));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_2));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_3));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_4));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_5));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_6));
+            bonus_icons.concat(getBonusIconValues(getAllIcons(top_card)));
         }
 
         // Cards underneath
         let pile_length = card_being_melded == null ? pile.length : pile.length + 1;
         for (let i = 0; i < pile_length - 1; i++) {
             let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
-            switch (parseInt(splay_direction)) {
-            case 0: // Not splayed
-                break;
-            case 1: // Splayed left (the icons on the right would be visible)
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_5));
-                break;
-            case 2: // Splayed right (the icons on the left would be visible)
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                break;
-            case 3: // Splayed up (the icons on the bottom would be visible)
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                break;
-            case 4: // Splayed up (the icons on the left and bottom would be visible)
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
-                bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                break;
-            }
+            bonus_icons.concat(getBonusIconValues(this.getVisibleBonusIconsInPile(pile_card, splay_direction)));
         }
 
         return bonus_icons.filter(val => val > 0); // Remove the zeroes
@@ -2627,105 +2510,32 @@ class Innovation extends GameGui {
         return score;
     }
 
-    getBonusIconValue(icon : number) {
-        // TODO(EXPANSION): If there is ever a bonus icon with a value higher than 11, then this needs to be changed.
-        if (icon > 100 && icon <= 111) {
-            return icon - 100;
-        }
-        return 0;
-    }
-
     /** Counts how many of a particular icon is visible in a specific pile */
     countVisibleIconsInPile(pile, splay_direction, icon) {
         let count = 0;
 
         // Top card
-        let top_card: Card | null = null;
         if (pile.length > 0) {
-            top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
-        }
-        if (top_card != null) {
-            if (top_card.spot_1 == icon) {
-                count++;
-            }
-            if (top_card.spot_2 == icon) {
-                count++;
-            }
-            if (top_card.spot_3 == icon) {
-                count++;
-            }
-            if (top_card.spot_4 == icon) {
-                count++;
-            }
-            if (top_card.spot_5 == icon) {
-                count++;
-            }
-            if (top_card.spot_6 == icon) {
-                count++;
-            }
+            let card = this.cards[this.getCardIdFromHTMLId(pile[pile.length-1].id)];
+            count += countMatchingIcons(getAllIcons(card), icon);
         }
 
         // Cards underneath
         for (let i = 0; i < pile.length - 1; i++) {
-            let pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
-            switch (parseInt(splay_direction)) {
-            case 0: // Not splayed
-                break;
-            case 1: // Splayed left (the icons on the right would be visible)
-                if (pile_card.spot_4 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_5 == icon) {
-                    count++;
-                }
-                break;
-            case 2: // Splayed right (the icons on the left would be visible)
-                if (pile_card.spot_1 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_2 == icon) {
-                    count++;
-                }
-                break;
-            case 3: // Splayed up (the icons on the bottom would be visible)
-                if (pile_card.spot_2 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_3 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_4 == icon) {
-                    count++;
-                }
-                break;
-            case 4: // Splayed aslant (the icons on the left and bottom would be visible)
-                if (pile_card.spot_1 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_2 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_3 == icon) {
-                    count++;
-                }
-                if (pile_card.spot_4 == icon) {
-                    count++;
-                }
-                break;
-            }
+            let card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+            count += countMatchingIcons(getVisibleIconsWhenSplayed(card, splay_direction), icon);
         }
 
         return count;
     }
     
-    createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts) {
+    createSimulatedRessourceTable(current_icon_counts: Map<number, number>, new_icon_counts: Map<number, number>) {
         let table = dojo.create('table', { 'class': 'ressource_table' });
         let symbol_line = dojo.create('tr', null, table);
         let count_line = dojo.create('tr', null, table);
-        
-        for(let icon=1; icon<=7; icon++) {
-            let current_count = current_ressource_counts[icon];
-            let new_count = new_ressource_counts[icon];
+        for (let icon = 1; icon <= 7; icon++) {
+            let current_count = current_icon_counts.get(icon) ?? 0;
+            let new_count = new_icon_counts.get(icon) ?? 0;
             let comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
             dojo.place('<td><div class="ressource with_white_border ressource_' + icon + ' square P icon_' + icon + '"></div></td>', symbol_line);
             dojo.place('<td><div class="ressource with_white_border' + icon + ' ' + comparator + '">&nbsp;&#8239;' + new_count + '</div></td>', count_line);
@@ -4682,85 +4492,39 @@ class Innovation extends GameGui {
         
         zone.items[position+delta] = item;
         zone.items[position] = other_item;
+        let splay_direction = Number(zone.splay_direction);
         
         // Change ressource if the card on top is involved
         if (position == zone.items.length-1 || position + delta == zone.items.length-1) {
             let up = delta == 1;
             let old_top_item = up ? other_item : item;
             let new_top_item = up ? item : other_item;
-            
             let old_top_card = this.cards[this.getCardIdFromHTMLId(old_top_item.id)];
             let new_top_card = this.cards[this.getCardIdFromHTMLId(new_top_item.id)];
             
-            let ressource_counts = {};
-            for(let icon=1; icon<=7; icon++) {
-                ressource_counts[icon] = this.counter["resource_count"][player_id][icon].getValue();
+            let icon_counts = new Map<number, number>();
+            for (let icon = 1; icon <= 7; icon++) {
+                icon_counts.set(icon, this.counter["resource_count"][player_id][icon].getValue());
             }
-            
-            switch(parseInt(zone.splay_direction)) {
-            case 0: // All icons of the old top card are lost
-                ressource_counts[old_top_card.spot_1]--;
-                ressource_counts[old_top_card.spot_2]--;
-                ressource_counts[old_top_card.spot_3]--;
-                ressource_counts[old_top_card.spot_4]--;
-                ressource_counts[old_top_card.spot_5]--;
-                ressource_counts[old_top_card.spot_6]--;
-                
-                ressource_counts[new_top_card.spot_1]++;
-                ressource_counts[new_top_card.spot_2]++;
-                ressource_counts[new_top_card.spot_3]++;
-                ressource_counts[new_top_card.spot_4]++;
-                ressource_counts[new_top_card.spot_5]++;
-                ressource_counts[new_top_card.spot_6]++;
-                break;
-            case 1: // Only the icons on the right can still be seen (spot_4 and spot_5)
-                ressource_counts[old_top_card.spot_1]--;
-                ressource_counts[old_top_card.spot_2]--;
-                ressource_counts[old_top_card.spot_3]--;
-                ressource_counts[old_top_card.spot_5]--;
-                
-                ressource_counts[new_top_card.spot_1]++;
-                ressource_counts[new_top_card.spot_2]++;
-                ressource_counts[new_top_card.spot_3]++;
-                ressource_counts[new_top_card.spot_5]++;
-                break;
-            case 2: // Icons on left can still be seen (spot_1 and spot_2)
-                ressource_counts[old_top_card.spot_3]--;
-                ressource_counts[old_top_card.spot_4]--;
-                ressource_counts[old_top_card.spot_5]--;
-                ressource_counts[old_top_card.spot_6]--;
-                
-                ressource_counts[new_top_card.spot_3]++;
-                ressource_counts[new_top_card.spot_4]++;
-                ressource_counts[new_top_card.spot_5]++;
-                ressource_counts[new_top_card.spot_6]++;
-                break;
-            case 3: // Icons on bottom can still be seen (spot_2, spot_3 and spot_4)
-                ressource_counts[old_top_card.spot_1]--;
-                ressource_counts[old_top_card.spot_5]--;
-                ressource_counts[old_top_card.spot_6]--;
-                
-                ressource_counts[new_top_card.spot_1]++;
-                ressource_counts[new_top_card.spot_5]++;
-                ressource_counts[new_top_card.spot_6]++;
-                break;
-            
-            case 4: // Icons on left and bottom can still be seen (spot_1, spot_2, spot_3 and spot_4)
-                ressource_counts[old_top_card.spot_5]--;
-                ressource_counts[old_top_card.spot_6]--;
-                
-                ressource_counts[new_top_card.spot_5]++;
-                ressource_counts[new_top_card.spot_6]++;
-                break;
+            this.decrementMap(icon_counts, getHiddenIconsWhenSplayed(old_top_card, splay_direction));
+            this.incrementMap(icon_counts, getHiddenIconsWhenSplayed(new_top_card, splay_direction));
+            for (let icon = 1; icon <= 7; icon++) {
+                this.counter["resource_count"][player_id][icon].setValue(icon_counts.get(icon));
             }
-            
-            for(let icon=1; icon<=7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(ressource_counts[icon]);
-            }
-            
         }
-        
         zone.updateDisplay();
+    }
+
+    decrementMap(map: Map<number, number>, keys: number[]) {
+        keys.forEach(key => {
+            map.set(key, (map.get(key) ?? 0) - 1);
+        });
+    }
+
+    incrementMap(map: Map<number, number>, keys: number[]) {
+        keys.forEach(key => {
+            map.set(key, (map.get(key) ?? 0) + 1);
+        });
     }
 
     click_display_forecast_window() {
@@ -5597,7 +5361,7 @@ class Innovation extends GameGui {
 
     /* Implementation of proper colored You with background in case of white or light colors  */
 
-    getColoredText(translatable_text, player_id = this.player_id) {
+    getColoredText(translatable_text: string, player_id = this.player_id) {
         let color = this.gamedatas.players[player_id].color;
         return "<span style='font-weight:bold;color:#" + color + "'>" + translatable_text + "</span>";
     }
@@ -5616,15 +5380,15 @@ class Innovation extends GameGui {
         return cards.join(arrow);
     }
 
-    isFlag(card_id) {
+    isFlag(card_id: number) {
         return 1000 <= card_id && card_id <= 1099;
     }
 
-    isFountain(card_id) {
+    isFountain(card_id: number) {
         return 1100 <= card_id && card_id <= 1199;
     }
 
-    canShowCardTooltip(card_id) {
+    canShowCardTooltip(card_id?: number) {
         if (card_id == undefined) {
             return false;
         }

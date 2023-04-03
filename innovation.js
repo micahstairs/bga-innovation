@@ -1,4 +1,58 @@
 "use strict";
+function getHiddenIconsWhenSplayed(card, direction) {
+    switch (direction) {
+        case 1: // left
+            return [card.spot_1, card.spot_2, card.spot_3, card.spot_6];
+        case 2: // right
+            return [card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+        case 3: // up
+            return [card.spot_1, card.spot_5, card.spot_6];
+        case 4: // aslant
+            return [card.spot_5, card.spot_6];
+        default: // unsplayed
+            return getAllIcons(card);
+    }
+}
+function getVisibleIconsWhenSplayed(card, direction) {
+    switch (direction) {
+        case 1: // left
+            return [card.spot_4, card.spot_5];
+        case 2: // right
+            return [card.spot_1, card.spot_2];
+        case 3: // up
+            return [card.spot_2, card.spot_3, card.spot_4];
+        case 4: // aslant
+            return [card.spot_1, card.spot_2, card.spot_3, card.spot_4];
+        default: // unsplayed
+            return [];
+    }
+}
+function getAllIcons(card) {
+    return [card.spot_1, card.spot_2, card.spot_3, card.spot_4, card.spot_5, card.spot_6];
+}
+function getBonusIconValues(icons) {
+    var bonus_values = [];
+    icons.forEach(function (icon) {
+        bonus_values.push(getBonusIconValue(icon));
+    });
+    return bonus_values;
+}
+function getBonusIconValue(icon) {
+    // TODO(4E): If there is a bonus icon with a value higher than 11, then this needs to be changed.
+    if (icon > 100 && icon <= 111) {
+        return icon - 100;
+    }
+    return 0;
+}
+function countMatchingIcons(icons, iconToMatch) {
+    var count = 0;
+    icons.forEach(function (icon) {
+        if (icon == iconToMatch) {
+            count++;
+        }
+    });
+    return count;
+}
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -1520,6 +1574,7 @@ var Innovation = /** @class */ (function (_super) {
                         // three or more icons of all six types
                         numerator = 0;
                         denominator = 6;
+                        // TODO(4E): Update this.
                         for (var i = 1; i <= 7; i++) {
                             if (self.counter["resource_count"][self.player_id][i].getValue() >= 3) {
                                 numerator++;
@@ -2011,22 +2066,15 @@ var Innovation = /** @class */ (function (_super) {
             }
         }
         // Calculate new ressource count if this card is melded
-        // Get current ressouce count
-        var current_ressource_counts = {};
-        var new_ressource_counts = {};
+        var current_icon_counts = new Map();
+        var new_icon_counts = new Map();
         for (var icon = 1; icon <= 7; icon++) {
-            var current_count = self.counter["resource_count"][self.player_id][icon].getValue();
-            current_ressource_counts[icon] = current_count;
-            new_ressource_counts[icon] = current_count;
+            var icon_count = this.counter["resource_count"][self.player_id][icon].getValue();
+            current_icon_counts.set(icon, icon_count);
+            new_icon_counts.set(icon, icon_count);
         }
-        // Add ressources brought by the new card
-        new_ressource_counts[card.spot_1]++;
-        new_ressource_counts[card.spot_2]++;
-        new_ressource_counts[card.spot_3]++;
-        new_ressource_counts[card.spot_4]++;
-        new_ressource_counts[card.spot_5]++;
-        new_ressource_counts[card.spot_6]++;
-        if (top_card != null) { // Substract the ressources no longer visible
+        this.incrementMap(new_icon_counts, getAllIcons(card));
+        if (top_card != null) {
             var splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
             var splay_direction = 0;
             for (var direction = 0; direction <= 4; direction++) {
@@ -2035,39 +2083,9 @@ var Innovation = /** @class */ (function (_super) {
                     break;
                 }
             }
-            switch (splay_direction) {
-                case 0: // No splay (all icons of the old top card are lost)
-                    new_ressource_counts[top_card.spot_1]--;
-                    new_ressource_counts[top_card.spot_2]--;
-                    new_ressource_counts[top_card.spot_3]--;
-                    new_ressource_counts[top_card.spot_4]--;
-                    new_ressource_counts[top_card.spot_5]--;
-                    new_ressource_counts[top_card.spot_6]--;
-                    break;
-                case 1: // Splayed left (only the icons on the right can still be seen)
-                    new_ressource_counts[top_card.spot_1]--;
-                    new_ressource_counts[top_card.spot_2]--;
-                    new_ressource_counts[top_card.spot_3]--;
-                    new_ressource_counts[top_card.spot_6]--;
-                    break;
-                case 2: // Splayed right (only the icons on the left can still be seen)
-                    new_ressource_counts[top_card.spot_3]--;
-                    new_ressource_counts[top_card.spot_4]--;
-                    new_ressource_counts[top_card.spot_5]--;
-                    new_ressource_counts[top_card.spot_6]--;
-                    break;
-                case 3: // Splayed up (only the icons on the bottom can still be seen)
-                    new_ressource_counts[top_card.spot_1]--;
-                    new_ressource_counts[top_card.spot_5]--;
-                    new_ressource_counts[top_card.spot_6]--;
-                    break;
-                case 4: // Splayed aslant (only the icons on the left and bottom can still be seen)
-                    new_ressource_counts[top_card.spot_5]--;
-                    new_ressource_counts[top_card.spot_6]--;
-                    break;
-            }
+            this.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(top_card, splay_direction));
         }
-        HTML_action += self.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+        HTML_action += self.createSimulatedRessourceTable(current_icon_counts, new_icon_counts);
         var splay_icon_triggers_city_draw = false;
         var splay_icon_direction = 11 <= card.spot_3 && card.spot_3 <= 13 ? card.spot_3 - 10 : 11 <= card.spot_6 && card.spot_6 <= 13 ? card.spot_6 - 10 : null;
         if (city_draw_age != null && city_draw_type != null && splay_icon_direction != null) { // city_draw_age and city_draw_type will be null if this is a promotion or an initial meld (neither counts as a Meld action)
@@ -2193,65 +2211,17 @@ var Innovation = /** @class */ (function (_super) {
             }
         }
         // Calculate new resource count if the splay direction changes
-        // Get current ressouce count
-        var current_ressource_counts = {};
-        var new_ressource_counts = {};
+        var current_icon_counts = new Map();
+        var new_icon_counts = new Map();
         for (var icon = 1; icon <= 7; icon++) {
-            var current_count = this.counter["resource_count"][this.player_id][icon].getValue();
-            current_ressource_counts[icon] = current_count;
-            new_ressource_counts[icon] = current_count;
+            var icon_count = this.counter["resource_count"][this.player_id][icon].getValue();
+            current_icon_counts.set(icon, icon_count);
+            new_icon_counts.set(icon, icon_count);
         }
-        // Browse all the cards of the pîle except the one on top
-        for (var i = 0; i < pile.length - 1; i++) {
+        for (var i = 0; i < pile.length - 1; i++) { // all cards except top one
             var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
-            // Remove resources which were granted by the current splay
-            switch (current_splay_direction) {
-                case 0: // Not currently splayed: no icons will be lost
-                    break;
-                case 1: // The icons on the right will be lost
-                    new_ressource_counts[pile_card.spot_4]--;
-                    new_ressource_counts[pile_card.spot_5]--;
-                    break;
-                case 2: // The icons on the left will be lost
-                    new_ressource_counts[pile_card.spot_1]--;
-                    new_ressource_counts[pile_card.spot_2]--;
-                    break;
-                case 3: // The icons on the bottom will be lost
-                    new_ressource_counts[pile_card.spot_2]--;
-                    new_ressource_counts[pile_card.spot_3]--;
-                    new_ressource_counts[pile_card.spot_4]--;
-                    break;
-                case 4: // The icons on the left and bottom will be lost
-                    new_ressource_counts[pile_card.spot_1]--;
-                    new_ressource_counts[pile_card.spot_2]--;
-                    new_ressource_counts[pile_card.spot_3]--;
-                    new_ressource_counts[pile_card.spot_4]--;
-                    break;
-            }
-            // Add resources granted by the new splay
-            switch (parseInt(splay_direction)) {
-                case 0: // Not splayed (this should not happen)
-                    break;
-                case 1: // The icons on the right will be revealed
-                    new_ressource_counts[pile_card.spot_4]++;
-                    new_ressource_counts[pile_card.spot_5]++;
-                    break;
-                case 2: // The icons on the left will be revealed
-                    new_ressource_counts[pile_card.spot_1]++;
-                    new_ressource_counts[pile_card.spot_2]++;
-                    break;
-                case 3: // The icons on the bottom will be revealed
-                    new_ressource_counts[pile_card.spot_2]++;
-                    new_ressource_counts[pile_card.spot_3]++;
-                    new_ressource_counts[pile_card.spot_4]++;
-                    break;
-                case 4: // The icons on the left and bottom will be revealed
-                    new_ressource_counts[pile_card.spot_1]++;
-                    new_ressource_counts[pile_card.spot_2]++;
-                    new_ressource_counts[pile_card.spot_3]++;
-                    new_ressource_counts[pile_card.spot_4]++;
-                    break;
-            }
+            this.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(pile_card, current_splay_direction));
+            this.incrementMap(new_icon_counts, getHiddenIconsWhenSplayed(pile_card, splay_direction));
         }
         // Calculate new score (score pile + bonus icons)
         var bonus_icons = [];
@@ -2272,7 +2242,7 @@ var Innovation = /** @class */ (function (_super) {
         else {
             HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
         }
-        HTML_action += this.createSimulatedRessourceTable(current_ressource_counts, new_ressource_counts);
+        HTML_action += this.createSimulatedRessourceTable(current_icon_counts, new_icon_counts);
         return HTML_action;
     };
     /** Returns all visible bonus icons in a particular pile, optionally pretending a card is placed on top of the pile */
@@ -2288,40 +2258,13 @@ var Innovation = /** @class */ (function (_super) {
             top_card = card_being_melded;
         }
         if (top_card != null) {
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_1));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_2));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_3));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_4));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_5));
-            bonus_icons.push(this.getBonusIconValue(top_card.spot_6));
+            bonus_icons.concat(getBonusIconValues(getAllIcons(top_card)));
         }
         // Cards underneath
         var pile_length = card_being_melded == null ? pile.length : pile.length + 1;
         for (var i = 0; i < pile_length - 1; i++) {
             var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
-            switch (parseInt(splay_direction)) {
-                case 0: // Not splayed
-                    break;
-                case 1: // Splayed left (the icons on the right would be visible)
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_5));
-                    break;
-                case 2: // Splayed right (the icons on the left would be visible)
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                    break;
-                case 3: // Splayed up (the icons on the bottom would be visible)
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                    break;
-                case 4: // Splayed up (the icons on the left and bottom would be visible)
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_1));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_2));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_3));
-                    bonus_icons.push(this.getBonusIconValue(pile_card.spot_4));
-                    break;
-            }
+            bonus_icons.concat(getBonusIconValues(this.getVisibleBonusIconsInPile(pile_card, splay_direction)));
         }
         return bonus_icons.filter(function (val) { return val > 0; }); // Remove the zeroes
     };
@@ -2342,99 +2285,29 @@ var Innovation = /** @class */ (function (_super) {
         }
         return score;
     };
-    Innovation.prototype.getBonusIconValue = function (icon) {
-        // TODO(EXPANSION): If there is ever a bonus icon with a value higher than 11, then this needs to be changed.
-        if (icon > 100 && icon <= 111) {
-            return icon - 100;
-        }
-        return 0;
-    };
     /** Counts how many of a particular icon is visible in a specific pile */
     Innovation.prototype.countVisibleIconsInPile = function (pile, splay_direction, icon) {
         var count = 0;
         // Top card
-        var top_card = null;
         if (pile.length > 0) {
-            top_card = this.cards[this.getCardIdFromHTMLId(pile[pile.length - 1].id)];
-        }
-        if (top_card != null) {
-            if (top_card.spot_1 == icon) {
-                count++;
-            }
-            if (top_card.spot_2 == icon) {
-                count++;
-            }
-            if (top_card.spot_3 == icon) {
-                count++;
-            }
-            if (top_card.spot_4 == icon) {
-                count++;
-            }
-            if (top_card.spot_5 == icon) {
-                count++;
-            }
-            if (top_card.spot_6 == icon) {
-                count++;
-            }
+            var card = this.cards[this.getCardIdFromHTMLId(pile[pile.length - 1].id)];
+            count += countMatchingIcons(getAllIcons(card), icon);
         }
         // Cards underneath
         for (var i = 0; i < pile.length - 1; i++) {
-            var pile_card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
-            switch (parseInt(splay_direction)) {
-                case 0: // Not splayed
-                    break;
-                case 1: // Splayed left (the icons on the right would be visible)
-                    if (pile_card.spot_4 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_5 == icon) {
-                        count++;
-                    }
-                    break;
-                case 2: // Splayed right (the icons on the left would be visible)
-                    if (pile_card.spot_1 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_2 == icon) {
-                        count++;
-                    }
-                    break;
-                case 3: // Splayed up (the icons on the bottom would be visible)
-                    if (pile_card.spot_2 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_3 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_4 == icon) {
-                        count++;
-                    }
-                    break;
-                case 4: // Splayed aslant (the icons on the left and bottom would be visible)
-                    if (pile_card.spot_1 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_2 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_3 == icon) {
-                        count++;
-                    }
-                    if (pile_card.spot_4 == icon) {
-                        count++;
-                    }
-                    break;
-            }
+            var card = this.cards[this.getCardIdFromHTMLId(pile[i].id)];
+            count += countMatchingIcons(getVisibleIconsWhenSplayed(card, splay_direction), icon);
         }
         return count;
     };
-    Innovation.prototype.createSimulatedRessourceTable = function (current_ressource_counts, new_ressource_counts) {
+    Innovation.prototype.createSimulatedRessourceTable = function (current_icon_counts, new_icon_counts) {
+        var _a, _b;
         var table = dojo.create('table', { 'class': 'ressource_table' });
         var symbol_line = dojo.create('tr', null, table);
         var count_line = dojo.create('tr', null, table);
         for (var icon = 1; icon <= 7; icon++) {
-            var current_count = current_ressource_counts[icon];
-            var new_count = new_ressource_counts[icon];
+            var current_count = (_a = current_icon_counts.get(icon)) !== null && _a !== void 0 ? _a : 0;
+            var new_count = (_b = new_icon_counts.get(icon)) !== null && _b !== void 0 ? _b : 0;
             var comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
             dojo.place('<td><div class="ressource with_white_border ressource_' + icon + ' square P icon_' + icon + '"></div></td>', symbol_line);
             dojo.place('<td><div class="ressource with_white_border' + icon + ' ' + comparator + '">&nbsp;&#8239;' + new_count + '</div></td>', count_line);
@@ -4121,6 +3994,7 @@ var Innovation = /** @class */ (function (_super) {
         dojo.style(other_item.id, 'z-index', other_item.weight);
         zone.items[position + delta] = item;
         zone.items[position] = other_item;
+        var splay_direction = Number(zone.splay_direction);
         // Change ressource if the card on top is involved
         if (position == zone.items.length - 1 || position + delta == zone.items.length - 1) {
             var up = delta == 1;
@@ -4128,65 +4002,29 @@ var Innovation = /** @class */ (function (_super) {
             var new_top_item = up ? item : other_item;
             var old_top_card = this.cards[this.getCardIdFromHTMLId(old_top_item.id)];
             var new_top_card = this.cards[this.getCardIdFromHTMLId(new_top_item.id)];
-            var ressource_counts = {};
+            var icon_counts = new Map();
             for (var icon = 1; icon <= 7; icon++) {
-                ressource_counts[icon] = this.counter["resource_count"][player_id][icon].getValue();
+                icon_counts.set(icon, this.counter["resource_count"][player_id][icon].getValue());
             }
-            switch (parseInt(zone.splay_direction)) {
-                case 0: // All icons of the old top card are lost
-                    ressource_counts[old_top_card.spot_1]--;
-                    ressource_counts[old_top_card.spot_2]--;
-                    ressource_counts[old_top_card.spot_3]--;
-                    ressource_counts[old_top_card.spot_4]--;
-                    ressource_counts[old_top_card.spot_5]--;
-                    ressource_counts[old_top_card.spot_6]--;
-                    ressource_counts[new_top_card.spot_1]++;
-                    ressource_counts[new_top_card.spot_2]++;
-                    ressource_counts[new_top_card.spot_3]++;
-                    ressource_counts[new_top_card.spot_4]++;
-                    ressource_counts[new_top_card.spot_5]++;
-                    ressource_counts[new_top_card.spot_6]++;
-                    break;
-                case 1: // Only the icons on the right can still be seen (spot_4 and spot_5)
-                    ressource_counts[old_top_card.spot_1]--;
-                    ressource_counts[old_top_card.spot_2]--;
-                    ressource_counts[old_top_card.spot_3]--;
-                    ressource_counts[old_top_card.spot_5]--;
-                    ressource_counts[new_top_card.spot_1]++;
-                    ressource_counts[new_top_card.spot_2]++;
-                    ressource_counts[new_top_card.spot_3]++;
-                    ressource_counts[new_top_card.spot_5]++;
-                    break;
-                case 2: // Icons on left can still be seen (spot_1 and spot_2)
-                    ressource_counts[old_top_card.spot_3]--;
-                    ressource_counts[old_top_card.spot_4]--;
-                    ressource_counts[old_top_card.spot_5]--;
-                    ressource_counts[old_top_card.spot_6]--;
-                    ressource_counts[new_top_card.spot_3]++;
-                    ressource_counts[new_top_card.spot_4]++;
-                    ressource_counts[new_top_card.spot_5]++;
-                    ressource_counts[new_top_card.spot_6]++;
-                    break;
-                case 3: // Icons on bottom can still be seen (spot_2, spot_3 and spot_4)
-                    ressource_counts[old_top_card.spot_1]--;
-                    ressource_counts[old_top_card.spot_5]--;
-                    ressource_counts[old_top_card.spot_6]--;
-                    ressource_counts[new_top_card.spot_1]++;
-                    ressource_counts[new_top_card.spot_5]++;
-                    ressource_counts[new_top_card.spot_6]++;
-                    break;
-                case 4: // Icons on left and bottom can still be seen (spot_1, spot_2, spot_3 and spot_4)
-                    ressource_counts[old_top_card.spot_5]--;
-                    ressource_counts[old_top_card.spot_6]--;
-                    ressource_counts[new_top_card.spot_5]++;
-                    ressource_counts[new_top_card.spot_6]++;
-                    break;
-            }
+            this.decrementMap(icon_counts, getHiddenIconsWhenSplayed(old_top_card, splay_direction));
+            this.incrementMap(icon_counts, getHiddenIconsWhenSplayed(new_top_card, splay_direction));
             for (var icon = 1; icon <= 7; icon++) {
-                this.counter["resource_count"][player_id][icon].setValue(ressource_counts[icon]);
+                this.counter["resource_count"][player_id][icon].setValue(icon_counts.get(icon));
             }
         }
         zone.updateDisplay();
+    };
+    Innovation.prototype.decrementMap = function (map, keys) {
+        keys.forEach(function (key) {
+            var _a;
+            map.set(key, ((_a = map.get(key)) !== null && _a !== void 0 ? _a : 0) - 1);
+        });
+    };
+    Innovation.prototype.incrementMap = function (map, keys) {
+        keys.forEach(function (key) {
+            var _a;
+            map.set(key, ((_a = map.get(key)) !== null && _a !== void 0 ? _a : 0) + 1);
+        });
     };
     Innovation.prototype.click_display_forecast_window = function () {
         this.my_forecast_verso_window.show();

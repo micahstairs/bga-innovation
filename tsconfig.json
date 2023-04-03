@@ -109,7 +109,7 @@
   "files": [
     "src/global.d.ts",
     "src/bga-framework.d.ts",
-    "src/innovation.d.ts",
+    "src/cards.ts",
     "src/innovation.ts",
     "src/define.ts",
   ],
