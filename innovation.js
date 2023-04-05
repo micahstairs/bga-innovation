@@ -106,9 +106,8 @@ var Innovation = /** @class */ (function (_super) {
         };
         _this.my_hand_padding = 5; // Must be consistent to what is declared in CSS
         _this.overlap_for_unsplayed = 3;
-        _this.overlap_for_splay = {
-            "M card": { "compact": 3, "expanded": 52 }
-        };
+        _this.compact_overlap_for_splay = 3;
+        _this.expanded_overlap_for_splay = 52;
         _this.HTML_class = {
             "my_hand": "M card",
             "opponent_hand": "S recto",
@@ -124,21 +123,21 @@ var Innovation = /** @class */ (function (_super) {
             "achievements": "S recto",
             "special_achievements": "S card",
         };
-        _this.num_cards_in_row = {
-            "my_hand": -1,
-            "opponent_hand": -1,
-            "display": 1,
-            "deck": 15,
-            "board": -1,
-            "forecast": -1,
-            "my_forecast_verso": 3,
-            "score": -1,
-            "my_score_verso": 3,
-            "revealed": 1,
-            "relics": -1,
-            "achievements": -1,
-            "special_achievements": -1, // Computed dynamically
-        };
+        _this.num_cards_in_row = new Map([
+            ["my_hand", -1],
+            ["opponent_hand", -1],
+            ["display", 1],
+            ["deck", 15],
+            ["board", -1],
+            ["forecast", -1],
+            ["my_forecast_verso", 3],
+            ["score", -1],
+            ["my_score_verso", 3],
+            ["revealed", 1],
+            ["relics", -1],
+            ["achievements", -1],
+            ["special_achievements", -1], // Computed dynamically
+        ]);
         _this.delta = {
             "my_hand": { "x": 189, "y": 133 },
             "opponent_hand": { "x": 35, "y": 49 },
@@ -948,27 +947,32 @@ var Innovation = /** @class */ (function (_super) {
         var buffer = this.gamedatas.echoes_expansion_enabled ? 10 : 0;
         // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
         var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
-        this.num_cards_in_row["achievements"] = Math.floor(num_forecast_score_achievements_cards / 3);
-        if (this.num_cards_in_row["achievements"] < 1) {
-            this.num_cards_in_row["achievements"] = 1;
+        var num_achievements_cards_in_row = Math.floor(num_forecast_score_achievements_cards / 3);
+        if (num_achievements_cards_in_row < 1) {
+            num_achievements_cards_in_row = 1;
         }
-        if (this.num_cards_in_row["achievements"] > this.gamedatas.number_of_achievements_needed_to_win) {
-            this.num_cards_in_row["achievements"] = this.gamedatas.number_of_achievements_needed_to_win;
+        if (num_achievements_cards_in_row > this.gamedatas.number_of_achievements_needed_to_win) {
+            num_achievements_cards_in_row = this.gamedatas.number_of_achievements_needed_to_win;
         }
         // If we're splitting the achievements across two rows, let's make the rows as even as possible
-        if (this.gamedatas.number_of_achievements_needed_to_win / 2 < this.num_cards_in_row["achievements"] && this.num_cards_in_row["achievements"] < this.gamedatas.number_of_achievements_needed_to_win) {
-            this.num_cards_in_row["achievements"] = Math.ceil(this.gamedatas.number_of_achievements_needed_to_win / 2);
+        if (this.gamedatas.number_of_achievements_needed_to_win / 2 < num_achievements_cards_in_row && num_achievements_cards_in_row < this.gamedatas.number_of_achievements_needed_to_win) {
+            num_achievements_cards_in_row = Math.ceil(this.gamedatas.number_of_achievements_needed_to_win / 2);
         }
+        this.num_cards_in_row.set("achievements", num_achievements_cards_in_row);
+        var num_forecast_cards_in_row;
+        var num_score_cards_in_row;
         if (this.gamedatas.echoes_expansion_enabled) {
-            this.num_cards_in_row["forecast"] = Math.floor((num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"]) / 2);
-            this.num_cards_in_row.score = this.num_cards_in_row["forecast"];
+            num_forecast_cards_in_row = Math.floor((num_forecast_score_achievements_cards - num_achievements_cards_in_row) / 2);
+            num_score_cards_in_row = num_forecast_cards_in_row;
         }
         else {
-            this.num_cards_in_row["forecast"] = 0;
-            this.num_cards_in_row.score = num_forecast_score_achievements_cards - this.num_cards_in_row["achievements"];
+            num_forecast_cards_in_row = 0;
+            num_score_cards_in_row = num_forecast_score_achievements_cards - num_achievements_cards_in_row;
         }
-        var forecast_container_width = this.gamedatas.echoes_expansion_enabled ? this.num_cards_in_row["forecast"] * this.delta.forecast.x : 0;
-        var achievement_container_width = this.num_cards_in_row["achievements"] * this.delta.achievements.x;
+        this.num_cards_in_row.set("forecast", num_forecast_cards_in_row);
+        this.num_cards_in_row.set("score", num_score_cards_in_row);
+        var forecast_container_width = this.gamedatas.echoes_expansion_enabled ? num_forecast_cards_in_row * this.delta.forecast.x : 0;
+        var achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
         var score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
         for (var player_id in this.players) {
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
@@ -983,8 +987,8 @@ var Innovation = /** @class */ (function (_super) {
             dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
         }
         // Defining the number of cards hand zone can host
-        this.num_cards_in_row["my_hand"] = Math.floor(main_area_inner_width / this.delta.my_hand.x);
-        this.num_cards_in_row["opponent_hand"] = Math.floor(main_area_inner_width / this.delta.opponent_hand.x);
+        this.num_cards_in_row.set("my_hand", Math.floor(main_area_inner_width / this.delta.my_hand.x));
+        this.num_cards_in_row.set("opponent_hand", Math.floor(main_area_inner_width / this.delta.opponent_hand.x));
         // TODO(LATER): Figure out how to disable the animations while resizing the zones.
         for (var player_id in this.players) {
             this.zone["forecast"][player_id].updateDisplay();
@@ -1715,6 +1719,7 @@ var Innovation = /** @class */ (function (_super) {
         return ret;
     };
     Innovation.prototype.all_icons = function (type) {
+        // TODO(4E): Revise this.
         return "<span class='icon_1 square " + type + "'></span>" +
             "&nbsp<span class='icon_2 square " + type + "'></span>" +
             "&nbsp<span class='icon_3 square " + type + "'></span>" +
@@ -2736,7 +2741,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
             var delta_x = this.delta[new_location].x;
-            var n = this.num_cards_in_row[new_location];
+            var n = this.num_cards_in_row.get(new_location);
             zone_width = card_dimensions.width + (n - 1) * delta_x;
         }
         // Id of the container
@@ -2754,7 +2759,7 @@ var Innovation = /** @class */ (function (_super) {
         zone.create(this, div_id, card_dimensions.width, card_dimensions.height);
         zone.setPattern('grid');
         // Add information which identify the zone
-        zone['location'] = new_location;
+        zone.location = new_location;
         zone.owner = owner;
         zone.HTML_class = HTML_class;
         zone.grouped_by_age_type_and_is_relic = grouped_by_age_type_and_is_relic;
@@ -2797,7 +2802,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         else {
             // verso
-            if (zone.owner != 0 && zone['location'] == 'achievements' && !this.isFlag(id) && !this.isFountain(id)) {
+            if (zone.owner != 0 && zone.location == 'achievements' && !this.isFlag(id) && !this.isFountain(id)) {
                 visible_card = false;
             }
             else {
@@ -2828,7 +2833,7 @@ var Innovation = /** @class */ (function (_super) {
     Innovation.prototype.addToZone = function (zone, id, position, age, type, is_relic) {
         var HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
         dojo.style(HTML_id, 'position', 'absolute');
-        if (zone['location'] == 'revealed' && zone.items.length == 0) {
+        if (zone.location == 'revealed' && zone.items.length == 0) {
             dojo.style(zone.container_div, 'display', 'block');
         }
         // A relative position makes it easy to decide if this new card should go before or after another card.
@@ -2864,7 +2869,7 @@ var Innovation = /** @class */ (function (_super) {
         // Add the card
         dojo.style(HTML_id, 'z-index', weight);
         zone.placeInZone(HTML_id, weight);
-        if (zone['location'] == 'board') {
+        if (zone.location == 'board') {
             this.refreshSplay(zone, zone.splay_direction);
         }
         zone.updateDisplay();
@@ -2905,10 +2910,10 @@ var Innovation = /** @class */ (function (_super) {
         // Remove the card
         zone.removeFromZone(HTML_id, destroy);
         // Remove the space occupied by the card if needed
-        if (zone['location'] == 'board') {
+        if (zone.location == 'board') {
             this.refreshSplay(zone, zone.splay_direction);
         }
-        else if (zone['location'] == 'revealed' && zone.items.length == 0) {
+        else if (zone.location == 'revealed' && zone.items.length == 0) {
             zone = this.createZone('revealed', zone.owner, null, null, null); // Recreate the zone (Dunno why it does not work if I don't do that)
             dojo.style(zone.container_div, 'display', 'none');
         }
@@ -2937,8 +2942,8 @@ var Innovation = /** @class */ (function (_super) {
         zone.itemIdToCoordsGrid = function (i, control_width) {
             var w = self.card_dimensions[this.HTML_class].width;
             var h = self.card_dimensions[this.HTML_class].height;
-            var delta = self.delta[this['location']];
-            var n = self.num_cards_in_row[this['location']];
+            var delta = self.delta[this.location];
+            var n = self.num_cards_in_row.get(this.location);
             var x_beginning = left_to_right ? 0 : control_width - w;
             var delta_x = left_to_right ? delta.x : -delta.x;
             var delta_y = delta.y;
@@ -3048,8 +3053,8 @@ var Innovation = /** @class */ (function (_super) {
         var self = this;
         var full_visible = force_full_visible || this.view_full;
         zone.splay_direction = splay_direction;
-        var overlap = this.overlap_for_splay[zone.HTML_class][this.display_mode ? "expanded" : "compact"];
-        var overlap_if_expanded = this.overlap_for_splay[zone.HTML_class]["expanded"];
+        var overlap = this.display_mode ? this.expanded_overlap_for_splay : this.compact_overlap_for_splay;
+        var overlap_if_expanded = this.expanded_overlap_for_splay;
         var visible_indices = this.getPileIndicesWhichMustRemainVisible(zone, splay_direction, full_visible);
         // Compute new width of zone
         var width;
@@ -3062,7 +3067,7 @@ var Innovation = /** @class */ (function (_super) {
             };
             // Shrink overlap if the pile is going to be too wide
             var max_total_width = dojo.position('player_' + zone.owner).w - 15;
-            var compact_overlap = this.overlap_for_splay[zone.HTML_class]["compact"];
+            var compact_overlap = this.compact_overlap_for_splay;
             // If compact mode isn't enough, then we also need to reduce the visibility on cards with echo effects
             if (calculateWidth(compact_overlap, overlap_if_expanded) > max_total_width) {
                 overlap = compact_overlap;
@@ -3094,7 +3099,7 @@ var Innovation = /** @class */ (function (_super) {
                         num_cards_expanded++;
                     }
                 }
-                switch (parseInt(splay_direction)) {
+                switch (splay_direction) {
                     case 0: // Unsplayed
                         delta_y = self.overlap_for_unsplayed;
                         delta_y_if_expanded = self.overlap_for_unsplayed;
@@ -3984,8 +3989,6 @@ var Innovation = /** @class */ (function (_super) {
         this.publication_permutations_done = [];
     };
     Innovation.prototype.publicationSwap = function (player_id, zone, position, delta) {
-        position = parseInt(position);
-        delta = parseInt(delta);
         var item = zone.items[position];
         var other_item = zone.items[position + delta];
         item.weight += delta;
