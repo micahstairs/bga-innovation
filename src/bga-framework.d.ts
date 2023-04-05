@@ -44,9 +44,7 @@ declare class GameGui {
 	isSpectator: boolean;
 	notifqueue: GameNotifQueue;
 	scoreCtrl: { [player_id: number]: Counter };
-	prefs: {
-		value: number;
-	}
+	prefs: { [index: number]: { value: number } };
 	gameinterface_zoomFactor: number;
 	default_viewport: string;
 
@@ -76,7 +74,18 @@ declare class GameGui {
 }
 
 declare interface Zone {
+	location: string;
+	owner: number;
 	container_div: string;
+	HTML_class: string;
+	splay_direction: number;
+	items: any;
+	counter: any;
+	grouped_by_age_type_and_is_relic: boolean;
+	itemIdToCoordsGrid: Function;
+	placeInZone(nodeId: string, index: number): void;
+	removeFromZone(nodeId: string, destroy: boolean): void;
+	updateDisplay(): void
 }
 
 declare class Counter {
@@ -140,7 +149,7 @@ interface Dojo {
     removeClass: (nodeId: string | HTMLElement, className?: string) => {};
     toggleClass: (nodeId: string | HTMLElement, className: string, forceValue: boolean) => {};
     connect: Function;
-    query: Function;
+    query: (selector: string) => DojoNodeList;
 	body: Function;
 	position: Function;
     subscribe: Function;
@@ -161,10 +170,11 @@ declare module Dojo {
 	var NodeList: Constructor<NodeList>;
 }
 
-declare class DojoNodeList {
-	push(element: any): void;
-	addClass(name: string): void;
-	removeClass(name: string): void;
+declare class DojoNodeList extends Array {
+	addClass(name: string): DojoNodeList;
+	removeClass(name: string): DojoNodeList;
+	removeAttr(name: string): DojoNodeList;
+	style: Function;
 }
 
 declare module dijit {
