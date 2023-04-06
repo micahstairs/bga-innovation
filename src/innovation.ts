@@ -47,21 +47,21 @@ class Innovation extends GameGui {
     compact_overlap_for_splay = 3;
     expanded_overlap_for_splay = 52;
     
-    HTML_class = {
-        "my_hand":              "M card",
-        "opponent_hand":        "S recto",
-        "display":              "M card",
-        "deck":                 "S recto",
-        "board":                "M card",
-        "forecast":             "S recto",
-        "my_forecast_verso":    "M card",
-        "score":                "S recto",
-        "my_score_verso":       "M card",
-        "revealed":             "M card",
-        "relics":               "S recto",
-        "achievements":         "S recto",
-        "special_achievements": "S card",
-    };
+    HTML_class: Map<string, string> = new Map([
+        ["my_hand",              "M card"],
+        ["opponent_hand",        "S recto"],
+        ["display",              "M card"],
+        ["deck",                 "S recto"],
+        ["board",                "M card"],
+        ["forecast",             "S recto"],
+        ["my_forecast_verso",    "M card"],
+        ["score",                "S recto"],
+        ["my_score_verso",       "M card"],
+        ["revealed",             "M card"],
+        ["relics",               "S recto"],
+        ["achievements",         "S recto"],
+        ["special_achievements", "S card"],
+    ]);
 
     num_cards_in_row: Map<string, number> = new Map([
         ["my_hand",              -1], // Computed dynamically
@@ -381,9 +381,9 @@ class Innovation extends GameGui {
                 let card = gamedatas.cards[key];
                 // NOTE: The colors do not need to be translated because they only appear in the Studio anyway.
                 let color = card.color == 0 ? "blue" : card.color == 1 ? "red" : card.color == 2 ? "green" : card.color == 3 ? "yellow" : "purple";
-                if (this.isFountain(card.id)) {
+                if (isFountain(card.id)) {
                     $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Fountain (${color})</option>`;
-                } else if (this.isFlag(card.id)) {
+                } else if (isFlag(card.id)) {
                     $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - Flag (${color})</option>`;
                 } else {
                     $('debug_card_list').innerHTML += `<option value='${card.id}'> ${card.id} - ${card.name} (Age ${card.age})</option>`;
@@ -793,7 +793,7 @@ class Innovation extends GameGui {
             let achievements = gamedatas.claimed_achievements[player_id];
             for(let i = 0; i < achievements.length; i++){
                 let achievement = achievements[i];
-                if (this.isFlag(parseInt(achievement.id)) || this.isFountain(parseInt(achievement.id))) {
+                if (isFlag(parseInt(achievement.id)) || isFountain(parseInt(achievement.id))) {
                     this.createAndAddToZone(this.zone["achievements"][player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), achievement);
                     this.addTooltipForCard(achievement);
                 } else if (achievement.age == null) { // Special achievement
@@ -1159,7 +1159,7 @@ class Innovation extends GameGui {
             }
         
             if (this.selected_card !== null) {
-                dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.selected_card.type, this.selected_card.is_relic, this.HTML_class["my_hand"]), 'selected')
+                dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.selected_card.type, this.selected_card.is_relic, this.HTML_class.get("my_hand")!), 'selected')
             }
             break;
         case 'artifactPlayerTurn':
@@ -1920,7 +1920,7 @@ class Innovation extends GameGui {
             return;
         }
 
-        let HTML_class = this.isFountain(card.id) || this.isFlag(card.id) ? 'S recto' : zone.HTML_class;
+        let HTML_class = isFountain(card.id) || isFlag(card.id) ? 'S recto' : zone.HTML_class;
         let HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, HTML_class);
         // Special achievement
         if (card.age === null) {
@@ -2038,12 +2038,12 @@ class Innovation extends GameGui {
         side_2_content += colors_title + red_icon + purple_icon + blue_icon + green_icon + yellow_icon;
         
         // Assembling
-        let div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>"
-        let div_side_2 = "<div class='reference_card side_2 M'>" + side_2_content + "</div>"
+        let div_side_1 = `<div class='reference_card side_1 M'>${side_1_content}</div>`;
+        let div_side_2 = `<div class='reference_card side_2 M'>${side_2_content}</div>`;
         this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
     }
     
-    createAdjustedContent(content, HTML_class, size, font_max, width_margin = 0, height_margin = 0, div_id: string | null = null) {
+    createAdjustedContent(content: string, HTML_class: string, size: string, font_max: number, width_margin = 0, height_margin = 0, div_id: string | null = null): string {
         // Problem: impossible to get suitable text size because it is not possible to get the width and height of an element still unattached
         // Solution: first create the title hardly attached to the DOM, then destroy it and set the title in tooltip properly
         // Create temporary title hardly attached on the DOM
@@ -2085,13 +2085,13 @@ class Innovation extends GameGui {
         return `<div id='${div_id}' class='${HTML_class} ${size}'><span class='font_size_${font_size}'>${content}</span></div>`;
     }
     
-    createDogmaEffectText(text, dogma_symbol, size, color, shade, other_classes) {
-        return "<div class='effect " + size + " " + shade + " " + other_classes + "'><span class='dogma_symbol color_" + color + " " + size + " icon_" + dogma_symbol + "'></span><span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
+    createDogmaEffectText(text: string, dogma_symbol: number, size: string, color: number, shade: string, other_classes: string) {
+        return `<div class='effect ${size} ${shade} ${other_classes}'><span class='dogma_symbol color_${color} ${size} icon_${dogma_symbol}'></span><span class='effect_text ${shade} ${size}'>${this.parseForRichedText(text, size)}<span></div>`;
     }
     
-    parseForRichedText(text: string, size: string) {
+    parseForRichedText(text: string, size: string): string {
         if (text == null) {
-            return null;
+            return '';
         }
         text = text.replace(new RegExp("\\$\\{I demand\\}" , "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
         text = text.replace(new RegExp("\\$\\{I compel\\}" , "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
@@ -2474,7 +2474,7 @@ class Innovation extends GameGui {
     }
 
     /** Returns all visible bonus icons in a particular pile, optionally pretending a card is placed on top of the pile */
-    getVisibleBonusIconsInPile(pile, splay_direction, card_being_melded = null) {
+    getVisibleBonusIconsInPile(pile, splay_direction: number, card_being_melded = null) {
         let bonus_icons: number[] = [];
 
         // Top card
@@ -2518,7 +2518,7 @@ class Innovation extends GameGui {
     }
 
     /** Counts how many of a particular icon is visible in a specific pile */
-    countVisibleIconsInPile(pile, splay_direction, icon) {
+    countVisibleIconsInPile(pile, splay_direction: number, icon: number) {
         let count = 0;
 
         // Top card
@@ -2823,11 +2823,11 @@ class Innovation extends GameGui {
         return dojo.getAttr(event.currentTarget, 'id');
     }
     
-    getCardHTMLId(id, age, type, is_relic, zone_HTML_class) : string{
+    getCardHTMLId(id, age, type, is_relic, zone_HTML_class: string) : string{
         return ["item_" + id, "age_" + age, "type_" + type, "is_relic_" + parseInt(is_relic), zone_HTML_class.replace(" ", "__")].join("__");
     }
     
-    getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class) {
+    getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class: string) {
         let simplified_card_layout = this.prefs[111].value == 1;
         let classes = ["item_" + id, "age_" + age, "type_" + type, zone_HTML_class];
         if (parseInt(is_relic)) {
@@ -2861,7 +2861,7 @@ class Innovation extends GameGui {
     /*
     * Card creation
     */
-    createCard(id, age, type, is_relic, zone_HTML_class, card) {
+    createCard(id, age, type, is_relic, zone_HTML_class: string, card) {
         let HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone_HTML_class);
         let HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
         let size = this.getCardSizeInZone(zone_HTML_class);
@@ -2877,9 +2877,9 @@ class Innovation extends GameGui {
                 HTML_inside = "<span class='card_back_text " + HTML_class + "'>" + age +"</span>";
             }
         } else {
-            if (this.isFountain(card.id)) {
+            if (isFountain(card.id)) {
                 HTML_inside = `<span class="square in_tooltip icon_9 fountain_flag_card color_${card.color}"></span>`;
-            } else if (this.isFlag(card.id)) {
+            } else if (isFlag(card.id)) {
                 HTML_inside = `<span class="square in_tooltip icon_8 fountain_flag_card color_${card.color}"></span>`;
             } else {
                 HTML_inside = this.writeOverCard(card, size, HTML_id);
@@ -2909,7 +2909,7 @@ class Innovation extends GameGui {
         return "<div id='" + HTML_id + "' class='" + graphics_class + " " + HTML_class + "'>" + HTML_inside + "</div>" + card_type;
     }
 
-    createCardForCardBrowser(id) {
+    createCardForCardBrowser(id: number) {
         let card = this.cards[id];
         let HTML_class = this.getCardHTMLClass(id, card.age, card.type, card.is_relic, card, 'M card');
         let HTML_id = `browse_card_id_${id}`;
@@ -2968,9 +2968,9 @@ class Innovation extends GameGui {
     }
     
     getSpecialAchievementText(card) {
-        if (this.isFountain(card.id)) {
+        if (isFountain(card.id)) {
             return _("This represents a visible fountain on your board which currently counts as an achievement.");
-        } else if (this.isFlag(card.id)) {
+        } else if (isFlag(card.id)) {
             return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
         }
         let card_data = this.cards[card.id];
@@ -3008,7 +3008,7 @@ class Innovation extends GameGui {
             new_location = location;
         }
 
-        let HTML_class = this.HTML_class[new_location];
+        let HTML_class = this.HTML_class.get(new_location)!;
         let card_dimensions = this.card_dimensions[HTML_class];
         
         // Width of the zone
@@ -3081,7 +3081,7 @@ class Innovation extends GameGui {
             }
         } else {
             // verso
-            if (zone.owner != 0 && zone.location == 'achievements' && !this.isFlag(id) && !this.isFountain(id)) {
+            if (zone.owner != 0 && zone.location == 'achievements' && !isFlag(id) && !isFountain(id)) {
                 visible_card = false;
             } else {
                 visible_card = true;
@@ -4808,7 +4808,7 @@ class Innovation extends GameGui {
         let zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
         let zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
         
-        let is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
+        let is_fountain_or_flag = isFountain(card.id) || isFlag(card.id);
         let visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
         let visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
@@ -5351,7 +5351,7 @@ class Innovation extends GameGui {
                 }
                 
                 if (typeof args.card_name == 'string') {
-                        args.card_name = this.getCardChain(args);
+                    args.card_name = this.getCardChain(args);
                 }
                 if (this.player_id == args.opponent_id) { // Is that player the opponent?
                     args.message_for_others = args.message_for_opponent;
@@ -5384,19 +5384,11 @@ class Innovation extends GameGui {
         return cards.join(arrow);
     }
 
-    isFlag(card_id: number) {
-        return 1000 <= card_id && card_id <= 1099;
-    }
-
-    isFountain(card_id: number) {
-        return 1100 <= card_id && card_id <= 1199;
-    }
-
     canShowCardTooltip(card_id?: number) {
         if (card_id == undefined) {
             return false;
         }
-        if (this.isFlag(card_id) || this.isFountain(card_id)) {
+        if (isFlag(card_id) || isFountain(card_id)) {
             return true;
         }
         return this.cards[card_id].age !== null &&
@@ -5406,12 +5398,12 @@ class Innovation extends GameGui {
     }
 
     // Returns true if the current player is a spectator or if the game is currently in replay mode
-    isReadOnly() {
+    isReadOnly(): boolean {
         return this.isSpectator || this.isInReplayMode();
     }
 
     // Returns true if the game is ongoing but the user clicked "replay from this move" in the log or the game is in archive mode after the game has ended
-    isInReplayMode() {
+    isInReplayMode(): boolean {
         return typeof g_replayFrom != 'undefined' || g_archive_mode;
     }
 }
