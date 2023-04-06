@@ -86,3 +86,11 @@ function countMatchingIcons(icons: number[], iconToMatch: number) {
     });
     return count;
 }
+
+function isFlag(card_id: number) {
+    return 1000 <= card_id && card_id <= 1099;
+}
+
+function isFountain(card_id: number) {
+    return 1100 <= card_id && card_id <= 1199;
+}

@@ -53,6 +53,12 @@ function countMatchingIcons(icons, iconToMatch) {
     });
     return count;
 }
+function isFlag(card_id) {
+    return 1000 <= card_id && card_id <= 1099;
+}
+function isFountain(card_id) {
+    return 1100 <= card_id && card_id <= 1199;
+}
 /**
  *------
  * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
@@ -108,21 +114,21 @@ var Innovation = /** @class */ (function (_super) {
         _this.overlap_for_unsplayed = 3;
         _this.compact_overlap_for_splay = 3;
         _this.expanded_overlap_for_splay = 52;
-        _this.HTML_class = {
-            "my_hand": "M card",
-            "opponent_hand": "S recto",
-            "display": "M card",
-            "deck": "S recto",
-            "board": "M card",
-            "forecast": "S recto",
-            "my_forecast_verso": "M card",
-            "score": "S recto",
-            "my_score_verso": "M card",
-            "revealed": "M card",
-            "relics": "S recto",
-            "achievements": "S recto",
-            "special_achievements": "S card",
-        };
+        _this.HTML_class = new Map([
+            ["my_hand", "M card"],
+            ["opponent_hand", "S recto"],
+            ["display", "M card"],
+            ["deck", "S recto"],
+            ["board", "M card"],
+            ["forecast", "S recto"],
+            ["my_forecast_verso", "M card"],
+            ["score", "S recto"],
+            ["my_score_verso", "M card"],
+            ["revealed", "M card"],
+            ["relics", "S recto"],
+            ["achievements", "S recto"],
+            ["special_achievements", "S card"],
+        ]);
         _this.num_cards_in_row = new Map([
             ["my_hand", -1],
             ["opponent_hand", -1],
@@ -359,10 +365,10 @@ var Innovation = /** @class */ (function (_super) {
                 var card = gamedatas.cards[key];
                 // NOTE: The colors do not need to be translated because they only appear in the Studio anyway.
                 var color = card.color == 0 ? "blue" : card.color == 1 ? "red" : card.color == 2 ? "green" : card.color == 3 ? "yellow" : "purple";
-                if (this.isFountain(card.id)) {
+                if (isFountain(card.id)) {
                     $('debug_card_list').innerHTML += "<option value='".concat(card.id, "'> ").concat(card.id, " - Fountain (").concat(color, ")</option>");
                 }
-                else if (this.isFlag(card.id)) {
+                else if (isFlag(card.id)) {
                     $('debug_card_list').innerHTML += "<option value='".concat(card.id, "'> ").concat(card.id, " - Flag (").concat(color, ")</option>");
                 }
                 else {
@@ -737,7 +743,7 @@ var Innovation = /** @class */ (function (_super) {
             var achievements = gamedatas.claimed_achievements[player_id];
             for (var i = 0; i < achievements.length; i++) {
                 var achievement = achievements[i];
-                if (this.isFlag(parseInt(achievement.id)) || this.isFountain(parseInt(achievement.id))) {
+                if (isFlag(parseInt(achievement.id)) || isFountain(parseInt(achievement.id))) {
                     this.createAndAddToZone(this.zone["achievements"][player_id], i, null, achievement.type, achievement.is_relic, achievement.id, dojo.body(), achievement);
                     this.addTooltipForCard(achievement);
                 }
@@ -1055,7 +1061,7 @@ var Innovation = /** @class */ (function (_super) {
                     this.addToLog(args.args.messages[this.player_id]);
                 }
                 if (this.selected_card !== null) {
-                    dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.selected_card.type, this.selected_card.is_relic, this.HTML_class["my_hand"]), 'selected');
+                    dojo.addClass(this.getCardHTMLId(this.selected_card.id, this.selected_card.age, this.selected_card.type, this.selected_card.is_relic, this.HTML_class.get("my_hand")), 'selected');
                 }
                 break;
             case 'artifactPlayerTurn':
@@ -1762,7 +1768,7 @@ var Innovation = /** @class */ (function (_super) {
             this.addCustomTooltip(back_HTML_id, this.getTooltipForCard(card.id), "");
             return;
         }
-        var HTML_class = this.isFountain(card.id) || this.isFlag(card.id) ? 'S recto' : zone.HTML_class;
+        var HTML_class = isFountain(card.id) || isFlag(card.id) ? 'S recto' : zone.HTML_class;
         var HTML_id = this.getCardHTMLId(card.id, card.age, card.type, card.is_relic, HTML_class);
         // Special achievement
         if (card.age === null) {
@@ -1855,8 +1861,8 @@ var Innovation = /** @class */ (function (_super) {
         side_2_content += icon_1_ages + icon_2_ages + icon_3_ages;
         side_2_content += colors_title + red_icon + purple_icon + blue_icon + green_icon + yellow_icon;
         // Assembling
-        var div_side_1 = "<div class='reference_card side_1 M'>" + side_1_content + "</div>";
-        var div_side_2 = "<div class='reference_card side_2 M'>" + side_2_content + "</div>";
+        var div_side_1 = "<div class='reference_card side_1 M'>".concat(side_1_content, "</div>");
+        var div_side_2 = "<div class='reference_card side_2 M'>".concat(side_2_content, "</div>");
         this.addTooltipHtmlToClass('reference_card', div_side_1 + div_side_2);
     };
     Innovation.prototype.createAdjustedContent = function (content, HTML_class, size, font_max, width_margin, height_margin, div_id) {
@@ -1900,11 +1906,11 @@ var Innovation = /** @class */ (function (_super) {
         return "<div id='".concat(div_id, "' class='").concat(HTML_class, " ").concat(size, "'><span class='font_size_").concat(font_size, "'>").concat(content, "</span></div>");
     };
     Innovation.prototype.createDogmaEffectText = function (text, dogma_symbol, size, color, shade, other_classes) {
-        return "<div class='effect " + size + " " + shade + " " + other_classes + "'><span class='dogma_symbol color_" + color + " " + size + " icon_" + dogma_symbol + "'></span><span class='effect_text " + shade + " " + size + "'>" + this.parseForRichedText(text, size) + "<span></div>";
+        return "<div class='effect ".concat(size, " ").concat(shade, " ").concat(other_classes, "'><span class='dogma_symbol color_").concat(color, " ").concat(size, " icon_").concat(dogma_symbol, "'></span><span class='effect_text ").concat(shade, " ").concat(size, "'>").concat(this.parseForRichedText(text, size), "<span></div>");
     };
     Innovation.prototype.parseForRichedText = function (text, size) {
         if (text == null) {
-            return null;
+            return '';
         }
         text = text.replace(new RegExp("\\$\\{I demand\\}", "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
         text = text.replace(new RegExp("\\$\\{I compel\\}", "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
@@ -2607,10 +2613,10 @@ var Innovation = /** @class */ (function (_super) {
             }
         }
         else {
-            if (this.isFountain(card.id)) {
+            if (isFountain(card.id)) {
                 HTML_inside = "<span class=\"square in_tooltip icon_9 fountain_flag_card color_".concat(card.color, "\"></span>");
             }
-            else if (this.isFlag(card.id)) {
+            else if (isFlag(card.id)) {
                 HTML_inside = "<span class=\"square in_tooltip icon_8 fountain_flag_card color_".concat(card.color, "\"></span>");
             }
             else {
@@ -2688,10 +2694,10 @@ var Innovation = /** @class */ (function (_super) {
         return '<div class="city_special_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
     };
     Innovation.prototype.getSpecialAchievementText = function (card) {
-        if (this.isFountain(card.id)) {
+        if (isFountain(card.id)) {
             return _("This represents a visible fountain on your board which currently counts as an achievement.");
         }
-        else if (this.isFlag(card.id)) {
+        else if (isFlag(card.id)) {
             return _("This represents a visible flag on your board which currently counts as an achievement since no other player has more visible cards of this color.");
         }
         var card_data = this.cards[card.id];
@@ -2732,7 +2738,7 @@ var Innovation = /** @class */ (function (_super) {
         else {
             new_location = location;
         }
-        var HTML_class = this.HTML_class[new_location];
+        var HTML_class = this.HTML_class.get(new_location);
         var card_dimensions = this.card_dimensions[HTML_class];
         // Width of the zone
         var zone_width;
@@ -2802,7 +2808,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         else {
             // verso
-            if (zone.owner != 0 && zone.location == 'achievements' && !this.isFlag(id) && !this.isFountain(id)) {
+            if (zone.owner != 0 && zone.location == 'achievements' && !isFlag(id) && !isFountain(id)) {
                 visible_card = false;
             }
             else {
@@ -4250,7 +4256,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         var zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
         var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
-        var is_fountain_or_flag = this.isFountain(card.id) || this.isFlag(card.id);
+        var is_fountain_or_flag = isFountain(card.id) || isFlag(card.id);
         var visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
         var visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
@@ -4755,17 +4761,11 @@ var Innovation = /** @class */ (function (_super) {
         var arrow = '&rarr;';
         return cards.join(arrow);
     };
-    Innovation.prototype.isFlag = function (card_id) {
-        return 1000 <= card_id && card_id <= 1099;
-    };
-    Innovation.prototype.isFountain = function (card_id) {
-        return 1100 <= card_id && card_id <= 1199;
-    };
     Innovation.prototype.canShowCardTooltip = function (card_id) {
         if (card_id == undefined) {
             return false;
         }
-        if (this.isFlag(card_id) || this.isFountain(card_id)) {
+        if (isFlag(card_id) || isFountain(card_id)) {
             return true;
         }
         return this.cards[card_id].age !== null &&
