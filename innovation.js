@@ -1,4 +1,3 @@
-"use strict";
 function getHiddenIconsWhenSplayed(card, direction) {
     switch (direction) {
         case 1: // left
@@ -2054,7 +2053,7 @@ var Innovation = /** @class */ (function (_super) {
         if (pile.length > 0) {
             var top_card_id = self.getCardIdFromHTMLId(pile[pile.length - 1].id);
             top_card = self.cards[top_card_id];
-            if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+            if (self.gamedatas.cities_expansion_enabled || self.gamedatas.echoes_expansion_enabled) {
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>", {
                     'age': self.square('N', 'age', top_card.age, 'type_' + top_card.type),
                     'card_name': "<span class='card_name'>" + _(top_card.name) + "</span>",
@@ -2069,7 +2068,7 @@ var Innovation = /** @class */ (function (_super) {
             }
         }
         else {
-            if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+            if (self.gamedatas.cities_expansion_enabled || self.gamedatas.echoes_expansion_enabled) {
                 HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), { 'score': new_score }) + "</p>";
             }
             else {
@@ -2080,11 +2079,11 @@ var Innovation = /** @class */ (function (_super) {
         var current_icon_counts = new Map();
         var new_icon_counts = new Map();
         for (var icon = 1; icon <= 7; icon++) {
-            var icon_count = this.counter["resource_count"][self.player_id][icon].getValue();
+            var icon_count = self.counter["resource_count"][self.player_id][icon].getValue();
             current_icon_counts.set(icon, icon_count);
             new_icon_counts.set(icon, icon_count);
         }
-        this.incrementMap(new_icon_counts, getAllIcons(card));
+        self.incrementMap(new_icon_counts, getAllIcons(card));
         if (top_card != null) {
             var splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
             var splay_direction = 0;
@@ -2094,7 +2093,7 @@ var Innovation = /** @class */ (function (_super) {
                     break;
                 }
             }
-            this.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(top_card, splay_direction));
+            self.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(top_card, splay_direction));
         }
         HTML_action += self.createSimulatedRessourceTable(current_icon_counts, new_icon_counts);
         var splay_icon_triggers_city_draw = false;

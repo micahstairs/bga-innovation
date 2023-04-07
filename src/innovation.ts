@@ -2226,7 +2226,7 @@ class Innovation extends BgaGame {
         });
     }
 
-    createActionTextForMeld(self, card, meld_info?, city_draw_age?, city_draw_type?) {
+    createActionTextForMeld(self: Innovation, card, meld_info?, city_draw_age?, city_draw_type?) {
         // Calculate new score (score pile + bonus icons)
         let bonus_icons: number[] = [];
         for (let i = 0; i < 5; i++) {
@@ -2251,7 +2251,7 @@ class Innovation extends BgaGame {
         if (pile.length > 0) {
             let top_card_id = self.getCardIdFromHTMLId(pile[pile.length - 1].id);
             top_card = self.cards[top_card_id];
-            if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+            if (self.gamedatas.cities_expansion_enabled || self.gamedatas.echoes_expansion_enabled) {
                 HTML_action += dojo.string.substitute("<p>" + _("If you do, it will cover ${age} ${card_name}, you will have a total score of ${score}, and your new featured icon counts will be:") + "<p>",
                     {
                         'age': self.square('N', 'age', top_card!.age, 'type_' + top_card!.type),
@@ -2266,7 +2266,7 @@ class Innovation extends BgaGame {
                     });
             }
         } else {
-            if (self.cities_expansion_enabled || self.echoes_expansion_enabled) {
+            if (self.gamedatas.cities_expansion_enabled || self.gamedatas.echoes_expansion_enabled) {
                 HTML_action += "<p>" + dojo.string.substitute(_("If you do, you will have a total score of ${score} and your new featured icon counts will be:"), { 'score': new_score }) + "</p>";
             } else {
                 HTML_action += "<p>" + _("If you do, your new ressource counts will be:") + "</p>";
@@ -2277,11 +2277,11 @@ class Innovation extends BgaGame {
         let current_icon_counts = new Map<number, number>();
         let new_icon_counts = new Map<number, number>();
         for (let icon = 1; icon <= 7; icon++) {
-            let icon_count = this.counter["resource_count"][self.player_id][icon].getValue();
+            let icon_count = self.counter["resource_count"][self.player_id][icon].getValue();
             current_icon_counts.set(icon, icon_count);
             new_icon_counts.set(icon, icon_count);
         }
-        this.incrementMap(new_icon_counts, getAllIcons(card));
+        self.incrementMap(new_icon_counts, getAllIcons(card));
         if (top_card != null) {
             let splay_indicator = 'splay_indicator_' + self.player_id + '_' + top_card.color;
             let splay_direction = 0;
@@ -2291,7 +2291,7 @@ class Innovation extends BgaGame {
                     break;
                 }
             }
-            this.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(top_card, splay_direction));
+            self.decrementMap(new_icon_counts, getHiddenIconsWhenSplayed(top_card, splay_direction));
         }
 
         HTML_action += self.createSimulatedRessourceTable(current_icon_counts, new_icon_counts);
