@@ -42,7 +42,8 @@
   background-color: #ebd5bd;
 }
 
-#debug_card_list, #debug_color_list {
+#debug_card_list,
+#debug_color_list {
   height: 30px;
 }
 
@@ -121,7 +122,9 @@
   height: 49px;
 }
 
-#change_display_mode_button, #change_view_full_button, #browse_all_cards_button {
+#change_display_mode_button,
+#change_view_full_button,
+#browse_all_cards_button {
   display: inline-block;
   font-size: 12px;
   margin-left: 5px;
@@ -129,7 +132,8 @@
   border-style: dotted;
 }
 
-#browse_cards_buttons_row_1, #browse_cards_buttons_row_2 {
+#browse_cards_buttons_row_1,
+#browse_cards_buttons_row_2 {
   text-align: center;
 }
 
@@ -631,14 +635,17 @@
   width: 208.45px;
 }
 
-#decks_1, #decks_2 {
+#decks_1,
+#decks_2 {
   display: flex;
   justify-content: space-between;
   padding-left: 3px;
   padding-right: 3px;
 }
 
-#available_relics_container, #available_achievements_container, #available_special_achievements_container {
+#available_relics_container,
+#available_achievements_container,
+#available_special_achievements_container {
   vertical-align: top;
   margin-top: 30px;
   width: 208.45px;
@@ -904,7 +911,15 @@
   width: 210px;
 }
 
-.i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
+.i_demand,
+.i_compel,
+.immediately,
+.possible_action,
+.equal,
+.more,
+.less,
+.name_in_tooltip,
+.warning {
   font-weight: bold;
 }
 
@@ -950,7 +965,11 @@
   width: 129px;
   height: 56px;
 }
-.card_effects.M > .font_size_1 > .effect.M, .card_effects.M > .font_size_2 > .effect.M, .card_effects.M > .font_size_3 > .effect.M, .card_effects.M > .font_size_4 > .effect.M, .card_effects.M > .font_size_5 > .effect.M {
+.card_effects.M > .font_size_1 > .effect.M,
+.card_effects.M > .font_size_2 > .effect.M,
+.card_effects.M > .font_size_3 > .effect.M,
+.card_effects.M > .font_size_4 > .effect.M,
+.card_effects.M > .font_size_5 > .effect.M {
   line-height: 5px;
 }
 .card_effects.M > .font_size_6 > .effect.M {
@@ -1167,7 +1186,9 @@
   height: 19px;
 }
 
-.score_count, .hand_count, .max_age_on_board {
+.score_count,
+.hand_count,
+.max_age_on_board {
   padding-right: 5px;
 }
 
@@ -1664,7 +1685,8 @@
   background-position-y: -80px;
 }
 
-#publication_arrow_up, #publication_arrow_down {
+#publication_arrow_up,
+#publication_arrow_down {
   position: absolute;
   left: 0px;
   font-weight: bolder;
