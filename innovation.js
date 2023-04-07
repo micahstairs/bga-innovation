@@ -91,9 +91,9 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 // @ts-ignore
-GameGui = /** @class */ (function () {
-    function GameGui() { }
-    return GameGui;
+BgaGame = /** @class */ (function () {
+    function BgaGame() { }
+    return BgaGame;
 })();
 var Innovation = /** @class */ (function (_super) {
     __extends(Innovation, _super);
@@ -2655,12 +2655,12 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.writeOverCard = function (card, size, HTML_id) {
         var card_data = this.cards[card.id];
-        var icon1 = this.getIconDiv(card, card_data['spot_1'], 'top_left_icon', size);
-        var icon2 = this.getIconDiv(card, card_data['spot_2'], 'bottom_left_icon', size);
-        var icon3 = this.getIconDiv(card, card_data['spot_3'], 'bottom_center_icon', size);
-        var icon4 = this.getIconDiv(card, card_data['spot_4'], 'bottom_right_icon', size);
-        var icon5 = this.getIconDiv(card, card_data['spot_5'], 'top_right_icon', size);
-        var icon6 = this.getIconDiv(card, card_data['spot_6'], 'top_center_icon', size);
+        var icon1 = this.getIconDiv(card_data, card_data.spot_1, 'top_left_icon', size);
+        var icon2 = this.getIconDiv(card_data, card_data.spot_2, 'bottom_left_icon', size);
+        var icon3 = this.getIconDiv(card_data, card_data.spot_3, 'bottom_center_icon', size);
+        var icon4 = this.getIconDiv(card_data, card_data.spot_4, 'bottom_right_icon', size);
+        var icon5 = this.getIconDiv(card_data, card_data.spot_5, 'top_right_icon', size);
+        var icon6 = this.getIconDiv(card_data, card_data.spot_6, 'top_center_icon', size);
         var card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
         var title = _(card_data.name).toUpperCase();
         var card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30, /*width_margin=*/ 0, /*height_margin=*/ 0, HTML_id + '_card_title');
@@ -2671,27 +2671,26 @@ var Innovation = /** @class */ (function (_super) {
         var dogma_effects = this.createAdjustedContent(i_demand_effect_1 + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     };
-    Innovation.prototype.getIconDiv = function (card, resource_icon_id, icon_location, size) {
-        if (resource_icon_id == 0) {
-            return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
+    Innovation.prototype.getIconDiv = function (card, icon, icon_location, size) {
+        if (icon == 0) {
+            return "<div class=\"hexagon_card_icon ".concat(size, " ").concat(icon_location, " hexagon_icon_").concat(card.id, "\"></div>");
         }
-        if (resource_icon_id <= 7) {
-            var div = "<div class=\"square_card_icon ".concat(size, " color_").concat(card.color, " ").concat(icon_location, " icon_").concat(resource_icon_id, "\"></div>");
-            if (resource_icon_id != null && icon_location == 'top_center_icon') {
+        if (icon <= 7) {
+            var div = "<div class=\"square_card_icon ".concat(size, " color_").concat(card.color, " ").concat(icon_location, " icon_").concat(icon, "\"></div>");
+            if (icon != null && icon_location == 'top_center_icon') {
                 div += "<div class=\"city_search_icon ".concat(size, " color_").concat(card.color, "\"></div>");
             }
             return div;
         }
-        if (resource_icon_id == 10) {
-            var card_data = this.cards[card.id];
-            var div = this.createAdjustedContent(this.parseForRichedText(_(card_data.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + resource_icon_id, size, size == 'M' ? 11 : 30);
+        if (icon == 10) {
+            var div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + icon, size, size == 'M' ? 11 : 30);
             // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
-            return div.replace("div class", "div style=\"display: table;\" class");
+            return div.replace("div class", 'div style="display: table;" class');
         }
-        if (resource_icon_id >= 101) {
-            return '<div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_color color_' + card.color + '"></div><div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_value bonus_' + (resource_icon_id - 100) + '"></div>';
+        if (icon >= 101) {
+            return "<div class=\"bonus_card_icon ".concat(size, " ").concat(icon_location, " bonus_color color_").concat(card.color, "\"></div><div class=\"bonus_card_icon ").concat(size, " ").concat(icon_location, " bonus_value bonus_").concat(icon - 100, "\"></div>");
         }
-        return '<div class="city_special_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+        return "<div class=\"city_special_icon ".concat(size, " color_").concat(card.color, " ").concat(icon_location, " icon_").concat(icon, "\"></div>");
     };
     Innovation.prototype.getSpecialAchievementText = function (card) {
         if (isFountain(card.id)) {
@@ -4782,7 +4781,7 @@ var Innovation = /** @class */ (function (_super) {
         return typeof g_replayFrom != 'undefined' || g_archive_mode;
     };
     return Innovation;
-}(GameGui));
+}(BgaGame));
 define([
     "dojo",
     "dojo/_base/declare",
