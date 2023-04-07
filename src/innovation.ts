@@ -149,7 +149,7 @@ class Innovation extends BgaGame {
 
     _actionTimerLabel = '';
     _actionTimerSeconds = 0;
-    _callback = (val) => { };
+    _callback: Function = (val: any) => { };
     _callbackParam = null;
     _actionTimerFunction = () => { };
     _actionTimerId: number | undefined = undefined;
@@ -950,7 +950,7 @@ class Innovation extends BgaGame {
     }
 
     /* [Undocumented] Override BGA framework functions to call onLoadingComplete when loading is done */
-    setLoader(value, max) {
+    setLoader(value: number, max: number) {
         this.inherited(arguments);
         if (!this.isLoadingComplete && value >= 100) {
             this.isLoadingComplete = true;
@@ -1097,10 +1097,10 @@ class Innovation extends BgaGame {
     // this.off enables to disconnect the handler of one particular event on the object attached with this.on
     // this.restart enables to reconnect the last handler of one particular event
 
-    on(filter, event, method) {
+    on(filter: any, event: any, method: any) {
         let self = this;
         filter.forEach(
-            function (node, index, arr) {
+            function (node: any, index: any, arr: any) {
                 if (node.last_handler === undefined) {
                     node.last_handler = {}
                 }
@@ -1110,19 +1110,19 @@ class Innovation extends BgaGame {
         );
     }
 
-    off(filter, event) {
+    off(filter: any, event: any) {
         let self = this;
         filter.forEach(
-            function (node, index, arr) {
+            function (node: any, index: any, arr: any) {
                 self.disconnect(node, event);
             }
         );
     }
 
-    restart(filter, event) {
+    restart(filter: any, event: any) {
         let self = this;
         filter.forEach(
-            function (node, index, arr) {
+            function (node: any, index: any, arr: any) {
                 self.connect(node, event, node.last_handler[event]);
             }
         );
@@ -1551,13 +1551,13 @@ class Innovation extends BgaGame {
     
     */
 
-    addToLog(message) {
+    addToLog(message: any) {
         let HTML = dojo.string.substitute('<div class="log" style="height: auto; display: block; color: rgb(0, 0, 0);"><div class="roundedbox">${msg}</div></div>',
             { 'msg': message })
         dojo.place(HTML, $('logs'), 'first')
     }
 
-    startActionTimer(buttonId, time, callback, callbackParam = null) {
+    startActionTimer(buttonId: string, time: number, callback: Function, callbackParam = null) {
         let button = $(buttonId);
         let isReadOnly = this.isReadOnly();
         if (button == null || isReadOnly) {
@@ -2711,7 +2711,7 @@ class Innovation extends BgaGame {
 
     }
 
-    resurrectClickEvents(revert_text) {
+    resurrectClickEvents(revert_text: boolean) {
         this.deactivated_cards.addClass("clickable");
         this.deactivated_cards_mid_dogma.addClass("mid_dogma");
         this.deactivated_cards_can_endorse.addClass("can_endorse");
@@ -2724,19 +2724,19 @@ class Innovation extends BgaGame {
         }
     }
 
-    getCardSizeInZone(zone_HTML_class) {
+    getCardSizeInZone(zone_HTML_class: string) {
         return zone_HTML_class.split(' ')[0];
     }
 
-    getCardTypeInZone(zone_HTML_class) {
+    getCardTypeInZone(zone_HTML_class: string) {
         return zone_HTML_class.split(' ')[1];
     }
 
-    getZone(location, owner, type, age: number | null = null, color = null) {
+    getZone(location: string, owner: number, type: number | null = null, age: number | null = null, color: number | null = null) {
         let root = this.zone[location];
         switch (location) {
             case "deck":
-                return root[type][age!];
+                return root[type!][age!];
             case "relics":
                 return this.zone["relics"][0];
             case "hand":
