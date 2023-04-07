@@ -12,12 +12,12 @@ type ElementOrId = Element | string;
 
 declare type Player = {
 	// Populated by BGA automatically
-    name: string;
+	name: string;
 	beginner: boolean;
-    color: string;
-    color_back: any | null;
-    eliminated: number;
-    zombie: number;
+	color: string;
+	color_back: any | null;
+	eliminated: number;
+	zombie: number;
 
 	// Populated by Innovation::getAllDatas
 	achievement_count: number;
@@ -38,7 +38,7 @@ declare type InnovationGameDatas = {
 	figures_expansion_enabled: boolean;
 };
 
-declare class GameGui {
+declare class BgaGame {
 	gamedatas: InnovationGameDatas;
 	player_id: number;
 	isSpectator: boolean;
@@ -49,19 +49,19 @@ declare class GameGui {
 	default_viewport: string;
 
 	setup(gamedatas: any): void;
-    onEnteringState(stateName: string, args: any): void;
-    onLeavingState(stateName: string ): void;
-    onUpdateActionButtons(stateName: string, args: any): void;
-    setupNotifications(): void;
-    format_string_recursive(log: string, args: any): void;
+	onEnteringState(stateName: string, args: any): void;
+	onLeavingState(stateName: string): void;
+	onUpdateActionButtons(stateName: string, args: any): void;
+	setupNotifications(): void;
+	format_string_recursive(log: string, args: any): void;
 	inherited(args: any): any;
-	format_block(id:string, args: any): any;
+	format_block(id: string, args: any): any;
 
 	isCurrentPlayerActive(): boolean;
 	getActivePlayerId(): number;
 	addActionButton(id: string, label: string, method: string | eventhandler, destination?: string, blinking?: boolean, color?: string): void;
 	checkAction(action: any): boolean;
-	ajaxcall(url: string, args: object, bind: GameGui, resultHandler: (result: any) => void, allHandler: (err: any) => void): void;
+	ajaxcall(url: string, args: object, bind: BgaGame, resultHandler: (result: any) => void, allHandler: (err: any) => void): void;
 	connect(node: ElementOrId, ontype: string, handler: any): void;
 	disconnect(node: ElementOrId, ontype: string): void;
 	connectClass(cls: string, ontype: string, handler: any): void;
@@ -100,13 +100,13 @@ declare class Counter {
 }
 
 interface Notif<T> {
-    args: T;
-    log: string;
-    move_id: number;
-    table_id: string;
-    time: number;
-    type: string;
-    uid: string;
+	args: T;
+	log: string;
+	move_id: number;
+	table_id: string;
+	time: number;
+	type: string;
+	uid: string;
 }
 
 declare class GameNotifQueue {
@@ -139,21 +139,21 @@ declare class GameNotifQueue {
 
 interface Dojo {
 	create: Function;
-    place: Function;
-    style: Function;
+	place: Function;
+	style: Function;
 	setStyle: Function;
 	attr: Function;
 	getAttr: Function;
 	hasClass: Function;
-    addClass: (nodeId: string | HTMLElement, className: string) => {};
-    removeClass: (nodeId: string | HTMLElement, className?: string) => {};
-    toggleClass: (nodeId: string | HTMLElement, className: string, forceValue: boolean) => {};
-    connect: Function;
-    query: (selector: string) => DojoNodeList;
+	addClass: (nodeId: string | HTMLElement, className: string) => {};
+	removeClass: (nodeId: string | HTMLElement, className?: string) => {};
+	toggleClass: (nodeId: string | HTMLElement, className: string, forceValue: boolean) => {};
+	connect: Function;
+	query: (selector: string) => DojoNodeList;
 	body: Function;
 	position: Function;
-    subscribe: Function;
-    string: any;
+	subscribe: Function;
+	string: any;
 	byId: Function;
 	destroy: Function;
 	window: Dojo.Window;

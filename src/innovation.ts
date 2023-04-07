@@ -20,12 +20,12 @@ declare const ebg: any;
 declare const dojo: Dojo;
 
 // @ts-ignore
-GameGui = /** @class */ (function () {
-    function GameGui() { }
-    return GameGui;
+BgaGame = /** @class */ (function () {
+    function BgaGame() { }
+    return BgaGame;
 })();
 
-class Innovation extends GameGui {
+class Innovation extends BgaGame {
 
     cards: Card[] = [];
 
@@ -2919,14 +2919,14 @@ class Innovation extends GameGui {
         return `<div id='${HTML_id}' class='${graphics_class} ${HTML_class}'>${HTML_inside}</div>`;
     }
 
-    writeOverCard(card, size, HTML_id): string {
-        let card_data = this.cards[card.id];
-        let icon1 = this.getIconDiv(card, card_data['spot_1'], 'top_left_icon', size);
-        let icon2 = this.getIconDiv(card, card_data['spot_2'], 'bottom_left_icon', size);
-        let icon3 = this.getIconDiv(card, card_data['spot_3'], 'bottom_center_icon', size);
-        let icon4 = this.getIconDiv(card, card_data['spot_4'], 'bottom_right_icon', size);
-        let icon5 = this.getIconDiv(card, card_data['spot_5'], 'top_right_icon', size);
-        let icon6 = this.getIconDiv(card, card_data['spot_6'], 'top_center_icon', size);
+    writeOverCard(card, size: string, HTML_id: string): string {
+        let card_data: Card = this.cards[card.id];
+        let icon1 = this.getIconDiv(card_data, card_data.spot_1, 'top_left_icon', size);
+        let icon2 = this.getIconDiv(card_data, card_data.spot_2, 'bottom_left_icon', size);
+        let icon3 = this.getIconDiv(card_data, card_data.spot_3, 'bottom_center_icon', size);
+        let icon4 = this.getIconDiv(card_data, card_data.spot_4, 'bottom_right_icon', size);
+        let icon5 = this.getIconDiv(card_data, card_data.spot_5, 'top_right_icon', size);
+        let icon6 = this.getIconDiv(card_data, card_data.spot_6, 'top_center_icon', size);
 
         let card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
 
@@ -2944,27 +2944,26 @@ class Innovation extends GameGui {
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     }
 
-    getIconDiv(card, resource_icon_id, icon_location, size) {
-        if (resource_icon_id == 0) {
-            return '<div class="hexagon_card_icon ' + size + ' ' + icon_location + ' hexagon_icon_' + card.id + '"></div>';
+    getIconDiv(card: Card, icon: number, icon_location: string, size: string) {
+        if (icon == 0) {
+            return `<div class="hexagon_card_icon ${size} ${icon_location} hexagon_icon_${card.id}"></div>`;
         }
-        if (resource_icon_id <= 7) {
-            let div = `<div class="square_card_icon ${size} color_${card.color} ${icon_location} icon_${resource_icon_id}"></div>`;
-            if (resource_icon_id != null && icon_location == 'top_center_icon') {
+        if (icon <= 7) {
+            let div = `<div class="square_card_icon ${size} color_${card.color} ${icon_location} icon_${icon}"></div>`;
+            if (icon != null && icon_location == 'top_center_icon') {
                 div += `<div class="city_search_icon ${size} color_${card.color}"></div>`;
             }
             return div;
         }
-        if (resource_icon_id == 10) {
-            let card_data = this.cards[card.id];
-            let div = this.createAdjustedContent(this.parseForRichedText(_(card_data.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + resource_icon_id, size, size == 'M' ? 11 : 30);
+        if (icon == 10) {
+            let div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + icon, size, size == 'M' ? 11 : 30);
             // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
-            return div.replace("div class", "div style=\"display: table;\" class");
+            return div.replace("div class", 'div style="display: table;" class');
         }
-        if (resource_icon_id >= 101) {
-            return '<div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_color color_' + card.color + '"></div><div class="bonus_card_icon ' + size + ' ' + icon_location + ' bonus_value bonus_' + (resource_icon_id - 100) + '"></div>';
+        if (icon >= 101) {
+            return `<div class="bonus_card_icon ${size} ${icon_location} bonus_color color_${card.color}"></div><div class="bonus_card_icon ${size} ${icon_location} bonus_value bonus_${icon - 100}"></div>`;
         }
-        return '<div class="city_special_icon ' + size + ' color_' + card.color + ' ' + icon_location + ' icon_' + resource_icon_id + '"></div>';
+        return `<div class="city_special_icon ${size} color_${card.color} ${icon_location} icon_${icon}"></div>`;
     }
 
     getSpecialAchievementText(card) {
@@ -3182,7 +3181,7 @@ class Innovation extends GameGui {
         this.updateDeckOpacities();
     }
 
-    removeFromZone(zone: Zone, id, destroy, age: number, type: number, is_relic) {
+    removeFromZone(zone: Zone, id, destroy: boolean, age: number, type: number, is_relic) {
         let HTML_id = this.getCardHTMLId(id, age, type, is_relic, zone.HTML_class);
 
         // Update weights before removing

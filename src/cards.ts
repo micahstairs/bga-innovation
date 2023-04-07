@@ -14,7 +14,7 @@ declare type Card = {
     spot_6: number;
     dogma_icon: number;
     is_relic: boolean;
-  
+
     // From materials file
     name: string;
     condition_for_claiming: string;
