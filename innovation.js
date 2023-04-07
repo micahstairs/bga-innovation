@@ -2481,6 +2481,7 @@ var Innovation = /** @class */ (function (_super) {
         return zone_HTML_class.split(' ')[1];
     };
     Innovation.prototype.getZone = function (location, owner, type, age, color) {
+        if (type === void 0) { type = null; }
         if (age === void 0) { age = null; }
         if (color === void 0) { color = null; }
         var root = this.zone[location];
