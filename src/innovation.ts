@@ -1720,13 +1720,15 @@ class Innovation extends BgaGame {
             if (dojo.query(`#special_achievement_summary_${id}.unclaimed`).length == 1) {
                 switch (id) {
                     case 105:
-                        // three or more icons of all six types
+                        // three or more icons of six out of seven types
                         numerator = 0;
                         denominator = 6;
-                        // TODO(4E): Update this.
                         for (let i = 1; i <= 7; i++) {
                             if (self.counter["resource_count"][self.player_id][i].getValue() >= 3) {
                                 numerator++;
+                                if (numerator === 6) {
+                                    break;
+                                }
                             }
                         }
                         break;
@@ -1736,13 +1738,12 @@ class Innovation extends BgaGame {
                         denominator = 6;
                         break;
                     case 107:
-                        // five colors on your board, and each is splayed either up or right
+                        // five colors on your board, and each is splayed either up, right, or aslant
                         numerator = 0;
                         denominator = 5;
                         for (let i = 0; i < 5; i++) {
                             let splay_direction = self.zone["board"][self.player_id][i].splay_direction;
-                            // TODO(4E#978): Possibly update this.
-                            if (splay_direction == 2 || splay_direction == 3) {
+                            if (splay_direction >= 2) {
                                 numerator++;
                             }
                         }

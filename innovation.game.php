@@ -3374,11 +3374,10 @@ class Innovation extends Table
                 $flags = self::getFlagsForMonument($player_id);
                 $eligible = $flags['number_of_tucked_cards'] >= 6 || $flags['number_of_scored_cards'] >= 6;
                 break;
-            case 107: // Wonder: 5 colors, each being splayed right or up
+            case 107: // Wonder: 5 colors, each being splayed right, up, or aslant
                 $eligible = true;
                 for($color = 0; $color < 5 ; $color++) {
-                    // TODO(4E#978): Possibly update this.
-                    if (self::getCurrentSplayDirection($player_id, $color) < 2) { // This color is missing, unsplayed or splayed left
+                    if (self::getCurrentSplayDirection($player_id, $color) <= 1) { // This color is missing, unsplayed or splayed left
                         $eligible = false;
                         break;
                     };
