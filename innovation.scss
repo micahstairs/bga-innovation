@@ -27,17 +27,21 @@
 #main_area_wrapper {
     display: flex;
 }
+
 #main_area {
     display: inline-block;
     vertical-align: top;
 }
+
 .minor_information {
     font-size: 0.8em;
 }
+
 .hidden {
     display: none !important;
     visibility: hidden;
 }
+
 .log {
     >.roundedbox {
         &:empty {
@@ -48,17 +52,22 @@
         }
     }
 }
-#debug_card_list, #debug_color_list {
+
+#debug_card_list,
+#debug_color_list {
     height: 30px;
 }
+
 .debug_button {
     width: 150px;
 }
+
 .card_name {
     font-weight: bold;
     font-style: normal;
     color: black;
 }
+
 .player.whiteblock {
     border-width: 1px;
     border-color: black;
@@ -66,78 +75,99 @@
     border-style: solid;
     padding: 5px;
     position: relative;
+
     >p {
         >span {
             font-weight: normal;
         }
     }
+
     &:nth-last-of-type(n + 2) {
         margin-bottom: 20px;
     }
+
     &:nth-last-of-type(1) {
         margin-bottom: 0;
     }
 }
+
 .display_container {
     background-color: #FFFFFF;
     border: 1px solid black;
     width: 195px;
     height: 165px;
     margin-bottom: 5px;
+
     >div {
         height: inherit;
         padding: 5px;
+
         >p {
             font-style: italic;
             margin: 0;
         }
     }
+
     .display {
         top: 5px;
         padding-bottom: 12px;
     }
 }
+
 .hand_container {
     background-color: #FFFFFF;
     border: 1px solid black;
+
     >div {
         background-color: #ebd5bd;
         padding: 5px;
         padding-bottom: 12px;
+
         >p {
             font-style: italic;
             margin: 0;
         }
     }
+
     .hand {
         top: 5px;
     }
 }
+
 .revealed_container {
     padding: 5px;
     width: 182px;
     margin: auto;
 }
+
 #display_button_bar {
     height: 49px;
 }
-#change_display_mode_button, #change_view_full_button, #browse_all_cards_button {
+
+#change_display_mode_button,
+#change_view_full_button,
+#browse_all_cards_button {
     display: inline-block;
     font-size: 12px;
     margin-left: 5px;
-    background-color: rgba(255,255,255,.5);
+    background-color: rgba(255, 255, 255, .5);
     border-style: dotted;
 }
-#browse_cards_buttons_row_1, #browse_cards_buttons_row_2 {
+
+#browse_cards_buttons_row_1,
+#browse_cards_buttons_row_2 {
     text-align: center;
 }
+
 .browse_cards_button {
     margin: 10px;
+
     &.selected {
         background: #dedede;
         box-shadow: inset 0px 0px 5px #676767;
     }
 }
+
 #browse_special_achievements_button {
     display: flex;
     text-align: center;
@@ -145,47 +175,58 @@
     margin: auto;
     margin-top: 10px;
 }
+
 #special_achievement_summaries.heightless {
     height: 0px;
     visibility: hidden;
 }
+
 .special_achievement_summary {
     display: flex;
     vertical-align: middle;
     opacity: 0.3;
+
     &.unclaimed {
         opacity: 1;
     }
 }
+
 .special_achievement_icon {
     float: left;
     min-width: 45px;
     max-width: 45px;
 }
+
 .special_achievement_status {
     text-align: center;
     font-weight: bold;
 }
+
 .special_achievement_text {
     vertical-align: middle;
     padding-left: 10px;
 }
+
 .disabled {
     color: grey !important;
     border-color: grey;
+
     &:hover {
         color: grey !important;
         border-color: grey;
         cursor: auto;
     }
 }
+
 .board {
     min-height: 171px;
+
     >p {
         font-style: italic;
         margin: 0;
     }
 }
+
 .pile_container {
     margin-right: 30px;
     margin-top: 10px;
@@ -193,6 +234,7 @@
     margin-bottom: 3px;
     display: inline-block;
 }
+
 .pile_count {
     align-items: center;
     text-align: center;
@@ -209,18 +251,22 @@
     border-radius: 50%;
     z-index: 100;
 }
+
 .pile {
     min-height: 126px;
 }
+
 .progress {
     display: flex;
     margin-top: 30px;
 }
+
 .forecast_container {
     flex-grow: 1;
     vertical-align: top;
     display: inline-block;
     position: relative;
+
     p {
         font-style: italic;
         font-size: 0.8em;
@@ -239,6 +285,7 @@
     vertical-align: top;
     display: inline-block;
     position: relative;
+
     p {
         font-style: italic;
         font-size: 0.8em;
@@ -257,6 +304,7 @@
     display: inline-block;
     position: relative;
     background-color: unset;
+
     >p {
         font-style: italic;
         font-size: 0.8em;
@@ -268,53 +316,65 @@
         overflow-y: hidden;
     }
 }
+
 .forecast {
     display: inline-block;
     margin-top: 18px;
     display: inline-block;
     height: 49px;
 }
+
 .score {
     display: inline-block;
     margin-top: 18px;
     display: inline-block;
     height: 49px;
 }
+
 .achievements {
     display: inline-block;
     margin-top: 18px;
     display: inline-block;
     height: 49px;
 }
+
 .forecast_show_window {
     text-decoration: underline;
     font-weight: bold;
+
     &:hover {
         cursor: pointer;
     }
 }
+
 .score_show_window {
     text-decoration: underline;
     font-weight: bold;
+
     &:hover {
         cursor: pointer;
     }
 }
+
 .reference_card {
     display: inline-block;
     background-image: url('img/reference_cards.jpg');
     position: relative;
+
     &.M {
         width: 560px;
         height: 408px;
         background-size: 570px auto;
-        &.side_1{
+
+        &.side_1 {
             background-position: -2px -2px;
         }
+
         &.side_2 {
             background-position: -2px -408px;
         }
     }
+
     &.S {
         width: 96px;
         min-width: 96px;
@@ -323,6 +383,7 @@
         background-position: -2px -145px;
     }
 }
+
 .reference_card_block {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
     position: absolute;
@@ -331,12 +392,14 @@
         font-size: 1.5em;
         font-weight: bold;
     }
+
     &.actions_txt {
         width: 450px;
         height: 36px;
         left: 55px;
         top: 38px;
     }
+
     &.meld_title {
         width: 143px;
         height: 23px;
@@ -345,12 +408,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.meld_parag {
         width: 143px;
         height: 94px;
         left: 55px;
         top: 114px;
     }
+
     &.draw_title {
         width: 143px;
         height: 23px;
@@ -359,12 +424,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.draw_parag {
         width: 143px;
         height: 94px;
         left: 206px;
         top: 114px;
     }
+
     &.achieve_title {
         width: 148px;
         height: 23px;
@@ -373,12 +440,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.achieve_parag {
         width: 148px;
         height: 94px;
         left: 357px;
         top: 114px;
     }
+
     &.dogma_title {
         width: 450px;
         height: 23px;
@@ -387,12 +456,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.dogma_parag {
         width: 450px;
         height: 121px;
         left: 55px;
         top: 232px;
     }
+
     &.tuck_title {
         width: 145px;
         height: 23px;
@@ -401,12 +472,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.tuck_parag {
         width: 145px;
         height: 72px;
         left: 55px;
         top: 63px;
     }
+
     &.return_title {
         width: 145px;
         height: 23px;
@@ -415,12 +488,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.return_parag {
         width: 145px;
         height: 72px;
         left: 206px;
         top: 63px;
     }
+
     &.draw_and_x_title {
         width: 148px;
         height: 23px;
@@ -429,12 +504,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.draw_and_x_parag {
         width: 148px;
         height: 72px;
         left: 357px;
         top: 63px;
     }
+
     &.splay_title {
         width: 450px;
         height: 23px;
@@ -443,12 +520,14 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.splay_parag {
         width: 341px;
         height: 28px;
         left: 55px;
         top: 168px;
     }
+
     &.splayed_left_example {
         width: 115px;
         height: 14px;
@@ -457,6 +536,7 @@
         text-align: center;
         font-style: italic;
     }
+
     &.splayed_right_example {
         width: 115px;
         height: 14px;
@@ -465,6 +545,7 @@
         text-align: center;
         font-style: italic;
     }
+
     &.splayed_up_example {
         width: 115px;
         height: 14px;
@@ -473,6 +554,7 @@
         text-align: center;
         font-style: italic;
     }
+
     &.empty_piles_title {
         width: 145px;
         height: 23px;
@@ -481,48 +563,56 @@
         text-align: center;
         font-weight: bold;
     }
+
     &.empty_piles_parag {
         width: 145px;
         height: 57px;
         left: 55px;
         top: 309px;
     }
+
     &.icon_1_ages {
         width: 50px;
         height: 18px;
         left: 316px;
         top: 307px;
     }
+
     &.icon_2_ages {
         width: 50px;
         height: 18px;
         left: 316px;
         top: 330px;
     }
+
     &.icon_3_ages {
         width: 50px;
         height: 18px;
         left: 316px;
         top: 352px;
     }
+
     &.icon_4_ages {
         width: 50px;
         height: 18px;
         left: 240px;
         top: 307px;
     }
+
     &.icon_5_ages {
         width: 50px;
         height: 18px;
         left: 240px;
         top: 330px;
     }
+
     &.icon_6_ages {
         width: 50px;
         height: 18px;
         left: 240px;
         top: 352px;
     }
+
     &.colors_title {
         width: 67px;
         height: 18px;
@@ -530,30 +620,35 @@
         top: 284px;
         font-weight: bold;
     }
+
     &.red_icon {
         width: 47px;
         height: 18px;
         left: 414px;
         top: 308px;
     }
+
     &.purple_icon {
         width: 47px;
         height: 18px;
         left: 414px;
         top: 329px;
     }
+
     &.blue_icon {
         width: 47px;
         height: 18px;
         left: 414px;
         top: 352px;
     }
+
     &.green_icon {
         width: 47px;
         height: 18px;
         left: 485px;
         top: 308px;
     }
+
     &.yellow_icon {
         width: 39px;
         height: 18px;
@@ -565,6 +660,7 @@
 .player-board {
     position: relative;
 }
+
 .action_card {
     display: inline-block;
     margin-left: 7px;
@@ -575,6 +671,7 @@
     background-position: -0px -0px;
     position: relative;
 }
+
 .action_text {
     position: absolute;
     text-align: center;
@@ -586,46 +683,59 @@
     margin-right: 5px;
     margin-left: 5px;
 }
+
 #decks_and_available_achievements {
     display: flex;
     width: 208.45px;
     margin-left: 10px;
+
     p {
         margin-bottom: 5px;
         margin-right: 5px;
     }
 }
+
 #decks_title {
     margin-top: 30px;
     width: 208.45px;
 }
+
 #decks {
     vertical-align: top;
     justify-content: center;
     width: 208.45px;
 }
-#decks_1, #decks_2 {
+
+#decks_1,
+#decks_2 {
     display: flex;
     justify-content: space-between;
     padding-left: 3px;
     padding-right: 3px;
 }
-#available_relics_container, #available_achievements_container, #available_special_achievements_container {
+
+#available_relics_container,
+#available_achievements_container,
+#available_special_achievements_container {
     vertical-align: top;
     margin-top: 30px;
     width: 208.45px;
 }
+
 .deck_set {
     display: inline-block;
+
     >.deck_pile {
         display: flex;
         height: 49px;
         margin-bottom: 5px;
         margin-right: 5px;
+
         &.three_sets {
             padding-top: 10px;
             padding-left: 20px;
         }
+
         &.four_sets {
             padding-top: 10px;
             padding-left: 5px;
@@ -636,12 +746,15 @@
             width: 80px;
             height: 100%;
         }
+
         >.deck_count {
             align-items: center;
             margin-right: 2px;
             width: 20px;
             display: flex;
-            &.three_sets, &.four_sets {
+
+            &.three_sets,
+            &.four_sets {
                 display: inline-block;
                 text-align: center;
                 position: absolute;
@@ -659,43 +772,52 @@
         }
     }
 }
+
 #relics {
     margin-left: 45px;
 }
+
 #achievements {
     margin-left: 45px;
 }
+
 #special_achievements {
     margin-left: 28px;
 }
+
 .player {
     >p {
         font-weight: bold;
     }
 }
+
 .text_left {
     font-style: italic;
     margin: 0;
     margin-left: 20px;
 }
+
 .text_center {
     font-style: italic;
     margin: 0;
     text-align: center;
 }
+
 .two_lines {
     top: -16px !important;
     height: 32px !important;
     padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
 }
+
 .player_info {
     margin-top: 5px;
     margin-left: 36px;
 }
+
 .ressource_table {
     display: inline-block;
     margin-top: 5px;
-    
+
     .ressource {
         border-radius: 4px;
         width: 20px;
@@ -703,27 +825,35 @@
         font-size: 14px;
         color: #ffffff;
     }
+
     .ressource.with_border {
         text-shadow: 1px 1px 2px black, 0 0 25px black, 0 0 5px black;
     }
+
     .ressource_1 {
         background-color: #e7ab22;
     }
+
     .ressource_2 {
         background-color: #153a1c;
     }
+
     .ressource_3 {
         background-color: #913c97;
     }
+
     .ressource_4 {
         background-color: #404446;
     }
+
     .ressource_5 {
         background-color: #850e04;
     }
+
     .ressource_6 {
         background-color: #14247f;
     }
+
     .ressource_7 {
         background-color: #000000;
     }
@@ -733,122 +863,151 @@
 .equal {
     color: #AAAAAA !important;
 }
+
 .more {
     color: green !important;
 }
+
 .less {
     color: red !important;
 }
+
 .card_age {
     color: #e8e8e8;
     text-align: center;
     font-family: Times New Roman;
     font-weight: bold;
     position: absolute;
+
     &.M {
         width: 14px;
         height: 14px;
         top: 4px;
         line-height: 16px;
+
         &.type_2 {
             top: 54px;
         }
     }
+
     &.L {
         width: 25px;
         height: 25px;
         top: 26px;
         line-height: 14px;
+
         &.type_2 {
             top: 154px;
         }
     }
 }
+
 .color_0 {
     &.card_age {
         &.M {
             right: 6.5px;
+
             &.type_2 {
                 right: 18px;
             }
         }
+
         &.L {
             right: 21px;
+
             &.type_2 {
                 right: 50px;
             }
         }
     }
 }
+
 .color_1 {
     &.card_age {
         &.M {
             right: 6px;
+
             &.type_2 {
                 right: 18px;
             }
         }
+
         &.L {
             right: 21px;
+
             &.type_2 {
                 right: 50px;
             }
         }
     }
 }
+
 .color_2 {
     &.card_age {
         &.M {
             right: 6.5px;
+
             &.type_2 {
                 right: 18px;
             }
         }
+
         &.L {
             right: 20px;
+
             &.type_2 {
                 right: 50px;
             }
         }
     }
 }
+
 .color_3 {
     &.card_age {
         &.M {
             right: 6px;
+
             &.type_2 {
                 right: 18px;
             }
         }
+
         &.L {
             right: 22px;
+
             &.type_2 {
                 right: 50px;
             }
         }
     }
 }
+
 .color_4 {
     &.card_age {
         &.M {
             right: 6.5px;
+
             &.type_2 {
                 right: 18px;
             }
         }
+
         &.L {
             right: 22px;
+
             &.type_2 {
                 right: 50px;
             }
         }
     }
 }
+
 .card_type {
     padding-top: 10px;
     font-style: italic;
     text-align: center;
 }
+
 .card_title {
     color: #e8e8e8;
     font-family: Times New Roman;
@@ -863,17 +1022,20 @@
         top: 5px;
         width: 93px;
         height: 15px;
+
         &.type_2 {
             left: 50px;
             top: 54.5px;
             width: 80px;
         }
     }
+
     &.L {
         left: 143px;
         top: 18px;
         width: 230px;
         height: 37px;
+
         &.type_2 {
             left: 126px;
             top: 142px;
@@ -881,43 +1043,61 @@
         }
     }
 }
-.i_demand, .i_compel, .immediately, .possible_action, .equal, .more, .less, .name_in_tooltip, .warning {
+
+.i_demand,
+.i_compel,
+.immediately,
+.possible_action,
+.equal,
+.more,
+.less,
+.name_in_tooltip,
+.warning {
     font-weight: bold;
 }
+
 .card_effects {
     position: absolute;
 }
+
 .effect_text {
     font-family: 'tradegothiclt-condeighteen', Arial, sans-serif;
+
     &.light {
         color: black;
     }
+
     &.dark {
         color: #e8e8e8;
     }
 }
+
 .effect {
     position: relative;
     border-style: solid;
     border-width: 1px;
     padding-right: 1px;
     padding-bottom: 1px;
-    
+
     &.M {
         &:nth-of-type(n+2) {
             margin-top: 2px;
         }
+
         padding-left: 9px;
         line-height: 8px;
     }
+
     &.L {
         &:nth-of-type(n+2) {
             margin-top: 10px;
         }
+
         padding-left: 19px;
         line-height: 22px;
     }
 }
+
 .card_effects {
     &.M {
         right: 2px;
@@ -925,22 +1105,29 @@
         width: 129px;
         height: 56px;
 
-        >.font_size_1, >.font_size_2, >.font_size_3, >.font_size_4, >.font_size_5 {
+        >.font_size_1,
+        >.font_size_2,
+        >.font_size_3,
+        >.font_size_4,
+        >.font_size_5 {
             >.effect.M {
                 line-height: 5px;
             }
         }
+
         >.font_size_6 {
             >.effect.M {
                 line-height: 6px;
             }
         }
+
         >.font_size_7 {
             >.effect.M {
                 line-height: 7px;
             }
         }
     }
+
     &.L {
         left: 116px;
         top: 63px;
@@ -948,139 +1135,185 @@
         height: 151px;
     }
 }
+
 .echo_effect {
     border-style: solid;
     border-width: 1px;
+
     &.color_0 {
         background-color: #b2def2;
         border-color: #0e2a50;
     }
+
     &.color_1 {
         background-color: #f7c3d2;
         border-color: #5a090c;
     }
+
     &.color_2 {
         background-color: #9dd19b;
         border-color: #122c18;
     }
+
     &.color_3 {
         background-color: #f4f4be;
         border-color: #8b6a28;
     }
+
     &.color_4 {
         background-color: #b4bcd8;
         border-color: #220e40;
     }
 }
+
 .effect.color_0 {
     border-color: #0e2a50;
+
     &.light {
         background-color: #b2def2;
     }
+
     &.dark {
         background-color: #0e2a50;
     }
 }
+
 .effect.color_1 {
     border-color: #5a090c;
+
     &.light {
         background-color: #f7c3d2;
     }
+
     &.dark {
         background-color: #5a090c;
     }
 }
+
 .effect.color_2 {
     border-color: #122c18;
+
     &.light {
         background-color: #9dd19b;
     }
+
     &.dark {
         background-color: #122c18;
     }
 }
+
 .effect.color_3 {
     border-color: #8b6a28;
+
     &.light {
         background-color: #f4f4be;
     }
+
     &.dark {
         background-color: #8b6a28;
     }
 }
+
 .effect.color_4 {
     border-color: #220e40;
+
     &.light {
         background-color: #b4bcd8;
     }
+
     &.dark {
         background-color: #220e40;
     }
 }
+
 .current_effect {
     box-shadow: 0px 0px 6px 2px #fff;
+
     &.light {
         background-color: rgb(255 255 255) !important;
     }
+
     &.dark {
         background-color: rgb(0 0 0) !important;
     }
 }
+
 .clickable {
     box-shadow: 0 0 6px 3px rgb(27, 5, 154) !important;
+
     &:hover {
         cursor: pointer;
     }
+
     &.mid_dogma {
         box-shadow: 0 0 6px 3px rgb(154, 5, 5) !important;
     }
+
     &.can_endorse {
         box-shadow: 0 0 6px 3px rgb(252, 0, 184) !important;
     }
 }
+
 .selected {
     box-shadow: 0 0 6px 3px white !important;
 }
+
 .splay_indicator {
     margin: auto;
     margin-top: 5px;
     width: 16px;
     height: 16px;
-    &.splay_1, &.splay_2, &.splay_3, &.splay_4 {
+
+    &.splay_1,
+    &.splay_2,
+    &.splay_3,
+    &.splay_4 {
         @include m.squares-background;
     }
+
     &.splay_1 {
         background-position-x: -80px;
     }
+
     &.splay_2 {
         background-position-x: -96px;
     }
-    &.splay_3, &.splay_4 {
+
+    &.splay_3,
+    &.splay_4 {
         background-position-x: -112px;
     }
+
     &.splay_4 {
         transform: rotate(45deg);
     }
 }
+
 .in_tooltip {
     display: inline-block;
+
     &.M {
         vertical-align: bottom;
     }
+
     &.L {
         vertical-align: text-bottom;
     }
+
     &.P {
         vertical-align: middle;
     }
-    &.basic  {
+
+    &.basic {
         margin-right: 4px;
     }
 }
+
 .tooltip {
     td {
         vertical-align: middle;
     }
+
     tr {
         &:nth-of-type(2) {
             >td {
@@ -1089,11 +1322,13 @@
         }
     }
 }
+
 .action {
     * {
         text-align: justify;
         text-justify: distribute;
     }
+
     &.in_tooltip {
         margin-top: 20px;
         margin-right: 20px;
@@ -1105,30 +1340,36 @@
 .warning {
     color: red;
 }
+
 .recap_dogma {
     li {
         list-style-type: disc;
-        margin-left:10px;
+        margin-left: 10px;
     }
 }
+
 #logs {
     .square {
         vertical-align: top;
         margin-top: 1px;
     }
 }
+
 .bgabutton {
     .square {
         margin-top: 2px;
         vertical-align: top;
     }
 }
+
 .with_white_border {
     border-right: 2px solid #ffffff;
 }
+
 .with_border {
     border-right: 2px solid #ebd5bd;
 }
+
 .all_icons {
     @include m.squares-background;
     display: inline-block;
@@ -1136,58 +1377,78 @@
     height: 19px;
     background-position: -0px -82px;
 }
+
 .dogma_symbol {
     position: absolute;
 }
+
 .simple_stats {
     height: 19px;
 }
 
-.score_count, .hand_count, .max_age_on_board {
+.score_count,
+.hand_count,
+.max_age_on_board {
     padding-right: 5px;
 }
+
 .square {
     display: inline-block;
+
     &.basic {
         @include m.squares-background;
         width: 16px;
         height: 16px;
+
         &.icon_score {
             background-position: -0px -0px;
             margin-top: 2px;
             margin-left: 2px;
         }
+
         &.icon_hand {
             background-position: -16px -0px;
             vertical-align: top;
             margin-top: 4px;
             margin-left: 3px;
         }
+
         &.icon_age_indicator {
             background-position: -64px -0px;
             vertical-align: top;
             margin-top: 4px;
             margin-left: 4px;
         }
+
         &.icon_help {
             background-position: -32px -0px;
         }
+
         &.icon_action {
             background-position: -48px -0px;
         }
     }
+
     &.N {
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+
+        &.icon_1,
+        &.icon_2,
+        &.icon_3,
+        &.icon_4,
+        &.icon_5,
+        &.icon_6 {
             @include m.icon-background;
             background-size: 92px auto;
             background-position-y: -77px;
             width: 14px;
             height: 14px;
         }
-        #pagemaintitletext > &.age {
+
+        #pagemaintitletext>&.age {
             top: -2px;
             position: relative;
         }
+
         &.music_note {
             width: 16px;
             height: 16px;
@@ -1197,35 +1458,48 @@
             background-size: 306px auto !important;
             background-position: -226px -22px !important;
         }
+
         &.age {
-			@include m.square-age;
-			font-size: 11px;
-			line-height: 12px;
-			width: 13px;
-			height: 12px;
-            &.type_0, &.type_1, &.type_2, &.type_3, &.type_4 {
+            @include m.square-age;
+            font-size: 11px;
+            line-height: 12px;
+            width: 13px;
+            height: 12px;
+
+            &.type_0,
+            &.type_1,
+            &.type_2,
+            &.type_3,
+            &.type_4 {
                 border: 1px solid black;
                 color: black;
                 font-weight: bold;
             }
+
             &.type_0 {
                 background-color: #f0d68c;
             }
+
             &.type_1 {
                 background-color: #d2b7ff;
             }
+
             &.type_2 {
                 background-color: #ff9fe5;
             }
+
             &.type_3 {
                 background-color: #88d2ff;
             }
+
             &.type_4 {
                 background-color: #16eb54;
             }
-		}
+        }
+
         @include m.generate-icon-x-position(1, 6, 0, 15.5px);
     }
+
     &.P {
         width: 20px;
         height: 20px;
@@ -1233,14 +1507,17 @@
         background-size: 133px auto;
         background-position-y: -112px;
         @include m.generate-icon-x-position(1, 7, 1, 22.1px);
+
         &.icon_7 {
             filter: brightness(0%);
         }
     }
+
     &.M {
         width: 9px;
         height: 9px;
         vertical-align: middle;
+
         &.icon_0 {
             width: 8px;
             height: 8px;
@@ -1248,7 +1525,13 @@
             background-size: 153px auto !important;
             background-position: -103px -11px !important;
         }
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+
+        &.icon_1,
+        &.icon_2,
+        &.icon_3,
+        &.icon_4,
+        &.icon_5,
+        &.icon_6 {
             width: 4px;
             height: 4px;
             @include m.icon-background;
@@ -1256,11 +1539,17 @@
             margin-top: -1px;
             margin-bottom: -1px;
             line-height: 4px;
-            .font_size_7 &, .font_size_8 &, .font_size_9 &, .font_size_10 &, .font_size_11 & {
+
+            .font_size_7 &,
+            .font_size_8 &,
+            .font_size_9 &,
+            .font_size_10 &,
+            .font_size_11 & {
                 width: 8px;
                 height: 8px;
             }
         }
+
         &.music_note {
             width: 8px;
             height: 8px;
@@ -1268,55 +1557,80 @@
             background-size: 153px auto !important;
             background-position: -113px -11px !important;
         }
-        .font_size_1 &, .font_size_2 &, .font_size_3 &, .font_size_4 &, .font_size_5 &, .font_size_6 & {
+
+        .font_size_1 &,
+        .font_size_2 &,
+        .font_size_3 &,
+        .font_size_4 &,
+        .font_size_5 &,
+        .font_size_6 & {
             background-size: 25px auto;
             background-position-y: -21px;
             @include m.generate-icon-x-position(1, 6, 0, 4.1666667px);
         }
-        .font_size_7 &, .font_size_8 &, .font_size_9 &, .font_size_10 &, .font_size_11 & {
+
+        .font_size_7 &,
+        .font_size_8 &,
+        .font_size_9 &,
+        .font_size_10 &,
+        .font_size_11 & {
             background-size: 50px auto;
             background-position-y: -42px;
             border: none; // At this size, it looks better without a border since there's a white border from the image.
             @include m.generate-icon-x-position(1, 6, 0, 8.3333333px);
         }
-		&.age {
-			@include m.square-age;
-			border-width: 0.5px;
-		}
-		.font_size_1 &.age, .font_size_2 &.age, .font_size_3 &.age, .font_size_4 &.age {
-			width: 4px;
-			height: 4px;
-			font-size: 3px;
-			line-height: 4px;
-		}
-		.font_size_5 &.age {
-			width: 5px;
-			height: 5px;
-			font-size: 4px;
-			line-height: 5px;
-		}
-		.font_size_6 &.age {
-			width: 6px;
-			height: 6px;
-			font-size: 5px;
-			line-height: 6px;
-		}
-		.font_size_7 &.age {
-			width: 8px;
-			height: 8px;
-			font-size: 7px;
-			line-height: 8px;
-		}
-        .font_size_8 &.age, .font_size_9 &.age, .font_size_10 &.age, .font_size_11 &.age {
-			width: 9px;
-			height: 9px;
-			font-size: 8px;
-			line-height: 9px;
-		}
+
+        &.age {
+            @include m.square-age;
+            border-width: 0.5px;
+        }
+
+        .font_size_1 &.age,
+        .font_size_2 &.age,
+        .font_size_3 &.age,
+        .font_size_4 &.age {
+            width: 4px;
+            height: 4px;
+            font-size: 3px;
+            line-height: 4px;
+        }
+
+        .font_size_5 &.age {
+            width: 5px;
+            height: 5px;
+            font-size: 4px;
+            line-height: 5px;
+        }
+
+        .font_size_6 &.age {
+            width: 6px;
+            height: 6px;
+            font-size: 5px;
+            line-height: 6px;
+        }
+
+        .font_size_7 &.age {
+            width: 8px;
+            height: 8px;
+            font-size: 7px;
+            line-height: 8px;
+        }
+
+        .font_size_8 &.age,
+        .font_size_9 &.age,
+        .font_size_10 &.age,
+        .font_size_11 &.age {
+            width: 9px;
+            height: 9px;
+            font-size: 8px;
+            line-height: 9px;
+        }
     }
+
     &.L {
         width: 19px;
         height: 19px;
+
         &.icon_0 {
             width: 24px;
             height: 24px;
@@ -1326,50 +1640,73 @@
             background-size: 459px auto !important;
             background-position: -310px -33px !important;
         }
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+
+        &.icon_1,
+        &.icon_2,
+        &.icon_3,
+        &.icon_4,
+        &.icon_5,
+        &.icon_6 {
             @include m.icon-background;
             background-position-y: -114px;
             background-size: 135px auto;
         }
+
         &.music_note {
             width: 24px;
             height: 24px;
-			position: relative;
+            position: relative;
             top: 4px;
             background-image: url("img/hexagon_icons_echoes.png");
             background-size: 459px auto !important;
             background-position: -340px -33px !important;
         }
+
         &.age {
-			@include m.square-age;
-			font-size: inherit;
-			line-height: 19px;
-		}
+            @include m.square-age;
+            font-size: inherit;
+            line-height: 19px;
+        }
+
         @include m.generate-icon-x-position(1, 6, 2, 22.25px);
     }
+
     &.in_tooltip {
         &.age {
-			@include m.square-age;
-			width: 14px;
+            @include m.square-age;
+            width: 14px;
             height: 14px;
-			font-size: 12px;
-			line-height: 14px;
+            font-size: 12px;
+            line-height: 14px;
         }
     }
+
     &.in_tooltip {
         width: 13px;
         height: 12px;
+
         &.icon_0 {
             background-image: url("img/hexagon_icons_echoes.png");
             background-size: 230px auto;
             background-position: -155px -17px;
         }
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6 {
+
+        &.icon_1,
+        &.icon_2,
+        &.icon_3,
+        &.icon_4,
+        &.icon_5,
+        &.icon_6 {
             @include m.icon-background;
             background-size: 83px auto;
             background-position-y: -42px;
         }
-        &.icon_8, &.icon_9, &.icon_11, &.icon_12, &.icon_13 {
+
+        &.icon_8,
+        &.icon_9,
+        &.icon_11,
+        &.icon_12,
+        &.icon_13 {
             background-image: url("img/cities_special_icons.png");
             filter: grayscale(1);
             background-size: 115px auto;
@@ -1378,37 +1715,48 @@
             top: 4px;
             position: relative;
         }
-        &.icon_8, &.icon_9 {
+
+        &.icon_8,
+        &.icon_9 {
             &.fountain_flag_card {
                 top: 13px;
                 left: 6px;
                 filter: none;
+
                 &.color_0 {
                     background-position-x: -0px;
                 }
+
                 &.color_1 {
                     background-position-x: -21px;
                 }
+
                 &.color_2 {
                     background-position-x: -42px;
                 }
+
                 &.color_3 {
                     background-position-x: -63px;
                 }
+
                 &.color_4 {
                     background-position-x: -84px;
                 }
             }
         }
+
         &.icon_8 {
             background-position-y: -42px;
         }
+
         &.icon_9 {
             background-position-y: -63px;
         }
+
         &.icon_11 {
             background-position-y: -20px;
         }
+
         &.icon_12 {
             background-position-y: -20px;
             transform: rotate(180deg);
@@ -1417,6 +1765,7 @@
             -o-transform: rotate(180deg);
             -ms-transform: rotate(180deg);
         }
+
         &.icon_13 {
             background-position-y: -20px;
             transform: rotate(90deg);
@@ -1425,6 +1774,7 @@
             -o-transform: rotate(90deg);
             -ms-transform: rotate(90deg);
         }
+
         @include m.generate-icon-x-position(1, 6, 0, 14px);
     }
 }
@@ -1433,65 +1783,94 @@
     &.M {
         left: -3px;
         top: -1px;
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6,&.icon_7 {
+
+        &.icon_1,
+        &.icon_2,
+        &.icon_3,
+        &.icon_4,
+        &.icon_5,
+        &.icon_6,
+        &.icon_7 {
             width: 10px;
             height: 10px;
             @include m.icon-background;
             background-size: 60px auto;
         }
+
         &.icon_7 {
             filter: brightness(0%);
         }
+
         @include m.generate-icon-x-position(1, 7, 0, 10px);
         @include m.generate-color-y-position(0, 4, 0, 10px);
     }
+
     &.L {
         left: -4px;
         top: -4px;
-        &.icon_1,&.icon_2,&.icon_3,&.icon_4,&.icon_5,&.icon_6,&.icon_7 {
+
+        &.icon_1,
+        &.icon_2,
+        &.icon_3,
+        &.icon_4,
+        &.icon_5,
+        &.icon_6,
+        &.icon_7 {
             width: 20px;
             height: 20px;
             @include m.icon-background;
             background-size: 120px auto;
         }
+
         &.icon_7 {
             filter: brightness(0%);
         }
+
         @include m.generate-icon-x-position(1, 7, 0, 20px);
         @include m.generate-color-y-position(0, 4, 0, 20px);
     }
 }
 
-#publication_arrow_up, #publication_arrow_down{
+#publication_arrow_up,
+#publication_arrow_down {
     position: absolute;
     left: 0px;
     font-weight: bolder;
     font-size: 25px;
     padding-bottom: 8px;
 }
+
 #publication_arrow_down {
     top: 80px;
 }
-#publication_arrow_up{
+
+#publication_arrow_up {
     top: 0px;
 }
+
 #publication_cancel {
     margin-right: 10px;
 }
+
 .card {
     display: inline-block;
     background-image: url('img/card_backgrounds.jpg');
+
     &.type_2 {
         background-image: url('img/card_backgrounds_cities.jpg');
+
         &.simplified {
             background-image: url('img/simplified_card_backgrounds_cities.jpg');
         }
     }
+
     position: relative;
     border: solid 1px #ffffff;
+
     &.simplified {
         background-image: url('img/simplified_card_backgrounds.jpg');
     }
+
     &.M {
         width: 180px;
         height: 124px;
@@ -1501,6 +1880,7 @@
         background-position-y: -2px;
         @include m.generate-color-x-position(0, 4, 2, 184px);
     }
+
     &.L {
         width: 456px;
         height: 316px;
@@ -1510,6 +1890,7 @@
         background-position-y: -2px;
         @include m.generate-color-x-position(0, 4, 0, 462px);
     }
+
     &.S {
         &.age_null {
             background-image: url("img/special_achievements_landscape.jpg");
@@ -1518,32 +1899,63 @@
             background-size: 232px, auto;
             border-radius: 3px;
         }
-        &.item_105, &.item_106, &.item_107, &.item_108, &.item_109 {
+
+        &.item_105,
+        &.item_106,
+        &.item_107,
+        &.item_108,
+        &.item_109 {
             background-position-y: -1px;
         }
-        &.item_325, &.item_326, &.item_327, &.item_328, &.item_329 {
+
+        &.item_325,
+        &.item_326,
+        &.item_327,
+        &.item_328,
+        &.item_329 {
             background-position-y: -37px;
         }
-        &.item_435, &.item_436, &.item_437, &.item_438, &.item_439 {
+
+        &.item_435,
+        &.item_436,
+        &.item_437,
+        &.item_438,
+        &.item_439 {
             background-position-y: -73px;
         }
-        &.item_105, &.item_325, &.item_435 {
+
+        &.item_105,
+        &.item_325,
+        &.item_435 {
             background-position-x: -1px;
         }
-        &.item_106, &.item_326, &.item_436 {
+
+        &.item_106,
+        &.item_326,
+        &.item_436 {
             background-position-x: -47px;
         }
-        &.item_107, &.item_327, &.item_437 {
+
+        &.item_107,
+        &.item_327,
+        &.item_437 {
             background-position-x: -93.5px;
         }
-        &.item_108, &.item_328, &.item_438 {
+
+        &.item_108,
+        &.item_328,
+        &.item_438 {
             background-position-x: -140px;
         }
-        &.item_109, &.item_329, &.item_439 {
+
+        &.item_109,
+        &.item_329,
+        &.item_439 {
             background-position-x: -186px;
         }
     }
 }
+
 /* Locations where the square and hexagon icons go on each card 
 *
 *  Square icons should be ~4% of the card width away from the left/bottom/right edges. It currently is 7px
@@ -1562,158 +1974,201 @@
 .square_card_icon {
     @include m.icon-background;
     position: absolute;
+
     &.icon_null {
         display: none;
     }
+
     &.M {
         width: 36px;
         height: 36px;
         background-size: 230px auto;
+
         &.icon_1 {
             background-position-x: -1px;
         }
+
         &.icon_2 {
             background-position-x: -39.5px;
         }
+
         &.icon_3 {
             background-position-x: -78px;
         }
+
         &.icon_4 {
             background-position-x: -116px;
         }
+
         &.icon_5 {
             background-position-x: -154.5px;
         }
+
         &.icon_6 {
             background-position-x: -192.5px;
         }
+
         &.icon_7 {
             background-position-x: -1px;
             filter: brightness(0%);
         }
+
         &.icon_10 {
             background-image: none;
+
             // The following line will be added dynamically via JavaScript:
             // display: table;
-            & > span {
+            &>span {
                 padding: 1px;
                 display: table-cell;
                 vertical-align: middle;
                 text-align: center;
             }
         }
+
         &.color_0 {
             background-position-y: -1px;
         }
+
         &.color_1 {
             background-position-y: -39.5px;
         }
+
         &.color_2 {
             background-position-y: -78px;
         }
+
         &.color_3 {
             background-position-y: -116px;
         }
+
         &.color_4 {
             background-position-y: -154.5px;
         }
+
         &.top_left_icon {
             top: 7px;
             left: 7px;
         }
+
         &.bottom_left_icon {
             bottom: 7px;
             left: 7px;
         }
+
         &.bottom_center_icon {
             bottom: 7px;
             left: 72px;
         }
+
         &.bottom_right_icon {
             bottom: 7px;
             right: 7px;
         }
+
         &.top_right_icon {
             top: 7px;
             right: 7px;
         }
+
         &.top_center_icon {
             top: 7px;
             left: 72px;
         }
     }
+
     &.L {
         width: 75px;
         background-size: 470px auto;
         height: 75px;
+
         &.icon_1 {
             background-position-x: -1.5px;
         }
+
         &.icon_2 {
             background-position-x: -80px;
         }
+
         &.icon_3 {
             background-position-x: -158.5px;
         }
+
         &.icon_4 {
             background-position-x: -236.5px;
         }
+
         &.icon_5 {
             background-position-x: -315.5px;
         }
+
         &.icon_6 {
             background-position-x: -393.5px;
         }
+
         &.icon_7 {
             background-position-x: -1.5px;
             filter: brightness(0%);
         }
+
         &.icon_10 {
             background-image: none;
+
             // The following line will be added dynamically via JavaScript:
             // display: table;
-            & > span {
+            &>span {
                 padding: 1px;
                 display: table-cell;
                 vertical-align: middle;
                 text-align: center;
             }
         }
+
         &.color_0 {
             background-position-y: -1px;
         }
+
         &.color_1 {
             background-position-y: -79.5px;
         }
+
         &.color_2 {
             background-position-y: -158px;
         }
+
         &.color_3 {
             background-position-y: -236px;
         }
+
         &.color_4 {
             background-position-y: -315px;
         }
+
         &.top_left_icon {
             top: 25px;
             left: 30px;
         }
+
         &.bottom_left_icon {
             bottom: 23px;
             left: 30px;
         }
+
         &.bottom_center_icon {
             bottom: 23px;
             left: 195px;
         }
+
         &.bottom_right_icon {
             bottom: 23px;
             right: 26px;
         }
+
         &.top_right_icon {
             top: 25px;
             right: 26px;
         }
+
         &.top_center_icon {
             top: 25px;
             left: 195px;
@@ -1724,6 +2179,7 @@
 .city_search_icon {
     @include m.city-special-icon-background;
     position: absolute;
+
     &.M {
         top: 0px;
         left: 70px;
@@ -1731,22 +2187,28 @@
         height: 45px;
         background-size: 230px auto;
         background-position-y: -165px;
+
         &.color_0 {
             background-position-x: 0px;
         }
+
         &.color_1 {
             background-position-x: -46px;
         }
+
         &.color_2 {
             background-position-x: -92px;
         }
+
         &.color_3 {
             background-position-x: -138px;
         }
+
         &.color_4 {
             background-position-x: -184px;
         }
     }
+
     &.L {
         top: 11px;
         left: 191px;
@@ -1754,18 +2216,23 @@
         height: 90px;
         background-size: 460px auto;
         background-position-y: -330px;
+
         &.color_0 {
             background-position-x: 0px;
         }
+
         &.color_1 {
             background-position-x: -92px;
         }
+
         &.color_2 {
             background-position-x: -184px;
         }
+
         &.color_3 {
             background-position-x: -276px;
         }
+
         &.color_4 {
             background-position-x: -368px;
         }
@@ -1775,9 +2242,11 @@
 .city_special_icon {
     @include m.city-special-icon-background;
     position: absolute;
+
     &.icon_null {
         display: none;
     }
+
     &.icon_12 {
         transform: rotate(180deg);
         -moz-transform: rotate(180deg);
@@ -1785,6 +2254,7 @@
         -o-transform: rotate(180deg);
         -ms-transform: rotate(180deg);
     }
+
     &.icon_13 {
         transform: rotate(90deg);
         -moz-transform: rotate(90deg);
@@ -1792,81 +2262,109 @@
         -o-transform: rotate(90deg);
         -ms-transform: rotate(90deg);
     }
+
     &.M {
         width: 40px;
         height: 40px;
         background-size: 230px auto;
+
         &.icon_8 {
             background-position-y: -83px;
         }
+
         &.icon_9 {
             background-position-y: -124px;
         }
-        &.icon_11, &.icon_12, &.icon_13 {
+
+        &.icon_11,
+        &.icon_12,
+        &.icon_13 {
             background-position-y: -42px;
         }
+
         &.icon_14 {
             background-position-y: -1px;
         }
+
         &.color_0 {
             background-position-x: -1px;
         }
+
         &.color_1 {
             background-position-x: -42px;
         }
+
         &.color_2 {
             background-position-x: -83px;
         }
+
         &.color_3 {
             background-position-x: -124px;
         }
+
         &.color_4 {
             background-position-x: -165px;
         }
+
         &.bottom_center_icon {
             bottom: 5px;
             left: 70px;
         }
+
         &.top_center_icon {
             top: 5px;
             left: 70px;
         }
     }
+
     &.L {
         width: 80px;
         height: 80px;
         background-size: 460px auto;
+
         &.icon_8 {
             background-position-y: -165px;
         }
+
         &.icon_9 {
             background-position-y: -249px;
         }
-        &.icon_11, &.icon_12, &.icon_13 {
+
+        &.icon_11,
+        &.icon_12,
+        &.icon_13 {
             background-position-y: -83px;
         }
+
         &.icon_14 {
             background-position-y: -1px;
         }
+
         &.color_0 {
             background-position-x: -1px;
         }
+
         &.color_1 {
             background-position-x: -83px;
         }
+
         &.color_2 {
             background-position-x: -165px;
         }
+
         &.color_3 {
             background-position-x: -247px;
         }
+
         &.color_4 {
             background-position-x: -331px;
         }
+
         &.bottom_center_icon {
             bottom: 22px;
             left: 192px;
         }
+
         &.top_center_icon {
             top: 22px;
             left: 192px;
@@ -1877,137 +2375,168 @@
 .bonus_card_icon {
     @include m.bonus-background;
     position: absolute;
+
     &.M {
         &.bonus_value {
             width: 20px;
             height: 22px;
             background-size: 230px auto;
             background-position-y: -40px;
+
             &.top_left_icon {
                 top: 15px;
                 left: 14px;
             }
+
             &.bottom_left_icon {
                 bottom: 12px;
                 left: 14px;
             }
+
             &.bottom_center_icon {
                 bottom: 12px;
                 left: 80px;
             }
+
             &.bottom_right_icon {
                 bottom: 12px;
                 right: 16px;
             }
+
             &.top_right_icon {
                 top: 15px;
                 right: 16px;
             }
+
             &.top_center_icon {
                 top: 15px;
                 left: 80px;
             }
         }
+
         // 1, -20, -41 -63, -83, -104, -125, -146, -167, -188, -209
         // 22.2029 −21.2258x^0.995702
-        @include m.generate-bonus-x-position-equation(1,11,22.2029px,21.2258,0.995702);
+        @include m.generate-bonus-x-position-equation(1, 11, 22.2029px, 21.2258, 0.995702);
+
         &.bonus_color {
             width: 36px;
             height: 36px;
             background-size: 230px auto;
             background-position-y: -1px;
+
             &.top_left_icon {
                 top: 7px;
                 left: 7px;
             }
+
             &.bottom_left_icon {
                 bottom: 7px;
                 left: 7px;
             }
+
             &.bottom_center_icon {
                 bottom: 7px;
                 left: 73px;
             }
+
             &.bottom_right_icon {
                 bottom: 7px;
                 right: 7px;
             }
+
             &.top_right_icon {
                 top: 7px;
                 right: 7px;
             }
+
             &.top_center_icon {
                 top: 7px;
                 left: 73px;
             }
         }
+
         @include m.generate-color-x-position(0, 4, 1, 38px);
     }
+
     &.L {
         &.bonus_value {
             width: 43px;
             background-size: 470px auto;
             height: 43px;
             background-position-y: -82px;
+
             &.top_left_icon {
                 top: 44px;
                 left: 48px;
             }
+
             &.bottom_left_icon {
                 bottom: 35px;
                 left: 48px;
             }
+
             &.bottom_center_icon {
                 bottom: 35px;
                 left: 211px;
             }
+
             &.bottom_right_icon {
                 bottom: 35px;
                 right: 41px;
             }
+
             &.top_right_icon {
                 top: 25px;
                 right: 43px;
             }
+
             &.top_center_icon {
                 top: 25px;
                 left: 211px;
             }
         }
+
         //1,-41,-85,-128,-171,-213,-256,-298,-342,-384,-427
         // 44.6125 −43.3471x^0.995277
-        @include m.generate-bonus-x-position-equation(1,11,44.6125px,43.3471,0.995277);
+        @include m.generate-bonus-x-position-equation(1, 11, 44.6125px, 43.3471, 0.995277);
 
         &.bonus_color {
             width: 76px;
             height: 75px;
             background-size: 470px auto;
             background-position-y: -1px;
+
             &.top_left_icon {
                 top: 25px;
                 left: 30px;
             }
+
             &.bottom_left_icon {
                 bottom: 23px;
                 left: 30px;
             }
+
             &.bottom_center_icon {
                 bottom: 23px;
                 left: 193px;
             }
+
             &.bottom_right_icon {
                 bottom: 23px;
                 right: 26px;
             }
+
             &.top_right_icon {
                 top: 25px;
                 right: 26px;
             }
+
             &.top_center_icon {
                 top: 25px;
                 left: 193px;
             }
         }
+
         @include m.generate-color-x-position(0, 4, -1, 77.5px);
     }
 }
@@ -2018,59 +2547,73 @@
 .hexagon_card_icon {
     background-image: url("img/hexagon_icons.png");
     position: absolute;
+
     &.M {
         background-size: 735px, auto;
         width: 45px;
         height: 45px;
+
         &.top_left_icon {
             top: 2px;
             left: 4px;
         }
+
         &.bottom_left_icon {
             bottom: 1px;
             left: 4px;
         }
+
         &.bottom_center_icon {
             bottom: 1px;
             left: 69px;
         }
+
         &.bottom_right_icon {
             bottom: 1px;
             right: 2px;
         }
+
         &.top_right_icon {
             top: 2px;
             right: 2px;
         }
+
         &.top_center_icon {
             top: 2px;
             left: 69px;
         }
     }
+
     &.L {
         background-size: 1511px, auto;
         width: 90px;
         height: 90px;
+
         &.top_left_icon {
             top: 17px;
             left: 26px;
         }
+
         &.bottom_left_icon {
             bottom: 11px;
             left: 26px;
         }
+
         &.bottom_center_icon {
             bottom: 11px;
             left: 192px;
         }
+
         &.bottom_right_icon {
             bottom: 11px;
             right: 15px;
         }
+
         &.top_right_icon {
             top: 17px;
             right: 15px;
         }
+
         &.top_center_icon {
             top: 17px;
             left: 192px;
@@ -2085,113 +2628,181 @@
     border: solid 1px #ffffff;
     box-shadow: -1px 1px grey;
     border-radius: 3px;
+
     &.S {
         width: v.$recto-S-width;
         height: v.$recto-S-height;
+
         &.age_null {
             background-image: url("img/special_achievements_portrait.jpg");
             background-size: 175px, auto;
         }
-        &.item_105, &.item_106, &.item_107, &.item_108, &.item_109 {
+
+        &.item_105,
+        &.item_106,
+        &.item_107,
+        &.item_108,
+        &.item_109 {
             background-position-y: -1px;
         }
-        &.item_325, &.item_326, &.item_327, &.item_328, &.item_329 {
+
+        &.item_325,
+        &.item_326,
+        &.item_327,
+        &.item_328,
+        &.item_329 {
             background-position-y: -47.5px;
         }
-        &.item_435, &.item_436, &.item_437, &.item_438, &.item_439 {
+
+        &.item_435,
+        &.item_436,
+        &.item_437,
+        &.item_438,
+        &.item_439 {
             background-position-y: -94px;
         }
-        &.item_105, &.item_325, &.item_435 {
+
+        &.item_105,
+        &.item_325,
+        &.item_435 {
             background-position-x: -1px;
         }
-        &.item_106, &.item_326, &.item_436 {
+
+        &.item_106,
+        &.item_326,
+        &.item_436 {
             background-position-x: -36px;
         }
-        &.item_107, &.item_327, &.item_437 {
+
+        &.item_107,
+        &.item_327,
+        &.item_437 {
             background-position-x: -71px;
         }
-        &.item_108, &.item_328, &.item_438 {
+
+        &.item_108,
+        &.item_328,
+        &.item_438 {
             background-position-x: -106px;
         }
-        &.item_109, &.item_329, &.item_439 {
+
+        &.item_109,
+        &.item_329,
+        &.item_439 {
             background-position-x: -141px;
         }
+
         // TODO(LATER): Clean this up by introducing a new class so that we don't need to generate a bunch of class combinations that are never used.
         @for $i from 1000 through 1013 {
-            &.item_#{$i}, &.item_#{$i+100} {
+
+            &.item_#{$i},
+            &.item_#{$i+100} {
                 background-image: none;
+
                 &.color_0 {
                     background-color: #94b1dd;
                 }
+
                 &.color_1 {
                     background-color: #db7b84;
                 }
+
                 &.color_2 {
                     background-color: #73bb64;
                 }
+
                 &.color_3 {
                     background-color: #e3e47b;
                 }
+
                 &.color_4 {
                     background-color: #9a58ba;
                 }
             }
         }
+
         &.default_card_back {
-            &.age_1, &.age_2, &.age_3, &.age_4, &.age_5, &.age_6, &.age_7, &.age_8, &.age_9, &.age_10 {
+
+            &.age_1,
+            &.age_2,
+            &.age_3,
+            &.age_4,
+            &.age_5,
+            &.age_6,
+            &.age_7,
+            &.age_8,
+            &.age_9,
+            &.age_10 {
                 background-image: url("img/card_backs_portrait.jpg");
                 background-size: 380px 256px;
             }
+
             &.age_1 {
                 background-position-x: -2px;
             }
+
             &.age_2 {
                 background-position-x: -36px;
             }
+
             &.age_3 {
                 background-position-x: -71px;
             }
+
             &.age_4 {
                 background-position-x: -105px;
             }
+
             &.age_5 {
                 background-position-x: -140px;
             }
+
             &.age_6 {
                 background-position-x: -174px;
             }
+
             &.age_7 {
                 background-position-x: -209px;
             }
+
             &.age_8 {
                 background-position-x: -243px;
             }
+
             &.age_9 {
                 background-position-x: -278px;
             }
+
             &.age_10 {
                 background-position-x: -312px;
             }
+
             &.type_0 {
                 background-position-y: -3px;
             }
+
             &.type_1 {
                 background-position-y: -54px;
             }
+
             &.type_2 {
                 background-position-y: -105px;
             }
+
             &.type_3 {
                 background-position-y: -156px;
             }
+
             &.type_4 {
                 background-position-y: -208px;
             }
+
             &.relic {
                 border: solid 1px transparent;
                 background-position-x: -347px;
             }
         }
+
         &.card_back_text {
             display: inline-block;
             vertical-align: middle;
@@ -2199,24 +2810,31 @@
             font-weight: bold;
             font-family: system-ui;
         }
+
         &.simplified_card_back {
             line-height: v.$recto-S-height;
             text-align: center;
+
             &.type_0 {
                 background-color: #f0d68c;
             }
+
             &.type_1 {
                 background-color: #d2b7ff;
             }
+
             &.type_2 {
                 background-color: #ff9fe5;
             }
+
             &.type_3 {
                 background-color: #88d2ff;
             }
+
             &.type_4 {
                 background-color: #16eb54;
             }
+
             &.relic {
                 box-shadow: inset 0px 0px 0px 5px #000;
             }
@@ -2233,137 +2851,162 @@
 
 /* hexagon card icons */
 
-$M_offset:        49;
-$M_x_position:     3;
-$M_y_position:     3;
-$L_offset:     100.5;
-$L_x_position:     8;
-$L_y_position:     8;
+$M_offset: 49;
+$M_x_position: 3;
+$M_y_position: 3;
+$L_offset: 100.5;
+$L_x_position: 8;
+$L_y_position: 8;
 
 .hexagon_card_icon {
+
     // Base cards
     @for $i from 0 through 104 {
-        @if $i <= 14 {
+        @if $i <=14 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + $i * $M_offset}px -#{$M_y_position}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + $i * $L_offset}px -#{$L_y_position}px;
                 }
             }
         }
-        @if $i > 14 {
+
+        @if $i >14 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))+ 1) * $L_offset}px;
                 }
             }
         }
     }
+
     // Artifact cards
     @for $i from 110 through 214 {
-        @if $i <= 124 {
+        @if $i <=124 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + ($i - 110) % 15 * $M_offset}px -#{$M_y_position + 10 * $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + ($i - 110) % 15 * $L_offset}px -#{$L_y_position + 10 * $L_offset}px;
                 }
             }
         }
-        @if $i > 124 {
+
+        @if $i >124 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + ($i - 15) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 15),10)))) * $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + ($i - 15) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 15),10)))) * $L_offset}px;
                 }
             }
         }
     }
+
     // Relic cards
     @for $i from 215 through 219 {
         &.hexagon_icon_#{$i} {
             &.M {
                 background-position: -#{$M_x_position + ($i + 5) % 15 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 100),10)))) * $M_offset}px;
             }
+
             &.L {
                 background-position: -#{$L_x_position + ($i + 5) % 15 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 100),10)))) * $L_offset}px;
             }
         }
     }
+
     // City cards
     @for $i from 220 through 324 {
-        @if $i <= 234 {
+        @if $i <=234 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $M_offset}px -#{$M_y_position + $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 220), 3))) * $L_offset}px -#{$L_y_position + $L_offset}px;
                 }
             }
         }
-        @if $i >= 235 and $i <= 314 {
+
+        @if $i >=235 and $i <=314 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $M_offset}px -#{$M_y_position + (2 + math.floor(math.div($i - 235, 10))) * $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + (10 + math.floor(math.div(($i - 235) % 10, 2))) * $L_offset}px -#{$L_y_position + (2 + math.floor(math.div($i - 235, 10))) * $L_offset}px;
                 }
             }
         }
-        @if $i >= 315 {
+
+        @if $i >=315 {
             &.hexagon_icon_#{$i} {
                 &.M {
                     background-position: -#{$M_x_position + (10 + math.floor(math.div($i - 315, 2))) * $M_offset}px -#{$M_y_position + 12 * $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + (10 + math.floor(math.div($i - 315, 2))) * $L_offset}px -#{$L_y_position + 12 * $L_offset}px;
                 }
             }
         }
     }
+
     // Echo cards
     // Since the icons are in their own png, we have to offset i by 330 and 345 back to '0' for calulation purposes
     @for $i from 330 through 434 {
-        @if $i <= 344 {
+        @if $i <=344 {
             &.hexagon_icon_#{$i} {
                 background-image: url("img/hexagon_icons_echoes.png");
+
                 &.M {
                     background-position: -#{$M_x_position + ($i - 330) * $M_offset}px -#{$M_y_position}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + ($i - 330) * $L_offset}px -#{$L_y_position}px;
                 }
             }
         }
-        @if $i >= 345 {
+
+        @if $i >=345 {
             &.hexagon_icon_#{$i} {
                 background-image: url("img/hexagon_icons_echoes.png");
+
                 &.M {
                     background-position: -#{$M_x_position + ($i - 345) % 10 * $M_offset}px -#{$M_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $M_offset}px;
                 }
+
                 &.L {
                     background-position: -#{$L_x_position + ($i - 345) % 10 * $L_offset}px -#{$L_y_position + ((math.floor(math.div(($i - 345),10)))+ 1) * $L_offset}px;
                 }
             }
         }
     }
+
     // Age 11 cards
     @for $i from 440 through 449 {
         &.hexagon_icon_#{$i} {
             filter: brightness(0%);
+
             &.M {
                 background-position: -3px -3px;
             }
+
             &.L {
                 background-position: -8px -8px;
             }
