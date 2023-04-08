@@ -26214,9 +26214,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // There must be at least one card which goes to a unique supply pile
                     && $card_id_returning_to_unique_supply_pile != null
-                    // The cards are coming from anywhere but the board
-                    // TODO(LATER): Extend this automation to the board once the special achievement check is moved to the end of the action.
-                    && $location_from != 'board') {
+                    // The cards are coming from anywhere but the board (unless we are playing with the 4th edition because relevant special achievement checks were moved to end of the action)
+                    && ($location_from != 'board' || $this->innovationGameState->usingFourthEditionRules())) {
                 $this->innovationGameState->set('id_last_selected', $card_id_returning_to_unique_supply_pile);
                 self::unmarkAsSelected($card_id_returning_to_unique_supply_pile);
                 $this->innovationGameState->set('can_pass', 0);
@@ -26224,15 +26223,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
-            // Try to tuck cards to the deck where the order doesn't matter
+            // Try to tuck cards where the order doesn't matter
             } else if ($enable_autoselection
                     // Make sure choosing these cards won't reveal hidden information
                     && (!$selection_will_reveal_hidden_information)
                     // The player must choose at least all of the selectable cards
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
-                    // The cards are being tucked
-                    // TODO(LATER): Extend this automation to melding once the special achievement check is moved to the end of the action.
-                    && $bottom_to > 0
+                    // The cards are being tucked (unless we are playing with the 4th edition because relevant special achievement checks were moved to end of the action)
+                    && ($bottom_to > 0 || $this->innovationGameState->usingFourthEditionRules())
                     // There must be at least one card which has a unique color
                     && $card_id_with_unique_color != null) {
                 $this->innovationGameState->set('id_last_selected', $card_id_with_unique_color);
