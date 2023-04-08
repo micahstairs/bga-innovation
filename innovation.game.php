@@ -4012,10 +4012,10 @@ class Innovation extends Table
 
     function getCurrentVersionOfEffect($prefix, $id) {
         $card_info = $this->textual_card_infos[$id];
-        $edition = $this->innovationGameState->getEdition();
         if (array_key_exists($prefix, $card_info)) {
             return $card_info[$prefix];
         }
+        $edition = $this->innovationGameState->getEdition();
         if ($edition == 1 && array_key_exists($prefix . '_first', $card_info)) {
             return $card_info[$prefix . '_first'];
         }
@@ -4070,6 +4070,15 @@ class Innovation extends Table
             unset($textual_infos[$non_demand . '_third_and_fourth']);
             unset($textual_infos[$non_demand . '_fourth']);
         }
+
+        // Make sure the condition for claiming the special achievement reflects the current edition
+        $textual_infos['condition_for_claiming'] = self::getCurrentVersionOfEffect('condition_for_claiming', $id);
+        if ($textual_infos['condition_for_claiming'] === null) {
+            unset($textual_infos['condition_for_claiming']);
+        }
+        unset($textual_infos['condition_for_claiming_first_and_third']);
+        unset($textual_infos['condition_for_claiming_fourth']);
+
         return array_merge($card, $textual_infos);
     }
     
