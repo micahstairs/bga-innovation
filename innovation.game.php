@@ -139,6 +139,10 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'distance_rule_demand_state'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `distance_rule_demand_state` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'player_index'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `player_index` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
+            self::caclulatePlayerIndexes();
+        }
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
@@ -385,9 +389,6 @@ class Innovation extends Table
         // There are compatible with player preferences
         $default_colors = array("0000ff", "ff0000", "008000", "ffa500", "0000000");
         
-        // Create players
-        // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
-        
         $game_type = $this->innovationGameState->get('game_type');
         $individual_game = self::decodeGameType($game_type) == 'individual';
         
@@ -407,7 +408,7 @@ class Innovation extends Table
                 $t++;
             }
             else { // Team game: the players of the same team are sit in front of each other
-                $t = ($t+1)%2;
+                $t = ($t+1) % 2;
             }
         }
         $sql .= implode($values, ',');
@@ -416,6 +417,8 @@ class Innovation extends Table
             self::reattributeColorsBasedOnPreferences($players, $default_colors);
         }
         self::reloadPlayersBasicInfos();
+
+        self::caclulatePlayerIndexes();
         
         /************ Start the game initialization *****/
 
@@ -499,7 +502,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('color_array', -1); // List of selectable colors encoded in a single value
         $this->innovationGameState->setInitial('type_array', -1); // List of selectable types encoded in a single value
         $this->innovationGameState->setInitial('icon_array', -1); // List of selectable icons encoded in a single value
-        $this->innovationGameState->setInitial('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 'player_no', not their 'player_id')
+        $this->innovationGameState->setInitial('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 0-based 'player_index', not their 'player_id')
         $this->innovationGameState->setInitial('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
         $this->innovationGameState->setInitial('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
         $this->innovationGameState->setInitial('not_id', -1); // id of a card which cannot be selected, else -2
@@ -957,12 +960,30 @@ class Innovation extends Table
         return $active_types;
     }
 
-    function playerIdToPlayerNo($player_id) {
-        return self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
+    function caclulatePlayerIndexes() {
+        $player_nos = self::getObjectListFromDB("SELECT player_no FROM player ORDER BY player_no", true);
+        $index = 0;
+        foreach ($player_nos as $player_no) {
+            self::DbQuery(self::format("UPDATE player SET player_index = {player_index} WHERE player_no = {player_no}",
+                array('player_index' => $index++, 'player_no' => $player_no)
+            ));
+        }
     }
 
-    function playerNoToPlayerId($player_no) {
-        return self::getUniqueValueFromDB(self::format("SELECT player_id FROM player WHERE player_no = {player_no}", array('player_no' => $player_no)));
+    function playerIdToPlayerIndex($player_id) {
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            return self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
+        } else {
+            return self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
+        }
+    }
+
+    function playerIndexToPlayerId($player_index) {
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            return self::getUniqueValueFromDB(self::format("SELECT player_id FROM player WHERE player_no = {player_no}", array('player_no' => $player_index)));
+        } else {
+            return self::getUniqueValueFromDB(self::format("SELECT player_id FROM player WHERE player_index = {player_index}", array('player_index' => $player_index)));
+        }
     }
 
     function getAllPlayerIds() {
@@ -993,65 +1014,127 @@ class Innovation extends Table
     }
 
     function getAllActivePlayers() {
-        return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            return self::getObjectListFromDB("SELECT player_no FROM player WHERE player_eliminated = 0", true);
+        } else {
+            return self::getObjectListFromDB("SELECT player_index FROM player WHERE player_eliminated = 0", true);
+        }
     }
 
     function getOtherActivePlayers($player_id) {
-        return self::getObjectListFromDB(self::format("
-            SELECT
-                player_no
-            FROM
-                player
-            WHERE
-                player_eliminated = 0 AND
-                player_id <> {player_id}
-        ", array('player_id' => $player_id)), true);
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            return self::getObjectListFromDB(self::format("
+                SELECT
+                    player_no
+                FROM
+                    player
+                WHERE
+                    player_eliminated = 0 AND
+                    player_id <> {player_id}
+            ", array('player_id' => $player_id)), true);
+        } else {
+            return self::getObjectListFromDB(self::format("
+                SELECT
+                player_index
+                FROM
+                    player
+                WHERE
+                    player_eliminated = 0 AND
+                    player_id <> {player_id}
+            ", array('player_id' => $player_id)), true);
+        }
     }
 
     function getActiveOpponents($player_id) {
-        return self::getObjectListFromDB(self::format("
-            SELECT
-                player_no
-            FROM
-                player
-            WHERE
-                player_eliminated = 0 AND
-                player_team <> (
-                    SELECT
-                        player_team
-                    FROM
-                        player
-                    WHERE
-                        player_id = {player_id}
-                )
-        ", array('player_id' => $player_id)), true);
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            return self::getObjectListFromDB(self::format("
+                SELECT
+                    player_no
+                FROM
+                    player
+                WHERE
+                    player_eliminated = 0 AND
+                    player_team <> (
+                        SELECT
+                            player_team
+                        FROM
+                            player
+                        WHERE
+                            player_id = {player_id}
+                    )
+            ", array('player_id' => $player_id)), true);
+        } else {
+            return self::getObjectListFromDB(self::format("
+                SELECT
+                    player_index
+                FROM
+                    player
+                WHERE
+                    player_eliminated = 0 AND
+                    player_team <> (
+                        SELECT
+                            player_team
+                        FROM
+                            player
+                        WHERE
+                            player_id = {player_id}
+                    )
+            ", array('player_id' => $player_id)), true);
+        }
     }
 
     function getActiveOpponentsWithFewerPoints($player_id) {
-        return self::getObjectListFromDB(self::format("
-            SELECT
-                player_no
-            FROM
-                player
-            WHERE
-                player_eliminated = 0 AND
-                player_team <> (
-                    SELECT
-                        player_team
-                    FROM
-                        player
-                    WHERE
-                        player_id = {player_id}
-                ) AND
-                player_innovation_score < (
-                    SELECT
-                        player_innovation_score
-                    FROM
-                        player
-                    WHERE
-                        player_id = {player_id}
-                )
-        ", array('player_id' => $player_id)), true);
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            return self::getObjectListFromDB(self::format("
+                SELECT
+                    player_no
+                FROM
+                    player
+                WHERE
+                    player_eliminated = 0 AND
+                    player_team <> (
+                        SELECT
+                            player_team
+                        FROM
+                            player
+                        WHERE
+                            player_id = {player_id}
+                    ) AND
+                    player_innovation_score < (
+                        SELECT
+                            player_innovation_score
+                        FROM
+                            player
+                        WHERE
+                            player_id = {player_id}
+                    )
+            ", array('player_id' => $player_id)), true);
+        } else {
+            return self::getObjectListFromDB(self::format("
+                SELECT
+                player_index
+                FROM
+                    player
+                WHERE
+                    player_eliminated = 0 AND
+                    player_team <> (
+                        SELECT
+                            player_team
+                        FROM
+                            player
+                        WHERE
+                            player_id = {player_id}
+                    ) AND
+                    player_innovation_score < (
+                        SELECT
+                            player_innovation_score
+                        FROM
+                            player
+                        WHERE
+                            player_id = {player_id}
+                    )
+            ", array('player_id' => $player_id)), true);
+        }
     }
 
     function isEliminated($player_id) {
@@ -3204,47 +3287,64 @@ class Innovation extends Table
         return array_slice($player_ids, 2, count($player_ids) - 3);
     }
 
+    function getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer() {
+        $current_player_index = self::playerIdToPlayerIndex(self::getCurrentPlayerUnderDogmaEffect());
+        $players = self::getCollectionFromDB("SELECT player_index, player_id, player_eliminated FROM player");
+        $player_id_to_left = self::playerIndexToPlayerId(($current_player_index + 1) % count($players));
+        return self::getActivePlayerIdsInTurnOrder($player_id_to_left);
+    }
+
     function getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() {
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         return self::getActivePlayerIdsInTurnOrder($current_player_id);
     }
 
-    function getActivePlayerIdsInTurnOrder($current_player_id) {
-        if ($current_player_id < 0) {
+    function getActivePlayerIdsInTurnOrder($starting_player_id) {
+        if ($starting_player_id < 0) {
             // Pick an arbitrary player if it's not anyone's turn (e.g. initial meld)
-            $current_player_no = 1;
+            $starting_index = 0;
         } else {
-            $current_player_no = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id={current_player_id}", array('current_player_id' => $current_player_id)));
+            $starting_index = self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id={starting_player_id}", array('starting_player_id' => $starting_player_id)));
         }
 
-        $players = self::getCollectionFromDB("SELECT player_no, player_id, player_eliminated FROM player");
+        $players = self::getCollectionFromDB("SELECT player_index, player_id, player_eliminated FROM player");
         $num_players = count($players);
 
         $player_ids = [];
         for ($i = 0; $i < $num_players; $i++) {
-            $current_no = (($current_player_no + $i - 1) % $num_players) + 1;
-            if ($players[$current_no]['player_eliminated'] == 0) {
-                $player_ids[] = $players[$current_no]['player_id'];
+            $index = ($starting_index + $i) % $num_players;
+            if ($players[$index]['player_eliminated'] == 0) {
+                $player_ids[] = $players[$index]['player_id'];
             }
         }
         return $player_ids;
     }
 
     /** Checks to see if any players are eligible for special achievements. **/
-    function checkForSpecialAchievements() {
-        // "In the rare case that two players simultaneously become eligible to claim a special achievement,
-        // the tie is broken in turn order going clockwise, with the current player winning ties."
-        // https://boardgamegeek.com/thread/2710666/simultaneous-special-achievements-tiebreaker
-        foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $player_id) {
-            self::checkForSpecialAchievementsForPlayer($player_id);
+    function checkForSpecialAchievements($is_end_of_action_check = false) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            $player_ids = self::getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer();
+        } else {
+            // "In the rare case that two players simultaneously become eligible to claim a special achievement,
+            // the tie is broken in turn order going clockwise, with the current player winning ties."
+            // https://boardgamegeek.com/thread/2710666/simultaneous-special-achievements-tiebreaker
+            $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
+        }
+
+        foreach ($player_ids as $player_id) {
+            self::checkForSpecialAchievementsForPlayer($player_id, $is_end_of_action_check);
         }
     }
     
     /** Checks if the player meets the conditions to get a special achievement. Do the transfer if he does. **/
-    function checkForSpecialAchievementsForPlayer($player_id) {
+    function checkForSpecialAchievementsForPlayer($player_id, $is_end_of_action_check) {
         // TODO(FIGURES): Update this once there are other special achievements to test for.
-        $achievements_to_test = array(105, 106, 107, 108, 109);
-        if ($this->innovationGameState->echoesExpansionEnabled()) {
+        $achievements_to_test = array(106);
+        $edition = $this->innovationGameState->getEdition();
+        if ($edition <= 3 || $is_end_of_action_check) {
+            $achievements_to_test = array_merge($achievements_to_test, [105, 107, 108, 109]);
+        }
+        if ($this->innovationGameState->echoesExpansionEnabled() && ($edition <= 3 || $is_end_of_action_check)) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
         $end_of_game = false;
@@ -5613,12 +5713,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // NOTE: The constant '100' is mostly arbitrary. It just needed to be at least as large as the maximum number of players in the game.
-        self::DbQuery(self::format("
-            UPDATE
-                player
-            SET
-                turn_order_ending_with_launcher = (CASE WHEN player_no <= {launcher_player_no} THEN player_no + 100 ELSE player_no END)
-        ", array('launcher_player_no' => self::playerIdToPlayerNo($launcher_id))));
+        if ($this->innovationGameState->get('release_version') <= 3) {
+            self::DbQuery(self::format("
+                UPDATE
+                    player
+                SET
+                    turn_order_ending_with_launcher = (CASE WHEN player_no <= {launcher_player_no} THEN player_no + 100 ELSE player_no END)
+            ", array('launcher_player_no' => self::playerIdToPlayerIndex($launcher_id))));
+        } else {
+            self::DbQuery(self::format("
+                UPDATE
+                    player
+                SET
+                    turn_order_ending_with_launcher = (CASE WHEN player_index <= {launcher_player_index} THEN player_index + 100 ELSE player_index END)
+            ", array('launcher_player_index' => self::playerIdToPlayerIndex($launcher_id))));
+        }
         $current_turn = $player_id == -1 ? -1 : self::getUniqueValueFromDB(self::format("SELECT turn_order_ending_with_launcher FROM player WHERE player_id = {player_id}", array('player_id' => $player_id)));
         return self::getUniqueValueFromDB(self::format("
             SELECT
@@ -7319,6 +7428,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
         self::returnCard($card);
 
+        // Check for special achievements (only necessary in 4th edition)
+        if ($this->innovationGameState->usingFourthEditionRules(true)) {
+            try {
+            self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
+            } catch(EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::returnArtifactOnDisplay');
+                self::trace('artifactPlayerTurn->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        }
+
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (returnArtifactOnDisplay)');
         $this->gamestate->nextState('playerTurn');
@@ -7336,6 +7458,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to return or dogma his Artifact on display.'), array('player_name' => self::getPlayerNameFromId($player_id)));
         $card = self::getArtifactOnDisplay($player_id);
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
+
+        // Check for special achievements (only necessary in 4th edition)
+        if ($this->innovationGameState->usingFourthEditionRules(true)) {
+            try {
+            self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
+            } catch(EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::passArtifactOnDisplay');
+                self::trace('artifactPlayerTurn->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        }
 
         self::giveExtraTime($player_id);
         self::trace('artifactPlayerTurn->playerTurn (passArtifactOnDisplay)');
@@ -7892,26 +8027,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         $dogma_icon = $card['dogma_icon'];
-        $ressource_column = 'player_icon_count_' . $dogma_icon;
+        $icon_column = 'player_icon_count_' . $dogma_icon;
         
-        $players = self::getCollectionFromDB(self::format("SELECT player_id, player_no, player_team, {ressource_column} FROM player", array('ressource_column' => $ressource_column)));
-        $players_nb = count($players);
+        $players = self::getCollectionFromDB(self::format("SELECT player_index, player_id, player_team, {icon_column} FROM player", array('icon_column' => $icon_column)));
         
         // Compare players ressources on dogma icon_count;
-        $dogma_player = $players[$player_id];
-        $dogma_player_team = $dogma_player['player_team'];
-        $dogma_player_ressource_count = $dogma_player[$ressource_column] + $extra_icons_from_artifact_on_display;
-        $dogma_player_no = $dogma_player['player_no'];
+        $player_index = self::playerIdToPlayerIndex($player_id);
+        $dogma_player_icon_count = $players[$player_index][$icon_column] + $extra_icons_from_artifact_on_display;
         
         // Count each player ressources
-        $players_ressource_count = array();
-        foreach ($players as $id => $player) {
-            $player_no = $player['player_no'];
-            $player_ressource_count = $id == $player_id ? $dogma_player_ressource_count : $player[$ressource_column];
-            $players_ressource_count[$player_no] = $player_ressource_count;
-            $players_teams[$player_no] = $player['player_team'];
-            
-            self::notifyPlayerRessourceCount($id, $dogma_icon, $player_ressource_count);
+        foreach ($players as $index => $player) {
+            $player_icon_count = $index == $player_index ? $dogma_player_icon_count : $player[$icon_column];
+            self::notifyPlayerRessourceCount($player['player_id'], $dogma_icon, $player_icon_count);
             self::DBQuery(self::format("
                 UPDATE 
                     player
@@ -7920,7 +8047,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 WHERE
                     player_id = {player_id}"
             ,
-                array('featured_icon_count' => $player_ressource_count, 'player_id' => $id)
+                array('featured_icon_count' => $player_icon_count, 'player_id' => $player['player_id'])
             ));
         }
 
@@ -8091,8 +8218,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (!ctype_digit($choice)) {
                     self::throwInvalidChoiceException();
                 }
-                $player_no = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
-                if ($player_no == null || !in_array($player_no, $this->innovationGameState->getAsArray('player_array'))) {
+                if ($this->innovationGameState->get('release_version') <= 3) {
+                    $player_index = self::getUniqueValueFromDB(self::format("SELECT player_no FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
+                } else {
+                    $player_index = self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
+                }
+                if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'))) {
                     self::throwInvalidChoiceException();
                 }
                 break;
@@ -9115,17 +9246,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }                
                 break;
             case 'choose_player':
-                $options = self::getObjectListFromDB(self::format("
-                    SELECT
-                        player_id AS value,
-                        player_name AS text
-                    FROM
-                        player
-                    WHERE
-                        player_no IN ({player_nos})
-                ",
-                    array('player_nos' => join($this->innovationGameState->getAsArray('player_array'), ','))
-                ));
+                if ($this->innovationGameState->get('release_version') <= 3) {
+                    $options = self::getObjectListFromDB(self::format("
+                        SELECT
+                            player_id AS value,
+                            player_name AS text
+                        FROM
+                            player
+                        WHERE
+                            player_no IN ({player_nos})
+                    ",
+                        array('player_nos' => join($this->innovationGameState->getAsArray('player_array'), ','))
+                    ));
+                } else {
+                    $options = self::getObjectListFromDB(self::format("
+                        SELECT
+                            player_id AS value,
+                            player_name AS text
+                        FROM
+                            player
+                        WHERE
+                            player_index IN ({player_indexes})
+                    ",
+                        array('player_indexes' => join($this->innovationGameState->getAsArray('player_array'), ','))
+                    ));
+                }
                 break;
             case 'choose_rearrange':
                 // Nothing
@@ -10165,6 +10310,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function stInterPlayerTurn() {
         // An action of the player has been fully resolved.
+
+        // Check for special achievements (only necessary in 4th edition)
+        if ($this->innovationGameState->usingFourthEditionRules(true)) {
+            try {
+            self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
+            } catch(EndOfGame $e) {
+                // End of the game: the exception has reached the highest level of code
+                self::trace('EOG bubbled from self::stInterPlayerTurn');
+                self::trace('interPlayerTurn->justBeforeGameEnd');
+                $this->gamestate->nextState('justBeforeGameEnd');
+                return;
+            }
+        }
 
         // Reset the counter used to track the cards returned by each player via Democracy during the action.
         if ($this->innovationGameState->get('release_version') >= 3) {
@@ -12365,7 +12523,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     } else {
                         $visited_boards = self::getAuxiliaryValueAsArray();
                     }
-                    $visited_boards[] = self::playerIdToPlayerNo($player_id);
+                    $visited_boards[] = self::playerIdToPlayerIndex($player_id);
                     self::setAuxiliaryValueFromArray(array_unique($visited_boards));
                 } else {
                     self::setAuxiliaryValue(self::getAuxiliaryValue() + 1); // Keep track of Dancing Girl's movements
@@ -24537,7 +24695,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // Remove the chosen player from the list of options.
                         $selectable_players = $this->innovationGameState->getAsArray('player_array');
                         $selected_player = self::getAuxiliaryValue();
-                        $selectable_players = array_diff($selectable_players, array(self::playerIdToPlayerNo($selected_player)));
+                        $selectable_players = array_diff($selectable_players, array(self::playerIdToPlayerIndex($selected_player)));
                         $this->innovationGameState->setFromArray('player_array', $selectable_players);
                         
                         // Repeat for next player
@@ -26250,7 +26408,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $player_array = $this->innovationGameState->getAsArray('player_array');
             // Automatically choose the player if there's only one option (and passing isn't allowed)
             if (count($player_array) == 1 && !$can_pass) {
-                $this->innovationGameState->set('choice', self::playerNoToPlayerId($player_array[0]));
+                $this->innovationGameState->set('choice', self::playerIndexToPlayerId($player_array[0]));
                 self::trace('preSelectionMove->interSelectionMove (only one player)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
