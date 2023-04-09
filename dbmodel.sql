@@ -32,6 +32,7 @@ ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Ind
 ALTER TABLE `player` ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards that this player has returned so far during this action via Democracy';
 ALTER TABLE `player` ADD `distance_rule_share_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to share effect, 1 = Is currently being prompted, 2 = Decided NOT to return card, 3 = Decided to return card';
 ALTER TABLE `player` ADD `distance_rule_demand_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to avoid demand, 1 = Is currently being prompted, 2 = Decided NOT to return card, 3 = Decided to return card';
+ALTER TABLE `player` ADD `player_index` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'same player order as player_no, but normalized to the range 0...N-1';
 
 /* Main table to store all the cards of the game and their characteristics. See the material file to see the textual info */
 CREATE TABLE IF NOT EXISTS `card` (
