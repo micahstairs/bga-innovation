@@ -438,6 +438,10 @@ class Innovation extends BgaGame {
                 dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
                 dojo.place(this.format_block('jstpl_ressource_count', infos), $('ressource_counts_' + player_id));
             }
+            if (!this.gamedatas.fourth_edition) {
+                dojo.style(`ressource_icon_${player_id}_7`, 'display', 'none');
+                dojo.style(`ressource_count_${player_id}_7`, 'display', 'none');
+            }
         }
 
         this.addCustomTooltipToClass("score_count", _("Score"), "");
@@ -489,13 +493,6 @@ class Innovation extends BgaGame {
         if (gamedatas.active_player !== null) {
             this.givePlayerActionCard(gamedatas.active_player, gamedatas.action_number);
         }
-
-        this.gamedatas.fourth_edition = gamedatas.fourth_edition;
-        this.gamedatas.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
-        this.gamedatas.relics_enabled = gamedatas.relics_enabled;
-        this.gamedatas.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
-        this.gamedatas.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
-        this.gamedatas.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
 
         if (this.gamedatas.artifacts_expansion_enabled) {
             this.num_sets_in_play++;
@@ -2540,7 +2537,8 @@ class Innovation extends BgaGame {
         let table = dojo.create('table', { 'class': 'ressource_table' });
         let symbol_line = dojo.create('tr', null, table);
         let count_line = dojo.create('tr', null, table);
-        for (let icon = 1; icon <= 7; icon++) {
+        let max_icon = this.gamedatas.fourth_edition ? 7 : 6;
+        for (let icon = 1; icon <= max_icon; icon++) {
             let current_count = current_icon_counts.get(icon) ?? 0;
             let new_count = new_icon_counts.get(icon) ?? 0;
             let comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
