@@ -419,6 +419,10 @@ var Innovation = /** @class */ (function (_super) {
                 dojo.place(this.format_block('jstpl_ressource_icon', infos), $('symbols_' + player_id));
                 dojo.place(this.format_block('jstpl_ressource_count', infos), $('ressource_counts_' + player_id));
             }
+            if (!this.gamedatas.fourth_edition) {
+                dojo.style("ressource_icon_".concat(player_id, "_7"), 'display', 'none');
+                dojo.style("ressource_count_".concat(player_id, "_7"), 'display', 'none');
+            }
         }
         this.addCustomTooltipToClass("score_count", _("Score"), "");
         this.addCustomTooltipToClass("hand_count", _("Number of cards in hand"), "");
@@ -461,12 +465,6 @@ var Innovation = /** @class */ (function (_super) {
         if (gamedatas.active_player !== null) {
             this.givePlayerActionCard(gamedatas.active_player, gamedatas.action_number);
         }
-        this.gamedatas.fourth_edition = gamedatas.fourth_edition;
-        this.gamedatas.artifacts_expansion_enabled = gamedatas.artifacts_expansion_enabled;
-        this.gamedatas.relics_enabled = gamedatas.relics_enabled;
-        this.gamedatas.cities_expansion_enabled = gamedatas.cities_expansion_enabled;
-        this.gamedatas.echoes_expansion_enabled = gamedatas.echoes_expansion_enabled;
-        this.gamedatas.figures_expansion_enabled = gamedatas.figures_expansion_enabled;
         if (this.gamedatas.artifacts_expansion_enabled) {
             this.num_sets_in_play++;
         }
@@ -2315,7 +2313,8 @@ var Innovation = /** @class */ (function (_super) {
         var table = dojo.create('table', { 'class': 'ressource_table' });
         var symbol_line = dojo.create('tr', null, table);
         var count_line = dojo.create('tr', null, table);
-        for (var icon = 1; icon <= 7; icon++) {
+        var max_icon = this.gamedatas.fourth_edition ? 7 : 6;
+        for (var icon = 1; icon <= max_icon; icon++) {
             var current_count = (_a = current_icon_counts.get(icon)) !== null && _a !== void 0 ? _a : 0;
             var new_count = (_b = new_icon_counts.get(icon)) !== null && _b !== void 0 ? _b : 0;
             var comparator = new_count == current_count ? 'equal' : (new_count > current_count ? 'more' : 'less');
