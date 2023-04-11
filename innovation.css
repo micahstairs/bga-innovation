@@ -1170,14 +1170,6 @@
   border-right: 2px solid #ebd5bd;
 }
 
-.all_icons {
-  background-image: url("img/squares.png");
-  display: inline-block;
-  width: 114px;
-  height: 19px;
-  background-position: 0px -82px;
-}
-
 .dogma_symbol {
   position: absolute;
 }
