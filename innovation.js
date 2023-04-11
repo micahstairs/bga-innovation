@@ -1578,13 +1578,15 @@ var Innovation = /** @class */ (function (_super) {
             if (dojo.query("#special_achievement_summary_".concat(id, ".unclaimed")).length == 1) {
                 switch (id) {
                     case 105:
-                        // three or more icons of all six types
+                        // three or more icons of six out of seven types
                         numerator = 0;
                         denominator = 6;
-                        // TODO(4E): Update this.
                         for (var i = 1; i <= 7; i++) {
                             if (self.counter["resource_count"][self.player_id][i].getValue() >= 3) {
                                 numerator++;
+                                if (numerator === 6) {
+                                    break;
+                                }
                             }
                         }
                         break;
@@ -1594,13 +1596,12 @@ var Innovation = /** @class */ (function (_super) {
                         denominator = 6;
                         break;
                     case 107:
-                        // five colors on your board, and each is splayed either up or right
+                        // five colors on your board, and each is splayed either up, right, or aslant
                         numerator = 0;
                         denominator = 5;
                         for (var i = 0; i < 5; i++) {
                             var splay_direction = self.zone["board"][self.player_id][i].splay_direction;
-                            // TODO(4E#978): Possibly update this.
-                            if (splay_direction == 2 || splay_direction == 3) {
+                            if (splay_direction >= 2) {
                                 numerator++;
                             }
                         }
@@ -1721,14 +1722,15 @@ var Innovation = /** @class */ (function (_super) {
         ret += "</span>";
         return ret;
     };
-    Innovation.prototype.all_icons = function (type) {
-        // TODO(4E): Revise this.
-        return "<span class='icon_1 square " + type + "'></span>" +
-            "&nbsp<span class='icon_2 square " + type + "'></span>" +
-            "&nbsp<span class='icon_3 square " + type + "'></span>" +
-            "&nbsp<span class='icon_4 square " + type + "'></span>" +
-            "&nbsp<span class='icon_5 square " + type + "'></span>" +
-            "&nbsp<span class='icon_6 square " + type + "'></span>";
+    Innovation.prototype.all_icons = function (max_icon, type) {
+        var str = '';
+        for (var i = 1; i <= max_icon; i++) {
+            if (i > 1) {
+                str += '&nbsp';
+            }
+            str += "<span class='icon_".concat(i, " square ").concat(type, "'></span>");
+        }
+        return str;
     };
     /*
         * Tooltip management
@@ -1912,7 +1914,8 @@ var Innovation = /** @class */ (function (_super) {
         text = text.replace(new RegExp("\\$\\{I demand\\}", "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
         text = text.replace(new RegExp("\\$\\{I compel\\}", "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
         text = text.replace(new RegExp("\\$\\{immediately\\}", "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
-        text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}", "g"), this.all_icons('in_tooltip'));
+        text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}", "g"), this.all_icons(6, 'in_tooltip'));
+        text = text.replace(new RegExp("\\$\\{icons_1_to_7\\}", "g"), this.all_icons(7, 'in_tooltip'));
         for (var age = 1; age <= 11; age++) {
             text = text.replace(new RegExp("\\$\\{age_" + age + "\\}", "g"), this.square(size, 'age', age));
         }

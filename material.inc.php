@@ -586,7 +586,7 @@ $this->textual_card_infos = array(
 
 105 => array('name' => clienttranslate('Empire'),
     'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have three or more icons of all six types: ${icons_1_to_6}'),
-    'condition_for_claiming_fourth' => clienttranslate('Claim this special achievement ${immediately} if you have three or more icons of all six types: ${icons_1_to_6}'),
+    'condition_for_claiming_fourth' => clienttranslate('Claim this special achievement at the end of any action if you have three or more icons of six of the seven types: ${icons_1_to_7}'),
     'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_2} Construction.')),
 
 106 => array('name' => clienttranslate('Monument'),

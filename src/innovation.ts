@@ -1868,14 +1868,15 @@ class Innovation extends BgaGame {
         return ret;
     }
 
-    all_icons(type: string) {
-        // TODO(4E): Revise this.
-        return "<span class='icon_1 square " + type + "'></span>" +
-            "&nbsp<span class='icon_2 square " + type + "'></span>" +
-            "&nbsp<span class='icon_3 square " + type + "'></span>" +
-            "&nbsp<span class='icon_4 square " + type + "'></span>" +
-            "&nbsp<span class='icon_5 square " + type + "'></span>" +
-            "&nbsp<span class='icon_6 square " + type + "'></span>"
+    all_icons(max_icon: number, type: string) {
+        var str = '';
+        for (var i = 1; i <= max_icon; i++) {
+            if (i > 1) {
+                str += '&nbsp';
+            }
+            str += `<span class='icon_${i} square ${type}'></span>`;
+        }
+        return str;
     }
 
     /*
@@ -2094,7 +2095,8 @@ class Innovation extends BgaGame {
         text = text.replace(new RegExp("\\$\\{I demand\\}", "g"), "<strong class='i_demand'>" + _("I DEMAND") + "</strong>");
         text = text.replace(new RegExp("\\$\\{I compel\\}", "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
         text = text.replace(new RegExp("\\$\\{immediately\\}", "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
-        text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}", "g"), this.all_icons('in_tooltip'));
+        text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}", "g"), this.all_icons(6, 'in_tooltip'));
+        text = text.replace(new RegExp("\\$\\{icons_1_to_7\\}", "g"), this.all_icons(7, 'in_tooltip'));
         for (let age = 1; age <= 11; age++) {
             text = text.replace(new RegExp("\\$\\{age_" + age + "\\}", "g"), this.square(size, 'age', age));
         }
