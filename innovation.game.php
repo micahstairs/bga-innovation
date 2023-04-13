@@ -9227,6 +9227,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 );
                 break;
 
+            case "359N1A":
+                // NOTE: This is only used during the second execution of an endorse action (in all other cases, the player can simply select cards by clicking on them)
+                $message_for_player = clienttranslate('Choose which card you want to meld');
+                $message_for_others = clienttranslate('${player_name} must choose which card he wants to meld');
+
+                $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
+                $card_id_1 = $encoded_card_ids % 1000;
+                $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
+
+                $card_1 = self::getCardInfo($card_id_1);
+                $card_2 = self::getCardInfo($card_id_2);
+
+                $options = [
+                    ['value' => 1, 'text' => clienttranslate('${age} ${name}'), 'age' => self::getAgeSquareWithType($card_1['age'], $card_1['type']), 'name' => self::getCardName($card_id_1), 'i18n' => array('name')],
+                    ['value' => 0, 'text' => clienttranslate('${age} ${name}'), 'age' => self::getAgeSquareWithType($card_2['age'], $card_2['type']), 'name' => self::getCardName($card_id_2), 'i18n' => array('name')],
+                ];
+                break;
+
             case "359N1B":
                 $message_for_player = clienttranslate('${You} must choose what to do with your top green card');
                 $message_for_others = clienttranslate('${player_name} must choose what to do with his top green card');
@@ -19915,25 +19933,38 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "359N1A":
             // "You may meld the card you drew due to Charitable Trust's echo effect."
-            $options = array(
-                'player_id' => $player_id,                
-                'n' => 1,
-                'can_pass' => true,
+            if (self::isExecutingAgainDueToEndorsedAction()) {
+                $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
+                $card_id_1 = $encoded_card_ids % 1000;
+                $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
+                // If two cards were drawn due to the Endorse action, let the player choose which gets melded (we can't let
+                // players click on the cards during the second execution because the first melded card might even be in the deck).
+                $options = array(
+                    'player_id' => $player_id, 
+                    'can_pass' => true,
+                    'choose_yes_or_no' => true,
+                );
+            } else {
+                $options = array(
+                    'player_id' => $player_id,                
+                    'n' => 1,
+                    'can_pass' => true,
 
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
+                    'owner_from' => $player_id,
+                    'location_from' => 'hand',
+                    'owner_to' => $player_id,
+                    'location_to' => 'board',
 
-                'card_id_1' => self::getIndexedAuxiliaryValue($player_id),
+                    'card_id_1' => self::getIndexedAuxiliaryValue($player_id),
 
-                'meld_keyword' => true,
-            );
-            // Special case if Charitable Trust was endorsed
-            if ($options['card_id_1'] >= 1000) {
-                $encoded_card_ids = $options['card_id_1'];
-                $options['card_id_1'] = $encoded_card_ids % 1000;
-                $options['card_id_2'] = (($encoded_card_ids - $options['card_id_1']) / 1000) - 1;
+                    'meld_keyword' => true,
+                );
+                // Special case if Charitable Trust was endorsed
+                if ($options['card_id_1'] >= 1000) {
+                    $encoded_card_ids = $options['card_id_1'];
+                    $options['card_id_1'] = $encoded_card_ids % 1000;
+                    $options['card_id_2'] = (($encoded_card_ids - $options['card_id_1']) / 1000) - 1;
+                }
             }
             break;
 
@@ -24004,8 +24035,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
 
                 case "359N1A":
+                    $card_was_melded = $n > 0;
+
+                    if (self::isExecutingAgainDueToEndorsedAction()) {
+                        // "meld the card you drew due to Charitable Trust's echo effect"
+                        self::meldCard(self::getCardInfo(self::getAuxiliaryValue()), $player_id);
+                        $card_was_melded = true;
+                    }
+
                     // "If you do"
-                    if ($n > 0) {
+                    if ($card_was_melded) {
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
                         if ($top_green_card != null) {
                             $claimable_ages = self::getClaimableAgesIgnoringAvailability($player_id);
@@ -25826,6 +25865,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
                 self::setAuxiliaryValue($choice);
+                break;
+            
+            case "359N1A":
+                if (self::isExecutingAgainDueToEndorsedAction()) {
+                    $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
+                    $card_id_1 = $encoded_card_ids % 1000;
+                    $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
+
+                    if ($choice == 1) {
+                        self::setAuxiliaryValue($card_id_1);
+                    } else {
+                        self::setAuxiliaryValue($card_id_2);
+                    }
+                } else {
+                    self::meldCard($card, $player_id);
+                }
                 break;
 
             case "359N1B":
