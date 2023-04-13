@@ -8181,7 +8181,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getClaimableAgesIgnoringAvailability($player_id) {
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
         $player_score = self::getPlayerScore($player_id);
-        $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements');
+        $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
         
         $claimable_ages = array();
         for ($age = 1; $age <= 10; $age++) {
@@ -14903,7 +14903,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "425N1":
                 $age_max = self::getMaxAgeOnBoardTopCards($player_id);
                 $player_score = self::getPlayerScore($player_id) * 2; // double the score
-                $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements');
+                $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
                 $unclaimed_achievements = self::getCardsInLocation(0, 'achievements');
 
                 $claimable_cards = array();
