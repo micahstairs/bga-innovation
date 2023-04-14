@@ -3258,15 +3258,15 @@ class Innovation extends Table
             }
             
             switch ($achievement_id) {
-            case 105: // Empire: three or more icons of all six types
-                $eligible = true;
-                $ressource_counts = self::getPlayerResourceCounts($player_id);
-                foreach ($ressource_counts as $icon => $count) {
-                    if ($count < 3) { // There are less than 3 icons
-                        $eligible = false;
+            case 105: // Empire: three or more icons of six types
+                $num_resources_with_three_or_more = 0;
+                foreach (self::getPlayerResourceCounts($player_id) as $icon => $count) {
+                    if ($count >= 3) {
+                        $num_resources_with_three_or_more++;
                         break;
                     }
                 }
+                $eligible = $num_resources_with_three_or_more >= 6;
                 break;
             case 106: // Monument: tuck 6 cards or score 6 cards
                 $flags = self::getFlagsForMonument($player_id);
