@@ -125,6 +125,7 @@ class Innovation extends Table
     }
 
     function upgradeTableDb($from_version) {
+        self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_auxiliary_value_table MODIFY COLUMN `nesting_index` SMALLINT NOT NULL;");
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'democracy_counter'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
         }
@@ -7381,30 +7382,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $num_cards_to_reveal = min($age_of_melded_card, $deck_count[$card['age']]);
 
                     if ($num_cards_to_reveal > 0) {
+                        $card_ids_to_return = array();
                         for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                            self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
+                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, /*type=*/ 0);
+                            self::transferCardFromTo($card, $player_id, 'hand');
+                            if (!self::hasRessource($card, $top_middle_icon)) {
+                                $card_ids_to_return[] = $card['id'];
+                            }
                         }
                         if ($num_cards_to_reveal < $age_of_melded_card) {
                             self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, /*type=*/ 0)));
                         }
-                        self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be put in hand and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
-                        $cards = self::getCardsInLocation($player_id, 'revealed');
-                        foreach ($cards as $card) {
-                            // Put matches in hand
-                            if (self::hasRessource($card, $top_middle_icon)) {
-                                self::transferCardFromTo($card, $player_id, 'hand');
-                            }
-                        }
-                        // Return the ones which don't have a matching icon
-                        $num_remaining_cards = self::countCardsInLocation($player_id, 'revealed');
-                        if ($num_remaining_cards > 0) {
+                        self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be kept and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
+                        if (count($card_ids_to_return) > 0) {
+                            self::setAuxiliaryArray($card_ids_to_return);
                             $options = array(
                                 'player_id' => $player_id,
-                                'n' => $num_remaining_cards,
+                                'n' => count($card_ids_to_return),
                                 'owner_from' => $player_id,
-                                'location_from' => 'revealed',
+                                'location_from' => 'hand',
                                 'owner_to' => 0,
                                 'location_to' => 'deck',
+                                'card_ids_are_in_auxiliary_array' => true,
                             );
                             self::setSelectionRange($options);
                             self::trace('playerTurn->preSelectionMove');
