@@ -62,6 +62,7 @@ class Innovation extends Table
             'can_pass' => 28,
             'n_min' => 29,
             'n_max' => 30,
+            // TODO(LATER): Deprecate and remove 'solid_constraint'.
             'solid_constraint' => 31,
             'splay_direction' => 32,
             'owner_from' => 33,
@@ -15184,7 +15185,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 3,
-                'solid_constraint' => true, // The player MUST have three cards in hand to trigger the effect
                 'can_pass' => true,
                 
                 'owner_from' => $player_id,
@@ -22115,7 +22115,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 // id 1, age 1: Tools
                 case "1N1A":
-                    if ($n > 0) { // "If you do"
+                    if ($n == 3) { // "If you do"
                         self::executeDrawAndMeld($player_id, 3); // "Draw and meld a 3"
                     }
                     break;
