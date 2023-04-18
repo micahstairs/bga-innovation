@@ -21528,15 +21528,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "418D1A":
             // "I demand you return your top card of the color I melded due to Jet's echo effect!"
-            $colors = self::getAuxiliaryArray();
-            $last_returned_color = self::getIndexedAuxiliaryValue($player_id);
-            if ($last_returned_color >= 0) {
-                if (count($colors) == 2 && $colors[0] == $colors[1]) {
-                    $colors = array($colors[0]);
-                } else {
-                    $colors = array_diff($colors, array($last_returned_color));
-                }
-            }
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -21546,7 +21537,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'color' => array_unique($colors),
+                // TODO(LATER): Remove array_unique since it's now redundant.
+                'color' => array_unique(self::getAuxiliaryArray()),
             );
             break;
         
@@ -24648,7 +24640,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($this->innovationGameState->get('release_version') >= 3) {
                             $colors = self::getAuxiliaryArray();
                             $colors[] = $this->innovationGameState->get('color_last_selected');
-                            self::setAuxiliaryArray($colors);
+                            self::setAuxiliaryArray(array_unique($colors));
                         } else {
                             self::setAuxiliaryValue($this->innovationGameState->get('color_last_selected'));
                         }
