@@ -24874,6 +24874,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stPreSelectionMove() {
+        $player_id = self::getCurrentPlayerId();
         $special_type_of_choice = $this->innovationGameState->get('special_type_of_choice');
         $can_pass = $this->innovationGameState->get('can_pass') == 1;
 
@@ -24948,6 +24949,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // This way the other players won't get the information that the player was forced to pass/stop
                     self::trace('preSelectionMove->selectionMove (player has to pass)');
                     $this->gamestate->nextState('selectionMove');
+                    self::giveExtraTime($player_id);
                     return;
                 }
                 
@@ -25061,6 +25063,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Let the player make his choice
         self::trace('preSelectionMove->selectionMove');
         $this->gamestate->nextState('selectionMove');
+        self::giveExtraTime($player_id);
     }
 
     function getSelectedCardIdBelongingToUniqueSupplyPile() {
