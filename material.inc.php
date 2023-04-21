@@ -25,7 +25,7 @@ $this->textual_card_infos = array(
 
 0 => array('name' => clienttranslate('Pottery'),
     'non_demand_effect_1_first_and_third' => clienttranslate('You may return up to three cards from your hand. If you returned any cards, draw and score a card of value equal to the number of cards you returned.'),
-    'non_demand_effect_1_fourth' => clienttranslate('You may return up to three cards from your hand. If you return any cards, draw and score a card of value equal to the number of cards you returned.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may return up to three cards from your hand. If you return any cards, draw and score a card of value equal to the number of cards you return.'),
     'non_demand_effect_2' => clienttranslate('Draw a ${age_1}.'),
 ),
 
@@ -69,7 +69,8 @@ $this->textual_card_infos = array(
 ),
 
 9 => array('name' => clienttranslate('Agriculture'),
-    'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may return a card from your hand. If you do, draw and score a card of value one higher than the card you returned.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may return a card from your hand. If you do, draw and score a card of value one higher than the card you return.'),
 ),
 
 10 => array('name' => clienttranslate('Domestication'),
@@ -100,7 +101,8 @@ $this->textual_card_infos = array(
 ),
 
 16 => array('name' => clienttranslate('Mathematics'),
-    'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, draw and meld a card of value one higher than the card your returned.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may return a card from your hand. If you do, draw and meld a card of value one higher than the card you returned.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may return a card from your hand. If you do, draw and meld a card of value one higher than the card you return.'),
 ),
 
 17 => array('name' => clienttranslate('Construction'),
@@ -114,7 +116,8 @@ $this->textual_card_infos = array(
 ),
 
 19 => array('name' => clienttranslate('Currency'),
-    'non_demand_effect_1' => clienttranslate('You may return any number of cards from your hand. If you do, draw and score a ${age_2} for every different value of card you returned.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may return any number of cards from your hand. If you do, draw and score a ${age_2} for every different value of card you returned.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may return any number of cards from your hand. If you do, draw and score a ${age_2} for every different value of card you return.'),
 ),
 
 20 => array('name' => clienttranslate('Mapmaking'),
@@ -174,13 +177,16 @@ $this->textual_card_infos = array(
 
 30 => array('name' => clienttranslate('Paper'),
     'non_demand_effect_1' => clienttranslate('You may splay your green or blue cards left.'),
-    'non_demand_effect_2' => clienttranslate('Draw a ${age_4} for every color you have splayed left.'),
+    'non_demand_effect_2_first_and_third' => clienttranslate('Draw a ${age_4} for every color you have splayed left.'),
+    'non_demand_effect_2_fourth' => clienttranslate('Score a card from your hand with a ${icon_4}. If you do, draw a ${age_4} for every color you have splayed left..'),
     'non_demand_effect_3_fourth' => clienttranslate('Return a top card with a ${icon_2}. If you don\'t, score Paper if it is a top card.'),
 ),
 
 31 => array('name' => clienttranslate('Machinery'),
     'i_demand_effect_1' => clienttranslate('${I demand} you exchange all the cards in your hand with all the highest cards in my hand!'),
-    'non_demand_effect_1' => clienttranslate('Score a card from your hand with a ${icon_4}. You may splay your red cards left.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand with a ${icon_4}. You may splay your red cards left.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Score a card from your hand with a ${icon_4}.'),
+    'non_demand_effect_2_fourth' => clienttranslate('You may splay your red cards left.'),
 ),
 
 32 => array('name' => clienttranslate('Medicine'),
@@ -293,7 +299,7 @@ $this->textual_card_infos = array(
 
 52 => array('name' => clienttranslate('Steam engine'),
     'non_demand_effect_1_first_and_third' => clienttranslate('Draw and tuck two ${age_4}, then score your bottom yellow card.'),
-    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck two ${age_4}, then score your bottom yellow card. If it is Steam Engine, junk all cards in the ${age_6} deck.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck two ${age_4}.  Score your bottom yellow card. If it is Steam Engine, junk all cards in the ${age_6} deck.'),
 ),
 
 53 => array('name' => clienttranslate('Astronomy'),
@@ -323,7 +329,7 @@ $this->textual_card_infos = array(
 57 => array('name' => clienttranslate('Industrialization'),
     'non_demand_effect_1_first' => clienttranslate('Draw and tuck a ${age_6} for every two ${icon_5} on your board.'),
     'non_demand_effect_1_third' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}.'),
-    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}. If you tuck more than one card with a ${icon_6}, tuck Industrialization if it is a top card.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}. If you tuck an ${age_8} or ${age_10}, return Industrialization.'),
     'non_demand_effect_2' => clienttranslate('You may splay your red or purple cards right.'),
 ),
 
@@ -392,7 +398,8 @@ $this->textual_card_infos = array(
 ),
 
 70 => array('name' => clienttranslate('Electricity'),
-    'non_demand_effect_1' => clienttranslate('Return all your top cards without a ${icon_5}, then draw an ${age_8} for each card you returned.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('Return all your top cards without a ${icon_5}, then draw an ${age_8} for each card you returned.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Return all your top cards without a ${icon_5}, then draw an ${age_8} for each card you return.'),
 ),
 
 71 => array('name' => clienttranslate('Refrigeration'),
@@ -407,12 +414,16 @@ $this->textual_card_infos = array(
 ),
 
 73 => array('name' => clienttranslate('Lighting'),
-    'non_demand_effect_1' => clienttranslate('You may tuck up to three cards from your hand. If you do, draw and score a ${age_7} for every different value of card you tucked.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may tuck up to three cards from your hand. If you do, draw and score a ${age_7} for every different value of card you tucked.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may tuck up to three cards from your hand. If you do, draw and score a ${age_7} for every different value of card you tuck.'),
 ),
 
 74 => array('name' => clienttranslate('Railroad'),
-    'non_demand_effect_1' => clienttranslate('Return all cards from your hand, then draw three ${age_6}.'),
-    'non_demand_effect_2' => clienttranslate('You may splay up any one color of your cards currently splayed right.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand, then draw three ${age_6}.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Return all cards from your hand.'),
+    'non_demand_effect_2_first_and_third' => clienttranslate('You may splay up any one color of your cards currently splayed right.'),
+    'non_demand_effect_2_fourth' => clienttranslate('Draw three ${age_6}.'),
+    'non_demand_effect_3_fourth' => clienttranslate('You may splay up any one color of your cards currently splayed right.'),
 ),
 
 /* Age 8 */
@@ -446,7 +457,8 @@ $this->textual_card_infos = array(
 ),
 
 81 => array('name' => clienttranslate('Antibiotics'),
-    'non_demand_effect_1' => clienttranslate('You may return up to three cards from your hand. For every different value of card that you returned, draw two ${age_8}.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may return up to three cards from your hand. For every different value of card that you returned, draw two ${age_8}.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may return up to three cards from your hand. For every different value of card that you return, draw two ${age_8}.'),
 ),
 
 82 => array('name' => clienttranslate('Skyscrapers'),
