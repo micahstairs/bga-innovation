@@ -179,6 +179,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_1' => clienttranslate('You may splay your green or blue cards left.'),
     'non_demand_effect_2_first_and_third' => clienttranslate('Draw a ${age_4} for every color you have splayed left.'),
     'non_demand_effect_2_fourth' => clienttranslate('Return a top card with a ${icon_2} from your board. If you do, draw a ${age_4} for every color you have splayed left.'),
+    'separate_4E_implementation' => true,
 ),
 
 31 => array('name' => clienttranslate('Machinery'),
