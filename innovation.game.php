@@ -2057,10 +2057,14 @@ class Innovation extends Table
         } else {
             $letter = '?';
         }
-        return self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) . $letter;
+        return self::getCardExecutionBaseCode($card_id, $current_effect_type, $current_effect_number) . $letter . self::getEditionSuffix($card_id);
     }
 
     function getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) {
+        return self::getCardExecutionBaseCode($card_id, $current_effect_type, $current_effect_number) . self::getEditionSuffix($card_id);
+    }
+
+    function getCardExecutionBaseCode($card_id, $current_effect_type, $current_effect_number) {
         $nested_card_state = self::getCurrentNestedCardState();
         $post_execution_indicator = $nested_card_state['post_execution_index'] == 0 ? '' : '+';
         // Echo effects are sometimes executed on cards other than the card being dogma'd
@@ -2072,6 +2076,17 @@ class Innovation extends Table
             $current_effect_number = 1;
         }
         return $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $post_execution_indicator;
+    }
+
+    function getEditionSuffix($card_id) {
+        if (array_key_exists('separate_4E_implementation', $this->textual_card_infos[$card_id]) && $this->textual_card_infos[$card_id]['separate_4E_implementation'] == true) {
+            if ($this->innovationGameState->getEdition() == 4) {
+                return '_4E'; // 4th edition or later
+            } else {
+                return '_3E'; // 3rd edition or earlier
+            }
+        }
+        return '';
     }
 
     function getLetterForEffectType($effect_type) {
@@ -4181,6 +4196,7 @@ class Innovation extends Table
         unset($textual_infos['condition_for_claiming_first_and_third']);
         unset($textual_infos['condition_for_claiming_fourth']);
 
+        unset($textual_infos['separate_4E_implementation']);
         return array_merge($card, $textual_infos);
     }
     
@@ -11183,33 +11199,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 30, age 3: Paper        
-            case "30N1":
+            case "30N1_3E":
+            case "30N1_4E":
                 $step_max = 1;
                 break;
                 
-            case "30N2":
+            case "30N2_3E":
+                // "Draw a 4 for every color you have splayed left"
                 $number_of_colors_splayed_left = 0;
-                for($color = 0; $color < 5 ; $color++) {
+                for ($color = 0; $color < 5 ; $color++) {
                     if (self::getCurrentSplayDirection($player_id, $color) == 1 /* left */) {
                         $number_of_colors_splayed_left++;
                     }
                 }
-                if ($number_of_colors_splayed_left < 2) {
+                if ($number_of_colors_splayed_left == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
-                }
-                else {
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
                 }
-                
-                for($i=0;$i<$number_of_colors_splayed_left;$i++) { // For every color you have splayed left
-                    self::executeDraw($player_id, 4); // Draw a 4
+                for ($i = 0; $i < $number_of_colors_splayed_left; $i++) {
+                    self::executeDraw($player_id, 4);
                 }
                 break;
-
-            case "30N3":
-                $step_max = 1; // 4th edition and beyond only
+            
+            case "30N2_4E":
+                $step_max = 1;
                 break;
                 
             // id 31, age 3: Machinery        
@@ -13965,7 +13981,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "350N2":
                 // "If Paper is a top card on any player's board, transfer it to your score pile."
-                // NOTE: This only occurs in the 4th edition and beyond
                 $paper_card = self::getCardInfo(30);
                 if (self::isTopBoardCard($paper_card)) {
                     self::transferCardFromTo($paper_card, $player_id, 'score', false, /*score_keyword*/false);
@@ -16547,8 +16562,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 30, age 3: Paper        
-        case "30N1A":
+        // id 30, age 3: Paper
+        case "30N1A_3E":
+        case "30N1A_4E":
             // "You may splay your green or blue cards left"
             $options = array(
                 'player_id' => $player_id,
@@ -16560,9 +16576,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        case "30N3A":
+        case "30N2A_4E":
             // "Return a top card with a leaf."
-            // NOTE: This is only present in 4th edition and beyond
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -23455,15 +23470,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndTuck($player_id, 1); // "Draw an tuck a 1"
                     }
                     break;
-
-                // id 30, age 3: Paper        
-                case "30N3A":
-                    // "If you don't, score Paper if it's a top card"
-                    // NOTE: This only occurs in the 4th edition and beyond
-                    if ($n == 0) {
-                        $paper_card = self::getCardInfo(30);
-                        if (self::isTopBoardCard($paper_card)) {
-                            self::scoreCard($paper_card, $player_id);
+                
+                // id 30, age 3: Paper
+                case "30N2A_4E":
+                    if ($n > 0) { // "If you do, draw a 4 for every color you have splayed left"
+                        $number_of_colors_splayed_left = 0;
+                        for ($color = 0; $color < 5 ; $color++) {
+                            if (self::getCurrentSplayDirection($player_id, $color) == 1 /* left */) {
+                                $number_of_colors_splayed_left++;
+                            }
+                        }
+                        if ($number_of_colors_splayed_left == 1) {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                        }
+                        for ($i = 0; $i < $number_of_colors_splayed_left; $i++) {
+                            self::executeDraw($player_id, 4);
                         }
                     }
                     break;
