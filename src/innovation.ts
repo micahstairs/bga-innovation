@@ -3351,9 +3351,10 @@ class Innovation extends BgaGame {
         return indices;
     }
 
-    refreshSplay(zone: Zone, splay_direction: number, force_full_visible = false) {
+    refreshSplay(zone: Zone, splay_direction: number | string, force_full_visible = false) {
         let self = this;
         let full_visible = force_full_visible || this.view_full;
+        splay_direction = Number(splay_direction);
         zone.splay_direction = splay_direction;
 
         let overlap = this.display_mode ? this.expanded_overlap_for_splay : this.compact_overlap_for_splay;
@@ -4983,7 +4984,7 @@ class Innovation extends BgaGame {
     notif_splayedPile(notif: any) {
         let player_id = notif.args.player_id;
         let color = notif.args.color;
-        let splay_direction = notif.args.splay_direction;
+        let splay_direction = Number(notif.args.splay_direction);
         let splay_direction_in_clear = notif.args.splay_direction_in_clear;
         let forced_unsplay = notif.args.forced_unsplay;
         let new_score = notif.args.new_score;
@@ -4996,8 +4997,7 @@ class Innovation extends BgaGame {
         for (let direction = 0; direction <= 4; direction++) {
             if (direction == splay_direction) {
                 dojo.addClass(splay_indicator, 'splay_' + direction);
-            }
-            else {
+            } else {
                 dojo.removeClass(splay_indicator, 'splay_' + direction);
             }
         }
@@ -5026,8 +5026,7 @@ class Innovation extends BgaGame {
             if (this.number_of_splayed_piles == 0) { // Now there is no more color splayed for any player
                 this.disableButtonForSplayMode();
             }
-        }
-        else {
+        } else {
             this.number_of_splayed_piles++;
             if (this.number_of_splayed_piles == 1) { // Now there is one color splayed for one player
                 this.enableButtonForSplayMode();
