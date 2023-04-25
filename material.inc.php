@@ -330,7 +330,7 @@ $this->textual_card_infos = array(
 57 => array('name' => clienttranslate('Industrialization'),
     'non_demand_effect_1_first' => clienttranslate('Draw and tuck a ${age_6} for every two ${icon_5} on your board.'),
     'non_demand_effect_1_third' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}.'),
-    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}. If you tuck an ${age_8} or ${age_10}, return Industrialization.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}. If you tuck an ${age_8} or ${age_10},   .'),
     'non_demand_effect_2' => clienttranslate('You may splay your red or purple cards right.'),
 ),
 
@@ -477,6 +477,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_1_first_and_third' => clienttranslate('You may tuck all cards from your hand. If you tuck one, you must tuck them all. If you tucked at least one purple card, take all the lowest cards in each other player\'s hand into your hand.'),
     'non_demand_effect_1_fourth' => clienttranslate('You may tuck a top card from your board and all cards from your hand.'),
     'non_demand_effect_2_fourth' => clienttranslate('You may junk an available achievement of value ${age_8}, ${age_9}, or ${age_10}.'),
+    'separate_4E_implementation' => true,
 ),
 
 /* Age 9 */

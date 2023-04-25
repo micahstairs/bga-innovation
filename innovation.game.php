@@ -2429,10 +2429,10 @@ class Innovation extends Table
     
     function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
-        if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
+        if ($code === '100N1A') { // Self Service
             // TODO(LATER): We can simplify Self Service to use "board->none", guarded by release_version.
             $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from your board');
-            $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');            
+            $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');
         } else if ($targetable_players !== null) { // Used when several players can be targeted
             switch($location_from . '->' . $location_to) {
             case 'score->deck':
@@ -2558,6 +2558,10 @@ class Innovation extends Table
             case 'board->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
                 $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
+                break;
+            case 'board->board':
+                $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} tuck ${number} ${card} from his board');
                 break;
             case 'board->hand':
                 if ($bottom_from == 1) {
@@ -11632,10 +11636,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 }
 
-                // "If you tuck an 8 or 10, return Industrialization." (4th edition only)
+                // "If you tuck an 8 or 10, return Industrialization if it is a top card on any board." (4th edition only)
                 $industrialization_card = self::getCardInfo(57);
                 if ($this->innovationGameState->usingFourthEditionRules()
-                        && $industrialization_card['location'] != 'deck'
+                        && self::isTopBoardCard($industrialization_card)
                         && $eight_or_ten_tucked) {
                     self::returnCard($industrialization_card);
                 }
@@ -11954,8 +11958,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 84, age 8: Socialism     
-            case "84N1":
-                self::setAuxiliaryValue(0); // Flag to indicate if one purple card has been tuckeds or not
+            case "84N1_3E":
+                self::setAuxiliaryValue(0); // Flag to indicate if one purple card has been tucked or not
+                $step_max = 1;
+                break;
+
+            case "84N1_4E":
+                $step_max = 1;
+                break;
+
+            case "84N2_4E":
                 $step_max = 1;
                 break;
                 
@@ -12226,34 +12238,55 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "100N2":
                 $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
-                $most_achievements = true;
-                foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                    if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
-                        $most_achievements = false;
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    // "If you have at least twice as many achievements as each opponent, you win."
+                    $twice_the_achievements = true;
+                    foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                        if ($number_of_achievements < self::getPlayerNumberOfAchievements($opponent_id) * 2) {
+                            $twice_the_achievements = false;
+                        }
                     }
-                }
-                if ($most_achievements) { // "If you have more achievements than each other player"
-                    if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                        self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has more achievements than each other player.'), array(
+                    if ($twice_the_achievements) {
+                        self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has at least twice as many achievements as each opponent.'), array(
                             'player_name' => self::getPlayerNameFromId($player_id)
                         ));
-                        
-                        self::notifyPlayer($player_id, "log", clienttranslate('${You} have more achievements than each other player.'), array(
+                        self::notifyPlayer($player_id, "log", clienttranslate('${You} have at least twice as many achievements as each opponent.'), array(
                             'You' => 'You'
                         ));
+                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
+                        throw new EndOfGame();
                     }
-                    else { // $this->innovationGameState->get('game_type')) == 'team'
-                        $teammate_id = self::getPlayerTeammate($player_id);
-                        $winning_team = array($player_id, $teammate_id);
-                        self::notifyAllPlayersBut($winning_team, "log", clienttranslate('The other team has more achievements than yours.'), array());
-                        
-                        self::notifyPlayer($player_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
-                        
-                        self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
+                } else {
+                    $most_achievements = true;
+                    foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                        if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
+                            $most_achievements = false;
+                        }
                     }
-                    $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                    throw new EndOfGame();
+                    if ($most_achievements) { // "If you have more achievements than each other player"
+                        if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
+                            self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has more achievements than each other player.'), array(
+                                'player_name' => self::getPlayerNameFromId($player_id)
+                            ));
+                            
+                            self::notifyPlayer($player_id, "log", clienttranslate('${You} have more achievements than each other player.'), array(
+                                'You' => 'You'
+                            ));
+                        }
+                        else { // $this->innovationGameState->get('game_type')) == 'team'
+                            $teammate_id = self::getPlayerTeammate($player_id);
+                            $winning_team = array($player_id, $teammate_id);
+                            self::notifyAllPlayersBut($winning_team, "log", clienttranslate('The other team has more achievements than yours.'), array());
+                            
+                            self::notifyPlayer($player_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
+                            
+                            self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
+                        }
+                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
+                        throw new EndOfGame();
+                    }
                 }
                 break;
                 
@@ -17805,7 +17838,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         // id 84, age 8: Socialism     
-        case "84N1A":
+        case "84N1A_3E":
             // "You may tuck all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
@@ -17817,6 +17850,56 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'bottom_to' => true
+            );    
+            break;
+
+        case "84N1A_4E":
+            // "You may tuck a top card from your board"
+            // NOTE: There's a chance that the intention is for the player to be able to tuck card(s) from their hand before
+            // tucking a top card, however, it's going to be much harder to implement, so let's do it this way first and see
+            // if there are any complaints.
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true,
+            );    
+            break;
+
+        case "84N1B_4E":
+            // "and all cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true,
+            );    
+            break;
+
+        case "84N2A_4E":
+            // "You may junk an available achievement of value 8, 9, or 10"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'junk',
+
+                'age_min' => 8,
+                'age_max' => 10,
             );    
             break;
         
@@ -23904,7 +23987,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                                     
                 // id 84, age 8: Socialism     
-                case "84N1A":
+                case "84N1A_3E":
                     if ($n > 0) {
                         if (self::getAuxiliaryValue() == 1) { // "If you tucked at least one purple card"
                             self::notifyGeneralInfo(clienttranslate('At least one purple card has been tucked.'));
@@ -23919,6 +24002,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('No purple card has been tucked.'));
                         }
+                    }
+                    break;
+                
+                case "84N1A_4E":
+                    // If a top card is tucked, then proceed to make the player tuck all cards from their hand
+                    if ($n > 0) {
+                        self::incrementStepMax(1);
                     }
                     break;
                 
@@ -26879,7 +26969,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 84, age 8: Socialism     
-            case "84N1A":
+            case "84N1A_3E":
                 if ($card['color'] == 4 /* purple*/) { // A purple card has been tucked
                     self::setAuxiliaryValue(1); // Flag that
                 }
