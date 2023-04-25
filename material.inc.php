@@ -532,8 +532,7 @@ $this->textual_card_infos = array(
 ),
 
 93 => array('name' => clienttranslate('Services'),
-    'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer all the highest cards 
-    from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
+    'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
     'i_demand_effect_1_fourth' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transfer any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
 ),
 
@@ -563,8 +562,7 @@ $this->textual_card_infos = array(
 ),
 
 98 => array('name' => clienttranslate('Robotics'),
-    'non_demand_effect_1_first_and_third' => clienttranslate('Score your top green card. Draw and meld a $
-    {age_10}, then execute each of its non-demand dogma effects. Do not share them.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('Score your top green card. Draw and meld a ${age_10}, then execute each of its non-demand dogma effects. Do not share them.'),
     'non_demand_effect_1_fourth' => clienttranslate('Score your top green card. Draw and meld a ${age_10}, then self-execute it.'),
 ),
 
