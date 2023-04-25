@@ -187,6 +187,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand with a ${icon_4}. You may splay your red cards left.'),
     'non_demand_effect_1_fourth' => clienttranslate('Score a card from your hand with a ${icon_4}.'),
     'non_demand_effect_2_fourth' => clienttranslate('You may splay your red cards left.'),
+    'separate_4E_implementation' => true,
 ),
 
 32 => array('name' => clienttranslate('Medicine'),
@@ -424,6 +425,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_2_first_and_third' => clienttranslate('You may splay up any one color of your cards currently splayed right.'),
     'non_demand_effect_2_fourth' => clienttranslate('Draw three ${age_6}.'),
     'non_demand_effect_3_fourth' => clienttranslate('You may splay up any one color of your cards currently splayed right.'),
+    'separate_4E_implementation' => true,
 ),
 
 /* Age 8 */
@@ -515,6 +517,7 @@ $this->textual_card_infos = array(
     'non_demand_effect_2_fourth' => clienttranslate('Draw three ${age_8}.'),
     'non_demand_effect_3_first_and_third' => clienttranslate('Meld a card from your hand and then execute each of its non-demand dogma effects. Do not share them.'),
     'non_demand_effect_3_fourth' => clienttranslate('Meld a card from your hand, then self-execute it.'),
+    'separate_4E_implementation' => true,
 ),
 
 91 => array('name' => clienttranslate('Ecology'),
