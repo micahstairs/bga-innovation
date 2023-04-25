@@ -3059,6 +3059,7 @@ var Innovation = /** @class */ (function (_super) {
         if (force_full_visible === void 0) { force_full_visible = false; }
         var self = this;
         var full_visible = force_full_visible || this.view_full;
+        splay_direction = Number(splay_direction);
         zone.splay_direction = splay_direction;
         var overlap = this.display_mode ? this.expanded_overlap_for_splay : this.compact_overlap_for_splay;
         var overlap_if_expanded = this.expanded_overlap_for_splay;
@@ -4424,7 +4425,7 @@ var Innovation = /** @class */ (function (_super) {
     Innovation.prototype.notif_splayedPile = function (notif) {
         var player_id = notif.args.player_id;
         var color = notif.args.color;
-        var splay_direction = notif.args.splay_direction;
+        var splay_direction = Number(notif.args.splay_direction);
         var splay_direction_in_clear = notif.args.splay_direction_in_clear;
         var forced_unsplay = notif.args.forced_unsplay;
         var new_score = notif.args.new_score;
