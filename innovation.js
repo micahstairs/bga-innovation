@@ -161,6 +161,7 @@ var Innovation = /** @class */ (function (_super) {
         _this.display_mode = true;
         _this.view_full = false;
         _this.card_browsing_window = null;
+        _this.special_achievement_selection_window = null;
         _this.my_score_verso_window = null;
         _this.my_forecast_verso_window = null;
         _this.text_for_expanded_mode = '';
@@ -176,7 +177,7 @@ var Innovation = /** @class */ (function (_super) {
         _this.players = [];
         _this.saved_HTML_cards = {};
         _this.initializing = true;
-        // Special flags used for Publication
+        // Special flags used for Publication (3rd edition and earlier)
         _this.publication_permuted_zone = null;
         _this.publication_permutations_done = null;
         _this.publication_original_items = null;
@@ -401,6 +402,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         //******
         this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
+        this.special_achievement_selection_window = new dijit.Dialog({ 'title': _("Special Achievements") });
         this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
         this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
         this.text_for_expanded_mode = _("Show compact");
@@ -1226,7 +1228,7 @@ var Innovation = /** @class */ (function (_super) {
                             });
                         }
                     }
-                    else if (args.args.special_type_of_choice == 6 /* rearrange */) {
+                    else if (args.args.special_type_of_choice == 6 /* choose_rearrange */) {
                         this.off(dojo.query('#change_display_mode_button'), 'onclick');
                         for (var color = 0; color < 5; color++) {
                             var zone = this.zone["board"][this.player_id][color];
@@ -1236,6 +1238,10 @@ var Innovation = /** @class */ (function (_super) {
                         var selectable_cards = this.selectAllCardsOnMyBoard();
                         selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
+                    }
+                    else if (args.args.special_type_of_choice == 13 /* choose_special_achievement */) {
+                        this.buildSpecialAchievementSelectionWindow(args.args.available_special_achievements.map(Number), args.args.junked_special_achievements.map(Number));
+                        this.click_open_special_achievement_selection_window();
                     }
                     if (args.args.color_pile !== null) { // The selection involves cards in a stack
                         this.color_pile = args.args.color_pile;
@@ -1367,7 +1373,6 @@ var Innovation = /** @class */ (function (_super) {
                     dojo.place("<span class='extra_text'> , " + _("meld or dogma") + "</span>", "take_draw_action", "after");
                     break;
                 case 'selectionMove':
-                    var special_type_of_choice_with_buttons = args.special_type_of_choice != 0 && args.special_type_of_choice != 6 /* rearrange */;
                     var splay_choice = args.splay_direction !== null;
                     var last_button_id = null;
                     if (args.special_type_of_choice == 11 /* choose_non_negative_integer */) {
@@ -1386,7 +1391,11 @@ var Innovation = /** @class */ (function (_super) {
                         dojo.removeClass("increase_integers", 'bgabutton_blue');
                         dojo.addClass("increase_integers", 'bgabutton_red');
                     }
-                    else if (special_type_of_choice_with_buttons) {
+                    else if (args.special_type_of_choice == 13 /* choose_special_achievement */) {
+                        this.addActionButton("choice_0", _("Select"), "click_open_special_achievement_selection_window");
+                        last_button_id = "choice_0";
+                    }
+                    else if (args.special_type_of_choice != 0 && args.special_type_of_choice != 6) {
                         // Add a button for each available options
                         for (var i = 0; i < args.options.length; i++) {
                             var option = args.options[i];
@@ -1496,6 +1505,48 @@ var Innovation = /** @class */ (function (_super) {
         this.on(change_display_mode_button, 'onclick', 'toggle_displayMode');
         change_display_mode_button.removeClass('disabled');
     };
+    Innovation.prototype.buildSpecialAchievementSelectionWindow = function (availableIDs, junkedIDs) {
+        var _this = this;
+        var content = "<div id='special_achievement_selections'>";
+        // NOTE: We use getSpecialAchievementIds because we want to display them in the same order that we use in the card browser
+        this.getSpecialAchievementIds().forEach(function (card_id) {
+            var currentlyAvailable = availableIDs.includes(card_id);
+            if (!currentlyAvailable && !junkedIDs.includes(card_id)) {
+                return; // Skip this card if a player has claimed it
+            }
+            var card_data = _this.cards[card_id];
+            var name = _(card_data.name).toUpperCase();
+            var text = "<b>".concat(name, "</b>: ").concat(_this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip'));
+            if (card_data.alternative_condition_for_claiming != null) {
+                text += " ".concat(_this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip'));
+            }
+            content += "<div class=\"special_achievement_selection\">";
+            content += "<div class=\"special_achievement_icon\"><div class=\"item_".concat(card_id, " age_null S card\"></div></div>");
+            content += "<div class=\"special_achievement_text\">".concat(text, "</div>");
+            if (currentlyAvailable) {
+                content += "<div><a id='select_special_achievement_".concat(card_id, "' class='bgabutton bgabutton_blue select_special_achievement_button' card_id='").concat(card_id, "'>").concat(_("Junk"), "</a></div>");
+            }
+            else {
+                content += "<div><a id='select_special_achievement_".concat(card_id, "' class='bgabutton bgabutton_blue select_special_achievement_button' card_id='").concat(card_id, "'>").concat(_("Unjunk"), "</a></div>");
+            }
+            content += "</div></br>";
+        });
+        content += "</div>";
+        this.special_achievement_selection_window.attr("content", "".concat(content, "<a id='close_special_achievement_selection_button' class='bgabutton bgabutton_blue'>").concat(_("Close"), "</a>"));
+        this.on(dojo.query('#close_special_achievement_selection_button'), 'onclick', 'click_close_special_achievement_selection_window');
+        availableIDs.forEach(function (card_id) {
+            _this.on(dojo.query("#select_special_achievement_".concat(card_id)), 'onclick', 'action_chooseSpecialAchievement');
+        });
+        junkedIDs.forEach(function (card_id) {
+            _this.on(dojo.query("#select_special_achievement_".concat(card_id)), 'onclick', 'action_chooseSpecialAchievement');
+        });
+    };
+    Innovation.prototype.click_open_special_achievement_selection_window = function () {
+        this.special_achievement_selection_window.show();
+    };
+    Innovation.prototype.click_close_special_achievement_selection_window = function () {
+        this.special_achievement_selection_window.hide();
+    };
     Innovation.prototype.addButtonForBrowsingCards = function () {
         // Build button
         var button_text = _("Browse all cards");
@@ -1503,13 +1554,7 @@ var Innovation = /** @class */ (function (_super) {
         dojo.place(button, 'change_display_mode_button', 'after');
         this.addCustomTooltip('browse_all_cards_button', '<p>' + _('Browse the full list of cards, including special achievement.') + '</p>', "");
         // Build popup box
-        var ids = [106, 105, 108, 107, 109];
-        if (this.gamedatas.cities_expansion_enabled) {
-            ids.push(325, 326, 327, 328, 329);
-        }
-        if (this.gamedatas.echoes_expansion_enabled) {
-            ids.push(439, 436, 435, 437, 438);
-        }
+        var ids = this.getSpecialAchievementIds();
         // TODO(FIGURES): Add special achievements.
         var content = "";
         content += "<div id='browse_cards_buttons_row_1'>";
@@ -1543,9 +1588,6 @@ var Innovation = /** @class */ (function (_super) {
             var card_data = this.cards[card_id];
             var name_1 = _(card_data.name).toUpperCase();
             var text = "<b>".concat(name_1, "</b>: ").concat(this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip'));
-            if (card_id == 106) {
-                text += " ".concat(_("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile."));
-            }
             if (card_data.alternative_condition_for_claiming != null) {
                 text += " ".concat(this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip'));
             }
@@ -1685,6 +1727,16 @@ var Innovation = /** @class */ (function (_super) {
             }
             dojo.query("#special_achievement_summary_".concat(id, " .special_achievement_status"))[0].innerHTML = (numerator >= 0 && denominator > 0) ? "".concat(numerator, "/").concat(denominator) : "";
         });
+    };
+    Innovation.prototype.getSpecialAchievementIds = function () {
+        var ids = [106, 105, 108, 107, 109];
+        if (this.gamedatas.cities_expansion_enabled) {
+            ids.push(325, 326, 327, 328, 329);
+        }
+        if (this.gamedatas.echoes_expansion_enabled) {
+            ids.push(439, 436, 435, 437, 438);
+        }
+        return ids;
     };
     /*
     * Id management
@@ -4025,6 +4077,20 @@ var Innovation = /** @class */ (function (_super) {
         }
         zone.updateDisplay();
     };
+    Innovation.prototype.action_chooseSpecialAchievement = function (event) {
+        if (!this.checkAction('choose')) {
+            return;
+        }
+        this.click_close_special_achievement_selection_window();
+        this.deactivateClickEvents();
+        var card_id = dojo.getAttr(event.currentTarget, 'card_id');
+        var self = this;
+        this.ajaxcall("/innovation/innovation/chooseSpecialOption.html", {
+            lock: true,
+            choice: card_id,
+        }, this, function (result) { }, function (is_error) { if (is_error)
+            self.resurrectClickEvents(true); });
+    };
     Innovation.prototype.decrementMap = function (map, keys) {
         keys.forEach(function (key) {
             var _a;
@@ -4256,32 +4322,35 @@ var Innovation = /** @class */ (function (_super) {
                 this.removeFromZone(this.zone["my_score_verso"], card.id, true, card.age, card.type, card.is_relic);
             }
         }
+        // The zones are undefined if the location is "removed" or "junk" since there aren't actually locations for cards onscreen
         var zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
         var zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
         var is_fountain_or_flag = isFountain(card.id) || isFlag(card.id);
-        var visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-        // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
+        var visible_from = is_fountain_or_flag || zone_from && this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         var visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         var id_from;
         var id_to;
         if (visible_from) {
-            // The card is shown at the start (verso)
             id_from = card.id;
             if (visible_to) {
-                id_to = id_from; // verso -> verso
+                id_to = id_from;
             }
             else {
-                id_to = null; // verso -> recto: the card is being hidden. A new id must be created for the recto
+                id_to = null; // A new ID must be created for this card since it's being flipped face down
             }
         }
         else {
-            // The card is hidden at the start (recto)
-            id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age, card.type, card.is_relic);
-            if (visible_to) {
-                id_to = card.id; // recto -> verso: the card is being revealed
+            if (card.location_from == "removed" || card.location_from == "junk") {
+                id_from = card.id;
             }
             else {
-                id_to = id_from; // recto -> recto
+                id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age, card.type, card.is_relic);
+            }
+            if (visible_to) {
+                id_to = card.id;
+            }
+            else {
+                id_to = id_from;
             }
         }
         // If this is a special achievement, marked it as unclaimed (if it is not, then this does nothing)
@@ -4363,6 +4432,9 @@ var Innovation = /** @class */ (function (_super) {
         }
         else if (is_fountain_or_flag && card.owner_to == 0) {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+        }
+        else if (card.location_from == 'junk') { // Assumes we are unjunking a special achievement
+            this.createAndAddToZone(zone_to, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), null);
         }
         else {
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);

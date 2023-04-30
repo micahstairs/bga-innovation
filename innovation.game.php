@@ -1846,7 +1846,7 @@ class Innovation extends Table
         $progressInfo = array();
         // Update player progression if applicable
         // TODO(4E): Remove the no_players_involved case. There is always a player which initiates the action.
-        $no_players_involved = $owner_from == 0 && $owner_to == 0 && $location_to != 'junk';
+        $no_players_involved = $owner_from == 0 && $owner_to == 0 && $location_to != 'junk' && $location_from != 'junk';
         $one_player_involved = array_key_exists('using_debug_buttons', $card) // Debug buttons can be used by non-active players
             || $card['age'] === null // Flags, fountains, and special achievements only involve one player
             || ($owner_from == 0 && $owner_to == $active_player_id)
@@ -2379,6 +2379,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} junk a ${<}${age}${>} from the available achievements.');
                 $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from the available achievements.');
             }
+            break;
+        case 'junk->achievements':
+            $message_for_player = clienttranslate('${You} move ${<<<}${name}${>>>} to the available achievements.');
+            $message_for_others = clienttranslate('${player_name} moves ${<<<}${name}${>>>} to the available achievements.');
             break;
         case 'fountains->achievements':
             $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
@@ -6236,6 +6240,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'choose_type',
             'choose_non_negative_integer',
             'choose_icon_type',
+            'choose_special_achievement',
         ];
         foreach($possible_special_types_of_choice as $special_type_of_choice) {
             if (array_key_exists($special_type_of_choice, $options)) {
@@ -6819,6 +6824,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 11;
         case 'choose_icon_type':
             return 12;
+        case 'choose_special_achievement':
+            return 13;
         }
     }
     
@@ -6845,6 +6852,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'choose_non_negative_integer';
         case 12:
             return 'choose_icon_type';
+        case 13:
+            return 'choose_special_achievement';
         }
     }
     
@@ -8255,6 +8264,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::throwInvalidChoiceException();
                 }
                 break;
+            case 'choose_special_achievement':
+                if (!ctype_digit($choice)) {
+                    self::throwInvalidChoiceException();
+                }
+                $special_achievement = self::getCardInfo($choice);
+                if ($special_achievement === null || $special_achievement['owner'] != 0 || $special_achievement['age'] != null) {
+                    self::throwInvalidChoiceException();
+                }
+                if ($special_achievement['location'] != 'achievements' && $special_achievement['location'] != 'junk') {
+                    self::throwInvalidChoiceException();
+                }
+                break;
             case 'choose_rearrange':
                 // Choice contains the color and the permutations made
                 if (!is_array($choice) || !array_key_exists('color', $choice)) {
@@ -9300,6 +9321,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ));
                 }
                 break;
+            case 'choose_special_achievement':
+                // Nothing
+                $options = null;
+                break;
             case 'choose_rearrange':
                 // Nothing
                 $options = null;
@@ -9395,9 +9420,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 66, age 7: Publications
-            case "66N1A":
+            case "66N1A_3E":
                 $message_for_player = clienttranslate('${You} may rearrange one color of your cards. Click on a card then use arrows to move it within the pile');
                 $message_for_others = clienttranslate('${player_name} may rearrange one color of his cards');
+                break;
+
+            case "66N2A_4E":
+                $message_for_player = clienttranslate('${You} may junk an available special achievement or make a junked special achievement available');
+                $message_for_others = clienttranslate('${player_name} may junk an available special achievement or make a junked special achievement available');
                 break;
                 
             // id 69, age 7: Bicycle 
@@ -9957,6 +9987,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             if ($special_type_of_choice == 11 /* choose_non_negative_integer */) {
                 $args['default_integer'] = self::getAuxiliaryValue(); 
+            } else if ($special_type_of_choice == 13 /* choose_special_achievement */) {
+                $available_ids = [];
+                foreach (self::getCardsInLocation(0, 'achievements') as $card) {
+                    if ($card['age'] === null) {
+                        $available_ids[] = $card['id'];
+                    }
+                }
+                $args['available_special_achievements'] = $available_ids;
+                $junked_ids = [];
+                foreach (self::getCardsInLocation(0, 'junk') as $card) {
+                    if ($card['age'] === null) {
+                        $junked_ids[] = $card['id'];
+                    }
+                }
+                $args['junked_special_achievements'] = $junked_ids;
             }
             
             return $args;
@@ -11719,7 +11764,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 66, age 7: Publications
-            case "66N1":
+            case "66N1_3E":
                 // Make sure there's at least one pile which can be rearranged
                 $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
                 for ($color = 0; $color < 5; $color++) {
@@ -11730,7 +11775,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            case "66N2":
+            case "66N2_3E":
+            case "66N1_4E":
+                $step_max = 1;
+                break;
+
+            case "66N2_4E":
                 $step_max = 1;
                 break;
 
@@ -17409,7 +17459,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         // id 66, age 7: Publications
-        case "66N1A":
+        case "66N1A_3E":
             // "You may rearrange the order of one color of cards on your board"
             $options = array(
                 'player_id' => $player_id,
@@ -17419,7 +17469,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        case "66N2A":
+        case "66N2A_3E":
+        case "66N1A_4E":
             // "You may splay your blue or yellow cards up"
             $options = array(
                 'player_id' => $player_id,
@@ -17428,6 +17479,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3 /* up */,
                 'color' => array(0,3) /* blue or yellow */
+            );
+            break;
+
+        case "66N2A_4E":
+            // "You may junk an available special achievement or make a junked special achievement available"
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
+                
+                'choose_special_achievement' => true,
             );
             break;
             
@@ -26876,8 +26937,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 66, age 7: Publications          
-            case "66N1A":
-                // All was done before
+            case "66N1A_3E":
+                // The rearrangement was already done.
+                break;
+            
+            case "66N2A_4E":
+                // "You may junk an available special achievement or make a junked special achievement available"
+                $achievement = self::getCardInfo($choice);
+                if ($achievement['location'] == 'junk') {
+                    self::transferCardFromTo($achievement, 0, 'achievements');
+                } else {
+                    self::transferCardFromTo($achievement, 0, 'junk');
+                }
                 break;
             
             // id 67, age 7: Bicycle         
