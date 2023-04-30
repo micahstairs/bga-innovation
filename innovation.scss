@@ -176,7 +176,8 @@
     margin-top: 10px;
 }
 
-#special_achievement_summaries.heightless {
+#special_achievement_summaries.heightless,
+#special_achievement_selections.heightless {
     height: 0px;
     visibility: hidden;
 }
@@ -189,6 +190,21 @@
     &.unclaimed {
         opacity: 1;
     }
+}
+
+.special_achievement_selection {
+    display: flex;
+    vertical-align: middle;
+    opacity: 1;
+}
+
+.special_achievement_selection>.special_achievement_text {
+    padding-right: 10px;
+}
+
+.select_special_achievement_button {
+    min-width: 50px;
+    text-align: center;
 }
 
 .special_achievement_icon {

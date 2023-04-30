@@ -101,6 +101,7 @@ class Innovation extends BgaGame {
     view_full = false;
 
     card_browsing_window: dijit.Dialog | null = null;
+    special_achievement_selection_window: dijit.Dialog | null = null;
     my_score_verso_window: dijit.Dialog | null = null;
     my_forecast_verso_window: dijit.Dialog | null = null;
     text_for_expanded_mode: string = '';
@@ -122,7 +123,7 @@ class Innovation extends BgaGame {
 
     initializing = true;
 
-    // Special flags used for Publication
+    // Special flags used for Publication (3rd edition and earlier)
     publication_permuted_zone: Zone | null = null;
     publication_permutations_done: Array<{ 'position': number, 'delta': number }> | null = null;
     publication_original_items = null;
@@ -418,6 +419,7 @@ class Innovation extends BgaGame {
         //******
 
         this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
+        this.special_achievement_selection_window = new dijit.Dialog({ 'title': _("Special Achievements") });
         this.my_score_verso_window = new dijit.Dialog({ 'title': _("Cards in your score pile (opponents cannot see this)") });
         this.my_forecast_verso_window = new dijit.Dialog({ 'title': _("Cards in your forecast (opponents cannot see this)") });
         this.text_for_expanded_mode = _("Show compact");
@@ -1336,8 +1338,7 @@ class Innovation extends BgaGame {
                                 dojo.attr(card, 'warning', warning);
                             });
                         }
-                    }
-                    else if (args.args.special_type_of_choice == 6 /* rearrange */) {
+                    } else if (args.args.special_type_of_choice == 6 /* choose_rearrange */) {
                         this.off(dojo.query('#change_display_mode_button'), 'onclick');
                         for (let color = 0; color < 5; color++) {
                             let zone = this.zone["board"][this.player_id][color];
@@ -1348,6 +1349,9 @@ class Innovation extends BgaGame {
                         let selectable_cards = this.selectAllCardsOnMyBoard();
                         selectable_cards.addClass("clickable").addClass('mid_dogma');
                         this.on(selectable_cards, 'onclick', 'publicationClicForMove');
+                    } else if (args.args.special_type_of_choice == 13 /* choose_special_achievement */) {
+                        this.buildSpecialAchievementSelectionWindow(args.args.available_special_achievements.map(Number), args.args.junked_special_achievements.map(Number));
+                        this.click_open_special_achievement_selection_window();
                     }
 
                     if (args.args.color_pile !== null) { // The selection involves cards in a stack
@@ -1487,7 +1491,6 @@ class Innovation extends BgaGame {
                     dojo.place("<span class='extra_text'> , " + _("meld or dogma") + "</span>", "take_draw_action", "after")
                     break;
                 case 'selectionMove':
-                    let special_type_of_choice_with_buttons = args.special_type_of_choice != 0 && args.special_type_of_choice != 6 /* rearrange */;
                     let splay_choice = args.splay_direction !== null;
                     let last_button_id: string | null = null;
                     if (args.special_type_of_choice == 11 /* choose_non_negative_integer */) {
@@ -1505,7 +1508,10 @@ class Innovation extends BgaGame {
                         this.addActionButton("increase_integers", ">>", "action_clickButtonToIncreaseIntegers");
                         dojo.removeClass("increase_integers", 'bgabutton_blue');
                         dojo.addClass("increase_integers", 'bgabutton_red');
-                    } else if (special_type_of_choice_with_buttons) {
+                    } else if (args.special_type_of_choice == 13 /* choose_special_achievement */) {
+                        this.addActionButton("choice_0", _("Select"), "click_open_special_achievement_selection_window");
+                        last_button_id = "choice_0";
+                    } else if (args.special_type_of_choice != 0 && args.special_type_of_choice != 6) {
                         // Add a button for each available options
                         for (let i = 0; i < args.options.length; i++) {
                             let option = args.options[i];
@@ -1629,6 +1635,49 @@ class Innovation extends BgaGame {
         change_display_mode_button.removeClass('disabled');
     }
 
+    buildSpecialAchievementSelectionWindow(availableIDs: number[], junkedIDs: number[]) {
+        let content = "<div id='special_achievement_selections'>";
+        // NOTE: We use getSpecialAchievementIds because we want to display them in the same order that we use in the card browser
+        this.getSpecialAchievementIds().forEach(card_id => {
+            const currentlyAvailable = availableIDs.includes(card_id);
+            if (!currentlyAvailable && !junkedIDs.includes(card_id)) {
+                return; // Skip this card if a player has claimed it
+            }
+            let card_data = this.cards[card_id];
+            let name = _(card_data.name).toUpperCase();
+            let text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
+            if (card_data.alternative_condition_for_claiming != null) {
+                text += ` ${this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip')}`;
+            }
+            content += `<div class="special_achievement_selection">`;
+            content += `<div class="special_achievement_icon"><div class="item_${card_id} age_null S card"></div></div>`;
+            content += `<div class="special_achievement_text">${text}</div>`
+            if (currentlyAvailable) {
+                content += `<div><a id='select_special_achievement_${card_id}' class='bgabutton bgabutton_blue select_special_achievement_button' card_id='${card_id}'>${_("Junk")}</a></div>`;
+            } else {
+                content += `<div><a id='select_special_achievement_${card_id}' class='bgabutton bgabutton_blue select_special_achievement_button' card_id='${card_id}'>${_("Unjunk")}</a></div>`;
+            }
+            content += `</div></br>`;
+        });
+        content += `</div>`;
+        this.special_achievement_selection_window!.attr("content", `${content}<a id='close_special_achievement_selection_button' class='bgabutton bgabutton_blue'>${_("Close")}</a>`);
+        this.on(dojo.query('#close_special_achievement_selection_button'), 'onclick', 'click_close_special_achievement_selection_window');
+        availableIDs.forEach(card_id => {
+            this.on(dojo.query(`#select_special_achievement_${card_id}`), 'onclick', 'action_chooseSpecialAchievement');
+        });
+        junkedIDs.forEach(card_id => {
+            this.on(dojo.query(`#select_special_achievement_${card_id}`), 'onclick', 'action_chooseSpecialAchievement');
+        });
+    }
+
+    click_open_special_achievement_selection_window() {
+        this.special_achievement_selection_window!.show();
+    }
+
+    click_close_special_achievement_selection_window() {
+        this.special_achievement_selection_window!.hide();
+    }
+
     addButtonForBrowsingCards() {
         // Build button
         let button_text = _("Browse all cards");
@@ -1637,13 +1686,7 @@ class Innovation extends BgaGame {
         this.addCustomTooltip('browse_all_cards_button', '<p>' + _('Browse the full list of cards, including special achievement.') + '</p>', "")
 
         // Build popup box
-        let ids = [106, 105, 108, 107, 109];
-        if (this.gamedatas.cities_expansion_enabled) {
-            ids.push(325, 326, 327, 328, 329);
-        }
-        if (this.gamedatas.echoes_expansion_enabled) {
-            ids.push(439, 436, 435, 437, 438);
-        }
+        let ids = this.getSpecialAchievementIds();
         // TODO(FIGURES): Add special achievements.
         let content = "";
 
@@ -1681,9 +1724,6 @@ class Innovation extends BgaGame {
 
             let name = _(card_data.name).toUpperCase();
             let text = `<b>${name}</b>: ${this.parseForRichedText(_(card_data.condition_for_claiming), 'in_tooltip')}`;
-            if (card_id == 106) {
-                text += ` ${_("Note: Transfered cards from other players do not count toward this achievement, nor does exchanging cards from your hand and score pile.")}`;
-            }
             if (card_data.alternative_condition_for_claiming != null) {
                 text += ` ${this.parseForRichedText(_(card_data.alternative_condition_for_claiming), 'in_tooltip')}`;
             }
@@ -1827,6 +1867,17 @@ class Innovation extends BgaGame {
             }
             dojo.query(`#special_achievement_summary_${id} .special_achievement_status`)[0].innerHTML = (numerator >= 0 && denominator > 0) ? `${numerator}/${denominator}` : "";
         });
+    }
+
+    getSpecialAchievementIds(): number[] {
+        let ids = [106, 105, 108, 107, 109];
+        if (this.gamedatas.cities_expansion_enabled) {
+            ids.push(325, 326, 327, 328, 329);
+        }
+        if (this.gamedatas.echoes_expansion_enabled) {
+            ids.push(439, 436, 435, 437, 438);
+        }
+        return ids;
     }
 
     /*
@@ -4520,6 +4571,24 @@ class Innovation extends BgaGame {
         zone.updateDisplay();
     }
 
+    action_chooseSpecialAchievement(event: any) {
+        if (!this.checkAction('choose')) {
+            return;
+        }
+        this.click_close_special_achievement_selection_window();
+        this.deactivateClickEvents();
+
+        let card_id = dojo.getAttr(event.currentTarget, 'card_id');
+        let self = this;
+        this.ajaxcall("/innovation/innovation/chooseSpecialOption.html",
+            {
+                lock: true,
+                choice: card_id,
+            },
+            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
+        );
+    }
+
     decrementMap(map: Map<number, number>, keys: number[]) {
         keys.forEach(key => {
             map.set(key, (map.get(key) ?? 0) - 1);
@@ -4806,32 +4875,33 @@ class Innovation extends BgaGame {
             }
         }
 
+        // The zones are undefined if the location is "removed" or "junk" since there aren't actually locations for cards onscreen
         let zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
         let zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
 
         let is_fountain_or_flag = isFountain(card.id) || isFlag(card.id);
-        let visible_from = is_fountain_or_flag || this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
-        // zone_to is undefined if location_to is "removed" since there isn't actually a removed location for cards
+        let visible_from = is_fountain_or_flag || zone_from && this.getCardTypeInZone(zone_from.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
         let visible_to = is_fountain_or_flag || zone_to && this.getCardTypeInZone(zone_to.HTML_class) == "card" || card.age === null; // Special achievements are considered visible too
 
         let id_from: number;
         let id_to: number | null;
         if (visible_from) {
-            // The card is shown at the start (verso)
             id_from = card.id;
             if (visible_to) {
-                id_to = id_from // verso -> verso
+                id_to = id_from;
             } else {
-                id_to = null; // verso -> recto: the card is being hidden. A new id must be created for the recto
+                id_to = null; // A new ID must be created for this card since it's being flipped face down
             }
         } else {
-            // The card is hidden at the start (recto)
-            id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age, card.type, card.is_relic)!;
-            if (visible_to) {
-                id_to = card.id // recto -> verso: the card is being revealed
+            if (card.location_from == "removed" || card.location_from == "junk") {
+                id_from = card.id;
+            } else {
+                id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age, card.type, card.is_relic)!;
             }
-            else {
-                id_to = id_from; // recto -> recto
+            if (visible_to) {
+                id_to = card.id;
+            } else {
+                id_to = id_from;
             }
         }
 
@@ -4918,6 +4988,8 @@ class Innovation extends BgaGame {
             this.createAndAddToZone(zone_to, null, null, card.type, card.is_relic, card.id, center_of_top_card.id, card);
         } else if (is_fountain_or_flag && card.owner_to == 0) {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
+        } else if (card.location_from == 'junk') { // Assumes we are unjunking a special achievement
+            this.createAndAddToZone(zone_to, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), null);
         } else {
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);
         }
