@@ -513,7 +513,7 @@ $this->textual_card_infos = array(
 
 90 => array('name' => clienttranslate('Satellites'),
     'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand, and draw three ${age_8}. '),
-    'non_demand_effect_1_fourth' => clienttranslate('Return all cards from your hand, and draw three ${age_8}. You may splay your purple cards up.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Return all cards from your hand. You may splay your purple cards up.'),
     'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your purple cards up.'),
     'non_demand_effect_2_fourth' => clienttranslate('Draw three ${age_8}.'),
     'non_demand_effect_3_first_and_third' => clienttranslate('Meld a card from your hand and then execute each of its non-demand dogma effects. Do not share them.'),
