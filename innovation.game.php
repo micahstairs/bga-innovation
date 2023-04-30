@@ -2057,10 +2057,14 @@ class Innovation extends Table
         } else {
             $letter = '?';
         }
-        return self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) . $letter;
+        return self::getCardExecutionBaseCode($card_id, $current_effect_type, $current_effect_number) . $letter . self::getEditionSuffix($card_id);
     }
 
     function getCardExecutionCode($card_id, $current_effect_type, $current_effect_number) {
+        return self::getCardExecutionBaseCode($card_id, $current_effect_type, $current_effect_number) . self::getEditionSuffix($card_id);
+    }
+
+    function getCardExecutionBaseCode($card_id, $current_effect_type, $current_effect_number) {
         $nested_card_state = self::getCurrentNestedCardState();
         $post_execution_indicator = $nested_card_state['post_execution_index'] == 0 ? '' : '+';
         // Echo effects are sometimes executed on cards other than the card being dogma'd
@@ -2072,6 +2076,17 @@ class Innovation extends Table
             $current_effect_number = 1;
         }
         return $card_id . self::getLetterForEffectType($current_effect_type) . $current_effect_number . $post_execution_indicator;
+    }
+
+    function getEditionSuffix($card_id) {
+        if (array_key_exists('separate_4E_implementation', $this->textual_card_infos[$card_id]) && $this->textual_card_infos[$card_id]['separate_4E_implementation'] == true) {
+            if ($this->innovationGameState->getEdition() == 4) {
+                return '_4E'; // 4th edition or later
+            } else {
+                return '_3E'; // 3rd edition or earlier
+            }
+        }
+        return '';
     }
 
     function getLetterForEffectType($effect_type) {
@@ -2414,10 +2429,10 @@ class Innovation extends Table
     
     function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
-        if ($location_from == $location_to && $location_from == 'board') { // Used only for Self service
+        if ($code === '100N1A') { // Self Service
             // TODO(LATER): We can simplify Self Service to use "board->none", guarded by release_version.
             $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from your board');
-            $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');            
+            $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');
         } else if ($targetable_players !== null) { // Used when several players can be targeted
             switch($location_from . '->' . $location_to) {
             case 'score->deck':
@@ -2543,6 +2558,10 @@ class Innovation extends Table
             case 'board->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
                 $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
+                break;
+            case 'board->board':
+                $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your board');
+                $message_for_others = clienttranslate('${player_must} tuck ${number} ${card} from his board');
                 break;
             case 'board->hand':
                 if ($bottom_from == 1) {
@@ -4181,6 +4200,7 @@ class Innovation extends Table
         unset($textual_infos['condition_for_claiming_first_and_third']);
         unset($textual_infos['condition_for_claiming_fourth']);
 
+        unset($textual_infos['separate_4E_implementation']);
         return array_merge($card, $textual_infos);
     }
     
@@ -11183,37 +11203,38 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 30, age 3: Paper        
-            case "30N1":
+            case "30N1_3E":
+            case "30N1_4E":
                 $step_max = 1;
                 break;
                 
-            case "30N2":
+            case "30N2_3E":
+                // "Draw a 4 for every color you have splayed left"
                 $number_of_colors_splayed_left = 0;
-                for($color = 0; $color < 5 ; $color++) {
+                for ($color = 0; $color < 5 ; $color++) {
                     if (self::getCurrentSplayDirection($player_id, $color) == 1 /* left */) {
                         $number_of_colors_splayed_left++;
                     }
                 }
-                if ($number_of_colors_splayed_left < 2) {
+                if ($number_of_colors_splayed_left == 1) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
-                }
-                else {
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
                 }
-                
-                for($i=0;$i<$number_of_colors_splayed_left;$i++) { // For every color you have splayed left
-                    self::executeDraw($player_id, 4); // Draw a 4
+                for ($i = 0; $i < $number_of_colors_splayed_left; $i++) {
+                    self::executeDraw($player_id, 4);
                 }
                 break;
-
-            case "30N3":
-                $step_max = 1; // 4th edition and beyond only
+            
+            case "30N2_4E":
+                $step_max = 1;
                 break;
                 
             // id 31, age 3: Machinery        
             case "31D1":
+            case "31D1_4E":
                 // "Exchange all the cards in your hand with all the highest cards in my hand"
                 
                 // Get cards in hand
@@ -11232,6 +11253,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "31N1":
+            case "31N1_4E":
                 $has_card_with_tower = false;
                 foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
                     if (self::hasRessource($card, 4 /* tower */)) {
@@ -11246,7 +11268,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
 
                 }
-                $step_max = 2;
+                $step_max = $this->innovationGameState->usingFourthEditionRules() ? 1 : 2;
                 break;
                 
             // id 32, age 3: Medicine        
@@ -11605,21 +11627,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
 
-                $num_tucked_cards_with_clocks = 0;
-                for($i=0; $i<$number; $i++) {
+                $eight_or_ten_tucked = false;
+                for ($i = 0; $i < $number; $i++) {
                     $card = self::executeDrawAndTuck($player_id, 6); // "Draw and tuck a 6"
-                    if (self::hasRessource($card, 6)) {
-                        $num_tucked_cards_with_clocks++;
+                    if ($card['age'] == 8 || $card['age'] == 10) {
+                        $eight_or_ten_tucked = true;
                     }
 
                 }
 
-                // "If you tuck more than one card with a clock, tuck Industrialization if it's a top card."
+                // "If you tuck an 8 or 10, return Industrialization if it is a top card on any board." (4th edition only)
                 $industrialization_card = self::getCardInfo(57);
                 if ($this->innovationGameState->usingFourthEditionRules()
                         && self::isTopBoardCard($industrialization_card)
-                        && $num_tucked_cards_with_clocks > 1) {
-                    self::tuckCard($industrialization_card);
+                        && $eight_or_ten_tucked) {
+                    self::returnCard($industrialization_card);
                 }
                 break;
                 
@@ -11818,11 +11840,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 74, age 7: Railroad        
-            case "74N1":
+            case "74N1_3E":
+            case "74N1_4E":
                 $step_max = 1;
                 break;
             
-            case "74N2":
+            case "74N2_3E":
+                $step_max = 1;
+                break;
+
+            case "74N2_4E":
+                // "Draw three 6"
+                self::executeDraw($player_id, 6);
+                self::executeDraw($player_id, 6);
+                self::executeDraw($player_id, 6);
+                break;
+
+            case "74N3_4E":
                 $step_max = 1;
                 break;
                 
@@ -11924,8 +11958,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 84, age 8: Socialism     
-            case "84N1":
-                self::setAuxiliaryValue(0); // Flag to indicate if one purple card has been tuckeds or not
+            case "84N1_3E":
+                self::setAuxiliaryValue(0); // Flag to indicate if one purple card has been tucked or not
+                $step_max = 1;
+                break;
+
+            case "84N1_4E":
+                $step_max = 1;
+                break;
+
+            case "84N2_4E":
                 $step_max = 1;
                 break;
                 
@@ -12020,6 +12062,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            case "88N2":
+                // NOTE: This is only in 4th edition and beyond
+                self::executeDraw($player_id, 10); // "Draw a 10"
+                break;
+
             // id 89, age 9: Collaboration
             case "89D1":
                 self::executeDraw($player_id, 9, 'revealed'); // "Draw two 9 and reveal them"
@@ -12040,15 +12087,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 90, age 9: Satellites
-            case "90N1":
+            case "90N1_3E":
                 $step_max = 1;
                 break;
 
-            case "90N2":
+            case "90N1_4E":
+                $step_max = 2;
+                break;
+
+            case "90N2_3E":
                 $step_max = 1;
                 break;
+
+            case "90N2_4E":
+                // "Draw three 8"
+                self::executeDraw($player_id, 8);
+                self::executeDraw($player_id, 8);
+                self::executeDraw($player_id, 8);
+                break;
                 
-            case "90N3":
+            case "90N3_3E":
+            case "90N3_4E":
                 $step_max = 1;
                 break;
 
@@ -12179,34 +12238,55 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "100N2":
                 $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
-                $most_achievements = true;
-                foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
-                    if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
-                        $most_achievements = false;
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    // "If you have at least twice as many achievements as each opponent, you win."
+                    $twice_the_achievements = true;
+                    foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                        if ($number_of_achievements < self::getPlayerNumberOfAchievements($opponent_id) * 2) {
+                            $twice_the_achievements = false;
+                        }
                     }
-                }
-                if ($most_achievements) { // "If you have more achievements than each other player"
-                    if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                        self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has more achievements than each other player.'), array(
+                    if ($twice_the_achievements) {
+                        self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has at least twice as many achievements as each opponent.'), array(
                             'player_name' => self::getPlayerNameFromId($player_id)
                         ));
-                        
-                        self::notifyPlayer($player_id, "log", clienttranslate('${You} have more achievements than each other player.'), array(
+                        self::notifyPlayer($player_id, "log", clienttranslate('${You} have at least twice as many achievements as each opponent.'), array(
                             'You' => 'You'
                         ));
+                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
+                        throw new EndOfGame();
                     }
-                    else { // $this->innovationGameState->get('game_type')) == 'team'
-                        $teammate_id = self::getPlayerTeammate($player_id);
-                        $winning_team = array($player_id, $teammate_id);
-                        self::notifyAllPlayersBut($winning_team, "log", clienttranslate('The other team has more achievements than yours.'), array());
-                        
-                        self::notifyPlayer($player_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
-                        
-                        self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
+                } else {
+                    $most_achievements = true;
+                    foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                        if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
+                            $most_achievements = false;
+                        }
                     }
-                    $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
-                    throw new EndOfGame();
+                    if ($most_achievements) { // "If you have more achievements than each other player"
+                        if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
+                            self::notifyAllPlayersBut($player_id, "log", clienttranslate('${player_name} has more achievements than each other player.'), array(
+                                'player_name' => self::getPlayerNameFromId($player_id)
+                            ));
+                            
+                            self::notifyPlayer($player_id, "log", clienttranslate('${You} have more achievements than each other player.'), array(
+                                'You' => 'You'
+                            ));
+                        }
+                        else { // $this->innovationGameState->get('game_type')) == 'team'
+                            $teammate_id = self::getPlayerTeammate($player_id);
+                            $winning_team = array($player_id, $teammate_id);
+                            self::notifyAllPlayersBut($winning_team, "log", clienttranslate('The other team has more achievements than yours.'), array());
+                            
+                            self::notifyPlayer($player_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
+                            
+                            self::notifyPlayer($teammate_id, "log", clienttranslate('Your team has more achievements than the other.'), array());
+                        }
+                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
+                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Self service');
+                        throw new EndOfGame();
+                    }
                 }
                 break;
                 
@@ -13965,7 +14045,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "350N2":
                 // "If Paper is a top card on any player's board, transfer it to your score pile."
-                // NOTE: This only occurs in the 4th edition and beyond
                 $paper_card = self::getCardInfo(30);
                 if (self::isTopBoardCard($paper_card)) {
                     self::transferCardFromTo($paper_card, $player_id, 'score', false, /*score_keyword*/false);
@@ -15668,34 +15747,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 442, age 11: Astrogeology
             case "442N1":
                 // "Draw and reveal an 11."
-                $card = self::executeDraw($player_id, 11, 'revealed');
+                $revealed_card = self::executeDraw($player_id, 11, 'revealed');
                 
-                if ($card['splay_direction'] != 4) { // aslant
-                    // "If the color of the drawn card is not splayed aslant on your board, "
-                    $color = $card['color'];
+                // "Splay its color on your board aslant. If you do, transfer all but your top two cards of that color into your hand."
+                $color = $revealed_card['color'];
+                $num_cards_in_pile = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
+                if ($revealed_card['splay_direction'] != 4 && $num_cards_in_pile >= 2) { // aslant
+                    self::splayAslant($player_id, $player_id, $color);
                     
-                    $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                    $num_color_cards = $board_cards[$color];
-                    if ($num_color_cards > 2) { // verify that at least two cards are there so transfer can occur
-                        $num_cards_transferred = 0;
-                        do {
-                            // "transfer all but your top two cards of this color into your hand, "
-                            $card = self::getBottomCardOnBoard($player_id, $color);
-                            if ($card != null) {
-                                self::transferCardFromTo($card, $player_id, 'hand');
-                            }
-                            $num_cards_transferred++;
-                        } while ($num_cards_transferred < $num_color_cards - 2);
+                    while ($num_cards_in_pile > 2) {
+                        $card = self::getBottomCardOnBoard($player_id, $color);
+                        self::transferCardFromTo($card, $player_id, 'hand');
+                        $num_cards_in_pile--;
                     }
-                    self::splayAslant($player_id, $player_id, $card['color']); // "and splay it aslant."				
                 }
-                self::transferCardFromTo($card, $player_id, 'hand'); // put revealed card in hand
+                self::transferCardFromTo($revealed_card, $player_id, 'hand'); // put revealed card in hand
                 break;
 
             case "442N2":
-                
                 if (self::countCardsInLocation($player_id, 'hand') >= 11) { 
-                    // If you have 11 or more cards in hand, you win.
+                    // "If you have eleven or more cards in your hand, you win."
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 11 or more cards in hand.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 11 or more cards in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     $this->innovationGameState->set('winner_by_dogma', $player_id);
@@ -16547,8 +16618,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 30, age 3: Paper        
-        case "30N1A":
+        // id 30, age 3: Paper
+        case "30N1A_3E":
+        case "30N1A_4E":
             // "You may splay your green or blue cards left"
             $options = array(
                 'player_id' => $player_id,
@@ -16560,9 +16632,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        case "30N3A":
+        case "30N2A_4E":
             // "Return a top card with a leaf."
-            // NOTE: This is only present in 4th edition and beyond
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -16578,6 +16649,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 31, age 3: Machinery        
         case "31N1A":
+        case "31N1A_4E":
             // "Score a card from your hand with a tower"
             $options = array(
                 'player_id' => $player_id,
@@ -16595,6 +16667,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
           
         case "31N1B":
+        case "31N2A_4E":
             // "You may splay your red cards left"
             $options = array(
                 'player_id' => $player_id,
@@ -17518,7 +17591,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         // id 74, age 7: Railroad        
-        case "74N1A":
+        case "74N1A_3E":
+        case "74N1A_4E":
             // "Return all the cards in your hand"
             $options = array(
                 'player_id' => $player_id,
@@ -17530,10 +17604,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        case "74N2A":
+        case "74N2A_3E":
+        case "74N3A_4E":
             $splayed_right_colors = array();
-            for($color=0; $color<5; $color++) {
-                if (self::getCurrentSplayDirection($player_id, $color)==2 /* right */) {
+            for ($color = 0; $color < 5; $color++) {
+                if (self::getCurrentSplayDirection($player_id, $color) == 2 /* right */) {
                     $splayed_right_colors[] = $color;
                 }
             }
@@ -17763,7 +17838,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         // id 84, age 8: Socialism     
-        case "84N1A":
+        case "84N1A_3E":
             // "You may tuck all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
@@ -17775,6 +17850,56 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'bottom_to' => true
+            );    
+            break;
+
+        case "84N1A_4E":
+            // "You may tuck a top card from your board"
+            // NOTE: There's a chance that the intention is for the player to be able to tuck card(s) from their hand before
+            // tucking a top card, however, it's going to be much harder to implement, so let's do it this way first and see
+            // if there are any complaints.
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true,
+            );    
+            break;
+
+        case "84N1B_4E":
+            // "and all cards from your hand"
+            $options = array(
+                'player_id' => $player_id,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true,
+            );    
+            break;
+
+        case "84N2A_4E":
+            // "You may junk an available achievement of value 8, 9, or 10"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => 0,
+                'location_to' => 'junk',
+
+                'age_min' => 8,
+                'age_max' => 10,
             );    
             break;
         
@@ -17851,8 +17976,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;        
         
         // id 90, age 9: Satellites
-        case "90N1A":
-            // "Return all cards from you hand"
+        case "90N1A_3E":
+        case "90N1A_4E":
+            // "Return all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
                 
@@ -17863,7 +17989,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        case "90N2A":
+        case "90N2A_3E":
+        case "90N1B_4E":
             // "You may splay your purple cards up"
             $options = array(
                 'player_id' => $player_id,
@@ -17875,7 +18002,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        case "90N3A":
+        case "90N3A_3E":
+        case "90N3A_4E":
             // "Meld a card from your hand"
             $options = array(
                 'player_id' => $player_id,
@@ -23455,15 +23583,25 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndTuck($player_id, 1); // "Draw an tuck a 1"
                     }
                     break;
-
-                // id 30, age 3: Paper        
-                case "30N3A":
-                    // "If you don't, score Paper if it's a top card"
-                    // NOTE: This only occurs in the 4th edition and beyond
-                    if ($n == 0) {
-                        $paper_card = self::getCardInfo(30);
-                        if (self::isTopBoardCard($paper_card)) {
-                            self::scoreCard($paper_card, $player_id);
+                
+                // id 30, age 3: Paper
+                case "30N2A_4E":
+                    if ($n > 0) { // "If you do, draw a 4 for every color you have splayed left"
+                        $number_of_colors_splayed_left = 0;
+                        for ($color = 0; $color < 5 ; $color++) {
+                            if (self::getCurrentSplayDirection($player_id, $color) == 1 /* left */) {
+                                $number_of_colors_splayed_left++;
+                            }
+                        }
+                        if ($number_of_colors_splayed_left == 1) {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                        } else {
+                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors splayed left.'), array('i18n' => array('n'), 'You' => 'You', 'n' => $number_of_colors_splayed_left));
+                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors splayed left.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_colors_splayed_left));
+                        }
+                        for ($i = 0; $i < $number_of_colors_splayed_left; $i++) {
+                            self::executeDraw($player_id, 4);
                         }
                     }
                     break;
@@ -23756,10 +23894,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                 
                 // id 74, age 7: Railroad        
-                case "74N1A":
-                    self::executeDraw($player_id, 6); // Draw three 6
-                    self::executeDraw($player_id, 6); //
-                    self::executeDraw($player_id, 6); //
+                case "74N1A_3E":
+                    // "Draw three 6"
+                    self::executeDraw($player_id, 6);
+                    self::executeDraw($player_id, 6);
+                    self::executeDraw($player_id, 6);
                     break;
                 
                 // id 75, age 8: Quantum theory        
@@ -23848,7 +23987,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                                     
                 // id 84, age 8: Socialism     
-                case "84N1A":
+                case "84N1A_3E":
                     if ($n > 0) {
                         if (self::getAuxiliaryValue() == 1) { // "If you tucked at least one purple card"
                             self::notifyGeneralInfo(clienttranslate('At least one purple card has been tucked.'));
@@ -23866,9 +24005,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                 
+                case "84N1A_4E":
+                    // If a top card is tucked, then proceed to make the player tuck all cards from their hand
+                    if ($n > 0) {
+                        self::incrementStepMax(1);
+                    }
+                    break;
+                
                 // id 88, age 9: Fission
                 case "88N1A":
-                    if (!$this->innovationGameState->usingFirstEditionRules()) {
+                    if ($this->innovationGameState->usingThirdEditionRules()) {
                         self::executeDraw($player_id, 10); // "Draw a 10"
                     }
                     break;
@@ -23881,13 +24027,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     break;
                     
                 // id 90, age 9: Satellites
-                case "90N1A":
-                    self::executeDraw($player_id, 8); // "Draw three 8"
-                    self::executeDraw($player_id, 8); //
-                    self::executeDraw($player_id, 8); //
+                case "90N1A_3E":
+                    // "Draw three 8"
+                    self::executeDraw($player_id, 8);
+                    self::executeDraw($player_id, 8);
+                    self::executeDraw($player_id, 8);
                     break;
                     
-                case "90N3A":
+                case "90N3A_3E":
+                case "90N3A_4E":
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected')); // The card the player melded from his hand
                         self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
@@ -26821,7 +26969,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             // id 84, age 8: Socialism     
-            case "84N1A":
+            case "84N1A_3E":
                 if ($card['color'] == 4 /* purple*/) { // A purple card has been tucked
                     self::setAuxiliaryValue(1); // Flag that
                 }
