@@ -293,7 +293,7 @@ $this->textual_card_infos = array(
 ),
 
 51 => array('name' => clienttranslate('Statistics'),
-    'i_demand_effect_third_and_fourth' => clienttranslate('${I demand} you transfer all the highest cards in your score pile to your hand!'),
+    'i_demand_effect_1_third_and_fourth' => clienttranslate('${I demand} you transfer all the highest cards in your score pile to your hand!'),
     'i_demand_effect_1_first' => clienttranslate('${I demand} you transfer the highest card in your score pile to your hand! If you do, and have only one card in your hand afterwards, repeat this demand!'),
     'non_demand_effect_1' => clienttranslate('You may splay your yellow cards right.'),
 ),
@@ -330,7 +330,7 @@ $this->textual_card_infos = array(
 57 => array('name' => clienttranslate('Industrialization'),
     'non_demand_effect_1_first' => clienttranslate('Draw and tuck a ${age_6} for every two ${icon_5} on your board.'),
     'non_demand_effect_1_third' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}.'),
-    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}. If you tuck an ${age_8} or ${age_10},   .'),
+    'non_demand_effect_1_fourth' => clienttranslate('Draw and tuck a ${age_6} for every color on your board with one or more ${icon_5}. If you tuck an ${age_8} or ${age_10}, return Industrialization if it is a top card on any board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your red or purple cards right.'),
 ),
 
