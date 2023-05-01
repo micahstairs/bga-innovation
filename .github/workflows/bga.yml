@@ -3,7 +3,7 @@ name: Push to innovationdev
 on:
   push:
     branches:
-      - 'main-dev'
+      - 'main-4'
 
 jobs:
   build-test:
