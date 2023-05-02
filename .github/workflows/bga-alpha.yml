@@ -9,12 +9,6 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Fetch PHP rename utils
-        uses: actions/checkout@master
-        with:
-          repository: elaskavaia/bga-sharedcode
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: './bga-sharedcode'
       - name: Checkout codebase
         uses: actions/checkout@v2
         with:
@@ -25,7 +19,7 @@ jobs:
         with:
          php-version: '8.1:'
       - name: Rename innovation to innovationalpha
-        run: php bga-sharedcode/misc/bgaprojectrename.php innovation innovationalpha
+        run: php innovation/misc/bgaprojectrename.php innovation innovationalpha
       - name: Delete files that we do not want to upload
         run: cd innovationalpha && rm -rf .vscode .git .github .DS_Store misc node_modules package-lock.json vendor composer.json composer.lock phpunit.xml tests && cd ..
       - name: Push to BGA
