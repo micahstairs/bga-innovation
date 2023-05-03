@@ -11278,7 +11278,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 31, age 3: Machinery        
-            case "31D1":
+            case "31D1_3E":
             case "31D1_4E":
                 // "Exchange all the cards in your hand with all the highest cards in my hand"
                 
@@ -11297,8 +11297,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
                 
-            case "31N1":
-            case "31N1_4E":
+            case "31N1_3E":
                 $has_card_with_tower = false;
                 foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
                     if (self::hasRessource($card, 4 /* tower */)) {
@@ -11313,7 +11312,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
 
                 }
-                $step_max = $this->innovationGameState->usingFourthEditionRules() ? 1 : 2;
+                $step_max = 2;
+                break;
+
+            case "31N1_4E":
+                $has_card_with_tower = false;
+                foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
+                    if (self::hasRessource($card, 4 /* tower */)) {
+                        $has_card_with_tower = true;
+                        break;
+                    }
+                }
+                if ($has_card_with_tower) {
+                    $step_max = 1;
+                } else {
+                    self::revealHand($player_id);
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
+                }
                 break;
                 
             // id 32, age 3: Medicine        
@@ -16698,7 +16714,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         // id 31, age 3: Machinery        
-        case "31N1A":
+        case "31N1A_3E":
         case "31N1A_4E":
             // "Score a card from your hand with a tower"
             $options = array(
@@ -16716,7 +16732,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
           
-        case "31N1B":
+        case "31N1B_3E":
         case "31N2A_4E":
             // "You may splay your red cards left"
             $options = array(
