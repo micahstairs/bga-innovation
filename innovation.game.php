@@ -7815,7 +7815,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function claimSpecialAchievement($player_id, $achievement_id) {
         $achievement = self::getCardInfo($achievement_id);
-        if ($achievement['owner'] == 0 && $achievement['location'] != 'removed') {
+        if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
             self::transferCardFromTo($achievement, $player_id, 'achievements');
         } else {
             $card_args = self::getNotificationArgsForCardList([$achievement]);
@@ -11044,12 +11044,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($eligible) { // "If you are the only player with five top cards"
                     $achievement = self::getCardInfo(105);
-                    if ($achievement['owner'] == 0) {
+                    if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} are the only player with five top cards.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Empire achievement"
-                    }
-                    else {
+                    } else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} are the only player with five top cards but the Empire achievement has already been claimed.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} is the only player with five top cards but the Empire achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     }
@@ -11192,12 +11191,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($eligible) { // "If each card on your board has a crown"
                     $achievement = self::getCardInfo(108);
-                    if ($achievement['owner'] == 0) {
+                    if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown}.'), array('your' => 'your', 'crown' => $crown));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown}.'), array('player_name' => self::getColoredPlayerName($player_id), 'crown' => $crown));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the World achievement"
-                    }
-                    else {
+                    } else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('Each top card on ${your} board has a ${crown} but the Empire achievement has already been claimed.'), array('your' => 'your', 'crown' => $crown));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Each top card on ${player_name} board has a ${crown} but the World achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id), 'crown' => $crown));
                     }
@@ -11423,12 +11421,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($eligible) { // "If you have colors splayed, each in any direction"
                     $achievement = self::getCardInfo(107);
-                    if ($achievement['owner'] == 0) {
+                    if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have all your five colors splayed.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed.'), array('player_name' => self::getColoredPlayerName($player_id)));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Wonder achievement"
-                    }
-                    else {
+                    } else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have all your five colors splayed but the Wonder achievement has already been claimed.'), array('You' => 'You'));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has all his five colors splayed but the Wonder achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id)));
                     }
@@ -11609,12 +11606,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if ($eligible) { // "If all your non-purple top cards on your board are value 6 or higher"
                     $achievement = self::getCardInfo(109);
-                    if ($achievement['owner'] == 0) {
+                    if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
                         self::notifyPlayer($player_id, 'log', clienttranslate('All non-purple top cards on ${your} board are value ${age_6} or higher.'), array('your' => 'your', 'age_6' => self::getAgeSquare(6)));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All non-purple top cards on ${player_name}\'s board are value ${age_6} or higher.'), array('player_name' => self::getColoredPlayerName($player_id), 'age_6' => self::getAgeSquare(6)));
                         self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Universe achievement"
-                    }
-                    else {
+                    } else {
                         self::notifyPlayer($player_id, 'log', clienttranslate('All non-purple top cards on ${your} board are value ${age_6} or higher but the Universe achievement has already been claimed.'), array('your' => 'your', 'age_6' => self::getAgeSquare(6)));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All non-purple top cards on ${player_name}\'s board are value ${age_6} or higher but the Universe achievement has already been claimed.'), array('player_name' => self::getColoredPlayerName($player_id), 'age_6' => self::getAgeSquare(6)));
                     }
@@ -14344,14 +14340,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 
                 if ($eligible) {
-                    self::notifyPlayer($player_id, 'log', 
-                        clienttranslate('${You} have at least one non-purple top card and all your top cards have at least one ${icon}.'), 
-                        array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
-                    self::notifyAllPlayersBut($player_id, 'log', 
-                        clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon}.'), 
+                    $achievement = self::getCardInfo(439);
+                    if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
+                        self::notifyPlayer($player_id, 'log', 
+                            clienttranslate('${You} have at least one non-purple top card and all your top cards have at least one ${icon}.'), 
+                            array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
+                        self::notifyAllPlayersBut($player_id, 'log', 
+                            clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon}.'), 
                         array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($icon_match)));
-                    // "claim the Supremacy achievement."
-                    self::claimSpecialAchievement($player_id, 439);
+                        self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Supremacy achievement"
+                    } else {
+                        self::notifyPlayer($player_id, 'log', 
+                            clienttranslate('${You} have at least one non-purple top card and all your top cards have at least one ${icon} but the Supremacy achievement has already been claimed.'), 
+                            array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
+                        self::notifyAllPlayersBut($player_id, 'log', 
+                            clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon} but the Supremacy achievement has already been claimed.'), 
+                            array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($icon_match)));
+                    }
                 }
                 break;
 
@@ -23564,12 +23569,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 11, age 1: Masonry
                 case "11N1A":
                     if ($n >= 4) { // "If you melded four or more cards this way"
-                        $achievement = self::getCardInfo(106); // Monument achievement
-                        if ($achievement['owner'] == 0) {
+                        $achievement = self::getCardInfo(106);
+                        if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
                             self::notifyGeneralInfo(clienttranslate("At least four cards have been melded."));
                             self::transferCardFromTo($achievement, $player_id, 'achievements'); // "Claim the Monument achievement"
-                        }
-                        else {
+                        } else {
                             self::notifyGeneralInfo(clienttranslate("At least four cards have been melded but the Monument achievement has already been claimed."));
                         }
                     }
