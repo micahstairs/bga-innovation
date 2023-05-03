@@ -16771,7 +16771,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => 0,
                 'location_from' => 'achievements',
                 'owner_to' => 0,
-                'location_to' => 'removed',
+                'location_to' => 'junk',
                 
                 'age_min' => 3,
                 'age_max' => 4,
