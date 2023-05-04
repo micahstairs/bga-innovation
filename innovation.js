@@ -1746,7 +1746,7 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.uniqueIdForCard = function (age, type, is_relic) {
         // We need to multiply by a large number like 1000 to avoid colliding with the IDs of real cards
-        return ((this.uniqueId() * 1000 + age) * 5 + type) * 2 + parseInt(is_relic);
+        return ((this.uniqueId() * 1000 + age) * 6 + type) * 2 + parseInt(is_relic);
     };
     /*
     * Icons and little stuff
@@ -2570,14 +2570,14 @@ var Innovation = /** @class */ (function (_super) {
         }
         // A relative position makes it easy to decide if this new card should go before or after another card.
         // The cards are sorted by age, breaking ties by their type, and then breaking ties with non-relics first.
-        var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
+        var relative_position = ((parseInt(age) * 6) + parseInt(type)) * 2 + parseInt(is_relic);
         var p = 0;
         for (var i = 0; i < zone.items.length; i++) {
             var item = zone.items[i];
             var item_age = this.getCardAgeFromHTMLId(item.id);
             var item_type = this.getCardTypeFromHTMLId(item.id);
             var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
-            var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
+            var item_relative_position = ((item_age * 6) + item_type) * 2 + item_is_relic;
             if (item_relative_position < relative_position) {
                 continue;
             }
@@ -2897,7 +2897,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         // A relative position makes it easy to decide if this new card should go before or after another card.
         // We want the cards sorted by age, breaking ties by their type, and then breaking ties by placing non-relics first.
-        var relative_position = ((parseInt(age) * 5) + parseInt(type)) * 2 + parseInt(is_relic);
+        var relative_position = ((parseInt(age) * 6) + parseInt(type)) * 2 + parseInt(is_relic);
         // Update weights before adding and find the right spot to put the card according to its position, and age for not board stock
         var weight = -1;
         var p = 0;
@@ -2906,13 +2906,13 @@ var Innovation = /** @class */ (function (_super) {
             var item_age = this.getCardAgeFromHTMLId(item.id);
             var item_type = this.getCardTypeFromHTMLId(item.id);
             var item_is_relic = this.getCardIsRelicFromHTMLId(item.id);
-            var item_relative_position = ((item_age * 5) + item_type) * 2 + item_is_relic;
+            var item_relative_position = ((item_age * 6) + item_type) * 2 + item_is_relic;
             // We have not reached the group the card can be put into
             if (zone.grouped_by_age_type_and_is_relic && item_relative_position < relative_position) {
                 continue;
             }
             // We found the spot where the card belongs
-            if (weight != -1 && zone.grouped_by_age_type_and_is_relic && item_relative_position > relative_position || p == position) {
+            if (weight == -1 && zone.grouped_by_age_type_and_is_relic && item_relative_position > relative_position || p == position) {
                 weight = i;
             }
             if (weight != -1) { // Increment positions of the cards after
