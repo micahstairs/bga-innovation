@@ -9361,7 +9361,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 21, age 2: Canal building
             case "21N1A":
-                if ($this->innovationGameState->usingFourthEditionRules()) {
+                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0)[3] > 0) {
                     $message_args_for_player['age_3'] = self::getAgeSquare(3);
                     $message_args_for_others['age_3'] = self::getAgeSquare(3);
                     $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile or junk the ${age_3} pile?');
@@ -16469,7 +16469,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 21, age 2: Canal building         
         case "21N1A":
-            if ($this->innovationGameState->usingFourthEditionRules()) {
+            if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0)[3] > 0) {
                 // "You may choose to either exchange all the highest cards in your hand with all the highest cards in your score pile, or junk all cards in the 3 deck."
                 $options = array(
                     'player_id' => $player_id,
