@@ -9962,6 +9962,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose an icon');
                 $message_for_others = clienttranslate('${player_name} must choose an icon');
                 break;
+        
+            // id 443, age 11: Fusion
+            case "443N1B":
+                $message_for_player = clienttranslate('Choose a value');
+                $message_for_others = clienttranslate('${player_name} must choose a value');
+                break;
 
             default:
                 // This should not happen
@@ -15848,16 +15854,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 443, age 11: Fusion
             case "443N1":
-                $card_ids_to_score = array();
-                foreach (self::getTopCardsOnBoard($player_id) as $card) {
-                    if ($card['faceup_age'] == 11) {
-                        $card_ids_to_score[] = $card['id'];
-                    }
-                }
-                if (count($card_ids_to_score) > 0) {
-                    self::setAuxiliaryArray($card_ids_to_score);
-                    $step_max = 1;
-                }
+                self::setAuxiliaryValue(11);
+                $step_max = 1;
                 break;
 
             // id 444, age 11: Hypersonics
@@ -15956,7 +15954,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "446N1+":
-                // "If there is a card there, then put it back."
+                // If there is still a card in the revealed area, then put it back in the score pile.
                 foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
                     self::transferCardFromTo($card, $player_id, 'score');
                 }
@@ -23277,6 +23275,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // id 443, age 11: Fusion
         case "443N1A":
+        case "443N1C": // We have to use a third interaction because if we repeat the first interaction then we wind up overwriting the auxiliary value with 11
             // "Score a top card of value 11 on your board."    
             $options = array(
                 'player_id' => $player_id,                
@@ -23287,10 +23286,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
-                'card_ids_are_in_auxiliary_array' => true,
+                'age' => self::getAuxiliaryValue(),
                 
                 'score_keyword' => true,
-             );
+            );
+            break;
+
+        case "443N1B":
+            // "Choose a value one or two lower than the scored card"
+
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'choose_value' => true,
+                'age' => self::getAuxiliaryArray(),
+            );
             break;
 
         // id 444, age 11: Hypersonics
@@ -26368,30 +26379,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 443, age 11: Fusion
                 case "443N1A":
-                    if($n > 0) { // "If you do, "
-                        // "repeat this dogma effect using a value one or two lower."
-                        $last_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        $age_last_selected = $last_card['age'];
-                        $card_ids_to_score = array();
-                        $top_cards = self::getTopCardsOnBoard($player_id);
+                case "443N1C":
+                    // "If you do, choose a value one or two lower than the scored card, then repeat this dogma effect using the chosen value."
+                    if($n > 0) {
+                        $age_last_selected = $this->innovationGameState->get('age_last_selected');
                         $upper_age = $age_last_selected - 1;
                         $lower_age = $age_last_selected - 2;
-                        
-                        foreach ($top_cards as $card) {
+                        $found_matching_card = false;
+                        foreach (self::getTopCardsOnBoard($player_id) as $card) {
                             if ($card['age'] == $upper_age || $card['age'] == $lower_age) {
-                                $card_ids_to_score[] = $card['id'];
+                                $found_matching_card = true;
+                                break;
                             }
                         }
-                        if (count($card_ids_to_score) > 0) {
-                            self::setStep(0); $step=0;
-                            self::setAuxiliaryArray($card_ids_to_score);
+                        if ($found_matching_card > 0) {
+                            self::setStep(1);
+                            $step = 1;
+                            self::setStepMax(3);
+                            self::setAuxiliaryArray([$lower_age, $upper_age]);
                         } else {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards of value ${lower_age} or ${upper_age} on your board.'), array('You' => 'You', 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards of value ${lower_age} or ${upper_age} on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'lower_age' => self::getAgeSquare($lower_age), 'upper_age' => self::getAgeSquare($upper_age)));                                 
                         }
                     }
                     break;
-                
+
                 // id 444, age 11: Hypersonics
                 case "444D1B":
                     if ($n > 0) { // "if you do"
@@ -27833,6 +27845,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
+            // id 443, age 11: Fusion
+            case "443N1B":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
                             
             default:
                 if ($splay_direction == -1) {

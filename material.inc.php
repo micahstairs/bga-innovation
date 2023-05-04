@@ -1873,7 +1873,7 @@ $this->textual_card_infos = array(
 ),
 
 443 => array('name' => clienttranslate('Fusion'),
-    'non_demand_effect_1' => clienttranslate('Score a top card of value ${age_11} on your board. If you do, repeat this dogma effect using a value one or two lower.'),
+    'non_demand_effect_1' => clienttranslate('Score a top card of value ${age_11} on your board. If you do, choose a value one or two lower than the scored card, then repeat this dogma effect using the chosen value.'),
 ),
 
 444 => array('name' => clienttranslate('Hypersonics'),
