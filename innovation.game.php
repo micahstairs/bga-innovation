@@ -8888,9 +8888,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 73: // Lighting
             case 75: // Quantum Theory
             case 81: // Antibiotics
-            case 84: // Socialism
-            case 97: // Miniaturization
-            case 102: // Stem Cells
             case 114: // Papyrus of Ani
             case 120: // Lurgan Canoe
             case 121: // Xianrendong Shards
@@ -8932,7 +8929,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 return true;
 
-            case 21: // Canal Building
             case 69: // Bicycle
                 // These non-demand effects have no effect if the player has an empty score pile and an empty hand.
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
@@ -8976,6 +8972,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            case 21: // Canal Building
+                // The non-demand effect in the 4th edition will have an effect if the there is at least one age 3 card in the base deck.
+                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0)[3] > 0) {
+                    return false;
+                }
+                // The non-demand effect will have no effect if the player has an empty score pile and an empty hand.
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && self::countCardsInLocation($executing_player_id, 'score') == 0;
+
             case 24: // Philosophy
                 // The non-demand effects have no effect if the player has no cards in hand and no piles that can be splayed left
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0 && count(self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1)) == 0;
@@ -8988,10 +8992,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // The non-demand effect has no effect if the player has no cards in hand and cannot splay their red pile left
                 return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(1 /* red */,  self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1));
 
-            case 34: // Feudalism
-                // The non-demand effect has no effect if the player cannot splay their yellow or purple piles left
-                $left_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 1);
-                return !in_array(3 /* yellow */,  $left_splayable_colors) && !in_array(4 /* purple */,  $left_splayable_colors);
+            case 32: // Medicine
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    // The non-demand has no effect if both the age 3 and age 4 base decks are empty.
+                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
+                    return $base_decks[3] == 0 && $base_decks[4] == 0;
+                }
+                return true;
 
             case 36: // Printing Press
                 // The non-demand effect has no effect if the player has no cards in their score pile and cannot splay their blue pile right
@@ -9016,7 +9023,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 56: // Encyclopedia
                 if ($this->innovationGameState->usingFourthEditionRules()) {
-                    return false; // 4th edition has a second non-demand effect
+                    // The non-demand will have an effect if there are cards in any of the age 5, 6, or 7 base decks.
+                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
+                    if ($base_decks[5] > 0 || $base_decks[6] > 0 || $base_decks[7] > 0) {
+                        return false;
+                    }
                 }
                 return self::countCardsInLocation($executing_player_id, 'score') == 0;
 
@@ -9034,6 +9045,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // The non-demand effect has no effect if the player cannot splay their red or purple piles right
                 $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 2);
                 return !in_array(1 /* red */,  $right_splayable_colors) && !in_array(4 /* purple */,  $right_splayable_colors);
+            
+            case 72: // Sanitation
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    // The non-demand has no effect if both the age 7 and age 8 base decks are empty.
+                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0);
+                    return $base_decks[7] == 0 && $base_decks[8] == 0;
+                }
+                return true;
 
             case 77: // Flight
                 $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 3);
@@ -9044,6 +9063,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 // The non-demand effects have no effect if the player has no piles that can be splayed up
                 return count($up_splayable_colors) == 0;
+            
+            case 91: // Ecology
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    // The non-demand will have an effect if there are cards in the age 10 base deck.
+                    if (self::countCardsInLocationKeyedByAge(0, 'deck', /*type=*/ 0)[10] > 0) {
+                        return false;
+                    }
+                }
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0;
             
             case 94: // Specialization
                 // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or blue piles up
@@ -9073,7 +9101,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             /*** Basic cases involving empty hands and/or empty score piles ***/
 
-            case 34: // Feudalism
             case 64: // Emancipation
             case 68: // Explosives
             case 71: // Refrigeration
@@ -18219,6 +18246,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'with_icon' => 2, /* leaf */
 
+                // Fourth edition: "Score a top card with a leaf on any opponent's board."
                 'score_keyword' => $this->innovationGameState->usingFourthEditionRules(),
             );
             break;
@@ -18229,7 +18257,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => true,
+                'can_pass' => $this->innovationGameState->getEdition() <= 3, // Fourth edition doesn't say "You may"
                 
                 'owner_from' => $player_id,
                 'location_from' => 'hand',
