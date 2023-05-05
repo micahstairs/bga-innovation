@@ -3388,7 +3388,6 @@ class Innovation extends Table
                 foreach (self::getPlayerResourceCounts($player_id) as $icon => $count) {
                     if ($count >= 3) {
                         $num_resources_with_three_or_more++;
-                        break;
                     }
                 }
                 $eligible = $num_resources_with_three_or_more >= 6;
