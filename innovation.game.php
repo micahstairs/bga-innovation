@@ -11361,6 +11361,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
                 }
                 break;
+
+            case "31N2_4E":
+                $step_max = 1;
+                break;
                 
             // id 32, age 3: Medicine        
             case "32D1":
