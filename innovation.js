@@ -932,13 +932,7 @@ var Innovation = /** @class */ (function (_super) {
             dojo.style('decks_and_available_achievements', 'flex-direction', 'row');
             dojo.style('available_relics_and_achievements_container', 'display', 'inline-block');
         }
-        // Fourth edition has 11 decks, so we can't place them into two columns.
-        if (this.num_sets_in_play == 1 && this.gamedatas.fourth_edition) {
-            dojo.style('decks', 'display', 'inline-block');
-            dojo.style('decks_1', 'justify-content', 'center');
-            dojo.style('decks_2', 'justify-content', 'center');
-        }
-        else if (this.num_sets_in_play == 1) {
+        if (this.num_sets_in_play == 1) {
             dojo.style('decks', 'display', 'flex');
         }
         else {
