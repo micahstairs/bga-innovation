@@ -2334,8 +2334,13 @@ class Innovation extends Table
             }
             break;
         case 'revealed->score':
-            $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>}.');
-            $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>}.');
+            if ($score_keyword) {
+                $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>}.');
+            } else {
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your score pile.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his score pile.');
+            }
             break;
         case 'revealed->achievements':
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>}.');
@@ -7170,13 +7175,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_args = self::getNotificationArgsForCardList([$card]);
         if (self::getNonDemandEffect($card['id'], 1) === null) {
             self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
-            return;
+            return false;
         }
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}.'),
             ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}.'),
             ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
+        return true;
     }
 
     function executeAllEffects($card) {
@@ -26483,7 +26489,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Reveal the highest card in your score pile and execute its non-demand dogma effects. Do not share them."
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::executeNonDemandEffects($card);
+                        // TODO(4E): There are likely bugs that could arise given that the card remains in the revealed zone (this may conflict with assumptions in other cards).
+                        if (!self::executeNonDemandEffects($card)) {
+                            // If there were no cards to execute, make sure the player puts the card back in the score pile.
+                            self::transferCardFromTo($card, $player_id, 'score');
+                        }
                     }
                     break;
 
