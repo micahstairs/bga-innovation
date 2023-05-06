@@ -23442,7 +23442,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        
         case "448N1+A":
+        case "448N1B":
             // "Return from your hand all cards of value equal to the value of the revealed card."
             $options = array(
                 'player_id' => $player_id,
@@ -26491,7 +26493,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         // TODO(4E): There are likely bugs that could arise given that the card remains in the revealed zone (this may conflict with assumptions in other cards).
                         if (!self::executeNonDemandEffects($card)) {
-                            // If there were no cards to execute, make sure the player puts the card back in the score pile.
+                            // If there were no non-demands to execute, make sure the player puts the card back in the score pile.
                             self::transferCardFromTo($card, $player_id, 'score');
                         }
                     }
@@ -26503,11 +26505,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         self::setAuxiliaryValue($card['age']);
-                        self::executeNonDemandEffects($card);
+                        if (!self::executeNonDemandEffects($card)) {
+                            // If there were no non-demands to execute, make sure the rest of the effect still happens.
+                            self::transferCardFromTo($card, $player_id, 'hand');
+                            self::setStepMax(2);
+                        }
                     }
                     break;
 
                 case "448N1+A":
+                case "448N1B":
                     // "Draw three cards of that value."
                     $age = self::getAuxiliaryValue();
                     self::executeDraw($player_id, $age);
