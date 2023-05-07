@@ -16038,14 +16038,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 448, age 11: Escapism
             case "448N1":
+                self::setAuxiliaryValue(-1); // Indicate that no card has been revealed yet
                 $step_max = 1;
                 break;
 
             case "448N1+":
-                // If there is a card there, then put it back.
-                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
-                    $step_max = 1; // card was revealed, thus the second half of this effect should be executed.
-                    self::transferCardFromTo($card, $player_id, 'hand');
+                // If a card was revealed, then execute the rest of the effect
+                if (self::getAuxiliaryValue() >= 0) {
+                    $step_max = 1;
                 }                
                 break;
                 
@@ -16053,7 +16053,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "449D1":
                 $step_max = 1;
                 break;
-
                 
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
@@ -23442,7 +23441,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        
         case "448N1+A":
         case "448N1B":
             // "Return from your hand all cards of value equal to the value of the revealed card."
@@ -23454,7 +23452,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => $this->innovationGameState->get('age_last_selected')
+                'age' => self::getAuxiliaryValue(),
             );
             break;
             
@@ -26505,9 +26503,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         self::setAuxiliaryValue($card['age']);
+                        self::transferCardFromTo($card, $player_id, 'hand');
                         if (!self::executeNonDemandEffects($card)) {
                             // If there were no non-demands to execute, make sure the rest of the effect still happens.
-                            self::transferCardFromTo($card, $player_id, 'hand');
                             self::setStepMax(2);
                         }
                     }
