@@ -16000,13 +16000,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
-            case "446N1+":
-                // If there is still a card in the revealed area, then put it back in the score pile.
-                foreach (self::getCardsInLocation($player_id, 'revealed') as $card) {
-                    self::transferCardFromTo($card, $player_id, 'score');
-                }
-                break;
-
             // id 447, age 11: Reclamation
             case "447N1":
                 // "Return your three bottom red cards."
@@ -26489,11 +26482,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Reveal the highest card in your score pile and execute its non-demand dogma effects. Do not share them."
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        // TODO(4E): There are likely bugs that could arise given that the card remains in the revealed zone (this may conflict with assumptions in other cards).
-                        if (!self::executeNonDemandEffects($card)) {
-                            // If there were no non-demands to execute, make sure the player puts the card back in the score pile.
-                            self::transferCardFromTo($card, $player_id, 'score');
-                        }
+                        self::transferCardFromTo($card, $player_id, 'score');
+                        self::executeNonDemandEffects($card);
                     }
                     break;
 
