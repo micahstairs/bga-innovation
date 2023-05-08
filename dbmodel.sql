@@ -703,9 +703,23 @@ INSERT INTO `card` (`id`, `type`, `age`, `color`, `spot_1`, `spot_2`, `spot_3`, 
 (321, 2,10, 3,   2,   6,  13,   2, 0,   9, 2, 'removed'),
 (322, 2,10, 3, 110, 110,   6,   1, 0,   1, 1, 'removed'),
 (323, 2,10, 4,   5,   6,   9,   5, 0,   9, 5, 'removed'),
-(324, 2,10, 4,   2,   3,  13,   3, 0,   9, 3, 'removed');
+(324, 2,10, 4,   2,   3,  13,   3, 0,   9, 3, 'removed'),
+
+/* Cities - Age 11 */
+/* TODO(4E):  Put real icons in here */
+(460, 2, 11, 0, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(461, 2, 11, 0, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(462, 2, 11, 1, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(463, 2, 11, 1, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(464, 2, 11, 2, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(465, 2, 11, 2, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(466, 2, 11, 3, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(467, 2, 11, 3, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(468, 2, 11, 4, 0, 0, 0, 0, 0, 0, 0, 'removed'),
+(469, 2, 11, 4, 0, 0, 0, 0, 0, 0, 0, 'removed');
 
 /* Cities - Flags */
+/* TODO(4E): Revisit this to see if we need to add more. */
 INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
 (1000, 2, 0, 'flags', 0),
 (1001, 2, 1, 'flags', 1),
@@ -722,6 +736,7 @@ INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
 (1012, 2, 4, 'flags', 12);
 
 /* Cities - Fountains */
+/* TODO(4E): Revisit this to see if we need to add more. */
 INSERT INTO `card` (`id`, `type`, `color`, `location`, `position`) VALUES
 (1100, 2, 0, 'fountains', 0),
 (1101, 2, 0, 'fountains', 1),

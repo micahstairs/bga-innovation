@@ -1909,6 +1909,20 @@ $this->textual_card_infos = array(
     'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card with a demand effect of each color from your board to my board! If you transfer a card, exchange all cards in your score pile with all cards in my score pile!'),
 ),
 
+/* 450-459 are reserved for Artifacts - Age 11 */
+
+/* Cities - Age 11 */
+
+460 => array('name' => clienttranslate('Prague')),
+461 => array('name' => clienttranslate('Seattle')),
+462 => array('name' => clienttranslate('Guangzhou')),
+463 => array('name' => clienttranslate('Warsaw')),
+464 => array('name' => clienttranslate('Beirut')),
+465 => array('name' => clienttranslate('Riyadh')),
+466 => array('name' => clienttranslate('Nairobi')),
+467 => array('name' => clienttranslate('Shenzhen')),
+468 => array('name' => clienttranslate('Lima')),
+469 => array('name' => clienttranslate('Brisbane')),
 
 );
 

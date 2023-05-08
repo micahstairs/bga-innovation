@@ -560,6 +560,8 @@ class Innovation extends Table
         self::initStat('player', 'dogma_actions_number_with_sharing', 0);
         self::initStat('player', 'i_demand_effects_number', 0);
         self::initStat('player', 'sharing_effects_number', 0);
+
+        $edition = $this->innovationGameState->getEdition();
         
         // Add cards from expansions that are in use.
         if ($this->innovationGameState->artifactsExpansionEnabled()) {
@@ -571,6 +573,9 @@ class Innovation extends Table
 
         if ($this->innovationGameState->citiesExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
+            if ($edition == 4) {
+                self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 460 <= id AND id <= 469");
+            }
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
         }
 
@@ -579,7 +584,7 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
         }
 
-        if (!$this->innovationGameState->usingFourthEditionRules()) {
+        if ($edition <= 3) {
             // Certain cards got new symbols in the 4th edition, so we need to revert them when using an earlier edition
             self::DbQuery("UPDATE card SET spot_2 = 6 WHERE id = 96"); // Software
             self::DbQuery("UPDATE card SET spot_3 = 6 WHERE id = 98"); // Robotics
