@@ -1266,24 +1266,32 @@ $this->textual_card_infos = array(
 
 /* Cities Special achievements */
 
-325 => array('name' => clienttranslate('Legend'),
+325 => array(
+    'name_first_and_third' => clienttranslate('Legend'),
+    'name_fourth' => clienttranslate('Tradition'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_11} on a color already splayed left.'),
 ),
 
-326 => array('name' => clienttranslate('Repute'),
+326 => array(
+    'name' => clienttranslate('Repute'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_12} on a color already splayed right.'),
 ),
 
-327 => array('name' => clienttranslate('Fame'),
+327 => array(
+    'name' => clienttranslate('Fame'),
     'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you meld a city with a ${icon_13} on a color already splayed up.'),
 ),
 
-328 => array('name' => clienttranslate('Glory'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_8}.'),
+328 => array(
+    'name' => clienttranslate('Glory'),
+    'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_8}.'),
+    'condition_for_claiming_fourth' => clienttranslate('Claim this special achievement ${immediately} if you junk a city with a ${icon_8} from your hand.'),
 ),
 
-329 => array('name' => clienttranslate('Victory'),
-    'condition_for_claiming' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_9}.'),
+329 => array(
+    'name' => clienttranslate('Victory'),
+    'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you tuck a city with a ${icon_9}.'),
+    'condition_for_claiming_fourth' => clienttranslate('Claim this special achievement ${immediately} if you junk a city with a ${icon_9} from your hand.'),
 ),
     
 /* Echoes - Age 1 */

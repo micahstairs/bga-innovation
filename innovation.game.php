@@ -1539,15 +1539,22 @@ class Innovation extends Table
         if ($current_state['name'] != 'gameSetup') {
             try {
                 self::updateGameSituation($card, $transferInfo);
-                if ($card['type'] == 2 && $location_to == 'board') { // city card going on a board
-                    if ($bottom_to) { // tuck
+                if ($card['type'] == 2) {
+                    if ($location_from == 'hand' && $location_to == 'junk') {
+                        if (self::hasRessource($card, 8)) { // has a flag
+                            self::claimSpecialAchievement($owner_to, 328); // Glory (4th edition)
+                        }
+                        if (self::hasRessource($card, 9)) { // has a fountain
+                            self::claimSpecialAchievement($owner_to, 329); // Victory (4th edition)
+                        }
+                    } else if ($location_to == 'board' && $bottom_to && $this->innovationGameState->getEdition() <= 3) { // tuck
                         if (self::hasRessource($card, 8)) { // has a flag
                             self::claimSpecialAchievement($owner_to, 328); // Glory
                         }
                         if (self::hasRessource($card, 9)) { // has a fountain
                             self::claimSpecialAchievement($owner_to, 329); // Victory
                         }
-                    } else if ($meld_keyword) { // meld
+                    } else if ($location_to == 'board' && $meld_keyword) { // meld
                         $current_splay_direction = self::getCurrentSplayDirection($owner_to, $card['color']);
                         if (self::hasRessource($card, 11) && $current_splay_direction == 1) { // has a left arrow and already splayed left
                             self::claimSpecialAchievement($owner_to, 325); // Legend
@@ -4117,15 +4124,15 @@ class Innovation extends Table
         if ($id >= 1000) { // Flags and fountains
             return null;
         }
-        return $this->textual_card_infos[$id]['name'];
+        return self::getCardPropertyForCurrentVersion('name', $id);
     }
 
     function getNonDemandEffect($id, $effect_number) {
-        return self::getCurrentVersionOfEffect('non_demand_effect_'.$effect_number, $id);
+        return self::getCardPropertyForCurrentVersion('non_demand_effect_'.$effect_number, $id);
     }
 
     function getDemandEffect($id) {
-        return self::getCurrentVersionOfEffect('i_demand_effect_1', $id);
+        return self::getCardPropertyForCurrentVersion('i_demand_effect_1', $id);
     }
 
     function isCompelEffect($id) {
@@ -4139,7 +4146,7 @@ class Innovation extends Table
         return null;
     }
 
-    function getCurrentVersionOfEffect($prefix, $id) {
+    function getCardPropertyForCurrentVersion($prefix, $id) {
         $card_info = $this->textual_card_infos[$id];
         if (array_key_exists($prefix, $card_info)) {
             return $card_info[$prefix];
@@ -4175,6 +4182,11 @@ class Innovation extends Table
         $id = $card['id'];
         $textual_infos = $this->textual_card_infos[$id];
 
+        // Make sure the name reflects the current edition
+        $textual_infos['name'] = self::getCardName($id);
+        unset($textual_infos['name_first_and_third']);
+        unset($textual_infos['name_fourth']);
+
         // Make sure the demand effect reflects the current edition
         $textual_infos['i_demand_effect_1'] = self::getDemandEffect($id);
         if ($textual_infos['i_demand_effect_1'] === null) {
@@ -4201,7 +4213,7 @@ class Innovation extends Table
         }
 
         // Make sure the condition for claiming the special achievement reflects the current edition
-        $textual_infos['condition_for_claiming'] = self::getCurrentVersionOfEffect('condition_for_claiming', $id);
+        $textual_infos['condition_for_claiming'] = self::getCardPropertyForCurrentVersion('condition_for_claiming', $id);
         if ($textual_infos['condition_for_claiming'] === null) {
             unset($textual_infos['condition_for_claiming']);
         }
