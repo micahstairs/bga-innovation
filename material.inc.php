@@ -1262,7 +1262,7 @@ $this->textual_card_infos = array(
 321 => array('name' => clienttranslate('Copenhagen')),
 322 => array('name' => clienttranslate('Dubai')),
 323 => array('name' => clienttranslate('Brussels')),
-324 => array('name' => clienttranslate('Essen')),
+324 => array('name_first_and_third' => clienttranslate('Essen'), 'name_fourth' => clienttranslate('Lagos')),
 
 /* Cities Special achievements */
 

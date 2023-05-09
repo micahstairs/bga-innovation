@@ -577,6 +577,35 @@ class Innovation extends Table
                 self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 460 <= id AND id <= 469");
             }
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
+            if ($edition <= 3) {
+                self::DbQuery("UPDATE card SET spot_6 = 4 WHERE id = 221"); // Troy
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 228"); // Babylon
+                self::DbQuery("UPDATE card SET spot_3 = 5, spot_6 = 4 WHERE id = 237"); // Sparta
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 243"); // Luoyang
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 245"); // Hangzhou
+                self::DbQuery("UPDATE card SET spot_1 = 1, spot_6 = 2 WHERE id = 252"); // Jakarta
+                self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 258"); // Milan
+                self::DbQuery("UPDATE card SET spot_6 = 3 WHERE id = 264"); // Seville
+                self::DbQuery("UPDATE card SET spot_6 = 8 WHERE id = 267"); // Zurich
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 269"); // Amsterdam
+                self::DbQuery("UPDATE card SET spot_6 = 8 WHERE id = 282"); // Dublin
+                self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 284"); // New York City
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 288"); // Montreal
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 289"); // London
+                self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 295"); // Chongqing
+                self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 299"); // Hamburg
+                self::DbQuery("UPDATE card SET spot_3 = 14 WHERE id = 313"); // Hong Kong
+                self::DbQuery("UPDATE card SET spot_6 = 14 WHERE id = 314"); // Moscow
+                self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 315"); // Bangalore
+                self::DbQuery("UPDATE card SET spot_2 = 110, spot_6 = 6 WHERE id = 316"); // Atlanta
+                self::DbQuery("UPDATE card SET spot_1 = 110, spot_6 = 5 WHERE id = 317"); // Singapore
+                self::DbQuery("UPDATE card SET spot_1 = 2, spot_2 = 6, spot_4 = 6, spot_6 = 9 WHERE id = 318"); // Seoul
+                self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 319"); // Tel Aviv
+                self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 321"); // Copenhagen
+                self::DbQuery("UPDATE card SET spot_2 = 110, spot_6 = 1 WHERE id = 322"); // Dubai
+                self::DbQuery("UPDATE card SET spot_2 = 6, spot_3 = 9, spot_4 = 5, spot_6 = 9 WHERE id = 323"); // Brussels
+                self::DbQuery("UPDATE card SET spot_6 = 9 WHERE id = 324"); // Essen (renamed to Lagos in 4th edition)
+            }
         }
 
         if ($this->innovationGameState->echoesExpansionEnabled()) {
