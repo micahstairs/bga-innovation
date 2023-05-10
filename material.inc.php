@@ -274,7 +274,8 @@ $this->textual_card_infos = array(
 47 => array('name' => clienttranslate('Coal'),
     'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_5}.'),
     'non_demand_effect_2' => clienttranslate('You may splay your red cards right.'),
-    'non_demand_effect_3' => clienttranslate('You may score any one of your top cards. If you do, also score the card beneath it.'),
+    'non_demand_effect_3_first_and_third' => clienttranslate('You may score any one of your top cards. If you do, also score the card beneath it.'),
+    'non_demand_effect_3_fourth' => clienttranslate('You may score one of your top cards. If you do, also score the card beneath it.'),
 ),
 
 48 => array('name' => clienttranslate('The pirate code'),
@@ -349,7 +350,8 @@ $this->textual_card_infos = array(
 ),
 
 61 => array('name' => clienttranslate('Canning'),
-    'non_demand_effect_1' => clienttranslate('You may draw and tuck a ${age_6}. If you do, score all your top cards without a ${icon_5}.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may draw and tuck a ${age_6}. If you do, score all your top cards without a ${icon_5}.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may draw and tuck a ${age_6}. If you do, score a top card without a ${icon_5} of each color on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow cards right.'),
 ),
 
