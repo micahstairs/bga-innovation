@@ -1444,12 +1444,19 @@
         &.icon_3,
         &.icon_4,
         &.icon_5,
-        &.icon_6 {
+        &.icon_6,
+        &.icon_7 {
             @include m.icon-background;
             background-size: 92px auto;
             background-position-y: -77px;
             width: 14px;
             height: 14px;
+        }
+
+        &.icon_7 {
+            background-image: url("img/avatar.png");
+            background-size: 14px auto;
+            background-position: 0px 0px !important;
         }
 
         #pagemaintitletext>&.age {
@@ -1710,6 +1717,12 @@
             @include m.icon-background;
             background-size: 83px auto;
             background-position-y: -42px;
+        }
+
+        &.icon_7 {
+            background-image: url("img/avatar.png");
+            background-size: 12px auto;
+            background-position: 0px 0px !important;
         }
 
         &.icon_8,
