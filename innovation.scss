@@ -1517,7 +1517,9 @@
         @include m.generate-icon-x-position(1, 7, 1, 22.1px);
 
         &.icon_7 {
-            filter: brightness(0%);
+            background-image: url("img/avatar.png");
+            background-size: 20px auto;
+            background-position: 0px 0px;
         }
     }
 
@@ -1806,7 +1808,9 @@
         }
 
         &.icon_7 {
-            filter: brightness(0%);
+            background-image: url("img/avatar.png");
+            background-size: 10px auto;
+            background-position: 0px 0px;
         }
 
         @include m.generate-icon-x-position(1, 7, 0, 10px);
@@ -1831,7 +1835,9 @@
         }
 
         &.icon_7 {
-            filter: brightness(0%);
+            background-image: url("img/avatar.png");
+            background-size: 20px auto;
+            background-position: 0px 0px;
         }
 
         @include m.generate-icon-x-position(1, 7, 0, 20px);
@@ -2017,8 +2023,9 @@
         }
 
         &.icon_7 {
-            background-position-x: -1px;
-            filter: brightness(0%);
+            background-image: url("img/avatar.png");
+            background-size: 36px auto;
+            background-position: 0px 0px !important;
         }
 
         &.icon_10 {
@@ -2115,8 +2122,9 @@
         }
 
         &.icon_7 {
-            background-position-x: -1.5px;
-            filter: brightness(0%);
+            background-image: url("img/avatar.png");
+            background-size: 75px auto;
+            background-position: 0px 0px !important;
         }
 
         &.icon_10 {

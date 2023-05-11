@@ -1328,7 +1328,9 @@
   background-position-x: -133.6px;
 }
 .square.P.icon_7 {
-  filter: brightness(0%);
+  background-image: url("img/avatar.png");
+  background-size: 20px auto;
+  background-position: 0px 0px;
 }
 .square.M {
   width: 9px;
@@ -1605,7 +1607,9 @@
   background-size: 60px auto;
 }
 .dogma_symbol.M.icon_7 {
-  filter: brightness(0%);
+  background-image: url("img/avatar.png");
+  background-size: 10px auto;
+  background-position: 0px 0px;
 }
 .dogma_symbol.M.icon_1 {
   background-position-x: 0px;
@@ -1654,7 +1658,9 @@
   background-size: 120px auto;
 }
 .dogma_symbol.L.icon_7 {
-  filter: brightness(0%);
+  background-image: url("img/avatar.png");
+  background-size: 20px auto;
+  background-position: 0px 0px;
 }
 .dogma_symbol.L.icon_1 {
   background-position-x: 0px;
@@ -1852,8 +1858,9 @@
   background-position-x: -192.5px;
 }
 .square_card_icon.M.icon_7 {
-  background-position-x: -1px;
-  filter: brightness(0%);
+  background-image: url("img/avatar.png");
+  background-size: 36px auto;
+  background-position: 0px 0px !important;
 }
 .square_card_icon.M.icon_10 {
   background-image: none;
@@ -1927,8 +1934,9 @@
   background-position-x: -393.5px;
 }
 .square_card_icon.L.icon_7 {
-  background-position-x: -1.5px;
-  filter: brightness(0%);
+  background-image: url("img/avatar.png");
+  background-size: 75px auto;
+  background-position: 0px 0px !important;
 }
 .square_card_icon.L.icon_10 {
   background-image: none;
