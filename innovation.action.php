@@ -286,10 +286,10 @@
 
         // Retrieve arguments
         $card_to_endorse_id = self::getArg("card_to_endorse_id", AT_posint, true);
-        $card_to_tuck_id = self::getArg("card_to_tuck_id", AT_posint, true);
+        $payment_card_id = self::getArg("payment_card_id", AT_posint, true);
 
         // Call endorse from game logic
-        $this->game->endorse($card_to_endorse_id, $card_to_tuck_id);
+        $this->game->endorse($card_to_endorse_id, $payment_card_id);
 
         self::ajaxResponse();
     }

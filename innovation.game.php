@@ -1377,6 +1377,10 @@ class Innovation extends Table
         return self::transferCardFromTo($card, 0, 'deck');
     }
 
+    function junkCard($card) {
+        return self::transferCardFromTo($card, 0, 'junk');
+    }
+
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
@@ -2270,6 +2274,10 @@ class Innovation extends Table
         case 'hand->achievements':
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his hand.');
+            break;
+        case 'hand->junk':
+            $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+            $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from his hand.');
             break;
         case 'hand->forecast':
             $message_for_player = clienttranslate('${You} foreshadow ${<}${age}${>} ${<<}${name}${>>} from your hand.');
@@ -7989,14 +7997,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::incStat(1, 'dogma_actions_number_targeting_artifact_on_board', $player_id);
         }
 
-        self::setUpDogma($player_id, $card, /*extra_icons_from_artifact_on_display=*/ 0, /*card_to_tuck=*/ null, $card_to_return);
+        self::setUpDogma($player_id, $card, /*extra_icons_from_artifact_on_display=*/ 0, /*endorse_payment_card=*/ null, $card_to_return);
 
         // Resolve the first dogma effect of the card
         self::trace('playerTurn->dogmaEffect (dogma)');
         $this->gamestate->nextState('dogmaEffect');
     }
 
-    function endorse($card_to_endorse_id, $card_to_tuck_id) {
+    function endorse($card_to_endorse_id, $card_for_payment_id) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('endorse');
 
@@ -8021,15 +8029,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::throwInvalidChoiceException();
         }
 
-        // Check that the player really has a card to tuck
-        $card_to_tuck = self::getCardInfo($card_to_tuck_id);
-        if ($card_to_tuck['owner'] != $player_id || $card_to_tuck['location'] != "hand") {
+        // Check that the player really has a card to tuck/junk
+        $card_payment = self::getCardInfo($card_for_payment_id);
+        if ($card_payment['owner'] != $player_id || $card_payment['location'] != "hand") {
             self::throwInvalidChoiceException();
         }
 
-        // Make sure the endorsement is valid given this card being tucked
-        $max_age_to_tuck = self::getMaxAgeToTuckForEndorse($card_to_endorse);
-        if ($max_age_to_tuck == null || $card_to_tuck['age'] > $max_age_to_tuck) {
+        // Make sure the endorsement is valid given this card being tucked/junked
+        $max_payment_age = self::getMaxAgeForEndorsePayment($card_to_endorse);
+        if ($max_payment_age == null || $card_payment['age'] > $max_payment_age) {
             self::throwInvalidChoiceException();
         }
 
@@ -8037,7 +8045,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         try {
             // The tuck to pay for the Endorse action happens inside of setUpDogma
-            self::setUpDogma($player_id, $card_to_endorse, /*extra_icons_from_artifact_on_display=*/ 0, $card_to_tuck);
+            self::setUpDogma($player_id, $card_to_endorse, /*extra_icons_from_artifact_on_display=*/ 0, $card_payment);
         } catch (EndOfGame $e) {
             // End of the game: the exception has reached the highest level of code
             self::trace('EOG bubbled from self::endorse');
@@ -8092,7 +8100,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
     
-    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $card_to_tuck = null, $card_to_return = null) {
+    function setUpDogma($player_id, $card, $extra_icons_from_artifact_on_display = 0, $endorse_payment_card = null, $card_to_return = null) {
 
         self::notifyDogma($card);
 
@@ -8105,9 +8113,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        if ($card_to_tuck != null) {
+        if ($endorse_payment_card != null) {
             try {
-                self::tuckCard($card_to_tuck, $player_id);
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    self::junkCard($endorse_payment_card, $player_id);
+                } else {
+                    self::tuckCard($endorse_payment_card, $player_id);
+                }
             } catch (EndOfGame $e) {
                 self::trace('EOG bubbled from self::setUpDogma');
                 throw $e; // Re-throw exception to higher level
@@ -8764,26 +8776,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $dogma_effect_info['on_non_adjacent_board'] = $card['owner'] != $launcher_id;
 
         if ($this->innovationGameState->get('endorse_action_state') == 1 && !$is_on_display) {
-            $max_age_to_tuck_for_endorse = self::getMaxAgeToTuckForEndorse($card);
+            $max_age_for_endorse_payment = self::getMaxAgeForEndorsePayment($card);
             $can_endorse = false;
-            if ($max_age_to_tuck_for_endorse != null) {
+            if ($max_age_for_endorse_payment != null) {
                 foreach (self::getCardsInHand($launcher_id) as $card_in_hand) {
-                    if ($card_in_hand['age'] <= $max_age_to_tuck_for_endorse) {
+                    if ($card_in_hand['age'] <= $max_age_for_endorse_payment) {
                         $can_endorse = true;
                         break;
                     }
                 }
             }
             if ($can_endorse) {
-                $dogma_effect_info['max_age_to_tuck_for_endorse'] = $max_age_to_tuck_for_endorse;
+                $dogma_effect_info['max_age_for_endorse_payment'] = $max_age_for_endorse_payment;
             }
         }
 
         return $dogma_effect_info;
     }
 
-    /** Returns the maximum age card that can be tucked in order to endorse the card, or null if there are no City cards matching the featured icon. */
-    function getMaxAgeToTuckForEndorse($card) {
+    /** Returns the maximum age card that can be tucked/junked in order to endorse the card, or null if there are no City cards matching the featured icon. */
+    function getMaxAgeForEndorsePayment($card) {
         // Battleship Yamato does not have any icons on it so it cannot be executed
         $dogma_icon = $card['dogma_icon'];
         if ($dogma_icon == null) {

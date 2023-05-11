@@ -1176,7 +1176,7 @@ var Innovation = /** @class */ (function (_super) {
                     cards_on_non_adjacent_board.addClass("clickable");
                     this.on(cards_on_non_adjacent_board, 'onclick', 'action_clickNonAdjacentDogma');
                     // Cards on board (endorse action)
-                    // TODO(4E): Make it possible to endorse dogmas on non-adjacent boards.
+                    // TODO(4E-CITIES): Make it possible to endorse dogmas on non-adjacent boards.
                     var endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
                     this.off(endorsable_cards, 'onclick');
                     endorsable_cards.addClass("can_endorse");
@@ -2032,8 +2032,8 @@ var Innovation = /** @class */ (function (_super) {
         cards.forEach(function (card) {
             var HTML_id = dojo.attr(card, "id");
             var id = self.getCardIdFromHTMLId(HTML_id);
-            if (dogma_effect_info[id].max_age_to_tuck_for_endorse != undefined) {
-                dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse', dogma_effect_info[id].max_age_to_tuck_for_endorse);
+            if (dogma_effect_info[id].max_age_for_endorse_payment != undefined) {
+                dojo.attr(HTML_id, 'max_age_for_endorse_payment', dogma_effect_info[id].max_age_for_endorse_payment);
             }
             dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id].no_effect);
             dojo.attr(HTML_id, 'card_id', id);
@@ -2165,7 +2165,7 @@ var Innovation = /** @class */ (function (_super) {
         var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
         var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
         var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
-        var can_endorse = dogma_effect_info[card.id].max_age_to_tuck_for_endorse != undefined;
+        var can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment != undefined;
         var on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
         if (info.no_effect) {
             return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
@@ -2176,7 +2176,12 @@ var Innovation = /** @class */ (function (_super) {
             HTML_action += _("Click 'Dogma and Return' to execute the dogma effect(s) of this card.");
         }
         else if (can_endorse) {
-            HTML_action += dojo.string.substitute(_("Click and you will be given the option to either use a Dogma action targeting this card, or to use an Endorse action by tucking a card of value ${age} or lower."), { 'age': self.square('N', 'age', dogma_effect_info[card.id].max_age_to_tuck_for_endorse) });
+            if (self.gamedatas.fourth_edition) {
+                HTML_action += dojo.string.substitute(_("Click and you will be given the option to either use a Dogma action targeting this card, or to use an Endorse action by junking a card of value ${age} or lower from your hand."), { 'age': self.square('N', 'age', dogma_effect_info[card.id].max_age_for_endorse_payment) });
+            }
+            else {
+                HTML_action += dojo.string.substitute(_("Click and you will be given the option to either use a Dogma action targeting this card, or to use an Endorse action by tucking a card of value ${age} or lower from your hand."), { 'age': self.square('N', 'age', dogma_effect_info[card.id].max_age_for_endorse_payment) });
+            }
         }
         else if (on_non_adjacent_board) {
             HTML_action += _("Click and you will be given the option to choose a card to return from your hand in order to execute the dogma effect(s) of this card.");
@@ -2447,15 +2452,15 @@ var Innovation = /** @class */ (function (_super) {
             }
             var top_card = pile[pile.length - 1];
             var card_id = this.getCardIdFromHTMLId(top_card.id);
-            if (dogma_effect_info[card_id].max_age_to_tuck_for_endorse != undefined) {
+            if (dogma_effect_info[card_id].max_age_for_endorse_payment != undefined) {
                 list.push(dojo.byId(top_card.id));
             }
         }
         return list;
     };
-    Innovation.prototype.selectMyCardsEligibleToTuckForEndorsedDogma = function (max_age_to_tuck_for_endorse) {
+    Innovation.prototype.selectMyCardsEligibleForEndorsedDogmaPayment = function (max_age_for_endorse_payment) {
         var queries = [];
-        for (var age = 1; age <= max_age_to_tuck_for_endorse; age++) {
+        for (var age = 1; age <= max_age_for_endorse_payment; age++) {
             queries.push("#hand_".concat(this.player_id, " > .age_").concat(age));
         }
         return dojo.query(queries.join(","));
@@ -3654,8 +3659,13 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_id = this.getCardHTMLIdFromEvent(event);
         var card_id = dojo.attr(HTML_id, 'card_id');
         var card = this.cards[card_id];
-        var max_age_to_tuck_for_endorse = dojo.attr(HTML_id, 'max_age_to_tuck_for_endorse');
-        $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand to tuck"), { 'age': this.square('N', 'age', card.age, 'type_' + card.type), 'card_name': _(card.name), 'tuck_age': this.square('N', 'age', max_age_to_tuck_for_endorse) });
+        var max_age_for_endorse_payment = dojo.attr(HTML_id, 'max_age_for_endorse_payment');
+        if (this.gamedatas.fourth_edition) {
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${junk_age} or lower from your hand to junk"), { 'age': this.square('N', 'age', card.age, 'type_' + card.type), 'card_name': _(card.name), 'junk_age': this.square('N', 'age', max_age_for_endorse_payment) });
+        }
+        else {
+            $('pagemaintitletext').innerHTML = dojo.string.substitute(_("Endorse ${age} ${card_name} by selecting a card of value ${tuck_age} or lower from your hand to tuck"), { 'age': this.square('N', 'age', card.age, 'type_' + card.type), 'card_name': _(card.name), 'tuck_age': this.square('N', 'age', max_age_for_endorse_payment) });
+        }
         // Add cancel button
         this.addActionButton("endorse_cancel_button", _("Cancel"), "action_cancelEndorse");
         dojo.removeClass("endorse_cancel_button", 'bgabutton_blue');
@@ -3664,12 +3674,12 @@ var Innovation = /** @class */ (function (_super) {
         this.addActionButton("dogma_without_endorse_button", _("Dogma without endorse"), "action_dogmaWithoutEndorse");
         dojo.attr('dogma_without_endorse_button', 'html_id', HTML_id);
         dojo.attr('dogma_without_endorse_button', 'card_id', card_id);
-        // Make tuckable cards clickable
-        var cards_to_tuck = this.selectMyCardsEligibleToTuckForEndorsedDogma(max_age_to_tuck_for_endorse);
-        cards_to_tuck.addClass("clickable");
-        cards_to_tuck.addClass("mid_dogma");
-        this.on(cards_to_tuck, 'onclick', 'action_confirmEndorse');
-        cards_to_tuck.forEach(function (node) {
+        // Make cards for payment clickable
+        var payment_cards = this.selectMyCardsEligibleForEndorsedDogmaPayment(max_age_for_endorse_payment);
+        payment_cards.addClass("clickable");
+        payment_cards.addClass("mid_dogma");
+        this.on(payment_cards, 'onclick', 'action_confirmEndorse');
+        payment_cards.forEach(function (node) {
             dojo.attr(node, 'card_to_endorse_id', card_id);
         });
     };
@@ -3699,13 +3709,13 @@ var Innovation = /** @class */ (function (_super) {
         dojo.destroy("endorse_cancel_button");
         dojo.destroy("dogma_without_endorse_button");
         var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var card_to_tuck_id = this.getCardIdFromHTMLId(HTML_id);
+        var payment_card_id = this.getCardIdFromHTMLId(HTML_id);
         var card_to_endorse_id = dojo.attr(HTML_id, 'card_to_endorse_id');
         var self = this;
         this.ajaxcall("/innovation/innovation/endorse.html", {
             lock: true,
             card_to_endorse_id: card_to_endorse_id,
-            card_to_tuck_id: card_to_tuck_id
+            payment_card_id: payment_card_id
         }, this, function (result) { }, function (is_error) { if (is_error)
             self.resurrectClickEvents(true); });
     };
