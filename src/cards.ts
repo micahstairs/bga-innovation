@@ -70,8 +70,7 @@ function getBonusIconValues(icons: number[]) {
 }
 
 function getBonusIconValue(icon: number) {
-    // TODO(4E): If there is a bonus icon with a value higher than 11, then this needs to be changed.
-    if (icon > 100 && icon <= 111) {
+    if (icon > 100 && icon <= 112) {
         return icon - 100;
     }
     return 0;

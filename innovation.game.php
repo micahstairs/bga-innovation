@@ -5129,44 +5129,44 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         for($i=0; $i<count($pile)-1; $i++) {
             $card = $pile[$i];
             if($splay_direction == 1) { // left
-                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111)
+                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 112)
                 {
                     $visible_bonus_icons[] = $card['spot_4'] - 100;
                 }
-                if ($card['spot_5'] >= 101 && $card['spot_5'] <= 111) {
+                if ($card['spot_5'] >= 101 && $card['spot_5'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_5'] - 100;
                 }
             }
             elseif ($splay_direction == 2) { // right
-                if ($card['spot_1'] >= 101 && $card['spot_1'] <= 111) {
+                if ($card['spot_1'] >= 101 && $card['spot_1'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_1'] - 100;
                 }
-                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_2'] - 100;
                 }
             }
             elseif ($splay_direction == 3) { // up
-                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_2'] - 100;
                 }
-                if ($card['spot_3'] >= 101 && $card['spot_3'] <= 111) {
+                if ($card['spot_3'] >= 101 && $card['spot_3'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_3'] - 100;
                 }
-                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111) {
+                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_4'] - 100;
                 }
             }
             elseif ($splay_direction == 4) { // aslant
-                if ($card['spot_1'] >= 101 && $card['spot_1'] <= 111) {
+                if ($card['spot_1'] >= 101 && $card['spot_1'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_1'] - 100;
                 }
-                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+                if ($card['spot_2'] >= 101 && $card['spot_2'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_2'] - 100;
                 }
-                if ($card['spot_3'] >= 101 && $card['spot_3'] <= 111) {
+                if ($card['spot_3'] >= 101 && $card['spot_3'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_3'] - 100;
                 }
-                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111) {
+                if ($card['spot_4'] >= 101 && $card['spot_4'] <= 112) {
                     $visible_bonus_icons[] = $card['spot_4'] - 100;
                 }
             }
@@ -5187,22 +5187,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getBonusIcons($card) {
         $bonus_icons = array();
         if ($card !== null) {
-            if ($card['spot_1'] >= 101 && $card['spot_1'] <= 111) {
+            if ($card['spot_1'] >= 101 && $card['spot_1'] <= 112) {
                 $bonus_icons[] = $card['spot_1'] - 100;
             }
-            if ($card['spot_2'] >= 101 && $card['spot_2'] <= 111) {
+            if ($card['spot_2'] >= 101 && $card['spot_2'] <= 112) {
                 $bonus_icons[] = $card['spot_2'] - 100;
             }
-            if ($card['spot_3'] >= 101 && $card['spot_3'] <= 111) {
+            if ($card['spot_3'] >= 101 && $card['spot_3'] <= 112) {
                 $bonus_icons[] = $card['spot_3'] - 100;
             }
-            if ($card['spot_4'] >= 101 && $card['spot_4'] <= 111) {
+            if ($card['spot_4'] >= 101 && $card['spot_4'] <= 112) {
                 $bonus_icons[] = $card['spot_4'] - 100;
             }            
-            if ($card['spot_5'] >= 101 && $card['spot_5'] <= 111) {
+            if ($card['spot_5'] >= 101 && $card['spot_5'] <= 112) {
                 $bonus_icons[] = $card['spot_5'] - 100;
             }
-            if ($card['spot_6'] >= 101 && $card['spot_6'] <= 111) {
+            if ($card['spot_6'] >= 101 && $card['spot_6'] <= 112) {
                 $bonus_icons[] = $card['spot_6'] - 100;
             }
         }
@@ -20434,7 +20434,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                     break;
                                 }
                             }
-                            for ($icon = 101; $icon <= 111; $icon++) { // count bonus icons
+                            for ($icon = 101; $icon <= 112; $icon++) { // count bonus icons
                                 if (self::countIconsOnCard($card, $icon) != self::countIconsOnCard($top_card, $icon)) {
                                     $match_found = false; // If any icon counts mismatch, then the card isn't eligible
                                     break;
