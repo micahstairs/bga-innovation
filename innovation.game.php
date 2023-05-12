@@ -9120,8 +9120,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 77: // Flight
                 $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, /*splay_direction=*/ 3);
                 $top_red_card = self::getTopCardOnBoard($executing_player_id, 1 /* red */);
-                // The second non-demand effect has no effect if the player's red pile is not or cannot be splayed up
-                if ($top_red_card == null || $top_red_card['splay_direction'] == 3 || !in_array(1 /* red */, $up_splayable_colors)) {
+                // The second non-demand effect has no effect if the player's red pile is not and cannot be splayed up
+                if ($top_red_card == null || ($top_red_card['splay_direction'] != 3 && !in_array(1 /* red */, $up_splayable_colors))) {
                     return true;
                 }
                 // The non-demand effects have no effect if the player has no piles that can be splayed up
