@@ -30,7 +30,8 @@ $this->textual_card_infos = array(
 ),
 
 1 => array('name' => clienttranslate('Tools'),
-    'non_demand_effect_1' => clienttranslate('You may return three cards from your hand. If you do, draw and meld a ${age_3}.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('You may return three cards from your hand. If you do, draw and meld a ${age_3}.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may return three cards from your hand. If you return three, draw and meld a ${age_3}.'),
     'non_demand_effect_2' => clienttranslate('You may return a ${age_3} from your hand. If you do, draw three ${age_1}.'),
 ),
 
@@ -472,7 +473,8 @@ $this->textual_card_infos = array(
 ),
 
 83 => array('name' => clienttranslate('Empiricism'),
-    'non_demand_effect_1' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is either of the colors you choose, meld it and you may splay your cards of that color up.'),
+    'non_demand_effect_1_first_and_third' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is either of the colors you choose, meld it and you may splay your cards of that color up.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is one of those colors, meld it and you may splay your cards of that color up.'),
     'non_demand_effect_2' => clienttranslate('If you have twenty or more ${icon_3} on your board, you win.'),
 ),
 
