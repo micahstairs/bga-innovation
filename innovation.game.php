@@ -6072,7 +6072,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 player_icon_count_3 = 0,
                 player_icon_count_4 = 0,
                 player_icon_count_5 = 0,
-                player_icon_count_6 = 0
+                player_icon_count_6 = 0,
                 player_icon_count_7 = 0
         ");
         
