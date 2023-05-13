@@ -15887,13 +15887,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color = $card['color'];
                     
                 if ($card['splay_direction'] != 4) { // aslant
-                    // "If the color of the melded card is not splayed aslant on your board, return all but your top two cards of this color"
+                    // "If its color is not splayed aslant on your board, return all but your top two cards of that color"
                     $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
                     $num_color_cards = $board_cards[$color];
                     if ($num_color_cards > 2) { // verify that more than two cards are there so transfer can occur
                         $num_cards_transferred = 0;
                         do {
-                            // "return all but your top two cards of this color"
                             $card = self::getBottomCardOnBoard($player_id, $color);
                             if ($card != null) {
                                 self::transferCardFromTo($card, $player_id, 'deck');
@@ -15901,12 +15900,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $num_cards_transferred++;
                         } while ($num_cards_transferred < $num_color_cards - 2);
                     }
-                    self::splayAslant($player_id, $player_id, $card['color']); // "and splay them aslant."				
+                    self::splayAslant($player_id, $player_id, $card['color']); // "and splay that color aslant"
                 }
                 
                 // Need to recount the cards to verify that the number of cards is right. 
                 if (self::countCardsInLocationKeyedByColor($player_id, 'board')[$color] >= 4) {
-                    // "If there are four or more cards of this color on your board, you win."
+                    // "If there are four or more cards of that color on your board, you win."
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 4 or more ${color} cards on your board.'), array('You' => 'You', 'color' => self::getColorInClear($color)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 4 or more ${color} cards on their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
                     $this->innovationGameState->set('winner_by_dogma', $player_id);
@@ -18032,9 +18031,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "84N1A_4E":
             // "You may tuck a top card from your board"
-            // NOTE: There's a chance that the intention is for the player to be able to tuck card(s) from their hand before
-            // tucking a top card, however, it's going to be much harder to implement, so let's do it this way first and see
-            // if there are any complaints.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -18050,7 +18046,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "84N1B_4E":
-            // "and all cards from your hand"
+            // "Tuck all cards from your hand"
             $options = array(
                 'player_id' => $player_id,
                 
@@ -23357,7 +23353,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
 
         case "440N1B":
-            // " and all cards in your score pile of equal or higher value than the top card."
+            // "Return all cards in your score pile of equal or higher value than the top card."
             $options = array(
                 'player_id' => $player_id,                
                 'n' => 2,

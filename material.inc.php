@@ -480,7 +480,7 @@ $this->textual_card_infos = array(
 
 84 => array('name' => clienttranslate('Socialism'),
     'non_demand_effect_1_first_and_third' => clienttranslate('You may tuck all cards from your hand. If you tuck one, you must tuck them all. If you tucked at least one purple card, take all the lowest cards in each other player\'s hand into your hand.'),
-    'non_demand_effect_1_fourth' => clienttranslate('You may tuck a top card from your board and all cards from your hand.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may tuck a top card from your board. If you do, tuck all cards from your hand.'),
     'non_demand_effect_2_fourth' => clienttranslate('You may junk an available achievement of value ${age_8}, ${age_9}, or ${age_10}.'),
     'separate_4E_implementation' => true,
 ),
@@ -1872,11 +1872,11 @@ $this->textual_card_infos = array(
 
 440 => array('name' => clienttranslate('Climatology'),
     'i_demand_effect_1' => clienttranslate('${I demand} you return two top cards from your board each with the icon of my choice other than ${icon_2}!'),
-    'non_demand_effect_1' => clienttranslate('Return a top card from your board and all cards in your score pile of equal or higher value than the top card.'),
+    'non_demand_effect_1' => clienttranslate('Return a top card from your board. Return all cards in your score pile of equal or higher value than the top card.'),
 ),
 
 441 => array('name' => clienttranslate('Solar Sailing'),
-    'non_demand_effect_1' => clienttranslate('Draw and meld an ${age_11}. If the color of the melded card is not splayed aslant on your board, return all but your top two cards of this color, and splay them aslant. If there are four or more cards of this color on your board, you win.'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld an ${age_11}. If its color is not splayed aslant on your board, return all but your top two cards of that color, and splay that color aslant. If there are four or more cards of that color on your board, you win.'),
 ),
 
 442 => array('name' => clienttranslate('Astrogeology'),
