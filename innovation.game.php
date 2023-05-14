@@ -11184,7 +11184,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 21, age 2: Canal building         
             case "21N1":
-                if (self::countCardsInLocation($player_id, 'score') == 0 && self::countCardsInLocation($player_id, 'hand') == 0) {
+                if (!$this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocation($player_id, 'score') == 0 && self::countCardsInLocation($player_id, 'hand') == 0) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards in your hand or score pile to exchange.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards in their hand or score pile to exchange.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 } else {
