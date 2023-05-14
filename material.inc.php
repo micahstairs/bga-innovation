@@ -1928,5 +1928,7 @@ $this->textual_card_infos = array(
 468 => array('name' => clienttranslate('Lima')),
 469 => array('name' => clienttranslate('Brisbane')),
 
+/* 470-479 are reserved for Echoes - Age 11 */
+
 );
 
