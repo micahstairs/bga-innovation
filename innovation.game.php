@@ -12175,22 +12175,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($card['color'] == 1 /* red */) { // "If it is red"
                     self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
                     self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
+                    // TODO(4E): Create new bulk notification for 4th edition.
                     self::notifyAll('removedHandsBoardsAndScores', clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'), array());
 
-                    // TODO(4E): Create new bulk notification for 4th edition.
                     if ($this->innovationGameState->usingFourthEditionRules()) {
                         // "junk each player's non-achievement cards, and the dogma action is complete!"
                         // The above action already removes the hands, boards, and score piles.
                         // In fourth edition, display (artifacts) and forecast (echoes) needs to be
                         // removed as well.
                         foreach (self::getAllPlayerIds() as $player) {
-                            $display_card = self::getCardsInLocation($player, 'display');
-                            if ($display_card !== null) {
+                            foreach (self::getCardsInLocation($player, 'display') as $display_card) {
                                 self::transferCardFromTo($display_card[0], 0, 'junk');
                             }
-                            $forecast_card = self::getCardsInLocation($player, 'forecast');
-                            foreach ($forecast_card as $card) {
-                                self::transferCardFromTo($card, 0, 'junk');
+                            foreach (self::getCardsInLocation($player, 'forecast') as $forecast_card) {
+                                self::transferCardFromTo($forecast_card, 0, 'junk');
                             }
                         }
                     }
