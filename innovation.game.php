@@ -26454,19 +26454,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 440, age 11: Climatology
                 case "440N1A":
-                    
-                    $cards_in_score = self::getCardsInLocation($player_id, 'score');
+                    $min_age_to_return = 0;
+                    if($n > 0) {
+                        $min_age_to_return = $this->innovationGameState->get('age_last_selected');
+                    }
                     
                     $card_ids_to_return = array();
-                    foreach ($cards_in_score as $card) {
-                        if ($card['age'] >= $this->innovationGameState->get('age_last_selected')) {
+                    foreach (self::getCardsInLocation($player_id, 'score') as $card) {
+                        if ($card['age'] >= $min_age_to_return) {
                             $card_ids_to_return[] = $card['id'];
                         }
                     }
                     
                     if (count($card_ids_to_return) > 0) {
                         self::incrementStepMax(1);
-                        self::setAuxiliaryArray($card_ids_to_return); // store ids for later
+                        self::setAuxiliaryArray($card_ids_to_return);
                     }
                     break;
 
