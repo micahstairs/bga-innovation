@@ -24269,7 +24269,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         break;
                     }
 
-                    $age_last_selected = $this->innovationGameState->get('age_last_selected') == 10;
+                    $age_last_selected = $this->innovationGameState->get('age_last_selected');
                     if ($age_last_selected == 10) { // "If you returned a 10"
                         $number_of_cards_in_score = self::countCardsInLocationKeyedByAge($player_id, 'score');
                         $number_of_different_value = 0;
