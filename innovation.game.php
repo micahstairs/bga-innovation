@@ -6050,7 +6050,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::recordThatChangeOccurred();
             self::notifyAll('junkedBaseDeck', clienttranslate('All cards in the ${age} deck were junked.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0), 'age_to_junk' => $age));
         } else {
-            self::notifyGeneralInfo(clienttranslate('No cards were in the ${age} deck.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0)));
+            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, /*type=*/ 0)));
         }
         
     }
