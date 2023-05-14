@@ -2790,8 +2790,8 @@ class Innovation extends Table
         
         $player_id = $transferInfo['player_id'];
         
-        if ($owner_from == 0 || $owner_to == 0) { // Used only for Rocketry or Fission or Mass media
-            switch($location_from . '->' . $location_to) {
+        if ($owner_from == 0 || $owner_to == 0) {
+            switch ($location_from . '->' . $location_to) {
             case 'score->deck':
                 $message_for_player = clienttranslate('${You} return a ${<}${age}${>} from ${opponent_name}\'s score pile.');
                 $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile.');
@@ -2808,6 +2808,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
                 $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
                 $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
+                break;
+            
+            case 'board->junk':
+                $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
+                $message_for_opponent = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
+                $message_for_others = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
                 break;
 
             default:
@@ -23757,7 +23763,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you don't, junk Fermenting and all cards in the 2 deck."
                     // NOTE: This only occurs in the 4th edition and beyond
                     if ($n == 0) {
-                        self::transferCardFromTo(self::getCardInfo(22), 0, 'junk');
+                        $fermenting_card = self::getCardInfo(22);
+                        if ($fermenting_card['location'] != 'junk') {
+                            self::transferCardFromTo($fermenting_card, 0, 'junk');
+                        }
                         self::junkBaseDeck(2);
                     }
                     break;
