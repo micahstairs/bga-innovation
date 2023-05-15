@@ -147,4 +147,12 @@ class GameState
     {
         return $this->get('echoes_mode') > 1;
     }
+
+    /**
+     * @return bool
+     */
+    public function unseenExpansionEnabled()
+    {
+        return $this->get('unseen_mode') > 1;
+    }
 }

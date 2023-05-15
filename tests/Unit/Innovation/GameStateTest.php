@@ -251,4 +251,18 @@ class GameStateTest extends BaseTest
 
         $this->assertTrue($this->state->echoesExpansionEnabled());
     }
+
+    public function testUnseenExpansionEnabled_disabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('unseen_mode')->willReturn(1);
+
+        $this->assertFalse($this->state->unseenExpansionEnabled());
+    }
+
+    public function testUnseenExpansionEnabled_enabled()
+    {
+        $this->game->expects($this->once())->method('getGameStateValue')->with('unseen_mode')->willReturn(2);
+
+        $this->assertTrue($this->state->unseenExpansionEnabled());
+    }
 }

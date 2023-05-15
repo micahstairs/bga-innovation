@@ -117,6 +117,7 @@ class Innovation extends Table
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
             'cities_mode' => 103, // 1 for "Disabled", 2 for "Enabled"
             'echoes_mode' => 104, // 1 for "Disabled", 2 for "Enabled"
+            'unseen_mode' => 106, // 1 for "Disabled", 2 for "Enabled"
             'extra_achievement_to_win' => 110 // 1 for "Disabled", 2 for "Enabled"
         ));
     }
@@ -447,6 +448,11 @@ class Innovation extends Table
         if ($this->innovationGameState->echoesExpansionEnabled()) {
             $this->innovationGameState->increment('number_of_achievements_needed_to_win');
         }
+
+        if ($this->innovationGameState->unseenExpansionEnabled()) {
+            $this->innovationGameState->increment('number_of_achievements_needed_to_win');
+        }
+
         // Add extra achievement to win
         if ($this->innovationGameState->get('extra_achievement_to_win') > 1) {
             $this->innovationGameState->increment('number_of_achievements_needed_to_win');
@@ -710,6 +716,7 @@ class Innovation extends Table
         $result['echoes_expansion_enabled'] = $this->innovationGameState->echoesExpansionEnabled();
         // TODO(FIGURES): Update this when the expansion is added.
         $result['figures_expansion_enabled'] = false;
+        $result['unseen_expansion_enabled'] = $this->innovationGameState->unseenExpansionEnabled();
     
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return information visible by this player !!
         
@@ -989,10 +996,13 @@ class Innovation extends Table
         if ($this->innovationGameState->citiesExpansionEnabled()) {
             $active_types[] = 2;
         }
-         if ($this->innovationGameState->echoesExpansionEnabled()) {
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
             $active_types[] = 3;
         }
         // TODO(FIGURES): Update this when implementing the expansion.
+        if ($this->innovationGameState->unseenExpansionEnabled()) {
+            $active_types[] = 5;
+        }
         return $active_types;
     }
 
