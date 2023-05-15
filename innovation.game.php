@@ -14752,7 +14752,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDrawAndTuck($player_id, 5);
                 $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                 // "Return your top card of the tucked card's color!"
-                self::transferCardFromTo($top_card, 0, 'deck'); 
+                self::returnCard($top_card);
                 break;            
                 
             case "375N1":
@@ -15644,7 +15644,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($color >= 0) {
                         $card = self::getTopCardOnBoard($player_id, $color);
                         if ($card !== null) {
-                            self::transferCardFromTo($card, 0, 'deck');
+                            self::returnCard($card);
                         }
                     }
                 }
@@ -15910,7 +15910,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         do {
                             $card = self::getBottomCardOnBoard($player_id, $color);
                             if ($card != null) {
-                                self::transferCardFromTo($card, $player_id, 'deck');
+                                self::returnCard($card);
                             }
                             $num_cards_transferred++;
                         } while ($num_cards_transferred < $num_color_cards - 2);
@@ -16091,7 +16091,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $total_age_value = 0;
                     for ($i = 0; $i < $return_card_count; $i++) {
                         $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                        self::transferCardFromTo($bottom_card, $player_id, 'deck'); // return the cards
+                        self::returnCard($bottom_card);
                         
                         $total_age_value += $bottom_card['faceup_age'];
                     }
@@ -25633,7 +25633,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 self::incrementStepMax(1); // need to choose between returning and achieving
                             } else {
                                 // If not eligible, then return green if present
-                                self::transferCardFromTo($top_green_card, 0, 'deck'); // return green
+                                self::returnCard($top_green_card);
                             }
                         }
                     }
@@ -25644,7 +25644,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $top_green_card = self::getTopCardOnBoard($player_id, 2);
                     
                     if (self::getAuxiliaryValue() == 1) {
-                        self::transferCardFromTo($top_green_card, 0, 'deck'); // return
+                        self::returnCard($top_green_card);
                     } else {
                         self::transferCardFromTo($top_green_card, $player_id, 'achievements');
                     }
@@ -27449,11 +27449,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::setAuxiliaryValue2($card['id']);
                     }
                     $card = self::transferCardFromTo($card, $owner_to, 'revealed');
-                    self::transferCardFromTo($card, 0, 'deck');
+                    self::returnCard($card);
                 } else {
                     // Do the transfer
                     $card = self::transferCardFromTo($card, $owner_to, 'revealed');
-                    self::transferCardFromTo($card, 0, 'deck');
+                    self::returnCard($card);
                 }
                 break;
                 
@@ -27704,7 +27704,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If any were blue, claim the Destiny achievement."
                     self::claimSpecialAchievement($player_id, 436);
                 }
-                self::transferCardFromTo($card, 0, 'deck');
+                self::returnCard($card);
                 break;
                 
             // id 372, Echoes age 4: Pencil
