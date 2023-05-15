@@ -1930,5 +1930,71 @@ $this->textual_card_infos = array(
 
 /* 470-479 are reserved for Echoes - Age 11 */
 
+/* Unseen - Age 1 */
+
+480 => array('name' => clienttranslate('Espionage'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you reveal a card in your hand! If you do, and I have no card in my hand of the same color, transfer it to my hand, then repeat this effect!'),
+),
+
+481 => array('name' => clienttranslate('Palmistry'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_1}.'),
+    'non_demand_effect_2' => clienttranslate('Return two cards from your hand. If you do, draw and score a ${age_2}.'),
+),
+
+482 => array('name' => clienttranslate('Proverb'),
+    'non_demand_effect_1' => clienttranslate('Draw, reveal, and return a ${age_1}. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand, then return all cards from your hand. Otherwise, draw two ${age_1}s.'),
+),
+
+483 => array('name' => clienttranslate('Assassination'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you draw and reveal a ${age_1}! If it has a ${icon_4}, transfer it and the top card on your board of its color to my score pile!'),
+    'non_demand_effect_1' => clienttranslate('If no player has a top green card, claim the Confidence achievement.'),
+),
+
+484 => array('name' => clienttranslate('Maze'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you score a card from your hand of matching color for each card in my hand! If you don\'t, and I have a card in my hand, exchange all cards in your hand with all cards in my score pile!'),
+),
+
+485 => array('name' => clienttranslate('Pilgrimage'),
+    'non_demand_effect_1' => clienttranslate('You may return a card from your hand and a card of each lower value than the value of card returned. If you do, safeguard an available achievement of each value of card you return.'),
+),
+
+486 => array('name' => clienttranslate('Dance'),
+    'non_demand_effect_1' => clienttranslate('Transfer a card on your board with a ${icon_4} to the board of any other player. If you do, meld the lowest top card without a ${icon_4} from that player\'s board.'),
+),
+
+487 => array('name' => clienttranslate('Rumor'),
+    'non_demand_effect_1' => clienttranslate('Return a card from your score pile. If you do, draw a card of value one higher than the card you return.'),
+    'non_demand_effect_2' => clienttranslate('Transfer a card from your hand to the hand of the player on your left.'),
+),
+
+488 => array('name' => clienttranslate('Silk'),
+    'non_demand_effect_1' => clienttranslate('Meld a card from your hand.'),
+    'non_demand_effect_2' => clienttranslate('You may score a card from your hand of each color on your board.'),
+),
+
+489 => array('name' => clienttranslate('Handshake'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer all cards from my hand to your hand! Choose two colors of cards in your hand! Transfer all cards in your hand of those colors to my hand!'),
+),
+
+490 => array('name' => clienttranslate('Tomb'),
+    'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value 1 plus the number of achievements you have.'),
+),
+
+491 => array('name' => clienttranslate('Woodworking'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_2}. If the melded card is a bottom card on your board, score it.'),
+),
+
+492 => array('name' => clienttranslate('Myth'),
+    'non_demand_effect_1' => clienttranslate('If you have two cards of the same color in your hand, tuck them. If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color.'),
+),
+
+493 => array('name' => clienttranslate('Polytheism'),
+    'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.  Otherwise, draw and tuck a ${age_1}.'),
+),
+
+494 => array('name' => clienttranslate('Symbology'),
+    'non_demand_effect_1' => clienttranslate('If you have four each of four icons on your board, draw a ${age_4}. Otherwise, if you have three each of three icons on your board, draw a ${age_3}. Otherwise, if you have two each of two icons on your board, draw a ${age_2}.'),
+),
+
 );
 
