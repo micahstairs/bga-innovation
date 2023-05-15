@@ -12199,9 +12199,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // The above action already removes the hands, boards, and score piles.
                         // In fourth edition, display (artifacts) and forecast (echoes) needs to be
                         // removed as well.
+                        // TODO(4E): Remove new locations too.
                         foreach (self::getAllPlayerIds() as $player) {
                             foreach (self::getCardsInLocation($player, 'display') as $display_card) {
-                                self::transferCardFromTo($display_card[0], 0, 'junk');
+                                self::transferCardFromTo($display_card, 0, 'junk');
                             }
                             foreach (self::getCardsInLocation($player, 'forecast') as $forecast_card) {
                                 self::transferCardFromTo($forecast_card, 0, 'junk');
