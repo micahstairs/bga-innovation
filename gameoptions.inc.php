@@ -145,13 +145,13 @@ $game_options = array(
         )
     ),*/
 
-    106 => array(
-        'name' => totranslate('The Unseen expansion'),
-        'values' => array(
-            1 => array('name' => totranslate('Disable')),
-            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Unseen Expansion'))
-        )
-    ),
+    // 106 => array(
+    //     'name' => totranslate('The Unseen expansion'),
+    //     'values' => array(
+    //         1 => array('name' => totranslate('Disable')),
+    //         2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Unseen Expansion'))
+    //     )
+    // ),
 
     110 => array(
         'name' => totranslate('Extra achievement to win'),
