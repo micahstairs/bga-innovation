@@ -1996,5 +1996,55 @@ $this->textual_card_infos = array(
     'non_demand_effect_1' => clienttranslate('If you have four each of four icons on your board, draw a ${age_4}. Otherwise, if you have three each of three icons on your board, draw a ${age_3}. Otherwise, if you have two each of two icons on your board, draw a ${age_2}.'),
 ),
 
+/* Unseen - Age 2 */
+
+495 => array('name' => clienttranslate('Astrology'),
+    'non_demand_effect_1' => clienttranslate('You may splay left the color of which you have the most cards on your board.'),
+    'non_demand_effect_2' => clienttranslate('Draw and meld a card of value equal to the number of visible purple cards on your board. If the melded card has no ${icon_1}, tuck it.'),
+),
+
+496 => array('name' => clienttranslate('Meteorology'),
+    'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_3}. If it has a ${icon_2}, score it.  Otherwise, if it has a ${icon_1}, return it and draw two ${age_3}. Otherwise, tuck it.'),
+    'non_demand_effect_2' => clienttranslate('If you have no ${icon_4}, claim the Zen achievement.'),
+),
+
+497 => array('name' => clienttranslate('Padlock'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you transfer one of your secrets to the available achievements!'),
+    'non_demand_effect_1' => clienttranslate('If no card was transferred due to the demand, you may score up to three cards from hand of different values.'),
+),
+
+498 => array('name' => clienttranslate('Password'),
+    'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_2}. You may safeguard another card from your hand of the color of the drawn card. If you do, score the drawn card. Otherwise, return all cards from your hand except the drawn card.'),
+),
+
+499 => array('name' => clienttranslate('Cipher'),
+    'non_demand_effect_1' => clienttranslate('Return all cards from your hand. If you return two or more, draw a card of value one higher than the highest value of card you return.'),
+    'non_demand_effect_2' => clienttranslate('Draw a ${age_2}. You may splay your blue cards left.'),
+),
+
+500 => array('name' => clienttranslate('Counterfeiting'),
+    'non_demand_effect_1' => clienttranslate('Score a top card from your board of a value not in your score pile. If you do, repeat this effect.'),
+    'non_demand_effect_2' => clienttranslate('You may splay your green or purple cards left.'),
+),
+
+501 => array('name' => clienttranslate('Exile'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you return a top card without a ${icon_2} from your board! Return all cards of the returned card\'s value from your score pile!'),
+    'non_demand_effect_1' => clienttranslate('If exactly one card was returned due to the demand, return Exile and draw a ${age_3}.'),
+),
+
+502 => array('name' => clienttranslate('Fingerprints'),
+    'non_demand_effect_1' => clienttranslate('You may splay your red or yellow cards left.'),
+    'non_demand_effect_2' => clienttranslate('Safeguard an available achievement of value equal to the number of splayed colors on your board.'),
+),
+
+503 => array('name' => clienttranslate('Propaganda'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you meld a card of the color of my choice from your hand! If you do, transfer the card beneath it to my board!'),
+    'non_demand_effect_1' => clienttranslate('Meld a card from your hand.'),
+),
+
+504 => array('name' => clienttranslate('Steganography'),
+    'non_demand_effect_1' => clienttranslate('You may splay left a color on your board with a visible ${icon_3}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board.'),
+),
+
 );
 
