@@ -144,7 +144,10 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'player_index'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `player_index` TINYINT UNSIGNED NOT NULL DEFAULT 0;");
-            self::caclulatePlayerIndexes();
+            self::calculatePlayerIndexes();
+        }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'will_draw_unseen_card_next'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `will_draw_unseen_card_next` BOOLEAN DEFAULT FALSE;");
         }
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2302100853) {
@@ -421,7 +424,7 @@ class Innovation extends Table
         }
         self::reloadPlayersBasicInfos();
 
-        self::caclulatePlayerIndexes();
+        self::calculatePlayerIndexes();
         
         /************ Start the game initialization *****/
 
@@ -1011,7 +1014,7 @@ class Innovation extends Table
         return $active_types;
     }
 
-    function caclulatePlayerIndexes() {
+    function calculatePlayerIndexes() {
         $player_nos = self::getObjectListFromDB("SELECT player_no FROM player ORDER BY player_no", true);
         $index = 0;
         foreach ($player_nos as $player_no) {
@@ -1411,6 +1414,11 @@ class Innovation extends Table
         // Do not move the card at all.
         if ($location_to == 'none') {
             return;
+        }
+
+        // Players can only draw an Unseen card on the first draw of a turn
+        if ($card['location'] == 'deck') {
+            self::setPlayerWillDrawUnseenCardNext($owner_to, false);
         }
 
         // Relics are not returned to the deck.
@@ -2748,7 +2756,7 @@ class Innovation extends Table
                 break;
             case 'deck->hand':
                 $message_for_player = clienttranslate('${You_must} look at ${number} top ${card} of any deck');
-                $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} of any deck');
+                $message_for_others = clienttranslate('${player_must} look at ${number} top ${card} of any deck');
                 break;
             default:
                 // This should not happen
@@ -5560,6 +5568,36 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             array('player_id' => $player_id, 'pile_view_full' => $pile_view_full ? "TRUE" : "FALSE")
         ));
     }
+
+    function getPlayerWillDrawUnseenCardNext($player_id) {
+        return self::getUniqueValueFromDB(self::format("
+        SELECT
+            will_draw_unseen_card_next
+        FROM
+            player
+        WHERE
+            player_id = {player_id}
+        ",
+            array('player_id' => $player_id)
+       )) == 1;
+    }
+
+    function setPlayerWillDrawUnseenCardNext($player_id, $will_draw_unseen_card_next) {
+        self::DbQuery(self::format("
+        UPDATE
+            player
+        SET
+            will_draw_unseen_card_next = {will_draw_unseen_card_next}
+        WHERE
+            player_id = {player_id}
+        ",
+            array('player_id' => $player_id, 'will_draw_unseen_card_next' => $will_draw_unseen_card_next ? "TRUE" : "FALSE")
+        ));
+    }
+
+    function resetWillDrawUnseenCardNext() {
+        self::DbQuery("UPDATE player SET will_draw_unseen_card_next = TRUE");
+    }
     
     function updatePlayerRessourceCounts($player_id) {     
         self::DbQuery("
@@ -6001,7 +6039,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $type = null;
         }
 
-        // If the type isn't specified, then we are either drawing a Base or Echoes card.
+        // If the type isn't specified, then we are either drawing a Base, Echoes, or Unseen card.
         if ($type === null) {
             $type = self::getCardTypeToDraw($age_to_draw, $player_id);
         }
@@ -6036,6 +6074,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::countCardsInLocation($player_id, 'revealed', /*type=*/ 3) == 0) {
             $card_type = 3;
         }
+
+        if ($card_type == 0 && self::getPlayerWillDrawUnseenCardNext($player_id)) {
+            $card_type = 5;
+        }
+
         // If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
         // draw a base card of that value instead.
         if (self::getDeckTopCard($age_to_draw, $card_type) === null) {
@@ -10476,6 +10519,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function stWhoBegins() {
         $this->innovationGameState->set('turn0', 0); // End of turn 0
+
+        if ($this->innovationGameState->unseenExpansionEnabled()) {
+            self::resetWillDrawUnseenCardNext();
+        }
         
         $cards = self::getSelectedCards();
         // Deselect the cards
@@ -10520,7 +10567,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // An action of the player has been fully resolved.
 
         // Check for special achievements (only necessary in 4th edition)
-        if ($this->innovationGameState->usingFourthEditionRules(true)) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             try {
             self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
             } catch(EndOfGame $e) {
@@ -10568,6 +10615,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             if ($this->innovationGameState->citiesExpansionEnabled()) {
                 $this->innovationGameState->set('endorse_action_state', 1);
+            }
+
+            if ($this->innovationGameState->unseenExpansionEnabled()) {
+                self::resetWillDrawUnseenCardNext();
             }
             
             // Activate the next non-eliminated player in turn order
@@ -21850,6 +21901,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 384, Echoes age 5: Tuning Fork
         case "384E1A":
             // "Look at the top card of any deck,"
+            // TODO(4E): Make sure the "look" doesn't count as a draw otherwise it will mess up the Unseen draw rule. This will likely
+            // become a no-op because the 4E version of this card has changed.
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
