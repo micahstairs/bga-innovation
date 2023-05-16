@@ -619,6 +619,11 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
         }
 
+        if ($this->innovationGameState->unseenExpansionEnabled()) {
+            self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 480 <= id AND id <= 594");
+            self::DbQuery("UPDATE card SET location = 'achievements' WHERE 595 <= id AND id <= 599");
+        }
+
         if ($edition <= 3) {
             // Certain cards got new symbols in the 4th edition, so we need to revert them when using an earlier edition
             self::DbQuery("UPDATE card SET spot_2 = 6 WHERE id = 96"); // Software
@@ -753,7 +758,7 @@ class Innovation extends Table
         
         // Backs of the cards in hands
         $result['hand_counts'] = array();
-        for ($type = 0; $type <= 4; $type++) {
+        for ($type = 0; $type <= 5; $type++) {
             for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
                 foreach ($players as $player_id => $player) {
                     $result['hand_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'hand', $type, $is_relic);
@@ -763,7 +768,7 @@ class Innovation extends Table
 
         // Backs of the cards in forecast piles
         $result['forecast_counts'] = array();
-        for ($type = 0; $type <= 4; $type++) {
+        for ($type = 0; $type <= 5; $type++) {
             for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
                 foreach ($players as $player_id => $player) {
                     $result['forecast_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'forecast', $type, $is_relic);
@@ -773,7 +778,7 @@ class Innovation extends Table
 
         // Backs of the cards in score piles
         $result['score_counts'] = array();
-        for ($type = 0; $type <= 4; $type++) {
+        for ($type = 0; $type <= 5; $type++) {
             for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
                 foreach ($players as $player_id => $player) {
                     $result['score_counts'][$player_id][$type][$is_relic] = self::countCardsInLocationKeyedByAge($player_id, 'score', $type, $is_relic);
@@ -800,7 +805,7 @@ class Innovation extends Table
         // TODO(#229): Deprecate this and add a new unclaimed_special_achievements entry.
         $result['unclaimed_achievements'] = self::getCardsInLocation(0, 'achievements');
         $result['unclaimed_standard_achievement_counts'] = array();
-        for ($type = 0; $type <= 4; $type++) {
+        for ($type = 0; $type <= 5; $type++) {
             for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
                 $result['unclaimed_standard_achievement_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'achievements', $type, $is_relic);
             }
@@ -826,7 +831,7 @@ class Innovation extends Table
         }
         
         // Remaining cards in deck
-        for ($type = 0; $type <= 4; $type++) {
+        for ($type = 0; $type <= 5; $type++) {
             $result['deck_counts'][$type] = self::countCardsInLocationKeyedByAge(0, 'deck', $type);
         }
         
@@ -14945,7 +14950,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Look at the top card of any deck"
                 $card_ids = array();
                 for ($age = 1; $age <= 10; $age++) {
-                    for ($type = 0; $type <= 4; $type++) {
+                    for ($type = 0; $type <= 5; $type++) {
                         $card = self::getDeckTopCard($age, $type);
                         if ($card !== null) {
                             $card_ids[] = $card['id'];

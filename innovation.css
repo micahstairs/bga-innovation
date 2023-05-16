@@ -2807,6 +2807,10 @@
 .recto.S.simplified_card_back.type_4 {
   background-color: #16eb54;
 }
+.recto.S.simplified_card_back.type_5 {
+  background-color: #000000;
+  color: white;
+}
 .recto.S.simplified_card_back.relic {
   box-shadow: inset 0px 0px 0px 5px #000;
 }

@@ -66,11 +66,13 @@
         $this->page->begin_block( "innovation_innovation", "decks_group_3_1" );
         $this->page->begin_block( "innovation_innovation", "decks_group_4_1" );
         $this->page->begin_block( "innovation_innovation", "decks_group_5_1" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_6_1" );
         $this->page->begin_block( "innovation_innovation", "decks_group_1_2" );
         $this->page->begin_block( "innovation_innovation", "decks_group_2_2" );
         $this->page->begin_block( "innovation_innovation", "decks_group_3_2" );
         $this->page->begin_block( "innovation_innovation", "decks_group_4_2" );
         $this->page->begin_block( "innovation_innovation", "decks_group_5_2" );
+        $this->page->begin_block( "innovation_innovation", "decks_group_6_2" );
         $this->page->begin_block( "innovation_innovation", "decks" );
         $this->page->begin_block( "innovation_innovation", "available_relics" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
@@ -176,6 +178,9 @@
         for ($age = 1; $age <= 5; $age++) {
             $this->page->insert_block("decks_group_5_1", array("TYPE" => 4, "AGE" => $age));
         }
+        for ($age = 1; $age <= 5; $age++) {
+            $this->page->insert_block("decks_group_6_1", array("TYPE" => 5, "AGE" => $age));
+        }
         for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_1_2", array("TYPE" => 0, "AGE" => $age));
         }
@@ -190,6 +195,9 @@
         }
         for ($age = 6; $age <= 11; $age++) {
             $this->page->insert_block("decks_group_5_2", array("TYPE" => 4, "AGE" => $age));
+        }
+        for ($age = 6; $age <= 11; $age++) {
+            $this->page->insert_block("decks_group_6_2", array("TYPE" => 5, "AGE" => $age));
         }
         $this->page->insert_block( "decks", array("DECKS" => self::_("Decks")) );
         $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );

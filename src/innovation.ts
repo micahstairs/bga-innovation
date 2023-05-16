@@ -508,13 +508,16 @@ class Innovation extends BgaGame {
         if (this.gamedatas.figures_expansion_enabled) {
             this.num_sets_in_play++;
         }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            this.num_sets_in_play++;
+        }
         if (this.num_sets_in_play > 2) {
             this.delta.deck = { "x": 0.25, "y": 0.25 }; // overlap
         }
 
         // DECKS
         this.zone["deck"] = {};
-        for (let type = 0; type <= 4; type++) {
+        for (let type = 0; type <= 5; type++) {
             this.zone["deck"][type] = {};
             for (let age = 1; age <= 11; age++) {
 
@@ -559,6 +562,10 @@ class Innovation extends BgaGame {
             dojo.byId('deck_set_5_1').style.display = 'none';
             dojo.byId('deck_set_5_2').style.display = 'none';
         }
+        if (!gamedatas.unseen_expansion_enabled) {
+            dojo.byId('deck_set_6_1').style.display = 'none';
+            dojo.byId('deck_set_6_2').style.display = 'none';
+        }
 
         // AVAILABLE RELICS
         this.zone["relics"] = {};
@@ -584,7 +591,7 @@ class Innovation extends BgaGame {
         if (gamedatas.unclaimed_standard_achievement_counts !== null) {
             this.zone["achievements"]["0"] = this.createZone('achievements', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRulesForAchievements();
-            for (let type = 0; type <= 4; type++) {
+            for (let type = 0; type <= 5; type++) {
                 for (let is_relic = 0; is_relic <= 1; is_relic++) {
                     for (let age = 1; age <= 11; age++) {
                         let num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
@@ -657,7 +664,7 @@ class Innovation extends BgaGame {
                     this.addTooltipForCard(card);
                 }
             } else {
-                for (let type = 0; type <= 4; type++) {
+                for (let type = 0; type <= 5; type++) {
                     for (let is_relic = 0; is_relic <= 1; is_relic++) {
                         for (let age = 1; age <= 11; age++) {
                             let num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
@@ -706,7 +713,7 @@ class Innovation extends BgaGame {
             this.setPlacementRules(this.zone["forecast"][player_id], /*left_to_right=*/ true);
 
             // Add cards to zone according to the current situation
-            for (let type = 0; type <= 4; type++) {
+            for (let type = 0; type <= 5; type++) {
                 for (let is_relic = 0; is_relic <= 1; is_relic++) {
                     let forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
                     for (let age = 1; age <= 11; age++) {
@@ -732,7 +739,7 @@ class Innovation extends BgaGame {
             this.setPlacementRules(this.zone["score"][player_id], /*left_to_right=*/ false);
 
             // Add cards to zone according to the current situation
-            for (let type = 0; type <= 4; type++) {
+            for (let type = 0; type <= 5; type++) {
                 for (let is_relic = 0; is_relic <= 1; is_relic++) {
                     let score_count = gamedatas.score_counts[player_id][type][is_relic];
                     for (let age = 1; age <= 11; age++) {
@@ -2921,7 +2928,7 @@ class Innovation extends BgaGame {
         let size = this.getCardSizeInZone(zone_HTML_class);
 
         // TODO(4E): Use real 4th edition card back
-        let simplified_card_back = this.prefs[110].value == 2 || age == 11;
+        let simplified_card_back = this.prefs[110].value == 2 || age == 11 || type == 5;
 
         let HTML_inside = '';
         if (card === null) {
@@ -2942,7 +2949,6 @@ class Innovation extends BgaGame {
 
         let card_type = "";
         if (size == 'L') {
-            // TODO(FIGURES): Update this.
             switch (parseInt(type)) {
                 case 0:
                     card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
@@ -2956,6 +2962,11 @@ class Innovation extends BgaGame {
                 case 3:
                     card_type = "<div class='card_type'>" + _("This card is from the Echoes of the Past expansion.") + "</div>";
                     break;
+                case 4:
+                    card_type = "<div class='card_type'>" + _("This card is from the Figures in the Sand expansion.") + "</div>";
+                    break;
+                case 5:
+                    card_type = "<div class='card_type'>" + _("This card is from the Unseen expansion.") + "</div>";
             }
         }
 

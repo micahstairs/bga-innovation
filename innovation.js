@@ -478,12 +478,15 @@ var Innovation = /** @class */ (function (_super) {
         if (this.gamedatas.figures_expansion_enabled) {
             this.num_sets_in_play++;
         }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            this.num_sets_in_play++;
+        }
         if (this.num_sets_in_play > 2) {
             this.delta.deck = { "x": 0.25, "y": 0.25 }; // overlap
         }
         // DECKS
         this.zone["deck"] = {};
-        for (var type = 0; type <= 4; type++) {
+        for (var type = 0; type <= 5; type++) {
             this.zone["deck"][type] = {};
             for (var age = 1; age <= 11; age++) {
                 if (age == 11 && !this.gamedatas.fourth_edition) {
@@ -525,6 +528,10 @@ var Innovation = /** @class */ (function (_super) {
             dojo.byId('deck_set_5_1').style.display = 'none';
             dojo.byId('deck_set_5_2').style.display = 'none';
         }
+        if (!gamedatas.unseen_expansion_enabled) {
+            dojo.byId('deck_set_6_1').style.display = 'none';
+            dojo.byId('deck_set_6_2').style.display = 'none';
+        }
         // AVAILABLE RELICS
         this.zone["relics"] = {};
         this.zone["relics"]["0"] = this.createZone('relics', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
@@ -548,7 +555,7 @@ var Innovation = /** @class */ (function (_super) {
         if (gamedatas.unclaimed_standard_achievement_counts !== null) {
             this.zone["achievements"]["0"] = this.createZone('achievements', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRulesForAchievements();
-            for (var type = 0; type <= 4; type++) {
+            for (var type = 0; type <= 5; type++) {
                 for (var is_relic = 0; is_relic <= 1; is_relic++) {
                     for (var age = 1; age <= 11; age++) {
                         var num_cards = gamedatas.unclaimed_standard_achievement_counts[type][is_relic][age];
@@ -618,7 +625,7 @@ var Innovation = /** @class */ (function (_super) {
                 }
             }
             else {
-                for (var type = 0; type <= 4; type++) {
+                for (var type = 0; type <= 5; type++) {
                     for (var is_relic = 0; is_relic <= 1; is_relic++) {
                         for (var age = 1; age <= 11; age++) {
                             var num_cards = gamedatas.hand_counts[player_id][type][is_relic][age];
@@ -662,7 +669,7 @@ var Innovation = /** @class */ (function (_super) {
             this.zone["forecast"][player_id] = this.createZone('forecast', player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true, /*counter_method=*/ "COUNT", /*counter_display_zero=*/ true);
             this.setPlacementRules(this.zone["forecast"][player_id], /*left_to_right=*/ true);
             // Add cards to zone according to the current situation
-            for (var type = 0; type <= 4; type++) {
+            for (var type = 0; type <= 5; type++) {
                 for (var is_relic = 0; is_relic <= 1; is_relic++) {
                     var forecast_count = gamedatas.forecast_counts[player_id][type][is_relic];
                     for (var age = 1; age <= 11; age++) {
@@ -685,7 +692,7 @@ var Innovation = /** @class */ (function (_super) {
             this.zone["score"][player_id] = this.createZone('score', player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
             this.setPlacementRules(this.zone["score"][player_id], /*left_to_right=*/ false);
             // Add cards to zone according to the current situation
-            for (var type = 0; type <= 4; type++) {
+            for (var type = 0; type <= 5; type++) {
                 for (var is_relic = 0; is_relic <= 1; is_relic++) {
                     var score_count = gamedatas.score_counts[player_id][type][is_relic];
                     for (var age = 1; age <= 11; age++) {
@@ -2654,7 +2661,7 @@ var Innovation = /** @class */ (function (_super) {
         var HTML_class = this.getCardHTMLClass(id, age, type, is_relic, card, zone_HTML_class);
         var size = this.getCardSizeInZone(zone_HTML_class);
         // TODO(4E): Use real 4th edition card back
-        var simplified_card_back = this.prefs[110].value == 2 || age == 11;
+        var simplified_card_back = this.prefs[110].value == 2 || age == 11 || type == 5;
         var HTML_inside = '';
         if (card === null) {
             if (age === null || !simplified_card_back) {
@@ -2677,7 +2684,6 @@ var Innovation = /** @class */ (function (_super) {
         }
         var card_type = "";
         if (size == 'L') {
-            // TODO(FIGURES): Update this.
             switch (parseInt(type)) {
                 case 0:
                     card_type = "<div class='card_type'>" + _("This card is from the base game.") + "</div>";
@@ -2691,6 +2697,11 @@ var Innovation = /** @class */ (function (_super) {
                 case 3:
                     card_type = "<div class='card_type'>" + _("This card is from the Echoes of the Past expansion.") + "</div>";
                     break;
+                case 4:
+                    card_type = "<div class='card_type'>" + _("This card is from the Figures in the Sand expansion.") + "</div>";
+                    break;
+                case 5:
+                    card_type = "<div class='card_type'>" + _("This card is from the Unseen expansion.") + "</div>";
             }
         }
         var graphics_class = age === null ? "" : simplified_card_back ? "simplified_card_back" : "default_card_back";

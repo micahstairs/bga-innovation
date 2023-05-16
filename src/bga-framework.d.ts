@@ -36,6 +36,7 @@ declare type InnovationGameDatas = {
 	cities_expansion_enabled: boolean;
 	echoes_expansion_enabled: boolean;
 	figures_expansion_enabled: boolean;
+	unseen_expansion_enabled: boolean;
 };
 
 declare class BgaGame {

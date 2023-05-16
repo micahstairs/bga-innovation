@@ -89,6 +89,11 @@
                             <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
                         <!-- END decks_group_5_1 -->
                     </div>
+                    <div id="deck_set_6_1" class="deck_set">
+                        <!-- BEGIN decks_group_6_1 -->
+                            <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+                        <!-- END decks_group_6_1 -->
+                    </div>
                 </div>
                 <div id="decks_2">
                     <div id="deck_set_1_2" class="deck_set">
@@ -115,6 +120,11 @@
                         <!-- BEGIN decks_group_5_2 -->
                             <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
                         <!-- END decks_group_5_2 -->
+                    </div>
+                    <div id="deck_set_6_2" class="deck_set">
+                        <!-- BEGIN decks_group_6_2 -->
+                            <div id="deck_pile_{TYPE}_{AGE}" class="deck_pile"><div class="deck_count" id="deck_count_{TYPE}_{AGE}"></div><div class="deck" id="deck_{TYPE}_{AGE}"></div></div>
+                        <!-- END decks_group_6_2 -->
                     </div>
                 </div>
             </div>
