@@ -10934,9 +10934,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // Player does not have cards in hand so they are unable to return a card in order to share the effect or avoid a demand
                         self::setPlayerTableColumn($player_id, $column, 3);
                         if ($is_non_demand_or_echo_effect) {
+                            self::setPlayerTableColumn($player_id, 'distance_rule_share_state', 2);
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not have any cards in your hand so you could not share the effect.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not have any cards in his hand so he could not share the effect.'), array('player_name' => self::getPlayerNameFromId($player_id)));
                         } else {
+                            self::setPlayerTableColumn($player_id, 'distance_rule_demand_state', 2);
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not have any cards in your hand so you could not avoid the demand.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not have any cards in his hand so he could not avoid the demand.'), array('player_name' => self::getPlayerNameFromId($player_id)));
                         }

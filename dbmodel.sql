@@ -30,8 +30,8 @@ ALTER TABLE `player` ADD `pile_display_mode` BOOLEAN DEFAULT TRUE COMMENT 'Playe
 ALTER TABLE `player` ADD `pile_view_full` BOOLEAN DEFAULT FALSE COMMENT 'Player preference for whether to show all cards in a stack on the board, TRUE if yes, FALSE if no';
 ALTER TABLE `player` ADD `effects_had_impact` BOOLEAN DEFAULT FALSE COMMENT 'Indicate if the player has changed the situation (TRUE) or not (FALSE) in the game when it was his turn to play within a dogma effect';
 ALTER TABLE `player` ADD `democracy_counter` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards that this player has returned so far during this action via Democracy';
-ALTER TABLE `player` ADD `distance_rule_share_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to share effect, 1 = Is currently being prompted, 2 = Decided NOT to return card, 3 = Decided to return card';
-ALTER TABLE `player` ADD `distance_rule_demand_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to avoid demand, 1 = Is currently being prompted, 2 = Decided NOT to return card, 3 = Decided to return card';
+ALTER TABLE `player` ADD `distance_rule_share_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to share effect, 1 = Is currently being prompted, 2 = Decided NOT to (or could not) return a card, 3 = Decided to return card';
+ALTER TABLE `player` ADD `distance_rule_demand_state` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 = Has not been prompted to return card in order to avoid demand, 1 = Is currently being prompted, 2 = Decided NOT to (or could not) return a card, 3 = Decided to return card';
 ALTER TABLE `player` ADD `player_index` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'same player order as player_no, but normalized to the range 0...N-1';
 ALTER TABLE `player` ADD `will_draw_unseen_card_next` BOOLEAN DEFAULT FALSE COMMENT 'Indicate whether the player will draw an Unseen card next (TRUE) or not (FALSE)';
 
