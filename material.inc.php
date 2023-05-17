@@ -2046,5 +2046,53 @@ $this->textual_card_infos = array(
     'non_demand_effect_1' => clienttranslate('You may splay left a color on your board with a visible ${icon_3}. If you do, safeguard an available achievement of value equal to the number of cards of that color on your board.'),
 ),
 
+/* Unseen - Age 3 */
+
+505 => array('name' => clienttranslate('Brethren of Purity'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3} or a card of value one higher than the last card melded due to Brethren of Purity during this action. If you meld over a card with a ${icon_3}, repeat this effect.'),
+),
+
+506 => array('name' => clienttranslate('Secret Secretorum'),
+    'non_demand_effect_1' => clienttranslate('Return five cards from your hand and/or score pile. Draw two cards of value equal to the number of different colors of cards you return. Meld one of the drawn cards and score the other.'),
+),
+
+507 => array('name' => clienttranslate('Knights Templar'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you unsplay a splayed color on your board! If you do, transfer the top card on your board of that color to my score pile!'),
+    'non_demand_effect_1' => clienttranslate('You may splay your red or green cards left.'),
+),
+
+508 => array('name' => clienttranslate('Red Envelope'),
+    'non_demand_effect_1' => clienttranslate('Choose a value of which you have exactly two or three cards altogether in your hand and score pile. Transfer those cards to the score pile of the player on your right.'),
+    'non_demand_effect_2' => clienttranslate('You may score exactly two or three cards from your hand.'),
+),
+
+509 => array('name' => clienttranslate('Cliffhanger'),
+    'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. Otherwise, transfer the top card of the [4] deck to your safe.'),
+),
+
+510 => array('name' => clienttranslate('Smuggling'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card of value equal to the top yellow card on your board and a card of value equal to the top yellow card on my board from your score pile to my score pile!'),
+),
+
+511 => array('name' => clienttranslate('Freemasons'),
+    'non_demand_effect_1' => clienttranslate('For each color, you may tuck a card from your hand of that color. If you tuck a yellow card or an expansion card, draw two ${age_3}s.'),
+    'non_demand_effect_2' => clienttranslate('You may splay your yellow or blue cards left.'),
+),
+
+512 => array('name' => clienttranslate('Secret Police'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you tuck a card in your hand, then return your top card of its color! If you do, repeat this effect! Otherwise, draw a ${age_3}!'),
+    'non_demand_effect_1' => clienttranslate('You may tuck any number of cards of any one color from your hand.'),
+),
+
+513 => array('name' => clienttranslate('Masquerade'),
+    'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value equal to the number of cards in your hand. If you do, return all the highest cards from your hand. If you return a ${age_4}, claim the Anonymity achievement.'),
+    'non_demand_effect_2' => clienttranslate('You may splay your purple cards left.'),
+),
+
+514 => array('name' => clienttranslate('Taqiyya'),
+    'non_demand_effect_1' => clienttranslate('Choose a color. Transfer all cards of that color on your board into your hand.'),
+    'non_demand_effect_2' => clienttranslate('Draw and meld a ${age_3}. If the melded card is a bottom card on your board, score it and any number of cards of its color in your hand.'),
+),
+
 );
 
