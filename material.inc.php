@@ -169,7 +169,7 @@ $this->textual_card_infos = array(
 ),
 
 28 => array('name' => clienttranslate('Optics'),
-    'non_demand_effect_1' => clienttranslate('Draw an meld a ${age_3}. If it has a ${icon_1}, draw and score a ${age_4}. Otherwise, transfer a card from your score pile to the score pile of an opponent with fewer points than you.'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. If it has a ${icon_1}, draw and score a ${age_4}. Otherwise, transfer a card from your score pile to the score pile of an opponent with fewer points than you.'),
 ),
 
 29 => array('name' => clienttranslate('Compass'),
