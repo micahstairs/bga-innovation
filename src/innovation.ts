@@ -936,17 +936,9 @@ class Innovation extends BgaGame {
         this.refreshLayout();
 
         // Force refresh page on resize if width changes
-        let window_width = dojo.window.getBox().w;
         let self = this;
         window.onresize = function () {
-            if (window.RT) {
-                clearTimeout(window.RT);
-            }
-            window.RT = setTimeout(function () {
-                if (window_width != dojo.window.getBox().w) { // If there is an actual change of the width of the viewport
-                    self.refreshLayout();
-                }
-            }, 100);
+            self.refreshLayout();
         }
 
         // Setup game notifications to handle (see "setupNotifications" method below)
