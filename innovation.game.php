@@ -10936,11 +10936,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($is_non_demand_or_echo_effect) {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not have any cards in your hand so you could not share the effect.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not have any cards in his hand so he could not share the effect.'), array('player_name' => self::getPlayerNameFromId($player_id)));
+                            // Skip sharing
+                            self::trace('playerInvolvedTurn->interPlayerInvolvedTurn');
+                            $this->gamestate->nextState('interPlayerInvolvedTurn');
+                            return;
                         } else {
                             self::notifyPlayer($player_id, 'log', clienttranslate('${You} did not have any cards in your hand so you could not avoid the demand.'), array('You' => 'You'));
                             self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} did not have any cards in his hand so he could not avoid the demand.'), array('player_name' => self::getPlayerNameFromId($player_id)));
                         }
-                        break;
                     } else {
                         // Player will be given the opportunity to return a card in order to share the effect or avoid a demand
                         self::setPlayerTableColumn($player_id, $column, 1);
@@ -10948,6 +10951,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $this->gamestate->nextState('interactionStep');
                         return;
                     }
+                    break;
                 }
             }
         }
