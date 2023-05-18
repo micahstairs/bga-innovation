@@ -2935,6 +2935,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} hand.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s hand.');
                 break;
+
+            case 'revealed->score':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s score.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} score.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s score.');
+                break;
                 
             default:
                 // This should not happen
@@ -4917,7 +4923,39 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             array('color' => $color)
        ));
     }
-    
+
+    function getMinAgeOnBoardTopCardsWithoutIcon($player_id, $icon) {
+        /**
+        Get the minimum age of the top cards with a particular icon
+        (0 if the player have no card on his board)
+        **/
+        
+        
+        // Get the max of the age matching the position defined in the sub-request
+        return self::getUniqueValueFromDB(self::format("
+            SELECT
+                COALESCE(MIN(a.faceup_age), 0)
+            FROM
+                card AS a
+            LEFT JOIN
+                (SELECT
+                    color, MAX(position) AS position
+                FROM
+                    card
+                WHERE
+                    owner = {player_id} AND
+                    location = 'board'
+                GROUP BY
+                    color) AS b ON a.color = b.color
+            WHERE
+                a.owner = {player_id} AND
+                a.location = 'board' AND
+                a.position = b.position AND
+                (a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon})
+        ",
+            array('player_id' => $player_id, 'icon' => $icon)
+        ));
+    }    
     function getMinAgeOnBoardTopCardsWithIcon($player_id, $icon) {
         /**
         Get the minimum age of the top cards with a particular icon
@@ -10074,6 +10112,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Choose a value');
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
+
+            // id 486, Unseen age 1: Dance
+            case "486N1A":
+                $message_for_player = clienttranslate('${You} may choose another player to accept a card to his board:');
+                $message_for_others = clienttranslate('${player_name} may choose another player to accept a card to his board');
+                break;
+
 
             default:
                 // This should not happen
@@ -16117,6 +16162,201 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 449, age 11: Whataboutism
             case "449D1":
                 $step_max = 1;
+                break;
+
+
+            // id 480, Unseen age 1: Espionage
+            case "480D1":
+                $step_max = 1;
+                break;
+
+            // id 481, Unseen age 1: Palmistry
+            case "481N1":
+                // "Draw and meld a 1."
+                self::executeDrawAndMeld($player_id, 1);
+                break;
+
+            case "481N2":
+                $step_max = 1;
+                break;
+
+            // id 483, Unseen age 1: Assassination
+            case "483D1":
+                $card = self::executeDrawAndReveal($player_id, 1);
+                // "If it has a castle, transfer it and the top card on your board of its color to my score pile!"
+                if (self::hasRessource($card, 4)) {
+                    $top_card = self::getTopCardOnBoard($player_id, $card['color']);
+                    if ($top_card !== null) {
+                        self::transferCardFromTo($top_card, $launcher_id, 'score'); // transfer
+                    }
+                    self::transferCardFromTo($card, $launcher_id, 'score');
+                } else {
+                    self::transferCardFromTo($card, $player_id, 'hand'); // else add it to hand
+                }
+                break;
+
+            case "483N1":
+                $green_count = 0;
+                foreach(self::getAllActivePlayerIds() as $player) {
+                    if (self::getTopCardOnBoard($player, 2)) {
+                        $green_count++;
+                    }
+                }
+                
+                if ($green_count == 0) {
+                    // "If no player has a top green card, claim the Confidence achievement."
+                    self::claimSpecialAchievement($player_id, 595);
+                }
+                break;
+
+            // id 486, Unseen age 1: Dance
+            case "486N1":
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                $castle_counter = 0;
+                foreach($top_cards as $card) {
+                    if (self::hasRessource($card, 4)) {
+                        $castle_counter++;
+                    }
+                }
+                
+                if ($castle_counter > 0) {
+                    $step_max = 3; // select player first, card second, other player's card third
+                } else {
+                    // Log message specifying no castle cards are present to transfer
+                }
+                break;
+
+            // id 487, Unseen age 1: Rumor
+            case "487N1":
+                $step_max = 1;
+                break;
+            
+            case "487N2":
+                $step_max = 1;
+                break;
+                
+            // id 488, Unseen age 1: Silk
+            // TODO: Implement this card
+            case "488N1":
+                $step_max = 0;
+                break;
+            
+            case "488N2":
+                $step_max = 0;
+                break;
+                
+            // id 489, Unseen age 1: Handshake
+            case "489N1":
+                $step_max = 2;
+                break;
+
+            // id 490, Unseen age 1: Tomb
+            case "490N1":
+                $step_max = 0;
+                break;
+
+            // id 491, Unseen age 1: Woodworking
+            case "491N1":
+                // "Draw and meld a 2."
+                $card = self::executeDrawAndMeld($player_id, 2);
+                $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
+                if ($bottom_card['id'] == $card['id'])
+                {
+                    // "If the melded card is a bottom card on your board, score it."
+                    self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+                }
+                break;
+                
+            // id 492, Unseen age 1: Myth
+            case "492N1":
+                $step_max = 0;
+                break;
+
+            // id 493, Unseen age 1: Polytheism
+            case "493N1":
+                $card_id_array = array();
+                $cards_in_hand = self::getCardsInHand($player_id);
+                if (count($cards_in_hand) > 0) {
+                    $step_max = 1;
+                    foreach ($cards_in_hand as $card) {
+                        $card_id_array[] = $card['id'];
+                    }
+                    self::setAuxiliaryArray($card_id_array);
+                    self::setAuxiliaryValue2FromArray(array()); // initialize icon tracker
+                }
+                break;
+
+            // id 494, Unseen age 1: Symbology
+            case "494N1":
+                $num_resources_four_or_more = 0;
+                $num_resources_three_or_more = 0;
+                $num_resources_two_or_more = 0;
+                foreach (self::getPlayerResourceCounts($player_id) as $icon => $count) {
+                    if ($count >= 4) {
+                        $num_resources_four_or_more++;
+                        $num_resources_three_or_more++;
+                        $num_resources_two_or_more++;
+                    } elseif($count >= 3) {
+                        $num_resources_three_or_more++;
+                        $num_resources_two_or_more++;
+                    } elseif($count >= 2) {
+                        $num_resources_two_or_more++;
+                    }
+                }
+                
+                if ($num_resources_four_or_more >= 4) {
+                    // "If you have four each of four icons on your board, draw a 4."
+                    self::executeDraw($player_id, 4);
+                } elseif ($num_resources_four_or_more >= 3) {
+                    // "Otherwise, if you have three each of three icons on your board, draw a 3."
+                    self::executeDraw($player_id, 3);
+                } elseif ($num_resources_four_or_more >= 2) {
+                    // "Otherwise, if you have two each of two icons on your board, draw a 2."
+                    self::executeDraw($player_id, 2);
+                }
+                break;
+                
+            // id 594, Unseen age 11: Metaverse
+            case "594N1":
+                // "For each splayed color on your board, score its top card."
+                $score_count = 0;
+                for ($color = 0; $color < 5; $color++) {
+                    $top_card = self::getTopCardOnBoard($player_id, $color);
+                    if ($top_card !== null) {
+                        if ($top_card['splay_direction'] != 0) { // splayed
+                            self::scoreCard($top_card); // score it
+                            $score_count++;
+                        }
+                    }
+                }
+                
+                if ($score_count < 3) {
+                    // "If you score fewer than three cards, you lose."
+                    if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
+                            'player_name' => self::getColoredPlayerName($player_id)
+                        ));
+                        if (count(self::getAllActivePlayers()) == 2) {
+                            $this->innovationGameState->set('winner_by_dogma', $launcher_id);
+                            self::trace('EOG bubbled from self::stInterInteractionStep Metaverse');
+                            throw new EndOfGame();
+                        } else {
+                            // Only eliminate the player if the game isn't ending
+                            self::eliminatePlayer($player_id);
+                        }
+                    } else { // Team play
+                        // Entire team loses if one player loses 
+                        $teammate_id = self::getPlayerTeammate($player_id);
+                        $losing_team = array($player_id, $teammate_id);
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
+                        self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
+                        self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
+                        $this->innovationGameState->set('winner_by_dogma', $launcher_id);
+                        self::trace('EOG bubbled from self::stInterInteractionStep Metaverse');
+                        throw new EndOfGame();
+                    }                    
+                }
                 break;
                 
             default:
@@ -23533,7 +23773,125 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
+        // id 480, Unseen age 1: Espionage
+        case "480D1A":
+            // "I demand you reveal a card in your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'revealed',
+            );
+            break;
             
+        // id 481, Unseen age 1: Palmistry
+        case "481N2A":
+            // "Return two cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 2,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        // id 486, Unseen age 1: Dance
+        case "486N1A":
+            // Select a player to receive a castle card
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'choose_player' => true,
+                'players' => self::getOtherActivePlayers($player_id),
+            );
+            break;
+
+        case "486N1B":
+            // "Transfer a card on your board with a castle to the board of any other player."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => self::getAuxiliaryValue(),
+                'location_to' => 'board',
+                
+                'with_icon' => 4,
+                
+                'meld_keyword' => false,
+            );
+            break;
+
+        case "486N1C":
+            // "meld the lowest top card without a castle from that player's board."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => self::getAuxiliaryValue(),
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'age' => self::getMinAgeOnBoardTopCardsWithoutIcon($player_id, 4),
+                
+                'without_icon' => 4, // castle
+                
+                'meld_keyword' => true,
+            );
+            break;
+            
+        // id 487, Unseen age 1: Rumor
+        case "487N1A":
+            // "Return a card from your score pile."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "487N2A":
+            // "Transfer a card from your hand to the hand of the player on your left."
+            $players = self::getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer();
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $players[0],
+                'location_to' => 'hand',
+            );
+            break;
+            
+        // id 493, Unseen age 1: Polytheism
+        case "493N1A":
+            // "Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -26599,7 +26957,102 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 480, Unseen age 1: Espionage
+                case "480D1A":
+                    if ($n > 0) { // "if you do"
+                        $cards_in_hand = self::getCardsInLocationKeyedByColor($launcher_id, 'hand');
+                        
+                        if (count($cards_in_hand) > 0) {
+                            $card = self::getCardInfo($this->innovationGameState->get('id_last_selected')); 
+                            self::revealHand($launcher_id);
+                            
+                            // "and I have no card in my hand of the same color"
+                            if (count($cards_in_hand[$card['color']]) == 0) {
+                                // "transfer it to my hand"
+                                self::transferCardFromTo($card, $launcher_id, 'hand');
+                                // "then repeat this effect!"
+                                self::setStep(1); $step = 1;
+                            }
+                            else {
+                                self::transferCardFromTo($card, $player_id, 'hand'); // move from revealed back to hand
+                            }
+                        }
+                    }
+                    break;
 
+                // id 481, Unseen age 1: Palmistry
+                case "481N2A":
+                    if ($n == 2) { // "if you do"
+                        // "draw and score a 2."
+                        self::executeDrawAndScore($player_id, 2);
+                    }
+                    break;
+ 
+                // id 486, Unseen age 1: Dance
+                case "486N1A":
+                    if ($n > 0) { // "if you do"
+                        self::setStepMax(2);
+                        $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
+                        self::setAuxiliaryValue(self::getOwnersOfTopCardWithColorAndAge($card['color'], $card['age']));
+                    }
+                    break;
+                    
+                // id 487, Unseen age 1: Rumor
+                case "487N1A":
+                    if ($n > 0) { // "if you do"
+                        // "draw a card of value one higher than the card you return."
+                        self::executeDraw($player_id, $this->innovationGameState->get('age_last_selected') + 1);
+                    }
+                    break;
+                    
+                // id 493, Unseen age 1: Polytheism
+                case "493N1A":
+                    if ($n > 0) { // "if you do"
+                        $melded_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
+                        $icon_array = self::getAuxiliaryValue2AsArray();
+                        for ($icon = 1; $icon <= 9; $icon++) { // skip the hex symbol                           
+                            if (self::hasRessource($melded_card, $icon)) {
+                                $icon_array[] = $icon;
+                            }
+                        }
+                        for ($icon = 11; $icon <= 17; $icon++) {
+                            if (self::hasRessource($melded_card, $icon)) {
+                                $icon_array[] = $icon;
+                            }
+                        }
+                        for ($icon = 101; $icon <= 112; $icon++) {
+                            if (self::hasRessource($melded_card, $icon)) {
+                                $icon_array[] = $icon;
+                            }
+                        }                        
+                        $card_id_array = array();
+                        $cards_in_hand = self::getCardsInHand($player_id);
+                        foreach($cards_in_hand as $card) {
+                            $found = false;
+                            foreach ($icon_array as $icon) {
+                                if (self::hasRessource($card, $icon)) {
+                                    $found = true;
+                                }
+                            }
+                            
+                            if ($found == false) {
+                                // update the card list with cards that do not have a matching icon
+                                $card_id_array[] = $card['id'];
+                            }
+                        }
+                        
+                        if (count($card_id_array) > 0) {
+                            // "repeat this effect."
+                            self::setStep(1); $step = 1;
+                            self::setAuxiliaryArray($card_id_array);
+                            self::setAuxiliaryValue2FromArray($icon_array); // update icon tracker
+                        }
+                        else {
+                            // "Otherwise, draw and tuck a 1."
+                            self::executeDrawAndTuck($player_id, 1);
+                        }
+                    }
+                    break;
                 }
                 
             } catch (EndOfGame $e) {
@@ -27972,7 +28425,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
-                            
+
+            // id 486, Unseen age 1: Dance
+            case "486N1A":
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the player ${player_choice}.'), 
+                    array('You' => 'You', 
+                    'player_choice' => self::getColoredPlayerName($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the player ${player_choice}.'), 
+                    array('player_name' => self::getColoredPlayerName($player_id),
+                    'player_choice' => self::getColoredPlayerName($choice)));
+                self::setAuxiliaryValue($choice);
+                break;
+                
             default:
                 if ($splay_direction == -1) {
                     if ($location_to == 'revealed,deck') {
