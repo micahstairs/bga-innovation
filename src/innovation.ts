@@ -162,174 +162,37 @@ class Innovation extends BgaGame {
         console.log('innovation constructor');
     }
 
+    debugTransfer(action: string) {
+        let debug_card_list = this.getDebugCardList();
+        this.ajaxcall(`/innovation/innovation/debug_transfer.html`,
+            {
+                lock: true,
+                card_id: debug_card_list.value,
+                transfer_action: action,
+            },
+            this, function (result) { }, function (is_error) { }
+        );
+    }
+
     getDebugCardList(): HTMLSelectElement {
         return <HTMLSelectElement>document.getElementById("debug_card_list")!;
+    }
+
+    debugSplay(direction: number) {
+        let debug_color_list = this.getDebugColorList();
+        this.ajaxcall("/innovation/innovation/debug_splay.html",
+            {
+                lock: true,
+                color: debug_color_list.value,
+                direction: direction,
+            },
+            this, function (result) { }, function (is_error) { }
+        );
     }
 
     getDebugColorList(): HTMLSelectElement {
         return <HTMLSelectElement>document.getElementById("debug_color_list")!;
     }
-
-    //****** CODE FOR DEBUG MODE
-    debugDraw() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_draw.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { },
-        );
-    }
-
-    debugMeld() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_meld.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { },
-        );
-    }
-
-    debugTuck() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_tuck.html",
-            {
-                lock: true,
-                card_id: debug_card_list.selectedIndex
-            },
-            this, function (result) { }, function (is_error) { },
-        );
-    }
-
-    debugScore() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_score.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugAchieve() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_achieve.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugReturn() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_return.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugTopdeck() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_topdeck.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugDig() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_dig.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugForeshadow() {
-        let debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_foreshadow.html",
-            {
-                lock: true,
-                card_id: debug_card_list.value
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugUnsplay() {
-        let debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html",
-            {
-                lock: true,
-                color: debug_color_list.value,
-                direction: 0
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugSplayLeft() {
-        let debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html",
-            {
-                lock: true,
-                color: debug_color_list.value,
-                direction: 1
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugSplayRight() {
-        let debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html",
-            {
-                lock: true,
-                color: debug_color_list.value,
-                direction: 2
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugSplayUp() {
-        let debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html",
-            {
-                lock: true,
-                color: debug_color_list.value,
-                direction: 3
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-
-    debugSplayAslant() {
-        let debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html",
-            {
-                lock: true,
-                color: debug_color_list.value,
-                direction: 4
-            },
-            this, function (result) { }, function (is_error) { }
-        );
-    }
-    //******
 
     /*
         setup:
@@ -374,6 +237,8 @@ class Innovation extends BgaGame {
                 + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
                 + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
                 + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
+                + "<button id='debug_junk' class='action-button debug_button bgabutton bgabutton_red'>JUNK</button>"
+                + "<button id='debug_safeguard' class='action-button debug_button bgabutton bgabutton_red'>SAFEGUARD</button>"
                 + main_area.innerHTML;
 
             // Populate dropdown lists
@@ -397,24 +262,30 @@ class Innovation extends BgaGame {
             $('debug_color_list').innerHTML += `<option value='4'>Purple</option>`;
 
             // Trigger events when buttons are clicked
-            dojo.connect($('debug_draw'), 'onclick', this, 'debugDraw');
-            dojo.connect($('debug_meld'), 'onclick', this, 'debugMeld');
-            dojo.connect($('debug_tuck'), 'onclick', this, 'debugTuck');
-            dojo.connect($('debug_score'), 'onclick', this, 'debugScore');
-            dojo.connect($('debug_achieve'), 'onclick', this, 'debugAchieve');
-            dojo.connect($('debug_return'), 'onclick', this, 'debugReturn');
-            dojo.connect($('debug_topdeck'), 'onclick', this, 'debugTopdeck');
+            dojo.connect($('debug_draw'), 'onclick', (_) => this.debugTransfer("draw"));
+            dojo.connect($('debug_meld'), 'onclick', (_) => this.debugTransfer("meld"));
+            dojo.connect($('debug_tuck'), 'onclick', (_) => this.debugTransfer("tuck"));
+            dojo.connect($('debug_score'), 'onclick', (_) => this.debugTransfer("score"));
+            dojo.connect($('debug_achieve'), 'onclick', (_) => this.debugTransfer("achieve"));
+            dojo.connect($('debug_return'), 'onclick', (_) => this.debugTransfer("return"));
+            dojo.connect($('debug_topdeck'), 'onclick', (_) => this.debugTransfer("topdeck"));
             if (gamedatas.artifacts_expansion_enabled) {
-                dojo.connect($('debug_dig'), 'onclick', this, 'debugDig');
+                dojo.connect($('debug_dig'), 'onclick', (_) => this.debugTransfer("dig"));
             }
             if (gamedatas.echoes_expansion_enabled) {
-                dojo.connect($('debug_foreshadow'), 'onclick', this, 'debugForeshadow');
+                dojo.connect($('debug_foreshadow'), 'onclick', (_) => this.debugTransfer("foreshadow"));
             }
-            dojo.connect($('debug_unsplay'), 'onclick', this, 'debugUnsplay');
-            dojo.connect($('debug_splay_left'), 'onclick', this, 'debugSplayLeft');
-            dojo.connect($('debug_splay_right'), 'onclick', this, 'debugSplayRight');
-            dojo.connect($('debug_splay_up'), 'onclick', this, 'debugSplayUp');
-            dojo.connect($('debug_splay_aslant'), 'onclick', this, 'debugSplayAslant');
+            if (gamedatas.edition == 4) {
+                dojo.connect($('debug_junk'), 'onclick', (_) => this.debugTransfer("junk"));
+            }
+            if (gamedatas.unseen_expansion_enabled) {
+                dojo.connect($('debug_safeguard'), 'onclick', (_) => this.debugTransfer("safeguard"));
+            }
+            dojo.connect($('debug_unsplay'), 'onclick', (_) => this.debugSplay(0));
+            dojo.connect($('debug_splay_left'), 'onclick', (_) => this.debugSplay(1));
+            dojo.connect($('debug_splay_right'), 'onclick', (_) => this.debugSplay(2));
+            dojo.connect($('debug_splay_up'), 'onclick', (_) => this.debugSplay(3));
+            dojo.connect($('debug_splay_aslant'), 'onclick', (_) => this.debugSplay(4));
         }
         //******
 

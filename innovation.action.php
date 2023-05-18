@@ -14,7 +14,7 @@
  *
  *
  * In this file, you are describing all the methods that can be called from your
- * user interface logic (javascript).
+ * user interface logic.
  *       
  * If you define a method "myAction" here, then you can call it from your javascript code with:
  * this.ajaxcall( "/innovation/innovation/myAction.html", ...)
@@ -35,61 +35,14 @@
         }
     } 
 
-    //****** DEBUG MODE
-    public function debug_draw() {            
+    public function debug_transfer() {
         self::setAjaxMode();
         $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_draw($card_id);
+        $transfer_action = self::getArg("transfer_action", AT_alphanum, true);
+        $this->game->debug_transfer($card_id, $transfer_action);
         self::ajaxResponse();
     }
-    public function debug_meld() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_meld($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_tuck() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_tuck($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_score() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_score($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_achieve() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_achieve($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_return() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_return($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_topdeck() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_topdeck($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_dig() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_dig($card_id);
-        self::ajaxResponse();
-    }
-    public function debug_foreshadow() {            
-        self::setAjaxMode();
-        $card_id = self::getArg("card_id", AT_posint, true);
-        $this->game->debug_foreshadow($card_id);
-        self::ajaxResponse();
-    }
+
     public function debug_splay() {
         self::setAjaxMode();
         $color = self::getArg("color", AT_posint, true);
@@ -97,7 +50,6 @@
         $this->game->debug_splay($color, $direction);
         self::ajaxResponse();
     }
-    //******
       
     public function initialMeld() {
         self::setAjaxMode();

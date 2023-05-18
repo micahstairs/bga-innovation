@@ -171,205 +171,67 @@ class Innovation extends Table
         }
     }
 
-    //****** CODE FOR DEBUG MODE
-    function debug_draw($card_id) {
+    function debug_transfer($card_id, $action) {
         if ($this->innovationGameState->get('debug_mode') == 0) {
             return; // Not in debug mode
         }
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['using_debug_buttons'] = true;
-        if ($card['location'] == 'achievements' || $card['location'] == 'board' || $card['location'] == 'deck' || $card['location'] == 'relics' || $card['location'] == 'score' || ($card['location'] == 'hand' && $card['owner'] != $player_id)) {
-            self::transferCardFromTo($card, $player_id, 'hand');
-        } else if ($card['location'] == 'removed') {
-            throw new BgaUserException("This card is removed from the game");
-        } else {
-            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
-        }
-    }
-    function debug_meld($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        // The melding is being done in two steps because otherwise many of the transitions would not be supported.
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
-            self::debug_draw($card_id);
-            $card = self::getCardInfo($card_id);
-            $card['using_debug_buttons'] = true;
-        }
-        self::meldCard($card, $player_id);
-    }
-    function debug_tuck($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        // The tucking is being done in two steps because otherwise many of the transitions would not be supported.
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
-            self::debug_draw($card_id);
-            $card = self::getCardInfo($card_id);
-            $card['using_debug_buttons'] = true;
-        }
-        self::transferCardFromTo($card, $player_id, 'board', /*bottom_to=*/ true);
-    }
-    function debug_score($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'deck') {
-            self::scoreCard($card, $player_id);
-        } else if ($card['location'] == 'achievements') {
-            throw new BgaUserException("This card is used as an achievement");
-        } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as a relic");
-        } else if ($card['location'] == 'removed') {
-            throw new BgaUserException("This card is removed from the game");
-        } else {
-            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
-        }
-    }
-    function debug_achieve($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if ($card['location'] == 'achievements' && $card['owner'] == $player_id) {
-            throw new BgaUserException("You already have this card as an achievement");
-        } else if ($card['location'] == 'removed') {
-            throw new BgaUserException("This card is removed from the game");
-        } else if ($card['owner'] == 0 || $card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score') {
-            try {
+        switch ($action) {
+            case 'draw':
+                self::transferCardFromTo($card, $player_id, 'hand');
+                break;
+            case 'meld':
+                // The melding is being done in two steps because otherwise many of the transitions would not be supported.
+                if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                    $card = self::getCardInfo($card_id);
+                    $card['using_debug_buttons'] = true;
+                }
+                self::meldCard($card, $player_id);
+                break;
+            case 'tuck':
+                // The tucking is being done in two steps because otherwise many of the transitions would not be supported.
+                if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                    $card = self::getCardInfo($card_id);
+                    $card['using_debug_buttons'] = true;
+                }
+                self::tuckCard($card, $player_id);
+                break;
+            case 'score':
+                self::scoreCard($card, $player_id);
+                break;
+            case 'achieve':
                 self::transferCardFromTo($card, $player_id, "achievements");
-            }
-            catch (EndOfGame $e) {
-                // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::debug_achieve');
-                $this->gamestate->nextState('justBeforeGameEnd');
-                return;
-            }
-        } else {
-            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
-        }
-       
-    }
-    function debug_return($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-
-        if ($card['location'] == 'forecast') {
-            $card = self::transferCardFromTo($card, $player_id, 'revealed');
-            $card['using_debug_buttons'] = true;
-        }
-
-        if ($card['location'] == 'deck') {
-            throw new BgaUserException("This card is already in the deck");
-        } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is already in the relics area");
-        } else if ($card['location'] == 'removed') {
-            throw new BgaUserException("This card is removed from the game");
-        } else if ($card['id'] >= 1100) {
-            self::transferCardFromTo($card, 0, 'fountains');
-        } else if ($card['id'] >= 1000) {
-            self::transferCardFromTo($card, 0, 'flags');
-        } else if ($card['location'] == 'hand' || $card['location'] == 'board' || $card['location'] == 'score' || $card['location'] == 'display' || $card['location'] == 'achievements' || $card['location'] == 'revealed') {
-            try {
+                break;
+            case 'return':
                 self::returnCard($card);
-            }
-            catch (EndOfGame $e) {
-                // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::debug_return');
-                $this->gamestate->nextState('justBeforeGameEnd');
-                return;
-            }
-        } else {
-            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
+                break;
+            case 'topdeck':
+                self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
+                break;
+            case 'dig':
+                if (self::getArtifactOnDisplay($player_id) != null) {
+                    throw new BgaUserException("There is already an Artifact on display");
+                }
+                self::digCard($card, $player_id);
+                break;
+            case 'foreshadow':
+                self::foreshadowCard($card, $player_id);
+                break;
+            case 'junk':
+                self::junkCard($card);
+                break;
+            case 'safeguard':
+                self::safeguardCard($card, $player_id);
+                break;
+            default:
+                throw new BgaUserException("Unsupported debug action: ".$action);
         }
     }
-    function debug_topdeck($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        // The topdecking is being done in two steps because otherwise many of the transitions would not be supported.
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
-            self::debug_draw($card_id);
-            $card = self::getCardInfo($card_id);
-            $card['using_debug_buttons'] = true;
-        }
-        self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
-    }
-    function debug_dig($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if (self::getArtifactOnDisplay($player_id) != null) {
-            throw new BgaUserException("There is already an Artifact on display");
-        } else if ($card['location'] == 'achievements') {
-            throw new BgaUserException("This card is used as an achievement");
-        } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as a relic");
-        } else if ($card['location'] == 'removed') {
-            throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'deck') {
-            try {
-                self::transferCardFromTo($card, $player_id, "display");
-            }
-            catch (EndOfGame $e) {
-                // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::debug_dig');
-                $this->gamestate->nextState('justBeforeGameEnd');
-                return;
-            }
-        } else {
-            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
-        }
-    }
-    function debug_foreshadow($card_id) {
-        if ($this->innovationGameState->get('debug_mode') == 0) {
-            return; // Not in debug mode
-        }
-        $player_id = self::getCurrentPlayerId();
-        $card = self::getCardInfo($card_id);
-        $card['using_debug_buttons'] = true;
-        if ($card['location'] == 'achievements') {
-            throw new BgaUserException("This card is used as an achievement");
-        } else if ($card['location'] == 'relics') {
-            throw new BgaUserException("This card is used as a relic");
-        } else if ($card['location'] == 'removed') {
-            throw new BgaUserException("This card is removed from the game");
-        } else if ($card['location'] == 'deck') {
-            try {
-                self::transferCardFromTo($card, $player_id, "forecast");
-            }
-            catch (EndOfGame $e) {
-                // End of the game: the exception has reached the highest level of code
-                self::trace('EOG bubbled from self::debug_foreshadow');
-                $this->gamestate->nextState('justBeforeGameEnd');
-                return;
-            }
-        } else {
-            throw new BgaUserException(self::format("This card is in {player_name}'s {location}", array('player_name' => self::getPlayerNameFromId($card['owner']), 'location' => $card['location'])));
-        }
-    }
+
     function debug_splay($color, $direction) {
         if ($this->innovationGameState->get('debug_mode') == 0) {
             return; // Not in debug mode
@@ -377,7 +239,6 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         self::splay($player_id, $player_id, $color, $direction, /*force_unsplay=*/ $direction == 0);
     }
-    //******
     
     /*
         setupNewGame:
@@ -1395,8 +1256,20 @@ class Innovation extends Table
         return self::transferCardFromTo($card, 0, 'deck');
     }
 
+    function digCard($card, $owner_to) {
+        self::transferCardFromTo($card, $player_id, "display");
+    }
+
+    function foreshadowCard($card, $owner_to) {
+        return self::transferCardFromTo($card, $owner_to, 'forecast');
+    }
+
     function junkCard($card) {
         return self::transferCardFromTo($card, 0, 'junk');
+    }
+
+    function safeguardCard($card, $owner_to) {
+        return self::transferCardFromTo($card, $owner_to, 'safe');
     }
 
     /**
@@ -6873,6 +6746,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 15;
         case 'junk':
             return 16;
+        case 'safe':
+            return 17;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -6916,6 +6791,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'hand,score';
         case 16:
             return 'junk';
+        case 17:
+            return 'safe';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -7978,7 +7855,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if ($top_artifact_card == null) {
                 self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
             } else {
-                self::transferCardFromTo($top_artifact_card, $player_id, 'display');
+                self::digCard($top_artifact_card, $player_id);
                 self::incStat(1, 'dig_events_number', $player_id);
                 
                 // "After you dig an artifact, you may seize a Relic of the same value as the Artifact card drawn."
@@ -12262,10 +12139,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         // TODO(4E): Remove new locations too.
                         foreach (self::getAllPlayerIds() as $player) {
                             foreach (self::getCardsInLocation($player, 'display') as $display_card) {
-                                self::transferCardFromTo($display_card, 0, 'junk');
+                                self::junkCard($display_card);
                             }
                             foreach (self::getCardsInLocation($player, 'forecast') as $forecast_card) {
-                                self::transferCardFromTo($forecast_card, 0, 'junk');
+                                self::junkCard($forecast_card);
                             }
                         }
                     }
@@ -14344,7 +14221,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${color} cards in his hand.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
                     
                     // "Otherwise, foreshadow the drawn card."
-                    self::transferCardFromTo($revealed_card, $player_id, 'forecast');
+                    self::foreshadowCard($revealed_card, $player_id);
                 }
                 break;
 
@@ -14402,7 +14279,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, $max_bonus, 'revealed');
                 
                 // "Transfer it to my forecast! "
-                self::transferCardFromTo($card, $launcher_id, 'forecast');
+                self::foreshadowCard($card, $launcher_id);
                 
                 if ($card['color'] == 1) { 
                     // "If it is red, transfer all cards from your hand to my score pile!"
@@ -14858,7 +14735,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if (!self::hasRessource($card, 5)) {
                         $keep_going = false;
                         // "Otherwise, foreshadow it."
-                        self::transferCardFromTo($card, $player_id, 'forecast');
+                        self::foreshadowCard($card, $player_id);
                     }
                     else {
                         // "If it has a factory, meld it"
@@ -25657,7 +25534,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $num_towers = self::getAuxiliaryValue();
                     if ($num_towers > 0) {
                         $card = self::executeDraw($player_id, $num_towers);
-                        self::transferCardFromTo($card, $launcher_id, 'forecast');
+                        self::foreshadowCard($card, $launcher_id);
                     }
                     break;
 
@@ -26098,7 +25975,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             $other_card = self::getCardInfo($card_id_1);
                         }
-                        self::transferCardFromTo($other_card, $player_id, 'forecast');
+                        self::foreshadowCard($other_card, $player_id);
                     }
                     break;
                 

@@ -205,117 +205,28 @@ var Innovation = /** @class */ (function (_super) {
         console.log('innovation constructor');
         return _this;
     }
+    Innovation.prototype.debugTransfer = function (action) {
+        var debug_card_list = this.getDebugCardList();
+        this.ajaxcall("/innovation/innovation/debug_transfer.html", {
+            lock: true,
+            card_id: debug_card_list.value,
+            transfer_action: action,
+        }, this, function (result) { }, function (is_error) { });
+    };
     Innovation.prototype.getDebugCardList = function () {
         return document.getElementById("debug_card_list");
+    };
+    Innovation.prototype.debugSplay = function (direction) {
+        var debug_color_list = this.getDebugColorList();
+        this.ajaxcall("/innovation/innovation/debug_splay.html", {
+            lock: true,
+            color: debug_color_list.value,
+            direction: direction,
+        }, this, function (result) { }, function (is_error) { });
     };
     Innovation.prototype.getDebugColorList = function () {
         return document.getElementById("debug_color_list");
     };
-    //****** CODE FOR DEBUG MODE
-    Innovation.prototype.debugDraw = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_draw.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugMeld = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_meld.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugTuck = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_tuck.html", {
-            lock: true,
-            card_id: debug_card_list.selectedIndex
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugScore = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_score.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugAchieve = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_achieve.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugReturn = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_return.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugTopdeck = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_topdeck.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugDig = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_dig.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugForeshadow = function () {
-        var debug_card_list = this.getDebugCardList();
-        this.ajaxcall("/innovation/innovation/debug_foreshadow.html", {
-            lock: true,
-            card_id: debug_card_list.value
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugUnsplay = function () {
-        var debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html", {
-            lock: true,
-            color: debug_color_list.value,
-            direction: 0
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugSplayLeft = function () {
-        var debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html", {
-            lock: true,
-            color: debug_color_list.value,
-            direction: 1
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugSplayRight = function () {
-        var debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html", {
-            lock: true,
-            color: debug_color_list.value,
-            direction: 2
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugSplayUp = function () {
-        var debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html", {
-            lock: true,
-            color: debug_color_list.value,
-            direction: 3
-        }, this, function (result) { }, function (is_error) { });
-    };
-    Innovation.prototype.debugSplayAslant = function () {
-        var debug_color_list = this.getDebugColorList();
-        this.ajaxcall("/innovation/innovation/debug_splay.html", {
-            lock: true,
-            color: debug_color_list.value,
-            direction: 4
-        }, this, function (result) { }, function (is_error) { });
-    };
-    //******
     /*
         setup:
         
@@ -329,6 +240,7 @@ var Innovation = /** @class */ (function (_super) {
         "gamedatas" argument contains all datas retrieved by your "getAllDatas" PHP method.
     */
     Innovation.prototype.setup = function (gamedatas) {
+        var _this = this;
         dojo.destroy('debug_output');
         //****** CODE FOR DEBUG MODE
         if (!this.isSpectator && gamedatas.debug_mode == 1) {
@@ -357,6 +269,8 @@ var Innovation = /** @class */ (function (_super) {
                     + "<button id='debug_achieve' class='action-button debug_button bgabutton bgabutton_red'>ACHIEVE</button>"
                     + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
                     + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
+                    + "<button id='debug_junk' class='action-button debug_button bgabutton bgabutton_red'>JUNK</button>"
+                    + "<button id='debug_safeguard' class='action-button debug_button bgabutton bgabutton_red'>SAFEGUARD</button>"
                     + main_area.innerHTML;
             // Populate dropdown lists
             for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
@@ -380,24 +294,30 @@ var Innovation = /** @class */ (function (_super) {
             $('debug_color_list').innerHTML += "<option value='3'>Yellow</option>";
             $('debug_color_list').innerHTML += "<option value='4'>Purple</option>";
             // Trigger events when buttons are clicked
-            dojo.connect($('debug_draw'), 'onclick', this, 'debugDraw');
-            dojo.connect($('debug_meld'), 'onclick', this, 'debugMeld');
-            dojo.connect($('debug_tuck'), 'onclick', this, 'debugTuck');
-            dojo.connect($('debug_score'), 'onclick', this, 'debugScore');
-            dojo.connect($('debug_achieve'), 'onclick', this, 'debugAchieve');
-            dojo.connect($('debug_return'), 'onclick', this, 'debugReturn');
-            dojo.connect($('debug_topdeck'), 'onclick', this, 'debugTopdeck');
+            dojo.connect($('debug_draw'), 'onclick', function (_) { return _this.debugTransfer("draw"); });
+            dojo.connect($('debug_meld'), 'onclick', function (_) { return _this.debugTransfer("meld"); });
+            dojo.connect($('debug_tuck'), 'onclick', function (_) { return _this.debugTransfer("tuck"); });
+            dojo.connect($('debug_score'), 'onclick', function (_) { return _this.debugTransfer("score"); });
+            dojo.connect($('debug_achieve'), 'onclick', function (_) { return _this.debugTransfer("achieve"); });
+            dojo.connect($('debug_return'), 'onclick', function (_) { return _this.debugTransfer("return"); });
+            dojo.connect($('debug_topdeck'), 'onclick', function (_) { return _this.debugTransfer("topdeck"); });
             if (gamedatas.artifacts_expansion_enabled) {
-                dojo.connect($('debug_dig'), 'onclick', this, 'debugDig');
+                dojo.connect($('debug_dig'), 'onclick', function (_) { return _this.debugTransfer("dig"); });
             }
             if (gamedatas.echoes_expansion_enabled) {
-                dojo.connect($('debug_foreshadow'), 'onclick', this, 'debugForeshadow');
+                dojo.connect($('debug_foreshadow'), 'onclick', function (_) { return _this.debugTransfer("foreshadow"); });
             }
-            dojo.connect($('debug_unsplay'), 'onclick', this, 'debugUnsplay');
-            dojo.connect($('debug_splay_left'), 'onclick', this, 'debugSplayLeft');
-            dojo.connect($('debug_splay_right'), 'onclick', this, 'debugSplayRight');
-            dojo.connect($('debug_splay_up'), 'onclick', this, 'debugSplayUp');
-            dojo.connect($('debug_splay_aslant'), 'onclick', this, 'debugSplayAslant');
+            if (gamedatas.edition == 4) {
+                dojo.connect($('debug_junk'), 'onclick', function (_) { return _this.debugTransfer("junk"); });
+            }
+            if (gamedatas.unseen_expansion_enabled) {
+                dojo.connect($('debug_safeguard'), 'onclick', function (_) { return _this.debugTransfer("safeguard"); });
+            }
+            dojo.connect($('debug_unsplay'), 'onclick', function (_) { return _this.debugSplay(0); });
+            dojo.connect($('debug_splay_left'), 'onclick', function (_) { return _this.debugSplay(1); });
+            dojo.connect($('debug_splay_right'), 'onclick', function (_) { return _this.debugSplay(2); });
+            dojo.connect($('debug_splay_up'), 'onclick', function (_) { return _this.debugSplay(3); });
+            dojo.connect($('debug_splay_aslant'), 'onclick', function (_) { return _this.debugSplay(4); });
         }
         //******
         this.card_browsing_window = new dijit.Dialog({ 'title': _("Browse All Cards") });
