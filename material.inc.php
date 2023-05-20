@@ -1946,7 +1946,7 @@ $this->textual_card_infos = array(
 ),
 
 483 => array('name' => clienttranslate('Assassination'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you draw and reveal a ${age_1}! If it has a ${icon_4}, transfer it and the top card on your board of its color to my score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal a ${age_1}! If it has a ${icon_4}, transfer it and the top card on your board of its color to my score pile!'),
     'non_demand_effect_1' => clienttranslate('If no player has a top green card, claim the Confidence achievement.'),
 ),
 
