@@ -3351,6 +3351,9 @@ class Innovation extends Table
         if ($this->innovationGameState->echoesExpansionEnabled() && ($edition <= 3 || $is_end_of_action_check)) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
+        if ($this->innovationGameState->unseenExpansionEnabled() && ($edition >= 4 || $is_end_of_action_check)) {
+            $achievements_to_test = array_merge($achievements_to_test, [595, 596, 597, 598, 599]);
+        }
         $end_of_game = false;
         
         foreach ($achievements_to_test as $achievement_id) {
@@ -3434,6 +3437,70 @@ class Innovation extends Table
                                 break;
                             }
                         }
+                    }
+                }
+                break;
+            case 595: // Confidence, age 5 minimum, 4 or more cards in safeguard
+                $eligible = false;
+                if (self::getMaxAgeOnBoardTopCards($player_id) >= 5) {
+                    // TODO: Change when the "safe" location is available.
+                    if (self::countCardsInLocation($player_id, 'revealed') >= 4) {
+                        $eligible = true;
+                    }
+                }
+                break;
+            case 596: // Zen, age 6 minimum, no odd valued top cards
+                $eligible = true;
+                if (self::getMaxAgeOnBoardTopCards($player_id) >= 6) {
+                    $top_cards = self::getTopCardsOnBoard($player_id);
+                    foreach ($top_cards as $card) {
+                        if ($card !== null) {
+                            if ($card['age'] == 1 || $card['age'] == 3 || 
+                                $card['age'] == 5 || $card['age'] == 7 || 
+                                $card['age'] == 9 || $card['age'] == 11)
+                            $eligible = false;
+                        }
+                    }
+                }
+                else {
+                    $eligible = false;
+                }
+                break;
+            case 597: // Anonymity, age 7 minimum and no standard achievements
+                $eligible = true;
+                if (self::getMaxAgeOnBoardTopCards($player_id) >= 7) {
+                    $achieve_cards = self::getCardsInLocation($player_id, 'achievements');
+                    foreach ($achieve_cards as $card) {
+                        if ($card['age'] !== null) { // aged achievement
+                            $eligible = false;
+                        }
+                    }
+                } else {
+                    $eligible = false;
+                }
+                 
+                break;
+            case 598: // Folklore, age 8 minimum, no factories
+                $eligible = false;
+                if (self::getMaxAgeOnBoardTopCards($player_id) >= 8) {
+                    if (self::getPlayerResourceCounts($player_id)[5] == 0) {
+                        $eligible = true;
+                    }
+                }
+                break;
+            case 599: // Mystery - age 9 minimum, less than 5 top cards
+                $eligible = false;
+                if (self::getMaxAgeOnBoardTopCards($player_id) >= 9) {
+                    $top_card_count = 0;
+                    
+                    $top_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                    for($color = 0; $color < 5; $color++) {
+                        if ($top_cards[$color] > 0) {
+                            $top_card_count++;
+                        }
+                    }
+                    if ($top_card_count < 5) {
+                        $eligible = true;
                     }
                 }
                 break;
@@ -21899,7 +21966,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(https://github.com/micahstairs/bga.innovationkahlia/issues/472): This needs to have the "choose_draw_value" when
+            // TODO(https://github.com/micahstairs/bga.innovation/issues/472): This needs to have the "choose_draw_value" when
             // that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
