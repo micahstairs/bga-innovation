@@ -57,6 +57,7 @@ class Innovation extends BgaGame {
         ["my_forecast_verso", "M card"],
         ["score", "S recto"],
         ["my_score_verso", "M card"],
+        ["safe", "S recto"],
         ["revealed", "M card"],
         ["relics", "S recto"],
         ["achievements", "S recto"],
@@ -73,7 +74,7 @@ class Innovation extends BgaGame {
         ["my_forecast_verso", 3],
         ["score", -1], // Computed dynamically
         ["my_score_verso", 3],
-        ["revealed", 1],
+        ["safe", -1], // Computed dynamically
         ["relics", -1], // Computed dynamically
         ["achievements", -1], // Computed dynamically
         ["special_achievements", -1], // Computed dynamically
@@ -89,6 +90,7 @@ class Innovation extends BgaGame {
         "my_forecast_verso": { "x": 189, "y": 133 }, // +7
         "score": { "x": 35, "y": 49 },  // + 2
         "my_score_verso": { "x": 189, "y": 133 }, // +7
+        "safe": { "x": 35, "y": 49 },  // + 2
         "revealed": { "x": 189, "y": 133 }, // +7,
         "achievements": { "x": 35, "y": 49 },  // + 2
     };
@@ -686,13 +688,27 @@ class Innovation extends BgaGame {
             }
         }
 
-        if (!this.isSpectator) {
-            if (this.gamedatas.echoes_expansion_enabled) {
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+        // PLAYERS' SAFE
+        this.zone["safe"] = {};
+        for (let player_id in this.players) {
+            // Creation of the zone
+            this.zone["safe"][player_id] = this.createZone('safe', player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
+            this.setPlacementRules(this.zone["safe"][player_id], /*left_to_right=*/ false);
+
+            // Add cards to zone according to the current situation
+            for (let type = 0; type <= 5; type++) {
+                let safe_count = gamedatas.safe_counts[player_id][type];
+                for (let age = 1; age <= 11; age++) {
+                    let num_cards = safe_count[age];
+                    for (let i = 0; i < num_cards; i++) {
+                        this.createAndAddToZone(this.zone["safe"][player_id], i, age, type, /*is_relic=*/ 0, null, dojo.body(), null);
+                    }
+                }
             }
-            dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-            dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+
+            if (!this.gamedatas.unseen_expansion_enabled) {
+                dojo.byId('safe_text_' + player_id).style.display = 'none';
+            }
         }
 
         // PLAYER BOARD
@@ -891,13 +907,15 @@ class Innovation extends BgaGame {
 
         let main_area_inner_width = main_area_width - 14;
         let reference_card_width = dojo.position('reference_card_' + any_player_id).w;
-        let buffer = this.gamedatas.echoes_expansion_enabled ? 10 : 0;
 
-        // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
-        let num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
+        // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x == this.delta.safe.x
+        let num_cards_in_row = Math.floor((main_area_inner_width - reference_card_width) / this.delta.score.x);
+        let num_safe_cards_in_row = this.gamedatas.unseen_expansion_enabled ? 1 : 0;
+        this.num_cards_in_row.set("safe", num_safe_cards_in_row);
+        let num_forecast_score_achievements_cards = num_cards_in_row - num_safe_cards_in_row;
         let num_achievements_cards_in_row = Math.floor(num_forecast_score_achievements_cards / 3);
-        if (num_achievements_cards_in_row < 1) {
-            num_achievements_cards_in_row = 1;
+        if (num_achievements_cards_in_row < 3) {
+            num_achievements_cards_in_row = 3;
         }
         if (num_achievements_cards_in_row > this.gamedatas.number_of_achievements_needed_to_win) {
             num_achievements_cards_in_row = this.gamedatas.number_of_achievements_needed_to_win;
@@ -920,9 +938,10 @@ class Innovation extends BgaGame {
         this.num_cards_in_row.set("forecast", num_forecast_cards_in_row);
         this.num_cards_in_row.set("score", num_score_cards_in_row);
 
-        let forecast_container_width = this.gamedatas.echoes_expansion_enabled ? num_forecast_cards_in_row * this.delta.forecast.x : 0;
+        let safe_container_width = num_safe_cards_in_row * this.delta.safe.x;
+        let forecast_container_width = num_forecast_cards_in_row * this.delta.forecast.x;
         let achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
-        let score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
+        let score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width - safe_container_width;
         for (let player_id in this.players) {
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
             dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
@@ -933,6 +952,9 @@ class Innovation extends BgaGame {
             dojo.style('achievement_container_' + player_id, 'width', achievement_container_width + 'px');
             dojo.style('achievements_' + player_id, 'width', achievement_container_width + 'px');
             dojo.setStyle(this.zone["achievements"][player_id].container_div, 'width', achievement_container_width + "px");
+            dojo.style('safe_container_' + player_id, 'width', safe_container_width + 'px');
+            dojo.style('safe_' + player_id, 'width', safe_container_width + 'px');
+            dojo.setStyle(this.zone["safe"][player_id].container_div, 'width', safe_container_width + "px");
             dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
         }
 
@@ -946,6 +968,7 @@ class Innovation extends BgaGame {
             this.zone["score"][player_id].updateDisplay();
             this.zone["achievements"][player_id].updateDisplay();
             this.zone["hand"][player_id].updateDisplay();
+            this.zone["safe"][player_id].updateDisplay();
         }
         for (let player_id in this.players) {
             for (let color = 0; color < 5; color++) {
@@ -2669,6 +2692,7 @@ class Innovation extends BgaGame {
             case "score":
             case "revealed":
             case "achievements":
+            case "safe":
                 if (owner == 0) {
                     return age === null ? this.zone["special_achievements"][0] : this.zone["achievements"][0];
                 } else {
@@ -2940,7 +2964,7 @@ class Innovation extends BgaGame {
 
         // Width of the zone
         let zone_width;
-        if (new_location == 'board' || new_location == 'score' || new_location == 'forecast') {
+        if (new_location == 'board' || new_location == 'score' || new_location == 'forecast' || new_location == 'safe') {
             zone_width = card_dimensions.width; // Will change dynamically
         } else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {
             let delta_x = this.delta[new_location].x

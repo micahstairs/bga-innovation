@@ -630,6 +630,14 @@ class Innovation extends Table
             }
         }
 
+        // Backs of the cards in each player's safe
+        $result['safe_counts'] = array();
+        for ($type = 0; $type <= 5; $type++) {
+            foreach ($players as $player_id => $player) {
+                $result['safe_counts'][$player_id][$type] = self::countCardsInLocationKeyedByAge($player_id, 'safe', $type, /*is_relic=*/ 0);
+            }
+        }
+
         // Backs of the cards in forecast piles
         $result['forecast_counts'] = array();
         for ($type = 0; $type <= 5; $type++) {
@@ -744,6 +752,7 @@ class Innovation extends Table
         $result['my_hand'] = Arrays::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'hand'));
         $result['my_forecast'] = Arrays::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'forecast'));
         $result['my_score'] = Arrays::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'score'));
+        $result['my_safe'] = Arrays::flatten(self::getCardsInLocationKeyedByAge($current_player_id, 'safe'));
         
         // My wish for splay
         $result['display_mode'] = self::getPlayerWishForSplay($current_player_id);        
@@ -2189,6 +2198,14 @@ class Innovation extends Table
         case 'achievements->relics':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your achievements.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from his achievements.');
+            break;
+        case 'achievements->safe':
+            $message_for_player = clienttranslate('${You} safeguard a ${<}${age}${>} from the available achievements.');
+            $message_for_others = clienttranslate('${player_name} safeguards a ${<}${age}${>} from the available achievements.');
+            break;
+        case 'hand->safe':
+            $message_for_player = clienttranslate('${You} safeguard ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+            $message_for_others = clienttranslate('${player_name} safeguards a ${<}${age}${>} from his hand.');
             break;
         case 'board->hand':
             $message_for_player = clienttranslate('${You} take back ${<}${age}${>} ${<<}${name}${>>} from your board to your hand.');

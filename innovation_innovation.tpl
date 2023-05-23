@@ -3,7 +3,7 @@
 <!-- 
 --------
 -- BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
--- Innovation implementation : © Jean Portemer <jportemer@gmail.com>
+-- Innovation implementation: © Jean Portemer <jportemer@gmail.com> and Micah Stairs <micah.stairs@gmail.com>
 -- 
 -- This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
 -- See http://en.boardgamearena.com/#!doc/Studio for more information.
@@ -42,8 +42,10 @@
                 </div>
                 <div id="progress_{PLAYER_ID}" class="progress">
                     <div id="forecast_container_{PLAYER_ID}" class="forecast_container">
-                        <p id="forecast_text_{PLAYER_ID}"{OPT_FORECAST_CLASS}>{FORECAST_PILE}</p>
-                        <div id="forecast_{PLAYER_ID}" class="forecast"></div>
+                        <div style="background-color:rgba({R}, {G}, {B}, .2);">
+                            <p id="forecast_text_{PLAYER_ID}"{OPT_FORECAST_CLASS}>{FORECAST_PILE}</p>
+                            <div id="forecast_{PLAYER_ID}" class="forecast"></div>
+                        </div>
                     </div>
                     <div id="score_container_{PLAYER_ID}" class="score_container">
                         <p id="score_text_{PLAYER_ID}"{OPT_SCORE_CLASS}>{SCORE_PILE}</p>
@@ -53,6 +55,12 @@
                     <div id="achievement_container_{PLAYER_ID}" class="achievement_container">
                         <p>{ACHIEVEMENTS}</p>
                         <div id="achievements_{PLAYER_ID}" class="achievements"></div>
+                    </div>
+                    <div id="safe_container_{PLAYER_ID}" class="safe_container">
+                        <div style="background-color:rgba({R}, {G}, {B}, .2);">
+                            <p id="safe_text_{PLAYER_ID}">{SAFE}</p>
+                            <div id="safe_{PLAYER_ID}" class="safe"></div>
+                        </div>
                     </div>
                 </div>
             </div>

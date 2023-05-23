@@ -122,6 +122,7 @@ var Innovation = /** @class */ (function (_super) {
             ["my_forecast_verso", "M card"],
             ["score", "S recto"],
             ["my_score_verso", "M card"],
+            ["safe", "S recto"],
             ["revealed", "M card"],
             ["relics", "S recto"],
             ["achievements", "S recto"],
@@ -137,7 +138,7 @@ var Innovation = /** @class */ (function (_super) {
             ["my_forecast_verso", 3],
             ["score", -1],
             ["my_score_verso", 3],
-            ["revealed", 1],
+            ["safe", -1],
             ["relics", -1],
             ["achievements", -1],
             ["special_achievements", -1], // Computed dynamically
@@ -152,6 +153,7 @@ var Innovation = /** @class */ (function (_super) {
             "my_forecast_verso": { "x": 189, "y": 133 },
             "score": { "x": 35, "y": 49 },
             "my_score_verso": { "x": 189, "y": 133 },
+            "safe": { "x": 35, "y": 49 },
             "revealed": { "x": 189, "y": 133 },
             "achievements": { "x": 35, "y": 49 }, // + 2
         };
@@ -685,13 +687,25 @@ var Innovation = /** @class */ (function (_super) {
                 }
             }
         }
-        if (!this.isSpectator) {
-            if (this.gamedatas.echoes_expansion_enabled) {
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-                dojo.query('#progress_' + this.player_id + ' .forecast_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+        // PLAYERS' SAFE
+        this.zone["safe"] = {};
+        for (var player_id in this.players) {
+            // Creation of the zone
+            this.zone["safe"][player_id] = this.createZone('safe', player_id, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
+            this.setPlacementRules(this.zone["safe"][player_id], /*left_to_right=*/ false);
+            // Add cards to zone according to the current situation
+            for (var type = 0; type <= 5; type++) {
+                var safe_count = gamedatas.safe_counts[player_id][type];
+                for (var age = 1; age <= 11; age++) {
+                    var num_cards = safe_count[age];
+                    for (var i = 0; i < num_cards; i++) {
+                        this.createAndAddToZone(this.zone["safe"][player_id], i, age, type, /*is_relic=*/ 0, null, dojo.body(), null);
+                    }
+                }
             }
-            dojo.query('#progress_' + this.player_id + ' .score_container > p, #progress_' + this.player_id + ' .achievement_container > p').addClass('two_lines');
-            dojo.query('#progress_' + this.player_id + ' .score_container > p')[0].innerHTML += '<br /><span class="minor_information">' + _('(view cards)') + '</span>';
+            if (!this.gamedatas.unseen_expansion_enabled) {
+                dojo.byId('safe_text_' + player_id).style.display = 'none';
+            }
         }
         // PLAYER BOARD
         // Display mode
@@ -861,12 +875,14 @@ var Innovation = /** @class */ (function (_super) {
         var any_player_id = Object.keys(this.players)[0];
         var main_area_inner_width = main_area_width - 14;
         var reference_card_width = dojo.position('reference_card_' + any_player_id).w;
-        var buffer = this.gamedatas.echoes_expansion_enabled ? 10 : 0;
-        // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x
-        var num_forecast_score_achievements_cards = Math.floor((main_area_inner_width - reference_card_width - buffer) / this.delta.score.x);
+        // Calculation relies on this.delta.forecast.x == this.delta.score.x == this.delta.achievements.x == this.delta.safe.x
+        var num_cards_in_row = Math.floor((main_area_inner_width - reference_card_width) / this.delta.score.x);
+        var num_safe_cards_in_row = this.gamedatas.unseen_expansion_enabled ? 1 : 0;
+        this.num_cards_in_row.set("safe", num_safe_cards_in_row);
+        var num_forecast_score_achievements_cards = num_cards_in_row - num_safe_cards_in_row;
         var num_achievements_cards_in_row = Math.floor(num_forecast_score_achievements_cards / 3);
-        if (num_achievements_cards_in_row < 1) {
-            num_achievements_cards_in_row = 1;
+        if (num_achievements_cards_in_row < 3) {
+            num_achievements_cards_in_row = 3;
         }
         if (num_achievements_cards_in_row > this.gamedatas.number_of_achievements_needed_to_win) {
             num_achievements_cards_in_row = this.gamedatas.number_of_achievements_needed_to_win;
@@ -888,9 +904,10 @@ var Innovation = /** @class */ (function (_super) {
         }
         this.num_cards_in_row.set("forecast", num_forecast_cards_in_row);
         this.num_cards_in_row.set("score", num_score_cards_in_row);
-        var forecast_container_width = this.gamedatas.echoes_expansion_enabled ? num_forecast_cards_in_row * this.delta.forecast.x : 0;
+        var safe_container_width = num_safe_cards_in_row * this.delta.safe.x;
+        var forecast_container_width = num_forecast_cards_in_row * this.delta.forecast.x;
         var achievement_container_width = num_achievements_cards_in_row * this.delta.achievements.x;
-        var score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width;
+        var score_container_width = main_area_inner_width - forecast_container_width - reference_card_width - achievement_container_width - safe_container_width;
         for (var player_id in this.players) {
             dojo.style('forecast_container_' + player_id, 'width', forecast_container_width + 'px');
             dojo.style('forecast_' + player_id, 'width', forecast_container_width + 'px');
@@ -901,6 +918,9 @@ var Innovation = /** @class */ (function (_super) {
             dojo.style('achievement_container_' + player_id, 'width', achievement_container_width + 'px');
             dojo.style('achievements_' + player_id, 'width', achievement_container_width + 'px');
             dojo.setStyle(this.zone["achievements"][player_id].container_div, 'width', achievement_container_width + "px");
+            dojo.style('safe_container_' + player_id, 'width', safe_container_width + 'px');
+            dojo.style('safe_' + player_id, 'width', safe_container_width + 'px');
+            dojo.setStyle(this.zone["safe"][player_id].container_div, 'width', safe_container_width + "px");
             dojo.style('progress_' + player_id, 'width', main_area_inner_width + 'px');
         }
         // Defining the number of cards hand zone can host
@@ -912,6 +932,7 @@ var Innovation = /** @class */ (function (_super) {
             this.zone["score"][player_id].updateDisplay();
             this.zone["achievements"][player_id].updateDisplay();
             this.zone["hand"][player_id].updateDisplay();
+            this.zone["safe"][player_id].updateDisplay();
         }
         for (var player_id in this.players) {
             for (var color = 0; color < 5; color++) {
@@ -2467,6 +2488,7 @@ var Innovation = /** @class */ (function (_super) {
             case "score":
             case "revealed":
             case "achievements":
+            case "safe":
                 if (owner == 0) {
                     return age === null ? this.zone["special_achievements"][0] : this.zone["achievements"][0];
                 }
@@ -2716,7 +2738,7 @@ var Innovation = /** @class */ (function (_super) {
         var card_dimensions = this.card_dimensions[HTML_class];
         // Width of the zone
         var zone_width;
-        if (new_location == 'board' || new_location == 'score' || new_location == 'forecast') {
+        if (new_location == 'board' || new_location == 'score' || new_location == 'forecast' || new_location == 'safe') {
             zone_width = card_dimensions.width; // Will change dynamically
         }
         else if (new_location != 'relics' && new_location != 'achievements' && new_location != 'special_achievements') {

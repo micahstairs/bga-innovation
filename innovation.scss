@@ -71,7 +71,7 @@
 .player.whiteblock {
     border-width: 1px;
     border-color: black;
-    border-radius: 20px;
+    border-radius: 5px;
     border-style: solid;
     padding: 5px;
     position: relative;
@@ -99,7 +99,6 @@
     margin-bottom: 5px;
 
     >div {
-        height: inherit;
         padding: 5px;
 
         >p {
@@ -274,7 +273,7 @@
 
 .progress {
     display: flex;
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .forecast_container {
@@ -282,9 +281,16 @@
     vertical-align: top;
     display: inline-block;
     position: relative;
+    background-color: white;
+    border: 1px solid black;
+
+    div {
+        height: 100%;
+    }
 
     p {
         font-style: italic;
+        padding-right: 3px;
         font-size: 0.8em;
         position: absolute;
         top: 0px;
@@ -304,6 +310,7 @@
 
     p {
         font-style: italic;
+        padding-right: 3px;
         font-size: 0.8em;
         position: absolute;
         top: 0px;
@@ -316,13 +323,15 @@
 }
 
 .achievement_container {
+    flex-grow: 1;
     vertical-align: top;
     display: inline-block;
     position: relative;
     background-color: unset;
 
-    >p {
+    p {
         font-style: italic;
+        padding-right: 3px;
         font-size: 0.8em;
         position: absolute;
         top: 0px;
@@ -330,39 +339,47 @@
         left: 3px;
         height: 16px;
         overflow-y: hidden;
+        text-align: left;
     }
 }
 
-.forecast {
+.safe_container {
+    flex-grow: 1;
+    vertical-align: top;
     display: inline-block;
-    margin-top: 18px;
-    display: inline-block;
-    height: 49px;
-}
+    position: relative;
+    background-color: white;
+    border: 1px solid black;
 
-.score {
-    display: inline-block;
-    margin-top: 18px;
-    display: inline-block;
-    height: 49px;
-}
+    div {
+        height: 100%;
+    }
 
-.achievements {
-    display: inline-block;
-    margin-top: 18px;
-    display: inline-block;
-    height: 49px;
-}
-
-.forecast_show_window {
-    text-decoration: underline;
-    font-weight: bold;
-
-    &:hover {
-        cursor: pointer;
+    p {
+        font-style: italic;
+        padding-right: 3px;
+        font-size: 0.8em;
+        position: absolute;
+        top: 0px;
+        margin: 0px;
+        right: 3px;
+        height: 16px;
+        overflow-y: hidden;
+        text-align: right;
     }
 }
 
+.forecast,
+.score,
+.achievements,
+.safe {
+    display: inline-block;
+    margin-top: 18px;
+    display: inline-block;
+    height: 49px;
+}
+
+.forecast_show_window,
 .score_show_window {
     text-decoration: underline;
     font-weight: bold;
@@ -817,12 +834,6 @@
     font-style: italic;
     margin: 0;
     text-align: center;
-}
-
-.two_lines {
-    top: -16px !important;
-    height: 32px !important;
-    padding-right: 3px; // Necessary because the text is in italics and is otherwise cut off slightly
 }
 
 .player_info {

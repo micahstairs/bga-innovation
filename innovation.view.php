@@ -105,7 +105,8 @@
                                                     "DISPLAY" => self::_("Artifact on Display"),
                                                     "FORECAST_PILE" => self::_("Forecast"),
                                                     "SCORE_PILE" => self::_("Score pile"),
-                                                    "ACHIEVEMENTS" => self::_("Achievements")
+                                                    "ACHIEVEMENTS" => self::_("Achievements"),
+                                                    "SAFE" => self::_("Safe")
                                                     ) );
             // Opponents
             // We have to reorganize players array so that it reflects the real turn order beginning from me
@@ -161,6 +162,7 @@
                                         "FORECAST_PILE" => self::_("Forecast"),
                                         "SCORE_PILE" => self::_("Score pile"),
                                         "ACHIEVEMENTS" => self::_("Achievements"),
+                                        "SAFE" => self::_("Safe")
                                          ) );
         }
         
