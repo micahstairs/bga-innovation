@@ -2094,5 +2094,27 @@ $this->textual_card_infos = array(
     'non_demand_effect_2' => clienttranslate('Draw and meld a ${age_3}. If the melded card is a bottom card on your board, score it and any number of cards of its color in your hand.'),
 ),
 
+/* Unseen - Special achievements */
+
+595 => array('name' => clienttranslate('Confidence'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 5 or higher and four or more secrets.'),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Assassination.')),
+
+596 => array('name' => clienttranslate('Zen'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 6 or higher and no top card on your board of odd value.'),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_2} Meteorology.')),
+
+597 => array('name' => clienttranslate('Anonymity'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 7 or higher and no standard achievements.'),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Masquerade.')),
+
+598 => array('name' => clienttranslate('Folklore'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 8 or higher and no ${icon_5} on your board.'),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} April Fool\'s Day.')),
+
+599 => array('name' => clienttranslate('Mystery'),
+    'condition_for_claiming' => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 9 or higher and fewer than five colors on your board.'),
+    'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Secret History.')),
+    
 );
 
