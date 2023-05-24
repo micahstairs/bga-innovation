@@ -1501,6 +1501,9 @@ var Innovation = /** @class */ (function (_super) {
         if (this.gamedatas.echoes_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_3'>" + _("Echoes") + "</div>";
         }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_5'>" + _("Unseen") + "</div>";
+        }
         content += "<div class='browse_cards_button bgabutton bgabutton_gray selected' id='browse_special_achievements'>" + _("Special Achievements") + "</div>";
         // TODO(FIGURES): Add button for Figures.
         content += "</div>";
@@ -4159,7 +4162,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         // Figure out which set is selected
         var type = 0;
-        for (var i = 0; i <= 4; i++) {
+        for (var i = 0; i <= 5; i++) {
             if (dojo.query("#browse_cards_type_".concat(i, ".selected")).length > 0) {
                 type = i;
             }
@@ -4174,7 +4177,14 @@ var Innovation = /** @class */ (function (_super) {
         // Determine range of cards to render
         var min_id;
         var max_id;
-        if (age == 11) {
+        if (type == 5) {
+            min_id = 475 + age * 10;
+            max_id = min_id + 9;
+            if (age == 1) {
+                min_id -= 5;
+            }
+        }
+        else if (age == 11) {
             min_id = 440 + type * 10;
             max_id = min_id + 9;
         }

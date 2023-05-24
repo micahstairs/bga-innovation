@@ -1589,6 +1589,9 @@ class Innovation extends BgaGame {
         if (this.gamedatas.echoes_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_3'>" + _("Echoes") + "</div>";
         }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_5'>" + _("Unseen") + "</div>";
+        }
         content += "<div class='browse_cards_button bgabutton bgabutton_gray selected' id='browse_special_achievements'>" + _("Special Achievements") + "</div>";
         // TODO(FIGURES): Add button for Figures.
         content += "</div>";
@@ -4643,7 +4646,7 @@ class Innovation extends BgaGame {
 
         // Figure out which set is selected
         let type = 0;
-        for (let i = 0; i <= 4; i++) {
+        for (let i = 0; i <= 5; i++) {
             if (dojo.query(`#browse_cards_type_${i}.selected`).length > 0) {
                 type = i;
             }
@@ -4660,7 +4663,13 @@ class Innovation extends BgaGame {
         // Determine range of cards to render
         let min_id: number;
         let max_id: number;
-        if (age == 11) {
+        if (type == 5) {
+            min_id = 475 + age * 10;
+            max_id = min_id + 9;
+            if (age == 1) {
+                min_id -= 5;
+            }
+        } else if (age == 11) {
             min_id = 440 + type * 10;
             max_id = min_id + 9;
         } else {
