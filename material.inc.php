@@ -2094,6 +2094,53 @@ $this->textual_card_infos = array(
     'non_demand_effect_2' => clienttranslate('Draw and meld a ${age_3}. If the melded card is a bottom card on your board, score it and any number of cards of its color in your hand.'),
 ),
 
+/* Unseen - Age 4 */
+
+515 => array('name' => clienttranslate('Quackery'),
+    'non_demand_effect_1' => clienttranslate('Choose to either score a card from your hand, or draw a ${age_4}.'),
+    'non_demand_effect_2' => clienttranslate('Reveal two cards in your hand. If you do, return both and draw a card of value equal to the sum number of ${icon_2} and ${icon_3} on the returned cards.'),
+),
+
+516 => array('name' => clienttranslate('The Prophecies'),
+    'non_demand_effect_1' => clienttranslate('Choose to either draw and safeguard a ${age_4}, or draw and reveal a card of value one higher than one your secrets. If you reveal a red or purple card, meld one of your other secrets. If you do, safeguard the drawn card.'),
+),
+
+517 => array('name' => clienttranslate('Ninja'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you return a card of the color of my choice from your hand! If you do, transfer the top card of that color from your board to mine!'),
+    'non_demand_effect_1' => clienttranslate('You may splay your red cards right.'),
+),
+
+518 => array('name' => clienttranslate('Spanish Inquisition'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you return all but the highest cards from your hand and all but the highest cards from your score pile!'),
+    'non_demand_effect_1' => clienttranslate('If Spanish Inquisition is a top card on your board, return all red cards from your board.'),
+),
+
+519 => array('name' => clienttranslate('Blackmail'),
+    'i_demand_effect_1' => clienttranslate('${I_demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Execute the non-demand effects of any revealed card of my choice for yourself only, replacing \'may\' with \'must\'!'),
+),
+
+520 => array('name' => clienttranslate('El Dorado'),
+    'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}, a ${age_2}, and a ${age_1}. If all three have a ${icon_1}, score all cards in the ${age_5} deck. If two or more have a ${icon_1}, splay your green and blue cards right.'),
+),
+
+521 => array('name' => clienttranslate('April Fool\'s Day'),
+    'non_demand_effect_1' => clienttranslate('Transfer the highest cards from your hand and score pile together to the board of the player on your right. If you don\'t, claim the Folklore achievement.'),
+    'non_demand_effect_2' => clienttranslate('Splay your yellow cards right, and unsplay your purple cards, or vice versa.'),
+),
+
+522 => array('name' => clienttranslate('Heirloom'),
+    'non_demand_effect_1' => clienttranslate('Transfer one of your secrets to the available achievements and draw a card of value one higher than the transferred card. If you don\'t, safeguard an available achievement of value equal to the value of your top red card.'),
+),
+
+523 => array('name' => clienttranslate('Confession'),
+    'non_demand_effect_1' => clienttranslate('Return a top card with a ${icon_4} of each color from your board. If you return none, meld a card from your score pile, then draw and score a ${age_4}.'),
+    'non_demand_effect_2' => clienttranslate('Draw a ${age_4} for each ${age_4} in your score pile.'),
+),
+
+524 => array('name' => clienttranslate('Legend'),
+    'non_demand_effect_1' => clienttranslate('Choose a non-purple color. Self-execute your top card of that color. Score your top card of that color. Repeat this effect with the same color if you have scored fewer than nine points due to Legend this action.'),
+),
+
 /* Unseen - Special achievements */
 
 595 => array('name' => clienttranslate('Confidence'),
