@@ -1651,7 +1651,7 @@ class Innovation extends BgaGame {
             if (dojo.query(`#special_achievement_summary_${id}.unclaimed`).length == 1) {
                 switch (id) {
                     case 105:
-                        // three or more icons of six out of seven types
+                        // Empire: three or more icons of six out of seven types
                         numerator = 0;
                         denominator = 6;
                         for (let i = 1; i <= 7; i++) {
@@ -1663,13 +1663,15 @@ class Innovation extends BgaGame {
                             }
                         }
                         break;
+
                     case 106:
-                        // tuck six or score six cards during a single turn
+                        // Monument: tuck six or score six cards during a single turn
                         numerator = Math.max(self.number_of_tucked_cards, self.number_of_scored_cards);
                         denominator = 6;
                         break;
+
                     case 107:
-                        // five colors on your board, and each is splayed either up, right, or aslant
+                        // Wonder: five colors on your board, and each is splayed either up, right, or aslant
                         numerator = 0;
                         denominator = 5;
                         for (let i = 0; i < 5; i++) {
@@ -1679,13 +1681,15 @@ class Innovation extends BgaGame {
                             }
                         }
                         break;
+
                     case 108:
-                        // twelve or more visible clocks on your board
+                        // World: twelve or more visible clocks on your board
                         numerator = self.counter["resource_count"][self.player_id][6].getValue();
                         denominator = 12;
                         break;
+
                     case 109:
-                        // five top cards, and each is of value 8 or higher
+                        // Universe: five top cards, and each is of value 8 or higher
                         numerator = 0;
                         denominator = 5;
                         for (let i = 0; i < 5; i++) {
@@ -1699,8 +1703,9 @@ class Innovation extends BgaGame {
                             }
                         }
                         break;
+
                     case 435:
-                        // eight or more bonuses visible on your board
+                        // Wealth: eight or more bonuses visible on your board
                         numerator = 0;
                         denominator = 8;
                         for (let i = 0; i < 5; i++) {
@@ -1708,13 +1713,15 @@ class Innovation extends BgaGame {
                             numerator += self.getVisibleBonusIconsInPile(pile_zone.items, pile_zone.splay_direction).length;
                         }
                         break;
+
                     case 436:
-                        // seven or more cards in your forecast
+                        // Destiny: seven or more cards in your forecast
                         numerator = self.zone["forecast"][self.player_id].items.length;
                         denominator = 7;
                         break;
+
                     case 437:
-                        // eight or more hex icons visible in one color
+                        // Heritage: eight or more hex icons visible in one color
                         numerator = 0;
                         denominator = 8;
                         for (let i = 0; i < 5; i++) {
@@ -1725,8 +1732,9 @@ class Innovation extends BgaGame {
                             }
                         }
                         break;
+
                     case 438:
-                        // a color with four or more visible echo effects
+                        // History: a color with four or more visible echo effects
                         numerator = 0;
                         denominator = 4;
                         for (let i = 0; i < 5; i++) {
@@ -1737,8 +1745,9 @@ class Innovation extends BgaGame {
                             }
                         }
                         break;
+
                     case 439:
-                        // three icons or more of the same icon type visible in each of four different colors
+                        // Supremacy: three icons or more of the same icon type visible in each of four different colors
                         numerator = 0;
                         denominator = 4;
                         for (let icon = 1; icon <= 7; icon++) {
@@ -1754,6 +1763,116 @@ class Innovation extends BgaGame {
                             }
                         }
                         break;
+
+                    case 595:
+                        // Confidence: top card on your board of value 5 or higher and four or more secrets
+                        numerator = 0;
+                        denominator = 5;
+                        for (let color = 0; color < 5; color++) {
+                            let pile_zone = self.zone["board"][self.player_id][color];
+                            if (pile_zone.items.length > 0) {
+                                let top_card_id = self.getCardIdFromHTMLId(pile_zone.items[pile_zone.items.length - 1].id);
+                                if (self.cards[top_card_id].age >= 5) {
+                                    numerator++;
+                                    break;
+                                }
+                            }
+                        }
+                        let safe_zone = self.zone["safe"][self.player_id];
+                        numerator += Math.min(4, safe_zone.items.length);
+                        break;
+
+                    case 596:
+                        // Zen: top card on your board of value 6 or higher and no top card on your board of odd value
+                        numerator = 0;
+                        denominator = 2;
+                        let value_6_or_higher = false;
+                        let has_odd_value = false;
+                        for (let color = 0; color < 5; color++) {
+                            let pile_zone = self.zone["board"][self.player_id][color];
+                            if (pile_zone.items.length > 0) {
+                                let top_card_id = self.getCardIdFromHTMLId(pile_zone.items[pile_zone.items.length - 1].id);
+                                let top_card = self.cards[top_card_id];
+                                if (top_card.age >= 6 && !value_6_or_higher) {
+                                    value_6_or_higher = true;
+                                    numerator++;
+                                }
+                                if (top_card.age % 2 === 1 && !has_odd_value) {
+                                    has_odd_value = true;
+                                    numerator++;
+                                }
+                            }
+                        }
+                        break;
+
+                    case 597:
+                        // Anonymity: top card on your board of value 7 or higher and no standard achievements
+                        numerator = 1;
+                        denominator = 2;
+                        for (let color = 0; color < 5; color++) {
+                            let pile_zone = self.zone["board"][self.player_id][color];
+                            if (pile_zone.items.length > 0) {
+                                let top_card_id = self.getCardIdFromHTMLId(pile_zone.items[pile_zone.items.length - 1].id);
+                                if (self.cards[top_card_id].age >= 7) {
+                                    numerator++;
+                                    break;
+                                }
+                            }
+                        }
+                        let achievements_zone = self.zone["achievements"][self.player_id];
+                        for (let i = 0; i < achievements_zone.items.length; i++) {
+                            let item = achievements_zone.items[i];
+                            let item_age = self.getCardAgeFromHTMLId(item.id);
+                            if (!isNaN(item_age)) {
+                                numerator--;
+                                break;
+                            }
+                        }
+                        break;
+
+                    case 598:
+                        // Folklore: top card on your board of value 8 or higher and no factories on your board
+                        numerator = 0;
+                        denominator = 2;
+                        let value_8_or_higher = false;
+                        for (let color = 0; color < 5; color++) {
+                            let pile_zone = self.zone["board"][self.player_id][color];
+                            if (pile_zone.items.length > 0) {
+                                let top_card_id = self.getCardIdFromHTMLId(pile_zone.items[pile_zone.items.length - 1].id);
+                                if (self.cards[top_card_id].age >= 8 && !value_8_or_higher) {
+                                    numerator++;
+                                    value_8_or_higher = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (self.counter["resource_count"][self.player_id][5].getValue() == 2) {
+                            numerator++;
+                        }
+                        break;
+
+                    case 599:
+                        // Mystery: top card on your board of value 9 or higher and fewer than five colors on your board
+                        numerator = 0;
+                        denominator = 2;
+                        let value_9_or_higher = false;
+                        let num_colors = 0;
+                        for (let color = 0; color < 5; color++) {
+                            let pile_zone = self.zone["board"][self.player_id][color];
+                            if (pile_zone.items.length > 0) {
+                                num_colors++;
+                                let top_card_id = self.getCardIdFromHTMLId(pile_zone.items[pile_zone.items.length - 1].id);
+                                if (self.cards[top_card_id].age >= 9 && !value_9_or_higher) {
+                                    numerator++;
+                                    value_9_or_higher = true;
+                                }
+                            }
+                        }
+                        if (num_colors < 5) {
+                            numerator++;
+                        }
+                        break;
+
                 }
             }
             dojo.query(`#special_achievement_summary_${id} .special_achievement_status`)[0].innerHTML = (numerator >= 0 && denominator > 0) ? `${numerator}/${denominator}` : "";
