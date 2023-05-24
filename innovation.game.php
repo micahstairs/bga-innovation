@@ -10120,6 +10120,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} may choose another player to accept a card to his board');
                 break;
 
+            // id 489, Unseen age 1: Handshake
+            case "489D1A":
+                $message_for_player = clienttranslate('${You} must choose two colors');
+                $message_for_others = clienttranslate('${player_name} must choose two colors');
+                break;
 
             default:
                 // This should not happen
@@ -16259,8 +16264,30 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 489, Unseen age 1: Handshake
-            case "489N1":
-                $step_max = 2;
+            case "489D1":
+                // "I demand you transfer all cards from my hand to your hand!"
+                foreach (self::getCardsInHand($launcher_id) as $card) {
+                    self::transferCardFromTo($card, $player_id, 'hand');
+                }
+
+                // Find unique colors
+                $cards_in_player_hand = self::countCardsInLocationKeyedByColor($player_id, 'hand');
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    if ($cards_in_player_hand[$color] > 0) {
+                        $color_array[] = $color;
+                    }
+                }
+                
+                // "Choose two colors of cards in your hand! Transfer all cards in your hand of those colors to my hand!"
+                if (count($color_array) == 1 || count($color_array) == 2) {
+                    foreach (self::getCardsInHand($player_id) as $card) {
+                        self::transferCardFromTo($card, $launcher_id, 'hand');
+                    }
+                } else if (count($color_array) > 2) {
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($color_array);
+                }
                 break;
 
             // id 490, Unseen age 1: Tomb
@@ -23891,6 +23918,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'hand',
             );
             break;
+
+        // id 489, Unseen age 1: Handshake
+        case "489D1A":
+            // "Choose two colors of cards in your hand!"
+            $options = array(
+                'player_id' => $player_id, 
+                
+                'choose_two_colors' => true,
+                'color' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
             
         // id 493, Unseen age 1: Polytheism
         case "493N1A":
@@ -27019,6 +27057,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, $this->innovationGameState->get('age_last_selected') + 1);
                     }
                     break;
+
+                // id 489, Unseen age 1: Handshake
+                case "489D1A":
+                    // "Transfer all cards in your hand of those colors to my hand!"
+                    $colors = self::getAuxiliaryValueAsArray();
+                    foreach (self::getCardsInHand($player_id) as $card) {
+                        if ($colors[0] == $card['color'] || $colors[1] == $card['color']) {
+                            self::transferCardFromTo($card, $launcher_id, 'hand');
+                        }
+                    }
+                    break;
                     
                 // id 493, Unseen age 1: Polytheism
                 case "493N1A":
@@ -28450,6 +28499,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     array('player_name' => self::getColoredPlayerName($player_id),
                     'player_choice' => self::getColoredPlayerName($choice)));
                 self::setAuxiliaryValue($choice);
+                break;
+
+            // id 489, Unseen age 1: Handshake     
+            case "489D1A":
+                // $choice was two colors
+                $colors = Arrays::getValueAsArray($choice);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredPlayerName($player_id), 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
+                self::setAuxiliaryValueFromArray($colors);
                 break;
                 
             default:
