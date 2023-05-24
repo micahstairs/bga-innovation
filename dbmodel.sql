@@ -175,11 +175,11 @@ INSERT INTO `card` (`id`, `type`, `location`, `position`) VALUES
 (439, 3, 'removed', 20),
 
 /* Unseen special achievements */
-(595, 5, 'removed', 27),
+(595, 5, 'removed', 25),
 (596, 5, 'removed', 26),
-(597, 5, 'removed', 28),
-(598, 5, 'removed', 29),
-(599, 5, 'removed', 25);
+(597, 5, 'removed', 27),
+(598, 5, 'removed', 28),
+(599, 5, 'removed', 29);
 
 /* Insert relic cards */
 
