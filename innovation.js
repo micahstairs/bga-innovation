@@ -1669,6 +1669,9 @@ var Innovation = /** @class */ (function (_super) {
         if (this.gamedatas.echoes_expansion_enabled) {
             ids.push(439, 436, 435, 437, 438);
         }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            ids.push(595, 596, 597, 598, 599);
+        }
         return ids;
     };
     /*
