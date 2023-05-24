@@ -1936,6 +1936,15 @@
             height: 31px;
             background-size: 232px, auto;
             border-radius: 3px;
+
+            &.item_595,
+            &.item_596,
+            &.item_597,
+            &.item_598,
+            &.item_599 {
+                background-image: none;
+                background-color: black;
+            }
         }
 
         &.item_105,
@@ -2676,6 +2685,15 @@
         &.age_null {
             background-image: url("img/special_achievements_portrait.jpg");
             background-size: 175px, auto;
+
+            &.item_595,
+            &.item_596,
+            &.item_597,
+            &.item_598,
+            &.item_599 {
+                background-image: none;
+                background-color: black;
+            }
         }
 
         &.item_105,

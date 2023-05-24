@@ -1808,6 +1808,10 @@
   background-size: 232px, auto;
   border-radius: 3px;
 }
+.card.S.age_null.item_595, .card.S.age_null.item_596, .card.S.age_null.item_597, .card.S.age_null.item_598, .card.S.age_null.item_599 {
+  background-image: none;
+  background-color: black;
+}
 .card.S.item_105, .card.S.item_106, .card.S.item_107, .card.S.item_108, .card.S.item_109 {
   background-position-y: -1px;
 }
@@ -2461,6 +2465,10 @@
 .recto.S.age_null {
   background-image: url("img/special_achievements_portrait.jpg");
   background-size: 175px, auto;
+}
+.recto.S.age_null.item_595, .recto.S.age_null.item_596, .recto.S.age_null.item_597, .recto.S.age_null.item_598, .recto.S.age_null.item_599 {
+  background-image: none;
+  background-color: black;
 }
 .recto.S.item_105, .recto.S.item_106, .recto.S.item_107, .recto.S.item_108, .recto.S.item_109 {
   background-position-y: -1px;
