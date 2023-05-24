@@ -16189,33 +16189,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 489, Unseen age 1: Handshake
             case "489D1":
-                // Get cards in hand
-                $cards_in_player_hand = self::getCardsInHand($launcher_id);
-                
-                // Make the transfers
-                foreach($cards_in_player_hand as $card) {
-                    // "I demand you transfer all cards from my hand to your hand!"
+                // "I demand you transfer all cards from my hand to your hand!"
+                foreach (self::getCardsInHand($launcher_id) as $card) {
                     self::transferCardFromTo($card, $player_id, 'hand');
                 }
-                
+
+                // Find unique colors
                 $cards_in_player_hand = self::countCardsInLocationKeyedByColor($player_id, 'hand');
                 $color_array = array();
-                // Find unique colors
                 for ($color = 0; $color < 5; $color++) {
                     if ($cards_in_player_hand[$color] > 0) {
                         $color_array[] = $color;
                     }
                 }
                 
-                if(count($color_array) == 1 || count($color_array) == 2) {
-                    // only one or two colors are available, so transfer all cards
-                    $cards_in_player_hand = self::getCardsInHand($player_id);
-                    foreach($cards_in_player_hand as $card) {
-                        // "I demand you transfer all cards from my hand to your hand!"
+                // "Choose two colors of cards in your hand! Transfer all cards in your hand of those colors to my hand!"
+                if (count($color_array) == 1 || count($color_array) == 2) {
+                    foreach (self::getCardsInHand($player_id) as $card) {
                         self::transferCardFromTo($card, $launcher_id, 'hand');
                     }
-                } elseif (count($color_array) > 2) {
-                    $step_max = 1; // need to choose colors
+                } else if (count($color_array) > 2) {
+                    $step_max = 1;
                     self::setAuxiliaryValueFromArray($color_array);
                 }
                 break;
@@ -26990,13 +26984,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 489, Unseen age 1: Handshake
                 case "489D1A":
+                    // "Transfer all cards in your hand of those colors to my hand!"
                     $colors = self::getAuxiliaryValueAsArray();
-                    
-                    $cards_in_player_hand = self::getCardsInHand($player_id);
-                    
-                    // Make the transfers
-                    foreach($cards_in_player_hand as $card) {
-                        // "Transfer all cards in your hand of those colors to my hand!"
+                    foreach (self::getCardsInHand($player_id) as $card) {
                         if ($colors[0] == $card['color'] || $colors[1] == $card['color']) {
                             self::transferCardFromTo($card, $launcher_id, 'hand');
                         }
