@@ -2121,6 +2121,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} draw and achieve a ${<}${age}${>}.');
             $message_for_others = clienttranslate('${player_name} draws and achieves a ${<}${age}${>}.');
             break;
+        case 'deck->safe':
+            $message_for_player = clienttranslate('${You} draw and safeguard ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} draws and safeguards a ${<}${age}${>}.');
+            break;
         case 'display->board':
             $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his display.');
@@ -2475,8 +2479,8 @@ class Innovation extends Table
                 break;
             case 'achievements->safe':
                 if ($player_id_is_owner_from) {
-                    $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} to your safeguard');
-                    $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} to your safeguard');
+                    $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} to your safe');
+                    $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} to his safe');
                 } else {
                     $message_for_player = clienttranslate('${You_must} safeguard ${number} ${card} from the available achievements');
                     $message_for_others = clienttranslate('${player_must} safeguard ${number} ${card} from the available achievements');
@@ -6014,6 +6018,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
         return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
+    }
+
+    function executeDrawAndSafeguard($player_id, $age_min = null) {
+        return self::executeDraw($player_id, $age_min, 'safe');
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
@@ -16210,32 +16218,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 482, Unseen age 1: Proverb
             case "482N1":
                 // "Draw, reveal, and return a 1."
-                $card_id_array = array();
                 $card = self::executeDrawAndReveal($player_id, 1);
-                self::transferCardFromTo($card, 0, 'deck');
+                self::returnCard($card);
                 
+                // "If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand"
+                $card_id_array = array();
                 if ($card['color'] == 3 || $card['color'] == 4) {
-                    // "If the color of the returned card is yellow or purple, "
-                    $card_cnt_in_hand_by_age = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                    $achievement_cards = self::getCardsInLocation(0, 'achievements');
-                    foreach ($achievement_cards as $card) {
-                        if ($card['age'] !== null) { // make sure its not a special
-                            if ($card_cnt_in_hand_by_age[$card['age']] > 0) {
+                    $card_count_in_hand_by_age = self::countCardsInLocationKeyedByAge($player_id, 'hand');
+                    foreach (self::getCardsInLocation(0, 'achievements') as $card) {
+                        if ($card['age'] !== null) { // Ignore special achievements
+                            if ($card_count_in_hand_by_age[$card['age']] > 0) {
                                 $card_id_array[] = $card['id'];
                             }
                         }
                     }
-                    
-                    if (count($card_id_array) == 1) {
-                        // "safeguard an available achievement of value equal to a card in your hand"
-                        self::safeguardCard(self::getCardInfo($card_id_array[0]), $player_id);
-                    } elseif (count($card_id_array) > 1) {
-                        $step_max = 2;
-                        self::setAuxiliaryArray($card_id_array);
-                    }
-                } 
-                
-                if (count($card_id_array) <= 1) {
+                    $step_max = 2;
+                    self::setAuxiliaryArray($card_id_array);
+                } else {
                     // "Otherwise, draw two 1s."
                     self::executeDraw($player_id, 1);
                     self::executeDraw($player_id, 1);                    
@@ -16353,20 +16352,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 492, Unseen age 1: Myth
             case "492N1":
+                // "If you have two cards of the same color in your hand"
                 $card_id_array = array();
-                $cards_in_hand_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                $cards_in_hand = self::getCardsInHand($player_id);
-                if (count($cards_in_hand_by_color) > 2) {
-                    foreach ($cards_in_hand as $card) {
-                        if ($cards_in_hand_by_color[$card['color']] >= 2) {
-                            $card_id_array[] = $card['id'];
-                        }
+                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if ($card_count_by_color[$card['color']] >= 2) {
+                        $card_id_array[] = $card['id'];
                     }
-                    
-                    if (count($card_id_array) >= 2) {
-                        $step_max = 2;
-                        self::setAuxiliaryArray($card_id_array);
-                    }
+                }
+                
+                if (count($card_id_array) >= 2) {
+                    $step_max = 2;
+                    self::setAuxiliaryArray($card_id_array);
                 }
                 break;
 
@@ -23953,8 +23950,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'with_icon' => 4,
-                
-                'meld_keyword' => false,
             );
             break;
 
@@ -27208,19 +27203,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 492, Unseen age 1: Myth
                 case "492N1B":
-                    if ($n > 0) { // "if you do"
+                    // "If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color."
+                    if ($n > 0) { 
                         $color = $this->innovationGameState->get('color_last_selected');
                         $bottom_card = self::getBottomCardOnBoard($player_id, $color);
+                        $age_to_draw = 0;
                         if ($bottom_card !== null) {
-                            // "splay left that color"
-                            self::splay($player_id, $player_id, $color, 1);
-                            // "and draw and safeguard a card of value equal to the value of your bottom card of that color."
-                            $card = self::executeDraw($player_id, $bottom_card['age']);
-                            self::safeguardCard($card, $player_id);
-                        } else {
-                            $card = self::executeDraw($player_id, 1);
-                            self::safeguardCard($card, $player_id);; // draw a 1 if no bottom card is available
+                            self::splayLeft($player_id, $player_id, $color);
+                            $age_to_draw = $bottom_card['age'];
                         }
+                        self::executeDrawAndSafeguard($player_id, $age_to_draw);
                     }
                     break;
                     
