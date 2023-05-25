@@ -34,6 +34,13 @@ class Innovation extends Table
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
     private GameState $innovationGameState;
 
+    // Splay directions
+    const UNSPLAYED = 1;
+    const LEFT = 1;
+    const RIGHT = 2;
+    const UP = 2;
+    const ASLANT = 2;
+
     function __construct()
     {
         // Your global variables labels:
@@ -1543,23 +1550,23 @@ class Innovation extends Table
     /** Splay mechanism **/
 
     function unsplay($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 0, /*force_unsplay=*/ true);
+        self::splay($player_id, $target_player_id, $color, UNSPLAYED, /*force_unsplay=*/ true);
     }
 
     function splayLeft($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 1);
+        self::splay($player_id, $target_player_id, $color, LEFT);
     }
 
     function splayRight($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 2);
+        self::splay($player_id, $target_player_id, $color, RIGHT);
     }
 
     function splayUp($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 3);
+        self::splay($player_id, $target_player_id, $color, UP);
     }
 
     function splayAslant($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, /*splay_direction=*/ 4);
+        self::splay($player_id, $target_player_id, $color, ASLANT);
     }
 
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
@@ -19775,16 +19782,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         case "155N1B":
             // "and the lowest top card on your board"
-            // TODO(LATER): Create new getMinAgeOnBoardTopCards function instead (based on getMaxAgeOnBoardTopCards).
-            $all_cards = self::getTopCardsOnBoard($player_id);
-            $ages = array();
-            foreach($all_cards as $card) {
-                $ages[] = $card['faceup_age'];
-            }
-            if (empty($ages)) {
-                $ages[] = 0;
-            }
-
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -19794,7 +19791,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => min($ages)
+                'age' => self::getMinAgeOnBoardTopCards($player_id),
             );
             break;
 
@@ -27373,7 +27370,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // TODO(FIGURES): Figure out if we need to make any updates to this logic.
             $num_cards_in_location_from = self::countCardsInLocation($owner_from, $location_from);
             $selection_will_reveal_hidden_information =
-                // The player making the decision has hiddden information about the card(s) that other players do not have.
+                // The player making the decision has hidden information about the card(s) that other players do not have.
                 ($location_from == 'hand' || $location_from == 'score' || $location_from == 'forecast') &&
                 // All players can see the number of cards (even in hidden locations) so if there aren't any cards there
                 // it's obvious a selection can't be made.
