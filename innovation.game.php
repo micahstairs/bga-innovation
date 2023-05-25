@@ -8737,7 +8737,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getClaimableAgesIncludingSecrets($player_id) {
         $claimable_ages = array();
         $unclaimed_achievement_count = self::countCardsInLocationKeyedByAge(0, 'achievements');
-        $unclaimed_secret_count = self::countCardsInLocationKeyedByAge(0, 'safe');
+        $unclaimed_secret_count = self::countCardsInLocationKeyedByAge($player_id, 'safe');
         foreach (self::getClaimableAgesIgnoringAvailability($player_id) as $age) {
             if ($unclaimed_achievement_count[$age] > 0 || $unclaimed_secret_count[$age] > 0) {
                 $claimable_ages[] = $age;
