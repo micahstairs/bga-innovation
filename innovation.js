@@ -605,6 +605,7 @@ var Innovation = /** @class */ (function (_super) {
             if (!this.gamedatas.echoes_expansion_enabled) {
                 dojo.byId('forecast_text_' + player_id).style.display = 'none';
                 dojo.byId('forecast_count_container_' + player_id).style.display = 'none';
+                dojo.byId('forecast_container_' + player_id).style.display = 'none';
             }
         }
         // PLAYERS' SCORE
@@ -705,6 +706,7 @@ var Innovation = /** @class */ (function (_super) {
             }
             if (!this.gamedatas.unseen_expansion_enabled) {
                 dojo.byId('safe_text_' + player_id).style.display = 'none';
+                dojo.byId('safe_container_' + player_id).style.display = 'none';
             }
         }
         // PLAYER BOARD

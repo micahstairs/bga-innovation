@@ -601,6 +601,7 @@ class Innovation extends BgaGame {
             if (!this.gamedatas.echoes_expansion_enabled) {
                 dojo.byId('forecast_text_' + player_id).style.display = 'none';
                 dojo.byId('forecast_count_container_' + player_id).style.display = 'none';
+                dojo.byId('forecast_container_' + player_id).style.display = 'none';
             }
         }
 
@@ -708,6 +709,7 @@ class Innovation extends BgaGame {
 
             if (!this.gamedatas.unseen_expansion_enabled) {
                 dojo.byId('safe_text_' + player_id).style.display = 'none';
+                dojo.byId('safe_container_' + player_id).style.display = 'none';
             }
         }
 
