@@ -41,6 +41,15 @@ class Innovation extends Table
     const UP = 3;
     const ASLANT = 4;
 
+    // Icons
+    const PROSPERITY = 1;
+    const HEALTH = 2;
+    const CONCEPT = 3;
+    const AUTHORITY = 4;
+    const INDUSTRY = 5;
+    const EFFICIENCY = 6;
+    const AVATAR = 7;
+
     function __construct()
     {
         // Your global variables labels:
@@ -3979,10 +3988,8 @@ class Innovation extends Table
     
     /** Notification system for dogma **/
     function getIconSquare($icon) {
+        $title='';
         switch ($icon) {
-        case 0:
-            $title='';
-            break;
         case 1:
             $title=clienttranslate('crown');
             break;
@@ -16284,8 +16291,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 483, Unseen age 1: Assassination
             case "483D1":
                 $card = self::executeDrawAndReveal($player_id, 1);
-                // "If it has a castle, transfer it and the top card on your board of its color to my score pile!"
-                if (self::hasRessource($card, 4)) {
+                // "If it has a [AUTHORITY], transfer it and the top card on your board of its color to my score pile!"
+                if (self::hasRessource($card, AUTHORITY)) {
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card !== null) {
                         self::transferCardFromTo($top_card, $launcher_id, 'score'); // transfer
@@ -16312,10 +16319,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 486, Unseen age 1: Dance
             case "486N1":
+                // "Transfer a card on your board with a [AUTHORITY] to the board of any other player."
                 $top_cards = self::getTopCardsOnBoard($player_id);
                 $castle_counter = 0;
-                foreach($top_cards as $card) {
-                    if (self::hasRessource($card, 4)) {
+                foreach ($top_cards as $card) {
+                    if (self::hasRessource($card, AUTHORITY)) {
                         $castle_counter++;
                     }
                 }
@@ -16323,7 +16331,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($castle_counter > 0) {
                     $step_max = 3; // select player first, card second, other player's card third
                 } else {
-                    // Log message specifying no castle cards are present to transfer
+                    // Log message specifying no [AUTHORITY] cards are present to transfer
                 }
                 break;
 
