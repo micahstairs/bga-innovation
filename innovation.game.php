@@ -35,11 +35,11 @@ class Innovation extends Table
     private GameState $innovationGameState;
 
     // Splay directions
-    const UNSPLAYED = 1;
+    const UNSPLAYED = 0;
     const LEFT = 1;
     const RIGHT = 2;
-    const UP = 2;
-    const ASLANT = 2;
+    const UP = 3;
+    const ASLANT = 4;
 
     function __construct()
     {
