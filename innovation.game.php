@@ -2282,6 +2282,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
             break;
+        case 'revealed->junk':
+            $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>}.');
+            break;
         case 'revealed->forecast':
             $message_for_player = clienttranslate('${You} foreshadow ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} foreshadows ${<}${age}${>} ${<<}${name}${>>}.');
@@ -7296,7 +7300,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /** Nested dogma excution management system: FIFO stack **/
-    function executeNonDemandEffects($card) {
+    function selfExecute($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $card_args = self::getNotificationArgsForCardList([$card]);
         if (self::getNonDemandEffect($card['id'], 1) === null) {
@@ -7311,7 +7315,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return true;
     }
 
-    function executeAllEffects($card) {
+    function fullyExecute($card) {
         $current_nested_state = self::getCurrentNestedCardState();
         $current_card = self::getCardInfo($current_nested_state['card_id']);
         $card_1_args = self::getNotificationArgsForCardList([$current_card]);
@@ -12237,7 +12241,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "85N2":
                 // "Draw and meld a 10"
                 $card = self::executeDrawAndMeld($player_id, 10);
-                self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
+                self::selfExecute($card); // "Execute each of its non-demand dogma effects"
                 break;
             
             // id 86, age 9: Genetics     
@@ -12463,7 +12467,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Draw and meld two 10s, then execute each of the second card's non dogma effects. Do not share them."
                 self::executeDrawAndMeld($player_id, 10);
                 $card = self::executeDrawAndMeld($player_id, 10);
-                self::executeNonDemandEffects($card);
+                self::selfExecute($card);
                 break;
                 
             // id 97, age 10: Miniaturization
@@ -12478,7 +12482,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::scoreCard($top_green_card, $player_id); // "Score your top green card"
                 }
                 $card = self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10
-                self::executeNonDemandEffects($card); // "Execute each its non-demand dogma effects"
+                self::selfExecute($card); // "Execute each its non-demand dogma effects"
                 break;
             
             // id 99, age 10: Databases
@@ -12961,7 +12965,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
 
                 // "Execute its non-demand dogma effects. Do not share them."
-                self::executeNonDemandEffects($melded_card);
+                self::selfExecute($melded_card);
                 break;
             
             // id 126, Artifacts age 2: Rosetta Stone
@@ -13695,7 +13699,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
 
                 // "Execute the effects of the melded card as if they were on this card, without sharing"
-                self::executeAllEffects($card);
+                self::fullyExecute($card);
                 break;
 
             // id 196, Artifacts age 9: Luna 3
@@ -13797,7 +13801,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $top_blue_card = self::getTopCardOnBoard($player_id, 0);
                 if ($top_blue_card !== null) {
                     self::setAuxiliaryValue(0);
-                    self::executeNonDemandEffects($top_blue_card);
+                    self::selfExecute($top_blue_card);
                 }
                 break;
 
@@ -13811,7 +13815,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw and meld an Artifact 10"
                 $card = self::executeDrawAndMeld($player_id, 10, /*type=*/ 1);
                 // "Execute the effects of the melded card as if they were on this card. Do not share them"
-                self::executeAllEffects($card);
+                self::fullyExecute($card);
                 break;
             
             // id 206, Artifacts age 10: Higgs Boson
@@ -15812,7 +15816,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($melded_card_id >= 1000) {
                             $step_max = 1;
                         } else {
-                            self::executeNonDemandEffects(self::getCardInfo($melded_card_id));
+                            self::selfExecute(self::getCardInfo($melded_card_id));
                         }
                     }
                 }
@@ -16183,22 +16187,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 448, age 11: Escapism
             case "448N1":
-                self::setAuxiliaryValue(-1); // Indicate that no card has been revealed yet
                 $step_max = 1;
                 break;
 
-            case "448N1+":
-                // If a card was revealed, then execute the rest of the effect
-                if (self::getAuxiliaryValue() >= 0) {
-                    $step_max = 1;
-                }                
-                break;
-                
             // id 449, age 11: Whataboutism
             case "449D1":
                 $step_max = 1;
                 break;
-
 
             // id 480, Unseen age 1: Espionage
             case "480D1":
@@ -23828,7 +23823,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 448, age 11: Escapism
         case "448N1A":
-            // "Reveal a card in your hand"
+            // "Reveal and junk a card in your hand"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -23840,9 +23835,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        case "448N1+A":
         case "448N1B":
-            // "Return from your hand all cards of value equal to the value of the revealed card."
+            // "Return from your hand all cards of value equal to the value of the junked card."
             $options = array(
                 'player_id' => $player_id,
 
@@ -23851,7 +23845,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => 0,
                 'location_to' => 'deck',
 
-                'age' => self::getAuxiliaryValue(),
+                'age' => $this->innovationGameState->get('age_last_selected'),
             );
             break;
             
@@ -24786,7 +24780,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "90N3A_4E":
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected')); // The card the player melded from his hand
-                        self::executeNonDemandEffects($card); // "Execute each of its non-demand dogma effects"
+                        self::selfExecute($card); // "Execute each of its non-demand dogma effects"
                     }
                     break;
                     
@@ -24888,7 +24882,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $color_scored = $this->innovationGameState->get('color_last_selected');
                         $top_card = self::getTopCardOnBoard($player_id, $color_scored);
                         if ($top_card !== null) { // "If you have a top card matching its color"
-                            self::executeNonDemandEffects($top_card); // "Execute each of the top card's non-demand dogma effects. Do not share them."
+                            self::selfExecute($top_card); // "Execute each of the top card's non-demand dogma effects. Do not share them."
                             break;
                         }
                     }
@@ -25056,7 +25050,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Execute its non-demand dogma effects"
                     $card_id = $this->innovationGameState->get('id_last_selected');
                     if ($n > 0 && self::getNonDemandEffect($card_id, 1) != null) {
-                        self::executeNonDemandEffects(self::getCardInfo($card_id));
+                        self::selfExecute(self::getCardInfo($card_id));
                     } else {
                         self::incrementStepMax(1); // Still need to do the splay
                     }
@@ -25090,7 +25084,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "136N1B":
                     if ($n > 0) {
                         // "Execute all of that color's top card's non-demand effects, without sharing"
-                        self::executeNonDemandEffects(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
+                        self::selfExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
                     }
                     break;
                     
@@ -25389,7 +25383,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "161N1A":
                     // "Execute the effects on the chosen card as if they were on this card. Do not share them"
                     if ($n > 0) {
-                        self::executeAllEffects(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
+                        self::fullyExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
                     }
                     break;
 
@@ -25403,7 +25397,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "162N1C":
                     // "Execute the effects of one of your other top cards as if they were on this card. Do not share them."
                     if ($n > 0) {
-                        self::executeAllEffects(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
+                        self::fullyExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
                     }
                     break;
 
@@ -25603,7 +25597,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, $melded_card['faceup_age'], 'score');
                         
                         // "Execute the effects of the melded card as if they were on this card. Do not share them."
-                        self::executeAllEffects($melded_card);
+                        self::fullyExecute($melded_card);
                     } else { // If no card is melded, the absence is treated like a 0 and cards are still scored.
                         self::executeDraw($player_id, 0, 'score');
                         self::executeDraw($player_id, 0, 'score');
@@ -25629,7 +25623,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::incrementStep(-2);
                     } else {
                         // "Execute the non-demand effects of your card. Do not share them"
-                        self::executeNonDemandEffects(self::getCardInfo(self::getAuxiliaryValue2()));
+                        self::selfExecute(self::getCardInfo(self::getAuxiliaryValue2()));
                     }
                     break;
                     
@@ -25711,7 +25705,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             throw new EndOfGame();
                         } else {
                             // "Otherwise, execute the effects of the melded card as if they were on this card. Do not share them"
-                            self::executeAllEffects($melded_card);
+                            self::fullyExecute($melded_card);
                         }
                     }
                     break;
@@ -26834,7 +26828,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 420, Echoes age 9: Email
                 case "420N2A":
                     if ($n > 0) {
-                        self::executeNonDemandEffects(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
+                        self::selfExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
                     }
                     break;
                     
@@ -26859,7 +26853,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "423N1A":
                     // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
                     // NOTE: This code is only hit when the action is endorsed (otherwise we don't need an interaction to choose which card to execute)
-                    self::executeNonDemandEffects(self::getCardInfo(self::getAuxiliaryValue()));
+                    self::selfExecute(self::getCardInfo(self::getAuxiliaryValue()));
                     break;
 
                 // id 424, Echoes age 9: Rock
@@ -27012,7 +27006,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         throw new EndOfGame();                
                     }
                     // "Execute each of the melded card's non-demand dogma effects. Do not share them."
-                    self::executeNonDemandEffects($card);
+                    self::selfExecute($card);
                     break;        
 
                 // id 440, age 11: Climatology
@@ -27100,31 +27094,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
                         self::transferCardFromTo($card, $player_id, 'score');
-                        self::executeNonDemandEffects($card);
+                        self::selfExecute($card);
                     }
                     break;
 
                 // id 448, age 11: Escapism
                 case "448N1A":
-                    // "and execute its non-demand dogma effects. Do not share them."
+                    // "junk a card in your hand"
                     if ($n > 0) {
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::setAuxiliaryValue($card['age']);
-                        self::transferCardFromTo($card, $player_id, 'hand');
-                        if (!self::executeNonDemandEffects($card)) {
-                            // If there were no non-demands to execute, make sure the rest of the effect still happens.
-                            self::setStepMax(2);
-                        }
+                        self::junkCard($card);
+                        self::setAuxiliaryValue($card['id']);
+                        self::incrementStepMax(1);
                     }
                     break;
 
-                case "448N1+A":
                 case "448N1B":
-                    // "Draw three cards of that value."
-                    $age = self::getAuxiliaryValue();
-                    self::executeDraw($player_id, $age);
-                    self::executeDraw($player_id, $age);
-                    self::executeDraw($player_id, $age);
+                    // "Draw three cards of that value. Self-execute the junked card."
+                    $card = self::getCardInfo(self::getAuxiliaryValue());
+                    self::executeDraw($player_id, $card['age']);
+                    self::executeDraw($player_id, $card['age']);
+                    self::executeDraw($player_id, $card['age']);
+                    self::selfExecute($card);
                     break;
                     
                 // id 449, age 11: Whataboutism
@@ -27881,7 +27872,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 100, age 10: Self service
             case "100N1A":
-                self::executeNonDemandEffects($card); // The player chose this card for execution
+                self::selfExecute($card); // The player chose this card for execution
                 break;
             
             // id 102, age 10: Stem cells 
@@ -27913,7 +27904,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed', /*bottom_to=*/ false, /*type=*/ $choice);
                 if ($card['color'] == 4) { // "If the drawn card is purple"
                     self::meldCard($card, $player_id); // "Meld it"
-                    self::executeNonDemandEffects($card); // "Execute each of its non-demand effects. Do not share them."
+                    self::selfExecute($card); // "Execute each of its non-demand effects. Do not share them."
                     break;
                 } else {
                     // Non-purple card is placed in the hand

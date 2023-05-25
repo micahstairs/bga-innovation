@@ -352,7 +352,7 @@ $this->textual_card_infos = array(
 
 61 => array('name' => clienttranslate('Canning'),
     'non_demand_effect_1_first_and_third' => clienttranslate('You may draw and tuck a ${age_6}. If you do, score all your top cards without a ${icon_5}.'),
-    'non_demand_effect_1_fourth' => clienttranslate('You may draw and tuck a ${age_6}. If you do, score a top card without a ${icon_5} of each color on your board.'),
+    'non_demand_effect_1_fourth' => clienttranslate('You may draw and tuck a ${age_6}. If you tuck a card, score a top card without a ${icon_5} of each color on your board.'),
     'non_demand_effect_2' => clienttranslate('You may splay your yellow cards right.'),
 ),
 
@@ -474,7 +474,7 @@ $this->textual_card_infos = array(
 
 83 => array('name' => clienttranslate('Empiricism'),
     'non_demand_effect_1_first_and_third' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is either of the colors you choose, meld it and you may splay your cards of that color up.'),
-    'non_demand_effect_1_fourth' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is one of those colors, meld it and you may splay your cards of that color up.'),
+    'non_demand_effect_1_fourth' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If the drawn card is one of those colors, meld it and you may splay your cards of that color up.'),
     'non_demand_effect_2' => clienttranslate('If you have twenty or more ${icon_3} on your board, you win.'),
 ),
 
@@ -539,7 +539,7 @@ $this->textual_card_infos = array(
 
 93 => array('name' => clienttranslate('Services'),
     'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transferred any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
-    'i_demand_effect_1_fourth' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transfer any cards, then transfer a top card from my board without a ${icon_2} to your hand!'),
+    'i_demand_effect_1_fourth' => clienttranslate('${I demand} you transfer all the highest cards from your score pile to my hand! If you transfer any cards, transfer a top card without a ${icon_2} from my board to your hand!'),
 ),
 
 94 => array('name' => clienttranslate('Specialization'),
@@ -1906,7 +1906,7 @@ $this->textual_card_infos = array(
 ),
 
 448 => array('name' => clienttranslate('Escapism'),
-    'non_demand_effect_1' => clienttranslate('Reveal and self-execute a card in your hand. Return from your hand all cards of value equal to the value of the revealed card. Draw three cards of that value.'),
+    'non_demand_effect_1' => clienttranslate('Reveal and junk a card in your hand. Return from your hand all cards of value equal to the value of the junked card. Draw three cards of that value. Self-execute the junked card.'),
 ),
 
 449 => array('name' => clienttranslate('Whataboutism'),
