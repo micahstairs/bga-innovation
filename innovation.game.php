@@ -2121,6 +2121,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} draw and achieve a ${<}${age}${>}.');
             $message_for_others = clienttranslate('${player_name} draws and achieves a ${<}${age}${>}.');
             break;
+        case 'deck->safe':
+            $message_for_player = clienttranslate('${You} draw and safeguard ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} draws and safeguards a ${<}${age}${>}.');
+            break;
         case 'display->board':
             $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his display.');
@@ -2472,6 +2476,15 @@ class Innovation extends Table
             case 'achievements->junk':
                 $message_for_player = clienttranslate('${You_must} junk ${number} ${card} from the available achievements');
                 $message_for_others = clienttranslate('${player_must} junk ${number} ${card} from the available achievements');
+                break;
+            case 'achievements->safe':
+                if ($player_id_is_owner_from) {
+                    $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} to your safe');
+                    $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} to his safe');
+                } else {
+                    $message_for_player = clienttranslate('${You_must} safeguard ${number} ${card} from the available achievements');
+                    $message_for_others = clienttranslate('${player_must} safeguard ${number} ${card} from the available achievements');
+                }
                 break;
             case 'hand->deck':
                 if (self::getPlayerTableColumn($owner_from, 'distance_rule_share_state') == 1) {
@@ -6005,6 +6018,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
         return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
+    }
+
+    function executeDrawAndSafeguard($player_id, $age_min = null) {
+        return self::executeDraw($player_id, $age_min, 'safe');
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
@@ -16198,6 +16215,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
+            // id 482, Unseen age 1: Proverb
+            case "482N1":
+                // "Draw, reveal, and return a 1."
+                $card = self::executeDrawAndReveal($player_id, 1);
+                self::returnCard($card);
+                
+                // "If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand"
+                $card_id_array = array();
+                if ($card['color'] == 3 || $card['color'] == 4) {
+                    $card_count_in_hand_by_age = self::countCardsInLocationKeyedByAge($player_id, 'hand');
+                    foreach (self::getCardsInLocation(0, 'achievements') as $card) {
+                        if ($card['age'] !== null) { // Ignore special achievements
+                            if ($card_count_in_hand_by_age[$card['age']] > 0) {
+                                $card_id_array[] = $card['id'];
+                            }
+                        }
+                    }
+                    $step_max = 2;
+                    self::setAuxiliaryArray($card_id_array);
+                } else {
+                    // "Otherwise, draw two 1s."
+                    self::executeDraw($player_id, 1);
+                    self::executeDraw($player_id, 1);                    
+                }
+                break;
+                
             // id 483, Unseen age 1: Assassination
             case "483D1":
                 $card = self::executeDrawAndReveal($player_id, 1);
@@ -16292,7 +16335,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 490, Unseen age 1: Tomb
             case "490N1":
-                $step_max = 0;
+                $step_max = 1;
                 break;
 
             // id 491, Unseen age 1: Woodworking
@@ -16309,7 +16352,19 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 492, Unseen age 1: Myth
             case "492N1":
-                $step_max = 0;
+                // "If you have two cards of the same color in your hand"
+                $card_id_array = array();
+                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    if ($card_count_by_color[$card['color']] >= 2) {
+                        $card_id_array[] = $card['id'];
+                    }
+                }
+                
+                if (count($card_id_array) >= 2) {
+                    $step_max = 2;
+                    self::setAuxiliaryArray($card_id_array);
+                }
                 break;
 
             // id 493, Unseen age 1: Polytheism
@@ -23843,6 +23898,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 482, Unseen age 1: Proverb
+        case "482N1A":
+            // "safeguard an available achievement of value equal to a card in your hand"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'safe',
+                
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "482N1B":
+            // "then return all cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+            
         // id 486, Unseen age 1: Dance
         case "486N1A":
             // Select a player to receive a castle card
@@ -23867,8 +23950,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'with_icon' => 4,
-                
-                'meld_keyword' => false,
             );
             break;
 
@@ -23927,6 +24008,57 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'choose_two_colors' => true,
                 'color' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        // id 490, Unseen age 1: Tomb
+        case "490N1A":
+            // "Safeguard an available achievement of value 1 plus the number of achievements you have."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'safe',
+                
+                'age' => self::countCardsInLocation($player_id, 'achievements') + 1,
+            );
+            break;
+
+        // id 492, Unseen age 1: Myth
+        case "492N1A":
+            // "If you have two cards of the same color in your hand, tuck them."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true,
+                
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "492N1B":
+            // Tuck the second
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'bottom_to' => true,
+                
+                'color' => array($this->innovationGameState->get('color_last_selected')),
             );
             break;
             
@@ -27066,6 +27198,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($colors[0] == $card['color'] || $colors[1] == $card['color']) {
                             self::transferCardFromTo($card, $launcher_id, 'hand');
                         }
+                    }
+                    break;
+                    
+                // id 492, Unseen age 1: Myth
+                case "492N1B":
+                    // "If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color."
+                    if ($n > 0) { 
+                        $color = $this->innovationGameState->get('color_last_selected');
+                        $bottom_card = self::getBottomCardOnBoard($player_id, $color);
+                        $age_to_draw = 0;
+                        if ($bottom_card !== null) {
+                            self::splayLeft($player_id, $player_id, $color);
+                            $age_to_draw = $bottom_card['age'];
+                        }
+                        self::executeDrawAndSafeguard($player_id, $age_to_draw);
                     }
                     break;
                     
