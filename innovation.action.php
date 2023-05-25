@@ -196,6 +196,23 @@
         
         self::ajaxResponse();
     }
+
+    public function achieveCardBack() {
+        self::setAjaxMode();
+        
+        // Retrieve arguments
+        $owner = self::getArg("owner", AT_posint, true);
+        $location = self::getArg("location", AT_alphanum, true);
+        $age = self::getArg("age", AT_posint, true);
+        $type = self::getArg("type", AT_posint, true);
+        $is_relic = self::getArg("is_relic", AT_posint, true);
+        $position = self::getArg("position", AT_posint, true);
+        
+        // Call achieveCardBack from game logic
+        $this->game->achieveCardBack($owner, $location, $age, $type, $is_relic, $position);
+        
+        self::ajaxResponse();
+    }
     
     public function draw() {
         self::setAjaxMode();

@@ -1085,7 +1085,7 @@ var Innovation = /** @class */ (function (_super) {
                     if (args.args.claimable_ages.length > 0) {
                         var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
                         claimable_achievements.addClass("clickable");
-                        this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
+                        this.on(claimable_achievements, 'onclick', 'action_clickCardBackForAchieve');
                     }
                     // Top drawable card on deck (draw action)
                     var max_age = this.gamedatas.fourth_edition ? 11 : 10;
@@ -1293,7 +1293,7 @@ var Innovation = /** @class */ (function (_super) {
                     for (var i = 0; i < args.claimable_ages.length; i++) {
                         var age = args.claimable_ages[i];
                         var HTML_id = "achieve_" + age;
-                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clicForAchieve");
+                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieve");
                         dojo.removeClass(HTML_id, 'bgabutton_blue');
                         dojo.addClass(HTML_id, 'bgabutton_red');
                     }
@@ -2517,12 +2517,13 @@ var Innovation = /** @class */ (function (_super) {
         return dojo.query(queries.join(","));
     };
     Innovation.prototype.selectClaimableAchievements = function (claimable_ages) {
-        var identifiers = [];
+        var queries = [];
         for (var i = 0; i < claimable_ages.length; i++) {
             var age = claimable_ages[i];
-            identifiers.push("#achievements > .age_" + age);
+            queries.push("#achievements > .age_" + age);
+            queries.push("#safe_".concat(this.player_id, " > .age_").concat(age));
         }
-        return dojo.query(identifiers.join(","));
+        return dojo.query(queries.join(","));
     };
     Innovation.prototype.selectDrawableCard = function (age_to_draw, type_to_draw) {
         var deck_to_draw_in = this.zone["deck"][type_to_draw][age_to_draw].items;
@@ -3467,26 +3468,49 @@ var Innovation = /** @class */ (function (_super) {
         }, this, function (result) { }, function (is_error) { if (is_error)
             self.resurrectClickEvents(true); });
     };
-    // TODO(#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
-    // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
-    // The vast majority of the time, players won't notice or care, which is why we haven't implemented it yet.
-    Innovation.prototype.action_clicForAchieve = function (event) {
+    Innovation.prototype.action_clickButtonForAchieve = function (event) {
         if (!this.checkAction('achieve')) {
             return;
         }
         this.deactivateClickEvents();
         var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var age;
-        if (HTML_id.substr(0, 4) == "item") { // The achievement card itself has been clicked
-            age = this.getCardAgeFromHTMLId(HTML_id);
-        }
-        else { // This action has been take using the button
-            age = HTML_id.split("_")[1];
-        }
+        var age = HTML_id.split("_")[1];
         var self = this;
         this.ajaxcall("/innovation/innovation/achieve.html", {
             lock: true,
-            age: age
+            age: age,
+        }, this, function (result) { }, function (is_error) { if (is_error)
+            self.resurrectClickEvents(true); });
+    };
+    Innovation.prototype.action_clickCardBackForAchieve = function (event) {
+        if (!this.checkAction('achieve')) {
+            return;
+        }
+        this.deactivateClickEvents();
+        var HTML_id = this.getCardHTMLIdFromEvent(event);
+        var card_id = this.getCardIdFromHTMLId(HTML_id);
+        var age = this.getCardAgeFromHTMLId(HTML_id);
+        var type = this.getCardTypeFromHTMLId(HTML_id);
+        var is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+        // Search the zone containing that card
+        var zone_container = event.currentTarget.parentNode;
+        var zone_infos = dojo.getAttr(zone_container, 'id').split('_');
+        var location = zone_infos[0];
+        var owner = location == 'deck' ? 0 : zone_infos[1];
+        if (!owner) {
+            owner = 0;
+        }
+        var zone = this.getZone(location, owner, type, age);
+        var position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+        var self = this;
+        this.ajaxcall("/innovation/innovation/achieveCardBack.html", {
+            lock: true,
+            owner: owner,
+            location: location,
+            age: age,
+            type: type,
+            is_relic: is_relic,
+            position: position
         }, this, function (result) { }, function (is_error) { if (is_error)
             self.resurrectClickEvents(true); });
     };

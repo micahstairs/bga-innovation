@@ -1143,7 +1143,7 @@ class Innovation extends BgaGame {
                     if (args.args.claimable_ages.length > 0) {
                         let claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
                         claimable_achievements.addClass("clickable");
-                        this.on(claimable_achievements, 'onclick', 'action_clicForAchieve');
+                        this.on(claimable_achievements, 'onclick', 'action_clickCardBackForAchieve');
                     }
 
                     // Top drawable card on deck (draw action)
@@ -1365,7 +1365,7 @@ class Innovation extends BgaGame {
                     for (let i = 0; i < args.claimable_ages.length; i++) {
                         let age = args.claimable_ages[i];
                         let HTML_id = "achieve_" + age;
-                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clicForAchieve");
+                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieve");
                         dojo.removeClass(HTML_id, 'bgabutton_blue');
                         dojo.addClass(HTML_id, 'bgabutton_red');
                     }
@@ -2723,12 +2723,13 @@ class Innovation extends BgaGame {
     }
 
     selectClaimableAchievements(claimable_ages) {
-        let identifiers: string[] = [];
+        let queries: string[] = [];
         for (let i = 0; i < claimable_ages.length; i++) {
             let age = claimable_ages[i];
-            identifiers.push("#achievements > .age_" + age);
+            queries.push("#achievements > .age_" + age);
+            queries.push(`#safe_${this.player_id} > .age_${age}`);
         }
-        return dojo.query(identifiers.join(","));
+        return dojo.query(queries.join(","));
     }
 
     selectDrawableCard(age_to_draw: any, type_to_draw: any) {
@@ -3790,30 +3791,62 @@ class Innovation extends BgaGame {
         );
     }
 
-    // TODO(#673): We need to add a new method in order to allow players to click on a specific achievement to achieve.
-    // Right now all we are doing is taking the age, and then achieving an arbitrary claimable achievement of that age.
-    // The vast majority of the time, players won't notice or care, which is why we haven't implemented it yet.
-    action_clicForAchieve(event: any) {
+    action_clickButtonForAchieve(event: any) {
         if (!this.checkAction('achieve')) {
             return;
         }
         this.deactivateClickEvents();
 
         let HTML_id = this.getCardHTMLIdFromEvent(event);
-        let age: number;
-        if (HTML_id.substr(0, 4) == "item") { // The achievement card itself has been clicked
-            age = this.getCardAgeFromHTMLId(HTML_id);
-        } else { // This action has been take using the button
-            age = HTML_id.split("_")[1];
-        }
+        let age = HTML_id.split("_")[1];
 
         let self = this;
         this.ajaxcall("/innovation/innovation/achieve.html",
             {
                 lock: true,
-                age: age
+                age: age,
             },
             this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
+        );
+    }
+
+    action_clickCardBackForAchieve(event: any) {
+        if (!this.checkAction('achieve')) {
+            return;
+        }
+        this.deactivateClickEvents();
+
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let card_id = this.getCardIdFromHTMLId(HTML_id);
+        let age = this.getCardAgeFromHTMLId(HTML_id);
+        let type = this.getCardTypeFromHTMLId(HTML_id);
+        let is_relic = this.getCardIsRelicFromHTMLId(HTML_id);
+
+        // Search the zone containing that card
+        let zone_container = event.currentTarget.parentNode;
+        let zone_infos = dojo.getAttr(zone_container, 'id').split('_');
+        let location = zone_infos[0];
+        let owner = location == 'deck' ? 0 : zone_infos[1];
+        if (!owner) {
+            owner = 0;
+        }
+        let zone = this.getZone(location, owner, type, age);
+
+        let position = this.getCardPositionFromId(zone, card_id, age, type, is_relic);
+        let self = this;
+        this.ajaxcall("/innovation/innovation/achieveCardBack.html",
+            {
+                lock: true,
+                owner: owner,
+                location: location,
+                age: age,
+                type: type,
+                is_relic: is_relic,
+                position: position
+            },
+            this,
+            function (result) { },
+            function (is_error) { if (is_error) self.resurrectClickEvents(true); }
         );
     }
 
