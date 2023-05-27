@@ -1938,7 +1938,7 @@ $this->textual_card_infos = array(
 
 481 => array('name' => clienttranslate('Palmistry'),
     'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_1}.'),
-    'non_demand_effect_2' => clienttranslate('Return two cards from your hand. If you do, draw and score a ${age_2}.'),
+    'non_demand_effect_2' => clienttranslate('Return two cards from your hand. If you return two, draw and score a ${age_2}.'),
 ),
 
 482 => array('name' => clienttranslate('Proverb'),
@@ -1955,7 +1955,7 @@ $this->textual_card_infos = array(
 ),
 
 485 => array('name' => clienttranslate('Pilgrimage'),
-    'non_demand_effect_1' => clienttranslate('You may return a card from your hand and a card of each lower value than the value of card returned. If you do, safeguard an available achievement of each value of card you return.'),
+    'non_demand_effect_1' => clienttranslate('You may return a card from your hand and a card of each lower value than the value of the card returned. If you do, safeguard an available achievement of each value of card you return.'),
 ),
 
 486 => array('name' => clienttranslate('Dance'),
@@ -1985,7 +1985,7 @@ $this->textual_card_infos = array(
 ),
 
 492 => array('name' => clienttranslate('Myth'),
-    'non_demand_effect_1' => clienttranslate('If you have two cards of the same color in your hand, tuck them. If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color.'),
+    'non_demand_effect_1' => clienttranslate('If you have two cards of the same color in your hand, tuck them both. If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color.'),
 ),
 
 493 => array('name' => clienttranslate('Polytheism'),
