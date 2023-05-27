@@ -16364,13 +16364,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 488, Unseen age 1: Silk
-            // TODO: Implement this card
             case "488N1":
-                $step_max = 0;
+                $step_max = 1;
                 break;
             
             case "488N2":
-                $step_max = 0;
+                // "You may score a card from your hand of each color on your board."
+                $card_id_array = array();
+                $color_array = array();
+                foreach (self::getCardsInHand($player_id) as $card) {
+                    $top_card = self::getTopCardOnBoard($player_id, $card['color']);
+                    if ($top_card !== null) {
+                        $card_id_array[] = $card['id'];
+                        $color_array[] = $top_card['color'];
+                    }
+                }
+                if (count($card_id_array) > 0) {
+                    self::setAuxiliaryArray($card_id_array);
+                    self::setAuxiliaryValue2FromArray($color_array);
+                    $step_max = 1;
+                }
                 break;
                 
             // id 489, Unseen age 1: Handshake
@@ -24057,6 +24070,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
+        // id 488, Unseen age 1: Silk
+        case "488N1A":
+            // "Meld a card from your hand."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+
+                'meld_keyword' => true,
+            );
+            break;   
+
+        case "488N2A":
+            // "You may score a card from your hand of each color on your board."
+            $options = array(
+                'player_id' => $player_id,
+                'can_pass' => true,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'card_ids_are_in_auxiliary_array' => true,
+                
+                'score_keyword' => true,
+            );
+            break; 
+            
         // id 489, Unseen age 1: Handshake
         case "489D1A":
             // "Choose two colors of cards in your hand!"
@@ -27244,6 +27291,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
+                // id 488, Unseen age 1: Silk
+                case "488N2A":
+                    if ($n > 0) {
+                        $last_color = $this->innovationGameState->get('color_last_selected');
+                        $remaining_colors = self::getAuxiliaryValue2AsArray();
+                        
+                        $card_id_array = array();
+                        $color_array = array();
+                        foreach (self::getCardsInHand($player_id) as $card) {
+                            foreach ($remaining_colors as $color) {
+                                if ($card['color'] == $color && $color != $last_color) {
+                                    $card_id_array[] = $card['id'];
+                                    $color_array[] = $color;
+                                }
+                            }
+                        }
+                        
+                        if (count($card_id_array) > 0) {
+                            self::setStep(0); $step = 0;
+                            self::setAuxiliaryArray($card_id_array);
+                            self::setAuxiliaryValue2FromArray($color_array);
+                        }
+                    }
+                    break;
+                    
                 // id 489, Unseen age 1: Handshake
                 case "489D1A":
                     // "Transfer all cards in your hand of those colors to my hand!"
