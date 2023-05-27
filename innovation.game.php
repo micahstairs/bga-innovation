@@ -16336,6 +16336,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
+            // id 485, Unseen age 1: Pilgrimage
+            case "485N1":
+                $step_max = 1;
+                break;
+
             // id 486, Unseen age 1: Dance
             case "486N1":
                 // "Transfer a card on your board with a [AUTHORITY] to the board of any other player."
@@ -23995,6 +24000,51 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
             );
             break;
+
+        // id 485, Unseen age 1: Pilgrimage
+        case "485N1A":
+            // "You may return a card from your hand"
+            $options = array(
+                'player_id' => $player_id,                
+                'can_pass' => true,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "485N1B":
+            // "and a card of each lower value than the value of the card returned."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "485N1C":
+            // "safeguard an available achievement of each value of card you return."
+            $options = array(
+                'player_id' => $player_id,                
+                'n' => 1,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'safe',
+                
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
             
         // id 486, Unseen age 1: Dance
         case "486N1A":
@@ -27273,7 +27323,107 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndScore($player_id, 2);
                     }
                     break;
- 
+
+                // id 485, Unseen age 1: Pilgrimage
+                case "485N1A":
+                    if ($n > 0) { 
+                        // Create an array of cards that are selectable
+                        $max_age = $this->innovationGameState->get('age_last_selected');
+                        $age_array = array($max_age);
+                        $card_id_array = array();
+                        foreach (self::getCardsInHand($player_id) as $card) {
+                            if ($card['age'] < $max_age) {
+                                $card_id_array[] = $card['id'];
+                                $age_array[] = $card['age'];
+                            }
+                        }
+                        
+                        self::setAuxiliaryArray($card_id_array);
+                        self::setAuxiliaryValueFromArray($age_array);
+                        self::setAuxiliaryValue2FromArray($age_array);
+                        self::setStepMax(3);
+                    }
+                    break;
+
+                case "485N1B":
+                    if ($n > 0) { 
+                        // Create an array of cards that are selectable
+                        $curr_age = $this->innovationGameState->get('age_last_selected');
+                        $age_array = self::getAuxiliaryValue2AsArray();
+                        $card_id_array = array();
+                        foreach (self::getCardsInHand($player_id) as $card) {
+                            foreach($age_array as $age) {
+                                if ($card['age'] == $age_array && $card['age'] != $curr_age) {
+                                    $card_id_array[] = $card['id'];
+                                    $age_array[] = $card['age'];
+                                }
+                            }
+                        }
+                        if (count($card_id_array) > 0) {
+                            self::incrementStep(-1); $step--;
+                            self::setAuxiliaryArray($card_id_array);
+                            self::setAuxiliaryValue2FromArray($age_array);
+                        } else {
+                            // create possible safeguard achievement array
+                            $card_id_array = array();
+                            $all_age_array = self::getAuxiliaryValueAsArray();
+                            $age_array = array();
+                            foreach (self::getCardsInLocation(0, 'achievements') as $card) {
+                                if ($card !== null) {
+                                    foreach ($all_age_array as $age) {
+                                        if ($card['age'] == $age) {
+                                            $card_id_array[] = $card['id'];
+                                            $age_array[] = $card['age'];
+                                        }
+                                    }
+                                }
+                            }
+                            self::setAuxiliaryArray($card_id_array);
+                            self::setAuxiliaryValue2FromArray($age_array);
+                        }
+                    } else {
+                        // no extra cards returned, but the first card was still returned
+                        $card_id_array = array();
+                        $all_age_array = self::getAuxiliaryValueAsArray();
+                        foreach (self::getCardsInLocation(0, 'achievements') as $card) {
+                            if ($card !== null) {
+                                if ($card['age'] == $all_age_array[0]) {
+                                    $card_id_array[] = $card['id'];
+                                }
+                            }
+                        }
+                        self::setAuxiliaryArray($card_id_array);
+                    }
+                    break;
+
+                case "485N1C":
+                    if ($n > 0) { 
+                        // Create an array of cards that are selectable
+                        $curr_age = $this->innovationGameState->get('age_last_selected');
+                        $all_age_array = self::getAuxiliaryValue2AsArray();
+                        $age_array = array();
+                        $card_id_array = array();
+                        foreach (self::getCardsInLocation(0, 'achievements') as $card) {
+                            if ($card !== null) {
+                                foreach ($all_age_array as $age) {
+                                    if ($card['age'] == $age && $card['age'] != $curr_age) {
+                                        $card_id_array[] = $card['id'];
+                                        $age_array[] = $card['age'];
+                                    }
+                                }
+                            }
+                        }
+                            
+                        if (count($card_id_array) > 0) {
+                            // repeat until all possible cards are transferred to the
+                            // safe
+                            self::incrementStep(-1); $step--;
+                            self::setAuxiliaryArray($card_id_array);
+                            self::setAuxiliaryValue2FromArray($age_array);
+                        }
+                    }
+                    break;
+                    
                 // id 486, Unseen age 1: Dance
                 case "486N1A":
                     if ($n > 0) { // "if you do"
