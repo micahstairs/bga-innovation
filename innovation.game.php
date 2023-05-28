@@ -28818,6 +28818,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // Indicate that the player decided to return a card in order to avoid a demand
             if (self::getPlayerTableColumn($player_id, 'distance_rule_demand_state') == 1) {
+                self::deselectAllCards();
                 self::setPlayerTableColumn($player_id, 'distance_rule_demand_state', 3);
                 // Skip demand
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned a card from your hand in order to avoid the demand.'), array('You' => 'You'));
@@ -28829,6 +28830,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // Indicate that the player decided to return a card in order to share in an effect
             if (self::getPlayerTableColumn($player_id, 'distance_rule_share_state') == 1) {
+                self::deselectAllCards();
                 self::setPlayerTableColumn($player_id, 'distance_rule_share_state', 3);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} returned a card from your hand in order to share the effect.'), array('You' => 'You'));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} returned a card from his hand in order to share the effect.'), array('player_name' => self::getPlayerNameFromId($player_id)));
