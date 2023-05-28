@@ -12377,7 +12377,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             SET
                                 current_player_id = {player_id},
                                 current_effect_type = 1,
-                                current_effect_number = 1
+                                current_effect_number = 2
                             WHERE
                                 nesting_index = {nesting_index}",
                             array('player_id' => $launcher_id, 'nesting_index' => $this->innovationGameState->get('current_nesting_index')))
