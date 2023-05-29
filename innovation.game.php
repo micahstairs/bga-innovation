@@ -18,18 +18,23 @@
 
 
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
+require_once('modules/Innovation/Cards/Card.php');
+require_once('modules/Innovation/Cards/ExecutionState.php');
+require_once('modules/Innovation/GameInterface.php');
+require_once('modules/Innovation/GameState.php');
 require_once('modules/Innovation/Utils/Arrays.php');
 require_once('modules/Innovation/Utils/Strings.php');
-require_once('modules/Innovation/GameState.php');
 
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Strings;
+use Innovation\GameInterface;
 use Innovation\GameState;
+use Innovation\Cards\ExecutionState;
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
 
-class Innovation extends Table
+class Innovation extends Table implements GameInterface
 {
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
     private GameState $innovationGameState;
@@ -64,6 +69,19 @@ class Innovation extends Table
     const ECHOES = 3;
     const FIGURES = 4;
     const UNSEEN = 5;
+
+    /**
+     * Return the DB connection object, allowing passing it to delegative models
+     *
+     * @return Connection
+     * @throws ReflectionException
+     */
+    public function getDatabaseConnection(): Connection {
+        $reflector = new ReflectionClass(get_class($this));
+        $method = $reflector->getMethod('getDbConnection');
+        $method->setAccessible(true);
+        return $method->invoke($this);
+    }
 
     function __construct()
     {
@@ -11088,6 +11106,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::trace('interDogmaEffect->dogmaEffect');
         $this->gamestate->nextState('dogmaEffect');
     }
+
+    /* Whether or not the card's implementation is in a separate file */
+    function isInSeparateFile($card_id) {
+        return $card_id == 0 || $card_id == 2;
+    }
     
     function stPlayerInvolvedTurn() {
         // A player must or can undergo/share an effect of a dogma card
@@ -11138,6 +11161,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
+        $executionState = (new ExecutionState())
+            ->setLauncherId($launcher_id)
+            ->setPlayerId($player_id)
+            ->setEffectType($current_effect_type)
+            ->setEffectNumber($current_effect_number)
+            ->setMaxSteps(0);
+
         $code = self::getCardExecutionCode($card_id, $current_effect_type, $current_effect_number);
         $step_max = null;
         $step = null;
@@ -11156,7 +11186,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $factory = self::getIconSquare(5);
         $clock = self::getIconSquare(6);
         
+        $using_execution_status_object = false;
+
         try {
+
+            if (self::isInSeparateFile($card_id)) {
+                require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
+                $classname = 'Innovation\Cards\Base\Card'.$card_id;
+                $card = new $classname($this);
+                $card->initialExecution($executionState);
+                $using_execution_status_object = true;
+            }
+
             switch($code) {
             // The first number is the id of the card
             // D1 means the first (and single) I demand effect
@@ -11167,14 +11208,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // E1 means the first (and single) echo effect
             
             // Setting the $step_max variable means there is interaction needed with the player
-            
-            // id 0, age 1: Pottery
-            case "0N1":
-                $step_max = 1;
-                break;
-            case "0N2":
-                self::executeDraw($player_id, 1); // "Draw a 1"
-                break;
 
             // id 1, age 1: Tools
             case "1N1":
@@ -11182,11 +11215,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             case "1N2":
                 $step_max = 1;
-                break;
-                
-            // id 2, age 1: Writing
-            case "2N1":
-                self::executeDraw($player_id, 2); // "Draw a 2"
                 break;
                 
             // id 3, age 1: Archery
@@ -17150,7 +17178,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
 
-        if ($step_max === null) {
+        if ($using_execution_status_object) {
+            $step_max = $executionState->getMaxSteps();
+            $step = $executionState->getNextStep();
+        }
+
+        // TODO(#1102): Remove null check.
+        if ($step_max === null || $step_max === 0) {
             // End of the effect for this player
             self::trace('playerInvolvedTurn->interPlayerInvolvedTurn');
             $this->gamestate->nextState('interPlayerInvolvedTurn');
@@ -17160,6 +17194,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::setStepMax($step_max);
 
         // Prepare the first step
+        // TODO(#1102): Remove null check.
         self::setStep($step === null ? 1 : $step);
         self::trace('playerInvolvedTurn->interactionStep');
         $this->gamestate->nextState('interactionStep');
@@ -17254,6 +17289,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $step = self::getStep();
+
+        $executionState = (new ExecutionState())
+            ->setLauncherId($launcher_id)
+            ->setPlayerId($player_id)
+            ->setEffectType($current_effect_type)
+            ->setEffectNumber($current_effect_number)
+            ->setCurrentStep(self::getStep())
+            ->setMaxSteps(self::getStepMax());
+
         $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
 
         $card_id_1 = $this->innovationGameState->get('card_id_1');
@@ -17267,8 +17311,29 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $factory = self::getIconSquare(5);
         $clock = self::getIconSquare(6);
 
-        $options = null;
+        if (self::isInSeparateFile($card_id)) {
+            require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
+            $classname = 'Innovation\Cards\Base\Card'.$card_id;
+            $card = new $classname($this);
+            $options = $card->getInteractionOptions($executionState);
+
+            // Use sensible defaults for unset options
+            if (!array_key_exists('can_pass', $options)) {
+                $options['can_pass'] = false;
+            }
+            if (!array_key_exists('player_id', $options)) {
+                $options['player_id'] = $player_id;
+            }
+            if (!array_key_exists('owner_from', $options)) {
+                $options['owner_from'] = $player_id;
+            }
+            if (array_key_exists('location_to', $options) && $options['location_to'] == 'deck') {
+                $options['owner_to'] = 0;
+            }
+        }
+
         switch($code) {
+
         // The first number is the id of the card
         // D1 means the first (and single) I demand effect
         // C1 means the first (and single) I compel effect
@@ -17280,22 +17345,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // The letter indicates the step : A for the first one, B for the second
         
         // Setting the $step_max variable means there is interaction needed with the player
-        
-        // id 0, age 1: Pottery
-        case "0N1A":
-            // "You may return up to three cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'n_max' => 3,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
             
         // id 1, age 1: Tools
         case "1N1A":
@@ -25633,10 +25682,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         array('nesting_index' => $nesting_index, 'effect_number' => $current_effect_number)));
             }
             $step = self::getStep();
+            $step_max = self::getStepMax();
             $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         }
 
         $n = $this->innovationGameState->get('n');
+
+        $executionState = (new ExecutionState())
+            ->setLauncherId($launcher_id)
+            ->setPlayerId($player_id)
+            ->setEffectType($current_effect_type)
+            ->setEffectNumber($current_effect_number)
+            ->setNumChosen($n)
+            ->setCurrentStep($step)
+            ->setMaxSteps($step_max);
         
         $crown = self::getIconSquare(1);
         $leaf = self::getIconSquare(2);
@@ -25647,6 +25706,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
+                if (self::isInSeparateFile($card_id)) {
+                    require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
+                    $classname = 'Innovation\Cards\Base\Card'.$card_id;
+                    $card = new $classname($this);
+                    $card->afterInteraction($executionState);
+                }
+
                 switch($code) {
                 // The first number is the id of the card
                 // D1 means the first (and single) I demand effect
@@ -25657,26 +25723,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // E1 means the first (and single) echo effect
                 
                 // The letter indicates the step : A for the first one, B for the second
-                
-                // Setting the $step_max variable means there is interaction needed with the player
-                
-                // id 0, age 1: Pottery
-                case "0N1A":
-                    if ($n > 0) { // "If you returned any"
-                        switch($n) {
-                        case 1:
-                            self::notifyGeneralInfo(clienttranslate("One card has been returned"));
-                            break;
-                        case 2:
-                            self::notifyGeneralInfo(clienttranslate("Two cards have been returned"));
-                            break;
-                        case 3:
-                            self::notifyGeneralInfo(clienttranslate("Three cards have been returned"));
-                            break;
-                        }
-                        self::executeDraw($player_id, $n, 'score'); // "Draw and score a card of value equal to the number of cards you returned" 
-                    }
-                    break;
                 
                 // id 1, age 1: Tools
                 case "1N1A":

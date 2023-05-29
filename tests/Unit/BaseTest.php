@@ -6,8 +6,7 @@ use BGAWorkbench\Test\StubProductionEnvironment;
 use Helpers\TestHelpers;
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseTest extends TestCase
-{
+abstract class BaseTest extends TestCase {
     use TestHelpers;
 
     /**
@@ -15,8 +14,7 @@ abstract class BaseTest extends TestCase
      *
      * @return object
      */
-    public function getInnovationInstance()
-    {
+    public function getInnovationInstance() {
         $klass = BGA_GAME_CLASS;
         return new $klass();
     }
