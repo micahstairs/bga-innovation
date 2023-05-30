@@ -16519,7 +16519,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw and meld a card of value equal to the number of visible purple cards on your board."
                 $purple_pile_size = self::countVisibleCards($player_id, 4);
                 $card = self::executeDrawAndMeld($player_id, $purple_pile_size);
-                if (!self::hasRessource($card, 1)) {
+                if (!self::hasRessource($card, self::PROSPERITY)) {
                     // "If the melded card has no crowns, tuck it."
                     self::tuckCard($card, $player_id);
                 }
@@ -16527,25 +16527,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 496, Unseen age 2: Meteorology
             case "496N1":
-                // "Draw and reveal a ${age_3}. If it has a ${icon_2}, score it.  Otherwise, if it has a ${icon_1}, return it and draw two ${age_3}. Otherwise, tuck it."
+                // "Draw and reveal a 3. If it has a leaf, score it.  Otherwise, if it has a crown, return it and draw two 3. Otherwise, tuck it."
                 $revealed_card = self::executeDrawAndReveal($player_id, 3);
-                if (self::hasRessource($revealed_card, 2)) {
+                if (self::hasRessource($revealed_card, self::HEALTH)) {
                     self::scoreCard($revealed_card, $player_id);
-                } else if (self::hasRessource($revealed_card, 1)) {
+                } else if (self::hasRessource($revealed_card, self::PROSPERITY)) {
                     self::returnCard($revealed_card);
                     self::executeDraw($player_id, 3);
                     self::executeDraw($player_id, 3);
-                }
-                else {
+                } else {
                     self::tuckCard($revealed_card, $player_id);
                 }
                 break;
 
             case "496N2":
-                // "If you have no castles, claim the Zen achievement."
+                // "If you have no towers, claim the Zen achievement."
                 $icon_counts = self::getPlayerResourceCounts($player_id);
-                if ($icon_counts[4] == 0) {
-                    self::claimSpecialAchievement($player_id, 596); // zen
+                if ($icon_counts[self::AUTHORITY] == 0) {
+                    self::claimSpecialAchievement($player_id, 596); // Zen
                 }
                 break;
 
@@ -16586,8 +16585,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $top_cards = self::getTopCardsOnBoard($player_id);
                 $score_cards_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
                 $card_id_array = array();
-                foreach($top_cards as $card) {
-                    for ($age = 0; $age < 12; $age++) {
+                foreach ($top_cards as $card) {
+                    for ($age = 1; $age <= 11; $age++) {
                         if ($score_cards_by_age[$card['age']] == 0) {
                             $card_id_array[] = $card['id'];
                         }
@@ -16656,8 +16655,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for ($color = 0; $color < 5; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null) {
-                        if ($top_card['splay_direction'] != 0) { // splayed
-                            self::scoreCard($top_card); // score it
+                        if ($top_card['splay_direction'] > 0) {
+                            self::scoreCard($top_card);
                             $score_count++;
                         }
                     }
