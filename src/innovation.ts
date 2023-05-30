@@ -75,6 +75,7 @@ class Innovation extends BgaGame {
         ["score", -1], // Computed dynamically
         ["my_score_verso", 3],
         ["safe", -1], // Computed dynamically
+        ["revealed", 1], // Computed dynamically
         ["relics", -1], // Computed dynamically
         ["achievements", -1], // Computed dynamically
         ["special_achievements", -1], // Computed dynamically

@@ -139,6 +139,7 @@ var Innovation = /** @class */ (function (_super) {
             ["score", -1],
             ["my_score_verso", 3],
             ["safe", -1],
+            ["revealed", 1],
             ["relics", -1],
             ["achievements", -1],
             ["special_achievements", -1], // Computed dynamically
