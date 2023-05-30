@@ -9,7 +9,7 @@ use Innovation\Cards\ExecutionState;
 class Card2 extends Card {
 
   public function initialExecution(ExecutionState $state) {
-    // Non-demand #1: "Draw a 2"
+    // Non-demand: "Draw a 2"
     $this->game->executeDraw($state->getPlayerId(), 2);
   }
 

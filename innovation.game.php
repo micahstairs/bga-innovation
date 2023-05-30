@@ -11109,7 +11109,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id == 0 || $card_id == 2;
+        return $card_id <= 2;
     }
     
     function stPlayerInvolvedTurn() {
@@ -11209,24 +11209,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // Setting the $step_max variable means there is interaction needed with the player
 
-            // id 1, age 1: Tools
-            case "1N1":
-                $step_max = 1;
-                break;
-            case "1N2":
-                $step_max = 1;
-                break;
-                
-            // id 3, age 1: Archery
-            case "3D1":
-                self::executeDraw($player_id, 1); // "Draw a 1"
-                $step_max = 1;
-                break;
-
-            case "3N1":
-                $step_max = 1; // 4th edition and beyond only
-                break;
-                
             // id 4, age 1: Metalworking
             case "4N1":
                 while(true) {
@@ -17321,13 +17303,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if (!array_key_exists('can_pass', $options)) {
                 $options['can_pass'] = false;
             }
+            if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
+                $options['n'] = 1;
+            }
             if (!array_key_exists('player_id', $options)) {
                 $options['player_id'] = $player_id;
             }
             if (!array_key_exists('owner_from', $options)) {
                 $options['owner_from'] = $player_id;
             }
-            if (array_key_exists('location_to', $options) && $options['location_to'] == 'deck') {
+            if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junkyard')) {
                 $options['owner_to'] = 0;
             }
         }
@@ -17345,69 +17330,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // The letter indicates the step : A for the first one, B for the second
         
         // Setting the $step_max variable means there is interaction needed with the player
-            
-        // id 1, age 1: Tools
-        case "1N1A":
-            // "You may return three cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 3,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-        case "1N2A":
-            // "You may return a 3 from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'age' => 3
-            );
-            break;
-        
-        // id 3, age 1: Archery
-        case "3D1A":
-            // "Transfer the highest card in your hand to my hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-                
-                'age' => self::getMaxAgeInHand($player_id)
-            );
-            break;
-
-        case "3N1A":
-            // "Junk an available achievement of value 1 or 2"
-            // NOTE: This only occurs in the 4th edition and beyond
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => 0,
-                'location_to' => 'junk',
-                
-                'age_min' => 1,
-                'age_max' => 2,
-            );
-            break;
             
         // id 5, age 1: Oars
         case "5D1A":
@@ -25723,20 +25645,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // E1 means the first (and single) echo effect
                 
                 // The letter indicates the step : A for the first one, B for the second
-                
-                // id 1, age 1: Tools
-                case "1N1A":
-                    if ($n == 3) { // "If you do"
-                        self::executeDrawAndMeld($player_id, 3); // "Draw and meld a 3"
-                    }
-                    break;
-                case "1N2A":
-                    if ($n > 0) {
-                        for ($times = 0; $times < 3; $times++) { // "If you do"
-                            self::executeDraw($player_id, 1); // "Draw three 1"                
-                        }
-                    }
-                    break;
                     
                 // id 5, age 1: Oars
                 case "5D1A":

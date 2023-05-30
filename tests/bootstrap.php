@@ -24,10 +24,11 @@ require_once 'Helpers/FakeGame.php';
 require_once 'Helpers/Mocks.php';
 require_once 'Helpers/TestHelpers.php';
 
-foreach (glob(__DIR__ . '/../modules/Innovation/Cards/*.php') as $filename) {
+$cardsDir = __DIR__ . '/../modules/Innovation/Cards';
+foreach (glob($cardsDir . '/*.php') as $filename) {
   require $filename;
 }
-foreach (glob(__DIR__ . '/../modules/Innovation/Cards/Base/*.php') as $filename) {
+foreach (glob($cardsDir . '/Base/*.php') as $filename) {
   require $filename;
 }
 

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "type": "library",
   "description": "BoardGameArena implementation of Innovation",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "autoload": {
     "psr-4": {
     },
@@ -17,8 +17,14 @@
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5",
-    "dholmes/bga-workbench": "^0.2.1"
+    "micahstairs/bga-workbench": "dev-master"
   },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/micahstairs/bga-workbench.git"
+    }
+  ],
   "scripts": {
     "test": "phpunit"
   },
