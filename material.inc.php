@@ -2009,7 +2009,7 @@ $this->textual_card_infos = array(
 ),
 
 497 => array('name' => clienttranslate('Padlock'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you transfer one of your secrets to the available achievements!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you transfer one of your secrets to the available achievements!'),
     'non_demand_effect_1' => clienttranslate('If no card was transferred due to the demand, you may score up to three cards from hand of different values.'),
 ),
 
@@ -2028,7 +2028,7 @@ $this->textual_card_infos = array(
 ),
 
 501 => array('name' => clienttranslate('Exile'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you return a top card without a ${icon_2} from your board! Return all cards of the returned card\'s value from your score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return a top card without a ${icon_2} from your board! Return all cards of the returned card\'s value from your score pile!'),
     'non_demand_effect_1' => clienttranslate('If exactly one card was returned due to the demand, return Exile and draw a ${age_3}.'),
 ),
 
@@ -2038,7 +2038,7 @@ $this->textual_card_infos = array(
 ),
 
 503 => array('name' => clienttranslate('Propaganda'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you meld a card of the color of my choice from your hand! If you do, transfer the card beneath it to my board!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you meld a card of the color of my choice from your hand! If you do, transfer the card beneath it to my board!'),
     'non_demand_effect_1' => clienttranslate('Meld a card from your hand.'),
 ),
 
@@ -2057,7 +2057,7 @@ $this->textual_card_infos = array(
 ),
 
 507 => array('name' => clienttranslate('Knights Templar'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you unsplay a splayed color on your board! If you do, transfer the top card on your board of that color to my score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you unsplay a splayed color on your board! If you do, transfer the top card on your board of that color to my score pile!'),
     'non_demand_effect_1' => clienttranslate('You may splay your red or green cards left.'),
 ),
 
@@ -2080,7 +2080,7 @@ $this->textual_card_infos = array(
 ),
 
 512 => array('name' => clienttranslate('Secret Police'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you tuck a card in your hand, then return your top card of its color! If you do, repeat this effect! Otherwise, draw a ${age_3}!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you tuck a card in your hand, then return your top card of its color! If you do, repeat this effect! Otherwise, draw a ${age_3}!'),
     'non_demand_effect_1' => clienttranslate('You may tuck any number of cards of any one color from your hand.'),
 ),
 
@@ -2106,17 +2106,17 @@ $this->textual_card_infos = array(
 ),
 
 517 => array('name' => clienttranslate('Ninja'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you return a card of the color of my choice from your hand! If you do, transfer the top card of that color from your board to mine!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return a card of the color of my choice from your hand! If you do, transfer the top card of that color from your board to mine!'),
     'non_demand_effect_1' => clienttranslate('You may splay your red cards right.'),
 ),
 
 518 => array('name' => clienttranslate('Spanish Inquisition'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you return all but the highest cards from your hand and all but the highest cards from your score pile!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you return all but the highest cards from your hand and all but the highest cards from your score pile!'),
     'non_demand_effect_1' => clienttranslate('If Spanish Inquisition is a top card on your board, return all red cards from your board.'),
 ),
 
 519 => array('name' => clienttranslate('Blackmail'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Execute the non-demand effects of any revealed card of my choice for yourself only, replacing \'may\' with \'must\'!'),
+    'i_demand_effect_1' => clienttranslate('${I demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Execute the non-demand effects of any revealed card of my choice for yourself only, replacing \'may\' with \'must\'!'),
 ),
 
 520 => array('name' => clienttranslate('El Dorado'),

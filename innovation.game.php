@@ -2578,6 +2578,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his hand');
                 break;
+            case 'hand->safe':
+                $message_for_player = clienttranslate('${You_must} safeguard ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} safeguards ${number} ${card} from his hand');
+                break;
             case 'board->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
                 $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
@@ -10218,6 +10222,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose two colors');
                 break;
 
+            // id 503, Unseen age 2: Propaganda
+            case "503D1A":
+                $message_for_player = clienttranslate('${You} must choose a color');
+                $message_for_others = clienttranslate('${player_name} must choose a color');
+                break;
+                
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
@@ -16490,6 +16500,153 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 2);
                 }
                 break;
+
+            // id 495, Unseen age 2: Astrology
+            case "495N1":
+                $stack_size = self::countCardsInLocationKeyedByColor($player_id, 'board');
+                $largest_stack = max($stack_size);
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    if ($stack_size[$color] == $largest_stack) {
+                        $color_array[] = $color;
+                    }
+                }
+                $step_max = 1;
+                self::setAuxiliaryValueFromArray($color_array);
+                break;
+
+            case "495N2":
+                // "Draw and meld a card of value equal to the number of visible purple cards on your board."
+                $purple_pile_size = self::countVisibleCards($player_id, 4);
+                $card = self::executeDrawAndMeld($player_id, $purple_pile_size);
+                if (!self::hasRessource($card, self::PROSPERITY)) {
+                    // "If the melded card has no crowns, tuck it."
+                    self::tuckCard($card, $player_id);
+                }
+                break;
+                
+            // id 496, Unseen age 2: Meteorology
+            case "496N1":
+                // "Draw and reveal a 3. If it has a leaf, score it.  Otherwise, if it has a crown, return it and draw two 3. Otherwise, tuck it."
+                $revealed_card = self::executeDrawAndReveal($player_id, 3);
+                if (self::hasRessource($revealed_card, self::HEALTH)) {
+                    self::scoreCard($revealed_card, $player_id);
+                } else if (self::hasRessource($revealed_card, self::PROSPERITY)) {
+                    self::returnCard($revealed_card);
+                    self::executeDraw($player_id, 3);
+                    self::executeDraw($player_id, 3);
+                } else {
+                    self::tuckCard($revealed_card, $player_id);
+                }
+                break;
+
+            case "496N2":
+                // "If you have no towers, claim the Zen achievement."
+                $icon_counts = self::getPlayerResourceCounts($player_id);
+                if ($icon_counts[self::AUTHORITY] == 0) {
+                    self::claimSpecialAchievement($player_id, 596); // Zen
+                }
+                break;
+
+            // id 497, Unseen age 2: Padlock
+            case "497D1":
+                $step_max = 1;
+                self::setAuxiliaryValue(0);
+                break;
+
+            case "497N1":
+                // "If no card was transferred due to the demand,"
+                if (self::getAuxiliaryValue() == 0) {
+                    $step_max = 1;
+                }
+                break;
+
+            // id 498, Unseen age 2: Password
+            case "498N1":
+                // "Draw and reveal a 2."
+                $card = self::executeDrawAndReveal($player_id, 2);
+                $step_max = 1;
+                break;
+
+            // id 499, Unseen age 2: Cipher
+            case "499N1":
+                self::setAuxiliaryValue(0);
+                $step_max = 1;
+                break;
+
+            case "499N2":
+                // "Draw a 2."
+                self::executeDraw($player_id, 2);
+                $step_max = 1;
+                break;
+                
+            // id 500, Unseen age 2: Counterfeiting
+            case "500N1":
+                $top_cards = self::getTopCardsOnBoard($player_id);
+                $score_cards_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                $card_id_array = array();
+                foreach ($top_cards as $card) {
+                    for ($age = 1; $age <= 11; $age++) {
+                        if ($score_cards_by_age[$card['age']] == 0) {
+                            $card_id_array[] = $card['id'];
+                        }
+                    }
+                }
+                if (count($card_id_array) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryArray($card_id_array);
+                }
+                break;
+
+            case "500N2":
+                $step_max = 1;
+                break;
+                
+            // id 501, Unseen age 2: Exile
+            case "501D1":
+                $step_max = 2;
+                self::setAuxiliaryValue(0);
+                break;
+
+            case "501N1":
+                if (self::getAuxiliaryValue() == 1) {
+                    // "If exactly one card was returned due to the demand, return Exile and draw a 3."
+                    self::returnCard(self::getCardInfo(501));
+                    self::executeDraw($player_id, 3);
+                }
+                break;
+
+            // id 502, Unseen age 2: Fingerprints
+            case "502N1":
+                $step_max = 1;
+                break;
+                
+            case "502N2":
+                $step_max = 1;
+                break;
+                
+            // id 503, Unseen age 2: Propaganda
+            case "503D1":
+                $step_max = 2;
+                break;
+
+            case "503N1":
+                $step_max = 1;
+                break;
+                
+            // id 504, Unseen age 2: Steganography
+            case "504N1":
+                $color_array = array();
+                for ($color = 0; $color < 5; $color++) {
+                    if (self::countVisibleIconsInPile($player_id, 3, $color) > 0) {
+                        $color_array[] = $color;
+                    }
+                }
+                if (count($color_array) > 0) {
+                    $step_max = 1;
+                    self::setAuxiliaryValueFromArray($color_array);
+                }
+                break;
                 
             // id 594, Unseen age 11: Metaverse
             case "594N1":
@@ -16498,8 +16655,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for ($color = 0; $color < 5; $color++) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null) {
-                        if ($top_card['splay_direction'] != 0) { // splayed
-                            self::scoreCard($top_card); // score it
+                        if ($top_card['splay_direction'] > 0) {
+                            self::scoreCard($top_card);
                             $score_count++;
                         }
                     }
@@ -24180,7 +24337,302 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 'card_ids_are_in_auxiliary_array' => true,
             );
-            break;            
+            break;
+            
+        // id 495, Unseen age 2: Astrology
+        case "495N1A":
+            // "You may splay left the color of which you have the most cards on your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => self::LEFT,
+                'color' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+
+        // id 497, Unseen age 2: Padlock
+        case "497D1A":
+            // "I demand you transfer one of your secrets to the available achievements!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'safe',
+                'owner_to' => 0,
+                'location_to' => 'achievements',
+            );
+            break;
+
+        case "497N1A":
+            // "you may score up to three cards from hand of different values."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                
+                'score_keyword' => true,
+            );
+            break;
+
+        case "497N1B":
+            // "you may score up to three cards from hand of different values."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "497N1C":
+            // "you may score up to three cards from hand of different values."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+            
+        // id 498, Unseen age 2: Password
+        case "498N1A":
+            // "You may safeguard another card from your hand of the color of the drawn card."
+            $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id, 
+                'location_to' => 'safe',
+                
+                'color' => array($revealed_card['color']),
+            );
+            break;
+
+        case "498N1B":
+            // "Otherwise, return all cards from your hand except the drawn card."
+            $options = array(
+                'player_id' => $player_id,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'not_id' => self::getAuxiliaryValue(),
+            );
+            break;
+
+        // id 499, Unseen age 2: Cipher
+        case "499N1A":
+            // "Return all cards from your hand."
+            $options = array(
+                'player_id' => $player_id,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+            );
+            break;
+
+        case "499N2A":
+            // "You may splay your blue cards left."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 1,
+                'color' => array(0), // blue
+            );
+            break;
+
+        // id 500, Unseen age 2: Counterfeiting
+        case "500N1A":
+            // "Score a top card from your board of a value not in your score pile."            
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+
+                'card_ids_are_in_auxiliary_array' => true,
+            );
+            break;
+
+        case "500N2A":
+            // "You may splay your green or purple cards left."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 1,
+                'color' => array(2,4), // green or purple
+            );
+            break;
+
+        // id 501, Unseen age 2: Exile
+        case "501D1A":
+            // "I demand you return a top card without a leaf from your board!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                
+                'owner_from' => $player_id,
+                'location_from' => 'board',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'without_icon' => 2,
+            );
+            break;
+
+        case "501D1B":
+            // "Return all cards of the returned card's value from your score pile!"
+            $options = array(
+                'player_id' => $player_id,
+
+                'owner_from' => $player_id,
+                'location_from' => 'score',
+                'owner_to' => 0,
+                'location_to' => 'deck',
+                
+                'age' => $this->innovationGameState->get('age_last_selected'),
+            );
+            break;
+
+        // id 502, Unseen age 2: Fingerprints
+        case "502N1A":
+            // "You may splay your red or yellow cards left."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => 1,
+                'color' => array(1,3), // red or yellow
+            );
+            break;
+            
+        case "502N2A":
+            // "Safeguard an available achievement of value equal to the number of splayed colors on your board."
+            $top_cards = self::getTopCardsOnBoard($player_id);
+            $count = 0;
+            foreach($top_cards as $card) {
+                if ($card !== null) {
+                    if ($card['splay_direction'] > 0) {
+                        $count++;
+                    }
+                }
+            }
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'safe',
+                
+                'age' => $count,
+            );
+            break;
+
+        // id 503, Unseen age 2: Propaganda
+        case "503D1A":
+            // "I demand you meld a card of the color of my choice from your hand!"
+            $options = array(
+                'player_id' => $launcher_id,
+                'n' => 1,
+                
+                'choose_color' => true,
+            );
+            break;
+  
+        case "503D1B":
+            // "I demand you meld a card of the color of my choice from your hand!"
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+                
+                'color' => array(self::getAuxiliaryValue()),
+            );
+            break;
+
+        case "503N1A":
+            // "Meld a card from your hand."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => $player_id,
+                'location_from' => 'hand',
+                'owner_to' => $player_id,
+                'location_to' => 'board',
+            );
+            break;
+
+        // id 504, Unseen age 2: Steganography
+        case "504N1A":
+            // "You may splay left a color on your board with a visible bulb."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+                'can_pass' => true,
+
+                'splay_direction' => self::LEFT,
+                'color' => self::getAuxiliaryValueAsArray(),
+            );
+            break;
+            
+        case "504N1B":
+            // "safeguard an available achievement of value equal to the number of cards of that color on your board."
+            $options = array(
+                'player_id' => $player_id,
+                'n' => 1,
+
+                'owner_from' => 0,
+                'location_from' => 'achievements',
+                'owner_to' => $player_id,
+                'location_to' => 'safe',
+                
+                'age' => self::countCardsInLocationKeyedByColor($player_id, 'board')[$this->innovationGameState->get('color_last_selected')],
+            );
+            break;
+            
         default:
             // This should not happens
             throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
@@ -27390,6 +27842,119 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
+                    
+                // id 497, Unseen age 2: Padlock
+                case "497D1A":
+                    self::setAuxiliaryValue($n);
+                    break;
+
+                case "497N1A":
+                    if ($n > 0) { // card scored
+                        $selectable_card_ids = array();
+                        $age = $this->innovationGameState->get('age_last_selected');
+                        foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
+                            if ($age != $card['age']) {
+                                $selectable_card_ids[] = $card['id'];
+                            }
+                        }
+                        if (count($selectable_card_ids) > 0) {
+                            self::setAuxiliaryArray($selectable_card_ids);
+                            self::setAuxiliaryValue($age);
+                            self::incrementStepMax(1);
+                        }
+                    }
+                    break;                    
+
+                case "497N1B":
+                    if ($n > 0) { // card scored
+                        $selectable_card_ids = array();
+                        $age = $this->innovationGameState->get('age_last_selected');
+                        $age2 = self::getAuxiliaryValue();
+                        foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
+                            if ($age != $card['age'] && $age2 != $card['age'] ) {
+                                $selectable_card_ids[] = $card['id'];
+                            }
+                        }
+                        if (count($selectable_card_ids) > 0) {
+                            self::setAuxiliaryArray($selectable_card_ids);
+                            self::incrementStepMax(1);
+                        }
+                    }
+                    break;
+
+                // id 498, Unseen age 2: Password
+                case "498N1A":
+                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
+                    if ($n > 0) { // "If you do,"
+                        // "score the drawn card."
+                        self::scoreCard($revealed_cards[0], $player_id);
+                    } else {
+                        // put the card in hand
+                        self::transferCardFromTo($revealed_cards[0], $player_id, 'hand');
+                        self::incrementStepMax(1);
+                    }
+                    break;
+
+                // id 499, Unseen age 2: Cipher
+                case "499N1A":
+                    if ($n >= 2) { // "If you return two or more,"
+                        // " draw a card of value one higher than the highest value of card you return."
+                        self::executeDraw($player_id, self::getAuxiliaryValue() + 1);
+                    }
+                    break;
+                    
+                // id 500, Unseen age 2: Counterfeiting
+                case "500N1A":
+                    if ($n > 0) { // "If you do,"
+                        $top_cards = self::getTopCardsOnBoard($player_id);
+                        $score_cards_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
+                        $card_id_array = array();
+                        foreach($top_cards as $card) {
+                            for ($age = 0; $age < 12; $age++) {
+                                if ($score_cards_by_age[$card['age']] == 0) {
+                                    $card_id_array[] = $card['id'];
+                                }
+                            }
+                        }
+                        if (count($card_id_array) > 0) {
+                            // "repeat this effect."
+                            self::setStep(0); $step = 0;
+                            self::setAuxiliaryArray($card_id_array);
+                        }
+                    }
+                    break;
+
+                // id 501, Unseen age 2: Exile
+                case "501D1A":
+                    self::setAuxiliaryValue($n);
+                    break;
+
+                case "501D1B":
+                    self::setAuxiliaryValue($n + self::getAuxiliaryValue());
+                    break;
+                    
+                // id 503, Unseen age 2: Propaganda
+                case "503D1B":
+                    if ($n > 0) { // "If you do,"
+                        // "transfer the card beneath it to my board!"
+                        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
+                        $pile = $board[self::getAuxiliaryValue()];
+                        $pile_size = count($pile);
+
+                        // underneath card available
+                        if ($pile_size > 1) {
+                            self::transferCardFromTo($pile[$pile_size - 2], $launcher_id, 'board');
+                        }
+                    }
+                    break;
+
+                // id 504, Unseen age 2: Steganography
+                case "504N1A":
+                    if ($n > 0) { // "If you do,"
+                        self::incrementStepMax(1);
+                    }
+                    break;
+                    
                 }
                 
             } catch (EndOfGame $e) {
@@ -28781,6 +29346,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::getColoredPlayerName($player_id), 'color_1' => self::getColorInClear($colors[0]), 'color_2' => self::getColorInClear($colors[1])));
                 self::setAuxiliaryValueFromArray($colors);
+                break;
+
+            // id 499, Unseen age 2: Cipher
+            case "499N1A":
+                $max_value_selected_so_far = self::getAuxiliaryValue();
+                if ($card['age'] > $max_value_selected_so_far) {
+                    self::setAuxiliaryValue($card['age']);
+                }
+                // Do the transfer as stated in B (return)
+                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                break;
+
+            // id 503, Unseen age 2: Propaganda
+            case "503D1A":
+                $color_in_clear = self::getColorInClear($choice);
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => $color_in_clear));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => $color_in_clear));
+                self::setAuxiliaryValue($choice);
                 break;
                 
             default:
