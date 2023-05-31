@@ -3722,6 +3722,10 @@ var Innovation = /** @class */ (function (_super) {
         this.resurrectClickEvents(true);
         dojo.destroy("non_adjacent_dogma_cancel_button");
         dojo.destroy("non_adjacent_dogma_button");
+        var cards_in_hand = this.selectMyCardsInHand();
+        cards_in_hand.removeClass("mid_dogma");
+        this.off(cards_in_hand, 'onclick');
+        this.on(cards_in_hand, 'onclick', 'action_clickMeld');
     };
     Innovation.prototype.action_confirmNonAdjacentDogma = function (event) {
         $('pagemaintitletext').innerHTML = this.erased_pagemaintitle_text;

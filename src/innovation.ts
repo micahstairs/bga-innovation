@@ -4108,6 +4108,10 @@ class Innovation extends BgaGame {
         this.resurrectClickEvents(true);
         dojo.destroy("non_adjacent_dogma_cancel_button");
         dojo.destroy("non_adjacent_dogma_button");
+        let cards_in_hand = this.selectMyCardsInHand();
+        cards_in_hand.removeClass("mid_dogma");
+        this.off(cards_in_hand, 'onclick');
+        this.on(cards_in_hand, 'onclick', 'action_clickMeld');
     }
 
     action_confirmNonAdjacentDogma(event: any) {
