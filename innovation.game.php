@@ -25079,7 +25079,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $color = $this->innovationGameState->get('color_last_selected');
                         self::setAuxiliaryValue($color); // Save the color of the revealed card
                         $revealed_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        
+                        self::revealHand($player_id);
                         foreach (self::getActiveOpponentIds($player_id) as $other_player_id) {
                             self::revealHand($other_player_id);
                             $transfer = false;
