@@ -7343,6 +7343,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Nested dogma excution management system: FIFO stack **/
     function selfExecute($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
+
+        if ($this->innovationGameState->get('current_nesting_index') >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
+            self::executeDraw($player_id, 11, 'achievements');
+        }
+
         $card_args = self::getNotificationArgsForCardList([$card]);
         if (self::getNonDemandEffect($card['id'], 1) === null) {
             self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
@@ -7357,11 +7362,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function fullyExecute($card) {
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $current_nested_state = self::getCurrentNestedCardState();
+
+        if ($current_nested_state['nesting_index'] >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
+            self::executeDraw($player_id, 11, 'achievements');
+        }
+
         $current_card = self::getCardInfo($current_nested_state['card_id']);
         $card_1_args = self::getNotificationArgsForCardList([$current_card]);
         $card_2_args = self::getNotificationArgsForCardList([$card]);
-        $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $initially_executed_card = self::getCardInfo($current_nested_state['executing_as_if_on_card_id']);
         $icon = self::getIconSquare($initially_executed_card['dogma_icon']);
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
