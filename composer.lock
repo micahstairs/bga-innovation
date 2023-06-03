@@ -276,25 +276,29 @@
         },
         {
             "name": "doctrine/deprecations",
-            "version": "v1.1.0",
+            "version": "1.1.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "8cffffb2218e01f3b370bf763e00e81697725259"
+                "reference": "ed7d7673471579f0dbd2049ce9264756985d9a05"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/8cffffb2218e01f3b370bf763e00e81697725259",
-                "reference": "8cffffb2218e01f3b370bf763e00e81697725259",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/ed7d7673471579f0dbd2049ce9264756985d9a05",
+                "reference": "ed7d7673471579f0dbd2049ce9264756985d9a05",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.1|^8.0"
+                "php": "^7.1 || ^8.0"
             },
             "require-dev": {
                 "doctrine/coding-standard": "^9",
-                "phpunit/phpunit": "^7.5|^8.5|^9.5",
-                "psr/log": "^1|^2|^3"
+                "phpstan/phpstan": "1.4.10 || 1.10.15",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+                "psalm/plugin-phpunit": "0.18.4",
+                "psr/log": "^1 || ^2 || ^3",
+                "vimeo/psalm": "4.30.0 || 5.12.0"
             },
             "suggest": {
                 "psr/log": "Allows logging deprecations via PSR-3 logger implementation"
@@ -313,9 +317,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/v1.1.0"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.x"
             },
-            "time": "2023-05-29T18:55:17+00:00"
+            "time": "2023-06-02T22:23:57+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -1104,12 +1108,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "95e9963defdda49ca602791db486860bfb91d345"
+                "reference": "8efbb9929e5e06b10611cf4fa8ce6bb294ed20a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/95e9963defdda49ca602791db486860bfb91d345",
-                "reference": "95e9963defdda49ca602791db486860bfb91d345",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/8efbb9929e5e06b10611cf4fa8ce6bb294ed20a4",
+                "reference": "8efbb9929e5e06b10611cf4fa8ce6bb294ed20a4",
                 "shasum": ""
             },
             "require": {
@@ -1172,7 +1176,7 @@
             "support": {
                 "source": "https://github.com/micahstairs/bga-workbench/tree/master"
             },
-            "time": "2023-05-30T01:54:10+00:00"
+            "time": "2023-06-03T02:24:40+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1654,12 +1658,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phar-io/manifest.git",
-                "reference": "36d8a21e851a9512db2b086dc5ac2c61308f0138"
+                "reference": "67729272c564ab9f953c81f48db44e8b1cb1e1c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phar-io/manifest/zipball/36d8a21e851a9512db2b086dc5ac2c61308f0138",
-                "reference": "36d8a21e851a9512db2b086dc5ac2c61308f0138",
+                "url": "https://api.github.com/repos/phar-io/manifest/zipball/67729272c564ab9f953c81f48db44e8b1cb1e1c3",
+                "reference": "67729272c564ab9f953c81f48db44e8b1cb1e1c3",
                 "shasum": ""
             },
             "require": {
@@ -1668,7 +1672,7 @@
                 "ext-phar": "*",
                 "ext-xmlwriter": "*",
                 "phar-io/version": "^3.0.1",
-                "php": "^7.2 || ^8.0"
+                "php": "^7.3 || ^8.0"
             },
             "default-branch": true,
             "type": "library",
@@ -1714,7 +1718,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-02-21T19:55:33+00:00"
+            "time": "2023-06-01T14:19:47+00:00"
         },
         {
             "name": "phar-io/version",
@@ -2257,12 +2261,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "f7e7556c4089d14f9b0d2887350db35071438bf9"
+                "reference": "f37fc18f5309c96fd2ff9e3747505d46dd4f49bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f7e7556c4089d14f9b0d2887350db35071438bf9",
-                "reference": "f7e7556c4089d14f9b0d2887350db35071438bf9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f37fc18f5309c96fd2ff9e3747505d46dd4f49bd",
+                "reference": "f37fc18f5309c96fd2ff9e3747505d46dd4f49bd",
                 "shasum": ""
             },
             "require": {
@@ -2347,7 +2351,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-28T06:55:25+00:00"
+            "time": "2023-05-31T14:54:01+00:00"
         },
         {
             "name": "psr/container",
@@ -4046,12 +4050,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/translation-contracts.git",
-                "reference": "ce0a6a932d572261f65b11e55991886c8d0e43ba"
+                "reference": "129138dd46853de65d8e4fcc526ba1f3f777ba57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/ce0a6a932d572261f65b11e55991886c8d0e43ba",
-                "reference": "ce0a6a932d572261f65b11e55991886c8d0e43ba",
+                "url": "https://api.github.com/repos/symfony/translation-contracts/zipball/129138dd46853de65d8e4fcc526ba1f3f777ba57",
+                "reference": "129138dd46853de65d8e4fcc526ba1f3f777ba57",
                 "shasum": ""
             },
             "require": {
@@ -4116,7 +4120,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-02-14T08:03:56+00:00"
+            "time": "2023-05-29T12:43:27+00:00"
         },
         {
             "name": "symfony/yaml",

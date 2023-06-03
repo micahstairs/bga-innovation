@@ -36,6 +36,7 @@ class EndOfGame extends Exception {}
 
 class Innovation extends Table implements GameInterface
 {
+
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
     private GameState $innovationGameState;
 
@@ -70,19 +71,6 @@ class Innovation extends Table implements GameInterface
     const FIGURES = 4;
     const UNSEEN = 5;
 
-    /**
-     * Return the DB connection object, allowing passing it to delegative models
-     *
-     * @return Connection
-     * @throws ReflectionException
-     */
-    public function getDatabaseConnection(): Connection {
-        $reflector = new ReflectionClass(get_class($this));
-        $method = $reflector->getMethod('getDbConnection');
-        $method->setAccessible(true);
-        return $method->invoke($this);
-    }
-
     function __construct()
     {
         // Your global variables labels:
@@ -92,6 +80,7 @@ class Innovation extends Table implements GameInterface
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
+        require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         // NOTE: The following values are unused and safe to use: 20-22, 24-25, 51-68, 90-93
         self::initGameStateLabels(array(
@@ -161,7 +150,7 @@ class Innovation extends Table implements GameInterface
             'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 = base game, 1 = Artifacts, 2 = Echoes, 3 = Cities, 4 = 4th edition base game)
             'debug_mode' => 99, // 0 for disabled, 1 for enabled
             
-            'game_type' => 100, // 1 for normal game, 2 for team game
+            'game_type' => 100, // 1 for normal game, 2/3/4/5 for team game
             'game_rules' => 101, // 1 for third edition, 2 for first edition
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
             'cities_mode' => 103, // 1 for "Disabled", 2 for "Enabled"
@@ -593,6 +582,7 @@ class Innovation extends Table implements GameInterface
         // Deal 2 cards of age 1 to each player
         for ($times = 0; $times < 2; $times++) {
             foreach ($players as $player_id => $player) {
+                $this->gamestate->changeActivePlayer($player_id);
                 self::executeDraw($player_id, 1);
             }
         }

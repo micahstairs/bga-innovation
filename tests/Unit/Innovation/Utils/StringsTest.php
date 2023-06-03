@@ -2,7 +2,7 @@
 
 namespace Unit\Innovation\Utils;
 
-use Unit\BaseTest;
+use BaseTest;
 use Innovation\Utils\Strings;
 
 class StringsTest extends BaseTest

@@ -2,8 +2,8 @@
 
 namespace Unit\Innovation;
 
+use BaseTest;
 use Innovation\Utils\Arrays;
-use Unit\BaseTest;
 use Innovation\GameState;
 
 class GameStateTest extends BaseTest
