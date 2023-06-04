@@ -280,12 +280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "ed7d7673471579f0dbd2049ce9264756985d9a05"
+                "reference": "612a3ee5ab0d5dd97b7cf3874a6efe24325efac3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/ed7d7673471579f0dbd2049ce9264756985d9a05",
-                "reference": "ed7d7673471579f0dbd2049ce9264756985d9a05",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/612a3ee5ab0d5dd97b7cf3874a6efe24325efac3",
+                "reference": "612a3ee5ab0d5dd97b7cf3874a6efe24325efac3",
                 "shasum": ""
             },
             "require": {
@@ -303,6 +303,7 @@
             "suggest": {
                 "psr/log": "Allows logging deprecations via PSR-3 logger implementation"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -317,9 +318,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/1.1.x"
+                "source": "https://github.com/doctrine/deprecations/tree/v1.1.1"
             },
-            "time": "2023-06-02T22:23:57+00:00"
+            "time": "2023-06-03T09:27:29+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -1108,12 +1109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "0218ba4a412fa8ef36dfbcefdb14a23829b61fc4"
+                "reference": "46cdd86234c79d2ca3bbc95f16767f515bc58321"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/0218ba4a412fa8ef36dfbcefdb14a23829b61fc4",
-                "reference": "0218ba4a412fa8ef36dfbcefdb14a23829b61fc4",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/46cdd86234c79d2ca3bbc95f16767f515bc58321",
+                "reference": "46cdd86234c79d2ca3bbc95f16767f515bc58321",
                 "shasum": ""
             },
             "require": {
@@ -1176,7 +1177,7 @@
             "support": {
                 "source": "https://github.com/micahstairs/bga-workbench/tree/master"
             },
-            "time": "2023-06-03T03:15:10+00:00"
+            "time": "2023-06-04T02:29:36+00:00"
         },
         {
             "name": "myclabs/deep-copy",
