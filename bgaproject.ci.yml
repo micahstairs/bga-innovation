@@ -1,0 +1,4 @@
+testDb:
+  namePrefix: innovation_test_
+  user: root
+  pass: password

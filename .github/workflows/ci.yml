@@ -5,6 +5,16 @@ on: [push, pull_request]
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: innovation_test
+        ports:
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout codebase
         uses: actions/checkout@v2
@@ -14,5 +24,14 @@ jobs:
           php-version: '7.4'
       - name: Install dependencies
         run: composer install -n --prefer-dist
+      - name: Create bgaproject.yml
+        run: cp bgaproject.ci.yml bgaproject.yml
       - name: Run Tests
         run: env CI=1 ./vendor/bin/phpunit --coverage-text
+        env:
+          CI: 1
+          TEST_DB_NAME: innovation_test
+          TEST_DB_USER: root
+          TEST_DB_PASS: password
+          TEST_DB_HOST: 0.0.0.0
+          TEST_DB_PORT: ${{ job.services.mysql.ports[3306] }}
