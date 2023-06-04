@@ -2,7 +2,6 @@
 
 namespace Integration\Cards\Base;
 
-use Doctrine\DBAL\Connection;
 use Helpers\FakeGame;
 use Integration\BaseIntegrationTest;
 use Integration\GameSetup;
@@ -29,27 +28,22 @@ class Card0Test extends BaseIntegrationTest
   public function testDogma()
   {
 
-    $game = $this->table->setupNewGame();
+    $tableInstance = $this->table->setupNewGame();
+
+    self::prepareCardForDogma($tableInstance, self::getPlayer1(), 0);
 
     // return card if it's not in player's hand
 
-    $action = $game
+    $action = $tableInstance
       ->createActionInstanceForCurrentPlayer(self::getPlayer1())
       ->stubActivePlayerId(self::getPlayer1())
-      ->stubArgs(["card_id" => 0]);
+      ->stubArgs(["card_id" => 0])
+      ->dogma();
     
     // $action->meld();
     // $action->dogma();
 
-  //   $game->withDbConnection(function (Connection $db) {
-  //     $id = 0;
-  //     $result = $db->executeQuery("SELECT * FROM card WHERE id = {$id}");
-  //     if ($result->rowCount() === 0) {
-  //       throw new \RuntimeException("No card found with id {$id}");
-  //     }
-  //     $res = $result->fetch();
-  //     throw new \RuntimeException(gettype($res) . " " . implode(", ", $res));
-  // });
 
+    // throw new \RuntimeException($card["location"]);
   }
 }

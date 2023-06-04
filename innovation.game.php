@@ -332,7 +332,7 @@ class Innovation extends Table implements GameInterface
         $this->innovationGameState->setInitial('release_version', 4);
 
         // Init global values with their initial values
-        $this->innovationGameState->set('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
+        $this->innovationGameState->setInitial('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
         
         // Number of achievements needed to win: 6 with 2 players, 5 with 3 players, 4 with 4 players and 6 for team game
         $number_of_achievements_needed_to_win = $individual_game ? 8 - count($players) : 6;
@@ -1309,7 +1309,7 @@ class Innovation extends Table implements GameInterface
     }
 
     function digCard($card, $owner_to) {
-        self::transferCardFromTo($card, $player_id, "display");
+        self::transferCardFromTo($card, $owner_to, "display");
     }
 
     function foreshadowCard($card, $owner_to) {
