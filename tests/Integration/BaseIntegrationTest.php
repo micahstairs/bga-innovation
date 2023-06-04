@@ -30,35 +30,20 @@ abstract class BaseIntegrationTest extends BaseTest {
     return $card;
   }
 
-  /* Move the card to the player's board in preparation for a dogma action */
-  protected function prepareCardForDogma(TableInstance $tableInstance, int $player_id, int $id)
+  /* Move the card to the player's board and initiate a dogma action */
+  protected function meldAndDogma(TableInstance $tableInstance, int $player_id, int $id)
   {
-    $card = $tableInstance->getTable()->getCardInfo($id);
-    $card['using_debug_buttons'] = true;
-    if ($card['owner'] !== $player_id && $card['location'] !== 'deck') {
-      $card = $tableInstance->getTable()->returnCard($card);
-      $card['using_debug_buttons'] = true;
-    }
-    if ($card['location'] === 'deck') {
-      $card = $tableInstance->getTable()->transferCardFromTo($card, $player_id, 'hand');
-      $card['using_debug_buttons'] = true;
-    }
-    if ($card['location'] !== 'board') {
-      $card = $tableInstance->getTable()->meldCard($card, $player_id);
-    }
+    $tableInstance
+      ->createActionInstanceForCurrentPlayer($player_id)
+      ->stubActivePlayerId($player_id)
+      ->stubArgs(["card_id" => $id, "transfer_action" => "meld"])
+      ->debug_transfer();
 
-
-    // $action = $tableInstance
-    // ->createActionInstanceForCurrentPlayer($player_id)
-    // ->stubActivePlayerId($player_id)
-    // ->stubArgs(["card_id" => $id, "transfer_action" => "meld"])
-    // ->debug_transfer();
-
-    // $card = $tableInstance->getTable()->getCardInfo($id);
-    $real_card = self::getCard($tableInstance, $id);
-    if ($card['location'] !== 'board' || $real_card['location'] !== 'board') {
-      throw new \Exception("not melded! " . $card['location'] . " " . $real_card['location']);
-    }
+    $tableInstance
+      ->createActionInstanceForCurrentPlayer($player_id)
+      ->stubActivePlayerId($player_id)
+      ->stubArgs(["card_id" => $id])
+      ->dogma();
   }
 
 }

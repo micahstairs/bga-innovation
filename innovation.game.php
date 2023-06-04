@@ -1329,6 +1329,10 @@ class Innovation extends Table implements GameInterface
      **/
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false) {
 
+        if ($this->innovationGameState->get('debug_mode') == 1) {
+            error_log("DEBUG: Transferring card #".$card['id']." from ".$card['owner'].":".$card['location']." to ".$owner_to.":".$location_to);
+        }
+
         // Get updated state of card in case a stale reference was passed.
         $using_debug_buttons = array_key_exists('using_debug_buttons', $card);
         $card = self::getCardInfo($card['id']);
@@ -10699,7 +10703,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card_1 = self::getCardsInHand($player_id)[0];
                 $card_2 = self::getCardsInHand($player_id)[1];
                 $card_id = self::comesAlphabeticallyBefore($card_1, $card_2) ? $card_2['id'] : $card_1['id'];
-                self::markAsSelected($card_id, $player_id);
+                self::markAsSelected($card_id);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array('You' => 'You'));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses a card.'), array('player_name' => self::getPlayerNameFromId($player_id)));
                 $this->gamestate->setPlayerNonMultiactive($player_id, '');

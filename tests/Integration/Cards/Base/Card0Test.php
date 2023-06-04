@@ -27,23 +27,8 @@ class Card0Test extends BaseIntegrationTest
 
   public function testDogma()
   {
-
     $tableInstance = $this->table->setupNewGame();
-
-    self::prepareCardForDogma($tableInstance, self::getPlayer1(), 0);
-
-    // return card if it's not in player's hand
-
-    $action = $tableInstance
-      ->createActionInstanceForCurrentPlayer(self::getPlayer1())
-      ->stubActivePlayerId(self::getPlayer1())
-      ->stubArgs(["card_id" => 0])
-      ->dogma();
-    
-    // $action->meld();
-    // $action->dogma();
-
-
-    // throw new \RuntimeException($card["location"]);
+    self::meldAndDogma($tableInstance, self::getPlayer1(), 0);
+    // TODO: Assert that the dogma worked.
   }
 }
