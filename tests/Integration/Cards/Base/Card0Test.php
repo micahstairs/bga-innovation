@@ -29,6 +29,7 @@ class Card0Test extends BaseIntegrationTest
   {
     $tableInstance = $this->table->setupNewGame();
     self::meldAndDogma($tableInstance, self::getPlayer1(), 0);
+    
     // TODO: Assert that the dogma worked.
   }
 }
