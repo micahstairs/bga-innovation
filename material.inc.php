@@ -679,9 +679,9 @@ $this->textual_card_infos = array(
     100 => array(
         'name'                                => clienttranslate('Self Service'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Execute each of the non-demand dogma effects of any other top card on your board. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Self-execute any other top card on your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have at least twice as many achievements as each opponent, you win.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('If you have more achievements than each other player, you win.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('If you have at least twice as many achievements as each opponent, you win.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Self-execute any other top card on your board.'),
     ),
 
     101 => array(
@@ -2295,7 +2295,7 @@ $this->textual_card_infos = array(
 
     482 => array(
         'name'                => clienttranslate('Proverb'),
-        'non_demand_effect_1' => clienttranslate('Draw, reveal, and return a ${age_1}. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand, then return all cards from your hand. Otherwise, draw two ${age_1}s.'),
+        'non_demand_effect_1' => clienttranslate('Draw, reveal, and return a ${age_1}. If the color of the returned card is yellow or purple, safeguard an available achievement of value equal to a card in your hand, then return all cards from your hand. Otherwise, draw two ${age_1}.'),
     ),
 
     483 => array(
@@ -2311,7 +2311,7 @@ $this->textual_card_infos = array(
 
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
-        'non_demand_effect_1' => clienttranslate('You may return a card from your hand and a card of each lower value than the value of the card returned. If you do, safeguard an available achievement of each value of card you return.'),
+        'non_demand_effect_1' => clienttranslate('You may return any number of cards with consecutive values, starting with 1. If you do, safeguard an available achievement of value equal to the highest card returned.'),
     ),
 
     486 => array(
@@ -2457,7 +2457,7 @@ $this->textual_card_infos = array(
 
     511 => array(
         'name'                => clienttranslate('Freemasons'),
-        'non_demand_effect_1' => clienttranslate('For each color, you may tuck a card from your hand of that color. If you tuck a yellow card or an expansion card, draw two ${age_3}s.'),
+        'non_demand_effect_1' => clienttranslate('For each color, you may tuck a card from your hand of that color. If you tuck a yellow card or an expansion card, draw two ${age_3}.'),
         'non_demand_effect_2' => clienttranslate('You may splay your yellow or blue cards left.'),
     ),
 
@@ -2627,3 +2627,5 @@ $this->textual_card_infos = array(
         'name'                => clienttranslate('Pen Name'),
         'non_demand_effect_1' => clienttranslate('Choose to either splay an unsplayed non-purple color on your board left and self-execute its top card, or meld a card from your hand and splay its color on your board right.'),
     ),
+
+);

@@ -2443,7 +2443,7 @@ class Innovation extends Table
     
     function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $bottom_from, $bottom_to, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
         // Creation of the message
-        if ($code === '100N1A') { // Self Service
+        if ($code === '100N1A' || $code === '100N2A') { // Self Service
             // TODO(LATER): We can simplify Self Service to use "board->none", guarded by release_version.
             $message_for_player = clienttranslate('${You_must} choose ${number} other top ${card} from your board');
             $message_for_others = clienttranslate('${player_must} choose ${number} other top ${card} from his board');
@@ -12585,13 +12585,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 100, age 10: Self service
             case "100N1":
-                $step_max = 1;
-                break;
-                
-            case "100N2":
-                $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     // "If you have at least twice as many achievements as each opponent, you win."
+                    $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
                     $twice_the_achievements = true;
                     foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
                         if ($number_of_achievements < self::getPlayerNumberOfAchievements($opponent_id) * 2) {
@@ -12610,6 +12606,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         throw new EndOfGame();
                     }
                 } else {
+                    $step_max = 1;
+                }
+                break;
+                
+            case "100N2":
+                if ($this->innovationGameState->usingFourthEditionRules()) {
+                    $step_max = 1;
+                } else {
+                    $number_of_achievements = self::getPlayerNumberOfAchievements($player_id);
                     $most_achievements = true;
                     foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
                         if (self::getPlayerNumberOfAchievements($opponent_id) >= $number_of_achievements) {
@@ -18945,7 +18950,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         
         // id 100, age 10: Self service
-        case "100N1A":
+        case "100N1A": // 3rd edition and earlier
+        case "100N2A": // 4th edition
             // "Execute each of the non-demand dogma effects of any other top card on your board" (a card with no non-demand effect can be chosen)
             $options = array(
                 'player_id' => $player_id,
@@ -28581,7 +28587,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             // id 100, age 10: Self service
-            case "100N1A":
+            case "100N1A": // 3rd edition and earlier
+            case "100N2A": // 4th edition
                 self::selfExecute($card); // The player chose this card for execution
                 break;
             
