@@ -3358,15 +3358,9 @@ class Innovation extends Table
         return self::getActivePlayerIdsInTurnOrder($player_id_to_left);
     }
 
-    function getActivePlayerIdsInTurnOrderStartingToRightOfActingPlayer() {
-        $current_player_index = self::playerIdToPlayerIndex(self::getCurrentPlayerUnderDogmaEffect());
-        $players = self::getCollectionFromDB("SELECT player_index, player_id, player_eliminated FROM player");
-        if ($current_player_index == 0) {
-            $player_id_to_right = self::playerIndexToPlayerId(count($players) - 1);
-        } else {
-            $player_id_to_right = self::playerIndexToPlayerId(($current_player_index - 1) % count($players));
-        }
-        return self::getActivePlayerIdsInTurnOrder($player_id_to_right);
+    function getActivePlayerIdOnRightOfActingPlayer() {
+        $player_ids = self::getActivePlayerIdsInTurnOrderStartingToLeftOfActingPlayer();
+        return $player_ids[count($player_ids) - 2];
     }
     
     function getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() {
@@ -24846,7 +24840,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'player_id' => $player_id,
                 'n' => 1,
 
-                'splay_direction' => 0, // TODO: This returns a weird error but the unsplay still happens
+                'splay_direction' => 0, // TODO(UNSEEN): This returns a weird error but the unsplay still happens
             );
             break;
 
@@ -28460,7 +28454,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($revealed_card, $player_id, 'safe'); // put it back
                         } else if ($color == 1) {
                             // "red, achieve it regardless of eligibility"
-                            self::achieveSpecificCard($revealed_card, $player_id);
+                            self::transferCardFromTo($revealed_card, $player_id, 'achievements');
                         } else if ($color == 2) {
                             // "green, tuck it;"
                             self::tuckCard($revealed_card, $player_id);
@@ -28484,15 +28478,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "511N1A":
                     if ($n > 0) { 
                         $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        if ($card['color'] == 3 || $card['type'] > 0)
-                        {
+                        if ($card['color'] == 3 || $card['type'] > 0) {
                             self::setAuxiliaryValue(1); // yellow or expansion card!
                         }
 
-                        $cards_in_hand = self::getCardsInHand($player_id);
                         $color_array = array_intersect(array($this->innovationGameState->get('color_last_selected')), self::getAuxiliaryValue2AsArray());
                         $card_id_array = array();
-                        foreach ($cards_in_hand as $card) {
+                        foreach (self::getCardsInHand($player_id) as $card) {
                             if (!in_array($card['color'], $color_array)) {
                                 $card_id_array[] = $card['id'];
                             }
