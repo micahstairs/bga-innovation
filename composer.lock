@@ -280,12 +280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/deprecations.git",
-                "reference": "612a3ee5ab0d5dd97b7cf3874a6efe24325efac3"
+                "reference": "eac01fbdf4e4a3635169b056608730ec0930e188"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/612a3ee5ab0d5dd97b7cf3874a6efe24325efac3",
-                "reference": "612a3ee5ab0d5dd97b7cf3874a6efe24325efac3",
+                "url": "https://api.github.com/repos/doctrine/deprecations/zipball/eac01fbdf4e4a3635169b056608730ec0930e188",
+                "reference": "eac01fbdf4e4a3635169b056608730ec0930e188",
                 "shasum": ""
             },
             "require": {
@@ -318,9 +318,9 @@
             "homepage": "https://www.doctrine-project.org/",
             "support": {
                 "issues": "https://github.com/doctrine/deprecations/issues",
-                "source": "https://github.com/doctrine/deprecations/tree/v1.1.1"
+                "source": "https://github.com/doctrine/deprecations/tree/1.1.x"
             },
-            "time": "2023-06-03T09:27:29+00:00"
+            "time": "2023-06-07T19:57:14+00:00"
         },
         {
             "name": "doctrine/event-manager",
@@ -1109,12 +1109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "46cdd86234c79d2ca3bbc95f16767f515bc58321"
+                "reference": "8d76d1c46159b6e84b785e1286113ee7e718e12e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/46cdd86234c79d2ca3bbc95f16767f515bc58321",
-                "reference": "46cdd86234c79d2ca3bbc95f16767f515bc58321",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/8d76d1c46159b6e84b785e1286113ee7e718e12e",
+                "reference": "8d76d1c46159b6e84b785e1286113ee7e718e12e",
                 "shasum": ""
             },
             "require": {
@@ -1177,7 +1177,7 @@
             "support": {
                 "source": "https://github.com/micahstairs/bga-workbench/tree/master"
             },
-            "time": "2023-06-04T02:29:36+00:00"
+            "time": "2023-06-08T11:51:13+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1854,12 +1854,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpseclib/phpseclib.git",
-                "reference": "765690c057a2ac0a1aaa3b47d1a71dc1ef0005c4"
+                "reference": "9f919e8f2428d9a017176e1dead76566164e1374"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/765690c057a2ac0a1aaa3b47d1a71dc1ef0005c4",
-                "reference": "765690c057a2ac0a1aaa3b47d1a71dc1ef0005c4",
+                "url": "https://api.github.com/repos/phpseclib/phpseclib/zipball/9f919e8f2428d9a017176e1dead76566164e1374",
+                "reference": "9f919e8f2428d9a017176e1dead76566164e1374",
                 "shasum": ""
             },
             "require": {
@@ -1956,7 +1956,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-05-10T09:36:56+00:00"
+            "time": "2023-06-04T21:16:25+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",

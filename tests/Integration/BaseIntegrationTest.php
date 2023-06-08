@@ -20,14 +20,18 @@ abstract class BaseIntegrationTest extends BaseTest {
     ];
   }
 
-  // EXAMPLE: This is how you can get data from the database
-  protected function getCard(TableInstance $tableInstance, int $id): array
+  /* Choose a random card from each player's hand and move it to their board */
+  protected function chooseRandomCardsForInitialMeld(TableInstance $tableInstance)
   {
-    $card = null;
-    $tableInstance->withDbConnection(function (Connection $db) use (&$card, $id) {
-      $card = $db->fetchAssociative("SELECT * FROM card WHERE id = ?", [$id]);
-    });
-    return $card;
+    foreach ($this->getPlayerIds($tableInstance) as $playerId) {
+      $cards = $tableInstance->getTable()->getCardsInLocation($playerId, "hand");
+      $tableInstance
+        ->createActionInstanceForCurrentPlayer($playerId)
+        ->stubActivePlayerId($playerId)
+        ->stubArgs(["card_id" => $cards[0]['id'], "transfer_action" => "meld"])
+        ->initialMeld();
+    }
+    $tableInstance->advanceGame();
   }
 
   /* Move the card to the player's board and initiate a dogma action */
@@ -44,6 +48,17 @@ abstract class BaseIntegrationTest extends BaseTest {
       ->stubActivePlayerId($player_id)
       ->stubArgs(["card_id" => $id])
       ->dogma();
+
+    $tableInstance->advanceGame();
+  }
+
+  protected function getPlayerIds(TableInstance $tableInstance): array
+  {
+    $players = [];
+    $tableInstance->withDbConnection(function (Connection $db) use (&$players) {
+      $players = $db->fetchAllAssociative("SELECT player_id FROM player");
+    });
+    return array_map(function ($player) { return intval($player['player_id']); }, $players);
   }
 
 }
