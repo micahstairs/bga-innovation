@@ -1357,7 +1357,7 @@ $this->textual_card_infos = array(
     ),
 
     // TODO(FIGURES): When implementing Figures, we need to transcribe this relic.
-// TODO(FIGURES): Make sure we read https://boardgamegeek.com/thread/1811482/article/27436133#27436133 when implementing this card.
+    // TODO(FIGURES): Make sure we read https://boardgamegeek.com/thread/1811482/article/27436133#27436133 when implementing this card.
     218 => array(
         'name' => clienttranslate('Ching Shih'),
     ),
@@ -2447,7 +2447,7 @@ $this->textual_card_infos = array(
 
     509 => array(
         'name'                => clienttranslate('Cliffhanger'),
-        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. Otherwise, transfer the top card of the [4] deck to your safe.'),
+        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. Otherwise, transfer the top card of the ${age_4} deck to your safe.'),
     ),
 
     510 => array(
