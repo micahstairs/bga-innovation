@@ -77,21 +77,24 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance->advanceGame();
   }
 
-  /* Move the card to the player's board and initiate a dogma action */
-  protected function meldAndDogma(int $playerId, int $id)
+  /* Move the card to the player's board */
+  protected function meld(int $playerId, int $id)
   {
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => $id, "transfer_action" => "meld"])
       ->debug_transfer();
+  }
 
+  /* Initiate a dogma action (assumes the card is on the player's board) */
+  protected function dogma(int $playerId, int $id)
+  {
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => $id])
       ->dogma();
-
     $this->tableInstance->getTable()->stubCurrentPlayerId($playerId);
     $this->tableInstance->advanceGame();
   }
@@ -127,6 +130,11 @@ abstract class BaseIntegrationTest extends BaseTest
   protected function getScore(int $playerId): int
   {
     return $this->tableInstance->getTable()->getPlayerScore($playerId);
+  }
+
+  protected function countCards(int $playerId, string $location): int
+  {
+    return $this->tableInstance->getTable()->countCardsInLocation($playerId, $location);
   }
 
   protected function getPlayerIds(): array
