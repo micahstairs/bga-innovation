@@ -138,6 +138,10 @@ $stats_type = array(
         "sharing_effects_number" => array("id"=> 23,
                     "name" => totranslate("Number of times the player has effectivly shared the effects of an opponent card"),
                     "type" => "int" ),
+
+        "execution_combo_count" => array("id"=> 90,
+                    "name" => totranslate("Number of times the player was eligible to draw and achieve an 11 due to the combo bonus"),
+                    "type" => "int" ),
         
         /* Artifacts-specific */
 

@@ -463,6 +463,10 @@ class Innovation extends Table
         self::initStat('player', 'sharing_effects_number', 0);
 
         $edition = $this->innovationGameState->getEdition();
+
+        if ($edition >= 4) {
+            self::initStat('player', 'execution_combo_count', 0);
+        }
         
         // Add cards from expansions that are in use.
         if ($this->innovationGameState->artifactsExpansionEnabled()) {
@@ -7367,6 +7371,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
         if ($this->innovationGameState->get('current_nesting_index') >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
+            self::incStat(1, 'execution_combo_count', $player_id);
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} recieve a combo bonus.'), ['You' => 'You', ]);
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} recieves a combo bonus.'), ['player_name' => self::getColoredPlayerName($player_id)]);
             self::executeDraw($player_id, 11, 'achievements');
         }
 
@@ -7388,6 +7395,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $current_nested_state = self::getCurrentNestedCardState();
 
         if ($current_nested_state['nesting_index'] >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
+            self::incStat(1, 'execution_combo_count', $player_id);
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} recieve a combo bonus.'), ['You' => 'You', ]);
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} recieves a combo bonus.'), ['player_name' => self::getColoredPlayerName($player_id)]);
             self::executeDraw($player_id, 11, 'achievements');
         }
 
