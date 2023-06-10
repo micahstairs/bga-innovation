@@ -7,7 +7,8 @@
       "watch:ts": "tsc --watch",
       "watch:scss": "sass --watch innovation.scss innovation.css",
       "watch": "npm run watch:ts && npm run watch:scss",
-      "build": "npm run build:ts && npm run build:scss"
+      "build": "npm run build:ts && npm run build:scss",
+      "test": " ./vendor/bin/phpunit"
     },
     "author": "Micah Stairs",
     "devDependencies": {

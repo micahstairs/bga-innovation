@@ -1,0 +1,5 @@
+# TODO: This is not really being used, since we use environment variables like DB_NAME_PREFIX instead.
+testDb:
+  namePrefix: innovation_test_
+  user: root
+  pass: ""

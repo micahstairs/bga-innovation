@@ -2,6 +2,8 @@
 
 namespace Unit;
 
+use BaseTest;
+
 class GameInfosTest extends BaseTest
 {
     protected function setUp(): void
