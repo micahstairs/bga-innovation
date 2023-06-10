@@ -21,11 +21,9 @@ define('BGA_GAME_CLASS', ucfirst($gameName));
 $vendorDir = __DIR__ . '/../vendor';
 require_once $vendorDir . '/autoload.php';
 require_once __DIR__ . '/../modules/Innovation/GameInterface.php';
-require_once 'Helpers/FakeGame.php';
 require_once 'Helpers/Mocks.php';
 require_once 'Helpers/TestHelpers.php';
 require_once 'BaseTest.php';
-require_once 'Integration/GameSetup.php';
 require_once 'Integration/BaseIntegrationTest.php';
 
 $cardsDir = __DIR__ . '/../modules/Innovation/Cards';

@@ -221,10 +221,13 @@ class Innovation extends Table implements GameInterface
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
             case 'meld':
-                // The melding is being done in two steps because otherwise many of the transitions would not be supported.
-                if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                    $card = self::getCardInfo($card_id);
+                // The melding is being done in multiple steps because otherwise many of the transitions would not be supported.
+                if ($card['owner'] != $player_id && $card['owner'] != 0) {
+                    $card = self::returnCard($card);
+                    $card['using_debug_buttons'] = true;
+                }
+                if ($card['location'] != 'hand') {
+                    $card = self::transferCardFromTo($card, $player_id, 'hand');
                     $card['using_debug_buttons'] = true;
                 }
                 self::meldCard($card, $player_id);
@@ -316,7 +319,7 @@ class Innovation extends Table implements GameInterface
                 $t = ($t+1) % 2;
             }
         }
-        $sql .= implode($values, ',');
+        $sql .= implode(',', $values);
         self::DbQuery($sql);
         if ($individual_game) { // We can take into account the preferences of players on colors
             self::reattributeColorsBasedOnPreferences($players, $default_colors);
@@ -404,8 +407,10 @@ class Innovation extends Table implements GameInterface
         $this->innovationGameState->setInitial('solid_constraint', -1); // 1 if there need to be at least n_min cards to trigger the effect or 0 if it is triggered no matter what, which will consume all eligible cards (do what you can rule)
         $this->innovationGameState->setInitial('owner_from', -1); // Owner from whom choose the card (0 for nobody, -2 for any player, -3 for any opponent, -4 for any other player)
         $this->innovationGameState->setInitial('location_from', -1); // Location from where choose the card (0 for deck, 1 for hand, 2 for board, 3 for score)
+        $this->innovationGameState->setInitial('bottom_from', -1); // Whether the card must be taken from the bottom of the location (1) or not (0)
         $this->innovationGameState->setInitial('owner_to', -1); // Owner to whom the chosen card will be transfered (0 for nobody)
         $this->innovationGameState->setInitial('location_to', -1); // Location where the chosen card will be transfered (0 for deck, 1 for hand, 2 for board, 3 for score)
+        $this->innovationGameState->setInitial('bottom_to', -1); // Whether the card will be placed at the bottom, typically for tucking or returning, (1) or not (0)
         $this->innovationGameState->setInitial('age_min', -1); // Age min of the card to be chosen
         $this->innovationGameState->setInitial('age_max', -1); // Age max of the card to be chosen
         $this->innovationGameState->setInitial('age_array', -1); // List of selectable ages encoded in a single value
@@ -4561,7 +4566,7 @@ class Innovation extends Table implements GameInterface
             $owner_condition = "owner != 0 AND";
         } else if ($owner == -3) { // any opponent
             $opponent_ids = self::getActiveOpponentIds(self::getActivePlayerId());
-            $owner_condition = self::format("owner IN ({owners}) AND", array('owners' => join($opponent_ids, ',')));
+            $owner_condition = self::format("owner IN ({owners}) AND", array('owners' => join(',', $opponent_ids)));
         } else if ($owner == -4) { // any other player
             $owner_condition = self::format("owner != 0 AND owner != {player_id} AND", array('player_id' => self::getActivePlayerId()));
         } else {
@@ -5105,7 +5110,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.color IN ({colors}) AND
                 a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon}
         ",
-            array('player_id' => $player_id, 'colors' => join($colors, ','), 'icon' => $icon)
+            array('player_id' => $player_id, 'colors' => join(',', $colors), 'icon' => $icon)
         ));
     }
     
@@ -6658,7 +6663,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ",
                 array('player_id' => $player_id)), true
             );
-            $condition_for_owner = self::format("owner IN ({opponents})", array('opponents' => join($opponents, ',')));
+            $condition_for_owner = self::format("owner IN ({opponents})", array('opponents' => join(',', $opponents)));
         } else if ($owner_from == -4) { // Any other player
             $other_players = self::getObjectListFromDB(self::format("
                 SELECT
@@ -6670,7 +6675,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ",
                 array('player_id' => $player_id)), true
             );
-            $condition_for_owner = self::format("owner IN ({other_players})", array('other_players' => join($other_players, ',')));
+            $condition_for_owner = self::format("owner IN ({other_players})", array('other_players' => join(',', $other_players)));
         } else {
             $condition_for_owner = self::format("owner = {owner_from}", array('owner_from' => $owner_from));
         }
@@ -6704,7 +6709,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $claimable_ages[] = -1;
             }
         }
-        $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", array('claimable_ages' => join($claimable_ages, ',')));
+        $condition_for_claimable_ages = self::format("age IN ({claimable_ages})", array('claimable_ages' => join(',', $claimable_ages)));
 
         // Condition for whether it has a demand effect
         $condition_for_demand_effect = "TRUE";
@@ -6714,11 +6719,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         // Condition for color
         $color_array = $this->innovationGameState->getAsArray('color_array');
-        $condition_for_color = count($color_array) == 0 ? "FALSE" : "color IN (".join($color_array, ',').")";
+        $condition_for_color = count($color_array) == 0 ? "FALSE" : "color IN (".join(',', $color_array).")";
 
         // Condition for type
         $type_array = $this->innovationGameState->getAsArray('type_array');
-        $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join($type_array, ',').")";
+        $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join(',', $type_array).")";
         
         // Condition for icon
         $with_icon = $this->innovationGameState->get('with_icon');
@@ -6765,7 +6770,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (count($splay_directions) == 0) {
             $condition_for_splay = "AND FALSE";
         } else if ($this->innovationGameState->get('release_version') <= 3 && count($splay_directions) < 4 || $this->innovationGameState->get('release_version') >= 4 && count($splay_directions) < 5) {
-            $condition_for_splay = "AND splay_direction IN (".join($splay_directions, ',').")";
+            $condition_for_splay = "AND splay_direction IN (".join(',', $splay_directions).")";
         }
 
         // Condition for requiring ID
@@ -8923,7 +8928,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
             }
             if (count($opponents_which_cannot_afford_to_share) > 0) {
-                $distance_rule_condition = self::format("AND player_id NOT IN ({player_ids})", array("player_ids" => join($opponents_which_cannot_afford_to_share, ',')));
+                $distance_rule_condition = self::format("AND player_id NOT IN ({player_ids})", array("player_ids" => join(',', $opponents_which_cannot_afford_to_share)));
             }
         }
 
@@ -9600,7 +9605,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         WHERE
                             player_no IN ({player_nos})
                     ",
-                        array('player_nos' => join($this->innovationGameState->getAsArray('player_array'), ','))
+                        array('player_nos' => join(',', $this->innovationGameState->getAsArray('player_array')))
                     ));
                 } else {
                     $options = self::getObjectListFromDB(self::format("
@@ -9612,7 +9617,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         WHERE
                             player_index IN ({player_indexes})
                     ",
-                        array('player_indexes' => join($this->innovationGameState->getAsArray('player_array'), ','))
+                        array('player_indexes' => join(',', $this->innovationGameState->getAsArray('player_array')))
                     ));
                 }
                 break;
