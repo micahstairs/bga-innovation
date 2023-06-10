@@ -16,25 +16,22 @@
   *
   */
 
-
 require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
 require_once('modules/Innovation/Cards/Card.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
-require_once('modules/Innovation/GameInterface.php');
 require_once('modules/Innovation/GameState.php');
 require_once('modules/Innovation/Utils/Arrays.php');
 require_once('modules/Innovation/Utils/Strings.php');
 
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Strings;
-use Innovation\GameInterface;
 use Innovation\GameState;
 use Innovation\Cards\ExecutionState;
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
 
-class Innovation extends Table implements GameInterface
+class Innovation extends Table
 {
 
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
@@ -1333,10 +1330,6 @@ class Innovation extends Table implements GameInterface
      * Executes the transfer of the card, returning the new card info.
      **/
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false) {
-
-        if ($this->innovationGameState->get('debug_mode') == 1) {
-            error_log("DEBUG: Transferring card #".$card['id']." from ".$card['owner'].":".$card['location']." to ".$owner_to.":".$location_to);
-        }
 
         // Get updated state of card in case a stale reference was passed.
         $using_debug_buttons = array_key_exists('using_debug_buttons', $card);

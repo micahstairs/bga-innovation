@@ -20,7 +20,6 @@ define('BGA_GAME_CLASS', ucfirst($gameName));
 
 $vendorDir = __DIR__ . '/../vendor';
 require_once $vendorDir . '/autoload.php';
-require_once __DIR__ . '/../modules/Innovation/GameInterface.php';
 require_once 'Helpers/Mocks.php';
 require_once 'Helpers/TestHelpers.php';
 require_once 'BaseTest.php';

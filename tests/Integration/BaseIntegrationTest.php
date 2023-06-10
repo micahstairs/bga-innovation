@@ -78,34 +78,55 @@ abstract class BaseIntegrationTest extends BaseTest
   }
 
   /* Move the card to the player's board and initiate a dogma action */
-  protected function meldAndDogma(int $player_id, int $id)
+  protected function meldAndDogma(int $playerId, int $id)
   {
     $this->tableInstance
-      ->createActionInstanceForCurrentPlayer($player_id)
-      ->stubActivePlayerId($player_id)
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => $id, "transfer_action" => "meld"])
       ->debug_transfer();
 
     $this->tableInstance
-      ->createActionInstanceForCurrentPlayer($player_id)
-      ->stubActivePlayerId($player_id)
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => $id])
       ->dogma();
 
-    $this->tableInstance->getTable()->stubCurrentPlayerId($player_id);
+    $this->tableInstance->getTable()->stubCurrentPlayerId($playerId);
     $this->tableInstance->advanceGame();
   }
 
   /* Select a random card in the specified location */
-  protected function selectRandomCard(int $player_id, string $location)
+  protected function selectRandomCard(int $playerId, string $location)
   {
-    $cards = $this->tableInstance->getTable()->getCardsInLocation($player_id, $location);
+    $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
     $this->tableInstance
-      ->createActionInstanceForCurrentPlayer($player_id)
-      ->stubActivePlayerId($player_id)
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => $cards[0]['id']])
       ->choose();
     $this->tableInstance->advanceGame();
+  }
+
+  /* Choose to pass */
+  protected function pass(int $playerId)
+  {
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
+      ->stubArgs(["card_id" => -1])
+      ->choose();
+    $this->tableInstance->advanceGame();
+  }
+
+  protected function assertDogmaComplete(): void
+  {
+    self::assertEquals("playerTurn", $this->tableInstance->getTable()->getCurrentState()['name']);
+  }
+
+  protected function getScore(int $playerId): int
+  {
+    return $this->tableInstance->getTable()->getPlayerScore($playerId);
   }
 
   protected function getPlayerIds(): array
@@ -116,11 +137,6 @@ abstract class BaseIntegrationTest extends BaseTest
     });
     return array_map(function ($player) {
       return intval($player['player_id']); }, $players);
-  }
-
-  protected function assertDogmaComplete(): void
-  {
-    self::assertEquals("playerTurn", $this->tableInstance->getTable()->getCurrentState()['name']);
   }
 
 }

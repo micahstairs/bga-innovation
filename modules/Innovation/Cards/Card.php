@@ -2,15 +2,14 @@
 
 namespace Innovation\Cards;
 
-use Innovation\GameInterface;
 use Innovation\Cards\ExecutionState;
 
 /* Abstract class of all card implementations */
 abstract class Card {
 
-    protected GameInterface $game;
+    protected \Innovation $game;
 
-    function __construct(GameInterface $game) {
+    function __construct(\Innovation $game) {
       $this->game = $game;
     }
 
