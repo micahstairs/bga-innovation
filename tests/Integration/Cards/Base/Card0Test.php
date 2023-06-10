@@ -13,10 +13,10 @@ class Card0Test extends BaseIntegrationTest
 
   public function test_whenReturnOneCard_drawAndScore1()
   {
-    self::meld(0);
-    self::drawToHandSize(2);
+    self::meld();
+    self::setHandSize(2);
 
-    self::dogma(0);
+    self::dogma();
     self::selectRandomCard("hand");
     self::pass();
 
@@ -27,10 +27,9 @@ class Card0Test extends BaseIntegrationTest
 
   public function test_whenReturnThreeCards_drawAndScore3()
   {
-    self::meld(0);
-    self::drawToHandSize(4);
+    self::setHandSize(4);
 
-    self::dogma(0);
+    self::dogma();
     self::selectRandomCard("hand");
     self::selectRandomCard("hand");
     self::selectRandomCard("hand");
@@ -42,14 +41,11 @@ class Card0Test extends BaseIntegrationTest
 
   public function test_whenReturnNoCards_doNotDrawAndScore()
   {
-    self::meld(0);
-    self::drawToHandSize(2);
-
-    self::dogma(0);
+    self::dogma();
     self::pass();
 
     self::assertDogmaComplete();
-    self::assertEquals(3, self::countCards('hand'));
+    self::assertEquals(self::getInitialHandSize() + 1, self::countCards('hand'));
     self::assertEquals(0, self::getScore());
   }
 }

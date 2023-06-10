@@ -17,13 +17,33 @@ abstract class BaseIntegrationTest extends BaseTest
    */
   protected $tableInstance;
 
+  /**
+   * Set up a new game of Innovation.
+   * 
+   * Assumptions that tests can make about the setup:
+   *  - The first player will have exactly one card on their board (the card under test).
+   *  - The other player will have no cards on their board.
+   *  - Both players will have two 1's in hand.
+   */
   protected function setUp(): void
   {
     $this->tableInstance = $this->createGameTableInstanceBuilder()
       ->build()
       ->createDatabase()
       ->setupNewGame();
+
+    // Meld initial cards then pull them back into hand
     $this->chooseRandomCardsForInitialMeld();
+    $this->returnAllCardsToHand();
+
+    // Place the card under test on the first player's board and replenish their hand
+    $this->meld();
+    self::setHandSize(2);
+  }
+
+  protected function getInitialHandSize(): int
+  {
+    return 2;
   }
 
   protected function tearDown(): void
@@ -71,15 +91,32 @@ abstract class BaseIntegrationTest extends BaseTest
       $this->tableInstance
         ->createActionInstanceForCurrentPlayer($playerId)
         ->stubActivePlayerId($playerId)
-        ->stubArgs(["card_id" => $cards[0]['id'], "transfer_action" => "meld"])
+        ->stubArgs(["card_id" => self::getRandomCardId($cards), "transfer_action" => "meld"])
         ->initialMeld();
     }
     $this->tableInstance->advanceGame();
   }
 
-  /* Move the card to the player's board */
-  protected function meld(int $id)
+  /* Return all cards on the player's board to their hand */
+  protected function returnAllCardsToHand()
   {
+    foreach ($this->getPlayerIds() as $playerId) {
+      $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, "board");
+      foreach ($cards as $card) {
+        $this->tableInstance
+          ->createActionInstanceForCurrentPlayer($playerId)
+          ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])
+          ->debug_transfer();
+      }
+    }
+  }
+
+  /* Move the card to the player's board. If the ID is null, it's assumed the card under test is the one that should be melded. */
+  protected function meld(int $id = null)
+  {
+    if ($id === null) {
+      $id = self::getCardIdFromTestClassName();
+    }
     $playerId = self::getActivePlayerId();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
@@ -88,9 +125,12 @@ abstract class BaseIntegrationTest extends BaseTest
       ->debug_transfer();
   }
 
-  /* Initiate a dogma action (assumes the card is on the player's board) */
-  protected function dogma(int $id)
+  /* Initiate a dogma action (assumes the card is on the player's board). If the ID is null, it's assumed the card under test is the one that should be dogma'd. */
+  protected function dogma(int $id = null)
   {
+    if ($id === null) {
+      $id = self::getCardIdFromTestClassName();
+    }
     $playerId = self::getActivePlayerId();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
@@ -109,7 +149,7 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
-      ->stubArgs(["card_id" => $cards[0]['id']])
+      ->stubArgs(["card_id" => self::getRandomCardId($cards)])
       ->choose();
     $this->tableInstance->advanceGame();
   }
@@ -146,11 +186,20 @@ abstract class BaseIntegrationTest extends BaseTest
     }
   }
 
-  /* Draw 1s until the hand is at least the specified size */
-  protected function drawToHandSize(int $targetSize)
+  /* Return cards or draw 1s until the hand is of the specified size */
+  protected function setHandSize(int $targetSize)
   {
     $playerId = self::getActivePlayerId();
     $currentSize = $this->tableInstance->getTable()->countCardsInLocation($playerId, "hand");
+    while ($currentSize > $targetSize) {
+      $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, "hand");
+      $this->tableInstance
+        ->createActionInstanceForCurrentPlayer($playerId)
+        ->stubActivePlayerId($playerId)
+        ->stubArgs(["card_id" => self::getRandomCardId($cards), "transfer_action" => "return"])
+        ->debug_transfer();
+      $currentSize--;
+    }
     while ($currentSize < $targetSize) {
       $this->tableInstance->getTable()->executeDraw($playerId, 1);
       $currentSize++;
@@ -166,6 +215,17 @@ abstract class BaseIntegrationTest extends BaseTest
   {
     $playerId = self::getActivePlayerId();
     return $this->tableInstance->getTable()->getMaxAgeOnBoardTopCards($playerId);
+  }
+
+  protected function getMaxAge(string $location): int
+  {
+    $playerId = self::getActivePlayerId();
+    $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
+    $maxAge = 0;
+    foreach ($cards as $card) {
+      $maxAge = max($maxAge, $card['age']);
+    }
+    return $maxAge;
   }
 
   protected function getScore(): int
@@ -198,6 +258,18 @@ abstract class BaseIntegrationTest extends BaseTest
   protected function getCurrentStateName(): string
   {
     return $this->tableInstance->getTable()->getCurrentState()['name'];
+  }
+
+  protected function getRandomCardId(array $cards): int
+  {
+    return $cards[array_rand($cards)]['id'];
+  }
+
+  /* Returns the ID of the card associated with the test (assumes CardXTest naming, where X is the card ID) */
+  protected function getCardIdFromTestClassName(): int
+  {
+    $className = get_class($this);
+    return intval(substr($className, strrpos($className, "\\") + 5, -4));
   }
 
 }
