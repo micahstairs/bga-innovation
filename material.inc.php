@@ -2628,4 +2628,61 @@ $this->textual_card_infos = array(
         'non_demand_effect_1' => clienttranslate('Choose to either splay an unsplayed non-purple color on your board left and self-execute its top card, or meld a card from your hand and splay its color on your board right.'),
     ),
 
+    /* Unseen - Age 6 */
+
+    535 => array(
+        'name'                => clienttranslate('Placebo'),
+        'non_demand_effect_1' => clienttranslate('Return one or more top cards of one color from your board, from the top. Draw a ${age_7} for each card returned. If you return exactly one ${age_7}, draw an ${age_8}.'),
+    ),
+
+    536 => array(
+        'name'                => clienttranslate('Reconnaissance'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you reveal your hand!'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal three ${age_7}. Return two of the drawn cards. You may splay the color of the card not returned right.'),
+    ),
+
+    537 => array(
+        'name'                => clienttranslate('Red Herring'),
+        'non_demand_effect_1' => clienttranslate('Splay your red cards left, right, or up.'),
+        'non_demand_effect_2' => clienttranslate('Draw and tuck a ${age_6}. If the color on your board of the card you tuck is splayed in the same direction as your red cards, splay that color up.  Otherwise, unsplay that color.'),
+    ),
+
+    538 => array(
+        'name'              => clienttranslate('Sniping'),
+        'i_demand_effect_1' => clienttranslate('${I_demand} you unsplay the color on your board of my choice! Meld your bottom card of that color! Transfer your bottom card of that color to my board!'),
+    ),
+
+    539 => array(
+        'name'                => clienttranslate('Hiking'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_6}. If the top card on your board of the drawn card\'s color has a ${icon_5}, tuck the drawn card and draw and reveal a ${age_7}. If the second drawn card has a ${icon_2}, meld it and draw an ${age_8}.'),
+    ),
+
+    540 => array(
+        'name'                => clienttranslate('Swiss Bank Account'),
+        'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value equal to the number of cards in your score pile. If you do, score all cards in your hand of its value.'),
+        'non_demand_effect_2' => clienttranslate('Draw a ${age_6} for each secret in your safe.'),
+    ),
+
+    541 => array(
+        'name'                => clienttranslate('Attic'),
+        'non_demand_effect_1' => clienttranslate('You may score or safeguard a card from your hand.'),
+        'non_demand_effect_2' => clienttranslate('Return a card from your score pile.'),
+        'non_demand_effect_3' => clienttranslate('Draw and score a card of value equal to a card in your score pile.'),
+    ),
+
+    542 => array(
+        'name'              => clienttranslate('Sabotage'),
+        'i_demand_effect_1' => clienttranslate('${I_demand} you draw a ${age_6}! Reveal the cards in your hand! Return the card of my choice from your hand! Tuck the top card from your board and all cards from your score pile of the same color as the returned card!'),
+    ),
+
+    543 => array(
+        'name'                => clienttranslate('Illuminati'),
+        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. Splay the card\'s color on your board right. Safeguard the top card on your board of that color. Safeguard an available achievement of value one higher than the secret.'),
+    ),
+
+    544 => array(
+        'name'                => clienttranslate('Triad'),
+        'non_demand_effect_1' => clienttranslate('If you have three or more cards in your hand, return a card from your hand and splay the color of the returned card right, tuck a card from your hand, and score a card from your hand.'),
+    ),
+
 );
