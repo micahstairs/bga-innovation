@@ -1828,7 +1828,6 @@ class Innovation extends Table
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
         $bottom_to = $transferInfo['bottom_to'];
-        $age = $card['age'];
         
         $score_from_update = $location_from == 'score' || $location_from == 'board';
         $score_to_update = $location_to == 'score' || $location_to == 'board';
@@ -2101,7 +2100,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "getLetterForEffectType()", 'code' => $effect_type)));
-                break;
         }
     }
 
@@ -2119,7 +2117,6 @@ class Innovation extends Table
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithNoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-            break;
         }
         
         self::sendNotificationWithNoPlayersInvolved($message, $card, $transferInfo, $progressInfo);
@@ -2457,7 +2454,6 @@ class Innovation extends Table
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
-            break;
         }
         
         self::sendNotificationWithOnePlayerInvolved($message_for_player, $message_for_others, $card, $transferInfo, $progressInfo);
@@ -2517,7 +2513,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         } else {
             switch($location_from . '->' . $location_to) { 
@@ -2733,7 +2728,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         }
 
@@ -2819,7 +2813,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         }        
         else if ($player_id == $owner_from) {
@@ -2935,7 +2928,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         }
         else { // $transferInfo['player_id'] == $transferInfo['owner_to']
@@ -3050,7 +3042,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         }
         
@@ -3130,7 +3121,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         } else if ($player_id_is_owner_to) {
             switch($location_from . '->' . $location_to) {
@@ -3161,7 +3151,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         } else {
             switch($location_from . '->' . $location_to) {
@@ -3174,7 +3163,6 @@ class Innovation extends Table
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
-                break;
             }
         }
 
@@ -6963,7 +6951,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
-            break;
         }
     }
     
@@ -7008,7 +6995,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
-            break;
         }
     }
     
@@ -7555,7 +7541,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Mark it as selected
-        self::markAsSelected($card_id, $player_id);
+        self::markAsSelected($card_id);
         
         // Notify
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose a card.'), array(
@@ -7585,9 +7571,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $cards = self::getCardsInHand($player_id);
         foreach($cards as $card_in_hand) {
             if ($card_in_hand['id'] == $card_id) {
-                self::markAsSelected($card_in_hand['id'], $player_id);
+                self::markAsSelected($card_in_hand['id']);
             } else {
-                self::unmarkAsSelected($card_in_hand['id'], $player_id);
+                self::unmarkAsSelected($card_in_hand['id']);
             }
         }
         
@@ -7696,7 +7682,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::returnCard($card);
 
         // Check for special achievements (only necessary in 4th edition)
-        if ($this->innovationGameState->usingFourthEditionRules(true)) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             try {
             self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
             } catch(EndOfGame $e) {
@@ -7727,7 +7713,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::decreaseResourcesForArtifactOnDisplay($player_id, $card);
 
         // Check for special achievements (only necessary in 4th edition)
-        if ($this->innovationGameState->usingFourthEditionRules(true)) {
+        if ($this->innovationGameState->usingFourthEditionRules()) {
             try {
             self::checkForSpecialAchievements(/*is_end_of_action_check=*/ true);
             } catch(EndOfGame $e) {
@@ -8296,7 +8282,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if ($card_to_return != null) {
             try {
-                self::returnCard($card_to_return, $player_id);
+                self::returnCard($card_to_return);
             } catch (EndOfGame $e) {
                 self::trace('EOG bubbled from self::setUpDogma');
                 throw $e; // Re-throw exception to higher level
@@ -8306,7 +8292,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($endorse_payment_card != null) {
             try {
                 if ($this->innovationGameState->usingFourthEditionRules()) {
-                    self::junkCard($endorse_payment_card, $player_id);
+                    self::junkCard($endorse_payment_card);
                 } else {
                     self::tuckCard($endorse_payment_card, $player_id);
                 }
@@ -9454,22 +9440,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     return true;
-                } else {
-                    // This demand has no effect unless the player has a top card with a lightbulb higher than the
-                    // launcher's top card of the same color.
-                    for ($color = 0; $color < 5; $color++) {
-                        $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
-                        $player_top_card = self::getTopCardOnBoard($executing_player_id, $color);
-                        if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
-                            continue;
-                        }
-                        if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
-                            return false;
-                        }
-                    }
-                    return true;
                 }
-                break;
+                // This demand has no effect unless the player has a top card with a lightbulb higher than the
+                // launcher's top card of the same color.
+                for ($color = 0; $color < 5; $color++) {
+                    $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color);
+                    $player_top_card = self::getTopCardOnBoard($executing_player_id, $color);
+                    if (!self::hasRessource($player_top_card, 3 /* lightbulb */)) {
+                        continue;
+                    }
+                    if ($launcher_top_card === null || $player_top_card['faceup_age'] > $launcher_top_card['faceup_age']) {
+                        return false;
+                    }
+                }
+                return true;
         
             // All other cards with demand effects are assumed to have an effect.
             default:
@@ -14101,7 +14085,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->set('winner_by_dogma', $player_id);
                 self::trace('EOG bubbled from self::stPlayerInvolvedTurn Wheres Waldo');
                 throw new EndOfGame();
-                break;
 
              // id 213, Artifacts age 10: DeLorean DMC-12
             case "213N1":
@@ -16818,7 +16801,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 if (count($card_id_array) > 0) {
                     self::setAuxiliaryArray($card_id_array);
-                    self::getAuxiliaryValue2AsArray(array());
+                    self::getAuxiliaryValue2AsArray();
                     $step_max = 1;
                     self::setAuxiliaryValue(0); // no yellows or expansion cards tucked
                 }
@@ -17085,7 +17068,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step = 2;
                     self::setAuxiliaryArray($unsplayed_array);
                 } else if (count($unsplayed_array) == 1) {
-                    self::splayLeft($player_id, $unsplayed_array[0]);
+                    self::splayLeft($player_id, $player_id, $unsplayed_array[0]);
                     $top_card = self::getTopCardOnBoard($player_id, $unsplayed_array[0]);
                     self::selfExecute($top_card);
                 } else if (count($cards_in_hand) == 1) {
@@ -17103,7 +17086,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $top_card = self::getTopCardOnBoard($player_id, $color);
                     if ($top_card !== null) {
                         if ($top_card['splay_direction'] > 0) {
-                            self::scoreCard($top_card);
+                            self::scoreCard($top_card, $player_id);
                             $score_count++;
                         }
                     }
@@ -25547,8 +25530,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            break;
             
         default:
-            // This should not happens
-            throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
+            if (!self::isInSeparateFile($card_id)) {
+                // This should not happen
+                throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section B: '{code}'"), array('code' => $code)));
+            }
             break;
         }
         
@@ -26740,24 +26725,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
                     
-                // id 171, Artifacts age 6: Stamp Act
-                case "171C1A":
-                    if ($n > 0) { // "If you do"
-                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card != null) {
-                            self::setAuxiliaryValue($top_green_card['age']);
-                            self::incrementStepMax(1);
-                        }
-                    }
-                    break;
- 
-                // id 173, Artifacts age 6: Moonlight Sonata
-                case "173N1A":
-                    // "Meld the bottom card on your board of that color"
-                    $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
-                    self::meldCard($bottom_card, $player_id);
-                    break;
-                    
                 // id 152, Artifacts age 4: Mona Lisa
                 case "152N1B":
                     // "Draw five 4s, then reveal your hand"
@@ -26917,16 +26884,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Unsplay that color"
                     self::unsplay($player_id, $player_id, self::getAuxiliaryValue());
                     break;
-
+                    
                 // id 171, Artifacts age 6: Stamp Act
                 case "171C1A":
                     if ($n > 0) { // "If you do"
                         $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card !== null) {
+                        if ($top_green_card != null) {
                             self::setAuxiliaryValue($top_green_card['age']);
                             self::incrementStepMax(1);
                         }
                     }
+                    break;
+ 
+                // id 173, Artifacts age 6: Moonlight Sonata
+                case "173N1A":
+                    // "Meld the bottom card on your board of that color"
+                    $bottom_card = self::getBottomCardOnBoard($player_id, self::getAuxiliaryValue());
+                    self::meldCard($bottom_card, $player_id);
                     break;
             
                 // id 174, Artifacts age 6: Marcha Real
@@ -28931,7 +28905,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $tucked_card2 = self::executeDrawAndTuck($player_id, 4);
                         
                         if ($tucked_card2['color'] == $this->innovationGameState->get('color_last_selected')) {
-                            self::splayRight($player_id, $tucked_card2['color']);
+                            self::splayRight($player_id, $player_id, $tucked_card2['color']);
                             foreach(self::getCardsInLocationKeyedByColor($player_id, 'board')[$tucked_card2['color']] as $card) {
                                 self::scoreCard($card, $player_id);
                             }
@@ -29018,7 +28992,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Transfer those cards to the score pile of the player on your right."
                     $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand');
                     $score_cards = self::getCardsInLocationKeyedByAge($player_id, 'score');
-                    $dest_player_id = self::getActivePlayerIdsInTurnOrderStartingToRightOfActingPlayer()[0];
+                    $dest_player_id = self::getActivePlayerIdOnRightOfActingPlayer();
                     foreach ($hand_cards[self::getAuxiliaryValue()] as $card) {
                         self::transferCardFromTo($card, $dest_player_id, 'score');
                     }
@@ -29136,7 +29110,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                case "513N1B":
+                case "514N1B":
                     if ($n > 0) { 
                         // "If you return a 4, claim the Anonymity achievement."
                         if ($this->innovationGameState->get('age_last_selected') == 4) {
@@ -29196,8 +29170,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $without_icon = $this->innovationGameState->get('without_icon');
             $with_bonus = $this->innovationGameState->get('with_bonus');
             $without_bonus = $this->innovationGameState->get('without_bonus');
-            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile(self::getSelectedCards()) : null;
-            $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor(self::getSelectedCards()) : null;
+            $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile() : null;
+            $card_id_with_unique_color = $location_to == 'board' ? self::getSelectedCardIdWithUniqueColor() : null;
 
             $nested_card_state = self::getCurrentNestedCardState();
 
@@ -30748,47 +30722,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function zombieTurn($state, $active_player) {
         throw new feException( "Zombie mode not supported at this moment" );
-        $statename = $state['name'];
-        
-        if ($state['type'] == "activeplayer") {
-            $player_name = self::getPlayerNameFromId($active_player);
-            self::notifyAll('log', clienttranslate('The turn of ${player_name} is skipped.'), array('player_name' => $player_name));
-            switch ($statename) {
-                case 'playerTurn':
-                    self::trace('playerTurn->interPlayerTurn (zombie)');
-                    $this->gamestate->nextState('interPlayerTurn');
-                    break;
-                case 'selectionMove':
-                    self::trace('selectionMove->interInteractionStep (zombie)');
-                    $this->gamestate->nextState('interInteractionStep');
-                    // Set the player choices as "pass" (this will work even if he is normally not supposed to)
-                    $this->innovationGameState->set('id_last_selected', -1);
-                    $this->innovationGameState->set('choice', -2);
-                    self::deselectAllCards(); // Deselect all the cards the player could choose if he had not quitted
-                    // --> There are further implications in self::stInterInteractionStep
-                    break;
-                default:
-                    break;
-            }
-
-            return;
-        }
-
-        if ($state['type'] == "multipleactiveplayer") {
-            // state turn0
-            // Make sure player is in a non blocking status for role turn
-            $sql = "
-                UPDATE  player
-                SET     player_is_multiactive = 0
-                WHERE   player_id = $active_player
-            ";
-            self::DbQuery($sql);
-
-            $this->gamestate->updateMultiactiveOrNextState('');
-            return;
-        }
-
-        throw new feException("Zombie mode not supported at this game state: ".$statename);
     }
     
     function isZombie($player_id) {

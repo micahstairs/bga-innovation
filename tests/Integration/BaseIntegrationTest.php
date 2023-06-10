@@ -78,8 +78,9 @@ abstract class BaseIntegrationTest extends BaseTest
   }
 
   /* Move the card to the player's board */
-  protected function meld(int $playerId, int $id)
+  protected function meld(int $id)
   {
+    $playerId = self::getActivePlayerId();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
@@ -88,8 +89,9 @@ abstract class BaseIntegrationTest extends BaseTest
   }
 
   /* Initiate a dogma action (assumes the card is on the player's board) */
-  protected function dogma(int $playerId, int $id)
+  protected function dogma(int $id)
   {
+    $playerId = self::getActivePlayerId();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
@@ -100,8 +102,9 @@ abstract class BaseIntegrationTest extends BaseTest
   }
 
   /* Select a random card in the specified location */
-  protected function selectRandomCard(int $playerId, string $location)
+  protected function selectRandomCard(string $location)
   {
+    $playerId = self::getActivePlayerId();
     $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
@@ -111,9 +114,22 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance->advanceGame();
   }
 
-  /* Choose to pass */
-  protected function pass(int $playerId)
+  /* Select the specified card */
+  protected function selectCard(int $cardId)
   {
+    $playerId = self::getActivePlayerId();
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer($playerId)
+      ->stubActivePlayerId($playerId)
+      ->stubArgs(["card_id" => $cardId])
+      ->choose();
+    $this->tableInstance->advanceGame();
+  }
+
+  /* Choose to pass */
+  protected function pass()
+  {
+    $playerId = self::getActivePlayerId();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
@@ -122,19 +138,51 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance->advanceGame();
   }
 
-  protected function assertDogmaComplete(): void
+  /* Try to pass (but skip if no interaction is required) */
+  protected function passIfNeeded()
   {
-    self::assertEquals("playerTurn", $this->tableInstance->getTable()->getCurrentState()['name']);
+    if (self::getCurrentStateName() === "selectionMove") {
+      $this->pass();
+    }
   }
 
-  protected function getScore(int $playerId): int
+  /* Draw 1s until the hand is at least the specified size */
+  protected function drawToHandSize(int $targetSize)
   {
+    $playerId = self::getActivePlayerId();
+    $currentSize = $this->tableInstance->getTable()->countCardsInLocation($playerId, "hand");
+    while ($currentSize < $targetSize) {
+      $this->tableInstance->getTable()->executeDraw($playerId, 1);
+      $currentSize++;
+    }
+  }
+
+  protected function assertDogmaComplete(): void
+  {
+    self::assertEquals("playerTurn", self::getCurrentStateName());
+  }
+
+  protected function getMaxAgeOnBoard(): int
+  {
+    $playerId = self::getActivePlayerId();
+    return $this->tableInstance->getTable()->getMaxAgeOnBoardTopCards($playerId);
+  }
+
+  protected function getScore(): int
+  {
+    $playerId = self::getActivePlayerId();
     return $this->tableInstance->getTable()->getPlayerScore($playerId);
   }
 
-  protected function countCards(int $playerId, string $location): int
+  protected function countCards(string $location): int
   {
+    $playerId = self::getActivePlayerId();
     return $this->tableInstance->getTable()->countCardsInLocation($playerId, $location);
+  }
+
+  protected function getActivePlayerId(): int
+  {
+    return $this->tableInstance->getTable()->getActivePlayerId();
   }
 
   protected function getPlayerIds(): array
@@ -145,6 +193,11 @@ abstract class BaseIntegrationTest extends BaseTest
     });
     return array_map(function ($player) {
       return intval($player['player_id']); }, $players);
+  }
+
+  protected function getCurrentStateName(): string
+  {
+    return $this->tableInstance->getTable()->getCurrentState()['name'];
   }
 
 }
