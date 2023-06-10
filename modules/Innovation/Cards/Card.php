@@ -3,14 +3,17 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Utils\Notifications;
 
 /* Abstract class of all card implementations */
 abstract class Card {
 
     protected \Innovation $game;
+    protected Notifications $notifications;
 
     function __construct(\Innovation $game) {
       $this->game = $game;
+      $this->notifications = $game->notifications;
     }
 
     // functions:

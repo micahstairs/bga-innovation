@@ -21,9 +21,11 @@ require_once('modules/Innovation/Cards/Card.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
 require_once('modules/Innovation/GameState.php');
 require_once('modules/Innovation/Utils/Arrays.php');
+require_once('modules/Innovation/Utils/Notifications.php');
 require_once('modules/Innovation/Utils/Strings.php');
 
 use Innovation\Utils\Arrays;
+use Innovation\Utils\Notifications;
 use Innovation\Utils\Strings;
 use Innovation\GameState;
 use Innovation\Cards\ExecutionState;
@@ -36,6 +38,9 @@ class Innovation extends Table
 
     /** @var GameState An inverted control structure for accessing game state in a testable manner */
     private GameState $innovationGameState;
+
+    /** @var Notifications Used to help create notifications */
+    public Notifications $notifications;
 
     // Splay directions
     const UNSPLAYED = 0;
@@ -85,6 +90,7 @@ class Innovation extends Table
         parent::__construct();
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
+        $this->notifications = new Notifications($this);
         // NOTE: The following values are unused and safe to use: 20-22, 24-25, 51-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
@@ -11095,7 +11101,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 3;
+        return $card_id <= 4;
     }
     
     function stPlayerInvolvedTurn() {
@@ -11194,21 +11200,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // E1 means the first (and single) echo effect
             
             // Setting the $step_max variable means there is interaction needed with the player
-
-            // id 4, age 1: Metalworking
-            case "4N1":
-                while(true) {
-                    $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
-                    if (self::hasRessource($card, 4)) { // "If it has a tower"
-                        self::notifyGeneralInfo(clienttranslate('It has a ${tower}.'), array('tower' => $tower));
-                        self::scoreCard($card, $player_id); // "Score it"
-                        continue; // "Repeat this dogma effect"
-                    }
-                    break; // "Otherwise"        
-                }
-                self::notifyGeneralInfo(clienttranslate('It does not have a ${tower}.'), array('tower' => $tower));
-                self::transferCardFromTo($card, $player_id, 'hand'); // "Keep it"
-                break;
             
             // id 5, age 1: Oars
             case "5D1":
