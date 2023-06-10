@@ -56,6 +56,10 @@ class ExecutionState {
       return $this->effectType;
     }
 
+    function isDemand(): bool {
+      return $this->effectType === \Innovation::DEMAND_EFFECT;
+    }
+
     function setEffectNumber(?int $effectNumber): ExecutionState {
       $this->effectNumber = $effectNumber;
       return $this;

@@ -15,9 +15,9 @@ class Card1Test extends BaseIntegrationTest
     self::setHandSize(4);
 
     self::dogma();
-    self::selectRandomCard("hand");
-    self::selectRandomCard("hand");
-    self::selectRandomCard("hand");
+    self::selectRandomCard();
+    self::selectRandomCard();
+    self::selectRandomCard();
     self::passIfNeeded(); // Do not return a 3
 
     self::assertDogmaComplete();
@@ -30,7 +30,7 @@ class Card1Test extends BaseIntegrationTest
     self::setHandSize(2);
 
     self::dogma();
-    self::selectRandomCard("hand"); // 2nd card will be chosen automatically since it's the last card in hand
+    self::selectRandomCard(); // 2nd card will be chosen automatically since it's the last card in hand
     self::passIfNeeded(); // Do not return a 3
 
     self::assertDogmaComplete();
@@ -41,7 +41,7 @@ class Card1Test extends BaseIntegrationTest
   public function test_whenReturnAgeThree_drawThreeCards()
   {
     self::setHandSize(2);
-    $card = $this->tableInstance->getTable()->executeDraw(self::getActivePlayerId(), 3);
+    $card = self::drawBaseCard(3);
 
     self::dogma();
     self::pass(); // Do not return three cards

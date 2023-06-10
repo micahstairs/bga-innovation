@@ -34,7 +34,7 @@ abstract class BaseIntegrationTest extends BaseTest
 
     // Meld initial cards then pull them back into hand
     $this->chooseRandomCardsForInitialMeld();
-    $this->returnAllCardsToHand();
+    $this->returnAllCardsOnBoardsToHand();
 
     // Place the card under test on the first player's board and replenish their hand
     $this->meld();
@@ -56,25 +56,26 @@ abstract class BaseIntegrationTest extends BaseTest
   protected function createGameTableInstanceBuilder(): TableInstanceBuilder
   {
     return $this->gameTableInstanceBuilder()
-      ->setPlayersWithIds([self::getPlayer1(), self::getPlayer2()])
+      ->setPlayersWithIds([12345, 67890])
       ->overrideGlobalsPreSetup(self::getGameOptions());
-  }
-
-  protected function getPlayer1(): int
-  {
-    return 12345;
-  }
-
-  protected function getPlayer2(): int
-  {
-    return 67890;
   }
 
   protected function getGameOptions(): array
   {
+    $testName = $this->getName();
+
+    // Randomly pick 3rd or 4th edition (unless the test name specifies a specific edition)
+    $game_rules = array_rand([1,3]);
+    if (strpos($testName, 'thirdEdition')) {
+      $game_rules = 1;
+    }
+    if (strpos($testName, 'fourthEdition')) {
+      $game_rules = 3;
+    }
+
     return [
       "game_type"                => 1, // non-2v2
-      "game_rules"               => 1, // 3rd edition
+      "game_rules"               => $game_rules,
       "artifacts_mode"           => 1, // disabled
       "cities_mode"              => 1, // disabled
       "echoes_mode"              => 1, // disabled
@@ -98,7 +99,7 @@ abstract class BaseIntegrationTest extends BaseTest
   }
 
   /* Return all cards on the player's board to their hand */
-  protected function returnAllCardsToHand()
+  protected function returnAllCardsOnBoardsToHand()
   {
     foreach ($this->getPlayerIds() as $playerId) {
       $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, "board");
@@ -112,16 +113,18 @@ abstract class BaseIntegrationTest extends BaseTest
   }
 
   /* Move the card to the player's board. If the ID is null, it's assumed the card under test is the one that should be melded. */
-  protected function meld(int $id = null)
+  protected function meld(int $cardId = null, int $playerId = null)
   {
-    if ($id === null) {
-      $id = self::getCardIdFromTestClassName();
+    if ($cardId === null) {
+      $cardId = self::getCardIdFromTestClassName();
     }
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
-      ->stubArgs(["card_id" => $id, "transfer_action" => "meld"])
+      ->stubArgs(["card_id" => $cardId, "transfer_action" => "meld"])
       ->debug_transfer();
   }
 
@@ -141,11 +144,11 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance->advanceGame();
   }
 
-  /* Select a random card in the specified location */
-  protected function selectRandomCard(string $location)
+  /* Choose a random card from the currently selected cards */
+  protected function selectRandomCard()
   {
     $playerId = self::getActivePlayerId();
-    $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
+    $cards = $this->tableInstance->getTable()->getSelectedCards();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
@@ -206,20 +209,38 @@ abstract class BaseIntegrationTest extends BaseTest
     }
   }
 
+  /* Draw a base card of the specified value */
+  protected function drawBaseCard(int $age, int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    $card = $this->tableInstance->getTable()->getDeckTopCard($age, \Innovation::BASE);
+    $this->tableInstance
+        ->createActionInstanceForCurrentPlayer($playerId)
+        ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])
+        ->debug_transfer();
+    return $this->tableInstance->getTable()->getCardInfo($card['id']);
+  }
+
   protected function assertDogmaComplete(): void
   {
     self::assertEquals("playerTurn", self::getCurrentStateName());
   }
 
-  protected function getMaxAgeOnBoard(): int
+  protected function getMaxAgeOnBoard(int $playerId = null): int
   {
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
     return $this->tableInstance->getTable()->getMaxAgeOnBoardTopCards($playerId);
   }
 
-  protected function getMaxAge(string $location): int
+  protected function getMaxAge(string $location, int $playerId = null): int
   {
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
     $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
     $maxAge = 0;
     foreach ($cards as $card) {
@@ -228,21 +249,46 @@ abstract class BaseIntegrationTest extends BaseTest
     return $maxAge;
   }
 
-  protected function getScore(): int
+  protected function getScore(int $playerId = null): int
   {
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
     return $this->tableInstance->getTable()->getPlayerScore($playerId);
   }
 
-  protected function countCards(string $location): int
+  protected function countCards(string $location, int $playerId = null): int
   {
-    $playerId = self::getActivePlayerId();
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
     return $this->tableInstance->getTable()->countCardsInLocation($playerId, $location);
+  }
+
+  protected function assertCardInLocation(int $cardId, string $location, int $playerId = null): void
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    $card = $this->tableInstance->getTable()->getCardInfo($cardId);
+    self::assertEquals($location, $card['location']);
+    self::assertEquals($playerId, $card['owner']);
   }
 
   protected function getActivePlayerId(): int
   {
     return $this->tableInstance->getTable()->getActivePlayerId();
+  }
+
+  protected function getNonActivePlayerId(): int
+  {
+    $activePlayerId = self::getActivePlayerId();
+    foreach (self::getPlayerIds() as $playerId) {
+      if ($playerId !== $activePlayerId) {
+        return $playerId;
+      }
+    }
+    throw new \Exception("No non-active player found");
   }
 
   protected function getPlayerIds(): array

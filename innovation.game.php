@@ -68,6 +68,12 @@ class Innovation extends Table
     const FIGURES = 4;
     const UNSEEN = 5;
 
+    // Effect types
+    const DEMAND_EFFECT = 0;
+    const NON_DEMAND_EFFECT = 1;
+    const COMPEL_EFFECT = 2;
+    const ECHO_EFFECT = 3;
+
     function __construct()
     {
         // Your global variables labels:
@@ -1331,6 +1337,10 @@ class Innovation extends Table
      **/
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false) {
 
+        if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
+            error_log("Transferring card=". $card['id'] . " from " . $card['location'] . " to " . $location_to);
+        }
+
         // Get updated state of card in case a stale reference was passed.
         $using_debug_buttons = array_key_exists('using_debug_buttons', $card);
         $card = self::getCardInfo($card['id']);
@@ -2085,16 +2095,16 @@ class Innovation extends Table
 
     function getLetterForEffectType($effect_type) {
         switch ($effect_type) {
-            case 0:
+            case self::DEMAND_EFFECT:
                 // I demand
                 return "D";
-            case 1:
+            case self::NON_DEMAND_EFFECT:
                 // Non-demand
                 return "N";
-            case 2:
+            case self::COMPEL_EFFECT:
                 // I compel
                 return "C";
-            case 3:
+            case self::ECHO_EFFECT:
                 // Echo
                 return "E";
             default:
@@ -11085,7 +11095,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 2;
+        return $card_id <= 3;
     }
     
     function stPlayerInvolvedTurn() {
