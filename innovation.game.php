@@ -11106,8 +11106,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function getCardInstance($card_id) {
         $set = $card_id <= 109 ? "Base" : "Unseen";
-        require_once("modules/Innovation/Cards/{$set}/Card{$card_id}.php");
-        $classname = "Innovation\Cards\{$set}\Card{$card_id}";
+        require_once("modules/Innovation/Cards/${set}/Card${card_id}.php");
+        $classname = "Innovation\Cards\\${set}\Card${card_id}";
         return new $classname($this);
     }
     
