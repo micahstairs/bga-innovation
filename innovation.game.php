@@ -11101,12 +11101,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65;
+        return $card_id <= 4 || $card_id == 65 || $card_id == 520;
     }
 
     function getCardInstance($card_id) {
-        require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
-        $classname = 'Innovation\Cards\Base\Card'.$card_id;
+        $set = $card_id <= 109 ? "Base" : "Unseen";
+        require_once("modules/Innovation/Cards/{$set}/Card{$card_id}.php");
+        $classname = "Innovation\Cards\{$set}\Card{$card_id}";
         return new $classname($this);
     }
     
