@@ -6,7 +6,6 @@ namespace Innovation\Cards;
 class ExecutionState
 {
 
-
   /* The player who launched the card currently being executed */
   private ?int $launcherId = null;
 

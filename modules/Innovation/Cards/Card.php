@@ -32,12 +32,12 @@ abstract class Card
         return [];
     }
 
-    public function handleSpecialChoice(ExecutionState $state, int $choice): void
+    public function handleSpecialChoice(ExecutionState $state, int $choice)
     {
         // Subclasses are expected to override this method if the card has any special choices.
     }
 
-    public function afterInteraction(ExecutionState $state): void
+    public function afterInteraction(ExecutionState $state)
     {
         // Subclasses are expected to override this method if the card has any interactions.
     }
