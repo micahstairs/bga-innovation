@@ -9543,8 +9543,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function argSelectionMove() {
         $player_id = self::getActivePlayerId();
         $player_name = self::getColoredPlayerName($player_id);
-        $You = 'You';
-        $you = 'you'; 
         $special_type_of_choice = $this->innovationGameState->get('special_type_of_choice');
         
         $nested_card_state = self::getCurrentNestedCardState();
@@ -9562,7 +9560,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $card = self::getCardInfo($card_id);
-        $card_name = self::getCardName($card['id']);
         
         $can_pass = $this->innovationGameState->get('can_pass') == 1;
         $can_stop = $this->innovationGameState->get('n_min') <= 0;
@@ -9644,6 +9641,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // The message to display is specific of the card
             $message_args_for_player = array('You' => 'You', 'you' => 'you');
             $message_args_for_others = array('player_name' => $player_name);
+
+            if ($code !== null && self::isInSeparateFile($card_id)) {
+                $executionState = (new ExecutionState())
+                    ->setLauncherId($player_id)
+                    ->setPlayerId($player_id)
+                    ->setEffectType($current_effect_type)
+                    ->setEffectNumber($current_effect_number)
+                    ->setCurrentStep(self::getStep())
+                    ->setMaxSteps(self::getStepMax());
+                $prompt = self::getCardInstance($card_id)->getSpecialChoicePrompt($executionState);
+                $message_for_player = $prompt['message_for_player'];
+                $message_for_others = $prompt['message_for_others'];
+                $options = $prompt['options'];
+            }
             
             switch($code) {
             // id 18, age 2: Road building
@@ -9697,19 +9708,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = $age_to_draw <= $max_age ? clienttranslate('${player_name} may draw and tuck a ${age_6}, then score all his top cards without a ${icon_5}')
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                break;
-                
-            // id 65, age 7: Evolution
-            case "65N1A":
-                $message_for_player = clienttranslate('${You} may make a choice');
-                $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
-                $age_to_score = self::getAgeToDrawIn($player_id, 8);
-                $age_to_draw = self::getAgeToDrawIn($player_id, self::getMaxAgeInScore($player_id) + 1);
-                $max_age = self::getMaxAge();
-                $options = [
-                    ['value' => 1, 'text' => $age_to_score <= $max_age ? clienttranslate('Draw and score a ${age}, then return a card from your score pile') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_score)],
-                    ['value' => 0, 'text' => $age_to_draw <= $max_age ? clienttranslate('Draw a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'), 'age' => self::getAgeSquare($age_to_draw)],
-                ];
                 break;
             
             // id 66, age 7: Publications
@@ -10317,7 +10315,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             default:
                 // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
+                if (!self::isInSeparateFile($card_id)) {
+                    throw new BgaVisibleSystemException(self::format(self::_("Unreferenced card effect code in section S: '{code}'"), array('code' => $code)));
+                }
             }
             
             $card_names = self::getDogmaCardNames();
@@ -11101,7 +11101,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4;
+        return $card_id <= 4 || $card_id == 65;
+    }
+
+    function getCardInstance($card_id) {
+        require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
+        $classname = 'Innovation\Cards\Base\Card'.$card_id;
+        return new $classname($this);
     }
     
     function stPlayerInvolvedTurn() {
@@ -11183,10 +11189,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
 
             if (self::isInSeparateFile($card_id)) {
-                require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
-                $classname = 'Innovation\Cards\Base\Card'.$card_id;
-                $card = new $classname($this);
-                $card->initialExecution($executionState);
+                self::getCardInstance($card_id)->initialExecution($executionState);
                 $using_execution_status_object = true;
             }
 
@@ -12035,7 +12038,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($card['age'] == 8 || $card['age'] == 10) {
                         $eight_or_ten_tucked = true;
                     }
-
                 }
 
                 // "If you tuck an 8 or 10, return Industrialization if it is a top card on any board." (4th edition only)
@@ -12112,11 +12114,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             
             case "64N1":
-                $step_max = 1;
-                break;
-            
-            // id 65, age 7: Evolution          
-            case "65N1":
                 $step_max = 1;
                 break;
             
@@ -17262,18 +17259,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_id_2 = $this->innovationGameState->get('card_id_2');
         $card_id_3 = $this->innovationGameState->get('card_id_3');
         
-        $crown = self::getIconSquare(1);
         $leaf = self::getIconSquare(2);
         $lightbulb = self::getIconSquare(3);
-        $tower = self::getIconSquare(4);
-        $factory = self::getIconSquare(5);
         $clock = self::getIconSquare(6);
 
         if (self::isInSeparateFile($card_id)) {
-            require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
-            $classname = 'Innovation\Cards\Base\Card'.$card_id;
-            $card = new $classname($this);
-            $options = $card->getInteractionOptions($executionState);
+            $options = self::getCardInstance($card_id)->getInteractionOptions($executionState);
 
             // Use sensible defaults for unset options
             if (!array_key_exists('can_pass', $options)) {
@@ -18526,30 +18517,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => self::RIGHT,
                 'color' => array(1,4) /* red or purple */
-            );
-            break;
-            
-        // id 65, age 7: Evolution          
-        case "65N1A":
-            // The player faces a choice
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => true, // Interpretation of the rules: the player can pass
-                
-                'choose_yes_or_no' => true
-            );
-            break;
-             
-        case "65N1B":
-            // "Return a card from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
             );
             break;
         
@@ -25597,20 +25564,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ->setCurrentStep($step)
             ->setMaxSteps($step_max);
         
-        $crown = self::getIconSquare(1);
-        $leaf = self::getIconSquare(2);
-        $lightbulb = self::getIconSquare(3);
-        $tower = self::getIconSquare(4);
-        $factory = self::getIconSquare(5);
-        $clock = self::getIconSquare(6);
-        
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
-                if (self::isInSeparateFile($card_id)) {
-                    require_once('modules/Innovation/Cards/Base/Card'.$card_id.'.php');
-                    $classname = 'Innovation\Cards\Base\Card'.$card_id;
-                    $card = new $classname($this);
-                    $card->afterInteraction($executionState);
+                if ($code !== null && self::isInSeparateFile($card_id)) {
+                    self::getCardInstance($card_id)->afterInteraction($executionState);
                 }
 
                 switch($code) {
@@ -29457,7 +29414,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
         
-        $launcher_id = self::getLauncherId();
         $nested_card_state = self::getCurrentNestedCardState();
 
         // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
@@ -29470,15 +29426,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $step = self::getStep();
             $code = self::getCardExecutionCodeWithLetter($card_id, $current_effect_type, $current_effect_number, $step);
         }
-        
-        $crown = self::getIconSquare(1);
-        $leaf = self::getIconSquare(2);
-        $lightbulb = self::getIconSquare(3);
-        $tower = self::getIconSquare(4);
-        $factory = self::getIconSquare(5);
-        $clock = self::getIconSquare(6);
-        
+
         try {
+
+            if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
+                $executionState = (new ExecutionState())
+                    ->setLauncherId($player_id)
+                    ->setPlayerId($player_id)
+                    ->setEffectType($current_effect_type)
+                    ->setEffectNumber($current_effect_number)
+                    ->setCurrentStep(self::getStep())
+                    ->setMaxSteps(self::getStepMax());
+                self::getCardInstance($card_id)->handleSpecialChoice($executionState, $choice);
+                self::setStepMax($executionState->getMaxSteps());
+            }
+
             switch($code) {
             // The first number is the id of the card
             // D1 means the first (and single) I demand effect
@@ -29595,17 +29557,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::scoreCard($card, $player_id); // "Score all your top cards without a factory"
                         }
                     }
-                }
-                break;
-            
-            // id 65, age 7: Evolution          
-            case "65N1A":
-                if ($choice == 0) { // Draw
-                    self::executeDraw($player_id, self::getMaxAgeInScore($player_id) + 1); // "Draw a card of one value higher than the highest card in your score pile"
-                }
-                else { // Draw and score, then return
-                    self::executeDraw($player_id, 8, 'score'); // "Draw and score a 8"
-                    self::incrementStepMax(1);
                 }
                 break;
                 
@@ -30602,20 +30553,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             default:
-                if ($splay_direction == -1) {
-                    if ($location_to == 'revealed,deck') {
-                        self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                        self::returnCard($card); // Return
-                    } else if ($location_to == 'revealed,score') {
-                        self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                        self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
-                    } else {
-                        self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                if ($special_type_of_choice == 0) {
+                    if ($splay_direction == -1) {
+                        if ($location_to == 'revealed,deck') {
+                            self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
+                            self::returnCard($card); // Return
+                        } else if ($location_to == 'revealed,score') {
+                            self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
+                            self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
+                        } else {
+                            self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                        }
                     }
-                }
-                else {
-                    // Do the splay as stated in B
-                    self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
+                    else {
+                        // Do the splay as stated in B
+                        self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
+                    }
+                } else if (!self::isInSeparateFile($card_id)) {
+                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "stInterSelectionMove()", 'code' => $code)));
                 }
                 break;
             }

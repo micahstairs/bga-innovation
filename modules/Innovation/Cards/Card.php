@@ -6,31 +6,39 @@ use Innovation\Cards\ExecutionState;
 use Innovation\Utils\Notifications;
 
 /* Abstract class of all card implementations */
-abstract class Card {
+abstract class Card
+{
 
     protected \Innovation $game;
     protected Notifications $notifications;
 
-    function __construct(\Innovation $game) {
-      $this->game = $game;
-      $this->notifications = $game->notifications;
+    function __construct(\Innovation $game)
+    {
+        $this->game = $game;
+        $this->notifications = $game->notifications;
     }
-
-    // functions:
-    // - setup (doesn't exist in current implementation but we could probably simplify some code if we had this)
-    // - logic before interaction (and get number of max steps, and next step which is usually 1)
-    // - choice prompt
-    // - response to special choice made
-    // - no-op detection methods (sharing, compel, demand)
 
     public abstract function initialExecution(ExecutionState $state);
 
-    public function getInteractionOptions(ExecutionState $state): Array {
+    public function getInteractionOptions(ExecutionState $state): array
+    {
         // Subclasses are expected to override this method if the card has any interactions.
         return [];
     }
 
-    public function afterInteraction(ExecutionState $state) {
+    public function getSpecialChoicePrompt(ExecutionState $state): array
+    {
+        // Subclasses are expected to override this method if the card has any special choices.
+        return [];
+    }
+
+    public function handleSpecialChoice(ExecutionState $state, int $choice): void
+    {
+        // Subclasses are expected to override this method if the card has any special choices.
+    }
+
+    public function afterInteraction(ExecutionState $state): void
+    {
         // Subclasses are expected to override this method if the card has any interactions.
     }
 
