@@ -324,7 +324,7 @@ class Innovation extends Table
             if ($individual_game) {
                 $t++;
             }
-            else { // Team game: the players of the same team are sit in front of each other
+            else { // Team game: the players of the same team are sitting across from each other
                 $t = ($t+1) % 2;
             }
         }
