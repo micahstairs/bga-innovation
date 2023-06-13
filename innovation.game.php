@@ -9643,7 +9643,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $message_args_for_others = array('player_name' => $player_name);
 
             if ($code !== null && self::isInSeparateFile($card_id)) {
-                $executionState = (new ExecutionState())
+                $executionState = (new ExecutionState($this))
                     ->setLauncherId($player_id)
                     ->setPlayerId($player_id)
                     ->setEffectType($current_effect_type)
@@ -11160,7 +11160,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        $executionState = (new ExecutionState())
+        $executionState = (new ExecutionState($this))
             ->setLauncherId($launcher_id)
             ->setPlayerId($player_id)
             ->setEffectType($current_effect_type)
@@ -17246,7 +17246,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $step = self::getStep();
 
-        $executionState = (new ExecutionState())
+        $executionState = (new ExecutionState($this))
             ->setLauncherId($launcher_id)
             ->setPlayerId($player_id)
             ->setEffectType($current_effect_type)
@@ -25556,7 +25556,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $n = $this->innovationGameState->get('n');
 
-        $executionState = (new ExecutionState())
+        $executionState = (new ExecutionState($this))
             ->setLauncherId($launcher_id)
             ->setPlayerId($player_id)
             ->setEffectType($current_effect_type)
@@ -29431,7 +29431,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
 
             if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
-                $executionState = (new ExecutionState())
+                $executionState = (new ExecutionState($this))
                     ->setLauncherId($player_id)
                     ->setPlayerId($player_id)
                     ->setEffectType($current_effect_type)

@@ -30,6 +30,13 @@ class ExecutionState
   /* The next interaction that will be executed */
   private ?int $nextStep = null;
 
+  protected \Table $game;
+
+  function __construct(\Table $game)
+  {
+      $this->game = $game;
+  }
+
   function setLauncherId(?int $launcherId): ExecutionState
   {
     $this->launcherId = $launcherId;
@@ -65,7 +72,7 @@ class ExecutionState
 
   function isDemand(): bool
   {
-    return $this->effectType === \Innovation::DEMAND_EFFECT;
+    return $this->effectType === $this->game::DEMAND_EFFECT;
   }
 
   function setEffectNumber(?int $effectNumber): ExecutionState

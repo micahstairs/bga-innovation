@@ -17,21 +17,21 @@ class Card520 extends Card
     $numCardsWithProsperityIcons = 0;
     for ($i = 3; $i >= 1; $i--) {
       $card = $this->game->executeDrawAndMeld($state->getPlayerId(), $i);
-      if ($this->game->hasRessource($card, \Innovation::PROSPERITY)) {
+      if ($this->game->hasRessource($card, $this->game::PROSPERITY)) {
         $numCardsWithProsperityIcons++;
       }
     }
     if ($numCardsWithProsperityIcons == 3) {
       $cardsInDeck = $this->game->getCardsInLocationKeyedByAge(0, 'deck');
       foreach ($cardsInDeck[5] as $card) {
-        if ($card['type'] == \Innovation::BASE) {
+        if ($card['type'] == $this->game::BASE) {
           $this->game->scoreCard($card, $state->getPlayerId());
         }
       }
     }
     if ($numCardsWithProsperityIcons >= 2) {
-      $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), \Innovation::GREEN);
-      $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), \Innovation::BLUE);
+      $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), $this->game::GREEN);
+      $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), $this->game::BLUE);
     }
   }
 }

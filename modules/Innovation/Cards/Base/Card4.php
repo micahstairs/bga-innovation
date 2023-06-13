@@ -15,11 +15,11 @@ class Card4 extends Card
   {
     while (true) {
       $card = $this->game->executeDrawAndReveal($state->getPlayerId(), 1);
-      if ($this->game->hasRessource($card, \Innovation::AUTHORITY)) {
-        $this->notifications->notifyPresenceOfIcon(\Innovation::AUTHORITY);
+      if ($this->game->hasRessource($card, $this->game::AUTHORITY)) {
+        $this->notifications->notifyPresenceOfIcon($this->game::AUTHORITY);
         $this->game->scoreCard($card, $state->getPlayerId());
       } else {
-        $this->notifications->notifyAbsenceOfIcon(\Innovation::AUTHORITY);
+        $this->notifications->notifyAbsenceOfIcon($this->game::AUTHORITY);
         $this->game->transferCardFromTo($card, $state->getPlayerId(), 'hand');
         return;
       }
