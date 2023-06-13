@@ -6,9 +6,9 @@ namespace Innovation\Utils;
 class Notifications
 {
 
-  protected \Innovation $game;
+  protected \Table $game;
 
-  function __construct(\Innovation $game)
+  function __construct(\Table $game)
   {
     $this->game = $game;
   }
