@@ -4,7 +4,6 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card65 extends Card
 {

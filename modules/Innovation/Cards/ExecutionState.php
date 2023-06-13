@@ -75,6 +75,11 @@ class ExecutionState
     return $this->effectType === $this->game::DEMAND_EFFECT;
   }
 
+  function isNonDemand(): bool
+  {
+    return $this->effectType === $this->game::NON_DEMAND_EFFECT;
+  }
+
   function setEffectNumber(?int $effectNumber): ExecutionState
   {
     $this->effectNumber = $effectNumber;
