@@ -66,7 +66,6 @@ function replacecontent($newprojectpath) {
                 $content= preg_replace( "/${oldprojectname}_${oldprojectname}/", "${newprojectname}_${newprojectname}", $content);
                 $content= preg_replace( "/action_${oldprojectname}\\b/", "action_${newprojectname}", $content);
                 $content= preg_replace( "/\\/${oldprojectname}\\/${oldprojectname}\\//", "/${newprojectname}/${newprojectname}/", $content);
-                $content= preg_replace( "/class ${oldprojectname} extends/i", "class $newprojectname extends", $content);
                 $content= preg_replace("/game_version_${oldprojectname}/", "game_version_${newprojectname}", $content);
                 $content= preg_replace("/${oldprojectname}\.js/i", "${newprojectname}.js", $content);
                 $content= preg_replace("/${oldprojectname}\.css/", "${newprojectname}.css", $content);
