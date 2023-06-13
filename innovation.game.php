@@ -30665,10 +30665,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState(); // End the game
     }
 
-//////////////////////////////////////////////////////////////////////////////
-//////////// Zombie
-////////////
-
     /*
         zombieTurn:
         
@@ -30676,7 +30672,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         You can do whatever you want in order to make sure the turn of this player ends appropriately
         (ex: pass).
     */
-
     function zombieTurn($state, $active_player) {
         throw new feException( "Zombie mode not supported at this moment" );
     }
