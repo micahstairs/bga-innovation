@@ -9754,7 +9754,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_args_for_player['age_10'] = self::getAgeSquareWithType(10, 0);
                 $message_args_for_others['age_10'] = self::getAgeSquareWithType(10, 0);
                 $message_for_player = clienttranslate('Do ${you} want to junk the ${age_10} pile?');
-                $message_for_others = clienttranslate('${player_name} may junk the ${age_10} pile?');
+                $message_for_others = clienttranslate('${player_name} may junk the ${age_10} pile');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
@@ -9763,7 +9763,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_args_for_player['age_9'] = self::getAgeSquareWithType(9, 0);
                 $message_args_for_others['age_9'] = self::getAgeSquareWithType(9, 0);
                 $message_for_player = clienttranslate('Do ${you} want to junk the ${age_9} pile?');
-                $message_for_others = clienttranslate('${player_name} may junk the ${age_9} pile?');
+                $message_for_others = clienttranslate('${player_name} may junk the ${age_9} pile');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
             
@@ -11098,7 +11098,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 520;
+        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || ($card_id >= 515 && $card_id < 525);
     }
 
     function getCardInstance($card_id) {
@@ -17275,6 +17275,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junkyard')) {
                 $options['owner_to'] = 0;
+            }
+            if (!array_key_exists('owner_to', $options)) {
+                $options['owner_to'] = $player_id;
             }
         }
 
@@ -29349,7 +29352,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         try {
 
-            if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
+            if ($code !== null && self::isInSeparateFile($card_id)) {
                 $executionState = (new ExecutionState($this))
                     ->setLauncherId($player_id)
                     ->setPlayerId($player_id)
@@ -29357,7 +29360,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                self::getCardInstance($card_id)->handleSpecialChoice($executionState, $choice);
+                if ($special_type_of_choice == 0) {
+                    self::getCardInstance($card_id)->handleCardChoice($executionState, $selected_card_id);
+                } else {
+                    self::getCardInstance($card_id)->handleSpecialChoice($executionState, $choice);
+                }
                 self::setStepMax($executionState->getMaxSteps());
             }
 
