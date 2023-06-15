@@ -2484,7 +2484,7 @@ $this->textual_card_infos = array(
     515 => array(
         'name'                => clienttranslate('Quackery'),
         'non_demand_effect_1' => clienttranslate('Choose to either score a card from your hand, or draw a ${age_4}.'),
-        'non_demand_effect_2' => clienttranslate('Reveal two cards in your hand. If you do, return both and draw a card of value equal to the sum number of ${icon_2} and ${icon_3} on the returned cards.'),
+        'non_demand_effect_2' => clienttranslate('Return exactly two cards in your hand. If you do, return draw a card of value equal to the sum number of ${icon_2} and ${icon_3} on the returned cards.'),
     ),
 
     516 => array(

@@ -41,9 +41,14 @@ abstract class Card
     // Subclasses are expected to override this method if the card has any special choices.
   }
 
+  public function handleCardChoice(Executionstate $state, int $cardId)
+  {
+    // Subclasses can optionally override this method if any extra handling is needed after individual cards are chosen.
+  }
+
   public function afterInteraction(ExecutionState $state)
   {
-    // Subclasses are expected to override this method if the card has any interactions.
+    // Subclasses can optionally override this method if any extra handling needs to be done after an entire interaction is complete.
   }
 
   // HELPER METHODS
