@@ -402,7 +402,7 @@ $this->textual_card_infos = array(
     59  => array(
         'name'                                => clienttranslate('Classification'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Reveal the color of a card in your hand. Take into your hand all cards of that color from all other player\'s hands. Then meld all cards of that color from your hand.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Reveal the color of a card from your hand. Take into your hand all cards of that color from all opponents\' hands. Then, reveal your hand and meld all cards of that color from it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. Take into your hand all cards of that color from all opponents\' hands. Then, reveal your hand and meld all cards of that color from it.'),
     ),
 
     60  => array(
@@ -2311,12 +2311,12 @@ $this->textual_card_infos = array(
 
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
-        'non_demand_effect_1' => clienttranslate('You may return any number of cards with consecutive values, starting with 1. If you do, safeguard an available achievement of value equal to the highest card returned.'),
+        'non_demand_effect_1' => clienttranslate('You may return any number of cards with consecutive values from your hand, starting with 1. If you do, safeguard an available achievement of value equal to the highest card returned.'),
     ),
 
     486 => array(
         'name'                => clienttranslate('Dance'),
-        'non_demand_effect_1' => clienttranslate('Transfer a card on your board with a ${icon_4} to the board of any other player. If you do, meld the lowest top card without a ${icon_4} from that player\'s board.'),
+        'non_demand_effect_1' => clienttranslate('Transfer a top card on your board with a ${icon_4} to the board of any other player. If you do, meld the lowest top card without a ${icon_4} from that player\'s board.'),
     ),
 
     487 => array(
@@ -2447,7 +2447,7 @@ $this->textual_card_infos = array(
 
     509 => array(
         'name'                => clienttranslate('Cliffhanger'),
-        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. Otherwise, transfer the top card of the ${age_4} deck to your safe.'),
+        'non_demand_effect_1' => clienttranslate('Reveal a ${age_4} in your safe. If it is: green, tuck it; purple, meld it; red, achieve it regardless of eligibility; yellow, score it; blue, draw a ${age_5}. If you cannot, safeguard the top card of the ${age_4} deck.'),
     ),
 
     510 => array(
@@ -2533,7 +2533,7 @@ $this->textual_card_infos = array(
 
     524 => array(
         'name'                => clienttranslate('Legend'),
-        'non_demand_effect_1' => clienttranslate('Choose a non-purple color. Self-execute your top card of that color. Score your top card of that color. Repeat this effect with the same color if you have scored fewer than nine points due to Legend this action.'),
+        'non_demand_effect_1' => clienttranslate('Choose a non-purple color. Self-execute your top card of that color. Score your top card of that color. If you do, repeat this effect with the same color if you have scored fewer than nine points due to Legend this action.'),
     ),
 
     /* Unseen - Age 5 */
@@ -2587,7 +2587,7 @@ $this->textual_card_infos = array(
 
     533 => array(
         'name'                => clienttranslate('Pantheism'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, draw and tuck a ${age_4}, splay right the color on your board of one of the tucked cards, and score all cards on your board of the color of the other tucked card.'),
+        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, draw and tuck a ${age_4}, score all cards on your board of the color of one of the tucked cards, and splay right the color on your board of the other tucked card.'),
         'non_demand_effect_2' => clienttranslate('Draw and tuck a ${age_4}.'),
     ),
 
@@ -2600,7 +2600,7 @@ $this->textual_card_infos = array(
 
     535 => array(
         'name'                => clienttranslate('Placebo'),
-        'non_demand_effect_1' => clienttranslate('Return one or more top cards of one color from your board, from the top. Draw a ${age_7} for each card returned. If you return exactly one ${age_7}, draw an ${age_8}.'),
+        'non_demand_effect_1' => clienttranslate('Return one or more top cards of one color from your board, from the top. Draw a ${age_7} for each card you return. If you return exactly one ${age_7}, draw an ${age_8}.'),
     ),
 
     536 => array(
