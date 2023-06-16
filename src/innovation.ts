@@ -3147,7 +3147,7 @@ class Innovation extends BgaGame {
 
     createAndAddToZone(zone: Zone, position, age, type, is_relic, id, start, card) {
         // id of the new item
-        let visible_card
+        let visible_card: boolean;
         if (id === null) {
             // Recto
             visible_card = false;

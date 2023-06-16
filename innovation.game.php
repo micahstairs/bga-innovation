@@ -2187,6 +2187,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your safe.');
             $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} from his safe.');
             break;
+        case 'safe->board':
+            $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your safe.');
+            $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his safe.');
+            break;
         case 'display->board':
             $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your display.');
             $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his display.');
@@ -2465,6 +2469,10 @@ class Innovation extends Table
         case 'safe->revealed':
             $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your safe.');
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his safe.');
+            break;
+        case 'revealed->safe':
+            $message_for_player = clienttranslate('${You} safeguard ${<}${age}${>} ${<<}${name}${>>}.');
+            $message_for_others = clienttranslate('${player_name} safeguards ${<}${age}${>} ${<<}${name}${>>}.');
             break;
             
         default:
@@ -11098,7 +11106,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || ($card_id >= 515 && $card_id < 525);
+        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 509 || ($card_id >= 515 && $card_id < 525);
     }
 
     function getCardInstance($card_id) {
@@ -16756,11 +16764,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (self::countCardsInHand($player_id) >= 2) {
                     $step_max = 1;
                 }
-                break;
-                
-            // id 509, Unseen age 3: Cliffhanger
-            case "509N1":
-                $step_max = 1;
                 break;
 
             // id 510, Unseen age 3: Smuggling
@@ -24998,22 +25001,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 509, Unseen age 3: Cliffhanger
-        case "509N1A":
-            // "Reveal a 4 in your safe. "
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'safe',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed',
-                
-                'age' => 4,
-            );
-            break;
-
         // id 510, Unseen age 3: Smuggling
         case "510D1A":
             // "I demand you transfer a card of value equal to the top yellow card on your board"
@@ -28882,38 +28869,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 509, Unseen age 3: Cliffhanger
-                case "509N1A":
-                    if ($n > 0) { // card was selected
-                        $color = $this->innovationGameState->get('color_last_selected');
-                        $revealed_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        // "If it is:"
-                        if ($color == 0) {
-                            // "blue, draw a 5."
-                            self::executeDraw($player_id, 5);
-                            self::transferCardFromTo($revealed_card, $player_id, 'safe'); // put it back
-                        } else if ($color == 1) {
-                            // "red, achieve it regardless of eligibility"
-                            self::transferCardFromTo($revealed_card, $player_id, 'achievements');
-                        } else if ($color == 2) {
-                            // "green, tuck it;"
-                            self::tuckCard($revealed_card, $player_id);
-                        } else if ($color == 3) {
-                            // "yellow, score it;"
-                            self::scoreCard($revealed_card, $player_id);
-                        } else {
-                            // " purple, meld it;"
-                            self::meldCard($revealed_card, $player_id);
-                        }
-                    } else {
-                        // "Otherwise, transfer the top card of the 4 deck to your safe."
-                        $card = self::getDeckTopCard(4, 0);
-                        if ($card !== null) {
-                            self::transferCardFromTo($card, $player_id, 'safe');
-                        }
-                    }
-                    break;
-
                 // id 511, Unseen age 3: Freemasons
                 case "511N1A":
                     if ($n > 0) { 
@@ -29352,7 +29307,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         try {
 
-            if ($code !== null && self::isInSeparateFile($card_id)) {
+            if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
                 $executionState = (new ExecutionState($this))
                     ->setLauncherId($player_id)
                     ->setPlayerId($player_id)
@@ -29360,11 +29315,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                if ($special_type_of_choice == 0) {
-                    self::getCardInstance($card_id)->handleCardChoice($executionState, $selected_card_id);
-                } else {
-                    self::getCardInstance($card_id)->handleSpecialChoice($executionState, $choice);
-                }
+                self::getCardInstance($card_id)->handleSpecialChoice($executionState, $choice);
                 self::setStepMax($executionState->getMaxSteps());
             }
 
@@ -30483,6 +30434,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
                         } else {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                        }
+                        if ($code !== null && self::isInSeparateFile($card_id)) {
+                            $executionState = (new ExecutionState($this))
+                                ->setLauncherId($player_id)
+                                ->setPlayerId($player_id)
+                                ->setEffectType($current_effect_type)
+                                ->setEffectNumber($current_effect_number)
+                                ->setCurrentStep(self::getStep())
+                                ->setMaxSteps(self::getStepMax());
+                            self::getCardInstance($card_id)->handleCardChoice($executionState, $selected_card_id);
+                            self::setStepMax($executionState->getMaxSteps());
                         }
                     }
                     else {
