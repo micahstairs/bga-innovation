@@ -24,11 +24,11 @@ require_once('modules/Innovation/Utils/Arrays.php');
 require_once('modules/Innovation/Utils/Notifications.php');
 require_once('modules/Innovation/Utils/Strings.php');
 
+use Innovation\GameState;
+use Innovation\Cards\ExecutionState;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 use Innovation\Utils\Strings;
-use Innovation\GameState;
-use Innovation\Cards\ExecutionState;
 
 /* Exception to be called when the game must end */
 class EndOfGame extends Exception {}
@@ -2668,6 +2668,10 @@ class Innovation extends Table
             case 'score->revealed,deck':
                 $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your score pile');
                 $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his score pile');
+                break;
+            case 'hand,score->revealed,deck':
+                $message_for_player = clienttranslate('${You_must} reveal and return ${number} ${card} from your hand and/or score pile');
+                $message_for_others = clienttranslate('${player_must} reveal and return ${number} ${card} from his hand and/or score pile');
                 break;
             case 'score->hand':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your score pile to your hand');
@@ -11106,7 +11110,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 509 || ($card_id >= 515 && $card_id < 525);
+        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525);
     }
 
     function getCardInstance($card_id) {
