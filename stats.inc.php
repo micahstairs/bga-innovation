@@ -140,7 +140,7 @@ $stats_type = array(
                     "type" => "int" ),
 
         "execution_combo_count" => array("id"=> 90,
-                    "name" => totranslate("Number of times the player was eligible to draw and achieve an 11 due to the combo bonus"),
+                    "name" => totranslate("Number of times the player was eligible to draw and achieve an 11 due to the Chain Rule"),
                     "type" => "int" ),
         
         /* Artifacts-specific */
