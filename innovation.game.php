@@ -10299,19 +10299,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
-            // id 533, Unseen age 5: Pantheism
-            case "533N1B":
-                // TODO(UNSEEN): Revisit this card. This interaction doesn't look right.
-                $colors = self::getAuxiliaryArray();
-                $message_args_for_player['color1'] = self::getColorInClear($colors[0]);
-                $message_args_for_others['color1'] = self::getColorInClear($colors[0]);        
-                $message_args_for_player['color2'] = self::getColorInClear($colors[1]);
-                $message_args_for_others['color2'] = self::getColorInClear($colors[1]);        
-                $message_for_player = clienttranslate('Do ${you} want to splay ${color1} right and score all ${color2} cards from your board or vice versa');
-                $message_for_others = clienttranslate('${player_name} must decide whether to splay ${color1} right and score all ${color2} cards from their board or vice versa');
-                $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                break;
-
             // id 534, Unseen age 5: Pen Name
             case "534N1A":
                 $message_for_player = clienttranslate('${You} may make a choice');
@@ -11110,7 +11097,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525);
+        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525) || $card_id >= 533;
     }
 
     function getCardInstance($card_id) {
@@ -17028,16 +17015,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Otherwise, draw a 5."
                     self::executeDraw($player_id, 5);
                 }
-                break;
-
-            // id 533, Unseen age 5: Pantheism
-            case "533N1":
-                $step_max = 1;
-                break;
-
-            case "533N2":
-                // "Draw and tuck a 4."
-                self::executeDrawAndTuck($player_id, 4);
                 break;
                 
             // id 534, Unseen age 5: Pen Name
@@ -25369,30 +25346,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            );
            break;
 
-       // id 533, Unseen age 5: Pantheism
-       case "533N1A":
-           // "Tuck a card from your hand."
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'owner_from' => $player_id,
-               'location_from' => 'hand',
-               'owner_to' => $player_id,
-               'location_to' => 'board',
-
-               'bottom_to' => true,
-           );
-           break;
-
-       case "533N1B":
-           $options = array(
-               'player_id' => $player_id, 
-
-               'choose_yes_or_no' => true,
-           );
-           break; 
-
        // id 534, Unseen age 5: Pen Name
        case "534N1A":
            // "Choose to either splay an unsplayed non-purple color on your 
@@ -28770,39 +28723,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 533, Unseen age 5: Pantheism
-                case "533N1A":
-                    if ($n > 0) { // "If you do"
-                        // "draw and tuck a 4,"
-                        $tucked_card2 = self::executeDrawAndTuck($player_id, 4);
-                        
-                        if ($tucked_card2['color'] == $this->innovationGameState->get('color_last_selected')) {
-                            self::splayRight($player_id, $player_id, $tucked_card2['color']);
-                            foreach(self::getCardsInLocationKeyedByColor($player_id, 'board')[$tucked_card2['color']] as $card) {
-                                self::scoreCard($card, $player_id);
-                            }
-                        } else {
-                            self::incrementStepMax(1); // decisions to be made
-                            self::setAuxiliaryArray(array($this->innovationGameState->get('color_last_selected'), $tucked_card2['color']));
-                        }
-                    }
-                    break;
-
-                case "533N1B":
-                    $colors = self::getAuxiliaryArray();
-                    if (self::getAuxiliaryValue() == 1) { // first choice
-                        $splayed_color = $colors[0];
-                        $scoring_color = $colors[1];
-                    } else {
-                        $splayed_color = $colors[1];
-                        $scoring_color = $colors[0];                    
-                    }
-                    self::splayRight($player_id, $player_id, $splayed_color);
-                    foreach(self::getCardsInLocationKeyedByColor($player_id, 'board')[$scoring_color] as $card) {
-                        self::scoreCard($card, $player_id);
-                    }
-                    break;
-
                 // id 534, Unseen age 5: Pen Name
                 case "534N1A":
                     // Choice made decide which interaction to enable
@@ -30397,21 +30317,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "529N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 533, Unseen age 5: Pantheism
-            case "533N1B":
-                $colors = self::getAuxiliaryArray();
-                if ($choice == 1) {
-                    $splayed_color = $colors[0];
-                     $scored_color = $colors[1];
-                } else {
-                    $splayed_color = $colors[1];
-                    $scored_color = $colors[0];
-                }
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay ${color1} right and score all ${color2} cards from your board.'), array('You' => 'You', 'color1' => self::getColorInClear($splayed_color), 'color2' => self::getColorInClear($scored_color)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay ${color1} right and score all ${color2} cards from their board.'), array('player_name' => self::getColoredPlayerName($player_id), 'color1' => self::getColorInClear($splayed_color), 'color2' => self::getColorInClear($scored_color)));
                 self::setAuxiliaryValue($choice);
                 break;
 
