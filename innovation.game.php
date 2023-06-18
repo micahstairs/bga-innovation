@@ -7397,8 +7397,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if ($this->innovationGameState->get('current_nesting_index') >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
             self::incStat(1, 'execution_combo_count', $player_id);
-            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Rule achievement.'), ['You' => 'You', ]);
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Rule achievement.'), ['player_name' => self::getColoredPlayerName($player_id)]);
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You', ]);
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Achievement.'), ['player_name' => self::getColoredPlayerName($player_id)]);
             self::executeDraw($player_id, 11, 'achievements');
         }
 
@@ -7421,8 +7421,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if ($current_nested_state['nesting_index'] >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
             self::incStat(1, 'execution_combo_count', $player_id);
-            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Rule achievement.'), ['You' => 'You', ]);
-            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Rule achievement.'), ['player_name' => self::getColoredPlayerName($player_id)]);
+            self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You', ]);
+            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} receives a Chain Achievement.'), ['player_name' => self::getColoredPlayerName($player_id)]);
             self::executeDraw($player_id, 11, 'achievements');
         }
 
