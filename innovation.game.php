@@ -11097,7 +11097,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525) || $card_id >= 533;
+        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 485 || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525) || $card_id >= 533;
     }
 
     function getCardInstance($card_id) {
@@ -25449,12 +25449,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ->setEffectNumber($current_effect_number)
             ->setNumChosen($n)
             ->setCurrentStep($step)
+            ->setNextStep($step + 1)
             ->setMaxSteps($step_max);
         
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
                 if ($code !== null && self::isInSeparateFile($card_id)) {
                     self::getCardInstance($card_id)->afterInteraction($executionState);
+                    $step = $executionState->getNextStep() - 1;
+                    $step_max = $executionState->getMaxSteps();
+                    self::setStep($step);
+                    self::setStepMax($step_max);
                 }
 
                 switch($code) {
