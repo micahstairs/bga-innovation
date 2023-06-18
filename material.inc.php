@@ -2653,6 +2653,64 @@ $this->textual_card_infos = array(
         'non_demand_effect_1' => clienttranslate('If you have three or more cards in your hand, return a card from your hand and splay the color of the returned card right, tuck a card from your hand, and score a card from your hand.'),
     ),
 
+    /* Unseen - Age 7 */
+
+    545 => array(
+        'name'                => clienttranslate('Counterintelligence'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you tuck a top card on your board with a ${icon_3}! If you do, transfer your top card of color matching the tucked card to my board, and draw a ${age_7}!'),
+        'non_demand_effect_1' => clienttranslate('Draw an ${age_8}.'),
+    ),
+
+    546 => array(
+        'name'                => clienttranslate('Private Eye'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you reveal your hand! Transfer the card in your hand of my choice to my board! Draw a ${age_7}!'),
+        'non_demand_effect_1' => clienttranslate('Score one of your secrets.'),
+        'non_demand_effect_2' => clienttranslate('You may splay your blue cards right.'),
+    ),
+
+    547 => array(
+        'name'                => clienttranslate('Camouflage'),
+        'non_demand_effect_1' => clienttranslate('Choose to either safeguard exactly two top cards of different color and equal value on your board, or score exactly two of your secrets of equal value.'),
+        'non_demand_effect_2' => clienttranslate('Draw a ${age_7} for each special achievement you have.'),
+    ),
+
+    548 => array(
+        'name'                => clienttranslate('Safe Deposit Box'),
+        'non_demand_effect_1' => clienttranslate('You may choose to either draw and junk two ${age_7}, or exchange all cards in your score pile with all valued junked cards.'),
+    ),
+
+    549 => array(
+        'name'                => clienttranslate('Black Market'),
+        'non_demand_effect_1' => clienttranslate('You may safeguard a card from your hand. If you do, reveal two available standard achievements. You may meld a revealed card with no ${icon_6} or ${icon_7}. Return each revealed card you do not meld.'),
+    ),
+
+    550 => array(
+        'name'                => clienttranslate('Plot Voucher'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, fully execute the melded card if it is your turn, otherwise self-execute it.'),
+    ),
+
+    551 => array(
+        'name'                => clienttranslate('Mafia'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you transfer your lowest secret to my safe!'),
+        'non_demand_effect_1' => clienttranslate('Tuck a card from any score pile.'),
+        'non_demand_effect_2' => clienttranslate('You may splay your red or yellow cards right.'),
+    ),
+
+    552 => array(
+        'name'                => clienttranslate('Subway'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_7}. If you have seven or more visible cards on your board of the color of the tucked card, draw a ${age_9}. Otherwise, junk all cards on your board of that color, and draw an ${age_8}.'),
+    ),
+
+    553 => array(
+        'name'                => clienttranslate('Fortune Cookie'),
+        'non_demand_effect_1' => clienttranslate('If you have exactly seven of any icon visible on your board, draw and score a ${age_7}; exactly eight, splay your green or purple cards right and draw an ${age_8}; exactly nine, draw a ${age_9}.'),
+    ),
+
+    554 => array(
+        'name'                => clienttranslate('Slot Machine'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}, ${age_2}, ${age_4}, ${age_4}, and ${age_5}, then return them. If one drawn card is green, splay your green or purple cards right. If two drawn cards are green, also score all drawn cards. If three drawn cards are green, you win.'),
+    ),
+
     /* Unseen - Special achievements */
 
     595 => array(
