@@ -1359,6 +1359,12 @@ class Innovation extends Table
             return;
         }
 
+        // Do not move the card if the was was supposed to move to the safe but it is already full
+        if ($location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getSafeLimit($owner_to)) {
+            $this->notifications->notifySafeIsFull($owner_to);
+            return;
+        }
+
         // Players can only draw an Unseen card on the first draw of a turn
         if ($card['location'] == 'deck') {
             self::setPlayerWillDrawUnseenCardNext($owner_to, false);
@@ -1676,6 +1682,14 @@ class Innovation extends Table
         }
         
         self::recordThatChangeOccurred();
+    }
+
+    function getSafeLimit($player_id): int {
+        $maxSplayDirection = 0;
+        foreach (self::getTopCardsOnBoard($player_id) as $card) {
+            $maxSplayDirection = max($maxSplayDirection, $card['splay_direction']);
+        }
+        return 5 - $maxSplayDirection;
     }
     
     /* Rearrangement mechanism */

@@ -64,7 +64,7 @@ class Card440 extends Card
 
   public function handleSpecialChoice(Executionstate $state, int $chosenIcon): void
   {
-    $this->notifications->motifyIconChoice($chosenIcon, $state->getPlayerId());
+    $this->notifications->notifyIconChoice($chosenIcon, $state->getPlayerId());
     $this->game->setAuxiliaryValue($chosenIcon);
   }
 }
