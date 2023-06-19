@@ -2711,6 +2711,63 @@ $this->textual_card_infos = array(
         'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}, ${age_2}, ${age_4}, ${age_4}, and ${age_5}, then return them. If one drawn card is green, splay your green or purple cards right. If two drawn cards are green, also score all drawn cards. If three drawn cards are green, you win.'),
     ),
 
+    /* Unseen - Age 8 */
+
+    555 => array(
+        'name'                => clienttranslate('Blacklight'),
+        'non_demand_effect_1' => clienttranslate('Choose to either unsplay one color of your cards, or splay up an unsplayed color on your board and draw a ${age_9}.'),
+    ),
+
+    556 => array(
+        'name'                => clienttranslate('Scouting'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal two ${age_9}. Return one or more of the drawn cards. If you return two cards, reveal the top card of the ${age_10} deck. If the color of the revealed card matches the color of one of the returned cards, draw a ${age_10}.'),
+    ),
+
+    557 => array(
+        'name'                => clienttranslate('Concealment'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you tuck all your secrets!'),
+        'non_demand_effect_1' => clienttranslate('Safeguard your bottom purple card.'),
+    ),
+
+    558 => array(
+        'name'                => clienttranslate('Enigma Machine'),
+        'non_demand_effect_1' => clienttranslate('Choose to either safeguard all available standard achievements, transfer all your secrets to your hand, or transfer all cards in your hand to the available achievements.'),
+        'non_demand_effect_2' => clienttranslate('Splay a color of your cards splayed left up.'),
+    ),
+
+    559 => array(
+        'name'                => clienttranslate('Handbag'),
+        'non_demand_effect_1' => clienttranslate('You may choose to either transfer a bottom card of each color from your board to your hand, or tuck all cards from your score pile, or choose a value and score all cards from your hand of that value.'),
+    ),
+
+    560 => array(
+        'name'                => clienttranslate('Hitchhiking'),
+        'non_demand_effect_1' => clienttranslate('Choose another player. That player chooses and transfers a card from their hand to your board. Self-execute the card, with that player making all decisions for you.'),
+    ),
+
+    561 => array(
+        'name'                => clienttranslate('Jackalope'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you transfer the highest card on your board without a ${icon_6} to my board! If you do, unsplay the transferred card\'s color on your board!'),
+        'non_demand_effect_1' => clienttranslate('Unsplay the color on your board with the most visible cards.'),
+    ),
+
+    562 => array(
+        'name'                => clienttranslate('Shangri-La'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has a ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If you meld an ${age_8}, repeat this effect.'),
+    ),
+
+    563 => array(
+        'name'                => clienttranslate('Joy Buzzer'),
+        'i_demand_effect_1'   => clienttranslate('${I_demand} you exchange all cards in your hand with all the lowest cards in my hand!'),
+        'non_demand_effect_1' => clienttranslate('You may score all the highest cards in your hand. If you do, score your top purple card.'),
+    ),
+
+    564 => array(
+        'name'                => clienttranslate('Opus Dei'),
+        'non_demand_effect_1' => clienttranslate('Reveal the highest card in your score pile. If you do, splay your cards of the revealed card\'s color up, and safeguard the revealed card.'),
+        'non_demand_effect_2' => clienttranslate('Draw an ${age_8} for each color on your board splayed up.'),
+    ),
+
     /* Unseen - Special achievements */
 
     595 => array(
