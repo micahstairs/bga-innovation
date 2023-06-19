@@ -2549,13 +2549,8 @@ class Innovation extends Table
                 }
                 break;
             case 'safe->none':
-                if ($code === '516N1B') {
-                    $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your safe');
-                    $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his safe');
-                } else {
-                    // This should not happen
-                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
-                }
+                $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his safe');
                 break;
             default:
                 // This should not happen
