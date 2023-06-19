@@ -156,7 +156,7 @@ class Innovation extends Table
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
             'current_nesting_index' => 97, // 0 refers to the originally executed card, 1 refers to a card exexcuted by that initial card, etc.
-            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 = base game, 1 = Artifacts, 2 = Echoes, 3 = Cities, 4 = 4th edition base game)
+            'release_version' => 98, // Used to help release new versions of the game without breaking existing games (undefined or 0 = base game, 1 = Artifacts, 2 = Echoes, 3 = Cities, 4 = 4th edition base game, 5 = 4th edition Unseen)
             'debug_mode' => 99, // 0 for disabled, 1 for enabled
             
             'game_type' => 100, // 1 for normal game, 2/3/4/5 for team game
@@ -339,9 +339,9 @@ class Innovation extends Table
         
         /************ Start the game initialization *****/
 
-        // Indicate that this production game was created after the 4th edition base game was released
+        // Indicate that this production game was created after the 4th edition unseen game was released
         // TODO(FIGURES): Update this before releasing future expansions.
-        $this->innovationGameState->setInitial('release_version', 4);
+        $this->innovationGameState->setInitial('release_version', 5);
 
         // Init global values with their initial values
         $this->innovationGameState->setInitial('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
@@ -7274,44 +7274,59 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function setAuxiliaryArray($array) {
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
-        $array_vals = array_values($array);
-        
-        // Remove the old array (if it exists)
-        self::DbQuery(self::format("DELETE FROM auxiliary_value_table WHERE nesting_index = {nesting_index}", array('nesting_index' => $nesting_index)));
-
-        // Write array size
-        self::DbQuery(self::format("
-                INSERT INTO auxiliary_value_table
-                    (nesting_index, array_index, value)
-                VALUES
-                    ({nesting_index}, 0, {array_size})
-            ", array('nesting_index' => $nesting_index, 'array_size' => count($array_vals))));
-
-        // Write array values
-        for ($i = 1; $i <= count($array_vals); $i++) {
-            self::DbQuery(self::format("
-                INSERT INTO auxiliary_value_table
-                    (nesting_index, array_index, value)
-                VALUES
-                    ({nesting_index}, {array_index}, {value})
-            ", array('nesting_index' => $nesting_index, 'array_index' => $i, 'value' => $array_vals[$i - 1])));
-        }
+        self::setAuxiliaryArrayHelper('auxiliary_value_table', 'nesting_index', $nesting_index, $array);
     }
 
     function getAuxiliaryArray() {
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
+        return self::getAuxiliaryArrayHelper('auxiliary_value_table', 'nesting_index', $nesting_index);
+    }
+
+    function setActionScopedAuxiliaryArray($card_id, $array) {
+        self::setAuxiliaryArrayHelper('action_scoped_auxiliary_value_table', 'card_id', $card_id, $array);
+    }
+
+    function getActionScopedAuxiliaryArray($card_id) {
+        return self::getAuxiliaryArrayHelper('action_scoped_auxiliary_value_table', 'card_id', $card_id);
+    }
+
+    function setAuxiliaryArrayHelper($table_name, $key_column_name, $key, $array) {
+        $array_vals = array_values($array);
         
+        // Remove the old array (if it exists)
+        self::DbQuery(self::format("DELETE FROM {table_name} WHERE {key_column_name} = {key}", array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key)));
+
+        // Write array size
+        self::DbQuery(self::format("
+                INSERT INTO {table_name}
+                    ({key_column_name}, array_index, value)
+                VALUES
+                    ({key}, 0, {array_size})
+            ", array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key, 'array_size' => count($array_vals))));
+
+        // Write array values
+        for ($i = 1; $i <= count($array_vals); $i++) {
+            self::DbQuery(self::format("
+                INSERT INTO {table_name}
+                    ({key_column_name}, array_index, value)
+                VALUES
+                    ({key}, {array_index}, {value})
+            ", array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key, 'array_index' => $i, 'value' => $array_vals[$i - 1])));
+        }
+    }
+
+    function getAuxiliaryArrayHelper($table_name, $key_column_name, $key) {
         // Get array size
         $array_size = self::getUniqueValueFromDB(self::format("
             SELECT
                 value
             FROM
-                auxiliary_value_table
+                {table_name}
             WHERE
-                nesting_index = {nesting_index} AND
+                {key_column_name} = {key} AND
                 array_index = 0
         ",
-            array('nesting_index' => $nesting_index)
+            array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key)
        ));
             
         // Get array values
@@ -7321,12 +7336,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 SELECT
                     value
                 FROM
-                    auxiliary_value_table
+                    {table_name}
                 WHERE
-                    nesting_index = {nesting_index} AND
+                    {key_column_name} = {key} AND
                     array_index = {array_index}
             ",
-                array('nesting_index' => $nesting_index, 'array_index' => $i)
+                array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key, 'array_index' => $i)
             ));
         }
 
@@ -11027,7 +11042,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Reset player table
             self::resetPlayerTable();
             
-            // [R] Disable the flags used when in dogma 
+            // Disable the flags used when in dogma 
+            if (self::getGameStateValue('release_version') >= 5) {
+                self::DbQuery("DELETE FROM action_scoped_auxiliary_value_table");
+            }
             self::DbQuery("
                 UPDATE
                     nested_card_execution
@@ -11111,7 +11129,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || $card_id == 485 || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525) || $card_id >= 533;
+        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || ($card_id >= 484 && $card_id <= 485) || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525) || $card_id >= 533;
     }
 
     function getCardInstance($card_id) {
@@ -12313,7 +12331,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     if (count($selectable_cards) == 2) {
                         foreach ($selectable_cards as $card) {
-                            self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                            self::transferCardFromTo($card, $launcher_id, 'score');
                         }
                         // "If you transferred any cards, draw an 8"
                         self::executeDraw($player_id, 8);
@@ -13344,7 +13362,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "I compel you to transfer all the highest cards from your score pile to my score pile!"
                     foreach ($card_ids as $card_id) {
                         $card = self::getCardInfo($card_id);
-                        self::transferCardFromTo($card, $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                        self::transferCardFromTo($card, $launcher_id, 'score');
                     }
                     self::setAuxiliaryValue($card['age']);
                     $step_max = 1;
@@ -13984,7 +14002,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for ($i = 0; $i < 5 ; $i++){
                     $pile = $piles[$i];
                     for ($j = count($pile) - 1; $j >= 0; $j--) {
-                        self::transferCardFromTo($pile[$j], $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false);
+                        self::transferCardFromTo($pile[$j], $player_id, 'score');
                     }
                 }
                 break;
@@ -14466,7 +14484,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "If Paper is a top card on any player's board, transfer it to your score pile."
                 $paper_card = self::getCardInfo(30);
                 if (self::isTopBoardCard($paper_card)) {
-                    self::transferCardFromTo($paper_card, $player_id, 'score', false, /*score_keyword*/false);
+                    self::transferCardFromTo($paper_card, $player_id, 'score');
                 }
                 break;
                 
@@ -17262,6 +17280,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if (!array_key_exists('can_pass', $options)) {
                 $options['can_pass'] = false;
             }
+            if (array_key_exists('meld_keyword', $options)) {
+                $options['location_to'] = 'board';
+            }
+            if (array_key_exists('score_keyword', $options)) {
+                $options['location_to'] = 'score';
+            }
             if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                 $options['n'] = 1;
             }
@@ -17271,7 +17295,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if (!array_key_exists('owner_from', $options)) {
                 $options['owner_from'] = $player_id;
             }
-            if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junkyard')) {
+            if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
                 $options['owner_to'] = 0;
             }
             if (!array_key_exists('owner_to', $options)) {
@@ -26402,7 +26426,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
                         $pile = $board[$this->innovationGameState->get('color_last_selected')];
                         for ($i = count($pile) - 1; $i >= 0; $i--) {
-                            self::transferCardFromTo($pile[$i], $launcher_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ false); 
+                            self::transferCardFromTo($pile[$i], $launcher_id, 'score'); 
                         }
                     }
                     break;
@@ -28070,7 +28094,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "417N1A":
                     if ($n > 0) {
                         $transferred_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::transferCardFromTo($transferred_card, $this->innovationGameState->get('owner_last_selected'), 'score', false, /*score_keyword*/false);
+                        self::transferCardFromTo($transferred_card, $this->innovationGameState->get('owner_last_selected'), 'score');
                         
                         // Fill the auxiliary array with all eligible cards in hand.
                         $eligible_cards = array();

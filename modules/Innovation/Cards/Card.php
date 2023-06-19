@@ -53,6 +53,22 @@ abstract class Card
 
   // HELPER METHODS
 
+  protected function setActionScopedAuxiliaryArray($array): void
+  {
+    $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $array);
+  }
+
+  protected function getActionScopedAuxiliaryArray(): array
+  {
+    return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName());
+  }
+
+  protected function getCardIdFromClassName(): string
+  {
+    $className = get_class($this);
+    return intval(substr($className, strrpos($className, "\\") + 5));
+  }
+
   protected function getPromptForIconChoice(): array
   {
     return [
