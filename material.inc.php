@@ -2353,7 +2353,7 @@ $this->textual_card_infos = array(
 
     493 => array(
         'name'                => clienttranslate('Polytheism'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect.  Otherwise, draw and tuck a ${age_1}.'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism. If you do, repeat this effect. Otherwise, draw and tuck a ${age_1}.'),
     ),
 
     494 => array(
@@ -2371,7 +2371,7 @@ $this->textual_card_infos = array(
 
     496 => array(
         'name'                => clienttranslate('Meteorology'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_3}. If it has a ${icon_2}, score it.  Otherwise, if it has a ${icon_1}, return it and draw two ${age_3}. Otherwise, tuck it.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_3}. If it has a ${icon_2}, score it. Otherwise, if it has a ${icon_1}, return it and draw two ${age_3}. Otherwise, tuck it.'),
         'non_demand_effect_2' => clienttranslate('If you have no ${icon_4}, claim the Zen achievement.'),
     ),
 
@@ -2612,7 +2612,7 @@ $this->textual_card_infos = array(
     537 => array(
         'name'                => clienttranslate('Red Herring'),
         'non_demand_effect_1' => clienttranslate('Splay your red cards left, right, or up.'),
-        'non_demand_effect_2' => clienttranslate('Draw and tuck a ${age_6}. If the color on your board of the card you tuck is splayed in the same direction as your red cards, splay that color up.  Otherwise, unsplay that color.'),
+        'non_demand_effect_2' => clienttranslate('Draw and tuck a ${age_6}. If the color on your board of the card you tuck is splayed in the same direction as your red cards, splay that color up. Otherwise, unsplay that color.'),
     ),
 
     538 => array(

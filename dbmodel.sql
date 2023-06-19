@@ -97,9 +97,10 @@ CREATE TABLE IF NOT EXISTS `auxiliary_value_table` (
 /* Table used to store a table-based auxiliary array which by default is only reset at the end of each action */
 CREATE TABLE IF NOT EXISTS `action_scoped_auxiliary_value_table` (
  `card_id` SMALLINT NOT NULL COMMENT 'The ID of the card which is storing and using this array of auxiliary values',
+ `player_id` INT(10) NOT NULL COMMENT 'The ID of the player which is storing and using this array of auxiliary values (or 0 if it is not player-specific)',
  `array_index` SMALLINT UNSIGNED NOT NULL COMMENT 'The 1-based index of the array (the 0th index is used as a header to indicate the array size)',
  `value` INT COMMENT 'the auxiliary value',
-  PRIMARY KEY(`card_id`, `array_index`)
+  PRIMARY KEY(`card_id`, `player_id`, `array_index`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /* Table used to store a index-based auxiliary value (useful for indexing by player IDs, for example) */

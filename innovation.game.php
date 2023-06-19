@@ -4238,7 +4238,12 @@ class Innovation extends Table
         /**
             Get all static information about all cards in the database.
         **/
-        $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM card");
+        // if 4th edition
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM `card` WHERE `location` != 'removed'");
+        } else {
+            $cards = self::getObjectListFromDB("SELECT id, type, age, faceup_age, color, spot_1, spot_2, spot_3, spot_4, spot_5, spot_6, dogma_icon, is_relic FROM `card`");
+        }
         return self::attachTextualInfoToList($cards);
     }
     
@@ -7274,60 +7279,50 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function setAuxiliaryArray($array) {
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
-        self::setAuxiliaryArrayHelper('auxiliary_value_table', 'nesting_index', $nesting_index, $array);
-    }
-
-    function getAuxiliaryArray() {
-        $nesting_index = $this->innovationGameState->get('current_nesting_index');
-        return self::getAuxiliaryArrayHelper('auxiliary_value_table', 'nesting_index', $nesting_index);
-    }
-
-    function setActionScopedAuxiliaryArray($card_id, $array) {
-        self::setAuxiliaryArrayHelper('action_scoped_auxiliary_value_table', 'card_id', $card_id, $array);
-    }
-
-    function getActionScopedAuxiliaryArray($card_id) {
-        return self::getAuxiliaryArrayHelper('action_scoped_auxiliary_value_table', 'card_id', $card_id);
-    }
-
-    function setAuxiliaryArrayHelper($table_name, $key_column_name, $key, $array) {
         $array_vals = array_values($array);
         
         // Remove the old array (if it exists)
-        self::DbQuery(self::format("DELETE FROM {table_name} WHERE {key_column_name} = {key}", array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key)));
+        self::DbQuery(self::format("DELETE FROM auxiliary_value_table WHERE nesting_index = {nesting_index}", array('nesting_index' => $nesting_index)));
 
         // Write array size
         self::DbQuery(self::format("
-                INSERT INTO {table_name}
-                    ({key_column_name}, array_index, value)
+                INSERT INTO auxiliary_value_table
+                    (nesting_index, array_index, value)
                 VALUES
-                    ({key}, 0, {array_size})
-            ", array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key, 'array_size' => count($array_vals))));
+                    ({nesting_index}, 0, {array_size})
+            ", array('nesting_index' => $nesting_index, 'array_size' => count($array_vals))));
 
         // Write array values
         for ($i = 1; $i <= count($array_vals); $i++) {
             self::DbQuery(self::format("
-                INSERT INTO {table_name}
-                    ({key_column_name}, array_index, value)
+                INSERT INTO auxiliary_value_table
+                    (nesting_index, array_index, value)
                 VALUES
-                    ({key}, {array_index}, {value})
-            ", array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key, 'array_index' => $i, 'value' => $array_vals[$i - 1])));
+                    ({nesting_index}, {array_index}, {value})
+            ", array('nesting_index' => $nesting_index, 'array_index' => $i, 'value' => $array_vals[$i - 1])));
         }
     }
 
-    function getAuxiliaryArrayHelper($table_name, $key_column_name, $key) {
+    function getAuxiliaryArray() {
+        $nesting_index = $this->innovationGameState->get('current_nesting_index');
+
         // Get array size
         $array_size = self::getUniqueValueFromDB(self::format("
             SELECT
                 value
             FROM
-                {table_name}
+                auxiliary_value_table
             WHERE
-                {key_column_name} = {key} AND
+                nesting_index = {nesting_index} AND
                 array_index = 0
         ",
-            array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key)
+            array('nesting_index' => $nesting_index)
        ));
+
+       // Return empty array if no array was stored
+       if ($array_size == null) {
+           return [];
+       }
             
         // Get array values
         $array = array();
@@ -7336,12 +7331,77 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 SELECT
                     value
                 FROM
-                    {table_name}
+                    auxiliary_value_table
                 WHERE
-                    {key_column_name} = {key} AND
+                    nesting_index = {nesting_index} AND
                     array_index = {array_index}
             ",
-                array('table_name' => $table_name, 'key_column_name' => $key_column_name, 'key' => $key, 'array_index' => $i)
+                array('nesting_index' => $nesting_index, 'array_index' => $i)
+            ));
+        }
+
+        return $array;
+    }
+
+    function setActionScopedAuxiliaryArray($card_id, $player_id, $array) {
+        $array_vals = array_values($array);
+        
+        // Remove the old array (if it exists)
+        self::DbQuery(self::format("DELETE FROM action_scoped_auxiliary_value_table WHERE card_id = {card_id} AND player_id = {player_id}", array('card_id' => $card_id, 'player_id' => $player_id)));
+
+        // Write array size
+        self::DbQuery(self::format("
+                INSERT INTO action_scoped_auxiliary_value_table
+                    (card_id, player_id, array_index, value)
+                VALUES
+                    ({card_id}, {player_id}, 0, {array_size})
+            ", array('card_id' => $card_id, 'player_id' => $player_id, 'array_size' => count($array_vals))));
+
+        // Write array values
+        for ($i = 1; $i <= count($array_vals); $i++) {
+            self::DbQuery(self::format("
+                INSERT INTO action_scoped_auxiliary_value_table
+                    (card_id, player_id, array_index, value)
+                VALUES
+                    ({card_id}, {player_id}, {array_index}, {value})
+            ", array('card_id' => $card_id, 'player_id' => $player_id, 'array_index' => $i, 'value' => $array_vals[$i - 1])));
+        }
+    }
+
+    function getActionScopedAuxiliaryArray($card_id, $player_id) {
+        // Get array size
+        $array_size = self::getUniqueValueFromDB(self::format("
+            SELECT
+                value
+            FROM
+                action_scoped_auxiliary_value_table
+            WHERE
+                card_id = {card_id} AND
+                player_id = {player_id} AND
+                array_index = 0
+        ",
+            array('card_id' => $card_id, 'player_id' => $player_id)
+       ));
+
+       // Return empty array if no array was stored
+       if ($array_size == null) {
+           return [];
+       }
+            
+        // Get array values
+        $array = array();
+        for ($i = 1; $i <= $array_size; $i++) {
+            $array[] = self::getUniqueValueFromDB(self::format("
+                SELECT
+                    value
+                FROM
+                    action_scoped_auxiliary_value_table
+                WHERE
+                    card_id = {card_id} AND
+                    player_id = {player_id} AND
+                    array_index = {array_index}
+            ",
+                array('card_id' => $card_id, 'player_id' => $player_id, 'array_index' => $i)
             ));
         }
 
@@ -11129,7 +11189,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
-        return $card_id <= 4 || $card_id == 65 || $card_id == 440 || ($card_id >= 484 && $card_id <= 485) || $card_id == 506 || $card_id == 509 || ($card_id >= 515 && $card_id < 525) || $card_id >= 533;
+        return $card_id <= 4
+            || $card_id == 65
+            || $card_id == 440
+            || ($card_id >= 484 && $card_id <= 485)
+            || $card_id == 493
+            || $card_id == 506
+            || $card_id == 509
+            || ($card_id >= 515 && $card_id < 525)
+            || $card_id >= 533;
     }
 
     function getCardInstance($card_id) {
@@ -16540,20 +16608,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($card_id_array) >= 2) {
                     $step_max = 2;
                     self::setAuxiliaryArray($card_id_array);
-                }
-                break;
-
-            // id 493, Unseen age 1: Polytheism
-            case "493N1":
-                $card_id_array = array();
-                $cards_in_hand = self::getCardsInHand($player_id);
-                if (count($cards_in_hand) > 0) {
-                    $step_max = 1;
-                    foreach ($cards_in_hand as $card) {
-                        $card_id_array[] = $card['id'];
-                    }
-                    self::setAuxiliaryArray($card_id_array);
-                    self::setAuxiliaryValue2FromArray(array()); // initialize icon tracker
                 }
                 break;
 
@@ -24648,22 +24702,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 493, Unseen age 1: Polytheism
-        case "493N1A":
-            // "Meld a card from your hand with no icon on a card already melded by you during this action due to Polytheism."
-            $options = array(
-                'player_id' => $player_id,                
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-            
         // id 495, Unseen age 2: Astrology
         case "495N1A":
             // "You may splay left the color of which you have the most cards on your board."
@@ -28529,55 +28567,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $age_to_draw = $bottom_card['age'];
                         }
                         self::executeDrawAndSafeguard($player_id, $age_to_draw);
-                    }
-                    break;
-                    
-                // id 493, Unseen age 1: Polytheism
-                case "493N1A":
-                    if ($n > 0) { // "if you do"
-                        $melded_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        $icon_array = self::getAuxiliaryValue2AsArray();
-                        for ($icon = 1; $icon <= 9; $icon++) { // skip the hex symbol                           
-                            if (self::hasRessource($melded_card, $icon)) {
-                                $icon_array[] = $icon;
-                            }
-                        }
-                        for ($icon = 11; $icon <= 17; $icon++) {
-                            if (self::hasRessource($melded_card, $icon)) {
-                                $icon_array[] = $icon;
-                            }
-                        }
-                        for ($icon = 101; $icon <= 112; $icon++) {
-                            if (self::hasRessource($melded_card, $icon)) {
-                                $icon_array[] = $icon;
-                            }
-                        }                        
-                        $card_id_array = array();
-                        $cards_in_hand = self::getCardsInHand($player_id);
-                        foreach($cards_in_hand as $card) {
-                            $found = false;
-                            foreach ($icon_array as $icon) {
-                                if (self::hasRessource($card, $icon)) {
-                                    $found = true;
-                                }
-                            }
-                            
-                            if ($found == false) {
-                                // update the card list with cards that do not have a matching icon
-                                $card_id_array[] = $card['id'];
-                            }
-                        }
-                        
-                        if (count($card_id_array) > 0) {
-                            // "repeat this effect."
-                            self::setStep(1); $step = 1;
-                            self::setAuxiliaryArray($card_id_array);
-                            self::setAuxiliaryValue2FromArray($icon_array); // update icon tracker
-                        }
-                        else {
-                            // "Otherwise, draw and tuck a 1."
-                            self::executeDrawAndTuck($player_id, 1);
-                        }
                     }
                     break;
                     

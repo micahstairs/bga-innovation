@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use Innovation\Utils\Arrays;
 
 class Card485 extends Card
 {

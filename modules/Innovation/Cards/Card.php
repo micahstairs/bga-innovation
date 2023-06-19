@@ -51,23 +51,26 @@ abstract class Card
     // Subclasses can optionally override this method if any extra handling needs to be done after an entire interaction is complete.
   }
 
-  // HELPER METHODS
+  // CARD HELPERS
 
-  protected function setActionScopedAuxiliaryArray($array): void
+  protected function drawAndTuck(int $player_id, int $age)
   {
-    $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $array);
+    return $this->game->executeDrawAndTuck($player_id, $age);
   }
 
-  protected function getActionScopedAuxiliaryArray(): array
+  // AUXILARY VALUE HELPERS
+
+  protected function setActionScopedAuxiliaryArray($array, $player_id = 0): void
   {
-    return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName());
+    $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $player_id, $array);
   }
 
-  protected function getCardIdFromClassName(): string
+  protected function getActionScopedAuxiliaryArray($player_id = 0): array
   {
-    $className = get_class($this);
-    return intval(substr($className, strrpos($className, "\\") + 5));
+    return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $player_id);
   }
+
+  // PROMPT MESSAGE HELPERS
 
   protected function getPromptForIconChoice(): array
   {
@@ -75,6 +78,14 @@ abstract class Card
       "message_for_player" => clienttranslate('Choose an icon'),
       "message_for_others" => clienttranslate('${player_name} must choose an icon'),
     ];
+  }
+
+  // GENERAL UTILITY HELPERS
+
+  protected function getCardIdFromClassName(): string
+  {
+    $className = get_class($this);
+    return intval(substr($className, strrpos($className, "\\") + 5));
   }
 
 }
