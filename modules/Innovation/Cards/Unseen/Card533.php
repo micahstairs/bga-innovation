@@ -19,7 +19,7 @@ class Card533 extends Card
     if ($state->getEffectNumber() == 1) {
       $state->setMaxSteps(1);
     } else {
-      $this->game->executeDrawAndTuck($state->getPlayerId(), 4);
+      self::drawAndTuck(4);
     }
   }
 
@@ -42,7 +42,7 @@ class Card533 extends Card
   public function handleCardChoice(Executionstate $state, int $cardId)
   {
     $tuckedCard1 = $this->game->getCardInfo($cardId);
-    $tuckedCard2 = $this->game->executeDrawAndTuck($state->getPlayerId(), 4);
+    $tuckedCard2 = self::drawAndTuck(4);
     $this->game->setAuxiliaryArray([$tuckedCard1['color'], $tuckedCard2['color']]);
     $state->setMaxSteps(2);
   }
@@ -62,7 +62,7 @@ class Card533 extends Card
     }
     $colors = $this->game->getAuxiliaryArray();
     $remainingColor = $colors[0] == $choice ? $colors[1] : $colors[0];
-    $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), $remainingColor);
+    self::splayRight($remainingColor);
   }
 
 }

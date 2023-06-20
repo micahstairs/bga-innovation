@@ -2553,13 +2553,13 @@ $this->textual_card_infos = array(
 
     527 => array(
         'name'                => clienttranslate('Cabal'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you transfer all cards from your hand that have a value matching any of my secrets to my score pile! Draw a ${age_5}!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer all cards from your hand that have a value matching any of my secrets to my score pile! Draw a ${age_5}!'),
         'non_demand_effect_1' => clienttranslate('Safeguard an available achievement of value equal to a top card on your board.'),
     ),
 
     528 => array(
         'name'              => clienttranslate('Witch Trial'),
-        'i_demand_effect_1' => clienttranslate('${I_demand} you draw and reveal a ${age_5}! Return your top card of the color of the drawn card, another card of that color from your hand, and a card from your score pile! If you do, repeat this effect!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal a ${age_5}! Return your top card of the color of the drawn card, another card of that color from your hand, and a card from your score pile! If you do, repeat this effect!'),
     ),
 
     529 => array(
@@ -2569,7 +2569,7 @@ $this->textual_card_infos = array(
 
     530 => array(
         'name'                => clienttranslate('Secret History'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you transfer one of your secrets to my safe!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer one of your secrets to my safe!'),
         'non_demand_effect_1' => clienttranslate('Splay your red or purple cards right. If you don\'t, claim the Mystery achievement.'),
     ),
 
@@ -2605,7 +2605,7 @@ $this->textual_card_infos = array(
 
     536 => array(
         'name'                => clienttranslate('Reconnaissance'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you reveal your hand!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand!'),
         'non_demand_effect_1' => clienttranslate('Draw and reveal three ${age_7}. Return two of the drawn cards. You may splay the color of the card not returned right.'),
     ),
 
@@ -2617,7 +2617,7 @@ $this->textual_card_infos = array(
 
     538 => array(
         'name'              => clienttranslate('Sniping'),
-        'i_demand_effect_1' => clienttranslate('${I_demand} you unsplay the color on your board of my choice! Meld your bottom card of that color! Transfer your bottom card of that color to my board!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you unsplay the color on your board of my choice! Meld your bottom card of that color! Transfer your bottom card of that color to my board!'),
     ),
 
     539 => array(
@@ -2640,7 +2640,7 @@ $this->textual_card_infos = array(
 
     542 => array(
         'name'              => clienttranslate('Sabotage'),
-        'i_demand_effect_1' => clienttranslate('${I_demand} you draw a ${age_6}! Reveal the cards in your hand! Return the card of my choice from your hand! Tuck the top card from your board and all cards from your score pile of the same color as the returned card!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you draw a ${age_6}! Reveal the cards in your hand! Return the card of my choice from your hand! Tuck the top card from your board and all cards from your score pile of the same color as the returned card!'),
     ),
 
     543 => array(
@@ -2657,13 +2657,13 @@ $this->textual_card_infos = array(
 
     545 => array(
         'name'                => clienttranslate('Counterintelligence'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you tuck a top card on your board with a ${icon_3}! If you do, transfer your top card of color matching the tucked card to my board, and draw a ${age_7}!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you tuck a top card on your board with a ${icon_3}! If you do, transfer your top card of color matching the tucked card to my board, and draw a ${age_7}!'),
         'non_demand_effect_1' => clienttranslate('Draw an ${age_8}.'),
     ),
 
     546 => array(
         'name'                => clienttranslate('Private Eye'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you reveal your hand! Transfer the card in your hand of my choice to my board! Draw a ${age_7}!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand! Transfer the card in your hand of my choice to my board! Draw a ${age_7}!'),
         'non_demand_effect_1' => clienttranslate('Score one of your secrets.'),
         'non_demand_effect_2' => clienttranslate('You may splay your blue cards right.'),
     ),
@@ -2691,7 +2691,7 @@ $this->textual_card_infos = array(
 
     551 => array(
         'name'                => clienttranslate('Mafia'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you transfer your lowest secret to my safe!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer your lowest secret to my safe!'),
         'non_demand_effect_1' => clienttranslate('Tuck a card from any score pile.'),
         'non_demand_effect_2' => clienttranslate('You may splay your red or yellow cards right.'),
     ),

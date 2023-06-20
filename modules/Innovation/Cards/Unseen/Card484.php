@@ -52,11 +52,11 @@ class Card484 extends Card
           $this->game->transferCardFromTo($card, $state->getLauncherId(), 'score');
         }
         foreach ($cardsInScorePile as $card) {
-          $this->game->transferCardFromTo($card, $state->getPlayerId(), 'hand');
+          self::putInHand($card);
         }
       }
     } else {
-      $color = $this->game->innovationGameState->get('color_last_selected');
+      $color = self::getLastSelectedColor();
       $colorCounts = self::getActionScopedAuxiliaryArray();
       $colorCounts[$color]--;
       self::setActionScopedAuxiliaryArray($colorCounts);

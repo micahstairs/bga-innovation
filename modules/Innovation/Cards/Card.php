@@ -10,11 +10,13 @@ abstract class Card
 {
 
   protected \Innovation $game;
+  protected ExecutionState $state;
   protected Notifications $notifications;
 
-  function __construct(\Innovation $game)
+  function __construct(\Innovation $game, ExecutionState $state)
   {
     $this->game = $game;
+    $this->state = $state;
     $this->notifications = $game->notifications;
   }
 
@@ -29,6 +31,8 @@ abstract class Card
   public function getSpecialChoicePrompt(ExecutionState $state): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
+      case 4: // choose_color
+        return $this->getPromptForColorChoice();
       case 12: // choose_icon_type
         return $this->getPromptForIconChoice();
       default:
@@ -53,24 +57,137 @@ abstract class Card
 
   // CARD HELPERS
 
-  protected function drawAndTuck(int $player_id, int $age)
+  protected function draw(int $age, int $playerId = null)
   {
-    return $this->game->executeDrawAndTuck($player_id, $age);
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->executeDraw($playerId, $age);
+  }
+
+  protected function drawAndMeld(int $age, int $playerId = null)
+  {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->executeDrawAndMeld($playerId, $age);
+  }
+
+  protected function drawAndTuck(int $age, int $playerId = null)
+  {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->executeDrawAndTuck($playerId, $age);
+  }
+
+  protected function drawAndScore(int $age, int $playerId = null)
+  {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->executeDrawAndScore($playerId, $age);
+  }
+
+  protected function drawAndSafeguard(int $age, int $playerId = null)
+  {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->executeDrawAndSafeguard($playerId, $age);
+  }
+
+  protected function drawAndReveal(int $age, int $playerId = null)
+  {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->executeDrawAndReveal($playerId, $age);
+  }
+
+  protected function putInHand($card, int $playerId = null) {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    return $this->game->transferCardFromTo($card, $playerId, 'hand');
+  }
+
+  // SPLAY HELPERS
+
+  protected function unsplay(int $color, int $playerId = null) {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    $this->game->unsplay($playerId, $playerId, $color);
+  }
+
+  protected function splayLeft(int $color, int $playerId = null) {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    $this->game->splayLeft($playerId, $playerId, $color);
+  }
+  
+  protected function splayRight(int $color, int $playerId = null) {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    $this->game->splayRight($playerId, $playerId, $color);
+  }
+
+  protected function splayUp(int $color, int $playerId = null) {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    $this->game->splayUp($playerId, $playerId, $color);
+  }
+
+  protected function splayAslant(int $color, int $playerId = null) {
+    if ($playerId === null) {
+      $playerId = $this->state->getPlayerId();
+    }
+    $this->game->splayAslant($playerId, $playerId, $color);
+  }
+
+  // SELECTION HELPERS
+
+  protected function getLastSelectedCard() {
+    return $this->game->getCardInfo(self::getLastSelectedId());
+  }
+
+  protected function getLastSelectedId(): int {
+    return $this->game->innovationGameState->get('id_last_selected');
+  }
+
+  protected function getLastSelectedAge(): int {
+    return $this->game->innovationGameState->get('age_last_selected');
+  }
+
+  protected function getLastSelectedColor(): int {
+    return $this->game->innovationGameState->get('color_last_selected');
   }
 
   // AUXILARY VALUE HELPERS
 
-  protected function setActionScopedAuxiliaryArray($array, $player_id = 0): void
+  protected function setActionScopedAuxiliaryArray($array, $playerId = 0): void
   {
-    $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $player_id, $array);
+    $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId, $array);
   }
 
-  protected function getActionScopedAuxiliaryArray($player_id = 0): array
+  protected function getActionScopedAuxiliaryArray($playerId = 0): array
   {
-    return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $player_id);
+    return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId);
   }
 
   // PROMPT MESSAGE HELPERS
+
+  protected function getPromptForColorChoice(): array
+  {
+    return [
+      "message_for_player" => clienttranslate('${You} must choose a color'),
+      "message_for_others" => clienttranslate('${player_name} must choose a color'),
+    ];
+  }
 
   protected function getPromptForIconChoice(): array
   {

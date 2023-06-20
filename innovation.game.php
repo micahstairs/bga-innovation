@@ -2548,6 +2548,10 @@ class Innovation extends Table
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 }
                 break;
+            case 'safe->none':
+                $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his safe');
+                break;
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -2767,6 +2771,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} look at ${number} top ${card} of any deck');
                 $message_for_others = clienttranslate('${player_must} look at ${number} top ${card} of any deck');
                 break;
+            case 'safe->none':
+                $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his safe');
+                break;
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -2875,6 +2883,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s board.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} board.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${opponent_name}\'s board.');
+                break;
+
+            case 'score->board':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your score to ${opponent_name}\'s board.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score to ${your} board.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score to ${opponent_name}\'s board.');
                 break;
                 
             case 'hand->achievements':
@@ -3160,6 +3174,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} to ${opponent_name}\'s board');
                 break;
 
+            case 'hand,score->board':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                break;
+                
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -3189,7 +3209,13 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s achievements');
                 break;
-            
+
+            case 'hand,score->board':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                break;
+                
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -9752,7 +9778,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                $prompt = self::getCardInstance($card_id)->getSpecialChoicePrompt($executionState);
+                $prompt = self::getCardInstance($card_id, $executionState)->getSpecialChoicePrompt($executionState);
                 $message_for_player = $prompt['message_for_player'];
                 $message_for_others = $prompt['message_for_others'];
                 if (array_key_exists('options', $prompt)) {
@@ -11200,12 +11226,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id >= 533;
     }
 
-    function getCardInstance($card_id) {
+    function getCardInstance($card_id, $execution_state) {
         $card = $this->getCardInfo($card_id);
         $set = $card['type'] == 0 ? "Base" : "Unseen";
         require_once("modules/Innovation/Cards/${set}/Card${card_id}.php");
         $classname = "Innovation\Cards\\${set}\Card${card_id}";
-        return new $classname($this);
+        return new $classname($this, $execution_state);
     }
     
     function stPlayerInvolvedTurn() {
@@ -11287,7 +11313,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
 
             if (self::isInSeparateFile($card_id)) {
-                self::getCardInstance($card_id)->initialExecution($executionState);
+                self::getCardInstance($card_id, $executionState)->initialExecution($executionState);
                 $using_execution_status_object = true;
             }
 
@@ -17324,7 +17350,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $clock = self::getIconSquare(6);
 
         if (self::isInSeparateFile($card_id)) {
-            $options = self::getCardInstance($card_id)->getInteractionOptions($executionState);
+            $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions($executionState);
 
             if (array_key_exists('n', $options) && $options['n'] == 'all') {
                 $options['n'] = 999;
@@ -25531,7 +25557,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
                 if ($code !== null && self::isInSeparateFile($card_id)) {
-                    self::getCardInstance($card_id)->afterInteraction($executionState);
+                    self::getCardInstance($card_id, $executionState)->afterInteraction($executionState);
                     $step = $executionState->getNextStep() - 1;
                     $step_max = $executionState->getMaxSteps();
                     self::setStep($step);
@@ -29271,7 +29297,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                self::getCardInstance($card_id)->handleSpecialChoice($executionState, $choice);
+                self::getCardInstance($card_id, $executionState)->handleSpecialChoice($executionState, $choice);
                 self::setStepMax($executionState->getMaxSteps());
             }
 
@@ -30384,7 +30410,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 ->setEffectNumber($current_effect_number)
                                 ->setCurrentStep(self::getStep())
                                 ->setMaxSteps(self::getStepMax());
-                            self::getCardInstance($card_id)->handleCardChoice($executionState, $selected_card_id);
+                            self::getCardInstance($card_id, $executionState)->handleCardChoice($executionState, $selected_card_id);
                             self::setStepMax($executionState->getMaxSteps());
                         }
                     }

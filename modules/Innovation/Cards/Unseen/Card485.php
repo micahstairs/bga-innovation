@@ -41,7 +41,7 @@ class Card485 extends Card
   public function afterInteraction(Executionstate $state)
   {
     if ($state->getCurrentStep() == 1) {
-      if ($this->game->innovationGameState->get('age_last_selected') == $this->game->getAuxiliaryValue()) {
+      if (self::getLastSelectedAge() == $this->game->getAuxiliaryValue()) {
         $this->game->setAuxiliaryValue($this->game->getAuxiliaryValue() + 1);
         $state->setNextStep(1);
         $state->setMaxSteps(2);

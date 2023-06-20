@@ -41,13 +41,12 @@ class Card493 extends Card
   public function afterInteraction(Executionstate $state)
   {
     if ($state->getNumChosen() == 1) {
-      $cardId = $this->game->innovationGameState->get('id_last_selected');
-      $card = $this->game->getCardInfo($cardId);
+      $card = self::getLastSelectedCard();
       $iconsMelded = array_unique(array_merge(self::getActionScopedAuxiliaryArray($state->getPlayerId()), self::getIcons($card)));
       self::setActionScopedAuxiliaryArray($iconsMelded, $state->getPlayerId());
       $state->setNextStep(1);
     } else {
-      self::drawAndTuck($state->getPlayerId(), 1);
+      self::drawAndTuck(1);
     }
   }
 

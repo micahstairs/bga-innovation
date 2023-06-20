@@ -61,7 +61,7 @@ class Card65 extends Card
     if ($choice === 0) {
       $this->game->executeDraw($player_id, $this->game->getMaxAgeInScore($player_id) + 1);
     } else {
-      $this->game->executeDrawAndScore($player_id, 8);
+      self::drawAndScore(8);
       $state->setMaxSteps(2);
     }
   }

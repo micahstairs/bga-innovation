@@ -16,7 +16,7 @@ class Card520 extends Card
   {
     $numCardsWithProsperityIcons = 0;
     for ($i = 3; $i >= 1; $i--) {
-      $card = $this->game->executeDrawAndMeld($state->getPlayerId(), $i);
+      $card = self::drawAndMeld($i);
       if ($this->game->hasRessource($card, $this->game::PROSPERITY)) {
         $numCardsWithProsperityIcons++;
       }
@@ -30,8 +30,8 @@ class Card520 extends Card
       }
     }
     if ($numCardsWithProsperityIcons >= 2) {
-      $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), $this->game::GREEN);
-      $this->game->splayRight($state->getPlayerId(), $state->getPlayerId(), $this->game::BLUE);
+      self::splayRight($this->game::GREEN);
+      self::splayRight($this->game::BLUE);
     }
   }
 }
