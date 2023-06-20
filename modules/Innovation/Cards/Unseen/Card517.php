@@ -32,48 +32,29 @@ class Card517 extends Card
           'choose_color' => true,
         ];
       } else {
-        // "I demand you return a card of the color of my choice from your hand!"
         return [
-          'player_id'     => $state->getPlayerId(),
           'location_from' => 'hand',
           'location_to'   => 'deck',
-          
           'color'         => array($this->game->getAuxiliaryValue()),
         ];
       }
     } else {
-      // "You may splay your red cards right."
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::RIGHT,
-        'color'           => array($this->game::RED),
+        'color'           => [$this->game::RED],
       ];
     }
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
-  {
-  }
-
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->isDemand()) {
-        if ($state->getNumChosen() > 0) { // "If you do"
-            // "transfer the top card of that color from your board to mine!"
-            $top_card_of_color = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game->getAuxiliaryValue());
-            if ($top_card_of_color !== null) {
-                $this->game->transferCardFromTo($top_card_of_color, $state->getLauncherId(), 'board');
-            }
-        }
+    if ($state->isDemand() && $state->getNumChosen() > 0) {
+      $topCard = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game->getAuxiliaryValue());
+      if ($topCard !== null) {
+        $this->game->transferCardFromTo($topCard, $state->getLauncherId(), 'board');
+      }
     }
-  }
-
-  public function getSpecialChoicePrompt(Executionstate $state): array
-  {
-    return [
-      "message_for_player" => clienttranslate('${You} must choose a color'),
-      "message_for_others" => clienttranslate('${player_name} must choose a color'),
-    ];
   }
 
   public function handleSpecialChoice(Executionstate $state, int $choice): void

@@ -35,8 +35,8 @@ class Card518 extends Card
         $this->game->setAuxiliaryArray($cardIds);
       }
     } else {
-      $top_card = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game::RED);
-      if ($top_card !== null && $top_card['id'] == 518) {
+      $topCard = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game::RED);
+      if ($topCard !== null && $topCard['id'] == self::getCardIdFromClassName()) {
         $state->setMaxSteps(1);
       }
     }
@@ -56,7 +56,7 @@ class Card518 extends Card
         'n'             => 'all',
         'location_from' => 'pile',
         'location_to'   => 'deck',
-        'color'         => array($this->game::RED),
+        'color'         => [$this->game::RED],
       ];
     }
   }
@@ -69,14 +69,6 @@ class Card518 extends Card
           $this->game->transferCardFromTo($topCard, $state->getLauncherId(), 'board');
         }
     }
-  }
-
-  public function getSpecialChoicePrompt(Executionstate $state): array
-  {
-    return [
-      "message_for_player" => clienttranslate('${You} must choose a color'),
-      "message_for_others" => clienttranslate('${player_name} must choose a color'),
-    ];
   }
 
   public function handleSpecialChoice(Executionstate $state, int $choice): void

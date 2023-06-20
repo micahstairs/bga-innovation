@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card522 extends Card
 {
@@ -16,30 +15,21 @@ class Card522 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $safe_cards = $this->game->getCardsInLocation($state->getPlayerId(), 'safe');
-      
-    if (count($safe_cards) == 1) {
-        // "Transfer one of your secrets to the available achievements"
-        $this->game->transferCardFromTo($safe_cards[0], 0, 'achievements');
-        // "draw a card of value one higher than the transferred card."
-        $this->game->executeDraw($state->getPlayerId(), ($safe_cards[0])['age'] + 1);
-    } else if (count($safe_cards) > 1) {
+    $secrets = $this->game->getCardsInLocation($state->getPlayerId(), 'safe');
+    if (count($secrets) == 1) {
+      $this->game->transferCardFromTo($secrets[0], 0, 'achievements');
+      self::draw($secrets[0]['age'] + 1);
+    } else if (count($secrets) > 1) {
       $state->setMaxSteps(1);
     } else {
-        $top_red_card = $this->game->getTopCardOnBoard($state->getPlayerId(), 1);
-        if ($top_red_card !== null) {
-            $age = $top_red_card['age'];
-        } else {
-            $age = 1;
-        }
-        $this->game->executeDrawAndSafeguard($state->getPlayerId(), $age);
+      $topRedCard = $this->game->getTopCardOnBoard($state->getPlayerId(), 1);
+      self::drawAndSafeguard($topRedCard === null ? 0 : $topRedCard['age']);
     }
-    
+
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-      // "Transfer one of your secrets to the available achievements"
     return [
       'location_from' => 'safe',
       'owner_to'      => 0,
@@ -49,17 +39,12 @@ class Card522 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-      if ($state->getNumChosen() > 0) {
-        $this->game->executeDraw($state->getPlayerId(), $this->game->get('age_last_selected') + 1);
-      } else {
-        $top_red_card = self::getTopCardOnBoard($state->getPlayerId(), 1);
-        if ($top_red_card !== null) {
-            $age = $top_red_card['age'];
-        } else {
-            $age = 1;
-        }
-        $this->executeDrawAndSafeguard($state->getPlayerId(), $age);
-      }
+    if ($state->getNumChosen() > 0) {
+      self::draw(self::getLastSelectedAge() + 1);
+    } else {
+      $topRedCard = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game::RED);
+      self::drawAndSafeguard($topRedCard === null ? 0 : $topRedCard['age']);
+    }
   }
 
 }

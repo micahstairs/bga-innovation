@@ -32,7 +32,6 @@ class Card515 extends Card
       } else {
         return [
           'location_from' => 'hand',
-          'location_to'   => 'score',
           'score_keyword' => true,
         ];
       }
@@ -57,7 +56,7 @@ class Card515 extends Card
   public function afterInteraction(Executionstate $state)
   {
     if ($state->getEffectNumber() == 2) {
-      $this->game->executeDraw($state->getPlayerId(), $this->game->getAuxiliaryValue());
+      self::draw($this->game->getAuxiliaryValue());
     }
   }
 
@@ -84,7 +83,7 @@ class Card515 extends Card
   public function handleSpecialChoice(Executionstate $state, int $choice): void
   {
     if ($choice === 0) {
-      $this->game->executeDraw($state->getPlayerId(), 4);
+      self::draw(4);
     } else {
       $state->setMaxSteps(2);
     }

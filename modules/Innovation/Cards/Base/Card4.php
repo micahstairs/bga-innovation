@@ -14,13 +14,13 @@ class Card4 extends Card
   public function initialExecution(ExecutionState $state)
   {
     while (true) {
-      $card = $this->game->executeDrawAndReveal($state->getPlayerId(), 1);
+      $card = self::drawAndReveal(1);
       if ($this->game->hasRessource($card, $this->game::AUTHORITY)) {
         $this->notifications->notifyPresenceOfIcon($this->game::AUTHORITY);
         $this->game->scoreCard($card, $state->getPlayerId());
       } else {
         $this->notifications->notifyAbsenceOfIcon($this->game::AUTHORITY);
-        $this->game->transferCardFromTo($card, $state->getPlayerId(), 'hand');
+        self::putInHand($card);
         return;
       }
     }
