@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card518 extends Card
 {
@@ -61,6 +60,11 @@ class Card518 extends Card
     }
   }
 
+  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  {
+    $this->game->setAuxiliaryValue($choice);
+  }
+
   public function afterInteraction(Executionstate $state)
   {
     if ($state->isDemand() && $state->getNumChosen() > 0) {
@@ -69,11 +73,6 @@ class Card518 extends Card
           $this->game->transferCardFromTo($topCard, $state->getLauncherId(), 'board');
         }
     }
-  }
-
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
-  {
-    $this->game->setAuxiliaryValue($choice);
   }
 
 }

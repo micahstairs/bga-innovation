@@ -62,6 +62,16 @@ abstract class Card
     return $this->state->getPlayerId();
   }
 
+  protected function getLauncherId(): int
+  {
+    return $this->state->getLauncherId();
+  }
+
+  protected function getCurrentStep(): int
+  {
+    return $this->state->getCurrentStep();
+  }
+
   protected function setMaxSteps(int $steps)
   {
     $this->state->setMaxSteps($steps);
@@ -98,6 +108,15 @@ abstract class Card
     }
     return $this->game->scoreCard($card, self::coercePlayerId($playerId));
   }
+
+  protected function reveal($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
+  }
+
 
   protected function drawAndMeld(int $age, int $playerId = null)
   {

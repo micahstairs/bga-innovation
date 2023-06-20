@@ -196,6 +196,9 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `player` LIKE 'will_draw_unseen_card_next'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_player ADD `will_draw_unseen_card_next` BOOLEAN DEFAULT FALSE;");
         }
+        if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'replace_may_with_must'"))) {
+            self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `replace_may_with_must` BOOLEAN DEFAULT FALSE;");
+        }
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
@@ -2864,8 +2867,7 @@ class Innovation extends Table
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
             }
-        }        
-        else if ($player_id == $owner_from) {
+        } else if ($player_id == $owner_from) {
             switch($location_from . '->' . $location_to) {
             case 'hand->hand':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s hand.');
@@ -2985,8 +2987,7 @@ class Innovation extends Table
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
             }
-        }
-        else { // $transferInfo['player_id'] == $transferInfo['owner_to']
+        } else if ($player_id == $owner_to) {
             switch($location_from . '->' . $location_to) {
             case 'hand->hand':
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your hand.');
@@ -3099,6 +3100,16 @@ class Innovation extends Table
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
             }
+        } else {
+            switch($location_from . '->' . $location_to) {
+                case 'revealed->board':
+                    $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board');
+                    $message_for_opponent = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${your} board');
+                    $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board');
+                    break;
+                default:
+                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+            }
         }
         
         self::sendNotificationWithTwoPlayersInvolved($message_for_player, $message_for_opponent, $message_for_others, $card, $transferInfo, $progressInfo);
@@ -3199,9 +3210,9 @@ class Innovation extends Table
                 break;
             
             case 'revealed->board': // Collaboration
-                $message_for_player = clienttranslate('${You_must} transfer ${number} revealed ${card} to your board.');
-                $message_for_opponent = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
-                $message_for_others = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board.');
+                $message_for_player = clienttranslate('${You_must} transfer ${number} revealed ${card} to your board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} revealed ${card} to his board');
                 break;
 
             case 'score->achievements':
@@ -3226,6 +3237,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
+                break;
+
+            case 'revealed->board':
+                $message_for_player = clienttranslate('${You_must} meld ${number} revealed ${card} on ${opponent_name}\'s board');
+                $message_for_opponent = clienttranslate('${player_must} meld ${number} revealed ${card} on ${your} board');
+                $message_for_others = clienttranslate('${player_must} meld ${number} revealed ${card} on ${opponent_name}\'s board');
                 break;
 
             default:
@@ -6475,7 +6492,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             }
         }
-        if (!array_key_exists('can_pass', $rewritten_options)) {
+        // TODO(4E): This might break the search icon.
+        if (!array_key_exists('can_pass', $rewritten_options) || self::getCurrentNestedCardState()['replace_may_with_must']) {
             $rewritten_options['can_pass'] = false;
         }
         if (!array_key_exists('color', $rewritten_options)) {
@@ -7510,6 +7528,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function selfExecute($card) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
+        // TODO(4E): There's a bug here since some are some executions which are not self/full (e.g. Blackmail).
         if ($this->innovationGameState->get('current_nesting_index') >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
             self::incStat(1, 'execution_combo_count', $player_id);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You', ]);
@@ -7522,9 +7541,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
             return false;
         }
-        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}.'),
+        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} self-execute the non-demand effect(s) of ${card}.'),
             ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
-        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}.'),
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} self-executes the non-demand effect(s) of ${card}.'),
             ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
         return true;
@@ -7534,6 +7553,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $current_nested_state = self::getCurrentNestedCardState();
 
+        // TODO(4E): There's a bug here since some are some executions which are not self/full (e.g. Blackmail).
         if ($current_nested_state['nesting_index'] >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
             self::incStat(1, 'execution_combo_count', $player_id);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You', ]);
@@ -7546,14 +7566,28 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_2_args = self::getNotificationArgsForCardList([$card]);
         $initially_executed_card = self::getCardInfo($current_nested_state['executing_as_if_on_card_id']);
         $icon = self::getIconSquare($initially_executed_card['dogma_icon']);
-        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
+        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} fully execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
-        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} fully executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['player_name' => self::getColoredPlayerName($player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
     }
-    
-    function pushCardIntoNestedDogmaStack($card, $execute_demand_effects) {
+
+    function executeReplacingMayWithMust($card) {
+        $player_id = self::getCurrentPlayerUnderDogmaEffect();
+        $card_args = self::getNotificationArgsForCardList([$card]);
+        if (self::getNonDemandEffect($card['id'], 1) === null) {
+            self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
+            return false;
+        }
+        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}, replacing \'may\' with \'must\'.'),
+            ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
+        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}, replacing \'may\' with \'must\'.'),
+            ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
+        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false, /*replace_may_with_must=*/ true);
+    }
+
+    function pushCardIntoNestedDogmaStack($card, $execute_demand_effects, $replace_may_with_must = false) {
         self::trace('nesting++');
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         $nested_card_state = self::getCurrentNestedCardState();
@@ -7562,6 +7596,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $as_if_on = $nested_card_state['executing_as_if_on_card_id'];
         } else {
             $as_if_on = $card['id'];
+        }
+        if ($nested_card_state['replace_may_with_must']) {
+            $replace_may_with_must = true;
         }
         $next_nesting_index = $this->innovationGameState->get('current_nesting_index') + 1;
         $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
@@ -7578,10 +7615,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         self::DbQuery(self::format("
             INSERT INTO nested_card_execution
-                (nesting_index, card_id, executing_as_if_on_card_id, launcher_id, current_effect_type, current_effect_number, step, step_max)
+                (nesting_index, card_id, executing_as_if_on_card_id, replace_may_with_must, launcher_id, current_effect_type, current_effect_number, step, step_max)
             VALUES
-                ({nesting_index}, {card_id}, {as_if_on}, {launcher_id}, {effect_type}, 1, -1, -1)
-        ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+                ({nesting_index}, {card_id}, {as_if_on}, {replace_may_with_must}, {launcher_id}, {effect_type}, 1, -1, -1)
+        ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'replace_may_with_must' => $replace_may_with_must, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
     }
     
     function popCardFromNestedDogmaStack() {
@@ -7608,6 +7645,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     nesting_index,
                     card_id,
                     executing_as_if_on_card_id,
+                    replace_may_with_must,
                     card_location,
                     launcher_id,
                     current_player_id,
@@ -8523,7 +8561,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function choose($card_id) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('choose');
-        $player_id = self::getActivePlayerId();
         
         if ($card_id == -1) {
             // The player chooses to pass or stop
