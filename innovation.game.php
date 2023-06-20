@@ -1279,34 +1279,18 @@ class Innovation extends Table
     
     function extractAgeAchievements() {
         /** Take the top card from each pile from age 1 to age 9, in the beginning of the game; these will be used as achievements **/
-        if ($this->innovationGameState->get('release_version') >= 2) {
-            self::DbQuery(self::format("
-                UPDATE
-                    card as a
-                    INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
-                SET
-                    a.location = 'achievements',
-                    a.position = 0
-                WHERE
-                    a.position = b.position AND
-                    a.type = 0 AND
-                    a.age BETWEEN 1 AND {max_achievement_age}
-                ", ["max_achievement_age" => $this->innovationGameState->usingFourthEditionRules() ? 10 : 9]));
-        } else {
-            self::DbQuery("
-                UPDATE
-                    card as a
-                    INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
-                SET
-                    a.location = 'achievements',
-                    a.position = a.age-1
-                WHERE
-                    a.position = b.position AND
-                    a.type = 0 AND
-                    a.age BETWEEN 1 AND 9
-                ");
-        }
-        
+        self::DbQuery(self::format("
+            UPDATE
+                card as a
+                INNER JOIN (SELECT age, MAX(position) AS position FROM card WHERE type = 0 GROUP BY age) as b ON a.age = b.age
+            SET
+                a.location = 'achievements',
+                a.position = 0
+            WHERE
+                a.position = b.position AND
+                a.type = 0 AND
+                a.age BETWEEN 1 AND {max_achievement_age}
+            ", ["max_achievement_age" => $this->innovationGameState->usingFourthEditionRules() ? 10 : 9]));
     }
     
     function tuckCard($card, $owner_to) {
@@ -1409,8 +1393,7 @@ class Innovation extends Table
             $filter_from .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
         case 'achievements':
-            // For games that were started before Echoes was released, we don't have to worry about new achievements being added
-            if ($this->innovationGameState->get('release_version') < 2 || $age == null) {
+            if ($age == null) {
                 break;
             }
             // The player's achievement pile is not grouped by type or age
@@ -1441,8 +1424,7 @@ class Innovation extends Table
             $filter_to .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
         case 'achievements':
-            // For games that were started before Echoes was released, we don't have to worry about new achievements being added.
-            if ($this->innovationGameState->get('release_version') < 2 || $age == null) {
+            if ($age == null) {
                 break;
             }
             // The player's achievement pile is not grouped by type or age
@@ -7623,9 +7605,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     
     function popCardFromNestedDogmaStack() {
         self::trace('nesting--');
-        if ($this->innovationGameState->get('release_version') >= 2) {
-            self::DbQuery(self::format("DELETE FROM indexed_auxiliary_value WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
-        }
+        self::DbQuery(self::format("DELETE FROM indexed_auxiliary_value WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
         self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
         $this->innovationGameState->increment('current_nesting_index', -1);
         self::updateCurrentNestedCardState('post_execution_index', 'post_execution_index + 1');
@@ -8533,9 +8513,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Write info in global variables to prepare the first effect
-        if ($this->innovationGameState->get('release_version') >= 2) {
-            self::DbQuery("DELETE FROM indexed_auxiliary_value"); // Empty indexed_auxiliary_value table
-        }
+        self::DbQuery("DELETE FROM indexed_auxiliary_value");
         $this->innovationGameState->set('current_nesting_index', 0);
         self::DbQuery(
             self::format("
