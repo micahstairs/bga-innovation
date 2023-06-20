@@ -58,8 +58,8 @@ class Card506 extends Card
     if ($state->getCurrentStep() == 1) {
       // Draw two cards and store the IDs in the auxiliary array
       $numColors = count($this->game->getAuxiliaryValueAsArray());
-      $card1 = $this->game->executeDraw($state->getPlayerId(), $numColors);
-      $card2 = $this->game->executeDraw($state->getPlayerId(), $numColors);
+      $card1 = self::draw($numColors);
+      $card2 = self::draw($numColors);
       $this->game->setAuxiliaryArray([$card1['id'], $card2['id']]);
     }
   }
