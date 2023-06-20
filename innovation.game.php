@@ -2845,6 +2845,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
                 break;
 
+            case 'revealed->deck':
+                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
+                break;
+
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -3166,13 +3172,19 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} to ${your} board');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} to ${opponent_name}\'s board');
                 break;
+                
+            case 'revealed->deck':
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card}');
+                $message_for_opponent = clienttranslate('${player_must} return ${number} ${card}');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card}');
+                break;
 
             case 'hand,score->board':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
                 break;
-                
+
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
@@ -3208,6 +3220,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
                 break;
+
+            case 'revealed->deck':
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card}');
+                $message_for_opponent = clienttranslate('${player_must} return ${number} ${card}');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card}');
+                break;
                 
             default:
                 // This should not happen
@@ -3227,6 +3245,12 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} meld ${number} revealed ${card} on ${opponent_name}\'s board');
                 break;
 
+            case 'revealed->deck':
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card}');
+                $message_for_opponent = clienttranslate('${player_must} return ${number} ${card}');
+                $message_for_others = clienttranslate('${player_must} return ${number} ${card}');
+                break;
+                
             default:
                 // This should not happen
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
