@@ -11222,7 +11222,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 493
             || $card_id == 506
             || $card_id == 509
-            || ($card_id >= 515 && $card_id < 525)
+            || ($card_id >= 515 && $card_id <= 524)
             || $card_id >= 533;
     }
 

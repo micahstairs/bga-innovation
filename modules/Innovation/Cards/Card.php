@@ -55,98 +55,114 @@ abstract class Card
     // Subclasses can optionally override this method if any extra handling needs to be done after an entire interaction is complete.
   }
 
+  // EXECUTION HELPERS
+
+  protected function getPlayerId(): int
+  {
+    return $this->state->getPlayerId();
+  }
+
+  protected function setMaxSteps(int $steps)
+  {
+    $this->state->setMaxSteps($steps);
+  }
+
+  protected function getPostExecutionIndex(): int
+  {
+    return $this->game->getCurrentNestedCardState()['post_execution_index'];
+  }
+
+  protected function setPostExecutionIndex(int $index)
+  {
+    $this->game->updateCurrentNestedCardState('post_execution_index', $index);
+  }
+
+  protected function selfExecute($card)
+  {
+    if ($card) {
+      $this->game->selfExecute($card);
+    }
+  }
+
   // CARD HELPERS
 
   protected function draw(int $age, int $playerId = null)
   {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
+    return $this->game->executeDraw(self::coercePlayerId($playerId), $age);
+  }
+
+  protected function score($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
     }
-    return $this->game->executeDraw($playerId, $age);
+    return $this->game->scoreCard($card, self::coercePlayerId($playerId));
   }
 
   protected function drawAndMeld(int $age, int $playerId = null)
   {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
-    return $this->game->executeDrawAndMeld($playerId, $age);
+    return $this->game->executeDrawAndMeld(self::coercePlayerId($playerId), $age);
   }
 
   protected function drawAndTuck(int $age, int $playerId = null)
   {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
-    return $this->game->executeDrawAndTuck($playerId, $age);
+    return $this->game->executeDrawAndTuck(self::coercePlayerId($playerId), $age);
   }
 
   protected function drawAndScore(int $age, int $playerId = null)
   {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
-    return $this->game->executeDrawAndScore($playerId, $age);
+    return $this->game->executeDrawAndScore(self::coercePlayerId($playerId), $age);
   }
 
   protected function drawAndSafeguard(int $age, int $playerId = null)
   {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
-    return $this->game->executeDrawAndSafeguard($playerId, $age);
+    return $this->game->executeDrawAndSafeguard(self::coercePlayerId($playerId), $age);
   }
 
   protected function drawAndReveal(int $age, int $playerId = null)
   {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
-    return $this->game->executeDrawAndReveal($playerId, $age);
+    return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age);
   }
 
   protected function putInHand($card, int $playerId = null) {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
-    return $this->game->transferCardFromTo($card, $playerId, 'hand');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
+  }
+
+  protected function getTopCardOfColor(int $color, int $playerId = null) {
+    return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
   // SPLAY HELPERS
 
   protected function unsplay(int $color, int $playerId = null) {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
+    $playerId = self::coercePlayerId($playerId);
     $this->game->unsplay($playerId, $playerId, $color);
   }
 
   protected function splayLeft(int $color, int $playerId = null) {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
+    $playerId = self::coercePlayerId($playerId);
     $this->game->splayLeft($playerId, $playerId, $color);
   }
   
   protected function splayRight(int $color, int $playerId = null) {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
+    $playerId = self::coercePlayerId($playerId);
     $this->game->splayRight($playerId, $playerId, $color);
   }
 
   protected function splayUp(int $color, int $playerId = null) {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
+    $playerId = self::coercePlayerId($playerId);
     $this->game->splayUp($playerId, $playerId, $color);
   }
 
   protected function splayAslant(int $color, int $playerId = null) {
-    if ($playerId === null) {
-      $playerId = $this->state->getPlayerId();
-    }
+    $playerId = self::coercePlayerId($playerId);
     $this->game->splayAslant($playerId, $playerId, $color);
+  }
+
+  // COLOR HELPERS
+
+  protected function getAllColorsOtherThan(int $color) {
+    return array_diff(range(0, 4), [$color]);
   }
 
   // SELECTION HELPERS
@@ -168,6 +184,14 @@ abstract class Card
   }
 
   // AUXILARY VALUE HELPERS
+
+  protected function getAuxiliaryValue(): int {
+    return $this->game->getAuxiliaryValue();
+  }
+
+  protected function setAuxiliaryValue(int $value) {
+    return $this->game->setAuxiliaryValue($value);
+  }
 
   protected function setActionScopedAuxiliaryArray($array, $playerId = 0): void
   {
@@ -203,6 +227,16 @@ abstract class Card
   {
     $className = get_class($this);
     return intval(substr($className, strrpos($className, "\\") + 5));
+  }
+
+  // PRIVATE HELPERS
+
+  private function coercePlayerId(?int $playerId): int
+  {
+    if ($playerId === null) {
+      return $this->state->getPlayerId();
+    }
+    return $playerId;
   }
 
 }
