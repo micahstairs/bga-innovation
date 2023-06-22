@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card541 extends Card
 {
@@ -13,7 +12,7 @@ class Card541 extends Card
   //   - Return a card from your score pile.
   //   - Draw and score a card of value equal to a card in your score pile.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     $scoreCards = $this->game->getCardsInScorePile(self::getPlayerId());
     if (self::getEffectNumber() == 1) {
@@ -25,7 +24,7 @@ class Card541 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() == 1) {
       return self::getFirstInteractionOptions();
@@ -57,14 +56,14 @@ class Card541 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getEffectNumber() == 3) {
       self::drawAndScore(self::getAuxiliaryValue());
     }
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     if (self::getEffectNumber() == 1) {
       return [
@@ -90,7 +89,7 @@ class Card541 extends Card
     }
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     self::setAuxiliaryValue($choice);
   }

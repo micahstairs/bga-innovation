@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card516 extends Card
 {
@@ -13,7 +12,7 @@ class Card516 extends Card
   //     than one your secrets. If you reveal a red or purple card, meld one of your other secrets.
   //     If you do, safeguard the drawn card.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if ($this->game->countCardsInLocation(self::getPlayerId(), 'safe') > 0) {
       self::setMaxSteps(1);
@@ -22,7 +21,7 @@ class Card516 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return ['choose_yes_or_no' => true];
@@ -43,7 +42,7 @@ class Card516 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getCurrentStep() == 2) {
       $card = self::drawAndReveal(self::getLastSelectedAge() + 1);
@@ -62,7 +61,7 @@ class Card516 extends Card
 
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 4);
     return [
@@ -82,7 +81,7 @@ class Card516 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     $secrets = $this->game->getCardsInLocation(self::getPlayerId(), 'safe');
     if ($choice === 1) {

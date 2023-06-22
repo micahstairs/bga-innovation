@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card543 extends Card
 {
@@ -13,14 +12,14 @@ class Card543 extends Card
   //     card on your board of that color. Safeguard an available achievement of value one higher
   //     than the secret.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if ($this->game->countCardsInHand(self::getPlayerId()) > 0) {
       self::setMaxSteps(1);
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -32,12 +31,12 @@ class Card543 extends Card
         'owner_from'    => 0,
         'location_from' => 'achievements',
         'location_to'   => 'safe',
-        'age'           => $this->game->getAuxiliaryValue(),
+        'age'           => self::getAuxiliaryValue(),
       ];
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() > 0 && self::getCurrentStep() == 1) {
       $color = self::getLastSelectedColor();

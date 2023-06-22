@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card522 extends Card
 {
@@ -13,7 +12,7 @@ class Card522 extends Card
   //     draw a card of value one higher than the transferred card. If you don't, 
   //     safeguard an available achievement of value equal to the value of your top red card.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     $secrets = $this->game->getCardsInLocation(self::getPlayerId(), 'safe');
     if (count($secrets) == 1) {
@@ -28,7 +27,7 @@ class Card522 extends Card
 
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     return [
       'location_from' => 'safe',
@@ -37,7 +36,7 @@ class Card522 extends Card
     ];
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
       self::draw(self::getLastSelectedAge() + 1);

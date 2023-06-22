@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card536 extends Card
 {
@@ -13,7 +12,7 @@ class Card536 extends Card
   //   - Draw and reveal three [7]. Return two of the drawn cards.  You may splay the color of the
   //     card not returned right.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::isDemand()) {
       $this->game->revealHand(self::getPlayerId());
@@ -28,7 +27,7 @@ class Card536 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -46,7 +45,7 @@ class Card536 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getCurrentStep() == 1) {
       $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'revealed')[0];

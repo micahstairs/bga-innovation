@@ -9817,7 +9817,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                $prompt = self::getCardInstance($card_id, $executionState)->getSpecialChoicePrompt($executionState);
+                $prompt = self::getCardInstance($card_id, $executionState)->getSpecialChoicePrompt();
                 $message_for_player = $prompt['message_for_player'];
                 $message_for_others = $prompt['message_for_others'];
                 if (array_key_exists('options', $prompt)) {
@@ -11352,7 +11352,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
 
             if (self::isInSeparateFile($card_id)) {
-                self::getCardInstance($card_id, $executionState)->initialExecution($executionState);
+                self::getCardInstance($card_id, $executionState)->initialExecution();
                 $using_execution_status_object = true;
             }
 
@@ -17389,7 +17389,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $clock = self::getIconSquare(6);
 
         if (self::isInSeparateFile($card_id)) {
-            $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions($executionState);
+            $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
 
             if (array_key_exists('n', $options) && $options['n'] == 'all') {
                 $options['n'] = 999;
@@ -25596,7 +25596,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!self::isZombie(self::getActivePlayerId())) {
             try {
                 if ($code !== null && self::isInSeparateFile($card_id)) {
-                    self::getCardInstance($card_id, $executionState)->afterInteraction($executionState);
+                    self::getCardInstance($card_id, $executionState)->afterInteraction();
                     $step = $executionState->getNextStep() - 1;
                     $step_max = $executionState->getMaxSteps();
                     self::setStep($step);
@@ -29336,7 +29336,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                self::getCardInstance($card_id, $executionState)->handleSpecialChoice($executionState, $choice);
+                self::getCardInstance($card_id, $executionState)->handleSpecialChoice($choice);
                 self::setStepMax($executionState->getMaxSteps());
             }
 
@@ -30449,7 +30449,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 ->setEffectNumber($current_effect_number)
                                 ->setCurrentStep(self::getStep())
                                 ->setMaxSteps(self::getStepMax());
-                            self::getCardInstance($card_id, $executionState)->handleCardChoice($executionState, $selected_card_id);
+                            self::getCardInstance($card_id, $executionState)->handleCardChoice($selected_card_id);
                             self::setStepMax($executionState->getMaxSteps());
                         }
                     }

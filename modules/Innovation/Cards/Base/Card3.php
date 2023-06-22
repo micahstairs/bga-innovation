@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card3 extends Card {
 
@@ -11,14 +10,14 @@ class Card3 extends Card {
   //   - I DEMAND you draw a [1], then transfer the highest card in your hand to my hand!
   //   - [4th edition] Junk an available achievement of value [1] or [2].
 
-  public function initialExecution(ExecutionState $state) {
+  public function initialExecution() {
     if (self::isDemand()) {
       self::draw(1);
     }
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): Array {
+  public function getInteractionOptions(): Array {
     if (self::isDemand()) {
       return [
         'location_from' => 'hand',

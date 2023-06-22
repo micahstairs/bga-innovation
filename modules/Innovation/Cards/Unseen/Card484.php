@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card484 extends Card
 {
@@ -13,10 +12,10 @@ class Card484 extends Card
   //     you don't, and I have a card in my hand, exchange all cards in your hand with all cards in
   //     my score pile!
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     $colorCounts = [0, 0, 0, 0, 0];
-    foreach ($this->game->getCardsInHand($state->getLauncherId()) as $card) {
+    foreach ($this->game->getCardsInHand(self::getLauncherId()) as $card) {
       $colorCounts[$card['color']]++;
     }
     self::setActionScopedAuxiliaryArray($colorCounts);
@@ -24,11 +23,11 @@ class Card484 extends Card
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
-    foreach ($this->game->getCardsInHand($state->getPlayerId()) as $card) {
+    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
       if ($colorCounts[$card['color']] > 0) {
         $cardIds[] = $card['id'];
       }
@@ -42,14 +41,14 @@ class Card484 extends Card
     ];
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
-    if ($state->getNumChosen() == 0) {
-      $cardsInHand = $this->game->getCardsInHand($state->getPlayerId());
-      if ($this->game->getAuxiliaryValue() == 0 && count($cardsInHand) > 0) {
-        $cardsInScorePile = $this->game->getCardsInScorePile($state->getLauncherId());
+    if (self::getNumChosen() == 0) {
+      $cardsInHand = $this->game->getCardsInHand(self::getPlayerId());
+      if (self::getAuxiliaryValue() == 0 && count($cardsInHand) > 0) {
+        $cardsInScorePile = $this->game->getCardsInScorePile(self::getLauncherId());
         foreach ($cardsInHand as $card) {
-          $this->game->transferCardFromTo($card, $state->getLauncherId(), 'score');
+          $this->game->transferCardFromTo($card, self::getLauncherId(), 'score');
         }
         foreach ($cardsInScorePile as $card) {
           self::putInHand($card);
@@ -61,7 +60,7 @@ class Card484 extends Card
       $colorCounts[$color]--;
       self::setActionScopedAuxiliaryArray($colorCounts);
       self::setAuxiliaryValue(1);
-      $state->setNextStep(1);
+      self::setNextStep(1);
     }
   }
 

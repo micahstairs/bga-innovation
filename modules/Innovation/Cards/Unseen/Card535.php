@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card535 extends Card
 {
@@ -12,14 +11,14 @@ class Card535 extends Card
   //   - Return one or more top cards of one color from your board, from the top. Draw a [7] for
   //     each card you return. If you return exactly one [7], draw an [8].
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setAuxiliaryValue(0); // Used to track the total number of cards returned
     self::setAuxiliaryValue2(0); // Used to track the number of 7s returned
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -36,7 +35,7 @@ class Card535 extends Card
     }
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
+  public function handleCardChoice(int $cardId)
   {
     self::incrementAuxiliaryValue();
     if (self::getLastSelectedAge() == 7) {
@@ -44,7 +43,7 @@ class Card535 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
       self::setNextStep(2);

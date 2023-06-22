@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card506 extends Card
 {
@@ -13,12 +12,12 @@ class Card506 extends Card
   //     number of different colors of cards you return. Meld one of the drawn cards and score the
   //     other.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       $this->game->setAuxiliaryValueFromArray([]);
@@ -36,7 +35,7 @@ class Card506 extends Card
     }
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
+  public function handleCardChoice(int $cardId)
   {
     if (self::getCurrentStep() == 1) {
       // Keep track of the colors of the cards being returned
@@ -52,7 +51,7 @@ class Card506 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getCurrentStep() == 1) {
       // Draw two cards and store the IDs in the auxiliary array

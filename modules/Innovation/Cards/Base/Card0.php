@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card0 extends Card
 {
@@ -13,7 +12,7 @@ class Card0 extends Card
   //     card of value equal to the number of cards you return.
   //   - Draw a [1].
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       self::setMaxSteps(1);
@@ -22,7 +21,7 @@ class Card0 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     return [
       'can_pass'      => true,
@@ -33,7 +32,7 @@ class Card0 extends Card
     ];
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
       self::drawAndScore(self::getNumChosen());

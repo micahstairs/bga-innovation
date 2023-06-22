@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card515 extends Card
 {
@@ -13,7 +12,7 @@ class Card515 extends Card
   //   - Return exactly two cards in your hand. If you do, draw a card of value equal to the sum
   //     number of [HEALTH] and [CONCEPT] on the returned cards.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       self::setMaxSteps(1);
@@ -23,7 +22,7 @@ class Card515 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() == 1) {
       if (self::getCurrentStep() == 1) {
@@ -43,7 +42,7 @@ class Card515 extends Card
     }
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
+  public function handleCardChoice(int $cardId)
   {
     $card = self::getCard($cardId);
     $sum = self::getAuxiliaryValue();
@@ -52,14 +51,14 @@ class Card515 extends Card
     self::setAuxiliaryValue($sum);
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getEffectNumber() == 2) {
       self::draw(self::getAuxiliaryValue());
     }
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 4);
     return [
@@ -79,7 +78,7 @@ class Card515 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 0) {
       self::draw(4);

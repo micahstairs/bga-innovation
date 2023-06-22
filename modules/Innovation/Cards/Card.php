@@ -20,15 +20,15 @@ abstract class Card
     $this->notifications = $game->notifications;
   }
 
-  public abstract function initialExecution(ExecutionState $state);
+  public abstract function initialExecution();
 
-  public function getInteractionOptions(ExecutionState $state): array
+  public function getInteractionOptions(): array
   {
     // Subclasses are expected to override this method if the card has any interactions.
     return [];
   }
 
-  public function getSpecialChoicePrompt(ExecutionState $state): array
+  public function getSpecialChoicePrompt(): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
       case 4: // choose_color
@@ -40,17 +40,17 @@ abstract class Card
     }
   }
 
-  public function handleSpecialChoice(ExecutionState $state, int $choice)
+  public function handleSpecialChoice(int $choice)
   {
     // Subclasses are expected to override this method if the card has any special choices.
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
+  public function handleCardChoice(int $cardId)
   {
     // Subclasses can optionally override this method if any extra handling is needed after individual cards are chosen.
   }
 
-  public function afterInteraction(ExecutionState $state)
+  public function afterInteraction()
   {
     // Subclasses can optionally override this method if any extra handling needs to be done after an entire interaction is complete.
   }

@@ -14,12 +14,12 @@ class Card440 extends Card
   //   - Return a top card from your board. Return all cards in your score pile of equal or higher
   //     value than the top card.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(self::isDemand() ? 3 : 2);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       if (self::getCurrentStep() == 1) {
@@ -51,7 +51,7 @@ class Card440 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::isNonDemand() && self::getCurrentStep() == 1) {
       $minAgeToReturn = 0;
@@ -62,7 +62,7 @@ class Card440 extends Card
     }
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $chosenIcon): void
+  public function handleSpecialChoice(int $chosenIcon): void
   {
     $this->notifications->notifyIconChoice($chosenIcon, self::getPlayerId());
     self::setAuxiliaryValue($chosenIcon);

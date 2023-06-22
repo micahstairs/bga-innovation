@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card537 extends Card
 {
@@ -13,7 +12,7 @@ class Card537 extends Card
   //   - Draw and tuck a [6]. If the color on your board of the card you tuck is splayed in the
   //     same direction as your red  cards, splay that color up. Otherwise, unsplay that color.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       self::setMaxSteps(1);
@@ -30,12 +29,12 @@ class Card537 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     return ['choose_yes_or_no' => true];
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     // TODO(4E): A third choice is needed.
     return [
@@ -54,7 +53,7 @@ class Card537 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
       self::splayLeft($this->game::RED);

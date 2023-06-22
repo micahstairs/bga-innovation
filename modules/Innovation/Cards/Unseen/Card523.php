@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card523 extends Card
 {
@@ -13,7 +12,7 @@ class Card523 extends Card
   //     a card from your score pile, then draw and score a [4].
   //   - Draw a [4] for each [4] in your score pile.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       self::setMaxSteps(1);
@@ -26,7 +25,7 @@ class Card523 extends Card
 
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -43,7 +42,7 @@ class Card523 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getCurrentStep() == 1) {
       if (self::getNumChosen() == 0) {

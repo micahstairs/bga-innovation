@@ -3,7 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
+use Innovation\Cards\Executiontate;
 
 class Card493 extends Card
 {
@@ -12,12 +12,12 @@ class Card493 extends Card
   //   - Meld a card from your hand with no icon on a card already melded by you during this action
   //     due to Polytheism. If you do, repeat this effect. Otherwise, draw and tuck a [1].
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     $iconsMelded = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $cardIds = [];
@@ -38,13 +38,13 @@ class Card493 extends Card
     ];
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
-    if ($state->getNumChosen() == 1) {
+    if (self::getNumChosen() == 1) {
       $card = self::getLastSelectedCard();
-      $iconsMelded = array_unique(array_merge(self::getActionScopedAuxiliaryArray($state->getPlayerId()), self::getIcons($card)));
-      self::setActionScopedAuxiliaryArray($iconsMelded, $state->getPlayerId());
-      $state->setNextStep(1);
+      $iconsMelded = array_unique(array_merge(self::getActionScopedAuxiliaryArray(self::getPlayerId()), self::getIcons($card)));
+      self::setActionScopedAuxiliaryArray($iconsMelded, self::getPlayerId());
+      self::setNextStep(1);
     } else {
       self::drawAndTuck(1);
     }

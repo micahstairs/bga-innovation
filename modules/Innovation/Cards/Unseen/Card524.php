@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card524 extends Card
 {
@@ -13,7 +12,7 @@ class Card524 extends Card
   //     of that color. If you do, repeat this effect with the same color if you have scored fewer
   //     than nine points due to Legend this action.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getPostExecutionIndex() > 0) {
       $topCard = self::getTopCardOfColor(self::getAuxiliaryValue());
@@ -31,7 +30,7 @@ class Card524 extends Card
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     return [
       'choose_color' => true,
@@ -39,7 +38,7 @@ class Card524 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     self::selfExecute(self::getTopCardOfColor($choice));
     self::setAuxiliaryValue($choice);

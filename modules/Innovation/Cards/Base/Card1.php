@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card1 extends Card
 {
@@ -12,12 +11,12 @@ class Card1 extends Card
   //   - You may return three cards from your hand. If you return three, draw and meld a [3].
   //   - You may return a [3] from your hand. If you do, draw three [1].
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() === 1) {
       return [
@@ -36,7 +35,7 @@ class Card1 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getEffectNumber() === 1) {
       if (self::getNumChosen() === 3) {

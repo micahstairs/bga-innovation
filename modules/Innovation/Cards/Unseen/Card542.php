@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card542 extends Card
 {
@@ -13,7 +12,7 @@ class Card542 extends Card
   //     your hand! Tuck the top card from your board and all cards from your score pile of the
   //     same color as the returned card!
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::draw(6);
     foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
@@ -22,7 +21,7 @@ class Card542 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -41,7 +40,7 @@ class Card542 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() > 0 && self::getCurrentStep() == 1) {
       self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));

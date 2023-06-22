@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card517 extends Card
 {
@@ -13,7 +12,7 @@ class Card517 extends Card
   //     If you do, transfer the top card of that color from your board to mine!
   //   - You may splay your red cards right.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::isDemand()) {
       self::setMaxSteps(2);
@@ -22,7 +21,7 @@ class Card517 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       if (self::getCurrentStep() == 1) {
@@ -46,14 +45,14 @@ class Card517 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::isDemand() && self::getNumChosen() > 0) {
       self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
     }
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     self::setAuxiliaryValue($choice);
   }

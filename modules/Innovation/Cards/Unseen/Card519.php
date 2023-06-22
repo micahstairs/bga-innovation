@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card519 extends Card
 {
@@ -13,7 +12,7 @@ class Card519 extends Card
   //     Execute the non-demand effects of any revealed card of my choice for yourself only,
   //     replacing 'may' with 'must'!
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
       self::reveal($card);
@@ -21,7 +20,7 @@ class Card519 extends Card
     self::setMaxSteps(2);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -42,7 +41,7 @@ class Card519 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {

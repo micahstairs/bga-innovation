@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card520 extends Card
 {
@@ -12,7 +11,7 @@ class Card520 extends Card
   //   - Draw and meld a [3], a [2], and a [1]. If all three have a PROSPERITY, score all cards in
   //     the [5] deck. If two or more have a PROSPERITY, splay your green and blue cards right.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     $numCardsWithProsperityIcons = 0;
     for ($i = 3; $i >= 1; $i--) {

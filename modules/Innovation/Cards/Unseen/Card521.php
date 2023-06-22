@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card521 extends Card
 {
@@ -12,7 +11,7 @@ class Card521 extends Card
   //   - Transfer the highest cards from your hand and score pile together to the 
   //     board of the player on your right. If you don't, claim the Folklore achievement.
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       $cardIds = array_merge(self::getCardsIdOfMaxAgeInLocation('hand'), self::getCardsIdOfMaxAgeInLocation('score'));
@@ -27,7 +26,7 @@ class Card521 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() == 1) {
       return [
@@ -42,7 +41,7 @@ class Card521 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     return [
       "message_for_player" => clienttranslate('${You} may make a choice'),
@@ -60,7 +59,7 @@ class Card521 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
       self::splayRight($this->game::YELLOW);

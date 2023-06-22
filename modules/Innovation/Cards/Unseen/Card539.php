@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card539 extends Card
 {
@@ -13,7 +12,7 @@ class Card539 extends Card
   //     INDUSTRY, tuck the drawn card and draw and reveal a [7]. If the second drawn card has a
   //     HEALTH, meld it and draw an [8].
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     $card = self::drawAndReveal(6);
     $topCard = self::getTopCardOfColor($card['color']);

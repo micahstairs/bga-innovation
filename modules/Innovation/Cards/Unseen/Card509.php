@@ -13,12 +13,12 @@ class Card509 extends Card
   //     regardless of eligibility; yellow, score it; blue, draw a [5]. If you cannot, safeguard
   //     the top card of the [4] deck.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     return [
       'location_from' => 'safe',
@@ -27,7 +27,7 @@ class Card509 extends Card
     ];
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
+  public function handleCardChoice(int $cardId)
   {
     $card = self::getCard($cardId);
     switch ($card['color']) {
@@ -50,7 +50,7 @@ class Card509 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() == 0) {
       self::safeguard($this->game->getDeckTopCard(4, $this->game::BASE));

@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card540 extends Card
 {
@@ -13,7 +12,7 @@ class Card540 extends Card
   //     pile. If you do, score all cards in your hand of its value.
   //   - Draw a [6] for each secret in your safe.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       if ($this->game->countCardsInLocation(self::getPlayerId(), 'score') > 0) {
@@ -26,7 +25,7 @@ class Card540 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     return [
       'owner_from'    => 0,
@@ -37,7 +36,7 @@ class Card540 extends Card
 
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
       $cards = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[self::getLastSelectedAge()];

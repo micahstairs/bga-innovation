@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card485 extends Card
 {
@@ -13,13 +12,13 @@ class Card485 extends Card
   //     with 1. If you do, safeguard an available achievement of value equal to the highest
   //     card returned.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(1);
     self::setAuxiliaryValue(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -38,7 +37,7 @@ class Card485 extends Card
     }
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::getCurrentStep() == 1) {
       if (self::getLastSelectedAge() == self::getAuxiliaryValue()) {

@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card65 extends Card
 {
@@ -12,12 +11,12 @@ class Card65 extends Card
   //   - You may choose to either draw and score an [8] and then return a card from your score pile,
   //     or draw a card of value one higher than the highest card in your score pile.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -32,7 +31,7 @@ class Card65 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     $player_id = self::getPlayerId();
     $age_to_score = $this->game->getAgeToDrawIn($player_id, 8);
@@ -56,7 +55,7 @@ class Card65 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 0) {
       self::draw($this->game->getMaxAgeInScore(self::getPlayerId()) + 1);

@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card518 extends Card
 {
@@ -13,7 +12,7 @@ class Card518 extends Card
   //     from your score pile!
   //   - If Spanish Inquisition is a top card on your board, return all red cards from your board.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::isDemand()) {
       $cardIds = [];
@@ -41,7 +40,7 @@ class Card518 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       return [
@@ -60,12 +59,12 @@ class Card518 extends Card
     }
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     self::setAuxiliaryValue($choice);
   }
 
-  public function afterInteraction(Executionstate $state)
+  public function afterInteraction()
   {
     if (self::isDemand() && self::getNumChosen() > 0) {
       // TODO(4E): This looks wrong.

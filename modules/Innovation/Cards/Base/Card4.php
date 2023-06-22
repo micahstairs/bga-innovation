@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card4 extends Card
 {
@@ -11,7 +10,7 @@ class Card4 extends Card
   // Metalworking:
   //   - Draw and reveal a [1]. If it has a [AUTHORITY], score it and repeat this effect.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     while (true) {
       $card = self::drawAndReveal(1);

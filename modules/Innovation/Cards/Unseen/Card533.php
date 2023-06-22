@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card533 extends Card
 {
@@ -14,7 +13,7 @@ class Card533 extends Card
   //     other tucked card.
   //   - Draw and tuck a [4].
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
       self::setMaxSteps(1);
@@ -23,7 +22,7 @@ class Card533 extends Card
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() == 1) {
       return [
@@ -39,7 +38,7 @@ class Card533 extends Card
     }
   }
 
-  public function handleCardChoice(Executionstate $state, int $cardId)
+  public function handleCardChoice(int $cardId)
   {
     $tuckedCard1 = self::getCard($cardId);
     $tuckedCard2 = self::drawAndTuck(4);
@@ -47,7 +46,7 @@ class Card533 extends Card
     self::setMaxSteps(2);
   }
 
-  public function getSpecialChoicePrompt(Executionstate $state): array
+  public function getSpecialChoicePrompt(): array
   {
     return [
       "message_for_player" => clienttranslate('${You} must choose a color and score all cards on your board of that color'),
@@ -55,7 +54,7 @@ class Card533 extends Card
     ];
   }
 
-  public function handleSpecialChoice(Executionstate $state, int $choice): void
+  public function handleSpecialChoice(int $choice): void
   {
     while (($card = self::getTopCardOfColor($choice)) !== null) {   
       self::score($card);
