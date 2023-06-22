@@ -24,9 +24,9 @@ class Card542 extends Card
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
-        'player_id'     => $state->getLauncherId(),
+        'player_id'     => self::getLauncherId(),
         'location_from' => 'revealed',
         'location_to'   => 'deck',
       ];
@@ -43,7 +43,7 @@ class Card542 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getNumChosen() > 0 && $state->getCurrentStep() == 1) {
+    if (self::getNumChosen() > 0 && self::getCurrentStep() == 1) {
       self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
       foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {

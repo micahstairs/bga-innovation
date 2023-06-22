@@ -15,15 +15,15 @@ class Card537 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->getEffectNumber() == 1) {
+    if (self::getEffectNumber() == 1) {
       self::setMaxSteps(1);
     } else {
       $card = self::drawAndTuck(6);
       if (
-        $this->game->getCurrentSplayDirection($state->getPlayerId(), $this->game::RED) ==
-        $this->game->getCurrentSplayDirection($state->getPlayerId(), $card['color'])
+        $this->game->getCurrentSplayDirection(self::getPlayerId(), $this->game::RED) ==
+        $this->game->getCurrentSplayDirection(self::getPlayerId(), $card['color'])
       ) {
-        $this->game->splayUp($state->getPlayerId(), $state->getPlayerId(), $card['color']);
+        $this->game->splayUp(self::getPlayerId(), self::getPlayerId(), $card['color']);
       } else {
         self::unsplay($card['color']);
       }

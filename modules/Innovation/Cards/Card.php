@@ -72,6 +72,16 @@ abstract class Card
     return $this->state->getEffectNumber();
   }
 
+  protected function isDemand(): bool
+  {
+    return $this->state->isDemand();
+  }
+
+  protected function isNonDemand(): bool
+  {
+    return $this->state->isNonDemand();
+  }
+
   protected function getCurrentStep(): int
   {
     return $this->state->getCurrentStep();
@@ -132,6 +142,14 @@ abstract class Card
     return $this->game->meldCard($card, self::coercePlayerId($playerId));
   }
 
+  protected function transferToBoard($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'board');
+  }
+
   protected function tuck($card, int $playerId = null)
   {
     if (!$card) {
@@ -188,6 +206,10 @@ abstract class Card
 
   protected function getTopCardOfColor(int $color, int $playerId = null) {
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
+  }
+
+  protected function getCard(int $cardId) {
+    return $this->game->getCardInfo($cardId);
   }
 
   // SPLAY HELPERS

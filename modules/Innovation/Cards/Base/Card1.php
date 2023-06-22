@@ -14,12 +14,12 @@ class Card1 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps(1);
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getEffectNumber() === 1) {
+    if (self::getEffectNumber() === 1) {
       return [
         'can_pass'      => true,
         'n'             => 3,
@@ -38,14 +38,14 @@ class Card1 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getEffectNumber() === 1) {
-      if ($state->getNumChosen() === 3) {
-        $this->game->executeDrawAndMeld($state->getPlayerId(), 3);
+    if (self::getEffectNumber() === 1) {
+      if (self::getNumChosen() === 3) {
+        self::drawAndMeld(3);
       }
     } else {
-      if ($state->getNumChosen() > 0) {
+      if (self::getNumChosen() > 0) {
         for ($i = 0; $i < 3; $i++) {
-          $this->game->executeDraw($state->getPlayerId(), 1);
+          self::draw(1);
         }
       }
     }

@@ -14,7 +14,7 @@ class Card538 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps(1);
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(Executionstate $state): array
@@ -31,7 +31,7 @@ class Card538 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-      $color = $this->game->getAuxiliaryValue();
+      $color = self::getAuxiliaryValue();
       self::unsplay($color);
       $bottomCard = $this->game->getBottomCardOnBoard(self::getPlayerId(), $color);
       if ($bottomCard) {
@@ -39,7 +39,7 @@ class Card538 extends Card
       }
       $bottomCard = $this->game->getBottomCardOnBoard(self::getPlayerId(), $color);
       if ($bottomCard) {
-        $this->game->transferCardFromTo($bottomCard, $state->getLauncherId(), 'board');
+        self::transferToBoard($bottomCard, self::getLauncherId());
       }
   }
 

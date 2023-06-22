@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card543 extends Card
 {
@@ -16,14 +15,14 @@ class Card543 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($this->game->countCardsInHand($state->getPlayerId()) > 0) {
+    if ($this->game->countCardsInHand(self::getPlayerId()) > 0) {
       self::setMaxSteps(1);
     }
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'location_from' => 'hand',
         'location_to'   => 'revealed,hand',

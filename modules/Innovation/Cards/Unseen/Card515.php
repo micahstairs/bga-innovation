@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card515 extends Card
 {
@@ -16,18 +15,18 @@ class Card515 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->getEffectNumber() == 1) {
-      $state->setMaxSteps(1);
-    } else if ($this->game->countCardsInHand($state->getPlayerId()) >= 2) {
-      $state->setMaxSteps(1);
-      $this->game->setAuxiliaryValue(0);
+    if (self::getEffectNumber() == 1) {
+      self::setMaxSteps(1);
+    } else if ($this->game->countCardsInHand(self::getPlayerId()) >= 2) {
+      self::setMaxSteps(1);
+      self::setAuxiliaryValue(0);
     }
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getEffectNumber() == 1) {
-      if ($state->getCurrentStep() == 1) {
+    if (self::getEffectNumber() == 1) {
+      if (self::getCurrentStep() == 1) {
         return ['choose_yes_or_no' => true];
       } else {
         return [
@@ -46,23 +45,23 @@ class Card515 extends Card
 
   public function handleCardChoice(Executionstate $state, int $cardId)
   {
-    $card = $this->game->getCardInfo($cardId);
-    $sum = $this->game->getAuxiliaryValue();
+    $card = self::getCard($cardId);
+    $sum = self::getAuxiliaryValue();
     $sum += $this->game->countIconsOnCard($card, $this->game::HEALTH);
     $sum += $this->game->countIconsOnCard($card, $this->game::CONCEPT);
-    $this->game->setAuxiliaryValue($sum);
+    self::setAuxiliaryValue($sum);
   }
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getEffectNumber() == 2) {
-      self::draw($this->game->getAuxiliaryValue());
+    if (self::getEffectNumber() == 2) {
+      self::draw(self::getAuxiliaryValue());
     }
   }
 
   public function getSpecialChoicePrompt(Executionstate $state): array
   {
-    $ageToDraw = $this->game->getAgeToDrawIn($state->getPlayerId(), 4);
+    $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 4);
     return [
       "message_for_player" => clienttranslate('${You} may make a choice'),
       "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
@@ -85,7 +84,7 @@ class Card515 extends Card
     if ($choice === 0) {
       self::draw(4);
     } else {
-      $state->setMaxSteps(2);
+      self::setMaxSteps(2);
     }
   }
 

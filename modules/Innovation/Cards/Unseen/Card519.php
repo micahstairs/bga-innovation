@@ -15,7 +15,7 @@ class Card519 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    foreach ($this->game->getCardsInHand($state->getPlayerId()) as $card) {
+    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
       self::reveal($card);
     }
     self::setMaxSteps(2);
@@ -45,11 +45,11 @@ class Card519 extends Card
   public function afterInteraction(Executionstate $state)
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    foreach ($this->game->getCardsInLocation($state->getPlayerId(), 'revealed') as $card) {
+    foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
       self::putInHand($card);
     }
     if (self::getCurrentStep() == 1) {
-      foreach ($this->game->getCardsInScorePile($state->getPlayerId()) as $card) {
+      foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
         self::reveal($card);
       }
     } else {

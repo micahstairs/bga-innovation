@@ -16,15 +16,15 @@ class Card440 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps($state->isDemand() ? 3 : 2);
+    self::setMaxSteps(self::isDemand() ? 3 : 2);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->isDemand()) {
-      if ($state->getCurrentStep() == 1) {
+    if (self::isDemand()) {
+      if (self::getCurrentStep() == 1) {
         return [
-          'player_id'        => $state->getLauncherId(),
+          'player_id'        => self::getLauncherId(),
           'choose_icon_type' => true,
           'icon'             => [1, 3, 4, 5, 6, 7],
         ];
@@ -32,11 +32,11 @@ class Card440 extends Card
         return [
           'location_from' => 'board',
           'location_to'   => 'deck',
-          'with_icon'     => $this->game->getAuxiliaryValue(),
+          'with_icon'     => self::getAuxiliaryValue(),
         ];
       }
     }
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'location_from' => 'board',
         'location_to'   => 'deck',
@@ -45,7 +45,7 @@ class Card440 extends Card
       return [
         'location_from' => 'score',
         'location_to'   => 'deck',
-        'age_min'       => $this->game->getAuxiliaryValue(),
+        'age_min'       => self::getAuxiliaryValue(),
         'n'             => 'all',
       ];
     }
@@ -53,18 +53,18 @@ class Card440 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->isNonDemand() && $state->getCurrentStep() == 1) {
+    if (self::isNonDemand() && self::getCurrentStep() == 1) {
       $minAgeToReturn = 0;
-      if ($state->getNumChosen() > 0) {
-        $minAgeToReturn = $this->game->innovationGameState->get('age_last_selected');
+      if (self::getNumChosen() > 0) {
+        $minAgeToReturn = self::getLastSelectedAge();
       }
-      $this->game->setAuxiliaryValue($minAgeToReturn);
+      self::setAuxiliaryValue($minAgeToReturn);
     }
   }
 
   public function handleSpecialChoice(Executionstate $state, int $chosenIcon): void
   {
-    $this->notifications->notifyIconChoice($chosenIcon, $state->getPlayerId());
-    $this->game->setAuxiliaryValue($chosenIcon);
+    $this->notifications->notifyIconChoice($chosenIcon, self::getPlayerId());
+    self::setAuxiliaryValue($chosenIcon);
   }
 }

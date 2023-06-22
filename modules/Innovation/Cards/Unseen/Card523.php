@@ -15,10 +15,10 @@ class Card523 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->getEffectNumber() == 1) {
-      $state->setMaxSteps(1);
+    if (self::getEffectNumber() == 1) {
+      self::setMaxSteps(1);
     } else {
-      $numFours = $this->game->countCardsInLocationKeyedByAge($state->getPlayerId(), 'score')[4];
+      $numFours = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score')[4];
       for ($i = 0; $i < $numFours; $i++) {
         self::draw(4);
       }
@@ -28,7 +28,7 @@ class Card523 extends Card
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'n'             => 'all',
         'location_from' => 'board',
@@ -45,9 +45,9 @@ class Card523 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getCurrentStep() == 1) {
-      if ($state->getNumChosen() == 0) {
-        $state->setMaxSteps(2);
+    if (self::getCurrentStep() == 1) {
+      if (self::getNumChosen() == 0) {
+        self::setMaxSteps(2);
       }
     } else {
       self::drawAndScore(4);

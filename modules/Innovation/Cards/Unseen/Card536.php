@@ -15,7 +15,7 @@ class Card536 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->isDemand()) {
+    if (self::isDemand()) {
       $this->game->revealHand(self::getPlayerId());
     } else {
       $cardIds = array();
@@ -24,13 +24,13 @@ class Card536 extends Card
         $cardIds[] = $card['id'];
       }
       $this->game->setAuxiliaryArray($cardIds);
-      $state->setMaxSteps(2);
+      self::setMaxSteps(2);
     }
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'n'                               => 2,
         'location_from'                   => 'revealed',
@@ -41,15 +41,15 @@ class Card536 extends Card
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::RIGHT,
-        'color'           => array($this->game->getAuxiliaryValue()),
+        'color'           => array(self::getAuxiliaryValue()),
       ];
     }
   }
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getCurrentStep() == 1) {
-      $revealedCard = $this->game->getCardsInLocation($state->getPlayerId(), 'revealed')[0];
+    if (self::getCurrentStep() == 1) {
+      $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'revealed')[0];
       self::putInHand($revealedCard);
       self::setAuxiliaryValue($revealedCard['color']);
     }

@@ -9,16 +9,17 @@ class Card65 extends Card
 {
 
   // Evolution:
-  //   - You may choose to either draw and score an [8] and then return a card from your score pile, or draw a card of value one higher than the highest card in your score pile.
+  //   - You may choose to either draw and score an [8] and then return a card from your score pile,
+  //     or draw a card of value one higher than the highest card in your score pile.
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps(1);
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'can_pass'         => true,
         'choose_yes_or_no' => true,
@@ -33,7 +34,7 @@ class Card65 extends Card
 
   public function getSpecialChoicePrompt(Executionstate $state): array
   {
-    $player_id = $state->getPlayerId();
+    $player_id = self::getPlayerId();
     $age_to_score = $this->game->getAgeToDrawIn($player_id, 8);
     $age_to_draw = $this->game->getAgeToDrawIn($player_id, $this->game->getMaxAgeInScore($player_id) + 1);
     $max_age = $this->game->getMaxAge();
@@ -57,12 +58,11 @@ class Card65 extends Card
 
   public function handleSpecialChoice(Executionstate $state, int $choice): void
   {
-    $player_id = $state->getPlayerId();
     if ($choice === 0) {
-      $this->game->executeDraw($player_id, $this->game->getMaxAgeInScore($player_id) + 1);
+      self::draw($this->game->getMaxAgeInScore(self::getPlayerId()) + 1);
     } else {
       self::drawAndScore(8);
-      $state->setMaxSteps(2);
+      self::setMaxSteps(2);
     }
   }
 

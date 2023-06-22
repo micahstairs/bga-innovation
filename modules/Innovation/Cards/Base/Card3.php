@@ -12,19 +12,19 @@ class Card3 extends Card {
   //   - [4th edition] Junk an available achievement of value [1] or [2].
 
   public function initialExecution(ExecutionState $state) {
-    if ($state->isDemand()) {
-      $this->game->executeDraw($state->getPlayerId(), 1);
+    if (self::isDemand()) {
+      self::draw(1);
     }
-    $state->setMaxSteps(1);
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(Executionstate $state): Array {
-    if ($state->isDemand()) {
+    if (self::isDemand()) {
       return [
         'location_from' => 'hand',
-        'owner_to' => $state->getLauncherId(),
+        'owner_to' => self::getLauncherId(),
         'location_to' => 'hand',
-        'age' => $this->game->getMaxAgeInHand($state->getPlayerId()),
+        'age' => $this->game->getMaxAgeInHand(self::getPlayerId()),
       ];
     } else {
       return [

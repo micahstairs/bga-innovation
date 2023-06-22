@@ -14,22 +14,22 @@ class Card521 extends Card
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->getEffectNumber() == 1) {
+    if (self::getEffectNumber() == 1) {
       $cardIds = array_merge(self::getCardsIdOfMaxAgeInLocation('hand'), self::getCardsIdOfMaxAgeInLocation('score'));
       if (count($cardIds) == 0) {
-        $this->game->claimSpecialAchievement($state->getPlayerId(), 598);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), 598);
       } else {
-        $state->setMaxSteps(1);
+        self::setMaxSteps(1);
         $this->game->setAuxiliaryArray($cardIds);
       }
     } else {
-      $state->setMaxSteps(1);
+      self::setMaxSteps(1);
     }
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getEffectNumber() == 1) {
+    if (self::getEffectNumber() == 1) {
       return [
         'n'                               => 'all',
         'location_from'                   => 'hand,score',

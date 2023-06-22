@@ -15,14 +15,14 @@ class Card522 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $secrets = $this->game->getCardsInLocation($state->getPlayerId(), 'safe');
+    $secrets = $this->game->getCardsInLocation(self::getPlayerId(), 'safe');
     if (count($secrets) == 1) {
       $this->game->transferCardFromTo($secrets[0], 0, 'achievements');
       self::draw($secrets[0]['age'] + 1);
     } else if (count($secrets) > 1) {
-      $state->setMaxSteps(1);
+      self::setMaxSteps(1);
     } else {
-      $topRedCard = $this->game->getTopCardOnBoard($state->getPlayerId(), 1);
+      $topRedCard = self::getTopCardOfColor($this->game::RED);
       self::drawAndSafeguard($topRedCard === null ? 0 : $topRedCard['age']);
     }
 
@@ -39,10 +39,10 @@ class Card522 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getNumChosen() > 0) {
+    if (self::getNumChosen() > 0) {
       self::draw(self::getLastSelectedAge() + 1);
     } else {
-      $topRedCard = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game::RED);
+      $topRedCard = self::getTopCardOfColor($this->game::RED);
       self::drawAndSafeguard($topRedCard === null ? 0 : $topRedCard['age']);
     }
   }
