@@ -67,14 +67,29 @@ abstract class Card
     return $this->state->getLauncherId();
   }
 
+  protected function getEffectNumber(): int
+  {
+    return $this->state->getEffectNumber();
+  }
+
   protected function getCurrentStep(): int
   {
     return $this->state->getCurrentStep();
   }
 
+  protected function setNextStep(int $step)
+  {
+    $this->state->setNextStep($step);
+  }
+
   protected function setMaxSteps(int $steps)
   {
     $this->state->setMaxSteps($steps);
+  }
+
+  protected function getNumChosen(): int
+  {
+    return $this->state->getNumChosen();
   }
 
   protected function getPostExecutionIndex(): int
@@ -109,12 +124,36 @@ abstract class Card
     return $this->game->scoreCard($card, self::coercePlayerId($playerId));
   }
 
+  protected function meld($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->meldCard($card, self::coercePlayerId($playerId));
+  }
+
+  protected function tuck($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->tuckCard($card, self::coercePlayerId($playerId));
+  }
+
   protected function reveal($card, int $playerId = null)
   {
     if (!$card) {
       return null;
     }
     $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
+  }
+
+  protected function safeguard($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
 
@@ -210,6 +249,18 @@ abstract class Card
 
   protected function setAuxiliaryValue(int $value) {
     return $this->game->setAuxiliaryValue($value);
+  }
+
+  protected function incrementAuxiliaryValue(int $value = 1) {
+    return self::setAuxiliaryValue(self::getAuxiliaryValue() + $value);
+  }
+
+  protected function getAuxiliaryValue2(): int {
+    return $this->game->getAuxiliaryValue2();
+  }
+
+  protected function setAuxiliaryValue2(int $value) {
+    return $this->game->setAuxiliaryValue2($value);
   }
 
   protected function setActionScopedAuxiliaryArray($array, $playerId = 0): void
