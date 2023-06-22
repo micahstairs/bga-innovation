@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use Innovation\Utils\Arrays;
 
 class Card506 extends Card
 {
@@ -16,12 +15,12 @@ class Card506 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps(2);
+    self::setMaxSteps(2);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       $this->game->setAuxiliaryValueFromArray([]);
       return [
         'location_from' => 'hand,score',
@@ -39,9 +38,9 @@ class Card506 extends Card
 
   public function handleCardChoice(Executionstate $state, int $cardId)
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       // Keep track of the colors of the cards being returned
-      $card = $this->game->getCardInfo($cardId);
+      $card = self::getCard($cardId);
       $colors = $this->game->getAuxiliaryValueAsArray();
       $colors[] = $card['color'];
       $this->game->setAuxiliaryValueFromArray(array_unique($colors));
@@ -49,13 +48,13 @@ class Card506 extends Card
       // Score the other card
       $cardIds = $this->game->getAuxiliaryArray();
       $cardIdToScore = $cardId == $cardIds[0] ? $cardIds[1] : $cardIds[0];
-      $this->game->scoreCard($this->game->getCardInfo($cardIdToScore), $state->getPlayerId(), );
+      self::score(self::getCard($cardIdToScore));
     }
   }
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       // Draw two cards and store the IDs in the auxiliary array
       $numColors = count($this->game->getAuxiliaryValueAsArray());
       $card1 = self::draw($numColors);

@@ -14,14 +14,14 @@ class Card493 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps(1);
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    $iconsMelded = self::getActionScopedAuxiliaryArray($state->getPlayerId());
+    $iconsMelded = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $cardIds = [];
-    foreach ($this->game->getCardsInHand($state->getPlayerId()) as $card) {
+    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
       foreach ($iconsMelded as $icon) {
         if ($this->game->hasRessource($card, $icon)) {
           continue 2;

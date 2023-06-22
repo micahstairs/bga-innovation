@@ -16,7 +16,7 @@ class Card539 extends Card
   public function initialExecution(ExecutionState $state)
   {
     $card = self::drawAndReveal(6);
-    $topCard = $this->game->getTopCardOnBoard(self::getPlayerId(), $card['color']);
+    $topCard = self::getTopCardOfColor($card['color']);
     if ($this->game->hasRessource($topCard, $this->game::INDUSTRY)) {
       self::tuck($card);
       $secondCard = self::drawAndReveal(7);

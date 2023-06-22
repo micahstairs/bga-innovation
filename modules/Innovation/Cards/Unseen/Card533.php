@@ -16,8 +16,8 @@ class Card533 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->getEffectNumber() == 1) {
-      $state->setMaxSteps(1);
+    if (self::getEffectNumber() == 1) {
+      self::setMaxSteps(1);
     } else {
       self::drawAndTuck(4);
     }
@@ -25,7 +25,7 @@ class Card533 extends Card
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'location_from' => 'hand',
         'location_to'   => 'board',
@@ -41,10 +41,10 @@ class Card533 extends Card
 
   public function handleCardChoice(Executionstate $state, int $cardId)
   {
-    $tuckedCard1 = $this->game->getCardInfo($cardId);
+    $tuckedCard1 = self::getCard($cardId);
     $tuckedCard2 = self::drawAndTuck(4);
     $this->game->setAuxiliaryArray([$tuckedCard1['color'], $tuckedCard2['color']]);
-    $state->setMaxSteps(2);
+    self::setMaxSteps(2);
   }
 
   public function getSpecialChoicePrompt(Executionstate $state): array
@@ -57,8 +57,8 @@ class Card533 extends Card
 
   public function handleSpecialChoice(Executionstate $state, int $choice): void
   {
-    while (($card = $this->game->getTopCardOnBoard($state->getPlayerId(), $choice)) !== null) {   
-      $this->game->scoreCard($card, $state->getPlayerId());
+    while (($card = self::getTopCardOfColor($choice)) !== null) {   
+      self::score($card);
     }
     $colors = $this->game->getAuxiliaryArray();
     $remainingColor = $colors[0] == $choice ? $colors[1] : $colors[0];

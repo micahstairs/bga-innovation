@@ -15,36 +15,36 @@ class Card485 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    $state->setMaxSteps(1);
-    $this->game->setAuxiliaryValue(1);
+    self::setMaxSteps(1);
+    self::setAuxiliaryValue(1);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'can_pass'      => true,
         'location_from' => 'hand',
         'location_to'   => 'deck',
-        'age'           => $this->game->getAuxiliaryValue(),
+        'age'           => self::getAuxiliaryValue(),
       ];
     } else {
       return [
         'location_from' => 'achievements',
         'owner_from'    => 0,
         'location_to'   => 'safe',
-        'age'           => $this->game->getAuxiliaryValue() - 1,
+        'age'           => self::getAuxiliaryValue() - 1,
       ];
     }
   }
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getCurrentStep() == 1) {
-      if (self::getLastSelectedAge() == $this->game->getAuxiliaryValue()) {
-        $this->game->setAuxiliaryValue($this->game->getAuxiliaryValue() + 1);
-        $state->setNextStep(1);
-        $state->setMaxSteps(2);
+    if (self::getCurrentStep() == 1) {
+      if (self::getLastSelectedAge() == self::getAuxiliaryValue()) {
+        self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+        self::setNextStep(1);
+        self::setMaxSteps(2);
       }
     }
   }

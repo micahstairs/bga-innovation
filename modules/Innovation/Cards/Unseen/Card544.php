@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card544 extends Card
 {
@@ -23,12 +22,12 @@ class Card544 extends Card
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'location_from' => 'hand',
         'location_to'   => 'deck',
       ];
-    } else if ($state->getCurrentStep() == 2) {
+    } else if (self::getCurrentStep() == 2) {
       return [
         'location_from' => 'hand',
         'location_to'   => 'board',
@@ -44,7 +43,7 @@ class Card544 extends Card
 
   public function handleCardChoice(Executionstate $state, int $cardId)
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       self::splayRight(self::getLastSelectedColor());
     }
   }

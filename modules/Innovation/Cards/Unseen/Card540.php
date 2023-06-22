@@ -15,9 +15,9 @@ class Card540 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->getEffectNumber() == 1) {
+    if (self::getEffectNumber() == 1) {
       if ($this->game->countCardsInLocation(self::getPlayerId(), 'score') > 0) {
-        $state->setMaxSteps(1);
+        self::setMaxSteps(1);
       }
     } else {
       for ($i = 0; $i < $this->game->countCardsInLocation(self::getPlayerId(), 'safe'); $i++) {
@@ -39,7 +39,7 @@ class Card540 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->getNumChosen() > 0) {
+    if (self::getNumChosen() > 0) {
       $cards = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[self::getLastSelectedAge()];
       foreach ($cards as $card) {
         self::score($card);

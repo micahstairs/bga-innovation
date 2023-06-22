@@ -4,7 +4,6 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card517 extends Card
 {
@@ -16,26 +15,26 @@ class Card517 extends Card
 
   public function initialExecution(ExecutionState $state)
   {
-    if ($state->isDemand()) {
-      $state->setMaxSteps(2);
+    if (self::isDemand()) {
+      self::setMaxSteps(2);
     } else {
-      $state->setMaxSteps(1);
+      self::setMaxSteps(1);
     }
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->isDemand()) {
-      if ($state->getCurrentStep() == 1) {
+    if (self::isDemand()) {
+      if (self::getCurrentStep() == 1) {
         return [
-          'player_id'    => $state->getLauncherId(),
+          'player_id'    => self::getLauncherId(),
           'choose_color' => true,
         ];
       } else {
         return [
           'location_from' => 'hand',
           'location_to'   => 'deck',
-          'color'         => array($this->game->getAuxiliaryValue()),
+          'color'         => [self::getAuxiliaryValue()],
         ];
       }
     } else {
@@ -49,17 +48,14 @@ class Card517 extends Card
 
   public function afterInteraction(Executionstate $state)
   {
-    if ($state->isDemand() && $state->getNumChosen() > 0) {
-      $topCard = $this->game->getTopCardOnBoard($state->getPlayerId(), $this->game->getAuxiliaryValue());
-      if ($topCard !== null) {
-        $this->game->transferCardFromTo($topCard, $state->getLauncherId(), 'board');
-      }
+    if (self::isDemand() && self::getNumChosen() > 0) {
+      self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
     }
   }
 
   public function handleSpecialChoice(Executionstate $state, int $choice): void
   {
-    $this->game->setAuxiliaryValue($choice);
+    self::setAuxiliaryValue($choice);
   }
 
 }

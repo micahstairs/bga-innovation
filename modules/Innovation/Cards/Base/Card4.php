@@ -17,7 +17,7 @@ class Card4 extends Card
       $card = self::drawAndReveal(1);
       if ($this->game->hasRessource($card, $this->game::AUTHORITY)) {
         $this->notifications->notifyPresenceOfIcon($this->game::AUTHORITY);
-        $this->game->scoreCard($card, $state->getPlayerId());
+        self::score($card);
       } else {
         $this->notifications->notifyAbsenceOfIcon($this->game::AUTHORITY);
         self::putInHand($card);

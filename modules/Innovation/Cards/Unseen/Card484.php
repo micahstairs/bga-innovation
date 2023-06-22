@@ -20,8 +20,8 @@ class Card484 extends Card
       $colorCounts[$card['color']]++;
     }
     self::setActionScopedAuxiliaryArray($colorCounts);
-    $this->game->setAuxiliaryValue(0); // Used to track whether the player has scored a card yet
-    $state->setMaxSteps(1);
+    self::setAuxiliaryValue(0); // Used to track whether the player has scored a card yet
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(Executionstate $state): array
@@ -60,7 +60,7 @@ class Card484 extends Card
       $colorCounts = self::getActionScopedAuxiliaryArray();
       $colorCounts[$color]--;
       self::setActionScopedAuxiliaryArray($colorCounts);
-      $this->game->setAuxiliaryValue(1);
+      self::setAuxiliaryValue(1);
       $state->setNextStep(1);
     }
   }

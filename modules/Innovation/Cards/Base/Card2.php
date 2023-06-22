@@ -11,7 +11,7 @@ class Card2 extends Card {
   //   - Draw a [2].
 
   public function initialExecution(ExecutionState $state) {
-    $this->game->executeDraw($state->getPlayerId(), 2);
+    self::draw(2);
   }
 
 }

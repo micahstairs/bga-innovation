@@ -16,12 +16,12 @@ class Card535 extends Card
   {
     self::setAuxiliaryValue(0); // Used to track the total number of cards returned
     self::setAuxiliaryValue2(0); // Used to track the number of 7s returned
-    $state->setMaxSteps(2);
+    self::setMaxSteps(2);
   }
 
   public function getInteractionOptions(Executionstate $state): array
   {
-    if ($state->getCurrentStep() == 1) {
+    if (self::getCurrentStep() == 1) {
       return [
         'location_from' => 'board',
         'location_to'   => 'deck',

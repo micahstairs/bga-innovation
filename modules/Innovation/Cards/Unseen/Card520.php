@@ -25,7 +25,7 @@ class Card520 extends Card
       $cardsInDeck = $this->game->getCardsInLocationKeyedByAge(0, 'deck');
       foreach ($cardsInDeck[5] as $card) {
         if ($card['type'] == $this->game::BASE) {
-          $this->game->scoreCard($card, $state->getPlayerId());
+          self::score($card);
         }
       }
     }
