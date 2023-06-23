@@ -30466,13 +30466,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                         }
                         if ($code !== null && self::isInSeparateFile($card_id)) {
+                            $this->innovationGameState->set("age_last_selected", $card['age']);
+                            $this->innovationGameState->set("color_last_selected", $card['color']);
+                            $this->innovationGameState->set("owner_last_selected", $card['owner']);
                             $executionState = (new ExecutionState($this))
                                 ->setLauncherId($player_id)
                                 ->setPlayerId($player_id)
                                 ->setEffectType($current_effect_type)
                                 ->setEffectNumber($current_effect_number)
                                 ->setCurrentStep(self::getStep())
-                                ->setMaxSteps(self::getStepMax());
+                                ->setMaxSteps(self::getStepMax())
+                                ->setNumChosen($this->innovationGameState->get('n') + 1);
                             self::getCardInstance($card_id, $executionState)->handleCardChoice($selected_card_id);
                             self::setStepMax($executionState->getMaxSteps());
                         }
@@ -30497,6 +30501,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         if ($special_type_of_choice == 0) {
             // Mark extra information about this chosen card
+            // TODO(LATER): Remove this once it becomes redundant with the same 3 lines above (once all cards are in separate files)
             $this->innovationGameState->set("age_last_selected", $card['age']);
             $this->innovationGameState->set("color_last_selected", $card['color']);
             $this->innovationGameState->set("owner_last_selected", $card['owner']);

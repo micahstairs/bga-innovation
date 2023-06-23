@@ -163,7 +163,7 @@ abstract class Card
     if (!$card) {
       return null;
     }
-    $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'revealed');
   }
 
   protected function safeguard($card, int $playerId = null)

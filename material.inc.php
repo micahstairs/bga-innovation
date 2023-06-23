@@ -2720,7 +2720,7 @@ $this->textual_card_infos = array(
 
     556 => array(
         'name'                => clienttranslate('Scouting'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal two ${age_9}. Return one or more of the drawn cards. If you return two cards, reveal the top card of the ${age_10} deck. If the color of the revealed card matches the color of one of the returned cards, draw a ${age_10}.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal two ${age_9}. Return one or more of the drawn cards. If you return two cards, reveal the top card of the 10 deck. If the color of the revealed card matches the color of one of the returned cards, draw a ${age_10}.'),
     ),
 
     557 => array(
