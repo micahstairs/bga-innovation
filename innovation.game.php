@@ -91,7 +91,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 51-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 52-68, 90-93
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -109,7 +109,7 @@ class Innovation extends Table
             'can_pass' => 28,
             'n_min' => 29,
             'n_max' => 30,
-            // TODO(LATER): Deprecate and remove 'solid_constraint'.
+            // TODO(LATER): Deprecate and remove 'solid_constraint'. But wait until we finish implementing 4th edition before deciding we do not need this.
             'solid_constraint' => 31,
             'splay_direction' => 32,
             'owner_from' => 33,
@@ -138,7 +138,8 @@ class Innovation extends Table
             'owner_last_selected' => 75,
             'type_array' => 76,
             'icon_array' => 49,
-            'age_array' => 77,
+            'age_array' => 51,
+            'choice_array' => 77,
             'player_array' => 78,
             'icon_hash_1' => 79,
             'icon_hash_2' => 80,
@@ -203,6 +204,7 @@ class Innovation extends Table
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
                 'icon_array' => 49,
+                'choice_array' => 51,
             ));
             $this->innovationGameState->set('icon_array', Arrays::getArrayAsValue([1,2,3,4,5,6]));
         }
@@ -428,6 +430,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('age_array', -1); // List of selectable ages encoded in a single value
         $this->innovationGameState->setInitial('color_array', -1); // List of selectable colors encoded in a single value
         $this->innovationGameState->setInitial('type_array', -1); // List of selectable types encoded in a single value
+        $this->innovationGameState->setInitial('choice_array', -1); // List of selectable choices encoded in a single value
         $this->innovationGameState->setInitial('icon_array', -1); // List of selectable icons encoded in a single value
         $this->innovationGameState->setInitial('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 0-based 'player_index', not their 'player_id')
         $this->innovationGameState->setInitial('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
@@ -6523,6 +6526,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $possible_special_types_of_choice = [
+            'choose_from_list',
             'choose_value',
             'choose_color',
             'choose_two_colors',
@@ -6546,6 +6550,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->setFromArray('type_array', $rewritten_options['type']); // used by 'choose_type'
                 $this->innovationGameState->setFromArray('icon_array', $rewritten_options['icon']); // used by 'choose_icon_type'
                 $this->innovationGameState->setFromArray('player_array', $rewritten_options['players']); // used by 'choose_player'
+                $this->innovationGameState->setFromArray('choice_array', $rewritten_options['choices']); // used by 'choose_from_list'
                 return;
             }
         }
@@ -6699,11 +6704,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'players':
                 $this->innovationGameState->setFromArray('player_array', $value);
                 break;
+            case 'choices':
+                $this->innovationGameState->setFromArray('choice_array', $value);
+                break;
             case 'has_splay_direction':
                 $this->innovationGameState->setFromArray('has_splay_direction', $value);
                 break;
             }
-            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'has_splay_direction') {
+            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction') {
                 $this->innovationGameState->set($key, $value);
             }
         }
@@ -7097,8 +7105,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function encodeSpecialTypeOfChoice($special_type_of_choice) {
-        // NOTE: The following values are unused and safe to re-use: 1, 2
+        // NOTE: The following value is unused and safe to re-use: 2
         switch($special_type_of_choice) {
+        case 'choose_from_list':
+            return 1;
         case 'choose_value':
             return 3;
         case 'choose_color':
@@ -7125,8 +7135,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function decodeSpecialTypeOfChoice($special_type_of_choice_code) {
-        // NOTE: The following values are unused and safe to re-use: 1, 2
+        // NOTE: The following value is unused and safe to re-use: 2
         switch($special_type_of_choice_code) {
+        case 1:
+            return 'choose_from_list';
         case 3:
             return 'choose_value';
         case 4:
@@ -8639,6 +8651,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
+            case 'choose_from_list':
+                if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('choice_array'))) {
+                    self::throwInvalidChoiceException();
+                }
+                break;
             case 'choose_value':
                 if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('age_array'))) {
                     self::throwInvalidChoiceException();
@@ -9733,6 +9750,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         if ($special_type_of_choice > 0) {
             switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
+            case 'choose_from_list':
+                // See the card
+                break;
             case 'choose_value':
                 $options = array();
                 foreach ($this->innovationGameState->getAsArray('age_array') as $age) {
@@ -11207,6 +11227,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('age_array', -1);
             $this->innovationGameState->set('color_array', -1);
             $this->innovationGameState->set('type_array', -1);
+            $this->innovationGameState->set('choice_array', -1);
             $this->innovationGameState->set('icon_array', -1);
             $this->innovationGameState->set('player_array', -1);
             $this->innovationGameState->set('with_icon', -1);
@@ -17419,6 +17440,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             if (!array_key_exists('owner_to', $options)) {
                 $options['owner_to'] = $player_id;
+            }
+            if (array_key_exists('choices', $options)) {
+                $options['choose_from_list'] = true;
             }
         }
 

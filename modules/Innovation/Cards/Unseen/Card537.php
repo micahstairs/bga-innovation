@@ -22,7 +22,7 @@ class Card537 extends Card
         $this->game->getCurrentSplayDirection(self::getPlayerId(), $this->game::RED) ==
         $this->game->getCurrentSplayDirection(self::getPlayerId(), $card['color'])
       ) {
-        $this->game->splayUp(self::getPlayerId(), self::getPlayerId(), $card['color']);
+        self::splayUp($card['color']);
       } else {
         self::unsplay($card['color']);
       }
@@ -31,12 +31,11 @@ class Card537 extends Card
 
   public function getInteractionOptions(): array
   {
-    return ['choose_yes_or_no' => true];
+    return ['choices' => [1, 2, 3]];
   }
 
   public function getSpecialChoicePrompt(): array
   {
-    // TODO(4E): A third choice is needed.
     return [
       "message_for_player" => clienttranslate('${You} may make a choice'),
       "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
@@ -46,8 +45,12 @@ class Card537 extends Card
           'text'  => clienttranslate('Splay red left'),
         ],
         [
-          'value' => 0,
+          'value' => 2,
           'text'  => clienttranslate('Splay red right'),
+        ],
+        [
+          'value' => 3,
+          'text'  => clienttranslate('Splay red up'),
         ],
       ],
     ];
@@ -57,8 +60,10 @@ class Card537 extends Card
   {
     if ($choice === 1) {
       self::splayLeft($this->game::RED);
-    } else {
+    } else if ($choice == 2) {
       self::splayRight($this->game::RED);
+    } else {
+      self::splayUp($this->game::RED);
     }
   }
 }
