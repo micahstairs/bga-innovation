@@ -2181,6 +2181,14 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} draw and achieve a ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} draws and achieves a ${<}${age}${>}.');
             break;
+        case 'revealed->achievements':
+            $message_for_player = clienttranslate('${You} return a ${<}${age}${>} ${<<}${name}${>>} to the available achievements.');
+            $message_for_others = clienttranslate('${player_name} return a ${<}${age}${>} to the available achievements.');
+            break;
+        case 'achievements->revealed':
+            $message_for_player = clienttranslate('${You} reveal a ${<}${age}${>} ${<<}${name}${>>} to the available achievements.');
+            $message_for_others = clienttranslate('${player_name} reveal a ${<}${age}${>} to the available achievements.');
+            break;
         case 'deck->safe':
             $message_for_player = clienttranslate('${You} draw and safeguard ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} draws and safeguards a ${<}${age}${>}.');
@@ -2613,6 +2621,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his hand');
                 break;
+            case 'hand->revealed,hand':
+                $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his hand');
+                break;
             case 'hand->revealed,score':
                 $message_for_player = clienttranslate('${You_must} reveal and score ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} reveal and score ${number} ${card} from his hand');
@@ -2691,6 +2703,24 @@ class Innovation extends Table
                 else {
                     $message_for_player = clienttranslate('${You_must} meld ${number} ${card} from your score pile');
                     $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his score pile');
+                }
+                break;
+            case 'revealed->achievements':
+                if ($location_to == 0) {
+                    $message_for_player = clienttranslate('${You_must} return ${number} ${card} to the available achievements');
+                    $message_for_others = clienttranslate('${player_must} return ${number} ${card} to the available achievements');                    
+                } else {
+                    $message_for_player = clienttranslate('${You_must} return ${number} ${card} to your achievements');
+                    $message_for_others = clienttranslate('${player_must} return ${number} ${card} to his achievements');
+                }
+                break;
+            case 'achievements->revealed':
+                if ($location_from == 0) {
+                    $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from the available achievements');
+                    $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from the available achievements');                    
+                } else {
+                    $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your achievements');
+                    $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his achievements');
                 }
                 break;
             case 'score->revealed':
@@ -2973,6 +3003,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} score.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s score.');
                 break;
+
+            case 'safe->safe':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s safe.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} safe.');
+                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s safe.');
+                break;
                 
             default:
                 // This should not happen
@@ -3085,6 +3121,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his score pile.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his score pile.');
+                break;
+
+            case 'safe->safe':
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your safe.');
+                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his safe.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his safe.');
                 break;
                 
             default:
