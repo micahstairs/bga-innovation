@@ -119,6 +119,13 @@ abstract class Card
     }
   }
 
+  protected function fullyExecute($card)
+  {
+    if ($card) {
+      $this->game->fullyExecute($card);
+    }
+  }
+
   // CARD HELPERS
 
   protected function draw(int $age, int $playerId = null)
@@ -132,6 +139,14 @@ abstract class Card
       return null;
     }
     return $this->game->scoreCard($card, self::coercePlayerId($playerId));
+  }
+
+  protected function transferToScorePile($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'score');
   }
 
   protected function meld($card, int $playerId = null)
@@ -174,6 +189,21 @@ abstract class Card
     return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
+  protected function return($card)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->returnCard($card);
+  }
+  
+  protected function junk($card)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->junkCard($card);
+  }
 
   protected function drawAndMeld(int $age, int $playerId = null)
   {

@@ -3,16 +3,13 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card548 extends Card
 {
 
   // Safe Deposit Box:
-  //   - You may choose to either draw and junk two [7], 
-  //     or exchange all cards in your score pile with 
-  //     all valued junked cards.
+  //   - You may choose to either draw and junk two [7], or exchange all cards in your score pile
+  //     with all valued junked cards.
 
   public function initialExecution()
   {
@@ -21,15 +18,11 @@ class Card548 extends Card
 
   public function getInteractionOptions(): array
   {
-      // TODO: there is an error on the backend when this is executed
-      return [
-        'can_pass' => true,
-        'choose_yes_or_no' => true
-        ];
-  }
-
-  public function afterInteraction()
-  {
+    // TODO(4E): there is an error on the backend when this is executed
+    return [
+      'can_pass' => true,
+      'choose_yes_or_no' => true,
+      ];
   }
 
   public function getSpecialChoicePrompt(): array
@@ -55,26 +48,19 @@ class Card548 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      $card1 = self::draw(7);
-      $card2 = self::draw(7);
-      self::transferCardFromTo($card1, 0, 'junk');
-      self::transferCardFromTo($card2, 0, 'junk');
+      self::junk(self::draw(7));
+      self::junk(self::draw(7));
     } else {
-      // "exchange all cards in your score pile with all valued junked cards."
-      $score_cards = $this->game->getCardsInScore(self::getPlayerId());
-      $junk_cards = $this->game->getCardsInLocation(self::getPlayerId(), 'junk');
-      
-      foreach($score_cards as $card) {
-        self::transferCardFromTo($card, 0, 'junk');
+      $scoreCards = $this->game->getCardsInScorePile(self::getPlayerId());
+      $junkCards = $this->game->getCardsInLocation(self::getPlayerId(), 'junk');
+      foreach ($scoreCards as $card) {
+        self::junk($card);
       }
-      
-      foreach($score_cards as $card) {
+      foreach ($junkCards as $card) {
         if ($card['age'] !== null) {
-          self::transferCardFromTo($card, self::getPlayerId(), 'score');
+          self::transferToScorePile($card);
         }
       }
-      
-      
     }
   }
   

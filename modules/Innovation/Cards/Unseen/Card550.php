@@ -10,67 +10,55 @@ class Card550 extends Card
 {
 
   // Plot Voucher
-  //   - Meld a card from your score pile. 
-  //     Safeguard the lowest available standard achievement. 
+  //   - Meld a card from your score pile. Safeguard the lowest available standard achievement. 
   //     If you do, fully execute the melded card if it is your turn, otherwise self-execute it.
 
   public function initialExecution()
   {
-      self::setAuxiliaryValue(-1);
-      if ($this->game->getMinOrMaxAgeInLocation(0, 'achievements', 'MIN') > 0) {
-        self::setMaxSteps(2);
-      } else {
-        self::setMaxSteps(1); // no achievements left
-      }
+    self::setAuxiliaryValue(-1);
+    self::setMaxSteps(2);
   }
 
   public function getInteractionOptions(): array
   {
-      
+
     if (self::getCurrentStep() == 1) {
-      // "Meld a card from your score pile."
       return [
         'location_from' => 'score',
         'location_to'   => 'board',
-        
-        'meld_keyword' => true,
+        'meld_keyword'  => true,
       ];
     } else {
-      // "Safeguard the lowest available standard achievement. "
       return [
         'owner_from'    => 0,
         'location_from' => 'achievements',
         'location_to'   => 'safe',
-        
-        'age'           => $this->game->getMinOrMaxAgeInLocation(0, 'achievements', 'MIN'), // minimum
+        'age'           => self::getLowestAvailableAchievementValue(),
       ];
     }
   }
 
-  public function afterInteraction()
+  public function handleCardChoice(int $cardId)
   {
     if (self::getCurrentStep() == 1) {
-        if (self::getNumChosen() > 0) {
-            self::setAuxiliaryValue(self::getLastSelectedId());
-        }
+      self::setAuxiliaryValue(self::getLastSelectedId());
     } else {
-        if (self::getNumChosen() > 0) {
-            $safe_card = $this->game->getCardInfo(self::getLastSelectedId());
-
-            if ($safe_card['location'] == 'safe' && $safe_card['owner'] == self::getPlayerId()) { // "If you do,"
-                if (self::getAuxiliaryValue() >= 0) { // can't execute a card you didn't meld
-                    $card = $this->game->getCardInfo(self::getAuxiliaryValue());
-                    if (self::getPlayerId() == self::getLauncherId()) {
-                        // "fully execute the melded card if it is your turn,"
-                        // TODO: $this->game->fullyExecute($card); 
-                    } else {
-                        // "otherwise self-execute it."
-                        // TODO: self::selfExecute($card);
-                    }
-                }
-            }
+      $secret = self::getLastSelectedCard();
+      // Make sure the card is actually in the safe (the safe could have been full)
+      if ($secret['location'] == 'safe' && $secret['owner'] == self::getPlayerId()) {
+        $meldedCard = self::getCard(self::getAuxiliaryValue());
+        if (self::getPlayerId() == self::getLauncherId()) {
+          self::fullyExecute($meldedCard);
+        } else {
+          self::selfExecute($meldedCard);
         }
+      }
     }
   }
-  
+
+  private function getLowestAvailableAchievementValue(): int
+  {
+    return $this->game->getMinOrMaxAgeInLocation(0, 'achievements', 'MIN');
+  }
+
 }
