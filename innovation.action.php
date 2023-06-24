@@ -43,6 +43,14 @@
         self::ajaxResponse();
     }
 
+    public function debug_transfer_all() {
+        self::setAjaxMode();
+        $location_from = self::getArg("location_from", AT_alphanum, true);
+        $location_to = self::getArg("location_to", AT_alphanum, true);
+        $this->game->debug_transfer_all($location_from, $location_to);
+        self::ajaxResponse();
+    }
+
     public function debug_splay() {
         self::setAjaxMode();
         $color = self::getArg("color", AT_posint, true);

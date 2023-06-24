@@ -286,6 +286,22 @@ class Innovation extends Table
                 throw new BgaUserException("Unsupported debug action: ".$action);
         }
     }
+    function debug_transfer_all($location_from, $location_to) {
+        if ($this->innovationGameState->get('debug_mode') == 0) {
+            return; // Not in debug mode
+        }
+        $player_id = self::getCurrentPlayerId();
+        $owner_from = $player_id;
+        $owner_to = $location_to == 'deck' ? 0 : $player_id;
+        foreach (self::getCardsInLocation($owner_from, $location_from) as $card) {
+            $card['using_debug_buttons'] = true;
+            if ($location_from == 'safe' && $location_to == 'deck') {
+                $card = self::transferCardFromTo($card, $owner_from, 'board');
+                $card['using_debug_buttons'] = true;
+            }
+            self::transferCardFromTo($card, $owner_to, $location_to);
+        }
+    }
 
     function debug_splay($color, $direction) {
         if ($this->innovationGameState->get('debug_mode') == 0) {

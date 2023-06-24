@@ -216,6 +216,13 @@ var Innovation = /** @class */ (function (_super) {
             transfer_action: action,
         }, this, function (result) { }, function (is_error) { });
     };
+    Innovation.prototype.debugTransferAll = function (location_from, location_to) {
+        this.ajaxcall("/innovation/innovation/debug_transfer_all.html", {
+            lock: true,
+            location_from: location_from,
+            location_to: location_to,
+        }, this, function (result) { }, function (is_error) { });
+    };
     Innovation.prototype.getDebugCardList = function () {
         return document.getElementById("debug_card_list");
     };
@@ -263,6 +270,10 @@ var Innovation = /** @class */ (function (_super) {
             if (gamedatas.artifacts_expansion_enabled) {
                 main_area.innerHTML = "<button id='debug_dig' class='action-button debug_button bgabutton bgabutton_red'>DIG</button>" + main_area.innerHTML;
             }
+            if (gamedatas.unseen_expansion_enabled) {
+                main_area.innerHTML = "<button id='debug_empty_safe' class='action-button debug_button bgabutton bgabutton_red'>EMPTY SAFE</button>" + main_area.innerHTML;
+                main_area.innerHTML = "<button id='debug_safeguard' class='action-button debug_button bgabutton bgabutton_red'>SAFEGUARD</button>" + main_area.innerHTML;
+            }
             main_area.innerHTML =
                 "<select id='debug_card_list'></select>"
                     + "<button id='debug_draw' class='action-button debug_button bgabutton bgabutton_red'>DRAW</button>"
@@ -273,7 +284,6 @@ var Innovation = /** @class */ (function (_super) {
                     + "<button id='debug_return' class='action-button debug_button bgabutton bgabutton_red'>RETURN</button>"
                     + "<button id='debug_topdeck' class='action-button debug_button bgabutton bgabutton_red'>TOPDECK</button>"
                     + "<button id='debug_junk' class='action-button debug_button bgabutton bgabutton_red'>JUNK</button>"
-                    + "<button id='debug_safeguard' class='action-button debug_button bgabutton bgabutton_red'>SAFEGUARD</button>"
                     + main_area.innerHTML;
             // Populate dropdown lists
             for (var i = 0; i < Object.keys(gamedatas.cards).length; i++) {
@@ -315,6 +325,7 @@ var Innovation = /** @class */ (function (_super) {
             }
             if (gamedatas.unseen_expansion_enabled) {
                 dojo.connect($('debug_safeguard'), 'onclick', function (_) { return _this.debugTransfer("safeguard"); });
+                dojo.connect($('debug_empty_safe'), 'onclick', function (_) { return _this.debugTransferAll("safe", "deck"); });
             }
             dojo.connect($('debug_unsplay'), 'onclick', function (_) { return _this.debugSplay(0); });
             dojo.connect($('debug_splay_left'), 'onclick', function (_) { return _this.debugSplay(1); });
