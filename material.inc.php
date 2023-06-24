@@ -2708,7 +2708,7 @@ $this->textual_card_infos = array(
 
     554 => array(
         'name'                => clienttranslate('Slot Machine'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}, ${age_2}, ${age_4}, ${age_4}, and ${age_5}, then return them. If one drawn card is green, splay your green or purple cards right. If two drawn cards are green, also score all drawn cards. If three drawn cards are green, you win.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}, ${age_2}, ${age_3}, ${age_4}, and ${age_5}, then return them. If one drawn card is green, splay your green or purple cards right. If two drawn cards are green, also score all drawn cards. If three drawn cards are green, you win.'),
     ),
 
     /* Unseen - Age 8 */
@@ -2725,7 +2725,7 @@ $this->textual_card_infos = array(
 
     557 => array(
         'name'                => clienttranslate('Concealment'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you tuck all your secrets!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you tuck all your secrets!'),
         'non_demand_effect_1' => clienttranslate('Safeguard your bottom purple card.'),
     ),
 
@@ -2747,7 +2747,7 @@ $this->textual_card_infos = array(
 
     561 => array(
         'name'                => clienttranslate('Jackalope'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you transfer the highest card on your board without a ${icon_6} to my board! If you do, unsplay the transferred card\'s color on your board!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer the highest card on your board without a ${icon_6} to my board! If you do, unsplay the transferred card\'s color on your board!'),
         'non_demand_effect_1' => clienttranslate('Unsplay the color on your board with the most visible cards.'),
     ),
 
@@ -2758,7 +2758,7 @@ $this->textual_card_infos = array(
 
     563 => array(
         'name'                => clienttranslate('Joy Buzzer'),
-        'i_demand_effect_1'   => clienttranslate('${I_demand} you exchange all cards in your hand with all the lowest cards in my hand!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you exchange all cards in your hand with all the lowest cards in my hand!'),
         'non_demand_effect_1' => clienttranslate('You may score all the highest cards in your hand. If you do, score your top purple card.'),
     ),
 
