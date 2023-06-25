@@ -1431,7 +1431,28 @@ class Innovation extends BgaGame {
                             if (i > 0) {
                                 dojo.place("<span class='extra_text'> ,</span>", "splay_" + args.splayable_colors[i - 1], "after")
                             }
-                            this.addActionButton("splay_" + args.splayable_colors[i], dojo.string.substitute(_("Splay your ${cards} ${direction}"), { 'cards': _(args.splayable_colors_in_clear[i]), 'direction': _(args.splay_direction_in_clear) }), "action_clicForSplay")
+                            if (args.splay_direction == 0) {
+                                this.addActionButton(
+                                    "splay_" + args.splayable_colors[i],
+                                    dojo.string.substitute(_("Unsplay your ${cards}"),
+                                        {
+                                            'cards': _(args.splayable_colors_in_clear[i])
+                                        }
+                                    ),
+                                    "action_clicForSplay"
+                                );
+                            } else {
+                                this.addActionButton(
+                                    "splay_" + args.splayable_colors[i],
+                                    dojo.string.substitute(_("Splay your ${cards} ${direction}"),
+                                        {
+                                            'cards': _(args.splayable_colors_in_clear[i]),
+                                            'direction': _(args.splay_direction_in_clear)
+                                        }
+                                    ),
+                                    "action_clicForSplay"
+                                );
+                            }
                         }
                         last_button_id = "splay_" + args.splayable_colors[args.splayable_colors.length - 1];
                     }

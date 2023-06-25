@@ -230,16 +230,15 @@ class Innovation extends Table
         $player_id = self::getCurrentPlayerId();
         $card = self::getCardInfo($card_id);
         $card['using_debug_buttons'] = true;
+        if ($card['owner'] != $player_id && $card['owner'] != 0) {
+            $card = self::returnCard($card);
+            $card['using_debug_buttons'] = true;
+        }
         switch ($action) {
             case 'draw':
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
             case 'meld':
-                // The melding is being done in multiple steps because otherwise many of the transitions would not be supported.
-                if ($card['owner'] != $player_id && $card['owner'] != 0) {
-                    $card = self::returnCard($card);
-                    $card['using_debug_buttons'] = true;
-                }
                 if ($card['location'] != 'hand') {
                     $card = self::transferCardFromTo($card, $player_id, 'hand');
                     $card['using_debug_buttons'] = true;
@@ -247,10 +246,8 @@ class Innovation extends Table
                 self::meldCard($card, $player_id);
                 break;
             case 'tuck':
-                // The tucking is being done in two steps because otherwise many of the transitions would not be supported.
-                if (!($card['location'] == 'hand' && $card['owner'] == $player_id)) {
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                    $card = self::getCardInfo($card_id);
+                if ($card['location'] != 'hand') {
+                    $card = self::transferCardFromTo($card, $player_id, 'hand');
                     $card['using_debug_buttons'] = true;
                 }
                 self::tuckCard($card, $player_id);
@@ -1811,7 +1808,7 @@ class Innovation extends Table
                 selected IS TRUE AND
                 location != 'board' AND
                 (owner != {player_id} OR location = 'score' OR location = 'forecast' OR location = 'achievements' OR location = 'safe')
-        ", // The opposite of the cards the player can see except that we potentially select the cards in his score pile too (to enable direct selection if the player is lazy to see the card in his score pile for transfer)
+        ",
             array('player_id' => $player_id)
         ));
     }
@@ -6720,23 +6717,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['location_from'] = 'board'; // Splaying is equivalent as selecting a board card, by design
             $rewritten_options['location_to'] = 'board';
             $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
-            $splay_direction = $rewritten_options['splay_direction'];
-            $colors = array();
             
+            // A color must have at least 2 cards in order to be a valid target for splaying/unsplaying
+            $colors = [];
             foreach ($rewritten_options['color'] as $color) {
-                // Check if the stacks have at least 2 cards
-                if ($number_of_cards_on_board[$color] < 2) {
-                    // This color can't be chosen for splay since the stack is one card or less
-                    continue;
+                if ($number_of_cards_on_board[$color] >= 2) {
+                    $colors[] = $color;
                 }
-                
-                // Check if the stack is not already splayed in the same direction
-                if (self::getCurrentSplayDirection($player_id, $color) == $splay_direction) {
-                    // This color can't be chosen for splay since the stack is already splayed in the same direction
-                    continue;
-                }
-                // This color is still eligible for splaying
-                $colors[] = $color;
             }
             $rewritten_options['color'] = $colors;
         }
@@ -10730,7 +10717,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         $must_show_score = false;
-        if ($special_type_of_choice == 0 && $splay_direction == null && $location_from == 'score') {
+        if ($special_type_of_choice == 0 && $splay_direction == -1 && $location_from == 'score') {
             if ($owner_from == $player_id) {
                 $must_show_score = true;
             } else if ($owner_from == -2) {
@@ -10745,7 +10732,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $must_show_forecast = false;
-        if ($special_type_of_choice == 0 && $splay_direction == null && $location_from == 'forecast') {
+        if ($special_type_of_choice == 0 && $splay_direction == -1 && $location_from == 'forecast') {
             if ($owner_from == $player_id) {
                 $must_show_forecast = true;
             } else if ($owner_from == -2) {
@@ -10781,7 +10768,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     "selectable_rectos" => self::getSelectableRectos($player_id), // Most of the time, the player choose among versos he can see this array is empty so this array is empty except for few dogma effects
                     "must_show_score" => $must_show_score,
                     "must_show_forecast" => $must_show_forecast,
-                    "show_all_cards_on_board" => $special_type_of_choice == 0 && $splay_direction == null && $location_from == 'board' && $bottom_from == 1,
+                    "show_all_cards_on_board" => $special_type_of_choice == 0 && $splay_direction == -1 && $location_from == 'board' && $bottom_from == 1,
                 )
             ))
         );
@@ -29207,7 +29194,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->set('id_last_selected', $card['id']);
                 self::unmarkAsSelected($card['id']);
                 $this->innovationGameState->set('can_pass', 0);
-
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
@@ -29224,7 +29210,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->set('id_last_selected', $card_id_returning_to_unique_supply_pile);
                 self::unmarkAsSelected($card_id_returning_to_unique_supply_pile);
                 $this->innovationGameState->set('can_pass', 0);
-
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;
