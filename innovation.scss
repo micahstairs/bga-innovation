@@ -7,13 +7,14 @@
 /* codex for numbers and symbols
  *
  * **Icons**
- * icon_0 - hex
- * icon_1 - crowns
- * icon_2 - leaves 
- * icon_3 - bulbs 
- * icon_4 - towers 
- * icon_5 - factories 
- * icon_6 - clocks
+ * icon_0 - Hexagon
+ * icon_1 - PROSPERITY
+ * icon_2 - HEALTH
+ * icon_3 - CONCEPT
+ * icon_4 - AUTHORITY
+ * icon_5 - INDUSTRY
+ * icon_6 - EFFICIENCY
+ * icon_7 - AVATAR
  *
  * **Colors**
  * color_0 - blue
@@ -1559,7 +1560,8 @@
         &.icon_3,
         &.icon_4,
         &.icon_5,
-        &.icon_6 {
+        &.icon_6,
+        &.icon_7 {
             width: 4px;
             height: 4px;
             @include m.icon-background;
@@ -1576,6 +1578,12 @@
                 width: 8px;
                 height: 8px;
             }
+        }
+
+        &.icon_7 {
+            background-image: url("img/avatar.png");
+            background-size: 8px auto !important;
+            background-position: 0px 0px !important;
         }
 
         &.music_note {
@@ -1678,6 +1686,12 @@
             @include m.icon-background;
             background-position-y: -114px;
             background-size: 135px auto;
+        }
+
+        &.icon_7 {
+            background-image: url("img/avatar.png");
+            background-size: 20px auto !important;
+            background-position: 0px 0px !important;
         }
 
         &.music_note {

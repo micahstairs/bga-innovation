@@ -2,13 +2,14 @@
 /* codex for numbers and symbols
  *
  * **Icons**
- * icon_0 - hex
- * icon_1 - crowns
- * icon_2 - leaves 
- * icon_3 - bulbs 
- * icon_4 - towers 
- * icon_5 - factories 
- * icon_6 - clocks
+ * icon_0 - Hexagon
+ * icon_1 - PROSPERITY
+ * icon_2 - HEALTH
+ * icon_3 - CONCEPT
+ * icon_4 - AUTHORITY
+ * icon_5 - INDUSTRY
+ * icon_6 - EFFICIENCY
+ * icon_7 - AVATAR
  *
  * **Colors**
  * color_0 - blue
@@ -1359,7 +1360,7 @@
   background-size: 153px auto !important;
   background-position: -103px -11px !important;
 }
-.square.M.icon_1, .square.M.icon_2, .square.M.icon_3, .square.M.icon_4, .square.M.icon_5, .square.M.icon_6 {
+.square.M.icon_1, .square.M.icon_2, .square.M.icon_3, .square.M.icon_4, .square.M.icon_5, .square.M.icon_6, .square.M.icon_7 {
   width: 4px;
   height: 4px;
   background-image: url("img/resource_icons.jpg");
@@ -1368,9 +1369,14 @@
   margin-bottom: -1px;
   line-height: 4px;
 }
-.font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1, .font_size_9 .square.M.icon_1, .font_size_10 .square.M.icon_1, .font_size_11 .square.M.icon_1, .font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2, .font_size_9 .square.M.icon_2, .font_size_10 .square.M.icon_2, .font_size_11 .square.M.icon_2, .font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3, .font_size_9 .square.M.icon_3, .font_size_10 .square.M.icon_3, .font_size_11 .square.M.icon_3, .font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4, .font_size_9 .square.M.icon_4, .font_size_10 .square.M.icon_4, .font_size_11 .square.M.icon_4, .font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5, .font_size_9 .square.M.icon_5, .font_size_10 .square.M.icon_5, .font_size_11 .square.M.icon_5, .font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6, .font_size_9 .square.M.icon_6, .font_size_10 .square.M.icon_6, .font_size_11 .square.M.icon_6 {
+.font_size_7 .square.M.icon_1, .font_size_8 .square.M.icon_1, .font_size_9 .square.M.icon_1, .font_size_10 .square.M.icon_1, .font_size_11 .square.M.icon_1, .font_size_7 .square.M.icon_2, .font_size_8 .square.M.icon_2, .font_size_9 .square.M.icon_2, .font_size_10 .square.M.icon_2, .font_size_11 .square.M.icon_2, .font_size_7 .square.M.icon_3, .font_size_8 .square.M.icon_3, .font_size_9 .square.M.icon_3, .font_size_10 .square.M.icon_3, .font_size_11 .square.M.icon_3, .font_size_7 .square.M.icon_4, .font_size_8 .square.M.icon_4, .font_size_9 .square.M.icon_4, .font_size_10 .square.M.icon_4, .font_size_11 .square.M.icon_4, .font_size_7 .square.M.icon_5, .font_size_8 .square.M.icon_5, .font_size_9 .square.M.icon_5, .font_size_10 .square.M.icon_5, .font_size_11 .square.M.icon_5, .font_size_7 .square.M.icon_6, .font_size_8 .square.M.icon_6, .font_size_9 .square.M.icon_6, .font_size_10 .square.M.icon_6, .font_size_11 .square.M.icon_6, .font_size_7 .square.M.icon_7, .font_size_8 .square.M.icon_7, .font_size_9 .square.M.icon_7, .font_size_10 .square.M.icon_7, .font_size_11 .square.M.icon_7 {
   width: 8px;
   height: 8px;
+}
+.square.M.icon_7 {
+  background-image: url("img/avatar.png");
+  background-size: 8px auto !important;
+  background-position: 0px 0px !important;
 }
 .square.M.music_note {
   width: 8px;
@@ -1478,6 +1484,11 @@
   background-image: url("img/resource_icons.jpg");
   background-position-y: -114px;
   background-size: 135px auto;
+}
+.square.L.icon_7 {
+  background-image: url("img/avatar.png");
+  background-size: 20px auto !important;
+  background-position: 0px 0px !important;
 }
 .square.L.music_note {
   width: 24px;
