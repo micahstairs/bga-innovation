@@ -30514,12 +30514,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             default:
                 if ($special_type_of_choice == 0) {
                     if ($splay_direction == -1) {
-                        if ($location_to == 'revealed,deck') {
-                            self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                            self::returnCard($card); // Return
+                        if ($location_to == 'revealed,hand') {
+                            $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                            self::transferCardFromTo($card, $owner_to, 'hand');
+                        } else if ($location_to == 'revealed,deck') {
+                            $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                            self::returnCard($card);
                         } else if ($location_to == 'revealed,score') {
-                            self::transferCardFromTo($card, $owner_to, 'revealed'); // Reveal
-                            self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword); // Score
+                            $card = self::transferCardFromTo($card, $owner_to, 'revealed');
+                            self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword);
                         } else {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                         }
