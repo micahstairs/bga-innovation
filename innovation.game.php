@@ -2213,8 +2213,13 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} from his safe.');
             break;
         case 'safe->board':
-            $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your safe.');
-            $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his safe.');
+            if ($bottom_to) {
+                $message_for_player = clienttranslate('${You} tuck ${<}${age}${>} ${<<}${name}${>>} from your safe.');
+                $message_for_others = clienttranslate('${player_name} tucks ${<}${age}${>} ${<<}${name}${>>} from his safe.');
+            } else {
+                $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your safe.');
+                $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from his safe.');
+            }
             break;
         case 'display->board':
             $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from your display.');
@@ -2671,6 +2676,15 @@ class Innovation extends Table
             case 'board->junk,safe':
                 $message_for_player = clienttranslate('${You_must} junk then safeguard ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} junk then safeguard ${number} ${card} from his hand');
+                break;
+            case 'safe->board':
+                if ($bottom_to) {
+                    $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your safe');
+                    $message_for_others = clienttranslate('${player_must} tuck ${number} ${card} from his safe');
+                } else {
+                    $message_for_player = clienttranslate('${You_must} meld ${number} ${card} from your safe');
+                    $message_for_others = clienttranslate('${player_must} meld ${number} ${card} from his safe');
+                }
                 break;
             case 'safe->score':
                 $message_for_player = clienttranslate('${You_must} score ${number} ${card} from your safe');
@@ -29226,7 +29240,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->innovationGameState->set('id_last_selected', $card_id_with_unique_color);
                 self::unmarkAsSelected($card_id_with_unique_color);
                 $this->innovationGameState->set('can_pass', 0);
-
                 self::trace('preSelectionMove->interSelectionMove (automated card selection)');
                 $this->gamestate->nextState('interSelectionMove');
                 return;

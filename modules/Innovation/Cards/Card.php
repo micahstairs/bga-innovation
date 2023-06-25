@@ -238,6 +238,10 @@ abstract class Card
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
+  protected function getBottomCardOfColor(int $color, int $playerId = null) {
+    return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
+  }
+
   protected function getCard(int $cardId) {
     return $this->game->getCardInfo($cardId);
   }
