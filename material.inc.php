@@ -2670,7 +2670,7 @@ $this->textual_card_infos = array(
 
     547 => array(
         'name'                => clienttranslate('Camouflage'),
-        'non_demand_effect_1' => clienttranslate('Choose to either safeguard exactly two top cards of different color and equal value on your board, or score exactly two of your secrets of equal value.'),
+        'non_demand_effect_1' => clienttranslate('Choose to either junk exactly two top cards of different color and equal value on your board, then safeguard them, or score exactly two of your secrets of equal value.'),
         'non_demand_effect_2' => clienttranslate('Draw a ${age_7} for each special achievement you have.'),
     ),
 
@@ -2686,7 +2686,7 @@ $this->textual_card_infos = array(
 
     550 => array(
         'name'                => clienttranslate('Plot Voucher'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, fully execute the melded card if it is your turn, otherwise self-execute it.'),
+        'non_demand_effect_1' => clienttranslate('Meld a card from your score pile. Safeguard the lowest available standard achievement. If you do, fully execute the melded card if it is your turn, or if it is not your turn self-execute it.'),
     ),
 
     551 => array(
@@ -2720,7 +2720,7 @@ $this->textual_card_infos = array(
 
     556 => array(
         'name'                => clienttranslate('Scouting'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal two ${age_9}. Return one or more of the drawn cards. If you return two cards, reveal the top card of the 10 deck. If the color of the revealed card matches the color of one of the returned cards, draw a ${age_10}.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal two ${age_9}. Return one or more of the drawn cards. If you return two cards, reveal the top card of the ${age_10} deck. If the color of the revealed card matches the color of one of the returned cards, draw a ${age_10}.'),
     ),
 
     557 => array(
@@ -2742,7 +2742,7 @@ $this->textual_card_infos = array(
 
     560 => array(
         'name'                => clienttranslate('Hitchhiking'),
-        'non_demand_effect_1' => clienttranslate('Choose another player. That player chooses and transfers a card from their hand to your board. Self-execute the card, with that player making all decisions for you.'),
+        'non_demand_effect_1' => clienttranslate('Choose another player. That player chooses and transfers a card from their hand to your board. Self-execute the card, with that player making all decisions for you with visibility of your cards.'),
     ),
 
     561 => array(
@@ -2753,7 +2753,7 @@ $this->textual_card_infos = array(
 
     562 => array(
         'name'                => clienttranslate('Shangri-La'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has a ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If you meld an ${age_8}, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8}. If it has a ${icon_5}, score it. Otherwise, draw and meld an ${age_8}. If you do, repeat this effect.'),
     ),
 
     563 => array(
@@ -2805,7 +2805,7 @@ $this->textual_card_infos = array(
 
     572 => array('name' => clienttranslate('Surveillance'),
     'i_demand_effect_1' => clienttranslate('${I_demand} you reveal all hands!'),
-    'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand exactly match the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
+    'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand matches the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
     'non_demand_effect_2' => clienttranslate('Draw a ${age_10}.'),
     ),
 

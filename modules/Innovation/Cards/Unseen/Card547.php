@@ -10,9 +10,8 @@ class Card547 extends Card
 {
 
   // Camouflage:
-  //   - Choose to either safeguard exactly two top cards of different
-  //     color and equal value on your board, or score exactly two of 
-  //     your secrets of equal value.
+  //   - Choose to either junk exactly two top cards of different color and equal value on your
+  //     board, then safeguard them, or score exactly two of your secrets of equal value.
   //   - Draw a [7] for each special achievement you have.
 
   public function initialExecution(ExecutionState $state)

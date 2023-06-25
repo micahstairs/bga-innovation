@@ -9,8 +9,8 @@ class Card556 extends Card
 
   // Scouting:
   //   - Draw and reveal two [9]. Return one or more of the drawn cards. If you return two cards,
-  //     reveal the top card of the 10 deck. If the color of the revealed card matches the color of
-  //     one of the returned cards, draw a [10].
+  //     reveal the top card of the [10] deck. If the color of the revealed card matches the color
+  //     of one of the returned cards, draw a [10].
 
   public function initialExecution()
   {
