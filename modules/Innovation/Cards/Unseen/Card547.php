@@ -3,8 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card547 extends Card
 {
@@ -14,79 +12,92 @@ class Card547 extends Card
   //     board, then safeguard them, or score exactly two of your secrets of equal value.
   //   - Draw a [7] for each special achievement you have.
 
-  public function initialExecution(ExecutionState $state)
+  public function initialExecution()
   {
-    switch ($state->getEffectNumber()) {
-      case 1:
-        
-        $state->setMaxSteps(1);
-        break;
-      case 2:
-        $achievements = $this->game->getCardsInLocation($state->getPlayerId(), 'achievements');
-        foreach($achievements as $card) {
-            // "Draw a [7] for each special achievement you have."
-            if ($card['age'] == null) {
-                $this->game->executeDraw($state->getPlayerId(), 7);
-            }
+    if (self::getEffectNumber() == 1) {
+      self::setMaxSteps(3);
+    } else {
+      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'achievements') as $card) {
+        if ($card['age'] == null) {
+          self::draw(7);
         }
-        break;
+      }
     }
   }
 
-  public function getInteractionOptions(Executionstate $state): array
+  public function getInteractionOptions(): array
   {
-      if ($state->getCurrentStep() == 1) {
-        // "Return one"
+    if (self::getCurrentStep() == 1) {
+      return ['choose_yes_or_no' => true];
+    } else if (self::getCurrentStep() == 2) {
+      if (self::getAuxiliaryValue() == 1) {
+        $this->game->setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('board'));
         return [
-          'can_pass' => false,
           'location_from' => 'board',
-          'location_to'   => 'deck',
-        ];          
+          'location_to'   => 'junk,safe',
+          'card_ids_are_in_auxiliary_array' => true,
+        ];
       } else {
-         // "or more top cards of one color from your board"
+        $this->game->setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));
         return [
-          'can_pass' => true,
-          'location_from' => 'board',
-          'location_to'   => 'deck',
-          
-          'color' => array($this->game->innovationGameState->get('color_last_selected')),
+          'location_from' => 'safe',
+          'score_keyword' => true,
+          'card_ids_are_in_auxiliary_array' => true,
         ];
       }
-  }
-
-  public function handleCardChoice(Executionstate $state, int $cardId)
-  {
-  }
-
-  public function afterInteraction(Executionstate $state)
-  {
-    if ($state->getCurrentStep() == 1) {
-        if ($state->getNumChosen() > 0) {
-            $state->setMaxSteps(2); // allow continue returning
-            $this->game->setAuxiliaryValue2($this->game->getAuxiliaryValue2() + 1);
-            if ($this->game->innovationGameState->get('age_last_selected') == 7) {
-                $this->game->setAuxiliaryValue($this->game->getAuxiliaryValue() + 1);
-            }
-        }
     } else {
-        if ($state->getNumChosen() > 0) {
-            $state->setNextStep(1);
-            $this->game->setAuxiliaryValue2($this->game->getAuxiliaryValue2() + 1);
-            if ($this->game->innovationGameState->get('age_last_selected') == 7) {
-                $this->game->setAuxiliaryValue($this->game->getAuxiliaryValue() + 1);
-            }
-        } else {
-            // "Draw a 7 for each card you return.
-            for ($count = 0; $count < $this->game->getAuxiliaryValue2(); $count++) {
-                $this->game->executeDraw($state->getPlayerId(), 7);                
-            }
-            
-            // "If you return exactly one 7, draw an 8."
-            if ($this->game->getAuxiliaryValue() == 1) {
-                $this->game->executeDraw($state->getPlayerId(), 8);
-            }
-        }
+      if (self::getAuxiliaryValue() == 1) {
+        return [
+          'location_from' => 'board',
+          'location_to'   => 'junk,safe',
+          'age'           => self::getLastSelectedAge(),
+          'color'         => self::getAllColorsOtherThan(self::getLastSelectedColor()),
+        ];
+      } else {
+        return [
+          'location_from' => 'safe',
+          'score_keyword' => true,
+          'age'           => self::getLastSelectedAge(),
+        ];
+      }
     }
+  }
+
+  public function getSpecialChoicePrompt(): array
+  {
+    return [
+      "message_for_player" => clienttranslate('${You} may make a choice'),
+      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
+      "options"            => [
+        [
+          'value' => 1,
+          'text'  => clienttranslate('Junk and safeguard two top cards')
+        ],
+        [
+          'value' => 0,
+          'text'  => clienttranslate('Score two secrets')
+        ],
+      ],
+    ];
+  }
+
+  public function handleSpecialChoice(int $choice): void
+  {
+    self::setAuxiliaryValue($choice);
+  }
+
+  private function getCardIdsWithDuplicateValuesInLocation(string $location): array
+  {
+    $cardIds = [];
+    $cardsByAge = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), $location);
+    for ($age = 1; $age <= 11; $age++) {
+      if (count($cardsByAge[$age]) >= 2) {
+        foreach ($cardsByAge[$age] as $card) {
+          $cardIds[] = $card['id'];
+        }
+      }
+    }
+    return $cardIds;
   }
 
 }

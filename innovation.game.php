@@ -1422,6 +1422,7 @@ class Innovation extends Table
         case 'hand':
         case 'forecast':
         case 'score':
+        case 'safe':
         case 'relics':
             $filter_from .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
@@ -1453,6 +1454,7 @@ class Innovation extends Table
         case 'hand':
         case 'forecast':
         case 'score':
+        case 'safe':
         case 'relics':
             $filter_to .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
@@ -1808,7 +1810,7 @@ class Innovation extends Table
             WHERE
                 selected IS TRUE AND
                 location != 'board' AND
-                (owner != {player_id} OR location = 'score' OR location = 'forecast' OR location = 'achievements')
+                (owner != {player_id} OR location = 'score' OR location = 'forecast' OR location = 'achievements' OR location = 'safe')
         ", // The opposite of the cards the player can see except that we potentially select the cards in his score pile too (to enable direct selection if the player is lazy to see the card in his score pile for transfer)
             array('player_id' => $player_id)
         ));
@@ -2343,6 +2345,14 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>} from his board.');
             break;
+        case 'junk->safe':
+            $message_for_player = clienttranslate('${You} safeguard ${<}${age}${>} ${<<}${name}${>>} from the junk pile.');
+            $message_for_others = clienttranslate('${player_name} safeguards ${<}${age}${>} ${<<}${name}${>>} from the junk pile.');
+            break;
+        case 'safe->score':
+            $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>} from your safe.');
+            $message_for_others = clienttranslate('${player_name} scores ${<}${age}${>} ${<<}${name}${>>} from his safe.');
+            break;
         case 'score->deck':
             $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from your score pile.');
             $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his score pile.');
@@ -2659,7 +2669,15 @@ class Innovation extends Table
                 break;
             case 'hand->safe':
                 $message_for_player = clienttranslate('${You_must} safeguard ${number} ${card} from your hand');
-                $message_for_others = clienttranslate('${player_must} safeguards ${number} ${card} from his hand');
+                $message_for_others = clienttranslate('${player_must} safeguard ${number} ${card} from his hand');
+                break;
+            case 'board->junk,safe':
+                $message_for_player = clienttranslate('${You_must} junk then safeguard ${number} ${card} from your hand');
+                $message_for_others = clienttranslate('${player_must} junk then safeguard ${number} ${card} from his hand');
+                break;
+            case 'safe->score':
+                $message_for_player = clienttranslate('${You_must} score ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} score safeguard ${number} ${card} from his safe');
                 break;
             case 'board->deck':
                 $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
@@ -3021,9 +3039,9 @@ class Innovation extends Table
                 break;
 
             case 'safe->safe':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s safe.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} safe.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s safe.');
+                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} to ${opponent_name}\'s safe.');
+                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} to ${your} safe.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} to ${opponent_name}\'s safe.');
                 break;
                 
             default:
@@ -3137,12 +3155,6 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your score pile.');
                 $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his score pile.');
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his score pile.');
-                break;
-
-            case 'safe->safe':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your safe.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his safe.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his safe.');
                 break;
                 
             default:
@@ -6578,6 +6590,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('players', $rewritten_options)) {
             $rewritten_options['players'] = self::getAllActivePlayers();
         }
+        if (!array_key_exists('choices', $rewritten_options)) {
+            $rewritten_options['choices'] = array();
+        }
 
         if (self::getActivePlayerId() != $player_id) {
             $this->gamestate->changeActivePlayer($player_id);
@@ -7112,6 +7127,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 16;
         case 'safe':
             return 17;
+        case 'junk,safe':
+            return 18;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -7156,6 +7173,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'junk';
         case 17:
             return 'safe';
+        case 18:
+            return 'junk,safe';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -30523,6 +30542,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else if ($location_to == 'revealed,score') {
                             $card = self::transferCardFromTo($card, $owner_to, 'revealed');
                             self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword);
+                        } else if ($location_to == 'junk,safe') {
+                            $card = self::junkCard($card);
+                            self::safeguardCard($card, $owner_to);
                         } else {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                         }
