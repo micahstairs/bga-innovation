@@ -2202,8 +2202,8 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} return a ${<}${age}${>} to the available achievements.');
             break;
         case 'achievements->revealed':
-            $message_for_player = clienttranslate('${You} reveal a ${<}${age}${>} ${<<}${name}${>>} to the available achievements.');
-            $message_for_others = clienttranslate('${player_name} reveal a ${<}${age}${>} to the available achievements.');
+            $message_for_player = clienttranslate('${You} reveal a ${<}${age}${>} ${<<}${name}${>>} from the available achievements.');
+            $message_for_others = clienttranslate('${player_name} reveals a ${<}${age}${>} ${<<}${name}${>>} from the available achievements.');
             break;
         case 'deck->safe':
             $message_for_player = clienttranslate('${You} draw and safeguard ${<}${age}${>} ${<<}${name}${>>}.');
