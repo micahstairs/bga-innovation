@@ -2158,6 +2158,7 @@ class Innovation extends Table
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo) {
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
+        $owner_to = $transferInfo['owner_to'];
         $bottom_to = $transferInfo['bottom_to'];
         $score_keyword = $transferInfo['score_keyword'];
 
@@ -2211,6 +2212,10 @@ class Innovation extends Table
         case 'safe->achievements':
             $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your safe.');
             $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} from his safe.');
+            break;
+        case 'safe->hand':
+            $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your safe to your hand.');
+            $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} from his safe to this hand.');
             break;
         case 'safe->board':
             if ($bottom_to) {
@@ -2277,8 +2282,13 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his hand.');
             break;
         case 'hand->achievements':
-            $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your hand.');
-            $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his hand.');
+            if ($owner_to == 0) {
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to the available achievements.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to the available achievements.');
+            } else {
+                $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>} from your hand.');
+                $message_for_others = clienttranslate('${player_name} achieves a ${<}${age}${>} from his hand.');
+            }
             break;
         case 'hand->junk':
             $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from your hand.');
@@ -6645,6 +6655,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         if (!array_key_exists('n_max', $rewritten_options)) {
             $rewritten_options['n_max'] = 999;
+        }
+        if (array_key_exists('location_to', $rewritten_options) && $rewritten_options['location_to'] == 'safe') {
+            $space_left_in_safe = self::getSafeLimit($rewritten_options['owner_to']) - self::countCardsInLocation($rewritten_options['owner_to'], 'safe');
+            if ($space_left_in_safe < 0) {
+                $space_left_in_safe = 0;
+            }
+            if ($rewritten_options['n_min'] > $space_left_in_safe) {
+                $rewritten_options['n_min'] = $space_left_in_safe;
+            }
+            if ($rewritten_options['n_max'] > $space_left_in_safe) {
+                $rewritten_options['n_max'] = $space_left_in_safe;
+            }
         }
         if (!array_key_exists('solid_constraint', $rewritten_options)) {
             $rewritten_options['solid_constraint'] = false;
@@ -29201,7 +29223,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // The player must choose at least all of the selectable cards
                     && (($cards_chosen_so_far == 0 && !$can_pass && $selection_size <= $n_min) || ($cards_chosen_so_far > 0 && $n_min >= $selection_size))
                     // If there's more than one selectable card, only automate the choices if the order does not matter
-                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck'))) {
+                    && ($selection_size == 1 || ($location_to != 'board' && $location_to != 'deck' && $location_to != 'revealed,deck' && $location_to != 'safe'))) {
                 // A card is chosen automatically for the player
                 $card = self::getSelectedCards()[0];
                 // Simplified version of self::choose()

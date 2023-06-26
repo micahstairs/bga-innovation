@@ -30,6 +30,7 @@ class Card549 extends Card
       return [
         'n'             => 2,
         'owner_from'    => 0,
+        // TODO(4E): Is there a bug here which makes special achievements selectable?
         'location_from' => 'achievements',
         'location_to'   => 'revealed',
       ];

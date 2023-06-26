@@ -38,7 +38,7 @@ class Card537 extends Card
   {
     return [
       "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
+      "message_for_others" => clienttranslate('${player_name} may make a choice among the three possibilities offered by the card'),
       "options"            => [
         [
           'value' => 1,

@@ -242,6 +242,10 @@ abstract class Card
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
+  protected function isSpecialAchievement($card): bool {
+    return $card['age'] == null;
+  }
+
   protected function getCard(int $cardId) {
     return $this->game->getCardInfo($cardId);
   }
