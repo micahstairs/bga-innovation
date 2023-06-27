@@ -205,6 +205,13 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
+  protected function putInHand($card, int $playerId = null) {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
+  }
+
   protected function drawAndMeld(int $age, int $playerId = null)
   {
     return $this->game->executeDrawAndMeld(self::coercePlayerId($playerId), $age);
@@ -228,10 +235,6 @@ abstract class Card
   protected function drawAndReveal(int $age, int $playerId = null)
   {
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age);
-  }
-
-  protected function putInHand($card, int $playerId = null) {
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
   }
 
   protected function getTopCardOfColor(int $color, int $playerId = null) {
@@ -348,6 +351,14 @@ abstract class Card
     return [
       "message_for_player" => clienttranslate('Choose an icon'),
       "message_for_others" => clienttranslate('${player_name} must choose an icon'),
+    ];
+  }
+
+  protected function getPromptForValueChoice(): array
+  {
+    return [
+      "message_for_player" => clienttranslate('Choose a value'),
+      "message_for_others" => clienttranslate('${player_name} must choose a value'),
     ];
   }
 
