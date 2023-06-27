@@ -11383,7 +11383,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 506
             || $card_id == 509
             || ($card_id >= 515 && $card_id <= 524)
-            || $card_id >= 533;
+            || $card_id >= 531;
     }
 
     function getCardInstance($card_id, $execution_state) {
@@ -17229,64 +17229,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "530N1":
                 $step_max = 1;
-                break;
-
-            // id 531, Unseen age 5: Chartreuse
-            case "531N1":
-                // "'Draw and reveal a 3, a 4, a 5, and a 6."
-                $card_id_array = array();
-                $card1 = self::executeDrawAndReveal($player_id, 3);
-                if ($card1['color'] == 2 || $card1['color'] == 3) {
-                     $card_id_array[] = $card1['id'];
-                }
-                $card2 = self::executeDrawAndReveal($player_id, 4);
-                if ($card2['color'] == 2 || $card2['color'] == 3) {
-                     $card_id_array[] = $card2['id'];
-                }
-                $card3 = self::executeDrawAndReveal($player_id, 5);
-                if ($card3['color'] == 2 || $card3['color'] == 3) {
-                     $card_id_array[] = $card3['id'];
-                }
-                $card4 = self::executeDrawAndReveal($player_id, 6);
-                if ($card4['color'] == 2 || $card4['color'] == 3) {
-                     $card_id_array[] = $card4['id'];
-                }
-                if (count($card_id_array) == 1) {
-                    // "meld the one card"
-                    self::meldCard(self::getCardInfo($card_id_array[0]), $player_id);
-                    $step_max = 2; 
-                    $step = 2;
-                } else if (count($card_id_array) == 4) {
-                    $step_max = 1; // none to return
-                    self::setAuxiliaryArray($card_id_array);
-                } else {
-                    $step_max = 2;
-                    self::setAuxiliaryArray($card_id_array);
-                }
-                break;
-
-            case "531N2":
-                $step_max = 1;
-                break;
-                
-            // id 532, Unseen age 5: Museum
-            case "532N1":
-                $score_pile_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                if ($score_pile_by_age[2] > 0) {
-                    // "If you have a 2 in your score pile, draw a 6."
-                    self::executeDraw($player_id, 6);
-                }
-                break;
-
-            case "532N2":
-                $score_pile_by_age = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                if ($score_pile_by_age[1] > 0) {
-                    // "If you have a 1 in your score pile, draw a 7."
-                    self::executeDraw($player_id, 7);
-                } else {
-                    // "Otherwise, draw a 5."
-                    self::executeDraw($player_id, 5);
-                }
                 break;
                 
             // id 534, Unseen age 5: Pen Name
@@ -25567,47 +25509,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                'splay_direction' => self::RIGHT,
                'color' => array(1,4),
-           );
-           break;
-
-       // id 531, Unseen age 5: Chartreuse
-       case "531N1A":
-           // "Meld each drawn green card and each drawn yellow card, in any order."
-           $options = array(
-               'player_id' => $player_id,
-
-               'owner_from' => $player_id,
-               'location_from' => 'revealed',
-               'owner_to' => $player_id,
-               'location_to' => 'board',
-
-               'meld_keyword' => true,
-
-               'card_ids_are_in_auxiliary_array' => true,
-           );
-           break;
-
-       case "531N1B":
-           // "Return the other drawn cards."
-           $options = array(
-               'player_id' => $player_id,
-
-               'owner_from' => $player_id,
-               'location_from' => 'revealed',
-               'owner_to' => 0,
-               'location_to' => 'deck',
-           );
-           break;
-
-       case "531N2A":
-           // "You may splay your green or yellow cards right."
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-               'can_pass' => true,
-
-               'splay_direction' => self::RIGHT,
-               'color' => array(2,3),
            );
            break;
 
