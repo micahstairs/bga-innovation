@@ -11383,7 +11383,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 506
             || $card_id == 509
             || ($card_id >= 515 && $card_id <= 524)
-            || $card_id >= 531;
+            || $card_id >= 530;
     }
 
     function getCardInstance($card_id, $execution_state) {
@@ -17222,15 +17222,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
-            // id 530, Unseen age 5: Secret History
-            case "530D1":
-                $step_max = 1;
-                break;
-
-            case "530N1":
-                $step_max = 1;
-                break;
-                
             // id 534, Unseen age 5: Pen Name
             case "534N1":
                 $top_cards = self::getTopCardsOnBoard($player_id);
@@ -25487,31 +25478,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            );
            break;
 
-       // id 530, Unseen age 5: Secret History
-       case "530D1A":
-           // "I demand you transfer one of your secrets to my safe!"
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'owner_from' => $player_id,
-               'location_from' => 'safe',
-               'owner_to' => $launcher_id,
-               'location_to' => 'safe',
-           );
-           break;
-
-       case "530N1A":
-           // "Splay your red or purple cards right."
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'splay_direction' => self::RIGHT,
-               'color' => array(1,4),
-           );
-           break;
-
        // id 534, Unseen age 5: Pen Name
        case "534N1A":
            // "Choose to either splay an unsplayed non-purple color on your 
@@ -28834,14 +28800,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($card_count >= 4) {
                         self::executeDrawAndSafeguard($player_id, self::getAuxiliaryValue());
                         self::incrementStepMax(1);
-                    }
-                    break;
-                    
-                // id 530, Unseen age 5: Secret History
-                case "530N1A":
-                    if ($n == 0) { // "If you don't,"
-                        // "claim the Mystery achievement."
-                        self::claimSpecialAchievement($player_id, 599);
                     }
                     break;
 
