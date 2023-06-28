@@ -2888,6 +2888,62 @@ $this->textual_card_infos = array(
         'non_demand_effect_3' => clienttranslate('Meld two cards from your hand. Score four cards from your hand. Splay your blue cards up.'),
     ),
 
+    /* Unseen - Age 11 */
+
+    585 => array(
+        'name'                => clienttranslate('Astrobiology'),
+        'non_demand_effect_1' => clienttranslate('Return a bottom card from your board. Splay that color on your board aslant. Score all cards on your board of that color without a ${icon_2}.'),
+    ),
+
+    586 => array(
+        'name'                => clienttranslate('Quantum Computers'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you flip a coin! If you lose the flip, you lose!'),
+        'non_demand_effect_1' => clienttranslate('Flip a coin. If you win the flip, this effect is complete. If you lose the flip, return one of your secrets. If you don\'t, you lose. Otherwise, repeat this effect.'),
+    ),
+
+    587 => array(
+        'name'              => clienttranslate('Cloaking'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer one of your claimed standard achievements to my safe!'),
+    ),
+
+    588 => array(
+        'name'                => clienttranslate('Dark Web'),
+        'non_demand_effect_1' => clienttranslate('Unsplay any color on any board.'),
+        'non_demand_effect_2' => clienttranslate('Choose to either safeguard any number of available standard achievements, or achieve any number of secrets from your safe regardless of eligibility.'),
+    ),
+
+    589 => array(
+        'name'                => clienttranslate('Green Hydrogen'),
+        'non_demand_effect_1' => clienttranslate('Score all non-top green cards on your board. Draw and tuck an ${age_11} for each card scored.'),
+    ),
+
+    590 => array(
+        'name'                => clienttranslate('Mystery Box'),
+        'non_demand_effect_1' => clienttranslate('Claim an available standard achievement, regardless of eligibility. Self-execute it.'),
+    ),
+
+    591 => array(
+        'name'                => clienttranslate('Escape Room'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you draw, reveal, and score an ${age_11}! Score a card from your hand of the same color as the drawn card! If you don\'t, you lose!'),
+        'non_demand_effect_1' => clienttranslate('Score four top non-yellow cards each with a ${icon_6} of different colors on your board.'),
+    ),
+
+    592 => array(
+        'name'                => clienttranslate('Fashion Mask'),
+        'non_demand_effect_1' => clienttranslate('Tuck a top card with a ${icon_1} or ${icon_5} of each color on your board. You may safeguard one of the tucked cards.'),
+        'non_demand_effect_2' => clienttranslate('You may score all but the top three of your yellow or purple cards. If you do, splay that color aslant.'),
+    ),
+
+    593 => array(
+        'name'                => clienttranslate('Holography'),
+        'non_demand_effect_1' => clienttranslate('Choose red, blue, or green. Score all but your top four cards of that color, then splay it aslant. If you do both, exchange all lowest cards in your score pile with all your claimed standard achievements of lower value.'),
+    ),
+
+    594 => array(
+        'name'                => clienttranslate('Metaverse'),
+        'non_demand_effect_1' => clienttranslate('For each splayed color on your board, score its top card. If you score fewer than three cards, you lose.'),
+    ),
+
     /* Unseen - Special achievements */
 
     595 => array(
