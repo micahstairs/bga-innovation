@@ -2850,7 +2850,7 @@ $this->textual_card_infos = array(
     578 => array(
         'name'                => clienttranslate('Secret Santa'),
         'i_demand_effect_1'   => clienttranslate('${I demand} you meld a card from my score pile!'),
-        'non_demand_effect_1' => clienttranslate('Draw and score three [10].'),
+        'non_demand_effect_1' => clienttranslate('Draw and score three ${age_10}.'),
     ),
 
     579 => array(
@@ -2868,7 +2868,7 @@ $this->textual_card_infos = array(
     581 => array(
         'name'                => clienttranslate('Ride-Hailing'),
         'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
-        'non_demand_effect_2' => clienttranslate('Meld a top non-yellow card with a ${icon_6} from another player\'s board. If you do, self-execute it. Otherwise, draw an [11].'),
+        'non_demand_effect_2' => clienttranslate('Meld a top non-yellow card with a ${icon_6} from another player\'s board. If you do, self-execute it. Otherwise, draw an ${age_11}.'),
     ),
 
     582 => array(

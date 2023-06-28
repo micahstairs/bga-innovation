@@ -2551,6 +2551,10 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from the board of ${targetable_players} to your score pile');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from the board of ${targetable_players} to his score pile');
                 break;
+            case 'board->board': // Ride-Hailing
+                $message_for_player = clienttranslate('${You_must} meld ${number} top ${card} from the board of ${targetable_players}');
+                $message_for_others = clienttranslate('${player_must} meld ${number} top ${card} from the board of ${targetable_players}');
+                break;
             case 'board->achievements':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} top ${card} from the board of ${targetable_players} to your achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from the board of ${targetable_players} to his achievements');
@@ -7736,7 +7740,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 (nesting_index, card_id, executing_as_if_on_card_id, replace_may_with_must, launcher_id, current_effect_type, current_effect_number, step, step_max)
             VALUES
                 ({nesting_index}, {card_id}, {as_if_on}, {replace_may_with_must}, {launcher_id}, {effect_type}, 1, -1, -1)
-        ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'replace_may_with_must' => $replace_may_with_must, 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
+        ", array('nesting_index' => $next_nesting_index, 'card_id' => $card['id'], 'as_if_on' => $as_if_on, 'replace_may_with_must' => $replace_may_with_must ? 'TRUE' : 'FALSE', 'launcher_id' => $current_player_id, 'effect_type' => $effect_type)));
     }
     
     function popCardFromNestedDogmaStack() {
