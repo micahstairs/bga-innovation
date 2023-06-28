@@ -2768,54 +2768,124 @@ $this->textual_card_infos = array(
         'non_demand_effect_2' => clienttranslate('Draw an ${age_8} for each color on your board splayed up.'),
     ),
 
-        /* Unseen - Age 9 */
+    /* Unseen - Age 9 */
 
-    565 => array('name' => clienttranslate('Consulting'),
-    'non_demand_effect_1' => clienttranslate('Choose an opponent. Draw and meld two ${age_10}. Self-execute the top card on your board of that player\'s choice.'),
+    565 => array(
+        'name'                => clienttranslate('Consulting'),
+        'non_demand_effect_1' => clienttranslate('Choose an opponent. Draw and meld two ${age_10}. Self-execute the top card on your board of that player\'s choice.'),
     ),
 
-    566 => array('name' => clienttranslate('Fermi Paradox'),
-    'non_demand_effect_1' => clienttranslate('Reveal the top card of the ${age_9} deck and the ${age_10} deck. Return the top card of the ${age_9} deck or the ${age_10} deck.'),
-    'non_demand_effect_2' => clienttranslate('If you have no cards on your board, you win. Otherwise, transfer all valued junked cards to your hand.'),
+    566 => array(
+        'name'                => clienttranslate('Fermi Paradox'),
+        'non_demand_effect_1' => clienttranslate('Reveal the top card of the ${age_9} deck and the ${age_10} deck. Return the top card of the ${age_9} deck or the ${age_10} deck.'),
+        'non_demand_effect_2' => clienttranslate('If you have no cards on your board, you win. Otherwise, transfer all valued junked cards to your hand.'),
     ),
 
-    567 => array('name' => clienttranslate('Iron Curtain'),
-    'non_demand_effect_1' => clienttranslate('Unsplay each splayed color on your board. For each color you unsplay, return your top card of that color and safeguard an available standard achievement.'),
+    567 => array(
+        'name'                => clienttranslate('Iron Curtain'),
+        'non_demand_effect_1' => clienttranslate('Unsplay each splayed color on your board. For each color you unsplay, return your top card of that color and safeguard an available standard achievement.'),
     ),
 
-    568 => array('name' => clienttranslate('McCarthyism'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you draw and meld an ${age_8}! If Socialism is a top card on your board, you lose!'),
-    'non_demand_effect_1' => clienttranslate('Score your top purple card.'),
-    'non_demand_effect_2' => clienttranslate('You may splay your red or blue cards up.'),
+    568 => array(
+        'name'                => clienttranslate('McCarthyism'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you draw and meld an ${age_8}! If Socialism is a top card on your board, you lose!'),
+        'non_demand_effect_1' => clienttranslate('Score your top purple card.'),
+        'non_demand_effect_2' => clienttranslate('You may splay your red or blue cards up.'),
     ),
 
-    569 => array('name' => clienttranslate('Area 51'),
-    'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
-    'non_demand_effect_2' => clienttranslate('Choose to either draw an ${age_11}, or safeguard an available standard achievement.'),
-    'non_demand_effect_3' => clienttranslate('Reveal one of your secrets, and fully execute it if it is your turn.'),
+    569 => array(
+        'name'                => clienttranslate('Area 51'),
+        'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
+        'non_demand_effect_2' => clienttranslate('Choose to either draw an ${age_11}, or safeguard an available standard achievement.'),
+        'non_demand_effect_3' => clienttranslate('Reveal one of your secrets, and fully execute it if it is your turn.'),
     ),
 
-    570 => array('name' => clienttranslate('Teleprompter'),
-    'non_demand_effect_1' => clienttranslate('Reveal the top card of any value deck of any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.'),
+    570 => array(
+        'name'                => clienttranslate('Teleprompter'),
+        'non_demand_effect_1' => clienttranslate('Reveal the top card of any value deck of any set. Execute the first sentence of non-demand dogma effect on the card. If you do, return the revealed card and repeat this effect using the next sentence.'),
     ),
 
-    571 => array('name' => clienttranslate('Magic 8-Ball'),
-    'non_demand_effect_1' => clienttranslate('Choose whether you wish to draw two ${age_10}, draw and score two ${age_8}, or safeguard two available achievements. Draw and tuck an ${age_8}. If it has a ${icon_3}, do as you wish. If it is red or purple, repeat this effect.'),
+    571 => array(
+        'name'                => clienttranslate('Magic 8-Ball'),
+        'non_demand_effect_1' => clienttranslate('Choose whether you wish to draw two ${age_10}, draw and score two ${age_8}, or safeguard two available achievements. Draw and tuck an ${age_8}. If it has a ${icon_3}, do as you wish. If it is red or purple, repeat this effect.'),
     ),
 
-    572 => array('name' => clienttranslate('Surveillance'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you reveal all hands!'),
-    'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand matches the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
-    'non_demand_effect_2' => clienttranslate('Draw a ${age_10}.'),
+    572 => array(
+        'name'                => clienttranslate('Surveillance'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal all hands!'),
+        'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand matches the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
+        'non_demand_effect_2' => clienttranslate('Draw a ${age_10}.'),
     ),
 
-    573 => array('name' => clienttranslate('Clown Car'),
-    'i_demand_effect_1' => clienttranslate('${I_demand} you transfer a card from my score pile to your board! If the transferred card has no ${icon_1}, repeat this effect!'),
+    573 => array(
+        'name'              => clienttranslate('Clown Car'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card from my score pile to your board! If the transferred card has no ${icon_1}, repeat this effect!'),
     ),
 
-    574 => array('name' => clienttranslate('Urban Legend'),
-    'non_demand_effect_1' => clienttranslate('For each color on your board with a ${icon_5}, draw a ${age_9}. If you draw five cards, you win.'),
-    'non_demand_effect_2' => clienttranslate('You may splay your yellow or purple cards up.'),
+    574 => array(
+        'name'                => clienttranslate('Urban Legend'),
+        'non_demand_effect_1' => clienttranslate('For each color on your board with a ${icon_5}, draw a ${age_9}. If you draw five cards, you win.'),
+        'non_demand_effect_2' => clienttranslate('You may splay your yellow or purple cards up.'),
+    ),
+
+    /* Unseen - Age 10 */
+
+    575 => array(
+        'name'              => clienttranslate('Hacking'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer your two highest secrets to my safe! Transfer the highest cards in your score pile to my score pile! Meld all the lowest cards from your score pile!'),
+    ),
+
+    576 => array(
+        'name'                => clienttranslate('Inhomogeneous Cosmology'),
+        'non_demand_effect_1' => clienttranslate('You may place a top card from your board on top of its deck. You may meld a card from your hand. If you do either, repeat this effect.'),
+        'non_demand_effect_2' => clienttranslate('Draw an ${age_11} for every color not on your board.'),
+    ),
+
+    577 => array(
+        'name'                => clienttranslate('Fight Club'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer one of your secrets to my achievements!'),
+        'non_demand_effect_1' => clienttranslate('You may splay your yellow cards up.'),
+    ),
+
+    578 => array(
+        'name'                => clienttranslate('Secret Santa'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you meld a card from my score pile!'),
+        'non_demand_effect_1' => clienttranslate('Draw and score three [10].'),
+    ),
+
+    579 => array(
+        'name'                => clienttranslate('Cryptocurrency'),
+        'non_demand_effect_1' => clienttranslate('Return all cards from your score pile. For each different value of card you return, draw and score a ${age_10}.'),
+        'non_demand_effect_2' => clienttranslate('You may splay your red cards up.'),
+    ),
+
+    580 => array(
+        'name'                => clienttranslate('Denver Airport'),
+        'non_demand_effect_1' => clienttranslate('You may achieve one of your secrets regardless of eligibility.'),
+        'non_demand_effect_2' => clienttranslate('You may splay your purple cards up.'),
+    ),
+
+    581 => array(
+        'name'                => clienttranslate('Ride-Hailing'),
+        'non_demand_effect_1' => clienttranslate('You may splay your green cards up.'),
+        'non_demand_effect_2' => clienttranslate('Meld a top non-yellow card with a ${icon_6} from another player\'s board. If you do, self-execute it. Otherwise, draw an [11].'),
+    ),
+
+    582 => array(
+        'name'                => clienttranslate('Whatchamacallit'),
+        'non_demand_effect_1' => clienttranslate('For each value, in ascending order, if that value is not a value of a top card on your board or a card in your score pile, draw and score a card of that value.'),
+    ),
+
+    583 => array(
+        'name'                => clienttranslate('3D Printing'),
+        'non_demand_effect_1' => clienttranslate('Return a top or bottom card on your board. Achieve one of your secrets of value equal to the returned card regardless of eligibility, then safeguard an available standard achievement. If you do, repeat this effect.'),
+    ),
+
+    584 => array(
+        'name'                => clienttranslate('Order of the Occult Hand'),
+        'non_demand_effect_1' => clienttranslate('If you have a ${age_3} in your score pile, you lose.'),
+        'non_demand_effect_2' => clienttranslate('If you have a ${age_7} in your hand, you win.'),
+        'non_demand_effect_3' => clienttranslate('Meld two cards from your hand. Score four cards from your hand. Splay your blue cards up.'),
     ),
 
     /* Unseen - Special achievements */
