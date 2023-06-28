@@ -320,7 +320,7 @@ var Innovation = /** @class */ (function (_super) {
             if (gamedatas.echoes_expansion_enabled) {
                 dojo.connect($('debug_foreshadow'), 'onclick', function (_) { return _this.debugTransfer("foreshadow"); });
             }
-            if (gamedatas.edition == 4) {
+            if (gamedatas.fourth_edition) {
                 dojo.connect($('debug_junk'), 'onclick', function (_) { return _this.debugTransfer("junk"); });
             }
             if (gamedatas.unseen_expansion_enabled) {

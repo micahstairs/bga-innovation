@@ -292,7 +292,7 @@ class Innovation extends BgaGame {
             if (gamedatas.echoes_expansion_enabled) {
                 dojo.connect($('debug_foreshadow'), 'onclick', (_) => this.debugTransfer("foreshadow"));
             }
-            if (gamedatas.edition == 4) {
+            if (gamedatas.fourth_edition) {
                 dojo.connect($('debug_junk'), 'onclick', (_) => this.debugTransfer("junk"));
             }
             if (gamedatas.unseen_expansion_enabled) {
