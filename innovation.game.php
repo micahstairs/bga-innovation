@@ -17240,50 +17240,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::splayRight($player_id, $player_id, $card['color']);
                 }
                 break;
-                
-            // id 594, Unseen age 11: Metaverse
-            case "594N1":
-                // "For each splayed color on your board, score its top card."
-                $score_count = 0;
-                for ($color = 0; $color < 5; $color++) {
-                    $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($top_card !== null) {
-                        if ($top_card['splay_direction'] > 0) {
-                            self::scoreCard($top_card, $player_id);
-                            $score_count++;
-                        }
-                    }
-                }
-                
-                if ($score_count < 3) {
-                    // "If you score fewer than three cards, you lose."
-                    if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
-                            'player_name' => self::getColoredPlayerName($player_id)
-                        ));
-                        if (count(self::getAllActivePlayers()) == 2) {
-                            $this->innovationGameState->set('winner_by_dogma', $launcher_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Metaverse');
-                            throw new EndOfGame();
-                        } else {
-                            // Only eliminate the player if the game isn't ending
-                            self::eliminatePlayer($player_id);
-                        }
-                    } else { // Team play
-                        // Entire team loses if one player loses 
-                        $teammate_id = self::getPlayerTeammate($player_id);
-                        $losing_team = array($player_id, $teammate_id);
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                        self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                        self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
-                        $this->innovationGameState->set('winner_by_dogma', $launcher_id);
-                        self::trace('EOG bubbled from self::stInterInteractionStep Metaverse');
-                        throw new EndOfGame();
-                    }                    
-                }
-                break;
-                
+
             default:
                 // Do not throw an exception so that we are able to stop executing a card after it's popped from
                 // the stack and there's nothing left to do.
