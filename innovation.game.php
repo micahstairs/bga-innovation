@@ -3262,6 +3262,12 @@ class Innovation extends Table
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${your} achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} top ${card} from his board to ${opponent_name}\'s achievements');
                 break;
+
+            case 'safe->safe':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your safe to ${opponent_name}\'s safe');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from his safe to ${your} safe');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from his safe to ${opponent_name}\'s safe');
+                break;
                 
             case 'score->score':
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from your score pile to ${opponent_name}\'s score pile');

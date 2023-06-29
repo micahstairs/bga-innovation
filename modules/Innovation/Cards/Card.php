@@ -126,7 +126,7 @@ abstract class Card
     }
   }
 
-  // CARD HELPERS
+  // CARD TRANSFER HELPERS
 
   protected function draw(int $age, int $playerId = null)
   {
@@ -246,6 +246,16 @@ abstract class Card
   protected function getBottomCardOfColor(int $color, int $playerId = null)
   {
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
+  }
+
+  // CARD ACCESSOR HELPERS
+
+  protected function getMinValueInLocation(string $location, int $playerId = null): int {
+    return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MIN');
+  }
+
+  protected function getMaxValueInLocation(string $location, int $playerId = null): int {
+    return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MAX');
   }
 
   protected function isSpecialAchievement($card): bool
