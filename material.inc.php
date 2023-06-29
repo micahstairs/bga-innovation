@@ -2732,12 +2732,12 @@ $this->textual_card_infos = array(
     558 => array(
         'name'                => clienttranslate('Enigma Machine'),
         'non_demand_effect_1' => clienttranslate('Choose to either safeguard all available standard achievements, transfer all your secrets to your hand, or transfer all cards in your hand to the available achievements.'),
-        'non_demand_effect_2' => clienttranslate('Splay a color of your cards splayed left up.'),
+        'non_demand_effect_2' => clienttranslate('Choose a color you have splayed left and splay it up.'),
     ),
 
     559 => array(
         'name'                => clienttranslate('Handbag'),
-        'non_demand_effect_1' => clienttranslate('You may choose to either transfer a bottom card of each color from your board to your hand, or tuck all cards from your score pile, or choose a value and score all cards from your hand of that value.'),
+        'non_demand_effect_1' => clienttranslate('You may choose to either transfer the bottom card of each color from your board to your hand, or tuck all cards from your score pile, or choose a value and score all cards from your hand of that value.'),
     ),
 
     560 => array(
@@ -2812,8 +2812,8 @@ $this->textual_card_infos = array(
 
     572 => array(
         'name'                => clienttranslate('Surveillance'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal all hands!'),
-        'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand matches the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand!'),
+        'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand match the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
         'non_demand_effect_2' => clienttranslate('Draw a ${age_10}.'),
     ),
 
@@ -2832,7 +2832,7 @@ $this->textual_card_infos = array(
 
     575 => array(
         'name'              => clienttranslate('Hacking'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer your two highest secrets to my safe! Transfer the highest cards in your score pile to my score pile! Meld all the lowest cards from your score pile!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer your two highest secrets to my safe! Transfer all the highest cards in your score pile to my score pile! Meld all the lowest cards from your score pile!'),
     ),
 
     576 => array(
