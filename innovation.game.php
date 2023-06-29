@@ -2705,8 +2705,13 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_must} score safeguard ${number} ${card} from his safe');
                 break;
             case 'board->deck':
-                $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
-                $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
+                if ($bottom_from == 1) {
+                    $message_for_player = clienttranslate('${You_must} return ${number} bottom ${card} from your board');
+                    $message_for_others = clienttranslate('${player_must} return ${number} bottom ${card} from his board');
+                } else {
+                    $message_for_player = clienttranslate('${You_must} return ${number} top ${card} from your board');
+                    $message_for_others = clienttranslate('${player_must} return ${number} top ${card} from his board');
+                }
                 break;
             case 'board->board':
                 $message_for_player = clienttranslate('${You_must} tuck ${number} ${card} from your board');
@@ -10808,7 +10813,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     "selectable_rectos" => self::getSelectableRectos($player_id), // Most of the time, the player choose among versos he can see this array is empty so this array is empty except for few dogma effects
                     "must_show_score" => $must_show_score,
                     "must_show_forecast" => $must_show_forecast,
-                    "show_all_cards_on_board" => $special_type_of_choice == 0 && $splay_direction == -1 && $location_from == 'board' && $bottom_from == 1,
+                    "show_all_cards_on_board" => $special_type_of_choice == 0 && ($splay_direction == -1 || $splay_direction === null) && $location_from == 'board' && $bottom_from == 1,
                 )
             ))
         );
@@ -29145,6 +29150,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // Reduce n_max to the selection size (Globe is an exception because it would reveal hidden info)
             } else if ($n_max < 800 && $selection_size < $n_max && !$selection_will_reveal_hidden_information) {
                 $this->innovationGameState->set('n_max', $selection_size);
+            }
+        } else if ($special_type_of_choice == 1) { // choose_from_list
+            $choice_array = $this->innovationGameState->getAsArray('choice_array');
+            // Automatically choose the value if there's only one option (and passing isn't allowed)
+            if (count($choice_array) == 1 && !$can_pass) {
+                $this->innovationGameState->set('choice', $choice_array[0]);
+                self::trace('preSelectionMove->interSelectionMove (only one choice)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
             }
         } else if ($special_type_of_choice == 3) { // choose_value
             $age_array = $this->innovationGameState->getAsArray('age_array');

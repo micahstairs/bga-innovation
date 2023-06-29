@@ -362,6 +362,25 @@ abstract class Card
     ];
   }
 
+  protected function getPromptForChoiceFromList(array $valuesToTextMap): array
+  {
+    $validChoices = $this->game->innovationGameState->getAsArray('choice_array');
+    $options = [];
+    foreach ($valuesToTextMap as $value => $text) {
+      if (in_array($value, $validChoices)) {
+        $options[] = [
+          'value' => $value,
+          'text'  => $text,
+        ];
+      }
+    }
+    return [
+      "message_for_player" => clienttranslate('${You} may make a choice'),
+      "message_for_others" => clienttranslate('${player_name} may make a choice among the possibilities offered by the card'),
+      "options"            => $options,
+    ];
+  }
+
   // GENERAL UTILITY HELPERS
 
   protected function getCardIdFromClassName(): string
