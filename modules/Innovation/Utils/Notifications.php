@@ -63,6 +63,21 @@ class Notifications
     return self::getColoredText($this->game->getPlayerNameFromId($playerId), $playerId);
   }
 
+  function notifyPlayerLoses(int $playerId): void
+  {
+    self::notifyPlayer($playerId, 'log', clienttranslate('${You} lose.'),  ['You' => 'You']);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} loses.'), array(
+      'player_name' => self::getColoredPlayerName($playerId)
+    ));
+  }
+
+  function notifyTeamLoses(int $playerId1, int $playerId2): void
+  {
+    $this->game->notifyPlayer($playerId1, 'log', clienttranslate('${Your} team loses.'), ['Your' => 'Your']);
+    $this->game->notifyPlayer($playerId2, 'log', clienttranslate('${Your} team loses.'), ['Your' => 'Your']);
+    $this->game->notifyAllPlayersBut([$playerId1, $playerId2], 'log', clienttranslate('The other team loses.'));
+  }
+
   function notifyPlayer($playerId, $type, $message, $args)
   {
     $this->game->notifyPlayer($playerId, $type, $message, $args);

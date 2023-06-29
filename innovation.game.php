@@ -1140,6 +1140,11 @@ class Innovation extends Table
     function isEliminated($player_id) {
         return self::getUniqueValueFromDB(self::format("SELECT player_eliminated FROM player WHERE player_id={player_id}", array('player_id' => $player_id)));
     }
+
+    // TODO(LATER): Use this helper more.
+    function isTeamGame() {
+        return self::decodeGameType($this->innovationGameState->get('game_type')) == 'team';
+    }
     
     /** log for debugging **/
     function log() {
@@ -1827,11 +1832,11 @@ class Innovation extends Table
     }
     
     /** Notification system for transfer **/
-    function notifyAll($notification_type, $notification_log, $notification_args) {
+    function notifyAll($notification_type, $notification_log, $notification_args = []) {
         self::notifyAllPlayersBut(array(), $notification_type, $notification_log, $notification_args);
     }
     
-    function notifyAllPlayersBut($player_ids, $notification_type, $notification_log, $notification_args) {
+    function notifyAllPlayersBut($player_ids, $notification_type, $notification_log, $notification_args = []) {
         /**
         Notify all players except the players in the list $player_ids (or with only one value, one can pass directly the id of the player to exclude).
         The spectators are notified as well.
@@ -4127,43 +4132,9 @@ class Innovation extends Table
     }
     
     function notifyEndOfGameByDogma() {
-        $player_id = $this->innovationGameState->get('winner_by_dogma');
         $dogma_card_id = self::getCurrentNestedCardState()['card_id'];
-
-        if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-            if ($dogma_card_id == 207 /* Exxon Valdez */ || $dogma_card_id == 445 /* Space Traffic */) {
-                self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} is the only remaining player. He wins!'), array(
-                    'player_name' => self::getPlayerNameFromId($player_id)
-                ));
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining player. You win!'), array());
-            } else {
-                self::notifyAllPlayersBut($player_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. He wins!'), array(
-                    'player_name' => self::getPlayerNameFromId($player_id)
-                ));
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You meet the victory condition. You win!'), array());
-            }
-        } else { // Team play
-            $teammate_id = self::getPlayerTeammate($player_id);
-            $winning_team = array($player_id, $teammate_id);
-            
-            if ($dogma_card_id == 207 /* Exxon Valdez */ || $dogma_card_id == 445 /* Space Traffic */) {
-                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: The other team is the only remaining team. They win!'), array());
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining team. You win!'), array());
-                self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: You are the only remaining team. You win!'), array());
-            } else if ($dogma_card_id == 100 /* Self service*/ || $dogma_card_id == 101 /* Globalization */) {
-                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: The other team meets the victory condition. They win!'), array());
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: Your team meets the victory condition. You win!'), array());
-                self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: Your team meets the victory condition. You win!'), array());
-            } else {
-                self::notifyAllPlayersBut($winning_team, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. The other team wins!'), array(
-                    'player_name' => self::getPlayerNameFromId($player_id)
-                ));
-                self::notifyPlayer($player_id, "log", clienttranslate('END OF GAME BY DOGMA: You meet the victory condition. Your team wins!'), array());
-                self::notifyPlayer($teammate_id, "log", clienttranslate('END OF GAME BY DOGMA: ${player_name} meets the victory condition. Your team wins!'), array(
-                    'player_name' => self::getPlayerNameFromId($player_id)
-                ));
-            }
-        }
+        $card_args = self::getNotificationArgsForCardList([self::getCardInfo($dogma_card_id)]);
+        self::notifyAllPlayers('logWithCardTooltips', clienttranslate('END OF GAME BY DOGMA: ${card}.'), ['card' => $card_args, 'card_ids' => [$dogma_card_id]]);
     }
     
     /** Notify general info **/

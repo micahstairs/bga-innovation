@@ -189,14 +189,14 @@ abstract class Card
     return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function return($card)
+  protected function return ($card)
   {
     if (!$card) {
       return null;
     }
     return $this->game->returnCard($card);
   }
-  
+
   protected function junk($card)
   {
     if (!$card) {
@@ -205,7 +205,8 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
-  protected function putInHand($card, int $playerId = null) {
+  protected function putInHand($card, int $playerId = null)
+  {
     if (!$card) {
       return null;
     }
@@ -237,92 +238,111 @@ abstract class Card
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age);
   }
 
-  protected function getTopCardOfColor(int $color, int $playerId = null) {
+  protected function getTopCardOfColor(int $color, int $playerId = null)
+  {
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function getBottomCardOfColor(int $color, int $playerId = null) {
+  protected function getBottomCardOfColor(int $color, int $playerId = null)
+  {
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function isSpecialAchievement($card): bool {
+  protected function isSpecialAchievement($card): bool
+  {
     return $card['age'] == null;
   }
 
-  protected function getCard(int $cardId) {
+  protected function getCard(int $cardId)
+  {
     return $this->game->getCardInfo($cardId);
   }
 
   // SPLAY HELPERS
 
-  protected function unsplay(int $color, int $playerId = null) {
+  protected function unsplay(int $color, int $playerId = null)
+  {
     $playerId = self::coercePlayerId($playerId);
     $this->game->unsplay($playerId, $playerId, $color);
   }
 
-  protected function splayLeft(int $color, int $playerId = null) {
+  protected function splayLeft(int $color, int $playerId = null)
+  {
     $playerId = self::coercePlayerId($playerId);
     $this->game->splayLeft($playerId, $playerId, $color);
   }
-  
-  protected function splayRight(int $color, int $playerId = null) {
+
+  protected function splayRight(int $color, int $playerId = null)
+  {
     $playerId = self::coercePlayerId($playerId);
     $this->game->splayRight($playerId, $playerId, $color);
   }
 
-  protected function splayUp(int $color, int $playerId = null) {
+  protected function splayUp(int $color, int $playerId = null)
+  {
     $playerId = self::coercePlayerId($playerId);
     $this->game->splayUp($playerId, $playerId, $color);
   }
 
-  protected function splayAslant(int $color, int $playerId = null) {
+  protected function splayAslant(int $color, int $playerId = null)
+  {
     $playerId = self::coercePlayerId($playerId);
     $this->game->splayAslant($playerId, $playerId, $color);
   }
 
   // COLOR HELPERS
 
-  protected function getAllColorsOtherThan(int $color) {
+  protected function getAllColorsOtherThan(int $color)
+  {
     return array_diff(range(0, 4), [$color]);
   }
 
   // SELECTION HELPERS
 
-  protected function getLastSelectedCard() {
+  protected function getLastSelectedCard()
+  {
     return $this->game->getCardInfo(self::getLastSelectedId());
   }
 
-  protected function getLastSelectedId(): int {
+  protected function getLastSelectedId(): int
+  {
     return $this->game->innovationGameState->get('id_last_selected');
   }
 
-  protected function getLastSelectedAge(): int {
+  protected function getLastSelectedAge(): int
+  {
     return $this->game->innovationGameState->get('age_last_selected');
   }
 
-  protected function getLastSelectedColor(): int {
+  protected function getLastSelectedColor(): int
+  {
     return $this->game->innovationGameState->get('color_last_selected');
   }
 
   // AUXILARY VALUE HELPERS
 
-  protected function getAuxiliaryValue(): int {
+  protected function getAuxiliaryValue(): int
+  {
     return $this->game->getAuxiliaryValue();
   }
 
-  protected function setAuxiliaryValue(int $value) {
+  protected function setAuxiliaryValue(int $value)
+  {
     return $this->game->setAuxiliaryValue($value);
   }
 
-  protected function incrementAuxiliaryValue(int $value = 1) {
+  protected function incrementAuxiliaryValue(int $value = 1)
+  {
     return self::setAuxiliaryValue(self::getAuxiliaryValue() + $value);
   }
 
-  protected function getAuxiliaryValue2(): int {
+  protected function getAuxiliaryValue2(): int
+  {
     return $this->game->getAuxiliaryValue2();
   }
 
-  protected function setAuxiliaryValue2(int $value) {
+  protected function setAuxiliaryValue2(int $value)
+  {
     return $this->game->setAuxiliaryValue2($value);
   }
 
@@ -379,6 +399,46 @@ abstract class Card
       "message_for_others" => clienttranslate('${player_name} may make a choice among the possibilities offered by the card'),
       "options"            => $options,
     ];
+  }
+
+  // WINNING AND LOSING HELPERS
+
+  protected function win(int $playerId = null): void
+  {
+    $playerId = self::coercePlayerId($playerId);
+    $this->game->innovationGameState->set('winner_by_dogma', $playerId);
+    throw new \EndOfGame();
+  }
+
+  protected function lose(int $playerId = null): void
+  {
+    $playerId = self::coercePlayerId($playerId);
+
+    // The entire team loses if one player loses 
+    if ($this->game->isTeamGame()) {
+      $teammateId = $this->game->getPlayerTeammate($playerId);
+      $this->notifications->notifyTeamLoses($playerId, $teammateId);
+      $arbitraryOpponentId = self::getRemainingPlayerIdsAfterEliminating([$playerId, $teammateId])[0];
+      $this->game->innovationGameState->set('winner_by_dogma', $arbitraryOpponentId);
+      throw new \EndOfGame();
+    }
+
+    // Declare a winner if there will only be one player remaining
+    $remainingPlayerIds = self::getRemainingPlayerIdsAfterEliminating([$playerId]);
+    if (count($remainingPlayerIds) === 1) {
+      $this->notifications->notifyPlayerLoses($playerId);
+      $this->game->innovationGameState->set('winner_by_dogma', $remainingPlayerIds[0]);
+      throw new \EndOfGame();
+    }
+
+    // Otherwise, eliminate the player
+    $this->notifications->notifyPlayerLoses($playerId);
+    $this->game->eliminatePlayer($playerId);
+  }
+
+  private function getRemainingPlayerIdsAfterEliminating(array $idsToEliminate): array
+  {
+    return array_values(array_diff($this->game->getAllActivePlayerIds(), $idsToEliminate));
   }
 
   // GENERAL UTILITY HELPERS
