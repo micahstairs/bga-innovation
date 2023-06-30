@@ -40,24 +40,11 @@ class Card558 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the three possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Safeguard all available standard achievements'),
-        ],
-        [
-          'value' => 2,
-          'text'  => clienttranslate('Transfer all your secrets to your hand'),
-        ],
-        [
-          'value' => 3,
-          'text'  => clienttranslate('Transfer all cards in your hand to the available achievements'),
-        ],
-      ],
-    ];
+    return self::getPromptForChoiceFromList([
+      1 => clienttranslate('Safeguard all available standard achievements'),
+      2 => clienttranslate('Transfer all your secrets to your hand'),
+      3 => clienttranslate('Transfer all cards in your hand to the available achievements'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

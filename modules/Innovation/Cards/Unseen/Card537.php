@@ -36,24 +36,11 @@ class Card537 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the three possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Splay red left'),
-        ],
-        [
-          'value' => 2,
-          'text'  => clienttranslate('Splay red right'),
-        ],
-        [
-          'value' => 3,
-          'text'  => clienttranslate('Splay red up'),
-        ],
-      ],
-    ];
+    return self::getPromptForChoiceFromList([
+      1 => clienttranslate('Splay red left'),
+      2 => clienttranslate('Splay red right'),
+      3 => clienttranslate('Splay red up'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

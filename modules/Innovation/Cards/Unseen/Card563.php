@@ -37,16 +37,9 @@ class Card563 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may score all the highest cards in his hand'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Score all the highest cards in your hand'),
-        ],
-      ],
-    ];
+    return self::getPromptForChoiceFromList([
+      1 => clienttranslate('Score all the highest cards in your hand'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice) {

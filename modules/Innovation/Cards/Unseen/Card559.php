@@ -38,24 +38,11 @@ class Card559 extends Card
   public function getSpecialChoicePrompt(): array
   {
     if (self::getCurrentStep() == 1) {
-      return [
-        "message_for_player" => clienttranslate('${You} may make a choice'),
-        "message_for_others" => clienttranslate('${player_name} may make a choice among the three possibilities offered by the card'),
-        "options"            => [
-          [
-            'value' => 1,
-            'text'  => clienttranslate('Transfer your bottom cards to your hand'),
-          ],
-          [
-            'value' => 2,
-            'text'  => clienttranslate('Tuck all cards from your score pile'),
-          ],
-          [
-            'value' => 3,
-            'text'  => clienttranslate('Score all cards from your hand of a specific value'),
-          ],
-        ],
-      ];
+      return self::getPromptForChoiceFromList([
+        1 => clienttranslate('Transfer your bottom cards to your hand'),
+        2 => clienttranslate('Tuck all cards from your score pile'),
+        3 => clienttranslate('Score all cards from your hand of a specific value'),
+      ]);
     } else {
       return self::getPromptForValueChoice();
     }
