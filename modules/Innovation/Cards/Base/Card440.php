@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card440 extends Card
 {

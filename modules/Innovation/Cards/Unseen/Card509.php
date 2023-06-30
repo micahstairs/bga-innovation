@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
 
 class Card509 extends Card
 {

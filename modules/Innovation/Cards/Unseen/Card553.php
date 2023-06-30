@@ -3,8 +3,6 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
-use Innovation\Cards\ExecutionState;
-use SebastianBergmann\Type\VoidType;
 
 class Card553 extends Card
 {
