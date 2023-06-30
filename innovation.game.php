@@ -2523,6 +2523,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your safe.');
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his safe.');
             break;
+        case 'safe->deck':
+            $message_for_player = clienttranslate('${You} return a ${<}${age}${>} from your safe.');
+            $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from his safe.');
+            break;
         case 'revealed->safe':
             $message_for_player = clienttranslate('${You} safeguard ${<}${age}${>} ${<<}${name}${>>}.');
             $message_for_others = clienttranslate('${player_name} safeguards ${<}${age}${>} ${<<}${name}${>>}.');
@@ -2708,6 +2712,10 @@ class Innovation extends Table
             case 'safe->score':
                 $message_for_player = clienttranslate('${You_must} score ${number} ${card} from your safe');
                 $message_for_others = clienttranslate('${player_must} score safeguard ${number} ${card} from his safe');
+                break;
+            case 'safe->deck':
+                $message_for_player = clienttranslate('${You_must} return ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} return safeguard ${number} ${card} from his safe');
                 break;
             case 'board->deck':
                 if ($bottom_from == 1) {
@@ -30389,10 +30397,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 ->setEffectType($current_effect_type)
                                 ->setEffectNumber($current_effect_number)
                                 ->setCurrentStep(self::getStep())
+                                ->setNextStep(self::getStep() + 1)
                                 ->setMaxSteps(self::getStepMax())
                                 ->setNumChosen($this->innovationGameState->get('n') + 1);
                             self::getCardInstance($card_id, $executionState)->handleCardChoice($selected_card_id);
                             self::setStepMax($executionState->getMaxSteps());
+                            self::setStep($executionState->getNextStep() - 1);
                         }
                     }
                     else {

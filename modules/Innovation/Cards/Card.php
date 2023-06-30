@@ -250,11 +250,13 @@ abstract class Card
 
   // CARD ACCESSOR HELPERS
 
-  protected function getMinValueInLocation(string $location, int $playerId = null): int {
+  protected function getMinValueInLocation(string $location, int $playerId = null): int
+  {
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MIN');
   }
 
-  protected function getMaxValueInLocation(string $location, int $playerId = null): int {
+  protected function getMaxValueInLocation(string $location, int $playerId = null): int
+  {
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MAX');
   }
 
@@ -371,7 +373,7 @@ abstract class Card
   protected function getPromptForColorChoice(): array
   {
     return [
-      "message_for_player" => clienttranslate('${You} must choose a color'),
+      "message_for_player" => clienttranslate('$Choose a color'),
       "message_for_others" => clienttranslate('${player_name} must choose a color'),
     ];
   }
@@ -394,6 +396,24 @@ abstract class Card
 
   protected function getPromptForChoiceFromList(array $valuesToTextMap): array
   {
+    $options = self::getOptionsForChoiceFromList($valuesToTextMap);
+    if ($this->game->innovationGameState->get('can_pass')) {
+      return [
+        "message_for_player" => clienttranslate('${You} may make a choice'),
+        "message_for_others" => clienttranslate('${player_name} may make a choice among the possibilities offered by the card'),
+        "options"            => $options,
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('${You} must make a choice'),
+        "message_for_others" => clienttranslate('${player_name} must make a choice among the possibilities offered by the card'),
+        "options"            => $options,
+      ];
+    }
+  }
+
+  protected function getOptionsForChoiceFromList(array $valuesToTextMap): array
+  {
     $validChoices = $this->game->innovationGameState->getAsArray('choice_array');
     $options = [];
     foreach ($valuesToTextMap as $value => $text) {
@@ -404,11 +424,7 @@ abstract class Card
         ];
       }
     }
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the possibilities offered by the card'),
-      "options"            => $options,
-    ];
+    return $options;
   }
 
   // WINNING AND LOSING HELPERS
