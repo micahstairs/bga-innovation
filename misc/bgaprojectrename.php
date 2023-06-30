@@ -17,7 +17,7 @@ if ($res !== 1) {
   exit(1);
 }
 
-$subdirs = ["src", "modules", ".vscode", "Innovation", "Utils"];
+$subdirs = ["src", "modules", ".vscode", "Innovation", "Utils", "Cards"];
 
 echo "Copying $oldprojectpath => $newprojectpath\n";
 copyr($oldprojectpath, $newprojectpath);
