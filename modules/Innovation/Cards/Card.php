@@ -189,6 +189,14 @@ abstract class Card
     return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
+  protected function putBackInSafe($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->putCardBackInSafe($card, self::coercePlayerId($playerId));
+  }
+
   protected function return($card)
   {
     if (!$card) {
@@ -407,9 +415,9 @@ abstract class Card
     ];
   }
 
-  protected function getPromptForChoiceFromList(array $valuesToTextMap): array
+  protected function getPromptForChoiceFromList(array $valuesToTextMap, array $optionsArgs = []): array
   {
-    $options = self::getOptionsForChoiceFromList($valuesToTextMap);
+    $options = self::getOptionsForChoiceFromList($valuesToTextMap, $optionsArgs);
     if ($this->game->innovationGameState->get('can_pass')) {
       return [
         "message_for_player" => clienttranslate('${You} may make a choice'),
@@ -425,16 +433,16 @@ abstract class Card
     }
   }
 
-  protected function getOptionsForChoiceFromList(array $valuesToTextMap): array
+  protected function getOptionsForChoiceFromList(array $valuesToTextMap, array $optionsArgs = []): array
   {
     $validChoices = $this->game->innovationGameState->getAsArray('choice_array');
     $options = [];
     foreach ($valuesToTextMap as $value => $text) {
       if (in_array($value, $validChoices)) {
-        $options[] = [
+        $options[] = array_merge($optionsArgs, [
           'value' => $value,
           'text'  => $text,
-        ];
+        ]);
       }
     }
     return $options;

@@ -19,6 +19,11 @@ class Card569 extends Card
 
   public function getInteractionOptions(): array
   {
+    // No more code needs to be executed after the card has been self-executed
+    if (self::getPostExecutionIndex() > 0) {
+      return [];
+    }
+
     if (self::getEffectNumber() == 1) {
       return [
         'can_pass'        => true,
@@ -27,7 +32,7 @@ class Card569 extends Card
       ];
     } else if (self::getEffectNumber() == 2) {
       if (self::getCurrentStep() == 1) {
-        return ['choose_yes_or_no' => true];
+        return ['choices' => [1, 2]];
       } else {
         return [
           'owner_from'    => 0,
@@ -49,44 +54,30 @@ class Card569 extends Card
     if (self::getEffectNumber() == 3) {
       if (self::getNumChosen() > 0) {
         if ($this->game->getActivePlayerId() == self::getPlayerId()) {
-          // "and fully execute it if it is your turn."
-          // TODO: Fully execute doesn't seem to work
           self::fullyExecute(self::getLastSelectedCard());
         }
-        // put it back
-        // TODO(4E): There's a bug here because we should ignore the safe limit in this case.
-        $this->game->transferCardFromTo(self::getLastSelectedCard(), self::getPlayerId(), 'safe');
+        self::putBackInSafe(self::getLastSelectedCard());
       }
     }
   }
 
   public function getSpecialChoicePrompt(): array
   {
-    $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 11);
-    $maxAge = $this->game->getMaxAge();
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => $ageToDraw <= $maxAge ? clienttranslate('Draw an ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'),
-          'age'   => $this->game->getAgeSquare($ageToDraw)
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Safeguard an available achievement'),
-        ],
+    return self::getPromptForChoiceFromList(
+      [
+        1 => clienttranslate('Draw an ${age}'),
+        2 => clienttranslate('Safeguard an available achievement'),
       ],
-    ];
+      ['age' => $this->game->getAgeSquare(11)],
+    );
   }
 
   public function handleSpecialChoice(int $choice): void
   {
-    if ($choice === 0) {
-      self::setMaxSteps(2);
-    } else {
+    if ($choice === 1) {
       self::draw(11);
+    } else {
+      self::setMaxSteps(2);
     }
   }
 

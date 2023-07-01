@@ -1346,10 +1346,15 @@ class Innovation extends Table
         return self::transferCardFromTo($card, $owner_to, 'safe');
     }
 
+    function putCardBackInSafe($card, $owner_to) {
+        // TOOD:
+        return self::transferCardFromTo($card, $owner_to, 'safe', /*bottom_to=*/ null, /*score_keyword=*/ false, /*bottom_from=*/ false, /*meld_keyword=*/ false, /*force=*/ true);
+    }
+
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false, $force = false) {
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("Transferring card=". $card['id'] . " from " . $card['location'] . " to " . $location_to);
@@ -1367,8 +1372,8 @@ class Innovation extends Table
             return;
         }
 
-        // Do not move the card if the was was supposed to move to the safe but it is already full
-        if ($location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getSafeLimit($owner_to)) {
+        // Do not move the card if the was was supposed to move to the safe but it is already full (unless we are returning the card to the safe after it was revealed)
+        if (!$force && $location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getSafeLimit($owner_to)) {
             $this->notifications->notifySafeIsFull($owner_to);
             return;
         }
