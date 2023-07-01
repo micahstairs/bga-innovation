@@ -189,12 +189,20 @@ abstract class Card
     return $this->game->safeguardCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function return ($card)
+  protected function return($card)
   {
     if (!$card) {
       return null;
     }
     return $this->game->returnCard($card);
+  }
+
+  protected function placeOnTopOfDeck($card)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
   }
 
   protected function junk($card)

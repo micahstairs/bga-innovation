@@ -2406,8 +2406,13 @@ class Innovation extends Table
             break;
         case 'revealed->deck':
         case 'revealed->relics':
-            $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
-            $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
+            if ($bottom_to) {
+                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
+                $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
+            } else {
+                $message_for_player = clienttranslate('${You} place ${<}${age}${>} ${<<}${name}${>>} on top of the deck.');
+                $message_for_others = clienttranslate('${player_name} places ${<}${age}${>} ${<<}${name}${>>} on top of the deck.');
+            }
             break;
         case 'revealed->junk':
             $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>}.');

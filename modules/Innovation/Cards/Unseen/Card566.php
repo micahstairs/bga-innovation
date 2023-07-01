@@ -16,29 +16,18 @@ class Card566 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
-      $top9 = $this->game->getDeckTopCard(9, $this->game::BASE);
-      $top10 = $this->game->getDeckTopCard(10, $this->game::BASE);
-
-      // TODO(4E): Update this once we get clarifications on how it is supposed to work.
-      if ($top9 && $top10) {
-        self::setMaxSteps(2);
-        self::reveal($top9);
-        self::reveal($top10);
-      } else if ($top9) {
-        self::reveal($top9);
-        self::return($top9);
-      } else if ($top10) {
-        self::reveal($top10);
-        self::return($top10);
+      $card1 = self::reveal($this->game->getDeckTopCard(9, $this->game::BASE));
+      $card2 = self::reveal($this->game->getDeckTopCard(10, $this->game::BASE));
+      if ($card1 || $card2) {
+        self::setMaxSteps(1);
       }
-
     } else {
       if ($this->game->countCardsInLocation(self::getPlayerId(), 'board') == 0) {
         self::win();
       } else {
         foreach ($this->game->getCardsInLocation(0, 'junk') as $card) {
           if (self::isValuedCard($card)) {
-            $this->game->transferCardFromTo($card, self::getPlayerId(), 'hand');
+            self::putInHand($card);
           }
         }
       }
@@ -47,16 +36,16 @@ class Card566 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
-      return [
-        'location_from' => 'revealed',
-        'location_to'   => 'deck',
-      ];
-    } else {
-      return [
-        'location_from' => 'revealed',
-        'location_to'   => 'hand',
-      ];
+    return [
+      'can_pass' => $this->game->countCardsInLocation(self::getPlayerId(), 'revealed') == 1,
+      'location_from' => 'revealed',
+      'location_to'   => 'deck',
+    ];
+  }
+
+  public function afterInteraction() {
+    foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      self::placeOnTopOfDeck($card);
     }
   }
 
