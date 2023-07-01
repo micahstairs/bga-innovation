@@ -2600,6 +2600,9 @@ class Innovation extends Table
                 } else if ($code === '565N1B') { // Consulting
                     $message_for_player = clienttranslate('${You_must} choose a top card from the board of ${targetable_players} for them to self-execute');
                     $message_for_others = clienttranslate('${player_must} choose a top card from the board of ${targetable_players}');
+                } else if ($code === '588N1A') {
+                    $message_for_player = clienttranslate('${You_must} choose a color to unsplay from the board of ${targetable_players}');
+                    $message_for_others = clienttranslate('${player_must} choose a color to unsplay from the board of ${targetable_players}');
                 } else {
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to . ':' . $code)));
                 }
@@ -2651,6 +2654,10 @@ class Innovation extends Table
                     $message_for_player = clienttranslate('${You_must} safeguard ${number} ${card} from the available achievements');
                     $message_for_others = clienttranslate('${player_must} safeguard ${number} ${card} from the available achievements');
                 }
+                break;
+            case 'safe->achievements':
+                $message_for_player = clienttranslate('${You_must} achieve ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} achieve ${number} ${card} from his safe');
                 break;
             case 'hand->deck':
                 if (self::getPlayerTableColumn($owner_from, 'distance_rule_share_state') == 1) {
@@ -17431,6 +17438,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Use sensible defaults for unset options
                 if (array_key_exists('n', $options) && $options['n'] == 'all') {
                     $options['n'] = 999;
+                }
+                if (array_key_exists('n_max', $options) && $options['n_max'] == 'all') {
+                    $options['n_max'] = 999;
                 }
                 if (!array_key_exists('can_pass', $options)) {
                     $options['can_pass'] = false;

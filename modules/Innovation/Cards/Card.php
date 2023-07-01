@@ -305,10 +305,13 @@ abstract class Card
 
   // SPLAY HELPERS
 
-  protected function unsplay(int $color, int $playerId = null)
+  protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null)
   {
-    $playerId = self::coercePlayerId($playerId);
-    $this->game->unsplay($playerId, $playerId, $color);
+    $targetPlayerId = self::coercePlayerId($targetPlayerId);
+    if ($triggeringPlayerId === null) {
+      $triggeringPlayerId = $targetPlayerId;
+    }
+    $this->game->unsplay($triggeringPlayerId, $targetPlayerId, $color);
   }
 
   protected function splayLeft(int $color, int $playerId = null)
