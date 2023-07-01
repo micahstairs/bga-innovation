@@ -19,11 +19,6 @@ class Card569 extends Card
 
   public function getInteractionOptions(): array
   {
-    // No more code needs to be executed after the card has been self-executed
-    if (self::getPostExecutionIndex() > 0) {
-      return [];
-    }
-
     if (self::getEffectNumber() == 1) {
       return [
         'can_pass'        => true,

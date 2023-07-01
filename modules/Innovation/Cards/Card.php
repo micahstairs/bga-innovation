@@ -28,6 +28,12 @@ abstract class Card
     return [];
   }
 
+  public function hasPostExecutionLogic(): bool
+  {
+    // Subclasses are expected to override this method and return true if the card needs to do any more logic after executing a card.
+    return false;
+  }
+
   public function getSpecialChoicePrompt(): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {

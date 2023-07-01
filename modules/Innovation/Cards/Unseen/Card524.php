@@ -12,6 +12,11 @@ class Card524 extends Card
   //     of that color. If you do, repeat this effect with the same color if you have scored fewer
   //     than nine points due to Legend this action.
 
+  public function hasPostExecutionLogic(): bool
+  {
+    return true;
+  }
+
   public function initialExecution()
   {
     if (self::getPostExecutionIndex() > 0) {

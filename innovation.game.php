@@ -11492,7 +11492,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         try {
 
             if (self::isInSeparateFile($card_id)) {
-                self::getCardInstance($card_id, $executionState)->initialExecution();
+                $cardInstance = self::getCardInstance($card_id, $executionState);
+                if ($nested_card_state['post_execution_index'] == 0 || $cardInstance->hasPostExecutionLogic()) {
+                    self::getCardInstance($card_id, $executionState)->initialExecution();
+                }
                 $using_execution_status_object = true;
             }
 
