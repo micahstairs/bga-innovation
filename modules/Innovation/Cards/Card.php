@@ -19,6 +19,12 @@ abstract class Card
     $this->state = $state;
     $this->notifications = $game->notifications;
   }
+  
+  public function oneTimeSetup()
+  {
+    // Subclasses are expected to override this method if the card need to do any one-time setup before any player executes anything.
+    // TODO(LATER): This method isn't actually called from the game logic yet. We need to wire it up if we want to use this method.
+  }
 
   public abstract function initialExecution();
 

@@ -16,67 +16,33 @@ class Card572 extends Card
   public function initialExecution()
   {
     if (self::isDemand()) {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'hand') as $card) {
-        self::reveal($card);
-      }
-    } else if (self::getEffectNumber() == 1) {
-
-      // "If the colors of cards in your hand matches the colors of 
-      //  revealed cards in an opponent's hand, and you have a card in your hand, you win."
-      if ($this->game->countCardsInHand(self::getPlayerId()) > 0) {
-        $my_hand = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'hand');
-
-        // TODO(4E): There's a bug here. We should only be looking at players vulnerable to the demand.
-        $opponent_ids = $this->game->getActiveOpponentIds(self::getPlayerId());
-
-        foreach ($opponent_ids as $opponent_id) {
-          $eligible = true;
-          $card_revealed = $this->game->getCardsInLocationKeyedByColor($opponent_id, 'revealed');
-          if (count($card_revealed) > 0) {
-            for ($color = 0; $color < 5; $color++) {
-              if (
-                ($card_revealed[$color] > 0 && $my_hand[$color] == 0) ||
-                ($card_revealed[$color] == 0 && $my_hand[$color] > 0)
-              ) {
-                $eligible = false;
-              }
-            }
-            if ($eligible) {
-              //self::win();
-            } else {
-
-              // put the cards back
-              $cards_in_revealed = $this->game->getCardsInLocation($opponent_id, 'revealed');
-              foreach ($cards_in_revealed as $card) {
-                $this->game->transferCardFromTo($card, $opponent_id, 'hand');
-              }
-            }
-          }
+      $this->game->revealHand(self::getPlayerId());
+      $colors = self::getUniqueColorsInHand(self::getPlayerId());
+      // Check each active opponent (we technically don't need to check opponents which won't be executing the non-demand, but this is simpler)
+      foreach ($this->game->getActiveOpponentIds(self::getPlayerId()) as $opponentId) {
+        $opponentColors = self::getUniqueColorsInHand($opponentId);
+        if (count($colors) === count($opponentColors) && array_diff($colors, $opponentColors) == []) {
+          $this->game->setIndexedAuxiliaryValue($opponentId, 1);
         }
       }
+    } else if (self::getEffectNumber() == 1) {
+      if ($this->game->getIndexedAuxiliaryValue(self::getPlayerId())) {
+        self::win();
+      }
     } else {
-      // "Draw a [10]."
       self::draw(10);
     }
   }
 
-  public function getInteractionOptions(): array
+  private function getUniqueColorsInHand(int $playerId): array
   {
-    return [
-      'owner_from'    => self::getLauncherId(),
-      'location_from' => 'score',
-      'location_to'   => 'board',
-    ];
-  }
-
-  public function afterInteraction()
-  {
-    if (self::getNumChosen() > 0) {
-      if (!$this->game->hasRessource(self::getLastSelectedCard(), $this->game::PROSPERITY)) {
-        // "If the transferred card has no PROSPERITY, repeat this effect!"
-        self::setNextStep(1);
+    $colors = [];
+    foreach ($this->game->getCardsInHand($playerId) as $card) {
+      if (!in_array($card['color'], $colors)) {
+        $colors[] = $card['color'];
       }
     }
+    return $colors;
   }
 
 }
