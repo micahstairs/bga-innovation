@@ -58,13 +58,10 @@ class Card569 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList(
-      [
-        1 => clienttranslate('Draw an ${age}'),
-        2 => clienttranslate('Safeguard an available achievement'),
-      ],
-      ['age' => $this->game->getAgeSquare(11)],
-    );
+    return self::getPromptForChoiceFromList([
+      1 => [clienttranslate('Draw an ${age}'), 'age' => $this->game->getAgeSquare(11)],
+      2 => clienttranslate('Safeguard an available achievement'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

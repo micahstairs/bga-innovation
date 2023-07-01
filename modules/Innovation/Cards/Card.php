@@ -421,9 +421,9 @@ abstract class Card
     ];
   }
 
-  protected function getPromptForChoiceFromList(array $valuesToTextMap, array $optionsArgs = []): array
+  protected function getPromptForChoiceFromList(array $choiceMap): array
   {
-    $options = self::getOptionsForChoiceFromList($valuesToTextMap, $optionsArgs);
+    $options = self::getOptionsForChoiceFromList($choiceMap);
     if ($this->game->innovationGameState->get('can_pass')) {
       return [
         "message_for_player" => clienttranslate('${You} may make a choice'),
@@ -439,17 +439,20 @@ abstract class Card
     }
   }
 
-  protected function getOptionsForChoiceFromList(array $valuesToTextMap, array $optionsArgs = []): array
+  protected function getOptionsForChoiceFromList(array $choiceMap): array
   {
     $validChoices = $this->game->innovationGameState->getAsArray('choice_array');
     $options = [];
-    foreach ($valuesToTextMap as $value => $text) {
-      if (in_array($value, $validChoices)) {
-        $options[] = array_merge($optionsArgs, [
-          'value' => $value,
-          'text'  => $text,
-        ]);
+    foreach ($choiceMap as $value => $textOrarray) {
+      if (!in_array($value, $validChoices)) {
+        continue;
       }
+      $text = is_array($textOrarray) ? reset($textOrarray) : $textOrarray;
+      $args = is_array($textOrarray) ? array_slice($textOrarray, 1) : [];
+      $options[] = array_merge($args, [
+        'value' => $value,
+        'text'  => $text,
+      ]);
     }
     return $options;
   }
