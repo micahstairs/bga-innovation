@@ -11,78 +11,67 @@ class Card569 extends Card
   //   - You may splay your green cards up.
   //   - Choose to either draw an [11], or safeguard an available standard achievement.
   //   - Reveal one of your secrets, and fully execute it if it is your turn.
-  
+
   public function initialExecution()
   {
-      if (self::getEffectNumber() == 1) {
-          self::setMaxSteps(1);
-      } else if (self::getEffectNumber() == 2) {
-          self::setMaxSteps(1);
-      } else {
-          self::setMaxSteps(1);
-      }
+    self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() == 1) {
-        // "You may splay your green cards up."
-        return [
-          'can_pass'        => true,
-          'splay_direction' => $this->game::UP,
-          'color'           => array($this->game::GREEN),
-        ];
+      return [
+        'can_pass'        => true,
+        'splay_direction' => $this->game::UP,
+        'color'           => array($this->game::GREEN),
+      ];
     } else if (self::getEffectNumber() == 2) {
-        if (self::getCurrentStep() == 1) {
-            // "Choose to either draw an [11], or safeguard an available standard achievement."
-          return [
-            'choose_yes_or_no' => true,
-          ];
-        } else {
-            // "safeguard an available standard achievement."
-            return [
-              'owner_from'    => 0,
-              'location_from' => 'achievements',
-              'location_to'   => 'safe',
-            ];             
-        }
-    } else {
+      if (self::getCurrentStep() == 1) {
+        return ['choose_yes_or_no' => true];
+      } else {
         return [
-          'location_from' => 'safe',
-          'location_to'   => 'revealed',
-        ];        
+          'owner_from'    => 0,
+          'location_from' => 'achievements',
+          'location_to'   => 'safe',
+        ];
+      }
+    } else {
+      return [
+        'location_from' => 'safe',
+        'location_to'   => 'revealed',
+      ];
     }
-    
+
   }
-  
+
   public function afterInteraction()
   {
-      if (self::getEffectNumber() == 3) {
-        if (self::getNumChosen() > 0) {
-            if ($this->game->getActivePlayerId() == self::getPlayerId()) {
-                // "and fully execute it if it is your turn."
-                // TODO: Fully execute doesn't seem to work
-                self::fullyExecute(self::getLastSelectedCard());
-            }
-            // put it back
-            $this->game->transferCardFromTo(self::getLastSelectedCard(), self::getPlayerId(), 'safe');
+    if (self::getEffectNumber() == 3) {
+      if (self::getNumChosen() > 0) {
+        if ($this->game->getActivePlayerId() == self::getPlayerId()) {
+          // "and fully execute it if it is your turn."
+          // TODO: Fully execute doesn't seem to work
+          self::fullyExecute(self::getLastSelectedCard());
         }
+        // put it back
+        // TODO(4E): There's a bug here because we should ignore the safe limit in this case.
+        $this->game->transferCardFromTo(self::getLastSelectedCard(), self::getPlayerId(), 'safe');
       }
-  }  
-  
+    }
+  }
+
   public function getSpecialChoicePrompt(): array
   {
-    $player_id = self::getPlayerId();
-    $age_to_draw = $this->game->getAgeToDrawIn($player_id, 11);
-    $max_age = $this->game->getMaxAge();
+    $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 11);
+    $maxAge = $this->game->getMaxAge();
     return [
       "message_for_player" => clienttranslate('${You} may make a choice'),
       "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
       "options"            => [
         [
           'value' => 1,
-          'text'  => $age_to_draw <= $max_age ? clienttranslate('Draw an ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'),
-          'age'   => $this->game->getAgeSquare($age_to_draw)
+          'text'  => $ageToDraw <= $maxAge ? clienttranslate('Draw an ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'),
+          'age'   => $this->game->getAgeSquare($ageToDraw)
         ],
         [
           'value' => 0,
@@ -99,6 +88,6 @@ class Card569 extends Card
     } else {
       self::draw(11);
     }
-  }  
-  
+  }
+
 }

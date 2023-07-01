@@ -36,6 +36,27 @@ class Notifications
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::getColoredPlayerName($playerId), 'age' => self::getAgeSquare($value)]);
   }
 
+  public function notifyPlayerChoice(int $chosenPlayerId, int $playerId) {
+    self::notifyPlayer(
+      $playerId,
+      'log',
+      clienttranslate('${You} choose the player ${player_choice}.'),
+      array(
+        'You'           => 'You',
+        'player_choice' => self::getColoredPlayerName($chosenPlayerId)
+      )
+    );
+    self::notifyAllPlayersBut(
+      $playerId,
+      'log',
+      clienttranslate('${player_name} chooses the player ${player_choice}.'),
+      array(
+        'player_name'   => self::getColoredPlayerName($playerId),
+        'player_choice' => self::getColoredPlayerName($chosenPlayerId)
+      )
+    );
+  }
+
   public function notifySafeIsFull(int $playerId)
   {
     self::notifyPlayer($playerId, 'log', clienttranslate('${Your} safe was already full so the card was not transferred to your safe.'), ['Your' => 'Your']);

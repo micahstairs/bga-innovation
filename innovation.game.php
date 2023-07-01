@@ -2585,9 +2585,11 @@ class Innovation extends Table
                 } else if ($code === '417N1A') {
                     $message_for_player = clienttranslate('${You_must} choose a top card to transfer from the board of ${targetable_players} to his score pile');
                     $message_for_others = clienttranslate('${player_must} choose a top card to transfer from the board of ${targetable_players} to his score pile');
+                } else if ($code === '565N1B') { // Consulting
+                    $message_for_player = clienttranslate('${You_must} choose a top card from the board of ${targetable_players} for them to self-execute');
+                    $message_for_others = clienttranslate('${player_must} choose a top card from the board of ${targetable_players}');
                 } else {
-                    // This should not happen
-                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
+                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to . ':' . $code)));
                 }
                 break;
             case 'hand->none':
@@ -2595,7 +2597,6 @@ class Innovation extends Table
                     $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your hand to meld or score');
                     $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his hand to meld or score');
                 } else {
-                    // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 }
                 break;
@@ -17409,38 +17410,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if (self::isInSeparateFile($card_id)) {
             $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
-
-            if (array_key_exists('n', $options) && $options['n'] == 'all') {
-                $options['n'] = 999;
-            }
-
-            // Use sensible defaults for unset options
-            if (!array_key_exists('can_pass', $options)) {
-                $options['can_pass'] = false;
-            }
-            if (array_key_exists('meld_keyword', $options)) {
-                $options['location_to'] = 'board';
-            }
-            if (array_key_exists('score_keyword', $options)) {
-                $options['location_to'] = 'score';
-            }
-            if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
-                $options['n'] = 1;
-            }
-            if (!array_key_exists('player_id', $options)) {
-                $options['player_id'] = $player_id;
-            }
-            if (!array_key_exists('owner_from', $options)) {
-                $options['owner_from'] = $player_id;
-            }
-            if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
-                $options['owner_to'] = 0;
-            }
-            if (!array_key_exists('owner_to', $options)) {
-                $options['owner_to'] = $player_id;
-            }
-            if (array_key_exists('choices', $options)) {
-                $options['choose_from_list'] = true;
+            if (empty($options)) {
+                $options = null;
+            } else {
+                // Use sensible defaults for unset options
+                if (array_key_exists('n', $options) && $options['n'] == 'all') {
+                    $options['n'] = 999;
+                }
+                if (!array_key_exists('can_pass', $options)) {
+                    $options['can_pass'] = false;
+                }
+                if (array_key_exists('meld_keyword', $options)) {
+                    $options['location_to'] = 'board';
+                }
+                if (array_key_exists('score_keyword', $options)) {
+                    $options['location_to'] = 'score';
+                }
+                if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
+                    $options['n'] = 1;
+                }
+                if (!array_key_exists('player_id', $options)) {
+                    $options['player_id'] = $player_id;
+                }
+                if (!array_key_exists('owner_from', $options)) {
+                    $options['owner_from'] = $player_id;
+                }
+                if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
+                    $options['owner_to'] = 0;
+                }
+                if (!array_key_exists('owner_to', $options)) {
+                    $options['owner_to'] = $player_id;
+                }
+                if (array_key_exists('choices', $options)) {
+                    $options['choose_from_list'] = true;
+                }
             }
         }
 

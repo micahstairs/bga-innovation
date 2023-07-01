@@ -2810,7 +2810,6 @@ $this->textual_card_infos = array(
         'non_demand_effect_1' => clienttranslate('Choose whether you wish to draw two ${age_10}, draw and score two ${age_8}, or safeguard two available achievements. Draw and tuck an ${age_8}. If it has a ${icon_3}, do as you wish. If it is red or purple, repeat this effect.'),
     ),
 
-<<<<<<< HEAD
     572 => array(
         'name'                => clienttranslate('Surveillance'),
         'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand!'),
@@ -2821,16 +2820,6 @@ $this->textual_card_infos = array(
     573 => array(
         'name'              => clienttranslate('Clown Car'),
         'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card from my score pile to your board! If the transferred card has no ${icon_1}, repeat this effect!'),
-=======
-    572 => array('name' => clienttranslate('Surveillance'),
-    'i_demand_effect_1' => clienttranslate('${I demand} you reveal all hands!'),
-    'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand matches the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
-    'non_demand_effect_2' => clienttranslate('Draw a ${age_10}.'),
-    ),
-
-    573 => array('name' => clienttranslate('Clown Car'),
-    'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card from my score pile to your board! If the transferred card has no ${icon_1}, repeat this effect!'),
->>>>>>> ce83255 (age 9!)
     ),
 
     574 => array(

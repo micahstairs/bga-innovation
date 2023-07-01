@@ -14,25 +14,19 @@ class Card574 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
-      $cards_drawn_ctr = 0;
-        for ($color = 0; $color < 5; $color++) {
-            if ($this->game->countVisibleIconsInPile(self::getPlayerId(), $this->game::INDUSTRY, $color) > 0) {
-                // For each color on your board with a INDUSTRY, draw a [9].
-                self::draw(9);
-                $cards_drawn_ctr++;
-            }
+      $numCardsDrawn = 0;
+      for ($color = 0; $color < 5; $color++) {
+        if ($this->game->countVisibleIconsInPile(self::getPlayerId(), $this->game::INDUSTRY, $color) > 0) {
+          self::draw(9);
+          $numCardsDrawn++;
         }
-        
-        if ($cards_drawn_ctr == 5) {
-            // TODO: verify that innovationGameState is correct
-            $this->game->notifyPlayer(self::getPlayerId(), 'log', clienttranslate('${You} have 5 colors with an ${icon_5}.'), array('You' => 'You'));
-            $this->game->notifyAllPlayersBut(self::getPlayerId(), 'log', clienttranslate('${player_name} has 5 colors with an ${icon_5}.'), array('player_name' => $this->game->getColoredPlayerName(self::getPlayerId())));
-            $this->innovationGameState->set('winner_by_dogma', self::getPlayerId());
-            $this->game->trace('EOG bubbled from self::stPlayerInvolvedTurn Urban Legend');
-            throw new EndOfGame();
-        }
+      }
+
+      if ($numCardsDrawn == 5) {
+        self::win();
+      }
     } else {
-        self::setMaxSteps(1);
+      self::setMaxSteps(1);
     }
   }
 
@@ -44,5 +38,4 @@ class Card574 extends Card
       'color'           => array($this->game::YELLOW, $this->game::PURPLE),
     ];
   }
-  
 }
