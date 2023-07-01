@@ -561,6 +561,8 @@ class Innovation extends Table
         if ($this->innovationGameState->unseenExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 480 <= id AND id <= 594");
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 595 <= id AND id <= 599");
+            // TODO(4E): Implement Hitchhiking and Teleprompter later.
+            self::DbQuery("UPDATE card SET location = 'removed' WHERE id = 560 OR id = 570");
         }
 
         if ($edition <= 3) {

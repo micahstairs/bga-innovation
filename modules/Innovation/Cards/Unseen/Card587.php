@@ -20,10 +20,10 @@ class Card587 extends Card
     return [
       'owner_from'    => self::getPlayerId(),
       'location_from' => 'achievements',
-      'owner_to'    => self::getLauncherId(),
+      'owner_to'      => self::getLauncherId(),
       'location_to'   => 'safe',
-      'age_min' => 1,
-      'age_max' => 11,
+      'age_min'       => 1,
+      'age_max'       => 11,
     ];
   }
 

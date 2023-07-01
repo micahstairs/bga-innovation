@@ -4358,12 +4358,18 @@ var Innovation = /** @class */ (function (_super) {
         }
         // Add cards to popup
         for (var i = min_id; i <= max_id; i++) {
-            node.innerHTML += this.createCardForCardBrowser(i);
+            // TODO(4E): Implement Hitchhiking and Teleprompter later.
+            if (i != 560 && i != 570) {
+                node.innerHTML += this.createCardForCardBrowser(i);
+            }
         }
         // NOTE: For some reason the tooltips get removed when we add more HTML to the node, so we need to use a
         // separate loop to add them.
         for (var i = min_id; i <= max_id; i++) {
-            this.addCustomTooltip("browse_card_id_".concat(i), this.getTooltipForCard(i), "");
+            // TODO(4E): Implement Hitchhiking and Teleprompter later.
+            if (i != 560 && i != 570) {
+                this.addCustomTooltip("browse_card_id_".concat(i), this.getTooltipForCard(i), "");
+            }
         }
     };
     Innovation.prototype.click_browse_special_achievements = function () {
