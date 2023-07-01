@@ -260,9 +260,14 @@ abstract class Card
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MAX');
   }
 
+  protected function isValuedCard($card): bool
+  {
+    return $card['age'] !== null;
+  }
+
   protected function isSpecialAchievement($card): bool
   {
-    return $card['age'] == null;
+    return $card['age'] === null;
   }
 
   protected function getCard(int $cardId)

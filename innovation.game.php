@@ -2330,6 +2330,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} take back ${<}${age}${>} ${<<}${name}${>>} from your board to your hand.');
             $message_for_others = clienttranslate('${player_name} takes back ${<}${age}${>} ${<<}${name}${>>} from his board to his hand.');
             break;
+        case 'junk->hand':
+            $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from the junk to your hand.');
+            $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from the junk to his hand.');
+            break;
         case 'board->revealed':
             $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your board.');
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his board.');
@@ -2581,9 +2585,11 @@ class Innovation extends Table
                 } else if ($code === '417N1A') {
                     $message_for_player = clienttranslate('${You_must} choose a top card to transfer from the board of ${targetable_players} to his score pile');
                     $message_for_others = clienttranslate('${player_must} choose a top card to transfer from the board of ${targetable_players} to his score pile');
+                } else if ($code === '565N1B') { // Consulting
+                    $message_for_player = clienttranslate('${You_must} choose a top card from the board of ${targetable_players} for them to self-execute');
+                    $message_for_others = clienttranslate('${player_must} choose a top card from the board of ${targetable_players}');
                 } else {
-                    // This should not happen
-                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
+                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to . ':' . $code)));
                 }
                 break;
             case 'hand->none':
@@ -2591,7 +2597,6 @@ class Innovation extends Table
                     $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your hand to meld or score');
                     $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his hand to meld or score');
                 } else {
-                    // This should not happen
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 }
                 break;
@@ -2671,6 +2676,10 @@ class Innovation extends Table
             case 'hand->revealed':
                 $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his hand');
+                break;
+            case 'safe->revealed':
+                $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your safe');
+                $message_for_others = clienttranslate('${player_must} reveal ${number} ${card} from his safe');
                 break;
             case 'hand->revealed,hand':
                 $message_for_player = clienttranslate('${You_must} reveal ${number} ${card} from your hand');
@@ -3335,6 +3344,12 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to your achievements');
                 $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} achievements');
                 $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s achievements');
+                break;
+
+            case 'score->board':
+                $message_for_player = clienttranslate('${You_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to your board');
+                $message_for_opponent = clienttranslate('${player_must} transfer ${number} ${card} from ${your} score pile to ${your} board');
+                $message_for_others = clienttranslate('${player_must} transfer ${number} ${card} from ${opponent_name}\'s score pile to ${opponent_name}\'s board');
                 break;
 
             case 'hand,score->board':
@@ -17395,38 +17410,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if (self::isInSeparateFile($card_id)) {
             $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
-
-            if (array_key_exists('n', $options) && $options['n'] == 'all') {
-                $options['n'] = 999;
-            }
-
-            // Use sensible defaults for unset options
-            if (!array_key_exists('can_pass', $options)) {
-                $options['can_pass'] = false;
-            }
-            if (array_key_exists('meld_keyword', $options)) {
-                $options['location_to'] = 'board';
-            }
-            if (array_key_exists('score_keyword', $options)) {
-                $options['location_to'] = 'score';
-            }
-            if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
-                $options['n'] = 1;
-            }
-            if (!array_key_exists('player_id', $options)) {
-                $options['player_id'] = $player_id;
-            }
-            if (!array_key_exists('owner_from', $options)) {
-                $options['owner_from'] = $player_id;
-            }
-            if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
-                $options['owner_to'] = 0;
-            }
-            if (!array_key_exists('owner_to', $options)) {
-                $options['owner_to'] = $player_id;
-            }
-            if (array_key_exists('choices', $options)) {
-                $options['choose_from_list'] = true;
+            if (empty($options)) {
+                $options = null;
+            } else {
+                // Use sensible defaults for unset options
+                if (array_key_exists('n', $options) && $options['n'] == 'all') {
+                    $options['n'] = 999;
+                }
+                if (!array_key_exists('can_pass', $options)) {
+                    $options['can_pass'] = false;
+                }
+                if (array_key_exists('meld_keyword', $options)) {
+                    $options['location_to'] = 'board';
+                }
+                if (array_key_exists('score_keyword', $options)) {
+                    $options['location_to'] = 'score';
+                }
+                if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
+                    $options['n'] = 1;
+                }
+                if (!array_key_exists('player_id', $options)) {
+                    $options['player_id'] = $player_id;
+                }
+                if (!array_key_exists('owner_from', $options)) {
+                    $options['owner_from'] = $player_id;
+                }
+                if (array_key_exists('location_to', $options) && ($options['location_to'] == 'deck' || $options['location_to'] == 'junk')) {
+                    $options['owner_to'] = 0;
+                }
+                if (!array_key_exists('owner_to', $options)) {
+                    $options['owner_to'] = $player_id;
+                }
+                if (array_key_exists('choices', $options)) {
+                    $options['choose_from_list'] = true;
+                }
             }
         }
 
