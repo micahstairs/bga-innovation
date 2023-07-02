@@ -24,10 +24,6 @@ class Card538 extends Card
     ];
   }
 
-  public function handleCardChoice(int $cardId)
-  {
-  }
-
   public function afterInteraction()
   {
       $color = self::getAuxiliaryValue();

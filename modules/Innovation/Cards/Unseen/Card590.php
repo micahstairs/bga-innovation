@@ -27,9 +27,9 @@ class Card590 extends Card
     ];
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
-    self::selfExecute(self::getLastSelectedCard());
+    self::selfExecute($card);
   }
 
 }

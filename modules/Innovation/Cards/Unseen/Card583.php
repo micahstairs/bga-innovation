@@ -67,15 +67,15 @@ class Card583 extends Card
     }
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleSpecialChoice(int $choice)
   {
     self::setAuxiliaryValue($choice);
   }
 
-  public function handleCardChoice($cardId)
+  public function handleCardChoice(array $card)
   {
     if (self::getCurrentStep() == 2) {
-      self::setAuxiliaryValue(self::getLastSelectedAge());
+      self::setAuxiliaryValue($card['age']);
     } else {
       self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
     }

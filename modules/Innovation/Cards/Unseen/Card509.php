@@ -26,9 +26,8 @@ class Card509 extends Card
     ];
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
-    $card = self::getCard($cardId);
     switch ($card['color']) {
       case $this->game::BLUE:
         self::draw(5);

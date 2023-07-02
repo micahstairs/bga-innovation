@@ -69,12 +69,12 @@ class Card586 extends Card
     }
   }
 
-  private function getPrintableCoinSide($side): string
+  private function getPrintableCoinSide(int $side): string
   {
     return $side == 1 ? clienttranslate('heads') : clienttranslate('tails');
   }
 
-  public function handleCardChoice($cardId) {
+  public function handleCardChoice(array $card) {
     self::setNextStep(1);
     self::setMaxSteps(1);
   }

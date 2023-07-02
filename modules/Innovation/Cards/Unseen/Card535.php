@@ -35,10 +35,10 @@ class Card535 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
     self::incrementAuxiliaryValue();
-    if (self::getLastSelectedAge() == 7) {
+    if ($card['age'] == 7) {
       self::setAuxiliaryValue2(self::getAuxiliaryValue2() + 1);
     }
   }

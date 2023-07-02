@@ -42,9 +42,8 @@ class Card515 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
-    $card = self::getCard($cardId);
     $sum = self::getAuxiliaryValue();
     $sum += $this->game->countIconsOnCard($card, $this->game::HEALTH);
     $sum += $this->game->countIconsOnCard($card, $this->game::CONCEPT);

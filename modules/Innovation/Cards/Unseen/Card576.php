@@ -43,7 +43,7 @@ class Card576 extends Card
     }
   }
 
-  public function handleCardChoice($cardId) {
+  public function handleCardChoice(array $card) {
     self::setAuxiliaryValue(1);
   }
 

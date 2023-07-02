@@ -35,18 +35,17 @@ class Card506 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
     if (self::getCurrentStep() == 1) {
       // Keep track of the colors of the cards being returned
-      $card = self::getCard($cardId);
       $colors = $this->game->getAuxiliaryValueAsArray();
       $colors[] = $card['color'];
       $this->game->setAuxiliaryValueFromArray(array_unique($colors));
     } else {
       // Score the other card
       $cardIds = $this->game->getAuxiliaryArray();
-      $cardIdToScore = $cardId == $cardIds[0] ? $cardIds[1] : $cardIds[0];
+      $cardIdToScore = $card['id'] == $cardIds[0] ? $cardIds[1] : $cardIds[0];
       self::score(self::getCard($cardIdToScore));
     }
   }

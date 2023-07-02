@@ -38,10 +38,9 @@ class Card564 extends Card
     ];
   }
 
-  public function handleCardChoice($cardId)
+  public function handleCardChoice(array $card)
   {
-    self::splayUp(self::getLastSelectedColor());
-    $card = self::getCard($cardId);
+    self::splayUp($card['color']);
     if (!self::safeguard($card)) {
       self::transferToScorePile($card);
     }

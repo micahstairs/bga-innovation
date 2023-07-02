@@ -32,8 +32,8 @@ class Card565 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId) {
-    self::selfExecute(self::getLastSelectedCard());
+  public function handleCardChoice(array $card) {
+    self::selfExecute($card);
   }
 
   public function getSpecialChoicePrompt(): array

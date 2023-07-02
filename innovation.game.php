@@ -30291,7 +30291,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 ->setNextStep(self::getStep() + 1)
                                 ->setMaxSteps(self::getStepMax())
                                 ->setNumChosen($this->innovationGameState->get('n') + 1);
-                            self::getCardInstance($card_id, $executionState)->handleCardChoice($selected_card_id);
+                            self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
                             self::setStepMax($executionState->getMaxSteps());
                             self::setStep($executionState->getNextStep() - 1);
                         }

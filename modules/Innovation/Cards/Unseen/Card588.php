@@ -48,9 +48,8 @@ class Card588 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
-    $card = self::getCard($cardId);
     self::unsplay($card['color'], $card['owner'], self::getPlayerId());
   }
 
@@ -66,7 +65,7 @@ class Card588 extends Card
     }
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleSpecialChoice(int $choice)
   {
     self::setAuxiliaryValue($choice);
   }

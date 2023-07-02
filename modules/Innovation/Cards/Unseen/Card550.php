@@ -37,14 +37,13 @@ class Card550 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
     if (self::getCurrentStep() == 1) {
-      self::setAuxiliaryValue(self::getLastSelectedId());
+      self::setAuxiliaryValue($card['id']);
     } else {
-      $secret = self::getLastSelectedCard();
       // Make sure the card is actually in the safe (the safe could have been full)
-      if ($secret['location'] == 'safe' && $secret['owner'] == self::getPlayerId()) {
+      if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
         $meldedCard = self::getCard(self::getAuxiliaryValue());
         if (self::getPlayerId() == self::getLauncherId()) {
           self::fullyExecute($meldedCard);

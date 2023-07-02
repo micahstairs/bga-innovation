@@ -31,10 +31,10 @@ class Card556 extends Card
     ];
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
     if (self::getNumChosen() == 1) {
-      self::setAuxiliaryValue(self::getLastSelectedColor());
+      self::setAuxiliaryValue($card['color']);
     }
   }
 
@@ -46,7 +46,7 @@ class Card556 extends Card
         if ($card['color'] == self::getAuxiliaryValue() || $card['color'] == self::getLastSelectedColor()) {
           self::putInHand($card);
         } else {
-          $this->game->transferCardFromTo($card, 0, 'deck', /*bottom_to=*/false);
+          self::placeOnTopOfDeck($card);
         }
       }
     }

@@ -37,9 +37,9 @@ class Card561 extends Card
     }
   }
 
-  public function handleCardChoice($card_id)
+  public function handleCardChoice(array $card)
   {
-    self::unsplay(self::getLastSelectedColor());
+    self::unsplay($card['color']);
   }
 
   private function getHighestCardIdsWithoutEffiencyOnBoard(): array {

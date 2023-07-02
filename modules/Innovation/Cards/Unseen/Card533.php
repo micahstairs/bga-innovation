@@ -38,9 +38,8 @@ class Card533 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $tuckedCard1)
   {
-    $tuckedCard1 = self::getCard($cardId);
     $tuckedCard2 = self::drawAndTuck(4);
     $this->game->setAuxiliaryArray([$tuckedCard1['color'], $tuckedCard2['color']]);
     self::setMaxSteps(2);

@@ -53,11 +53,11 @@ class Card486 extends Card
     self::setAuxiliaryValue($playerId);
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
     if (self::getCurrentStep() == 2) {
       self::setMaxSteps(3);
-      self::setAuxiliaryValue(self::getCard($cardId)['owner']);
+      self::setAuxiliaryValue($card['owner']);
     }
   }
 }

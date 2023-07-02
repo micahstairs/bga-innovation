@@ -59,7 +59,7 @@ abstract class Card
     // Subclasses are expected to override this method if the card has any special choices.
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $card)
   {
     // Subclasses can optionally override this method if any extra handling is needed after individual cards are chosen.
   }

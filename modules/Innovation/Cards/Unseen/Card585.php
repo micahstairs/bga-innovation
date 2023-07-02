@@ -25,9 +25,9 @@ class Card585 extends Card
     ];
   }
 
-  public function handleCardChoice($cardId)
+  public function handleCardChoice(array $card)
   {
-    $color = self::getLastSelectedColor();
+    $color = $card['color'];
     self::splayAslant($color);
     foreach ($this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color] as $card) {
       if (!$this->game->hasRessource($card, $this->game::HEALTH)) {

@@ -35,10 +35,10 @@ class Card579 extends Card
     }
   }
 
-  public function handleCardChoice($card_id)
+  public function handleCardChoice(array $card)
   {
     $values = $this->game->getAuxiliaryArray();
-    $returnedValue = self::getLastSelectedAge();
+    $returnedValue = $card['age'];
     if (!in_array($returnedValue, $values)) {
       return $this->game->setAuxiliaryArray(array_merge($values, [$returnedValue]));
     }
