@@ -9967,7 +9967,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             if ($code !== null && self::isInSeparateFile($card_id)) {
                 $executionState = (new ExecutionState($this))
-                    ->setLauncherId($player_id)
+                    ->setLauncherId($nested_card_state['launcher_id'])
                     ->setPlayerId($player_id)
                     ->setEffectType($current_effect_type)
                     ->setEffectNumber($current_effect_number)
@@ -11408,6 +11408,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 65
             || $card_id == 440
+            || $card_id == 480
             || ($card_id >= 484 && $card_id <= 486)
             || ($card_id >= 493 && $card_id <= 494)
             || $card_id == 506
@@ -16646,11 +16647,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 449, age 11: Whataboutism
             case "449D1":
-                $step_max = 1;
-                break;
-
-            // id 480, Unseen age 1: Espionage
-            case "480D1":
                 $step_max = 1;
                 break;
 
@@ -24545,20 +24541,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 480, Unseen age 1: Espionage
-        case "480D1A":
-            // "I demand you reveal a card in your hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed',
-            );
-            break;
-            
         // id 481, Unseen age 1: Palmistry
         case "481N2A":
             // "Return two cards from your hand."
@@ -28428,29 +28410,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 480, Unseen age 1: Espionage
-                case "480D1A":
-                    if ($n > 0) { // "if you do"
-                        $cards_in_hand = self::getCardsInLocationKeyedByColor($launcher_id, 'hand');
-                        
-                        if (count($cards_in_hand) > 0) {
-                            $card = self::getCardInfo($this->innovationGameState->get('id_last_selected')); 
-                            self::revealHand($launcher_id);
-                            
-                            // "and I have no card in my hand of the same color"
-                            if (count($cards_in_hand[$card['color']]) == 0) {
-                                // "transfer it to my hand"
-                                self::transferCardFromTo($card, $launcher_id, 'hand');
-                                // "then repeat this effect!"
-                                self::setStep(1); $step = 1;
-                            }
-                            else {
-                                self::transferCardFromTo($card, $player_id, 'hand'); // move from revealed back to hand
-                            }
-                        }
-                    }
-                    break;
-
                 // id 481, Unseen age 1: Palmistry
                 case "481N2A":
                     if ($n == 2) { // "if you do"
@@ -29211,7 +29170,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
                 $executionState = (new ExecutionState($this))
-                    ->setLauncherId($player_id)
+                    ->setLauncherId($nested_card_state['launcher_id'])
                     ->setPlayerId($player_id)
                     ->setEffectType($current_effect_type)
                     ->setEffectNumber($current_effect_number)
@@ -30324,7 +30283,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             $this->innovationGameState->set("color_last_selected", $card['color']);
                             $this->innovationGameState->set("owner_last_selected", $card['owner']);
                             $executionState = (new ExecutionState($this))
-                                ->setLauncherId($player_id)
+                                ->setLauncherId($nested_card_state['launcher_id'])
                                 ->setPlayerId($player_id)
                                 ->setEffectType($current_effect_type)
                                 ->setEffectNumber($current_effect_number)
