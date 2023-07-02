@@ -11415,7 +11415,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 65
             || $card_id == 440
             || ($card_id >= 484 && $card_id <= 485)
-            || $card_id == 493
+            || ($card_id >= 493 && $card_id <= 494)
             || $card_id == 506
             || $card_id == 509
             || ($card_id >= 515 && $card_id <= 524)
@@ -16833,36 +16833,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($card_id_array) >= 2) {
                     $step_max = 2;
                     self::setAuxiliaryArray($card_id_array);
-                }
-                break;
-
-            // id 494, Unseen age 1: Symbology
-            case "494N1":
-                $num_resources_four_or_more = 0;
-                $num_resources_three_or_more = 0;
-                $num_resources_two_or_more = 0;
-                foreach (self::getPlayerResourceCounts($player_id) as $icon => $count) {
-                    if ($count >= 4) {
-                        $num_resources_four_or_more++;
-                        $num_resources_three_or_more++;
-                        $num_resources_two_or_more++;
-                    } elseif($count >= 3) {
-                        $num_resources_three_or_more++;
-                        $num_resources_two_or_more++;
-                    } elseif($count >= 2) {
-                        $num_resources_two_or_more++;
-                    }
-                }
-                
-                if ($num_resources_four_or_more >= 4) {
-                    // "If you have four each of four icons on your board, draw a 4."
-                    self::executeDraw($player_id, 4);
-                } elseif ($num_resources_four_or_more >= 3) {
-                    // "Otherwise, if you have three each of three icons on your board, draw a 3."
-                    self::executeDraw($player_id, 3);
-                } elseif ($num_resources_four_or_more >= 2) {
-                    // "Otherwise, if you have two each of two icons on your board, draw a 2."
-                    self::executeDraw($player_id, 2);
                 }
                 break;
 
