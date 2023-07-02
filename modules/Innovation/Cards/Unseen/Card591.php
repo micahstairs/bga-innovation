@@ -22,7 +22,7 @@ class Card591 extends Card
     self::setMaxSteps(1);
   }
 
-  public function getInteractionOptions()
+  public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
       return [

@@ -2229,6 +2229,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your safe to your hand.');
             $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} from his safe to this hand.');
             break;
+        case 'board->safe':
+            $message_for_player = clienttranslate('${You} safeguard ${<}${age}${>} ${<<}${name}${>>} from your board.');
+            $message_for_others = clienttranslate('${player_name} safeguards ${<}${age}${>} ${<<}${name}${>>} from your board.');
+            break;
         case 'safe->board':
             if ($bottom_to) {
                 $message_for_player = clienttranslate('${You} tuck ${<}${age}${>} ${<<}${name}${>>} from your safe.');
@@ -2727,6 +2731,10 @@ class Innovation extends Table
             case 'board->junk,safe':
                 $message_for_player = clienttranslate('${You_must} junk then safeguard ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} junk then safeguard ${number} ${card} from his hand');
+                break;
+            case 'board->safe': // Fashion Mask
+                $message_for_player = clienttranslate('${You_must} safeguard ${number} tucked ${card}');
+                $message_for_others = clienttranslate('${player_must} safeguard ${number} tucked ${card}');
                 break;
             case 'safe->board':
                 if ($bottom_to) {
