@@ -210,7 +210,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Paper'),
         'non_demand_effect_1'                 => clienttranslate('You may splay your green or blue cards left.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('Draw a ${age_4} for every color you have splayed left.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Return a top card with a ${icon_2} from your board. If you do, draw a ${age_4} for every color you have splayed left.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Score a top card with a ${icon_2} from your board. If you do, draw a ${age_4} for every color you have splayed left.'),
         'separate_4E_implementation'          => true,
     ),
 
@@ -402,7 +402,7 @@ $this->textual_card_infos = array(
     59  => array(
         'name'                                => clienttranslate('Classification'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Reveal the color of a card in your hand. Take into your hand all cards of that color from all other player\'s hands. Then meld all cards of that color from your hand.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. Take into your hand all cards of that color from all opponents\' hands. Then, reveal your hand and meld all cards of that color from it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. Take into your hand all cards of that color from all opponents\' hands. Then, meld all cards of that color from it.'),
     ),
 
     60  => array(
@@ -558,7 +558,7 @@ $this->textual_card_infos = array(
     83  => array(
         'name'                                => clienttranslate('Empiricism'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If it is either of the colors you choose, meld it and you may splay your cards of that color up.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If the drawn card is one of those colors, meld it and you may splay your cards of that color up.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose two colors, then draw and reveal a ${age_9}. If the drawn card is one of those colors, meld it and splay your cards of that color up, otherwise unsplay that color.'),
         'non_demand_effect_2'                 => clienttranslate('If you have twenty or more ${icon_3} on your board, you win.'),
     ),
 
@@ -649,14 +649,15 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Bioengineering'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Transfer a top card with a ${icon_2} from any opponent\'s board to your score pile.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Score a top card with a ${icon_2} on any opponent\'s board.'),
-        'non_demand_effect_2'                 => clienttranslate('If any player has fewer than three ${icon_2} on their board, the single player with the most ${icon_2} on their board wins.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('If any player has fewer than three ${icon_2} on their board, the single player with the most ${icon_2} on their board wins.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If any player has fewer than two ${icon_2} on their board, the single player with the most ${icon_2} on their board wins.'),
     ),
 
     96  => array(
         'name'                                => clienttranslate('Software'),
         'non_demand_effect_1'                 => clienttranslate('Draw and score a ${age_10}.'),
         'non_demand_effect_2_first_and_third' => clienttranslate('Draw and meld two ${age_10}, then execute each of the second card\'s non dogma effects. Do not share them.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld two ${age_10}, then self-execute the second card.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and meld two ${age_9}, then self-execute the second card.'),
     ),
 
     97  => array(
@@ -668,7 +669,7 @@ $this->textual_card_infos = array(
     98  => array(
         'name'                                => clienttranslate('Robotics'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Score your top green card. Draw and meld a ${age_10}, then execute each of its non-demand dogma effects. Do not share them.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Score your top green card. Draw and meld a ${age_10}, then self-execute it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score your top green card. Draw and meld a ${age_10}. If it has a ${icon_5} or ${icon_6}, self-execute it.'),
     ),
 
     99  => array(
@@ -2234,7 +2235,7 @@ $this->textual_card_infos = array(
 
     444 => array(
         'name'              => clienttranslate('Hypersonics'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you return two top cards of different color from your board of the same value! If you do, return all cards of that value or less in your hand and score pile!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you return exactly two top cards of different color from your board of the same value! If you do, return all cards of that value or less in your hand and score pile!'),
     ),
 
     445 => array(
@@ -2260,7 +2261,7 @@ $this->textual_card_infos = array(
 
     449 => array(
         'name'              => clienttranslate('Whataboutism'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card with a demand effect of each color from your board to my board! If you transfer a card, exchange all cards in your score pile with all cards in my score pile!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card with a demand effect of each color from your board to my board! If you transfer any cards, exchange all cards in your score pile with all cards in my score pile!'),
     ),
 
     /* 450-459 are reserved for Artifacts - Age 11 */

@@ -12883,14 +12883,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "95N2":
                 $player_ids = self::getAllActivePlayerIds();
                 $max_number_of_leaves = -1;
-                $any_under_three_leaves = false;
+                $leaves_limit = $this->innovationGameState->usingFourthEditionRules() ? 2 : 3;
+                $anyone_under_leaves_limit = false;
                 foreach ($player_ids as $player_id) {
                     $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    if (!$any_under_three_leaves && $number_of_leaves < 3) { // Less than three
-                        self::notifyGeneralInfo(clienttranslate('That is less than 3.'));
-                        $any_under_three_leaves = true;
+                    if (!$anyone_under_leaves_limit && $number_of_leaves < $leaves_limit) {
+                        self::notifyGeneralInfo(clienttranslate('That is less than ${n}.'), array('i18n' => array('n'), 'n' => self::getTranslatedNumber($leaves_limit)));
+                        $anyone_under_leaves_limit = true;
                     }
                     if ($number_of_leaves > $max_number_of_leaves) {
                         $max_number_of_leaves = $number_of_leaves;
@@ -12902,8 +12903,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 
-                if (!$any_under_three_leaves) {
-                    self::notifyGeneralInfo(clienttranslate('Nobody has less than three ${leaves}.'), array('leaves' => $leaf));
+                if (!$anyone_under_leaves_limit) {
+                    self::notifyGeneralInfo(clienttranslate('Nobody has less than ${n} ${leaves}.'), array('i18n' => array('n'), 'leaves' => $leaf, 'n' => self::getTranslatedNumber($leaves_limit)));
                 }
                 else if ($tie) {
                     self::notifyGeneralInfo(clienttranslate('There is a tie for the most number of ${leaves}. The game continues.'), array('leaves' => $leaf));
@@ -12925,8 +12926,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "96N2":
                 // Draw and meld two 10s, then execute each of the second card's non dogma effects. Do not share them."
-                self::executeDrawAndMeld($player_id, 10);
-                $card = self::executeDrawAndMeld($player_id, 10);
+                // NOTE: In 4th edition, draw and meld two 9s instead.
+                $value = $this->innovationGameState->usingFourthEditionRules() ? 9 : 10;
+                self::executeDrawAndMeld($player_id, $value);
+                $card = self::executeDrawAndMeld($player_id, $value);
                 self::selfExecute($card);
                 break;
                 
@@ -12942,7 +12945,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::scoreCard($top_green_card, $player_id); // "Score your top green card"
                 }
                 $card = self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10
-                self::selfExecute($card); // "Execute each its non-demand dogma effects"
+                if ($this->innovationGameState->getEdition() <= 3 || self::hasRessource($card, self::INDUSTRY) || self::hasRessource($card, self::EFFICIENCY)) {
+                    self::selfExecute($card); // "Execute each its non-demand dogma effects"
+                }
                 break;
             
             // id 99, age 10: Databases
@@ -17896,15 +17901,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
             
         case "30N2A_4E":
-            // "Return a top card with a leaf."
+            // "Score a top card with a leaf."
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
                 
                 'owner_from' => $player_id,
                 'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
+                'owner_to' => $player_id,
+                'location_to' => 'score',
+                'score_keyword' => true,
                 
                 'with_icon' => 2 /* with a leaf */
             );
@@ -19078,10 +19084,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         case "83N1B":
             // "You may splay that color of your cards up"
+            // NOTE: The 4th edition does not say "you may"
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-                'can_pass' => true,
+                'can_pass' => !$this->innovationGameState->usingFourthEditionRules(),
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(self::getAuxiliaryValue())
@@ -29361,6 +29368,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($card['color'] <> $colors[0] && $card['color'] <> $colors[1]) {
                     self::notifyGeneralInfo(clienttranslate('It does not match any of the chosen colors.'));
                     self::transferCardFromTo($card, $player_id, 'hand'); // (Implicit) "Keep it in your hand"
+                    if ($this->innovationGameState->usingFourthEditionRules()) {
+                        self::unsplay($player_id, $player_id, $card['color']);
+                    }
                 }
                 else { // "If it is either of the colors you chose"
                     self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
