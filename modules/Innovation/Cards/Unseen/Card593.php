@@ -34,22 +34,27 @@ class Card593 extends Card
   public function handleSpecialChoice(int $color)
   {
     $cards = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color];
+    $scoredCard = false;
     for ($i = 0; $i < count($cards) - 4; $i++) {
       self::score($cards[$i]);
-    }
-    self::splayAslant($color);
-    // TODO(4E): Figure out what 'If you do both' is supposed to mean.
-    $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), 'score');
-    $minScoreValue = self::getMinValueInLocation('score');
-    foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'achievements') as $card) {
-      if (self::isValuedCard($card) && $card['age'] < $minScoreValue) {
-        self::transferToScorePile($card);
-      }
-    }
-    foreach ($lowestCardsInScorePile as $cardId) {
-      self::achieve(self::getCard($cardId));
+      $scoredCard = true;
     }
 
+    $splayedAslant = $this->game->getCurrentSplayDirection(self::getPlayerId(), $color) != $this->game::ASLANT;
+    self::splayAslant($color);
+
+    if ($scoredCard && $splayedAslant) {
+      $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), 'score');
+      $minScoreValue = self::getMinValueInLocation('score');
+      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'achievements') as $card) {
+        if (self::isValuedCard($card) && $card['age'] < $minScoreValue) {
+          self::transferToScorePile($card);
+        }
+      }
+      foreach ($lowestCardsInScorePile as $cardId) {
+        self::achieve(self::getCard($cardId));
+      }
+    }
   }
 
 }

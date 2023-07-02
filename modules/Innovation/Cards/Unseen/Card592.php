@@ -62,10 +62,13 @@ class Card592 extends Card
   public function handleSpecialChoice(int $color)
   {
     $cards = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color];
+    $scoredCard = false;
     for ($i = 0; $i < count($cards) - 3; $i++) {
       self::score($cards[$i]);
     }
-    self::splayAslant($color);
+    if ($scoredCard) {
+      self::splayAslant($color);
+    }
   }
 
   private function getTopCardIdsWithProsperityOrIndustryIcons(): array
