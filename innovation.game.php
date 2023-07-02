@@ -11408,12 +11408,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 65
             || $card_id == 440
-            || $card_id == 480
-            || ($card_id >= 484 && $card_id <= 486)
-            || ($card_id >= 493 && $card_id <= 494)
+            || (480 <= $card_id && $card_id <= 481)
+            || (484 <= $card_id && $card_id <= 486)
+            || (493 <= $card_id && $card_id <= 494)
             || $card_id == 506
             || $card_id == 509
-            || ($card_id >= 515 && $card_id <= 524)
+            || (515 <= $card_id && $card_id <= 524)
             || $card_id >= 530;
     }
 
@@ -16647,16 +16647,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 449, age 11: Whataboutism
             case "449D1":
-                $step_max = 1;
-                break;
-
-            // id 481, Unseen age 1: Palmistry
-            case "481N1":
-                // "Draw and meld a 1."
-                self::executeDrawAndMeld($player_id, 1);
-                break;
-
-            case "481N2":
                 $step_max = 1;
                 break;
 
@@ -24541,20 +24531,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 481, Unseen age 1: Palmistry
-        case "481N2A":
-            // "Return two cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
         // id 482, Unseen age 1: Proverb
         case "482N1A":
             // "safeguard an available achievement of value equal to a card in your hand"
@@ -28410,14 +28386,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 481, Unseen age 1: Palmistry
-                case "481N2A":
-                    if ($n == 2) { // "if you do"
-                        // "draw and score a 2."
-                        self::executeDrawAndScore($player_id, 2);
-                    }
-                    break;
-                    
                 // id 487, Unseen age 1: Rumor
                 case "487N1A":
                     if ($n > 0) { // "if you do"
