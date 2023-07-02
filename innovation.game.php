@@ -2212,7 +2212,6 @@ class Innovation extends Table
         case 'revealed->achievements':
             $message_for_player = clienttranslate('${You} return a ${<}${age}${>} ${<<}${name}${>>} to the available achievements.');
             $message_for_others = clienttranslate('${player_name} return a ${<}${age}${>} to the available achievements.');
-            break;
         case 'achievements->revealed':
             $message_for_player = clienttranslate('${You} reveal a ${<}${age}${>} ${<<}${name}${>>} from the available achievements.');
             $message_for_others = clienttranslate('${player_name} reveals a ${<}${age}${>} ${<<}${name}${>>} from the available achievements.');
@@ -2454,10 +2453,6 @@ class Innovation extends Table
                 $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your score pile.');
                 $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his score pile.');
             }
-            break;
-        case 'revealed->achievements':
-            $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>}.');
-            $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<}${name}${>>}.');
             break;
         case 'revealed->removed':
             $message_for_player = clienttranslate('${<}${age}${>} ${<<}${name}${>>} is removed from the game.');
@@ -2954,10 +2949,9 @@ class Innovation extends Table
         // [*] ATTENTION: when modifiing, modify getTransferInfoWithTwoPlayersInvolved at the same time 
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
-        
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
-        
+        $meld_keyword = $transferInfo['meld_keyword'];
         $player_id = $transferInfo['player_id'];
         
         if ($owner_from == 0 || $owner_to == 0) {
@@ -3148,9 +3142,15 @@ class Innovation extends Table
                 break;  
                 
             case 'board->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his board.');
+                if ($meld_keyword) {
+                    $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
+                    $message_for_opponent = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
+                    $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
+                } else {
+                    $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your board.');
+                    $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his board.');
+                    $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his board.');
+                }
                 break;
                 
             case 'board->hand':
@@ -10579,12 +10579,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
-            // id 486, Unseen age 1: Dance
-            case "486N1A":
-                $message_for_player = clienttranslate('${You} may choose another player to accept a card to his board:');
-                $message_for_others = clienttranslate('${player_name} may choose another player to accept a card to his board');
-                break;
-
             // id 489, Unseen age 1: Handshake
             case "489D1A":
                 $message_for_player = clienttranslate('${You} must choose two colors');
@@ -11414,7 +11408,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 65
             || $card_id == 440
-            || ($card_id >= 484 && $card_id <= 485)
+            || ($card_id >= 484 && $card_id <= 486)
             || ($card_id >= 493 && $card_id <= 494)
             || $card_id == 506
             || $card_id == 509
@@ -16722,24 +16716,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($green_count == 0) {
                     // "If no player has a top green card, claim the Confidence achievement."
                     self::claimSpecialAchievement($player_id, 595);
-                }
-                break;
-
-            // id 486, Unseen age 1: Dance
-            case "486N1":
-                // "Transfer a card on your board with a [AUTHORITY] to the board of any other player."
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $castle_counter = 0;
-                foreach ($top_cards as $card) {
-                    if (self::hasRessource($card, self::AUTHORITY)) {
-                        $castle_counter++;
-                    }
-                }
-                
-                if ($castle_counter > 0) {
-                    $step_max = 3; // select player first, card second, other player's card third
-                } else {
-                    // Log message specifying no [AUTHORITY] cards are present to transfer
                 }
                 break;
 
@@ -24625,52 +24601,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 486, Unseen age 1: Dance
-        case "486N1A":
-            // Select a player to receive a castle card
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_player' => true,
-                'players' => self::getOtherActivePlayers($player_id),
-            );
-            break;
-
-        case "486N1B":
-            // "Transfer a card on your board with a castle to the board of any other player."
-            $options = array(
-                'player_id' => $player_id,                
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => self::getAuxiliaryValue(),
-                'location_to' => 'board',
-                
-                'with_icon' => 4,
-            );
-            break;
-
-        case "486N1C":
-            // "meld the lowest top card without a castle from that player's board."
-            $options = array(
-                'player_id' => $player_id,                
-                'n' => 1,
-
-                'owner_from' => self::getAuxiliaryValue(),
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'age' => self::getMinAgeOnBoardTopCardsWithoutIcon($player_id, 4),
-                
-                'without_icon' => 4, // castle
-                
-                'meld_keyword' => true,
-            );
-            break;
-            
         // id 487, Unseen age 1: Rumor
         case "487N1A":
             // "Return a card from your score pile."
@@ -28528,15 +28458,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndScore($player_id, 2);
                     }
                     break;
- 
-                // id 486, Unseen age 1: Dance
-                case "486N1A":
-                    if ($n > 0) { // "if you do"
-                        self::setStepMax(2);
-                        $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::setAuxiliaryValue(self::getOwnersOfTopCardWithColorAndAge($card['color'], $card['age']));
-                    }
-                    break;
                     
                 // id 487, Unseen age 1: Rumor
                 case "487N1A":
@@ -30297,16 +30218,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
-            // id 486, Unseen age 1: Dance
-            case "486N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the player ${player_choice}.'), 
-                    array('You' => 'You', 
-                    'player_choice' => self::getColoredPlayerName($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the player ${player_choice}.'), 
-                    array('player_name' => self::getColoredPlayerName($player_id),
-                    'player_choice' => self::getColoredPlayerName($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
+            
 
             // id 489, Unseen age 1: Handshake     
             case "489D1A":

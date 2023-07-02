@@ -45,6 +45,8 @@ abstract class Card
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
       case 4: // choose_color
         return $this->getPromptForColorChoice();
+      case 10: // choose_player
+        return $this->getPromptForPlayerChoice();
       case 12: // choose_icon_type
         return $this->getPromptForIconChoice();
       default:
@@ -435,6 +437,14 @@ abstract class Card
     return [
       "message_for_player" => clienttranslate('Choose a value'),
       "message_for_others" => clienttranslate('${player_name} must choose a value'),
+    ];
+  }
+
+  protected function getPromptForPlayerChoice(): array
+  {
+    return [
+      "message_for_player" => clienttranslate('Choose a player'),
+      "message_for_others" => clienttranslate('${player_name} must choose a player'),
     ];
   }
 
