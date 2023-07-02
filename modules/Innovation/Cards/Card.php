@@ -209,6 +209,14 @@ abstract class Card
     return $this->game->putCardBackInSafe($card, self::coercePlayerId($playerId));
   }
 
+  protected function achieve($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
+  }
+
   protected function return($card)
   {
     if (!$card) {

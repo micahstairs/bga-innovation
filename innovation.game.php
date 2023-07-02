@@ -2330,7 +2330,7 @@ class Innovation extends Table
             $message_for_others = clienttranslate('${player_name} safeguards a ${<}${age}${>} from the available achievements.');
             break;
         case 'achievements->score':
-            $message_for_player = clienttranslate('${You} score a ${<}${age}${>} from the available achievements.');
+            $message_for_player = clienttranslate('${You} score ${<}${age}${>} ${<<}${name}${>>} from the available achievements.');
             $message_for_others = clienttranslate('${player_name} scores a ${<}${age}${>} from the available achievements.');
             break;
         case 'hand->safe':

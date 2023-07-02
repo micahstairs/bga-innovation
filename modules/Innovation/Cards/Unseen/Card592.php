@@ -46,7 +46,7 @@ class Card592 extends Card
     } else {
       return [
         'can_pass' => true,
-        'choices'  => [1, 2],
+        'choices'  => [$this->game::YELLOW, $this->game::PURPLE],
       ];
     }
   }
@@ -54,14 +54,13 @@ class Card592 extends Card
   public function getSpecialChoicePrompt(): array
   {
     return self::getPromptForChoiceFromList([
-      1 => clienttranslate('Score all but top three yellow cards'),
-      2 => clienttranslate('Score all but top three purple cards'),
+      $this->game::YELLOW => clienttranslate('Score all but top three yellow cards'),
+      $this->game::PURPLE => clienttranslate('Score all but top three purple cards'),
     ]);
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleSpecialChoice(int $color)
   {
-    $color = $choice === 1 ? $this->game::YELLOW : $this->game::PURPLE;
     $cards = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color];
     for ($i = 0; $i < count($cards) - 3; $i++) {
       self::score($cards[$i]);
