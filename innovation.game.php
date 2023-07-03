@@ -615,6 +615,9 @@ class Innovation extends Table
         self::extractAgeAchievements();
         
         // Deal 2 cards of age 1 to each player
+        if ($this->innovationGameState->unseenExpansionEnabled()) {
+            self::DbQuery("UPDATE player SET will_draw_unseen_card_next = TRUE");
+        }
         for ($times = 0; $times < 2; $times++) {
             foreach ($players as $player_id => $player) {
                 $this->gamestate->changeActivePlayer($player_id);
