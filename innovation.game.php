@@ -253,7 +253,7 @@ class Innovation extends Table
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
-        if ($from_version <= 2302100853) {
+        if ($from_version <= 2306100403) {
             self::initGameStateLabels(array(
                 'icon_array' => 49,
                 'choice_array' => 51,
@@ -399,7 +399,7 @@ class Innovation extends Table
 
         // Indicate that this production game was created after the 4th edition unseen game was released
         // TODO(FIGURES): Update this before releasing future expansions.
-        $this->innovationGameState->setInitial('release_version', 5);
+        $this->innovationGameState->setInitial('release_version', 4);
 
         // Init global values with their initial values
         $this->innovationGameState->setInitial('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
