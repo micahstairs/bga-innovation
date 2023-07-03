@@ -3247,9 +3247,14 @@ class Innovation extends Table
         } else {
             switch($location_from . '->' . $location_to) {
                 case 'revealed->board':
-                    $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board');
-                    $message_for_opponent = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${your} board');
-                    $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board');
+                    $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board.');
+                    $message_for_opponent = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${your} board.');
+                    $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board.');
+                    break;
+                case 'board->hand':
+                    $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his hand.');
+                    $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to your hand.');
+                    $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his hand.');
                     break;
                 default:
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
