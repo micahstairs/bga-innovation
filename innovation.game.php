@@ -399,7 +399,7 @@ class Innovation extends Table
 
         // Indicate that this production game was created after the 4th edition unseen game was released
         // TODO(FIGURES): Update this before releasing future expansions.
-        $this->innovationGameState->setInitial('release_version', 4);
+        $this->innovationGameState->setInitial('release_version', 5);
 
         // Init global values with their initial values
         $this->innovationGameState->setInitial('debug_mode', $this->getBgaEnvironment() == 'studio' ? 1 : 0);
