@@ -6794,6 +6794,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // A color must have at least 2 cards in order to be a valid target for splaying/unsplaying
             $colors = [];
             foreach ($rewritten_options['color'] as $color) {
+
+                // Skip this color if the player is allowed to pass and the color is already splayed in the specified direction
+                if ($rewritten_options['can_pass'] && self::getCurrentSplayDirection($player_id, $color) == $rewritten_options['splay_direction']) {
+                    continue;
+                }
+
                 if ($number_of_cards_on_board[$color] >= 2) {
                     $colors[] = $color;
                 }
