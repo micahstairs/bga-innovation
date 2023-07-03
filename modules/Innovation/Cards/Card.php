@@ -298,6 +298,11 @@ abstract class Card
     return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MAX');
   }
 
+  protected function hasIcon($card, int $icon): bool
+  {
+    return $this->game->hasRessource($card, $icon);
+  }
+
   protected function isValuedCard($card): bool
   {
     return $card['age'] !== null;
@@ -402,6 +407,11 @@ abstract class Card
   protected function setAuxiliaryValue2(int $value)
   {
     return $this->game->setAuxiliaryValue2($value);
+  }
+
+  protected function setAuxiliaryArray(array $array)
+  {
+    return $this->game->setAuxiliaryArray($array);
   }
 
   protected function setActionScopedAuxiliaryArray($array, $playerId = 0): void
