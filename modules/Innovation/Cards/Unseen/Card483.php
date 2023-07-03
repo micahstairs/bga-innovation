@@ -14,7 +14,7 @@ class Card483 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::isDemand()) {
       $card = self::drawAndReveal(1);
       if (self::hasIcon($card, $this->game::AUTHORITY)) {
         self::transferToScorePile($card, self::getLauncherId());
