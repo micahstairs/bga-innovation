@@ -16,7 +16,7 @@ class Card482 extends Card
   {
     $card = self::drawAndReveal(1);
     self::return($card);
-    if ($card['color'] === $this->game::YELLOW || $card['color'] === $this->game::PURPLE) {
+    if ($card['color'] == $this->game::YELLOW || $card['color'] == $this->game::PURPLE) {
       $cardIds = [];
       $countsByAge = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'hand');
       foreach ($this->game->getCardsInLocation(0, 'achievements') as $card) {
