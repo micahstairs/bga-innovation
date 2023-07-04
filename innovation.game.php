@@ -24904,8 +24904,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
-
-                'splay_direction' => 0, // TODO(UNSEEN): This returns a weird error but the unsplay still happens
+                'splay_direction' => 0,
+                'has_splay_direction' => array(1, 2, 3, 4), // Left, right, up, or aslant
             );
             break;
 
