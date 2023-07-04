@@ -32,11 +32,10 @@ class Card480 extends Card
       if (!self::hasCardWithColor($cardsInHand, $card['color'])) {
         self::putInHand($card, self::getLauncherId());
         self::setNextStep(1);
-      } else {
-        self::putInHand($card);
+        return;
       }
-
     }
+    self::putInHand($card);
   }
 
   private function hasCardWithColor(array $cards, int $color): bool{
