@@ -40,7 +40,7 @@ class Card544 extends Card
     }
   }
 
-  public function handleCardChoice(int $cardId)
+  public function handleCardChoice(array $cardId)
   {
     if (self::getCurrentStep() == 1) {
       self::splayRight(self::getLastSelectedColor());
