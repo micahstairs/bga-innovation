@@ -11429,6 +11429,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (493 <= $card_id && $card_id <= 494)
             || (505 <= $card_id && $card_id <= 506)
             || $card_id == 509
+            || $card_id == 512
             || (515 <= $card_id && $card_id <= 524)
             || $card_id >= 530;
     }
@@ -16981,23 +16982,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "511N2":
                 $step_max = 1;
-                break;
-                
-            // id 512, Unseen age 3: Secret Police
-            case "512D1":
-                $step_max = 1;
-                break;
-
-            case "512N1":
-                $color_array = array();
-                $hand_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                for ($color = 0; $color < 5; $color++){
-                    if ($hand_cards[$color] > 0) {
-                        $color_array[] = $color;
-                        $step_max = 2;
-                    }
-                }
-                $this->innovationGameState->setFromArray('color_array', $color_array);                
                 break;
                 
             // id 513, Unseen age 3: Masquerade
@@ -25010,51 +24994,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 512, Unseen age 3: Secret Police
-        case "512D1A":
-            // "I demand you tuck a card in your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id, 
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-            );
-            break;
-
-        case "512N1A":
-            // "You may tuck any number of cards of any one color from your hand.  "
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_color' => true,
-                'color' => $this->innovationGameState->getAsArray('color_array'),
-            );
-            break;
-
-        case "512N1B":
-            // "You may tuck any number of cards of any one color from your hand.  "
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id, 
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-
-                'color' => array(self::getAuxiliaryValue()),
-            );
-            break;
-
         // id 513, Unseen age 3: Masquerade
         case "513N1A":
             // "Safeguard an available achievement of value equal to the number of cards in your hand."
@@ -28621,21 +28560,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 512, Unseen age 3: Secret Police
-                case "512D1A":
-                    if ($n > 0) { 
-                        // "return your top card of its color!"
-                        $top_card = self::getTopCardOnBoard($player_id, $this->innovationGameState->get('color_last_selected'));
-                        if ($top_card !== null) {
-                            self::returnCard($top_card, $player_id);
-                            self::setStep(0); $step = 0; // "If you do, repeat this effect!"
-                        }
-                    } else {
-                        // "Otherwise, draw a 3!"
-                        self::executeDraw($player_id, 3);
-                    }
-                    break;
-
                 // id 513, Unseen age 3: Masquerade
                 case "513N1A":
                     if ($n > 0) { // "if you do"
@@ -29034,11 +28958,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectType($current_effect_type)
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
-                    ->setNextStep(self::getStep() + 1)
                     ->setMaxSteps(self::getStepMax());
                 self::getCardInstance($card_id, $executionState)->handleSpecialChoice($choice);
                 self::setStepMax($executionState->getMaxSteps());
-                self::setStep($executionState->getNextStep() - 1);
             }
 
             switch($code) {
@@ -30074,13 +29996,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "508N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 512, Unseen age 3: Secret Police
-            case "512N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
                 

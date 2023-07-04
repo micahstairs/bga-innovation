@@ -30,7 +30,11 @@ class Card505 extends Card
   }
 
   public function handleSpecialChoice(int $value) {
-    $card = self::drawAndMeld($value);
+    self::setAuxiliaryValue($value);
+  }
+
+  public function afterInteraction() {
+    $card = self::drawAndMeld(self::getAuxiliaryValue());
     self::setActionScopedAuxiliaryArray([$card['age']]);
     $pile = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$card['color']];
     $numCards = count($pile);

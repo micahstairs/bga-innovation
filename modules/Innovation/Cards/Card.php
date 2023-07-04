@@ -431,7 +431,7 @@ abstract class Card
   protected function getPromptForColorChoice(): array
   {
     return [
-      "message_for_player" => clienttranslate('$Choose a color'),
+      "message_for_player" => clienttranslate('Choose a color'),
       "message_for_others" => clienttranslate('${player_name} must choose a color'),
     ];
   }
