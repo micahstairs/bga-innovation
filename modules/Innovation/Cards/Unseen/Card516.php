@@ -26,14 +26,11 @@ class Card516 extends Card
     if (self::getCurrentStep() == 1) {
       return ['choose_yes_or_no' => true];
     } else if (self::getCurrentStep() == 2) {
-      // "draw and reveal a card of value one higher than one your secrets."
-      // select a secret
       return [
         'location_from' => 'safe',
         'location_to'   => 'none',
       ];
     } else {
-      // "meld one of your other secrets."
       return [
         'location_from' => 'safe',
         'location_to'   => 'board',
@@ -46,16 +43,18 @@ class Card516 extends Card
   {
     if (self::getCurrentStep() == 2) {
       $card = self::drawAndReveal(self::getLastSelectedAge() + 1);
-      if ($card['color'] == 1 || $card['color'] == 4) {
+      if ($card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE) {
         self::setAuxiliaryValue2(self::getLastSelectedId());
         self::setMaxSteps(3);
       } else {
         self::putInHand($card);
       }
     } else if (self::getCurrentStep() == 3) {
-      $revealedCards = $this->game->getCardsInLocation(self::getPlayerId(), 'reveal');
+      $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'reveal')[0];
       if (self::getNumChosen() > 0) {
-        self::safeguard($revealedCards[0]);
+        self::safeguard($revealedCard);
+      } else {
+        self::putInHand($revealedCard);
       }
     }
 
