@@ -11431,6 +11431,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 509
             || $card_id == 512
             || (515 <= $card_id && $card_id <= 524)
+            || $card_id == 528
             || $card_id >= 530;
     }
 
@@ -17098,25 +17099,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                     self::setAuxiliaryArray($card_id_array);
                 }
-                break;
-                
-            // id 528, Unseen age 5: Witch Trial
-            case "528D1":
-                // "I demand you draw and reveal a 5!" 
-                $card = self::executeDrawAndReveal($player_id, 5);
-                
-                // "Return your top card of the color of the drawn card,"
-                $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                if ($top_card !== null) {
-                    self::returnCard($top_card);
-                    self::setAuxiliaryValue(1);
-                }
-                else { 
-                    self::setAuxiliaryValue(0); // stop the repeat
-                }   
-                self::setAuxiliaryValue2($card['color']);
-                self::transferCardFromTo($card, $player_id, 'hand'); // move to hand so it can be chosen later
-                $step_max = 2;
                 break;
 
             // id 529, Unseen age 5: Buried Treasure
@@ -25129,35 +25111,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            );
            break;
 
-       // id 528, Unseen age 5: Witch Trial
-       case "528D1A":
-           // "another card of that color from your hand,"
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'owner_from' => $player_id,
-               'location_from' => 'hand',
-               'owner_to' => 0,
-               'location_to' => 'deck',
-
-               'color' => array(self::getAuxiliaryValue2()),
-           );
-           break;        
-
-       case "528D1B":
-           // "and a card from your score pile!"
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'owner_from' => $player_id,
-               'location_from' => 'score',
-               'owner_to' => 0,
-               'location_to' => 'deck',                
-           );
-           break;
-
        // id 529, Unseen age 5: Buried Treasure
        case "529N1A":
            // "Choose an odd value."
@@ -28423,34 +28376,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     // "Draw a 6."
                     self::executeDraw($player_id, 6);
-                    break;
-                
-                // id 528, Unseen age 5: Witch Trial
-                case "528D1A":
-                    if ($n == 0) {
-                        self::setAuxiliaryValue(0);
-                    }
-                    break;                
-
-                case "528D1B":
-                    if ($n > 0 && self::getAuxiliaryValue() == 1) {
-                        // "If you do, repeat this effect!"
-                        $card = self::executeDrawAndReveal($player_id, 5);
-                
-                        // "Return your top card of the color of the drawn card,"
-                        $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                        if ($top_card !== null) {
-                            self::returnCard($top_card);
-                            self::setAuxiliaryValue(1);
-                        }
-                        else { 
-                            self::setAuxiliaryValue(0); // stop the next repeat
-                        }   
-                        self::transferCardFromTo($card, $player_id, 'hand'); // move to hand so it can be chosen later
-                        self::setAuxiliaryValue2($card['color']);
-                        self::setStep(0); $step = 0;
-                    }
-                    break;                
+                    break;          
                 
                 // id 529, Unseen age 5: Buried Treasure
                 case "529N1A":
