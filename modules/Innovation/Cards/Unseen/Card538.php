@@ -18,29 +18,23 @@ class Card538 extends Card
 
   public function getInteractionOptions(): array
   {
+    $colors = $this->game->getSplayableColorsOnBoard(self::getPlayerId(), $this->game::UNSPLAYED);
+    if (empty($colors)) {
+      return [];
+    }
     return [
       'player_id'    => self::getLauncherId(),
       'choose_color' => true,
+      'color' => $colors,
     ];
   }
 
-  public function afterInteraction()
+  public function handleSpecialChoice(int $color): void
   {
-      $color = self::getAuxiliaryValue();
-      self::unsplay($color);
-      $bottomCard = $this->game->getBottomCardOnBoard(self::getPlayerId(), $color);
-      if ($bottomCard) {
-        self::meld($bottomCard);
-      }
-      $bottomCard = $this->game->getBottomCardOnBoard(self::getPlayerId(), $color);
-      if ($bottomCard) {
-        self::transferToBoard($bottomCard, self::getLauncherId());
-      }
-  }
-
-  public function handleSpecialChoice(int $choice): void
-  {
-    self::setAuxiliaryValue($choice);
+    $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+    self::unsplay($color);
+    self::meld(self::getBottomCardOfColor($color));
+    self::transferToBoard(self::getBottomCardOfColor($color), self::getLauncherId());
   }
 
 }
