@@ -11430,7 +11430,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (505 <= $card_id && $card_id <= 506)
             || $card_id == 509
             || $card_id == 512
-            || (515 <= $card_id && $card_id <= 524)
+            || (514 <= $card_id && $card_id <= 524)
             || $card_id == 528
             || $card_id >= 530;
     }
@@ -16992,23 +16992,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "513N2":
                 $step_max = 1;
-                break;
-                
-            // id 514, Unseen age 3: Taqiyya
-            case "514N1":
-                $step_max = 1;
-                break;
-
-            case "514N2":
-                // "Draw and meld a 3."
-                $card = self::executeDrawAndMeld($player_id, 3);
-                $bottom_card = self::getBottomCardOnBoard($player_id, $card['color']);
-                if ($bottom_card['id'] == $card['id']) {
-                    $step_max = 1;
-                    self::setAuxiliaryValue($card['color']);
-                    // "score it "
-                    self::scoreCard($card, $player_id);
-                }
                 break;
 
             // id 525, Unseen age 5: Popular Science
@@ -25018,35 +25001,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 514, Unseen age 3: Taqiyya
-        case "514N1A":
-            // "Choose a color."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_color' => true,
-            );
-            break;
-
-        case "514N2A":
-            // "and any number of cards of its color in your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id, 
-                'location_to' => 'score',
-                
-                'score_keyword' => true,
-
-                'color' => array(self::getAuxiliaryValue()),
-            );
-            break;
-
         // id 525, Unseen age 5: Popular Science
         case "525N1A":
             $options = array(
@@ -28501,23 +28455,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-
-                // id 514, Unseen age 3: Taqiyya
-                case "514N1A":
-                    $cards_by_color = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                    foreach($cards_by_color[self::getAuxiliaryValue()] as $card) {
-                        self::transferCardFromTo($card, $player_id, 'score');
-                    }
-                    break;
-
-                case "514N1B":
-                    if ($n > 0) { 
-                        // "If you return a 4, claim the Anonymity achievement."
-                        if ($this->innovationGameState->get('age_last_selected') == 4) {
-                            self::claimSpecialAchievement($player_id, 597);
-                        }
-                    }
-                    break;
                     
                 }
                 
@@ -29922,13 +29859,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "508N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-                
-            // id 514, Unseen age 3: Taqiyya
-            case "514N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             

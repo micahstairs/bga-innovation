@@ -22,27 +22,28 @@ class Card512 extends Card
     if (self::isDemand()) {
       return [
         'location_from' => 'hand',
-        'location_to' => 'board',
-        'bottom_to' => true,
+        'location_to'   => 'board',
+        'bottom_to'     => true,
       ];
     } else if (self::getCurrentStep() === 1) {
       return [
-        'can_pass' => true,
+        'can_pass'     => true,
         'choose_color' => true,
       ];
     } else {
       return [
-        'can_pass' => true,
-        'n_min' => 0,
+        'can_pass'      => true,
+        'n_min'         => 1,
         'location_from' => 'hand',
-        'location_to' => 'board',
-        'bottom_to' => true,
-        'color' => [self::getAuxiliaryValue()],
+        'location_to'   => 'board',
+        'bottom_to'     => true,
+        'color'         => [self::getAuxiliaryValue()],
       ];
     }
   }
 
-  public function handleSpecialChoice(int $choice) {
+  public function handleSpecialChoice(int $choice)
+  {
     self::setMaxSteps(2);
     self::setAuxiliaryValue($choice);
   }
@@ -57,5 +58,5 @@ class Card512 extends Card
       }
     }
   }
-    
+
 }

@@ -24,26 +24,28 @@ class Card588 extends Card
   {
     if (self::getEffectNumber() == 1) {
       return [
-        'owner_from' => 'any player',
+        'owner_from'    => 'any player',
         'location_from' => 'board',
-        'location_to' => 'none',
+        'location_to'   => 'none',
       ];
     } else if (self::getCurrentStep() == 1) {
       return ['choices' => [1, 2]];
     } else if (self::getAuxiliaryValue() == 1) {
       return [
-        'owner_from' => 0,
+        'can_pass'      => true,
+        'owner_from'    => 0,
         'location_from' => 'achievements',
         'location_to'   => 'safe',
-        'n_min' => 0,
-        'n_max' => 'all',
+        'n_min'         => 1,
+        'n_max'         => 'all',
       ];
     } else {
       return [
+        'can_pass'      => true,
         'location_from' => 'safe',
         'location_to'   => 'achievements',
-        'n_min' => 0,
-        'n_max' => 'all',
+        'n_min'         => 1,
+        'n_max'         => 'all',
       ];
     }
   }
