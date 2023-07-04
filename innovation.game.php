@@ -6650,7 +6650,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('icon', $rewritten_options)) {
             $rewritten_options['icon'] = $this->innovationGameState->usingFourthEditionRules() ? array(1, 2, 3, 4, 5, 6, 7) : array(1, 2, 3, 4, 5, 6);
         }
-        if (!array_key_exists('age', $rewritten_options)) {
+        if (array_key_exists('age', $rewritten_options)) {
+            $rewritten_options['age'] = array_unique($rewritten_options['age']);
+        } else {
             $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
         }
         if (!array_key_exists('players', $rewritten_options)) {
@@ -11425,7 +11427,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || (493 <= $card_id && $card_id <= 494)
-            || $card_id == 506
+            || (505 <= $card_id && $card_id <= 506)
             || $card_id == 509
             || (515 <= $card_id && $card_id <= 524)
             || $card_id >= 530;
@@ -16906,25 +16908,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($color_array) > 0) {
                     $step_max = 1;
                     self::setAuxiliaryValueFromArray($color_array);
-                }
-                break;
-
-            // id 505, Unseen age 3: Brethren of Purity
-            case "505N1":
-                // "Draw and meld a 3."
-                $card = self::executeDrawAndMeld($player_id, 3);
-                $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                $pile = $board[$card['color']];
-                $pile_size = count($pile);
-
-                // underneath card available
-                if ($pile_size > 1) {
-                    $prev_top_card = $pile[$pile_size - 2];
-                    if (self::hasRessource($prev_top_card, self::CONCEPT)) {
-                        // "If you meld over a card with a CONCEPT, repeat this effect."
-                        $step_max = 1;
-                        self::setAuxiliaryValue($card['age']);
-                    }
                 }
                 break;
 
@@ -24915,18 +24898,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 505, Unseen age 3: Brethren of Purity
-        case "505N1A":
-            // " or a card of value one higher than the last card melded due to Brethren of Purity during this action."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => array(3, self::getAuxiliaryValue() + 1),
-            );
-            break;
-
         // id 507, Unseen age 3: Knights Templar
         case "507D1A":
             // "I demand you unsplay a splayed color on your board!"
@@ -28586,24 +28557,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::splayRight($player_id, $player_id, $this->innovationGameState->get('color_last_selected'));                        
                     }
                     break;
-                    
-                // id 505, Unseen age 3: Brethren of Purity
-                case "505N1A":
-                    $card = self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
-                    $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                    $pile = $board[$card['color']];
-                    $pile_size = count($pile);
-
-                    // underneath card available
-                    if ($pile_size > 1) {
-                        $prev_top_card = $pile[$pile_size - 2];
-                        if (self::hasRessource($prev_top_card, self::CONCEPT)) {
-                            // "If you meld over a card with a CONCEPT, repeat this effect."
-                            self::setStep(0); $step = 0;
-                            self::setAuxiliaryValue($card['age']);
-                        }
-                    }                        
-                    break;
 
                 // id 507, Unseen age 3: Knights Templar
                 case "507D1A":
@@ -29081,9 +29034,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectType($current_effect_type)
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
+                    ->setNextStep(self::getStep() + 1)
                     ->setMaxSteps(self::getStepMax());
                 self::getCardInstance($card_id, $executionState)->handleSpecialChoice($choice);
                 self::setStepMax($executionState->getMaxSteps());
+                self::setStep($executionState->getNextStep() - 1);
             }
 
             switch($code) {
@@ -30112,13 +30067,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color_in_clear = self::getColorInClear($choice);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => $color_in_clear));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => $color_in_clear));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 505, Unseen age 3: Brethren of Purity
-            case "505N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
