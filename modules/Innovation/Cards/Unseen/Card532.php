@@ -15,11 +15,11 @@ class Card532 extends Card
   {
     $cardCounts = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score');
     if (self::getEffectNumber() == 1) {
-      if (count($cardCounts[2]) > 0) {
+      if ($cardCounts[2] > 0) {
         self::draw(6);
       }
     } else {
-      if (count($cardCounts[1]) > 0) {
+      if ($cardCounts[1] > 0) {
         self::draw(7);
       } else {
         self::draw(5);
