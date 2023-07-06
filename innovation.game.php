@@ -2313,6 +2313,10 @@ class Innovation extends Table
             $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from his hand.');
             break;
+        case 'score->junk':
+            $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from your score.');
+            $message_for_others = clienttranslate('${player_name} junks a ${<}${age}${>} from his score.');
+            break;
         case 'hand->forecast':
             $message_for_player = clienttranslate('${You} foreshadow ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} foreshadows a ${<}${age}${>} from his hand.');

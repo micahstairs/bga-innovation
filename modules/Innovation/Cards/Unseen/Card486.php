@@ -42,7 +42,7 @@ class Card486 extends Card
         'location_from' => 'board',
         'owner_to'      => self::getPlayerId(),
         'meld_keyword'  => true,
-        'age'           => $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getPlayerId(), $this->game::AUTHORITY),
+        'age'           => $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), $this->game::AUTHORITY),
         'without_icon'  => $this->game::AUTHORITY,
       ];
     }

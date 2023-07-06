@@ -18,14 +18,14 @@ class Card483 extends Card
       $card = self::drawAndReveal(1);
       if (self::hasIcon($card, $this->game::AUTHORITY)) {
         self::transferToScorePile($card, self::getLauncherId());
-        self::transferToScorePile(self::getTopCardOfColor($card['color'], self::getLauncherId()));
+        self::transferToScorePile(self::getTopCardOfColor($card['color']), self::getLauncherId());
       } else {
         self::putInHand($card);
       }
     } else {
       $isGreenCardOnAnyBoard = false;
       foreach ($this->game->getAllActivePlayerIds() as $player) {
-          if (self::getTopCardOfColor($this->game::GREEN)) {
+          if (self::getTopCardOfColor($this->game::GREEN, $player)) {
             $isGreenCardOnAnyBoard = true;
             break;
           }
