@@ -2296,6 +2296,16 @@ class Innovation extends Table
                 $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to his score pile.');
             }
             break;
+        case 'junk->score':
+            if ($score_keyword) {
+                $message_for_player = clienttranslate('${You} scores ${<}${age}${>} ${<<}${name}${>>} from the junk to your score pile.');
+                $message_for_others = clienttranslate('${player_name} scores a ${<}${age}${>} from the junk to his score pile.');
+            }
+            else {
+                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from the junk to your score pile.');
+                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from the junk to his score pile.');
+            }
+            break;
         case 'hand->revealed':
             $message_for_player = clienttranslate('${You} reveal ${<}${age}${>} ${<<}${name}${>>} from your hand.');
             $message_for_others = clienttranslate('${player_name} reveals ${<}${age}${>} ${<<}${name}${>>} from his hand.');
@@ -16834,6 +16844,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "498N1":
                 // "Draw and reveal a 2."
                 $card = self::executeDrawAndReveal($player_id, 2);
+                self::setAuxiliaryValue($card['id']);
                 $step_max = 1;
                 break;
 
@@ -16880,7 +16891,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "501N1":
                 if (self::getAuxiliaryValue() == 1) {
                     // "If exactly one card was returned due to the demand, return Exile and draw a 3."
-                    self::returnCard(self::getCardInfo(501));
+                    $exile_card = self::getCardInfo(501);
+                    if ($exile_card['location'] != 'deck') {
+                        // don't return this multiple times
+                        self::returnCard(self::getCardInfo(501));
+                    }
                     self::executeDraw($player_id, 3);
                 }
                 break;
@@ -16971,15 +16986,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 511, Unseen age 3: Freemasons
             case "511N1":
-                $cards_in_hand = self::getCardsInHand($player_id);
-                $card_id_array = array();                
-                foreach ($cards_in_hand as $card) {
-                    $card_id_array[] = $card['id'];
-                }
-                
-                if (count($card_id_array) > 0) {
-                    self::setAuxiliaryArray($card_id_array);
-                    self::getAuxiliaryValue2AsArray();
+                $cards_in_hand = self::getCardsInHand($player_id);                
+                if (count($cards_in_hand) > 0) {
+                    self::setAuxiliaryValue2FromArray(array(0,1,2,3,4));
                     $step_max = 1;
                     self::setAuxiliaryValue(0); // no yellows or expansion cards tucked
                 }
@@ -24946,8 +24955,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board',
                 
                 'bottom_to' => true,
-
-                'card_ids_are_in_auxiliary_array' => true,
+                'color' => self::getAuxiliaryValue2AsArray(),
             );
             break;
 
@@ -28414,18 +28422,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::setAuxiliaryValue(1); // yellow or expansion card!
                         }
 
-                        $color_array = array_intersect(array($this->innovationGameState->get('color_last_selected')), self::getAuxiliaryValue2AsArray());
-                        $card_id_array = array();
-                        foreach (self::getCardsInHand($player_id) as $card) {
-                            if (!in_array($card['color'], $color_array)) {
-                                $card_id_array[] = $card['id'];
-                            }
-                        }
+                        $color_array = array_diff(self::getAuxiliaryValue2AsArray(), array($this->innovationGameState->get('color_last_selected')));
                         
-                        if (count($card_id_array) > 0) {
+                        if (count($color_array) > 0) {
                             // more to tuck
                             self::setStep(0); $step = 0; // repeat until all colors are considered
-                            self::setAuxiliaryArray($card_id_array);
                             self::setAuxiliaryValue2FromArray($color_array);
                         } else {
                             // "If you tuck a yellow card or an expansion card, draw two 3s."
