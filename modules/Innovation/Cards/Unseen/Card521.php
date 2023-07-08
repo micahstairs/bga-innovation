@@ -74,7 +74,7 @@ class Card521 extends Card
   {
     $playerId = $this->state->getPlayerId();
     $cardIds = [];
-    $maxAge = $this->game->getMaxAgeInHand($playerId);
+    $maxAge = $this->game->getMinOrMaxAgeInLocation($playerId, $location, 'MAX');
     if ($maxAge > 0) {
       $maxAgeCards = $this->game->getCardsInLocationKeyedByAge($playerId, $location)[$maxAge];
       foreach ($maxAgeCards as $card) {
