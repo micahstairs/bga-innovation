@@ -2228,6 +2228,9 @@ class Innovation extends Table
         } else if ($location_from === 'relics') {
             $action_for_player = clienttranslate('seize');
             $action_for_others = clienttranslate('seizes');
+        } else if ($location_from === 'revealed') {
+            $visible_for_player = true;
+            $visible_for_others = true;
         }
 
         // Update text based on where the card is going to
