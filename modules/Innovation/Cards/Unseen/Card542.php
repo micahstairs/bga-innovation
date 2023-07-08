@@ -23,32 +23,38 @@ class Card542 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
-      return [
-        'player_id'     => self::getLauncherId(),
-        'location_from' => 'revealed',
-        'location_to'   => 'deck',
-      ];
-    } else {
-      return [
-        'n'             => 'all',
-        'location_from' => 'score',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
-        'color'         => [self::getLastSelectedColor()],
-      ];
+    if (self::isDemand()) {
+      if (self::getCurrentStep() == 1) {
+          return [
+            'player_id'     => self::getLauncherId(),
+            'location_from' => 'revealed',
+            'location_to'   => 'deck',
+            ];
+      } else {
+          return [
+            'n'             => 'all',
+            'location_from' => 'score',
+            'location_to'   => 'board',
+            'bottom_to'     => true,
+            'color'         => [self::getLastSelectedColor()],
+          ];
+        }
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() > 0 && self::getCurrentStep() == 1) {
-      self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));
-      $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
-        self::putInHand($card);
+    if (self::getNumChosen() > 0 && self::isDemand()) {
+      if (self::getCurrentStep() == 1) {
+          $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+          self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));
+          foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+            self::putInHand($card);
+          }
+      } else {
+        $this->game->revealScorePile(self::getPlayerId());
       }
-    }
+    } 
   }
 
 }

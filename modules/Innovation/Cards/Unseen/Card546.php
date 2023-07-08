@@ -52,8 +52,8 @@ class Card546 extends Card
   public function afterInteraction()
   {
     if (self::isDemand()) {
-      self::draw(7);
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+      self::draw(7);
       foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
         self::putInHand($card);
       }

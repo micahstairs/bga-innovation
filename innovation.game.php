@@ -2632,6 +2632,14 @@ class Innovation extends Table
                     throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
                 }
                 break;
+            case 'revealed->none':
+                //if ($code === '519N1B') {
+                    $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your score to self-execute');
+                    $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his score to self-execute');
+                //} else {
+                //    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'getTransferInfoWithOnePlayerInvolved()', 'code' => $location_from . '->' . $location_to)));
+                //}
+                break;
             case 'safe->none':
                 $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your safe');
                 $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his safe');
@@ -2736,6 +2744,10 @@ class Innovation extends Table
             case 'hand->none':
                 $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your hand');
                 $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his hand');
+                break;
+            case 'revealed->none':
+                $message_for_player = clienttranslate('${You_must} choose ${number} ${card} from your reveal');
+                $message_for_others = clienttranslate('${player_must} choose ${number} ${card} from his reveal');
                 break;
             case 'hand->safe':
                 $message_for_player = clienttranslate('${You_must} safeguard ${number} ${card} from your hand');

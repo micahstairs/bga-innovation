@@ -43,16 +43,20 @@ class Card519 extends Card
 
   public function afterInteraction()
   {
-    $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
-      self::putInHand($card);
-    }
     if (self::getCurrentStep() == 1) {
+      $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+        self::putInHand($card);
+      }
       foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
         self::reveal($card);
       }
     } else {
-      $this->game->executeReplacingMayWithMust(self::getLastSelectedCard());
+      $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+        $this->game->transferCardFromTo($card, self::getPlayerId(), 'score'); // put the score cards back before executing the card
+      }
+      $this->game->executeReplacingMayWithMust(self::getLastSelectedCard()); // TODO: This triggers a sharing bonus even when triggered from a demand
     }
   }
 
