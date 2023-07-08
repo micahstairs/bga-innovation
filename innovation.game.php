@@ -2205,6 +2205,7 @@ class Innovation extends Table
 
         // Update text based on where the card is coming from
         if ($location_from === 'deck') {
+            $visible_for_player = true;
             $action_for_player = clienttranslate('draw');
             $action_for_others = clienttranslate('draws');
         } else if ($location_from === 'safe') {
@@ -2380,8 +2381,8 @@ class Innovation extends Table
             $notif_args_for_others['from_somewhere'] = $from_somewhere_for_others;
             $notif_args_for_others['to_somewhere'] = $to_somewhere_for_others;
             if ($card['age'] === null) { // Special achievement
-                $message_for_player = '${You} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.';
-                $message_for_others = '${player_name} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.';
+                $message_for_player = clienttranslate('${You} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.');
+                $message_for_others = clienttranslate('${player_name} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.');
                 // TODO(LATER): We can deduplicate the following since notif_args_for_player and notif_args_for_others are the same.
                 $notif_args_for_player['i18n'] = array('name');
                 $notif_args_for_player['age'] = $card['age'];
@@ -2397,25 +2398,25 @@ class Innovation extends Table
                 $notif_args_for_others['name'] = self::getCardName($card['id']);
             } else {
                 if ($visible_for_player) {
-                    $message_for_player = '${You} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+                    $message_for_player = clienttranslate('${You} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
                     $notif_args_for_player['i18n'] = array('name');
                     $notif_args_for_player['name'] = self::getCardName($card['id']);
                     // TODO(LATER): We should stop sending the card's properties which aren't actually used.
                     $notif_args_for_player = array_merge($notif_args_for_player, $card);
                 } else {
-                    $message_for_player = '${You} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+                    $message_for_player = clienttranslate('${You} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
                     $notif_args_for_player['age'] = $card['age'];
                     $notif_args_for_player['type'] = $card['type'];
                     $notif_args_for_player['is_relic'] = $card['is_relic'];
                 }
                 if ($visible_for_others) {
-                    $message_for_others = '${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+                    $message_for_others = clienttranslate('${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
                     $notif_args_for_others['i18n'] = array('name');
                     $notif_args_for_others['name'] = self::getCardName($card['id']);
                     // TODO(LATER): We should stop sending the card's properties which aren't actually used.
                     $notif_args_for_others = array_merge($notif_args_for_others, $card);
                 } else {
-                    $message_for_others = '${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+                    $message_for_others = clienttranslate('${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
                     $notif_args_for_others['age'] = $card['age'];
                     $notif_args_for_others['type'] = $card['type'];
                     $notif_args_for_others['is_relic'] = $card['is_relic'];
@@ -2439,12 +2440,12 @@ class Innovation extends Table
         $achieve_keyword = false;
 
         // Text used for the active player
-        $message_for_player = '${You_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}';
+        $message_for_player = clienttranslate('${You_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}');
         $from_somewhere_for_player = '';
         $to_somewhere_for_player = '';
 
         // Text used for the other players
-        $message_for_others = '${player_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}';
+        $message_for_others = clienttranslate('${player_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}');
         $from_somewhere_for_others = '';
         $to_somewhere_for_others = '';
 
@@ -2721,6 +2722,9 @@ class Innovation extends Table
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s achievements');
             }
         } else if ($location_from === 'display') {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
             if ($player_id == $owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your display');
                 $from_somewhere_for_opponent = clienttranslate(' from his display');
@@ -2730,6 +2734,10 @@ class Innovation extends Table
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} display');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s display');
             }
+        } else if ($location_from === 'revealed') {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
         }
 
         // Update text based on where the card is going to
@@ -2820,70 +2828,74 @@ class Innovation extends Table
             $action_for_player = clienttranslate('junk');
             $action_for_opponent = clienttranslate('junks');
             $action_for_others = clienttranslate('junks');
+        } else if ($location_to === 'revealed') {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
         }
-
 
         // Choose a pattern for the messages, depending on the context of the card transfer
         $player_name = self::getPlayerNameFromId($transferInfo['player_id']);
         $opponent_name = self::getPlayerNameFromId($transferInfo['opponent_id']);
-        $info = array_merge($transferInfo, $progressInfo);
-        $notif_args_for_player = [];
-        $notif_args_for_player['You'] = 'You';
-        $notif_args_for_player['your'] = 'your';
-        $notif_args_for_player['action'] = $action_for_player;
-        $notif_args_for_player['from_somewhere'] = $from_somewhere_for_player;
-        $notif_args_for_player['to_somewhere'] = $to_somewhere_for_player;
-        $notif_args_for_opponent['i18n'] = array('name');
-        $notif_args_for_opponent['name'] = self::getCardName($card['id']);
-        $notif_args_for_opponent['You'] = 'You';
-        $notif_args_for_opponent['your'] = 'your';
-        $notif_args_for_opponent['player_name'] =  $player_name;
-        $notif_args_for_opponent['action'] = $action_for_opponent;
-        $notif_args_for_opponent['from_somewhere'] = $from_somewhere_for_opponent;
-        $notif_args_for_opponent['to_somewhere'] = $to_somewhere_for_opponent;
-        $notif_args_for_others = [];
-        $notif_args_for_others['player_name'] = self::getPlayerNameFromId($transferInfo['player_id']);
-        $notif_args_for_others['opponent_name'] = self::getColoredText($opponent_name, $transferInfo['opponent_id']);
-        $notif_args_for_others['action'] = $action_for_others;
-        $notif_args_for_others['from_somewhere'] = $from_somewhere_for_others;
-        $notif_args_for_others['to_somewhere'] = $to_somewhere_for_others;
+        $notif_args_for_player = [
+            'i18n' => ['name'],
+            'You' => 'You',
+            'action' => $action_for_player,
+            'from_somewhere' => ['log' => $from_somewhere_for_player, 'args' => ['opponent_name' => $opponent_name]],
+            'to_somewhere' => ['log' => $to_somewhere_for_player, 'args' => ['opponent_name' => $opponent_name]],
+        ];
+        $notif_args_for_opponent = [
+            'your' => 'your',
+            'player_name' => $player_name,
+            'action' => $action_for_opponent,
+            'from_somewhere' => ['log' => $from_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name]],
+            'to_somewhere' => ['log' => $to_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name, 'your' => 'your']],
+        ];
+        $notif_args_for_others = [
+            'player_name' => $player_name,
+            'opponent_name' => $opponent_name,
+            'action' => $action_for_others,
+            'from_somewhere' => ['log' => $from_somewhere_for_others, 'args' => ['opponent_name' => $opponent_name]],
+            'to_somewhere' => ['log' => $to_somewhere_for_others, 'args' => ['opponent_name' => $opponent_name]],
+        ];
         if ($visible_for_player) {
-            $message_for_player = '${You} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+            $message_for_player = clienttranslate('${You} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
             $notif_args_for_player['i18n'] = array('name');
             $notif_args_for_player['name'] = self::getCardName($card['id']);
             // TODO(LATER): We should stop sending the card's properties which aren't actually used.
             $notif_args_for_player = array_merge($notif_args_for_player, $card);
         } else {
-            $message_for_player = '${You} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+            $message_for_player = clienttranslate('${You} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
             $notif_args_for_player['age'] = $card['age'];
             $notif_args_for_player['type'] = $card['type'];
             $notif_args_for_player['is_relic'] = $card['is_relic'];
         }
         if ($visible_for_opponent) {
-            $message_for_opponent = '${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+            $message_for_opponent = clienttranslate('${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
             $notif_args_for_opponent['i18n'] = array('name');
             $notif_args_for_opponent['name'] = self::getCardName($card['id']);
             // TODO(LATER): We should stop sending the card's properties which aren't actually used.
             $notif_args_for_opponent = array_merge($notif_args_for_opponent, $card);
         } else {
-            $message_for_opponent = '${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+            $message_for_opponent = clienttranslate('${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
             $notif_args_for_opponent['age'] = $card['age'];
             $notif_args_for_opponent['type'] = $card['type'];
             $notif_args_for_opponent['is_relic'] = $card['is_relic'];
         }
         if ($visible_for_others) {
-            $message_for_others = '${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+            $message_for_others = clienttranslate('${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
             $notif_args_for_others['i18n'] = array('name');
             $notif_args_for_others['name'] = self::getCardName($card['id']);
             // TODO(LATER): We should stop sending the card's properties which aren't actually used.
             $notif_args_for_others = array_merge($notif_args_for_others, $card);
         } else {
-            $message_for_others = '${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+            $message_for_others = clienttranslate('${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
             $notif_args_for_others['age'] = $card['age'];
             $notif_args_for_others['type'] = $card['type'];
             $notif_args_for_others['is_relic'] = $card['is_relic'];
         }
         
+        $info = array_merge($transferInfo, $progressInfo);
         $notif_args_for_player = array_merge($info, self::getDelimiterMeanings($message_for_player, $card['id']));
         $notif_args_for_opponent = array_merge($info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
         $notif_args_for_others = array_merge($info, self::getDelimiterMeanings($message_for_others, $card['id']));
@@ -2900,25 +2912,23 @@ class Innovation extends Table
         $achieve_keyword = false;
 
         // Text used for the active player
-        $message_for_player = '${You_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}';
+        $message_for_player = clienttranslate('${You_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}');
         $from_somewhere_for_player = '';
         $to_somewhere_for_player = '';
 
         // Text used for the opponent
-        $message_for_opponent = '${You_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}';
+        $message_for_opponent = clienttranslate('${player_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}');
         $from_somewhere_for_opponent = '';
         $to_somewhere_for_opponent = '';
 
         // Text used for the other players
-        $message_for_others = '${player_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}';
+        $message_for_others = clienttranslate('${player_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}');
         $from_somewhere_for_others = '';
         $to_somewhere_for_others = '';
 
         // Text used for all players
         $action = clienttranslate('transfer');
         $card_qualifier = '';
-
-        // TODO(4E): Handle score->board and 
 
         // Update text based on where the card is coming from
         if ($location_from === 'hand') {
@@ -3035,9 +3045,8 @@ class Innovation extends Table
                     'action' => $action,
                     'card_qualifier' => $card_qualifier,
                     'card' => $cards,
-                    'from_somewhere' => $from_somewhere_for_player,
-                    'to_somewhere' => $to_somewhere_for_player,
-                    'opponent_name' => $opponent_name,
+                    'from_somewhere' => ['log' => $from_somewhere_for_player, 'args' => ['opponent_name' => $opponent_name]],
+                    'to_somewhere' => ['log' => $to_somewhere_for_player, 'args' => ['opponent_name' => $opponent_name]],
                 ],
             ],
             'message_for_opponent' => [
@@ -3055,9 +3064,8 @@ class Innovation extends Table
                     'action' => $action,
                     'card_qualifier' => $card_qualifier,
                     'card' => $cards,
-                    'from_somewhere' => $from_somewhere_for_opponent,
-                    'to_somewhere' => $to_somewhere_for_opponent,
-                    'your' => $your,
+                    'from_somewhere' => ['log' => $from_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name]],
+                    'to_somewhere' => ['log' => $to_somewhere_for_opponent, 'args' => ['opponent_name' => $opponent_name, 'your' => $your]],
                 ],
             ],
             'message_for_others' => [
@@ -3075,9 +3083,8 @@ class Innovation extends Table
                     'action' => $action,
                     'card_qualifier' => $card_qualifier,
                     'card' => $cards,
-                    'from_somewhere' => $from_somewhere_for_others,
-                    'to_somewhere' => $to_somewhere_for_others,
-                    'opponent_name' => $opponent_name,
+                    'from_somewhere' => ['log' => $from_somewhere_for_others, 'args' => ['opponent_name' => $opponent_name]],
+                    'to_somewhere' => ['log' => $to_somewhere_for_others, 'args' => ['opponent_name' => $opponent_name]],
                 ],
             ],
         ];
