@@ -6267,16 +6267,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $rewritten_options['location_to'] = 'board';
             $number_of_cards_on_board = self::countCardsInLocationKeyedByColor($player_id, 'board');
             
-            // A color must have at least 2 cards in order to be a valid target for splaying/unsplaying
+            // A color must have at least 1 card in order to be a valid target for splaying/unsplaying
             $colors = [];
             foreach ($rewritten_options['color'] as $color) {
 
-                // Skip this color if the player is allowed to pass and the color is already splayed in the specified direction
-                if ($rewritten_options['can_pass'] && self::getCurrentSplayDirection($player_id, $color) == $rewritten_options['splay_direction']) {
+                // Skip this color if the player is allowed to pass and splaying it won't do anything
+                if ($rewritten_options['can_pass'] && (self::getCurrentSplayDirection($player_id, $color) == $rewritten_options['splay_direction'] || $number_of_cards_on_board[$color] <= 1)) {
                     continue;
                 }
 
-                if ($number_of_cards_on_board[$color] >= 2) {
+                if ($number_of_cards_on_board[$color] > 0) {
                     $colors[] = $color;
                 }
             }
