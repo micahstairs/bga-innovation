@@ -239,17 +239,9 @@ class Innovation extends Table
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
             case 'meld':
-                if ($card['location'] != 'hand') {
-                    $card = self::transferCardFromTo($card, $player_id, 'hand');
-                    $card['using_debug_buttons'] = true;
-                }
                 self::meldCard($card, $player_id);
                 break;
             case 'tuck':
-                if ($card['location'] != 'hand') {
-                    $card = self::transferCardFromTo($card, $player_id, 'hand');
-                    $card['using_debug_buttons'] = true;
-                }
                 self::tuckCard($card, $player_id);
                 break;
             case 'score':
@@ -292,10 +284,6 @@ class Innovation extends Table
         $owner_to = $location_to == 'deck' ? 0 : $player_id;
         foreach (self::getCardsInLocation($owner_from, $location_from) as $card) {
             $card['using_debug_buttons'] = true;
-            if ($location_from == 'safe' && $location_to == 'deck') {
-                $card = self::transferCardFromTo($card, $owner_from, 'board');
-                $card['using_debug_buttons'] = true;
-            }
             self::transferCardFromTo($card, $owner_to, $location_to);
         }
     }
@@ -2230,9 +2218,9 @@ class Innovation extends Table
             $from_somewhere_for_player = clienttranslate(' from your forecast');
             $from_somewhere_for_others = clienttranslate(' from his forecast');
         } else if ($location_from === 'achievements') {
-            if ($owner_from) {
+            if ($owner_from == 0) {
                 $from_somewhere_for_player = clienttranslate(' from the available achievements');
-                $from_somewhere_for_others = clienttranslate(' to the available achievements');
+                $from_somewhere_for_others = clienttranslate(' from the available achievements');
             } else {
                 $from_somewhere_for_player = clienttranslate(' from your achievements');
                 $from_somewhere_for_others = clienttranslate(' from his achievements');
@@ -2296,7 +2284,7 @@ class Innovation extends Table
                 $action_for_others = clienttranslate('reveals');
             }
         } else if ($location_to === 'achievements') {
-            if ($owner_to) {
+            if ($owner_to == 0) {
                 $to_somewhere_for_player = clienttranslate(' to the available achievements');
                 $to_somewhere_for_others = clienttranslate(' to the available achievements');
             } else if ($location_from === 'deck') {
@@ -2304,11 +2292,11 @@ class Innovation extends Table
                 $action_for_player = clienttranslate('draw and achieve');
                 $action_for_others = clienttranslate('draws and achieves');
             } else if ($achieve_keyword) {
-                $to_somewhere_for_player = clienttranslate(' to your achievements');
-                $to_somewhere_for_others = clienttranslate(' to his achievements');
-            } else {
                 $action_for_player = clienttranslate('achieve');
                 $action_for_others = clienttranslate('achieves');
+            } else {
+                $to_somewhere_for_player = clienttranslate(' to your achievements');
+                $to_somewhere_for_others = clienttranslate(' to his achievements');
             }
         } else if ($location_to === 'score') {
             $visible_for_player = true;
@@ -2896,9 +2884,9 @@ class Innovation extends Table
         }
         
         $info = array_merge($transferInfo, $progressInfo);
-        $notif_args_for_player = array_merge($info, self::getDelimiterMeanings($message_for_player, $card['id']));
-        $notif_args_for_opponent = array_merge($info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
-        $notif_args_for_others = array_merge($info, self::getDelimiterMeanings($message_for_others, $card['id']));
+        $notif_args_for_player = array_merge($notif_args_for_player, $info, self::getDelimiterMeanings($message_for_player, $card['id']));
+        $notif_args_for_opponent = array_merge($notif_args_for_opponent, $info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
+        $notif_args_for_others = array_merge($notif_args_for_others, $info, self::getDelimiterMeanings($message_for_others, $card['id']));
         
         self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
         self::notifyPlayer($transferInfo['opponent_id'], "transferedCard", $message_for_opponent, $notif_args_for_opponent);
