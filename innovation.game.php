@@ -2193,7 +2193,7 @@ class Innovation extends Table
 
         // Used for the active player
         $visible_for_player = false;
-        $action_for_others = clienttranslate('transfer');
+        $action_for_player = clienttranslate('transfer');
         $from_somewhere_for_player = '';
         $to_somewhere_for_player = '';
 
@@ -2635,318 +2635,262 @@ class Innovation extends Table
     }
     
     function notifyWithTwoPlayersInvolved($card, $transferInfo, $progressInfo) {
-        // [*] ATTENTION: when modifiing, modify getTransferInfoWithTwoPlayersInvolved at the same time 
         $owner_from = $transferInfo['owner_from'];
         $owner_to = $transferInfo['owner_to'];
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
         $meld_keyword = $transferInfo['meld_keyword'];
         $player_id = $transferInfo['player_id'];
-        
-        if ($owner_from == 0 || $owner_to == 0) {
-            switch ($location_from . '->' . $location_to) {
-            case 'score->deck':
-                $message_for_player = clienttranslate('${You} return a ${<}${age}${>} from ${opponent_name}\'s score pile.');
-                $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile.');
-                $message_for_others = clienttranslate('${player_name} returns a ${<}${age}${>} from ${opponent_name}\'s score pile.');
-                break;
-            case 'score->achievements':
-                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} from ${opponent_name}\'s score pile to the available achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to the available achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to the available achievements.');
-                break;
-            case 'score->relics':
-                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile.');
-                $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile.');
-                $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile.');
-                break;
 
-            case 'board->deck':
-            case 'board->relics':
-                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
-                $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
-                break;
-            
-            case 'board->junk':
-                $message_for_player = clienttranslate('${You} junk ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
-                $message_for_others = clienttranslate('${player_name} junks ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
-                break;
+        // TODO(LATER): Add special cases for seizing relics.
 
-            case 'revealed->deck':
-                $message_for_player = clienttranslate('${You} return ${<}${age}${>} ${<<}${name}${>>}.');
-                $message_for_opponent = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
-                $message_for_others = clienttranslate('${player_name} returns ${<}${age}${>} ${<<}${name}${>>}.');
-                break;
+        // Used for the active player
+        $visible_for_player = false;
+        $action_for_player = clienttranslate('transfer');
+        $from_somewhere_for_player = '';
+        $to_somewhere_for_player = '';
 
-            default:
-                // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+        // Used for the opponent
+        $visible_for_opponent = false;
+        $action_for_opponent = clienttranslate('transfers');
+        $from_somewhere_for_opponent = '';
+        $to_somewhere_for_opponent = '';
+
+        // Used for the other players
+        $visible_for_others = false;
+        $action_for_others = clienttranslate('transfers');
+        $from_somewhere_for_others = '';
+        $to_somewhere_for_others = '';
+
+        // Update text based on where the card is coming from
+        if ($location_from === 'hand') {
+            if ($player_id == $owner_from) {
+                $visible_for_player = true;
+                $from_somewhere_for_player = clienttranslate(' from your hand');
+                $from_somewhere_for_opponent = clienttranslate(' from his hand');
+                $from_somewhere_for_others = clienttranslate(' from his hand');
+            } else {
+                $visible_for_opponent = true;
+                $to_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s hand');
+                $to_somewhere_for_opponent = clienttranslate(' from ${your} hand');
+                $to_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s hand');
             }
-        } else if ($player_id == $owner_from) {
-            switch($location_from . '->' . $location_to) {
-            case 'hand->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} hand.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${opponent_name}\'s hand.');
-                break;
-                
-            case 'hand->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s score pile.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${opponent_name}\'s score pile.');
-                break;
-            
-            case 'hand->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${opponent_name}\'s board.');
-                break;
-
-            case 'score->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your score to ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score to ${opponent_name}\'s board.');
-                break;
-                
-            case 'hand->achievements':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${your} achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${opponent_name}\'s achievements.');
-                break;
-
-            case 'hand->forecast':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your hand to ${opponent_name}\'s forecast.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his hand to ${your} forecast.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his hand to ${opponent_name}\'s forecast.');
-                break;
-                
-            case 'board->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s board.');
-                break;
-                
-            case 'board->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} hand.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s hand.');
-                break;
-        
-            case 'board->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s score pile.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s score pile.');
-                break;
-            
-            case 'board->achievements':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your board to ${opponent_name}\'s achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his board to ${your} achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a${<}${age}${>} ${<<}${name}${>>} from his board to ${opponent_name}\'s achievements.');
-                break;
-
-            case 'score->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your score pile to ${opponent_name}\'s hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score pile to ${your} hand.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${opponent_name}\'s hand.');
-                break;
-                
-            case 'score->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your score pile to ${opponent_name}\'s score pile.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from his score pile to ${your} score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${opponent_name}\'s score pile.');
-                break;
-
-            case 'score->achievements':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from your score pile to ${opponent_name}\'s achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${your} achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his score pile to ${opponent_name}\'s achievements.');
-                break;     
-
-            case 'revealed->achievements':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s achievements.');
-                break;
-
-            case 'revealed->forecast':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s forecast.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} forecast.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s forecast.');
-                break;
-                
-            case 'achievements->achievements':
-                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} from your achievements to ${opponent_name}\'s achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} from his achievements to ${your} achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from his achievements to ${opponent_name}\'s achievements.');
-                break;
-                
-            case 'revealed->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s board.');
-                break;
-
-            case 'revealed->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} hand.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s hand.');
-                break;
-
-            case 'revealed->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s score.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${your} score.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to ${opponent_name}\'s score.');
-                break;
-
-            case 'safe->safe':
-                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} to ${opponent_name}\'s safe.');
-                $message_for_opponent = clienttranslate('${player_name} transfers a ${<}${age}${>} to ${your} safe.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} to ${opponent_name}\'s safe.');
-                break;
-                
-            default:
-                // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+        } else if ($location_from === 'score') {
+            if ($player_id == $owner_from) {
+                $visible_for_player = true;
+                $from_somewhere_for_player = clienttranslate(' from your score pile');
+                $from_somewhere_for_opponent = clienttranslate(' from his score pile');
+                $from_somewhere_for_others = clienttranslate(' from his score pile');
+            } else {
+                $visible_for_opponent = true;
+                $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s score pile');
+                $from_somewhere_for_opponent = clienttranslate(' from ${your} score pile');
+                $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s score pile');
             }
-        } else if ($player_id == $owner_to) {
-            switch($location_from . '->' . $location_to) {
-            case 'hand->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his hand.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his hand.');
-                break;
-
-            case 'hand->achievements':
-                $message_for_player = clienttranslate('${You} transfer a ${<}${age}${>} from ${opponent_name}\'s hand to your achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his achievements.');
-                break;  
-
-            case 'hand->forecast':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your forecast.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his forecast.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his forecast.');
-                break;  
-                
-            case 'board->board':
-                if ($meld_keyword) {
-                    $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
-                    $message_for_opponent = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from ${your} board.');
-                    $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board.');
-                } else {
-                    $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your board.');
-                    $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his board.');
-                    $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his board.');
-                }
-                break;
-                
-            case 'board->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his hand.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his hand.');
-                break;    
-
-            case 'board->achievements':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his achievements.');
-                break;  
-
-            case 'board->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to your score pile.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to his score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his score pile.');
-                break;
-
-            case 'display->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s display to your board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} display to his board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s display to his board.');
-                break;
-                
-            case 'revealed->board': // Collaboration
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your board');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his board');
-                break;
-                
-            case 'revealed->achievements':
-                $message_for_player = clienttranslate('${You} achieve ${<}${age}${>} ${<<}${name}${>>}.');
-                $message_for_others = clienttranslate('${player_name} achieves ${<}${age}${>} ${<<}${name}${>>}.');
-                break;
-
-            case 'revealed->forecast':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} to your forecast.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his forecast.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} to his forecast.');
-                break;
-
-            case 'achievements->achievements':
-                $message_for_player = clienttranslate('${You} seize the ${<}${age}${>} relic from ${opponent_name}\'s achievements to your achievements.');
-                $message_for_opponent = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${your} achievements to his achievements.');
-                $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${opponent_name}\'s achievements to his achievements.');
-                break;
-
-            case 'achievements->hand':
-                $message_for_player = clienttranslate('${You} seize ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s achievements to your hand.');
-                $message_for_opponent = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${your} achievements to his hand.');
-                $message_for_others = clienttranslate('${player_name} seizes the ${<}${age}${>} relic from ${opponent_name}\'s achievements to his hand.');
-                break;
-
-            case 'score->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to your score pile.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to his score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his score pile.');
-                break;
-
-            case 'score->hand':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to your hand.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to his hand.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his hand.');
-                break;
-
-            case 'score->achievements':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to your achievements.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to his achievements.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s score pile to his achievements.');
-                break;
-
-            case 'score->board':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to ${opponent_name}\'s board.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} score pile to ${your} board.');
-                $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s score pile to ${opponent_name}\'s board.');
-                break;
-
-            case 'hand->score':
-                $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s hand to your score pile.');
-                $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} hand to his score pile.');
-                $message_for_others = clienttranslate('${player_name} transfers a ${<}${age}${>} from ${opponent_name}\'s hand to his score pile.');
-                break;
-                
-            default:
-                // This should not happen
-                throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+        } else if ($location_from === 'board') {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
+            if ($player_id == $owner_from) {
+                $from_somewhere_for_player = clienttranslate(' from your board');
+                $from_somewhere_for_opponent = clienttranslate(' from his board');
+                $from_somewhere_for_others = clienttranslate(' from his board');
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s board');
+                $from_somewhere_for_opponent = clienttranslate(' from ${your} board');
+                $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s board');
             }
-        } else {
-            switch($location_from . '->' . $location_to) {
-                case 'revealed->board':
-                    $message_for_player = clienttranslate('${You} meld ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board.');
-                    $message_for_opponent = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${your} board.');
-                    $message_for_others = clienttranslate('${player_name} melds ${<}${age}${>} ${<<}${name}${>>} on ${opponent_name}\'s board.');
-                    break;
-                case 'board->hand':
-                    $message_for_player = clienttranslate('${You} transfer ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his hand.');
-                    $message_for_opponent = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${your} board to your hand.');
-                    $message_for_others = clienttranslate('${player_name} transfers ${<}${age}${>} ${<<}${name}${>>} from ${opponent_name}\'s board to his hand.');
-                    break;
-                default:
-                    throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => 'notifyWithTwoPlayersInvolved()', 'code' => $location_from . '->' . $location_to)));
+        } else if ($location_from === 'safe') {
+            if ($player_id == $owner_from) {
+                $from_somewhere_for_player = clienttranslate(' from your safe');
+                $from_somewhere_for_opponent = clienttranslate(' from his safe');
+                $from_somewhere_for_others = clienttranslate(' from his safe');
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s safe');
+                $from_somewhere_for_opponent = clienttranslate(' from ${your} safe');
+                $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s safe');
+            }
+        } else if ($location_from === 'achievements') {
+            if ($player_id == $owner_from) {
+                $from_somewhere_for_player = clienttranslate(' from your achievements');
+                $from_somewhere_for_opponent = clienttranslate(' from his achievements');
+                $from_somewhere_for_others = clienttranslate(' from his achievements');
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s achievements');
+                $from_somewhere_for_opponent = clienttranslate(' from ${your} achievements');
+                $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s achievements');
+            }
+        } else if ($location_from === 'display') {
+            if ($player_id == $owner_from) {
+                $from_somewhere_for_player = clienttranslate(' from your display');
+                $from_somewhere_for_opponent = clienttranslate(' from his display');
+                $from_somewhere_for_others = clienttranslate(' from his display');
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s display');
+                $from_somewhere_for_opponent = clienttranslate(' from ${your} display');
+                $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s display');
             }
         }
+
+        // Update text based on where the card is going to
+        if ($location_to === 'hand') {
+            if ($player_id == $owner_to) {
+                $visible_for_player = true;
+                $to_somewhere_for_player = clienttranslate(' to your hand');
+                $to_somewhere_for_opponent = clienttranslate(' to his hand');
+                $to_somewhere_for_others = clienttranslate(' to his hand');
+            } else {
+                $visible_for_opponent = true;
+                $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s hand');
+                $to_somewhere_for_opponent = clienttranslate(' to ${your} hand');
+                $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s hand');
+            }
+        } else if ($location_to === 'score') {
+            if ($player_id == $owner_to) {
+                $visible_for_player = true;
+                $to_somewhere_for_player = clienttranslate(' to your score pile');
+                $to_somewhere_for_opponent = clienttranslate(' to his score pile');
+                $to_somewhere_for_others = clienttranslate(' to his score pile');
+            } else {
+                $visible_for_opponent = true;
+                $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s score pile');
+                $to_somewhere_for_opponent = clienttranslate(' to ${your} score pile');
+                $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s score pile');
+            }
+        } else if ($location_to === 'board') {
+            $visible_for_player = true;
+            $visible_for_opponent = true;
+            $visible_for_others = true;
+            if ($player_id == $owner_to) {
+                if ($meld_keyword) {
+                    $action_for_player = clienttranslate('meld');
+                    $action_for_opponent = clienttranslate('melds');
+                    $action_for_others = clienttranslate('melds');
+                } else {
+                    $to_somewhere_for_player = clienttranslate(' to your board');
+                    $to_somewhere_for_opponent = clienttranslate(' to his board');
+                    $to_somewhere_for_others = clienttranslate(' to his board');
+                }
+            } else {
+                $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s board');
+                $to_somewhere_for_opponent = clienttranslate(' to ${your} board');
+                $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s board');
+            }
+        } else if ($location_to === 'forecast') {
+            if ($player_id == $owner_to) {
+                $visible_for_player = true;
+                $to_somewhere_for_player = clienttranslate(' to your forecast');
+                $to_somewhere_for_opponent = clienttranslate(' to his forecast');
+                $to_somewhere_for_others = clienttranslate(' to his forecast');
+            } else {
+                $visible_for_opponent = true;
+                $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s forecast');
+                $to_somewhere_for_opponent = clienttranslate(' to ${your} forecast');
+                $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s forecast');
+            }
+        } else if ($location_to === 'safe') {
+            if ($player_id == $owner_to) {
+                $to_somewhere_for_player = clienttranslate(' to your safe');
+                $to_somewhere_for_opponent = clienttranslate(' to his safe');
+                $to_somewhere_for_others = clienttranslate(' to his safe');
+            } else {
+                $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s safe');
+                $to_somewhere_for_opponent = clienttranslate(' to ${your} safe');
+                $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s safe');
+            }
+        } else if ($location_to === 'achievements') {
+            if ($owner_to == 0) {
+                $to_somewhere_for_player = clienttranslate(' to the available achievements');
+                $to_somewhere_for_opponent = clienttranslate(' to the available achievements');
+                $to_somewhere_for_others = clienttranslate(' to the available achievements');
+            } else if ($player_id == $owner_to) {
+                $to_somewhere_for_player = clienttranslate(' to your achievements');
+                $to_somewhere_for_opponent = clienttranslate(' to his achievements');
+                $to_somewhere_for_others = clienttranslate(' to his achievements');
+            } else {
+                $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s achievements');
+                $to_somewhere_for_opponent = clienttranslate(' to ${your} achievements');
+                $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s achievements');
+            }
+        } else if ($location_to === 'deck' || $location_to === 'relics') {
+            $action_for_player = clienttranslate('return');
+            $action_for_opponent = clienttranslate('returns');
+            $action_for_others = clienttranslate('returns');
+        } else if ($location_to === 'junk') {
+            $action_for_player = clienttranslate('junk');
+            $action_for_opponent = clienttranslate('junks');
+            $action_for_others = clienttranslate('junks');
+        }
+
+
+        // Choose a pattern for the messages, depending on the context of the card transfer
+        $player_name = self::getPlayerNameFromId($transferInfo['player_id']);
+        $opponent_name = self::getPlayerNameFromId($transferInfo['opponent_id']);
+        $info = array_merge($transferInfo, $progressInfo);
+        $notif_args_for_player = [];
+        $notif_args_for_player['You'] = 'You';
+        $notif_args_for_player['your'] = 'your';
+        $notif_args_for_player['action'] = $action_for_player;
+        $notif_args_for_player['from_somewhere'] = $from_somewhere_for_player;
+        $notif_args_for_player['to_somewhere'] = $to_somewhere_for_player;
+        $notif_args_for_opponent['i18n'] = array('name');
+        $notif_args_for_opponent['name'] = self::getCardName($card['id']);
+        $notif_args_for_opponent['You'] = 'You';
+        $notif_args_for_opponent['your'] = 'your';
+        $notif_args_for_opponent['player_name'] =  $player_name;
+        $notif_args_for_opponent['action'] = $action_for_opponent;
+        $notif_args_for_opponent['from_somewhere'] = $from_somewhere_for_opponent;
+        $notif_args_for_opponent['to_somewhere'] = $to_somewhere_for_opponent;
+        $notif_args_for_others = [];
+        $notif_args_for_others['player_name'] = self::getPlayerNameFromId($transferInfo['player_id']);
+        $notif_args_for_others['opponent_name'] = self::getColoredText($opponent_name, $transferInfo['opponent_id']);
+        $notif_args_for_others['action'] = $action_for_others;
+        $notif_args_for_others['from_somewhere'] = $from_somewhere_for_others;
+        $notif_args_for_others['to_somewhere'] = $to_somewhere_for_others;
+        if ($visible_for_player) {
+            $message_for_player = '${You} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+            $notif_args_for_player['i18n'] = array('name');
+            $notif_args_for_player['name'] = self::getCardName($card['id']);
+            // TODO(LATER): We should stop sending the card's properties which aren't actually used.
+            $notif_args_for_player = array_merge($notif_args_for_player, $card);
+        } else {
+            $message_for_player = '${You} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+            $notif_args_for_player['age'] = $card['age'];
+            $notif_args_for_player['type'] = $card['type'];
+            $notif_args_for_player['is_relic'] = $card['is_relic'];
+        }
+        if ($visible_for_opponent) {
+            $message_for_opponent = '${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+            $notif_args_for_opponent['i18n'] = array('name');
+            $notif_args_for_opponent['name'] = self::getCardName($card['id']);
+            // TODO(LATER): We should stop sending the card's properties which aren't actually used.
+            $notif_args_for_opponent = array_merge($notif_args_for_opponent, $card);
+        } else {
+            $message_for_opponent = '${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+            $notif_args_for_opponent['age'] = $card['age'];
+            $notif_args_for_opponent['type'] = $card['type'];
+            $notif_args_for_opponent['is_relic'] = $card['is_relic'];
+        }
+        if ($visible_for_others) {
+            $message_for_others = '${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.';
+            $notif_args_for_others['i18n'] = array('name');
+            $notif_args_for_others['name'] = self::getCardName($card['id']);
+            // TODO(LATER): We should stop sending the card's properties which aren't actually used.
+            $notif_args_for_others = array_merge($notif_args_for_others, $card);
+        } else {
+            $message_for_others = '${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.';
+            $notif_args_for_others['age'] = $card['age'];
+            $notif_args_for_others['type'] = $card['type'];
+            $notif_args_for_others['is_relic'] = $card['is_relic'];
+        }
         
-        self::sendNotificationWithTwoPlayersInvolved($message_for_player, $message_for_opponent, $message_for_others, $card, $transferInfo, $progressInfo);
+        $notif_args_for_player = array_merge($info, self::getDelimiterMeanings($message_for_player, $card['id']));
+        $notif_args_for_opponent = array_merge($info, self::getDelimiterMeanings($message_for_opponent, $card['id']));
+        $notif_args_for_others = array_merge($info, self::getDelimiterMeanings($message_for_others, $card['id']));
+        
+        self::notifyPlayer($transferInfo['player_id'], "transferedCard", $message_for_player, $notif_args_for_player);
+        self::notifyPlayer($transferInfo['opponent_id'], "transferedCard", $message_for_opponent, $notif_args_for_opponent);
+        self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCard", $message_for_others, $notif_args_for_others);
     }
         
     function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {
@@ -3137,59 +3081,6 @@ class Innovation extends Table
                 ],
             ],
         ];
-    }
-
-    function sendNotificationWithTwoPlayersInvolved($message_for_player, $message_for_opponent, $message_for_others, $card, $transferInfo, $progressInfo) {
-        $player_id = $transferInfo['player_id'];
-        $player_name = self::getPlayerNameFromId($player_id);
-        $opponent_id = $transferInfo['opponent_id'];
-        $opponent_name = self::getPlayerNameFromId($opponent_id);
-        
-        $info = array_merge($transferInfo, $progressInfo);
-        
-        // Information to attach to the player
-        $delimiters_for_player = self::getDelimiterMeanings($message_for_player, $card['id']);
-        // TODO(LATER): We should stop sending the card's properties which aren't actually used.
-        $notif_args_for_player = array_merge($info, $delimiters_for_player, $card); // The player can always see the card
-        $notif_args_for_player['i18n'] = array('name');
-        $notif_args_for_player['name'] = self::getCardName($card['id']);
-        $notif_args_for_player['You'] =  'You';
-        $notif_args_for_player['your'] = 'your';
-        $notif_args_for_player['opponent_name'] =  self::getColoredText($opponent_name, $opponent_id);
-        
-        // Information to attach to the opponent
-        $delimiters_for_opponent = self::getDelimiterMeanings($message_for_opponent, $card['id']);
-        // TODO(LATER): We should stop sending the card's properties which aren't actually used.
-        $notif_args_for_opponent = array_merge($info, $delimiters_for_opponent, $card); // The opponent can always see the card
-        $notif_args_for_opponent['i18n'] = array('name');
-        $notif_args_for_opponent['name'] = self::getCardName($card['id']);
-        $notif_args_for_opponent['You'] = 'You';
-        $notif_args_for_opponent['your'] = 'your';
-        $notif_args_for_opponent['player_name'] =  $player_name;  // The color in the log will be defined automatically by the system
-        
-        // Information to attach to others (other players and spectators)
-        $delimiters_for_others = self::getDelimiterMeanings($message_for_others, $card['id']);
-        $notif_args_for_others = array_merge($info, $delimiters_for_others);
-        $notif_args_for_others['player_name'] =  $player_name; // The color in the log will be defined automatically by the system
-        $notif_args_for_others['opponent_name'] =  self::getColoredText($opponent_name, $opponent_id);
-        
-        // Visibility for others
-        if (array_key_exists('<<', $delimiters_for_others)) {
-            // Other players can see the front of the card
-            $notif_args_for_others['i18n'] = array('name');
-            $notif_args_for_others['name'] = self::getCardName($card['id']);
-            // TODO(LATER): We should stop sending the card's properties which aren't actually used.
-            $notif_args_for_others = array_merge($notif_args_for_others, $card);
-        } else {
-            // Other players can't see the front of the card
-            $notif_args_for_others['age'] = $card['age'];
-            $notif_args_for_others['type'] = $card['type'];
-            $notif_args_for_others['is_relic'] = $card['is_relic'];
-        }
-        
-        self::notifyPlayer($player_id, "transferedCard", $message_for_player, $notif_args_for_player);
-        self::notifyPlayer($opponent_id, "transferedCard", $message_for_opponent, $notif_args_for_opponent);
-        self::notifyAllPlayersBut(array($player_id, $opponent_id), "transferedCard", $message_for_others, $notif_args_for_others);
     }
 
     /** Returns the list of player IDs which are not adjacent to the launcher (i.e. the players used for the 4th edition distance rule) */
