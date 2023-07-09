@@ -5826,7 +5826,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         try {
-            $card = self::transferCardFromTo($card, $player_id, $location_to, $bottom_to, $location_to == 'score', $bottom_from);
+            if ($location_to == 'safe' && self::countCardsInLocation($player_id, 'safe') >= self::getSafeLimit($player_id)) {
+                $this->notifications->notifySafeIsFullOnDraw($player_id);
+                $card = self::transferCardFromTo($card, $player_id, 'hand');
+            } else {
+                $card = self::transferCardFromTo($card, $player_id, $location_to, $bottom_to, $location_to == 'score', $bottom_from);
+            }
         }
         catch (EndOfGame $e) {
             self::trace('EOG bubbled from self::executeDraw');

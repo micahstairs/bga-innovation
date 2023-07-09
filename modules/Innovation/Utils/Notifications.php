@@ -63,6 +63,12 @@ class Notifications
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name}\'s safe was already full so the card was not transferred to his safe.'), ['player_name' => self::getColoredPlayerName($playerId)]);
   }
 
+  public function notifySafeIsFullOnDraw(int $playerId)
+  {
+    self::notifyPlayer($playerId, 'log', clienttranslate('${Your} safe was already full so the card was not transferred to your safe but to your hand instead.'), ['Your' => 'Your']);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name}\'s safe was already full so the card was not transferred to his safe but to his hand instead.'), ['player_name' => self::getColoredPlayerName($playerId)]);
+  }
+  
   private function getIconSquare(int $icon): string
   {
     return $this->game->getIconSquare($icon);
