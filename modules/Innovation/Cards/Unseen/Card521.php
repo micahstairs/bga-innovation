@@ -14,15 +14,20 @@ class Card521 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() == 1) {
-      $cardIds = array_merge(self::getCardsIdOfMaxAgeInLocation('hand'), self::getCardsIdOfMaxAgeInLocation('score'));
-      if (count($cardIds) == 0) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 598);
+      $max_age_score = $this->game->getMaxAgeInScore(self::getPlayerId());
+      $max_age_hand = $this->game->getMaxAgeInHand(self::getPlayerId());
+      if ($max_age_score == 0 && $max_age_hand == 0) {
+          $this->game->claimSpecialAchievement(self::getPlayerId(), 598);
       } else {
-        self::setMaxSteps(1);
-        $this->game->setAuxiliaryArray($cardIds);
+          if ($max_age_score > $max_age_hand) {
+              self::setAuxiliaryValue($max_age_score);
+          } else {
+              self::setAuxiliaryValue($max_age_hand);
+          }
+          self::setMaxSteps(1);
       }
     } else {
-      self::setMaxSteps(1);
+        self::setMaxSteps(1);
     }
   }
 
@@ -34,7 +39,7 @@ class Card521 extends Card
         'location_from'                   => 'hand,score',
         'owner_to'                        => $this->game->getActivePlayerIdOnRightOfActingPlayer(),
         'location_to'                     => 'board',
-        'card_ids_are_in_auxiliary_array' => true,
+        'age'                             => self::getAuxiliaryValue(),
       ];
     } else {
       return ['choose_yes_or_no' => true];
@@ -68,20 +73,6 @@ class Card521 extends Card
       self::splayRight($this->game::PURPLE);
       self::unsplay($this->game::YELLOW);
     }
-  }
-
-  private function getCardsIdOfMaxAgeInLocation(string $location): array
-  {
-    $playerId = $this->state->getPlayerId();
-    $cardIds = [];
-    $maxAge = $this->game->getMinOrMaxAgeInLocation($playerId, $location, 'MAX');
-    if ($maxAge > 0) {
-      $maxAgeCards = $this->game->getCardsInLocationKeyedByAge($playerId, $location)[$maxAge];
-      foreach ($maxAgeCards as $card) {
-        $cardIds[] = $card['id'];
-      }
-    }
-    return $cardIds;
   }
 
 }
