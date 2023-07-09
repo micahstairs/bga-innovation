@@ -10086,16 +10086,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
-            // id 534, Unseen age 5: Pen Name
-            case "534N1A":
-                $message_for_player = clienttranslate('${You} may make a choice');
-                $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate('Splay a non-purple pile left and self-execute the top card')),
-                                array('value' => 0, 'text' => clienttranslate('Meld a card from hand and splay the pile right')),
-                );
-                break;
-                
             default:
                 // This should not happen
                 if (!self::isInSeparateFile($card_id)) {
@@ -16554,39 +16544,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 529, Unseen age 5: Buried Treasure
             case "529N1":
                 $step_max = 1;
-                break;
-
-            // id 534, Unseen age 5: Pen Name
-            case "534N1":
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $cards_in_hand = self::getCardsInHand($player_id);
-                
-                $unsplayed_array = array();
-                foreach ($top_cards as $card) {
-                    if ($card !== null && $card['splay_direction'] == 0 && $card['color'] != 4 && self::countCardsInLocationKeyedByColor($player_id, 'board')[$card['color']] > 1) {
-                        $unsplayed_array[] = $card['color'];
-                    }
-                }
-                
-                if (count($unsplayed_array) >= 1 && count($cards_in_hand) >= 1) {
-                    $step_max = 1;
-                    self::setAuxiliaryArray($unsplayed_array);
-                } else if (count($unsplayed_array) == 0 && count($cards_in_hand) > 1) {
-                    $step_max = 3;
-                    $step = 3;
-                } else if (count($cards_in_hand) == 0 && count($unsplayed_array) > 1) {
-                    $step_max = 2;
-                    $step = 2;
-                    self::setAuxiliaryArray($unsplayed_array);
-                } else if (count($unsplayed_array) == 1) {
-                    self::splayLeft($player_id, $player_id, $unsplayed_array[0]);
-                    $top_card = self::getTopCardOnBoard($player_id, $unsplayed_array[0]);
-                    self::selfExecute($top_card);
-                } else if (count($cards_in_hand) == 1) {
-                    $card = $cards_in_hand[0];
-                    self::meldCard($card, $player_id);
-                    self::splayRight($player_id, $player_id, $card['color']);
-                }
                 break;
 
             default:
@@ -24558,44 +24515,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            );
            break;
 
-       // id 534, Unseen age 5: Pen Name
-       case "534N1A":
-           // "Choose to either splay an unsplayed non-purple color on your 
-           //  board left and self-execute its top card, or meld a card from 
-           //  your hand and splay its color on your board right."
-           $options = array(
-               'player_id' => $player_id, 
-
-               'choose_yes_or_no' => true,
-           );
-           break;            
-
-       case "534N1B":
-           // "splay an unsplayed non-purple color on your 
-           //  board left"
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'splay_direction' => self::LEFT,
-               'color' => self::getAuxiliaryArray(),
-           );
-           break;
-
-
-       case "534N1C":
-           // "or meld a card from your hand"
-           $options = array(
-               'player_id' => $player_id, 
-               'n' => 1,
-
-               'owner_from' => $player_id,
-               'location_from' => 'hand',
-               'owner_to' => $player_id,
-               'location_to' => 'board',
-           );
-           break;
-            
         default:
             if (!self::isInSeparateFile($card_id)) {
                 // This should not happen
@@ -27816,33 +27735,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 534, Unseen age 5: Pen Name
-                case "534N1A":
-                    // Choice made decide which interaction to enable
-                    if (self::getAuxiliaryValue() == 1) {
-                        self::incrementStepMax(1);
-                    } else {
-                        self::incrementStepMax(2);
-                        self::incrementStep(2); $step = $step + 2;
-                    }
-                    break;
-
-                case "534N1B":
-                    if ($n > 0) {
-                        $top_card = self::getTopCardOnBoard($player_id, $this->innovationGameState->get('color_last_selected'));
-                        if ($top_card !== null) {
-                            self::selfExecute($top_card);
-                        }                        
-                    }
-                    break;
-
-                case "534N1C":
-                    if ($n > 0) {
-                        // meld happend, splay it right
-                        self::splayRight($player_id, $player_id, $this->innovationGameState->get('color_last_selected'));                        
-                    }
-                    break;
-
                 // id 507, Unseen age 3: Knights Templar
                 case "507D1A":
                     if ($n > 0) { // "If you do,"
@@ -29335,18 +29227,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
-            // id 534, Unseen age 5: Pen Name
-            case "534N1A":
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to splay a non-purple color left and self-execute the top card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to splay a non-purple color left and self-execute the top card..'), array('player_name' => self::getColoredPlayerName($player_id)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to meld a card from hand and splay that pile right.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to meld a card from hand and splay that pile right.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                }
-                self::setAuxiliaryValue($choice);
-                break;
-                
             default:
                 if ($special_type_of_choice == 0) {
                     if ($splay_direction == -1) {
@@ -29385,6 +29265,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     else {
                         // Do the splay as stated in B
+                        $this->innovationGameState->set("color_last_selected", $card['color']);
                         self::splay($player_id, $card['owner'], $card['color'], $splay_direction, /*force_unsplay=*/ $splay_direction == 0);
                     }
                 } else if (!self::isInSeparateFile($card_id)) {
