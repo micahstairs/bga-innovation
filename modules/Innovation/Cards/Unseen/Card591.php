@@ -26,11 +26,9 @@ class Card591 extends Card
   {
     if (self::isDemand()) {
       return [
-        'options' => [
           'location_from' => 'hand',
           'score_keyword' => true,
           'color' => [self::getAuxiliaryValue()],
-        ],
       ];
     } else {
       return [
