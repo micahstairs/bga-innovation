@@ -41,8 +41,14 @@ class Card533 extends Card
   public function handleCardChoice(array $tuckedCard1)
   {
     $tuckedCard2 = self::drawAndTuck(4);
-    $this->game->setAuxiliaryArray([$tuckedCard1['color'], $tuckedCard2['color']]);
-    self::setMaxSteps(2);
+    if ($tuckedCard1['color'] == $tuckedCard2['color']) {
+      while (($card = self::getTopCardOfColor($tuckedCard1['color'])) !== null) {
+        self::score($card);
+      }
+    } else {
+      self::setAuxiliaryArray([$tuckedCard1['color'], $tuckedCard2['color']]);
+      self::setMaxSteps(2);
+    }
   }
 
   public function getSpecialChoicePrompt(): array
@@ -55,7 +61,7 @@ class Card533 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    while (($card = self::getTopCardOfColor($choice)) !== null) {   
+    while (($card = self::getTopCardOfColor($choice)) !== null) {
       self::score($card);
     }
     $colors = $this->game->getAuxiliaryArray();
