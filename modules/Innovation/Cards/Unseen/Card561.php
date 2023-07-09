@@ -20,14 +20,13 @@ class Card561 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      $this->game->setAuxiliaryArray(self::getHighestCardIdsWithoutEffiencyOnBoard());
       return [
-        'location_from'                   => 'board',
-        'owner_from'                      => self::getPlayerId(),
-        'location_to'                     => 'board',
-        'owner_to'                        => self::getLauncherId(),
-        'without_icon'                    => $this->game::EFFICIENCY,
-        'card_ids_are_in_auxiliary_array' => true,
+        'location_from' => 'board',
+        'owner_from'    => self::getPlayerId(),
+        'location_to'   => 'board',
+        'owner_to'      => self::getLauncherId(),
+        'without_icon'  => $this->game::EFFICIENCY,
+        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), [0, 1, 2, 3, 4], $this->game::EFFICIENCY),
       ];
     } else {
       return [
@@ -42,32 +41,20 @@ class Card561 extends Card
     self::unsplay($card['color']);
   }
 
-  private function getHighestCardIdsWithoutEffiencyOnBoard(): array {
-    $topCards = $this->game->getTopCardsOnBoard(self::getPlayerId());
-    $cardIds = [];
-    for ($age = 11; $age >= 11; $age++) {
-      foreach ($topCards as $card) {
-        if (!$this->game->hasRessource($card, $this->game::EFFICIENCY)) {
-          $cardIds[] = $card['id'];
-        }
-      }
-      if (count($cardIds) > 0) {
-        break;
-      }
-    }
-    return $cardIds;
-  }
-
-  private function getColorsWithMostVisibleCards(): array {
-    $colors = [];
+  private function getColorsWithMostVisibleCards(): array
+  {
     $mostVisibleCards = 0;
     for ($color = 0; $color < 5; $color++) {
       $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
       if ($numVisibleCards > $mostVisibleCards) {
-        $colors = [$color];
         $mostVisibleCards = $numVisibleCards;
-      } else if ($numVisibleCards == $mostVisibleCards) {
-        $colors[] = $color;
+      }
+    }
+    $colors = [];
+    for ($color = 0; $color < 5; $color++) {
+      $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
+      if ($numVisibleCards == $mostVisibleCards) {
+        $colors = [$color];
       }
     }
     return $colors;
