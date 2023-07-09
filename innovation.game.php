@@ -4693,7 +4693,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.owner = {player_id} AND
                 a.location = 'board' AND
                 a.position = b.position AND
-                (a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon})
+                (a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon} AND a.spot_5 <> {icon} AND a.spot_6 <> {icon})
         ",
             array('player_id' => $player_id, 'icon' => $icon)
         ));
@@ -4725,7 +4725,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.owner = {player_id} AND
                 a.location = 'board' AND
                 a.position = b.position AND
-                (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon})
+                (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon} OR a.spot_5 = {icon} OR a.spot_6 = {icon})
         ",
             array('player_id' => $player_id, 'icon' => $icon)
         ));
@@ -4758,7 +4758,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.owner = {player_id} AND
                 a.location = 'board' AND
                 a.position = b.position AND
-                (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon})
+                (a.spot_1 = {icon} OR a.spot_2 = {icon} OR a.spot_3 = {icon} OR a.spot_4 = {icon} OR a.spot_5 = {icon} OR a.spot_6 = {icon})
         ",
             array('player_id' => $player_id, 'icon' => $icon)
         ));
@@ -4791,7 +4791,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.location = 'board' AND
                 a.position = b.position AND
                 a.color IN ({colors}) AND
-                a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon}
+                a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon} AND a.spot_5 <> {icon} AND a.spot_6 <> {icon}
         ",
             array('player_id' => $player_id, 'colors' => join(',', $colors), 'icon' => $icon)
         ));
