@@ -22,14 +22,14 @@ class Card534 extends Card
       return ['choices' => [1, 2]];
     } else if (self::getAuxiliaryValue() == 1) {
       return [
-        'splay_direction' => $this->game::LEFT,
+        'splay_direction'     => $this->game::LEFT,
         'has_splay_direction' => [$this->game::UNSPLAYED],
-        'color' => self::getAllColorsOtherThan($this->game::PURPLE),
+        'color'               => self::getAllColorsOtherThan($this->game::PURPLE),
       ];
     } else {
       return [
-       'location_from' => 'hand',
-       'meld_keyword' => true,
+        'location_from' => 'hand',
+        'meld_keyword'  => true,
       ];
     }
   }
@@ -47,7 +47,8 @@ class Card534 extends Card
     self::setAuxiliaryValue($choice);
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::splayRight($card['color']);
   }
 
@@ -57,5 +58,5 @@ class Card534 extends Card
       self::selfExecute(self::getTopCardOfColor(self::getLastSelectedColor()));
     }
   }
-  
+
 }

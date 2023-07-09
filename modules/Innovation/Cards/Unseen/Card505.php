@@ -22,10 +22,10 @@ class Card505 extends Card
     // The array will either contain a single value (if a card has been melded due to Brethren of
     // Purity during this action) or it will be empty.
     $array = self::getActionScopedAuxiliaryArray();
-    $lastValue = empty($array) ? null : $array[0];
+    $lastValue = empty($array) ? 0 : $array[0];
     return [
       'choose_value' => true,
-      'age' => $lastValue === null ? [3] : array_unique([3, $lastValue + 1]),
+      'age' => array_unique([3, $lastValue + 1]),
     ];
   }
 
