@@ -6169,18 +6169,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('n_max', $rewritten_options)) {
             $rewritten_options['n_max'] = 999;
         }
-        if (array_key_exists('location_to', $rewritten_options) && $rewritten_options['location_to'] == 'safe') {
-            $space_left_in_safe = self::getSafeLimit($rewritten_options['owner_to']) - self::countCardsInLocation($rewritten_options['owner_to'], 'safe');
-            if ($space_left_in_safe < 0) {
-                $space_left_in_safe = 0;
-            }
-            if ($rewritten_options['n_min'] > $space_left_in_safe) {
-                $rewritten_options['n_min'] = $space_left_in_safe;
-            }
-            if ($rewritten_options['n_max'] > $space_left_in_safe) {
-                $rewritten_options['n_max'] = $space_left_in_safe;
-            }
-        }
         if (!array_key_exists('solid_constraint', $rewritten_options)) {
             $rewritten_options['solid_constraint'] = false;
         }
@@ -24522,9 +24510,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
             break;
         }
+
+        // Decrease the number of cards to select based on the safe limit
+        // TODO(4E): Add similar logic for the forecast.
+        if ($options && array_key_exists('location_to', $options) && $options['location_to'] == 'safe') {
+            $space_left_in_safe = self::getSafeLimit($options['owner_to']) - self::countCardsInLocation($options['owner_to'], 'safe');
+            if ($space_left_in_safe < 0) {
+                $space_left_in_safe = 0;
+            }
+            if (array_key_exists('n', $options)) {
+                $options['n'] = min($options['n'], $space_left_in_safe);
+            }
+            if (array_key_exists('n_min', $options)) {
+                $options['n_min'] = min($options['n_min'], $space_left_in_safe);
+            }
+            if (array_key_exists('n_max', $options)) {
+                $options['n_max'] = min($options['n_max'], $space_left_in_safe);
+            }
+        }
         
         // There wasn't an interaction needed in this step after all
-        if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0)) {
+        if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0) || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)) {
             // The last step has been completed, so it's the end of the turn for the player involved
             if ($step == self::getStepMax()) {
                 self::trace('interactionStep->interPlayerInvolvedTurn');
