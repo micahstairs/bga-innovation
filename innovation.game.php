@@ -16135,18 +16135,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             case "488N2":
                 // "You may score a card from your hand of each color on your board."
-                $card_id_array = array();
                 $color_array = array();
                 foreach (self::getCardsInHand($player_id) as $card) {
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
                     if ($top_card !== null) {
-                        $card_id_array[] = $card['id'];
                         $color_array[] = $top_card['color'];
                     }
                 }
                 if (count($card_id_array) > 0) {
-                    self::setAuxiliaryArray($card_id_array);
                     self::setAuxiliaryValue2FromArray($color_array);
+                    self::setAuxiliaryValue(1);
                     $step_max = 1;
                 }
                 break;
@@ -23889,7 +23887,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // "You may score a card from your hand of each color on your board."
             $options = array(
                 'player_id' => $player_id,
-                'can_pass' => true,
+                'can_pass' => self::getAuxiliaryValue(), // only can pass first time
                 'n' => 1,
 
                 'owner_from' => $player_id,
@@ -23897,7 +23895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
-                'card_ids_are_in_auxiliary_array' => true,
+                'color' => self::getAuxiliaryValue2AsArray(),
                 
                 'score_keyword' => true,
             );
@@ -27543,23 +27541,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 488, Unseen age 1: Silk
                 case "488N2A":
                     if ($n > 0) {
+                        self::setAuxiliaryValue(0);
                         $last_color = $this->innovationGameState->get('color_last_selected');
                         $remaining_colors = self::getAuxiliaryValue2AsArray();
                         
-                        $card_id_array = array();
-                        $color_array = array();
-                        foreach (self::getCardsInHand($player_id) as $card) {
-                            foreach ($remaining_colors as $color) {
-                                if ($card['color'] == $color && $color != $last_color) {
-                                    $card_id_array[] = $card['id'];
-                                    $color_array[] = $color;
-                                }
-                            }
-                        }
-                        
-                        if (count($card_id_array) > 0) {
+                        $color_array = array_diff($remaining_colors, [$last_color]);                        
+                        if (count($color_array) > 0) {
                             self::setStep(0); $step = 0;
-                            self::setAuxiliaryArray($card_id_array);
                             self::setAuxiliaryValue2FromArray($color_array);
                         }
                     }
