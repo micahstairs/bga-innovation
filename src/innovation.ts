@@ -62,6 +62,7 @@ class Innovation extends BgaGame {
         ["relics", "S recto"],
         ["achievements", "S recto"],
         ["special_achievements", "S card"],
+        ["junk", "S recto"],
     ]);
 
     num_cards_in_row: Map<string, number> = new Map([
@@ -79,6 +80,7 @@ class Innovation extends BgaGame {
         ["relics", -1], // Computed dynamically
         ["achievements", -1], // Computed dynamically
         ["special_achievements", -1], // Computed dynamically
+        ["junk", 1], // TODO(4E): Compute this dynamically
     ]);
 
     delta = {
@@ -94,6 +96,7 @@ class Innovation extends BgaGame {
         "safe": { "x": 35, "y": 49 },  // + 2
         "revealed": { "x": 189, "y": 133 }, // +7,
         "achievements": { "x": 35, "y": 49 },  // + 2
+        "junk": { "x": 35, "y": 49 },  // + 2
     };
 
     incremental_id = 0;
@@ -529,8 +532,8 @@ class Innovation extends BgaGame {
         }
 
         // Add another button here to open up the special achievements popup
-        let button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", { 'button_text': _("Browse"), 'i18n': ['button_text'] });
-        dojo.place(button, 'special_achievements', 'after');
+        let browse_special_achievements_button = this.format_string_recursive("<i id='browse_special_achievements_button' class='bgabutton bgabutton_gray'>${button_text}</i>", { 'button_text': _("Browse"), 'i18n': ['button_text'] });
+        dojo.place(browse_special_achievements_button, 'special_achievements', 'after');
         this.on(dojo.query('#browse_special_achievements_button'), 'onclick', 'click_open_special_achievement_browsing_window');
 
         // PLAYERS' HANDS
@@ -818,6 +821,28 @@ class Innovation extends BgaGame {
             this.number_of_scored_cards = gamedatas.monument_counters.number_of_tucked_cards;
             this.refreshSpecialAchievementProgression();
         }
+
+        // JUNK
+        this.zone["junk"] = {};
+        this.zone["junk"]["0"] = this.createZone('junk', 0, null, null, null, /*grouped_by_age_type_and_is_relic=*/ true);
+        for (let type = 0; type <= 5; type++) {
+            for (let is_relic = 0; is_relic <= 1; is_relic++) {
+                for (let age = 1; age <= 11; age++) {
+                    let num_cards = gamedatas.junk_counts[type][is_relic][age];
+                    for (let i = 0; i < num_cards; i++) {
+                        this.createAndAddToZone(this.zone["junk"]["0"], i, age, type, is_relic, null, dojo.body(), null);
+                    }
+                }
+            }
+        }
+        if (!this.gamedatas.fourth_edition) {
+            dojo.byId('junk_container').style.display = 'none';
+        }
+
+        // Add a button here to open up the junk popup
+        let browse_junk_button = this.format_string_recursive("<i id='browse_junk_button' class='bgabutton bgabutton_gray'>${button_text}</i>", { 'button_text': _("Browse"), 'i18n': ['button_text'] });
+        dojo.place(browse_junk_button, 'junk_header', 'after');
+        this.on(dojo.query('#browse_junk_button'), 'onclick', 'click_open_junk_browsing_window');
 
         // REFERENCE CARD
         this.addTooltipForReferenceCard();
@@ -1628,11 +1653,14 @@ class Innovation extends BgaGame {
         if (this.gamedatas.echoes_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_3'>" + _("Echoes") + "</div>";
         }
+        // TODO(FIGURES): Add button for Figures.
         if (this.gamedatas.unseen_expansion_enabled) {
             content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_cards_type_5'>" + _("Unseen") + "</div>";
         }
         content += "<div class='browse_cards_button bgabutton bgabutton_gray selected' id='browse_special_achievements'>" + _("Special Achievements") + "</div>";
-        // TODO(FIGURES): Add button for Figures.
+        if (this.gamedatas.fourth_edition) {
+            content += "<div class='browse_cards_button bgabutton bgabutton_gray' id='browse_junk'>" + _("Junk") + "</div>";
+        }
         content += "</div>";
 
         content += "<div id='browse_cards_buttons_row_2'>";
@@ -1646,6 +1674,7 @@ class Innovation extends BgaGame {
         }
         content += "</div>";
         content += "<div id='browse_card_summaries'></div>";
+        content += "<div id='junk'></div>";
 
         content += "<div id='special_achievement_summaries'>";
         for (let i = 0; i < ids.length; i++) {
@@ -1665,11 +1694,15 @@ class Innovation extends BgaGame {
         content += `</div>`;
         this.card_browsing_window!.attr("content", content + "<a id='close_card_browser_button' class='bgabutton bgabutton_blue'>" + _("Close") + "</a>");
         dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
+        dojo.byId('junk').style.display = 'none';
 
         // Make everything clickable
         this.on(dojo.query('#browse_all_cards_button'), 'onclick', 'click_open_card_browsing_window');
         this.on(dojo.query('#close_card_browser_button'), 'onclick', 'click_close_card_browsing_window');
-        this.on(dojo.query('.browse_cards_button:not(#browse_special_achievements)'), 'onclick', 'click_browse_cards');
+        this.on(dojo.query('.browse_cards_button:not(#browse_special_achievements):not(#browse_junk)'), 'onclick', 'click_browse_cards');
+        if (this.gamedatas.fourth_edition) {
+            this.on(dojo.query('#browse_junk'), 'onclick', 'click_browse_junk');
+        }
         this.on(dojo.query('#browse_special_achievements'), 'onclick', 'click_browse_special_achievements');
     }
 
@@ -2850,7 +2883,8 @@ class Innovation extends BgaGame {
             case "deck":
                 return root[type!][age!];
             case "relics":
-                return this.zone["relics"][0];
+            case "junk":
+                return root[0];
             case "hand":
             case "display":
             case "forecast":
@@ -3139,7 +3173,7 @@ class Innovation extends BgaGame {
 
         // Id of the container
         let div_id = "";
-        if (location == "my_score_verso" || location == "my_forecast_verso") {
+        if (location == "my_score_verso" || location == "my_forecast_verso" || location == "junk") {
             div_id = location;
         } else {
             div_id = location + owner_string + type_string + age_string + color_string;
@@ -4788,6 +4822,11 @@ class Innovation extends BgaGame {
         this.click_browse_special_achievements();
     }
 
+    click_open_junk_browsing_window() {
+        this.click_open_card_browsing_window();
+        this.click_browse_junk();
+    }
+
     click_open_card_browsing_window() {
         this.card_browsing_window!.show();
     }
@@ -4804,7 +4843,6 @@ class Innovation extends BgaGame {
         if (id.startsWith('browse_cards_type_')) {
             dojo.query('#browse_cards_buttons_row_1 > .browse_cards_button').removeClass('selected');
             dojo.query(`#${id}`).addClass('selected');
-            dojo.byId('browse_cards_buttons_row_2').style.display = 'block';
             if (this.gamedatas.relics_enabled) {
                 dojo.byId('browse_relics').style.display = (id == 'browse_cards_type_1') ? 'inline-block' : 'none';
             }
@@ -4817,6 +4855,7 @@ class Innovation extends BgaGame {
         }
 
         dojo.byId('browse_card_summaries').style.display = 'block';
+        dojo.byId('junk').style.display = 'none';
         dojo.query('#special_achievement_summaries').addClass('heightless');
 
         let node = dojo.query('#browse_card_summaries')[0];
@@ -4904,7 +4943,17 @@ class Innovation extends BgaGame {
         dojo.query('#browse_special_achievements').addClass('selected');
         dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
         dojo.byId('browse_card_summaries').style.display = 'none';
+        dojo.byId('junk').style.display = 'none';
         dojo.query('#special_achievement_summaries').removeClass('heightless');
+    }
+
+    click_browse_junk() {
+        dojo.query('.browse_cards_button').removeClass('selected');
+        dojo.query('#browse_junk').addClass('selected');
+        dojo.byId('browse_cards_buttons_row_2').style.display = 'none';
+        dojo.byId('junk').style.display = 'block';
+        dojo.byId('browse_card_summaries').style.display = 'none';
+        dojo.query('#special_achievement_summaries').addClass('heightless');
     }
 
     ///////////////////////////////////////////////////
@@ -4992,7 +5041,7 @@ class Innovation extends BgaGame {
             }
         }
 
-        // The zones are undefined if the location is "removed" or "junk" since there aren't actually locations for cards onscreen
+        // The zones are undefined if the location is "removed" since there isn't actually a spot for it onscreen
         let zone_from = this.getZone(card.location_from, card.owner_from, card.type, card.age, card.color);
         let zone_to = this.getZone(card.location_to, card.owner_to, card.type, card.age, card.color);
 
@@ -5010,7 +5059,7 @@ class Innovation extends BgaGame {
                 id_to = null; // A new ID must be created for this card since it's being flipped face down
             }
         } else {
-            if (card.location_from == "removed" || card.location_from == "junk") {
+            if (card.location_from == "removed") {
                 id_from = card.id;
             } else {
                 id_from = this.getCardIdFromPosition(zone_from, card.position_from, card.age, card.type, card.is_relic)!;
@@ -5088,7 +5137,7 @@ class Innovation extends BgaGame {
         }
 
         // Handle case where card is being removed from the game.
-        if (card.location_to == 'removed' || card.location_to == 'junk') {
+        if (card.location_to == 'removed') {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
             if (this.canShowCardTooltip(card.id)) {
                 this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
@@ -5103,9 +5152,10 @@ class Innovation extends BgaGame {
             let top_card = pile[pile.length - 1];
             let center_of_top_card = dojo.query(`#${top_card.id} > .card_title`)[0];
             this.createAndAddToZone(zone_to, null, null, card.type, card.is_relic, card.id, center_of_top_card.id, card);
-        } else if (is_fountain_or_flag && card.owner_to == 0) {
+        } else if (is_fountain_or_flag && card.owner_to == 0 || (card.location_to == 'junk' && card.age == null)) {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
-        } else if (card.location_from == 'junk') { // Assumes we are unjunking a special achievement
+        } else if (card.location_from == 'junk' && card.age == null) { // Unjunking a special achievement
+            // TODO(4E): See if we can remove this special case and just handle it by calling moveBetweenZones below.
             this.createAndAddToZone(zone_to, card.position, card.age, card.type, card.is_relic, card.id, dojo.body(), null);
         } else {
             this.moveBetweenZones(zone_from, zone_to, id_from, id_to, card);

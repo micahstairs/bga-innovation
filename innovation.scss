@@ -168,7 +168,7 @@
     }
 }
 
-#browse_special_achievements_button {
+#browse_special_achievements_button, #browse_junk_button {
     display: flex;
     text-align: center;
     width: fit-content;
@@ -750,10 +750,15 @@
 
 #available_relics_container,
 #available_achievements_container,
-#available_special_achievements_container {
+#available_special_achievements_container,
+#junk_container {
     vertical-align: top;
     margin-top: 30px;
     width: 208.45px;
+}
+
+#junk_header {
+    height: 15px !important;
 }
 
 .deck_set {
@@ -807,11 +812,7 @@
     }
 }
 
-#relics {
-    margin-left: 45px;
-}
-
-#achievements {
+#relics, #achievements {
     margin-left: 45px;
 }
 

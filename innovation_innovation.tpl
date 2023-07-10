@@ -150,6 +150,9 @@
                 <p class="text_center"><!-- BEGIN special_achievements -->{SPECIAL_ACHIEVEMENTS}<!-- END special_achievements --></p>
                 <div id="special_achievements"></div>
             </div>
+            <div id="junk_container">
+                <p id="junk_header" class="text_center"><!-- BEGIN junk -->{JUNK}<!-- END junk --></p>
+            </div>
         </div>
     </div>
 </div>

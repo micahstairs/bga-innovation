@@ -77,6 +77,7 @@
         $this->page->begin_block( "innovation_innovation", "available_relics" );
         $this->page->begin_block( "innovation_innovation", "available_achievements" );
         $this->page->begin_block( "innovation_innovation", "special_achievements" );
+        $this->page->begin_block( "innovation_innovation", "junk" );
         
         // Players
         // Me
@@ -151,7 +152,7 @@
                                         "PLAYER_ID" => $player_id,
                                         "PLAYER_NAME" => $player['player_name'],
                                         "PLAYER_COLOR" => $player['player_color'],
-                                        "PLAYER TEAM" => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($player['player_color'] == "0000ff" ? _("Blue team") : _("Red team")): "",
+                                        "PLAYER TEAM" => $this->game->getGameStateValue('game_type') > 1 ? " - " . ($player['player_color'] == "0000ff" ? self::_("Blue team") : self::_("Red team")): "",
                                         "R" => $rgb[0],
                                         "G" => $rgb[1],
                                         "B" => $rgb[2],
@@ -206,6 +207,7 @@
         $this->page->insert_block( "available_relics", array("AVAILABLE_RELICS" => self::_("Available relics")) );
         $this->page->insert_block( "available_achievements", array("AVAILABLE_ACHIEVEMENTS" => self::_("Available achievements")) );
         $this->page->insert_block( "special_achievements", array("SPECIAL_ACHIEVEMENTS" => self::_("Special achievements")) );
+        $this->page->insert_block( "junk", array("JUNK" => self::_("Junk")) );
       }
   }
   

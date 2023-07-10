@@ -688,6 +688,14 @@ class Innovation extends Table
 
         // Artifacts on display
         $result['artifacts_on_display'] = self::getArtifactsOnDisplay($players);
+
+        // Backs of the cards in junk
+        $result['junk_counts'] = array();
+        for ($type = 0; $type <= 5; $type++) {
+            for ($is_relic = 0; $is_relic <= 1; $is_relic++) {
+                $result['junk_counts'][$type][$is_relic] = self::countCardsInLocationKeyedByAge(0, 'junk', $type, $is_relic);
+            }
+        }
         
         // Backs of the cards in hands
         $result['hand_counts'] = array();
@@ -1424,13 +1432,17 @@ class Innovation extends Table
         case 'score':
         case 'safe':
         case 'relics':
+        case 'junk':
+            // Special achievements aren't grouped
+            if ($age == null) {
+                break;
+            }
             $filter_from .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
             $filter_from .= self::format(" AND color = {color}", array('color' => $color));
             break;
         case 'removed':
-        case 'junk':
             $filter_from = self::format("id = {id}", array('id' => $id)); // Always use position 0
             break;
         default:
@@ -1444,6 +1456,7 @@ class Innovation extends Table
             $filter_to .= self::format(" AND type = {type} AND age = {age}", array('type' => $type, 'age' => $age));
             break;
         case 'achievements':
+            // Special achievements aren't grouped
             if ($age == null) {
                 break;
             }
@@ -1456,13 +1469,17 @@ class Innovation extends Table
         case 'score':
         case 'safe':
         case 'relics':
+        case 'junk':
+            // Special achievements aren't grouped
+            if ($age == null) {
+                break;
+            }
             $filter_to .= self::format(" AND type = {type} AND age = {age} AND is_relic = {is_relic}", array('type' => $type, 'age' => $age, 'is_relic' => $is_relic));
             break;
         case 'board':
             $filter_to .= self::format(" AND color = {color}", array('color' => $color));
             break;
         case 'removed':
-        case 'junk':
             $filter_to = self::format("id = {id}", array('id' => $id)); // Always use position 0
             break;
         default:
@@ -2313,6 +2330,10 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your score pile');
                 $to_somewhere_for_others = clienttranslate(' to his score pile');
             }
+        } else if ($location_to === 'hand') {
+            $visible_for_player = true;
+            $to_somewhere_for_player = clienttranslate(' to your hand');
+            $to_somewhere_for_others = clienttranslate(' to his hand');
         } else if ($location_to === 'safe') {
             if ($location_from === 'deck') {
                 $visible_for_player = true;
@@ -2341,7 +2362,7 @@ class Innovation extends Table
         } else if ($location_to === 'junk') {
             $action_for_player = clienttranslate('junk');
             $action_for_others = clienttranslate('junks');
-        } else if ($location_to === 'remove') {
+        } else if ($location_to === 'removed') {
             $action_for_player = clienttranslate('remove');
             $action_for_others = clienttranslate('removes');
         }
