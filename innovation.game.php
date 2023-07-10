@@ -16135,6 +16135,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             case "488N2":
                 // "You may score a card from your hand of each color on your board."
+                self::setAuxiliaryValue(1);
                 $color_array = array();
                 foreach (self::getCardsInHand($player_id) as $card) {
                     $top_card = self::getTopCardOnBoard($player_id, $card['color']);
@@ -16144,7 +16145,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if (count($card_id_array) > 0) {
                     self::setAuxiliaryValue2FromArray($color_array);
-                    self::setAuxiliaryValue(1);
                     $step_max = 1;
                 }
                 break;
@@ -27545,6 +27545,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $last_color = $this->innovationGameState->get('color_last_selected');
                         $remaining_colors = self::getAuxiliaryValue2AsArray();
                         
+                        $card_id_array = array();
                         $color_array = array_diff($remaining_colors, [$last_color]);                        
                         if (count($color_array) > 0) {
                             self::setStep(0); $step = 0;
