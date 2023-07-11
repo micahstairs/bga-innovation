@@ -16468,6 +16468,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
                 if ($top_yellow_card !== null) {
                     self::executeDrawAndMeld($player_id, $top_yellow_card['age'] + 1);
+                } else {
+                    self::executeDrawAndMeld($player_id, 1);
                 }
                 break;
 

@@ -65,6 +65,7 @@ class Card592 extends Card
     $scoredCard = false;
     for ($i = 0; $i < count($cards) - 3; $i++) {
       self::score($cards[$i]);
+      $scoredCard = true;
     }
     if ($scoredCard) {
       self::splayAslant($color);

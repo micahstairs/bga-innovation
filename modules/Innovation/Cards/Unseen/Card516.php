@@ -50,9 +50,12 @@ class Card516 extends Card
         self::putInHand($card);
       }
     } else if (self::getCurrentStep() == 3) {
-      $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'reveal')[0];
+      $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'revealed')[0];
       if (self::getNumChosen() > 0) {
         self::safeguard($revealedCard);
+        foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+            self::putInHand($card); // put all revealed cards in hand if they can't fit in the safe
+        }
       } else {
         self::putInHand($revealedCard);
       }
@@ -87,7 +90,7 @@ class Card516 extends Card
       self::drawAndSafeguard(4);
     } else if (count($secrets) == 1) {
       $secret = $secrets[0];
-      $card = self::drawAndReveal($secret['age'] + 1);
+      $card = self::drawAndReveal($secret['faceup_age'] + 1);
       if ($card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE) {
         self::safeguard($card);
       } else {
