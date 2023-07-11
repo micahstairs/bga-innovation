@@ -2234,6 +2234,10 @@ class Innovation extends Table
             $visible_for_player = true;
             $from_somewhere_for_player = clienttranslate(' from your forecast');
             $from_somewhere_for_others = clienttranslate(' from his forecast');
+        } else if ($location_from === 'score') {
+            $visible_for_player = true;
+            $from_somewhere_for_player = clienttranslate(' from your score pile');
+            $from_somewhere_for_others = clienttranslate(' from his score pile');
         } else if ($location_from === 'achievements') {
             if ($owner_from == 0) {
                 $from_somewhere_for_player = clienttranslate(' from the available achievements');
@@ -2245,6 +2249,9 @@ class Innovation extends Table
         } else if ($location_from === 'relics') {
             $action_for_player = clienttranslate('seize');
             $action_for_others = clienttranslate('seizes');
+        } else if ($location_from === 'junk') {
+            $from_somewhere_for_player = clienttranslate(' from the junk');
+            $from_somewhere_for_others = clienttranslate(' from the junk');
         } else if ($location_from === 'revealed') {
             $visible_for_player = true;
             $visible_for_others = true;

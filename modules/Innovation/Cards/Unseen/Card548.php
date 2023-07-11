@@ -18,31 +18,18 @@ class Card548 extends Card
 
   public function getInteractionOptions(): array
   {
-    // TODO(4E): there is an error on the backend when this is executed
     return [
       'can_pass' => true,
-      'choose_yes_or_no' => true,
-      ];
+      'choices'  => [1, 2],
+    ];
   }
 
   public function getSpecialChoicePrompt(): array
   {
-    $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 7);
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => $ageToDraw <= $this->game->getMaxAge() ? clienttranslate('Draw and junk two ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'),
-          'age'   => $this->game->getAgeSquare($ageToDraw),
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Exchange all cards in your score pile with all valued junked cards'),
-        ],
-      ],
-    ];
+    return self::getPromptForChoiceFromList([
+      1 => [clienttranslate('Draw and junk two ${age}'), 'age' => $this->game->getAgeSquare(7)],
+      2 => clienttranslate('Exchange all cards in your score pile with all valued junked cards'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void
@@ -57,11 +44,11 @@ class Card548 extends Card
         self::junk($card);
       }
       foreach ($junkCards as $card) {
-        if ($card['age'] !== null) {
+        if (self::isValuedCard($card)) {
           self::transferToScorePile($card);
         }
       }
     }
   }
-  
+
 }
