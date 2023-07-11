@@ -128,11 +128,12 @@ abstract class Card
     $this->game->updateCurrentNestedCardState('post_execution_index', $index);
   }
 
-  protected function selfExecute($card)
+  protected function selfExecute($card): bool
   {
-    if ($card) {
-      $this->game->selfExecute($card);
+    if (!$card) {
+      return false;
     }
+    return $this->game->selfExecute($card);
   }
 
   protected function fullyExecute($card)
