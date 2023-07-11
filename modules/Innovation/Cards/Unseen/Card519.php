@@ -44,14 +44,17 @@ class Card519 extends Card
   public function afterInteraction()
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
-      self::putInHand($card);
-    }
     if (self::getCurrentStep() == 1) {
+      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+        self::putInHand($card);
+      }
       foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
         self::reveal($card);
       }
     } else {
+      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+        self::transferToScorePile($card);
+      }
       $this->game->executeReplacingMayWithMust(self::getLastSelectedCard());
     }
   }
