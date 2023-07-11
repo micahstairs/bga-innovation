@@ -3189,7 +3189,7 @@ class Innovation extends Table
         if ($this->innovationGameState->echoesExpansionEnabled() && ($edition <= 3 || $is_end_of_action_check)) {
             $achievements_to_test = array_merge($achievements_to_test, [435, 436, 437, 438, 439]);
         }
-        if ($this->innovationGameState->unseenExpansionEnabled() && ($edition >= 4 || $is_end_of_action_check)) {
+        if ($this->innovationGameState->unseenExpansionEnabled() && $is_end_of_action_check) {
             $achievements_to_test = array_merge($achievements_to_test, [595, 596, 597, 598, 599]);
         }
         $end_of_game = false;
@@ -4721,7 +4721,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.owner = {player_id} AND
                 a.location = 'board' AND
                 a.position = b.position AND
-                (a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon} AND a.spot_5 <> {icon} AND a.spot_6 <> {icon})
+                (
+                    (a.spot_1 IS NULL OR a.spot_1 <> {icon}) AND
+                    (a.spot_2 IS NULL OR a.spot_2 <> {icon}) AND
+                    (a.spot_3 IS NULL OR a.spot_3 <> {icon}) AND
+                    (a.spot_4 IS NULL OR a.spot_4 <> {icon}) AND
+                    (a.spot_5 IS NULL OR a.spot_5 <> {icon}) AND
+                    (a.spot_6 IS NULL OR a.spot_6 <> {icon})
+                )
         ",
             array('player_id' => $player_id, 'icon' => $icon)
         ));
@@ -4819,7 +4826,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 a.location = 'board' AND
                 a.position = b.position AND
                 a.color IN ({colors}) AND
-                a.spot_1 <> {icon} AND a.spot_2 <> {icon} AND a.spot_3 <> {icon} AND a.spot_4 <> {icon} AND a.spot_5 <> {icon} AND a.spot_6 <> {icon}
+                (a.spot_1 IS NULL OR a.spot_1 <> {icon}) AND
+                (a.spot_2 IS NULL OR a.spot_2 <> {icon}) AND
+                (a.spot_3 IS NULL OR a.spot_3 <> {icon}) AND
+                (a.spot_4 IS NULL OR a.spot_4 <> {icon}) AND
+                (a.spot_5 IS NULL OR a.spot_5 <> {icon}) AND
+                (a.spot_6 IS NULL OR a.spot_6 <> {icon})
         ",
             array('player_id' => $player_id, 'colors' => join(',', $colors), 'icon' => $icon)
         ));
