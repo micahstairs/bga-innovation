@@ -13,7 +13,7 @@ class Card588 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else {
       self::setMaxSteps(2);
@@ -22,31 +22,33 @@ class Card588 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       return [
         'owner_from'    => 'any player',
         'location_from' => 'board',
         'location_to'   => 'none',
       ];
-    } else if (self::getCurrentStep() == 1) {
-      return ['choices' => [1, 2]];
-    } else if (self::getAuxiliaryValue() == 1) {
-      return [
-        'can_pass'      => true,
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
-        'location_to'   => 'safe',
-        'n_min'         => 1,
-        'n_max'         => 'all',
-      ];
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'safe',
-        'location_to'   => 'achievements',
-        'n_min'         => 1,
-        'n_max'         => 'all',
-      ];
+      if (self::getCurrentStep() === 1) {
+        return ['choices' => [1, 2]];
+      } else if (self::getAuxiliaryValue() === 1) {
+        return [
+          'can_pass'      => true,
+          'owner_from'    => 0,
+          'location_from' => 'achievements',
+          'location_to'   => 'safe',
+          'n_min'         => 1,
+          'n_max'         => 'all',
+        ];
+      } else {
+        return [
+          'can_pass'      => true,
+          'location_from' => 'safe',
+          'location_to'   => 'achievements',
+          'n_min'         => 1,
+          'n_max'         => 'all',
+        ];
+      }
     }
   }
 
@@ -57,7 +59,7 @@ class Card588 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return self::getPromptForChoiceFromList([
         1 => clienttranslate('Safeguard standard achievements'),
         2 => clienttranslate('Achieve secrets'),

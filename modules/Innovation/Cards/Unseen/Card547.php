@@ -31,11 +31,10 @@ class Card547 extends Card
       return ['choose_yes_or_no' => true];
     } else if (self::getCurrentStep() == 2) {
       if (self::getAuxiliaryValue() == 1) {
-        $this->game->setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('board'));
         return [
           'location_from' => 'board',
           'location_to'   => 'junk,safe',
-          'card_ids_are_in_auxiliary_array' => true,
+          'color' => $this->game->getColorsOfRepeatedValueOfTopCardsOnBoard(self::getPlayerId()),
         ];
       } else {
         $this->game->setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));

@@ -16,7 +16,7 @@ class Card589 extends Card
     $topGreenCard = self::getTopCardOfColor($this->game::GREEN);
     $numScored = 0;
     foreach ($greenCards as $card) {
-      if (!$card['id'] !== $topGreenCard['id']) {
+      if ($card['id'] != $topGreenCard['id']) {
         self::score($card);
         $numScored++;
       }
