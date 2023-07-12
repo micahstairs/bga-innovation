@@ -358,7 +358,7 @@ abstract class Card
 
   protected function getSplayDirection(int $color, int $playerId = null): int
   {
-    return self::getTopCardOfColor($color, self::coercePlayerId($playerId))['splay_direction'];
+    return $this->game->getCurrentSplayDirection(self::coercePlayerId($playerId), $color);
   }
 
   // COLOR HELPERS

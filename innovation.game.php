@@ -6297,9 +6297,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // A color must have at least 1 card in order to be a valid target for splaying/unsplaying
             $colors = [];
             foreach ($rewritten_options['color'] as $color) {
+                $current_splay_direction = self::getCurrentSplayDirection($player_id, $color);
 
                 // Skip this color if the player is allowed to pass and splaying it won't do anything
-                if ($rewritten_options['can_pass'] && (self::getCurrentSplayDirection($player_id, $color) == $rewritten_options['splay_direction'] || $number_of_cards_on_board[$color] <= 1)) {
+                if ($rewritten_options['can_pass'] && ($current_splay_direction == $rewritten_options['splay_direction'] || $number_of_cards_on_board[$color] <= 1)) {
+                    continue;
+                }
+
+                // Skip this color if it doesn't match the has_splay_direction filter
+                if (!in_array($current_splay_direction, $rewritten_options['has_splay_direction'])) {
                     continue;
                 }
 
@@ -6498,7 +6504,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $condition_for_splay = "";
         if (count($splay_directions) == 0) {
             $condition_for_splay = "AND FALSE";
-        } else if ($this->innovationGameState->get('release_version') <= 3 && count($splay_directions) < 4 || $this->innovationGameState->get('release_version') >= 4 && count($splay_directions) < 5) {
+        } else if (($this->innovationGameState->get('release_version') <= 3 && count($splay_directions) < 4) || ($this->innovationGameState->get('release_version') >= 4 && count($splay_directions) < 5)) {
             $condition_for_splay = "AND splay_direction IN (".join(',', $splay_directions).")";
         }
 
@@ -10906,7 +10912,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (493 <= $card_id && $card_id <= 494)
-            || (505 <= $card_id && $card_id <= 506)
+            || (505 <= $card_id && $card_id <= 507)
             || $card_id == 509
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
@@ -16376,15 +16382,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 506, Unseen age 3: Secret Secretorum
             case "506N1":
-                break;
-
-            // id 507, Unseen age 3: Knights Templar
-            case "507D1":
-                $step_max = 1;
-                break;
-
-            case "507N1":
-                $step_max = 1;
                 break;
                 
             // id 508, Unseen age 3: Red Envelope
@@ -24237,29 +24234,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 507, Unseen age 3: Knights Templar
-        case "507D1A":
-            // "I demand you unsplay a splayed color on your board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'splay_direction' => 0,
-                'has_splay_direction' => array(1, 2, 3, 4), // Left, right, up, or aslant
-            );
-            break;
-
-        case "507N1A":
-            // "You may splay your red or green cards left."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::LEFT,
-                'color' => array(1,2),
-            );
-            break;
-
         // id 508, Unseen age 3: Red Envelope
         case "508N1A":
             // "Choose a value of which you have exactly two or three cards altogether in your hand and score pile."
@@ -27694,17 +27668,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 507, Unseen age 3: Knights Templar
-                case "507D1A":
-                    if ($n > 0) { // "If you do,"
-                        // "transfer the top card on your board of that color to my score pile!"
-                        $card = self::getTopCardOnBoard($player_id, $this->innovationGameState->get('color_last_selected'));
-                        if ($card !== null) {
-                            self::transferCardFromTo($card, $launcher_id, 'score');
-                        }
-                    }
-                    break;
-
                 // id 508, Unseen age 3: Red Envelope
                 case "508N1A":
                     // "Transfer those cards to the score pile of the player on your right."
@@ -27882,6 +27845,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $this->gamestate->nextState('interInteractionStep');
                 return;
 
+            // Color must be splayed and there is only one choice
+            } else if ($enable_autoselection && !$can_pass && $splay_direction >= 0 && count($colors) === 1) {
+                // A card is chosen automatically for the player
+                $card = self::getSelectedCards()[0];
+                // Simplified version of self::choose()
+                $this->innovationGameState->set('id_last_selected', $card['id']);
+                self::unmarkAsSelected($card['id']);
+                $this->innovationGameState->set('can_pass', 0);
+                self::trace('preSelectionMove->interSelectionMove (automated splay selection)');
+                $this->gamestate->nextState('interSelectionMove');
+                return;
             // All selectable cards must be chosen
             } else if ($enable_autoselection
                     // Make sure choosing these cards won't reveal hidden information (unless all cards in that location need to be chosen anyway)

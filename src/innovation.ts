@@ -1316,7 +1316,11 @@ class Innovation extends BgaGame {
                     if (args.args.splay_direction !== null) {
                         let end_of_message: string[] = []
                         for (let i = 0; i < args.args.splayable_colors_in_clear.length; i++) {
-                            end_of_message.push(dojo.string.substitute(_("splay his ${cards} ${direction}"), { 'cards': _(args.args.splayable_colors_in_clear[i]), 'direction': _(args.args.splay_direction_in_clear) }))
+                            if (args.args.splay_direction == 0) {
+                                end_of_message.push(dojo.string.substitute(_("unsplay his ${cards}"), { 'cards': _(args.args.splayable_colors_in_clear[i]) }));
+                            } else {
+                                end_of_message.push(dojo.string.substitute(_("splay his ${cards} ${direction}"), { 'cards': _(args.args.splayable_colors_in_clear[i]), 'direction': _(args.args.splay_direction_in_clear) }));
+                            }
                         }
                         $('pagemaintitletext').innerHTML += " " + end_of_message.join(", ");
                     }

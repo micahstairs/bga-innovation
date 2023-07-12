@@ -1242,7 +1242,12 @@ var Innovation = /** @class */ (function (_super) {
                     if (args.args.splay_direction !== null) {
                         var end_of_message = [];
                         for (var i = 0; i < args.args.splayable_colors_in_clear.length; i++) {
-                            end_of_message.push(dojo.string.substitute(_("splay his ${cards} ${direction}"), { 'cards': _(args.args.splayable_colors_in_clear[i]), 'direction': _(args.args.splay_direction_in_clear) }));
+                            if (args.args.splay_direction == 0) {
+                                end_of_message.push(dojo.string.substitute(_("unsplay his ${cards}"), { 'cards': _(args.args.splayable_colors_in_clear[i]) }));
+                            }
+                            else {
+                                end_of_message.push(dojo.string.substitute(_("splay his ${cards} ${direction}"), { 'cards': _(args.args.splayable_colors_in_clear[i]), 'direction': _(args.args.splay_direction_in_clear) }));
+                            }
                         }
                         $('pagemaintitletext').innerHTML += " " + end_of_message.join(", ");
                     }
