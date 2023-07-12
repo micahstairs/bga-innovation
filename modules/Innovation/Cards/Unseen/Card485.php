@@ -8,9 +8,8 @@ class Card485 extends Card
 {
 
   // Pilgrimage:
-  //   - You may return any number of cards with consecutive values from your hand, starting
-  //     with 1. If you do, safeguard an available achievement of value equal to the highest
-  //     card returned.
+  //   - You may return a [1] from your hand. If you do, safeguard an available achievement of
+  //     value equal to the returned card, then repeat this effect using the next higher value.
 
   public function initialExecution()
   {
@@ -32,7 +31,7 @@ class Card485 extends Card
         'location_from' => 'achievements',
         'owner_from'    => 0,
         'location_to'   => 'safe',
-        'age'           => self::getAuxiliaryValue() - 1,
+        'age'           => self::getAuxiliaryValue(),
       ];
     }
   }
@@ -40,11 +39,13 @@ class Card485 extends Card
   public function afterInteraction()
   {
     if (self::getCurrentStep() == 1) {
-      if (self::getLastSelectedAge() == self::getAuxiliaryValue()) {
-        self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
-        self::setNextStep(1);
+      if (self::getNumChosen() > 0 && self::getLastSelectedAge() === self::getAuxiliaryValue()) {
         self::setMaxSteps(2);
       }
+    } else {
+      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::setNextStep(1);
+      self::setMaxSteps(1);
     }
   }
 }

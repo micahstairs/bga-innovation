@@ -2312,7 +2312,7 @@ $this->textual_card_infos = array(
 
     485 => array(
         'name'                => clienttranslate('Pilgrimage'),
-        'non_demand_effect_1' => clienttranslate('You may return any number of cards with consecutive values from your hand, starting with 1. If you do, safeguard an available achievement of value equal to the highest card returned.'),
+        'non_demand_effect_1' => clienttranslate('You may return a ${age_1} from your hand. If you do, safeguard an available achievement of value equal to the returned card, then repeat this effect using the next higher value.'),
     ),
 
     486 => array(
