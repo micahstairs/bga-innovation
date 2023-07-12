@@ -2612,7 +2612,6 @@ class Innovation extends Table
                 'i18n' => ['log'],
                 'log' => $message_for_player,
                 'args' => [
-                    'i18n' => ['targetable_players'],
                     'You_must' => [
                         'i18n' => ['log'],
                         'log' => $you_must,
@@ -2624,7 +2623,11 @@ class Innovation extends Table
                     'number' => $number,
                     'card_qualifier' => $card_qualifier,
                     'card' => $cards,
-                    'from_somewhere' => $from_somewhere_for_player,
+                    'from_somewhere' => [
+                        'i18n' => ['targetable_players'],
+                        'log' => $from_somewhere_for_player,
+                        'args' => ['targetable_players' => $targetable_players],
+                    ],
                     'to_somewhere' => $to_somewhere_for_player,
                     'targetable_players' => $targetable_players,
                 ],
@@ -2645,7 +2648,11 @@ class Innovation extends Table
                     'number' => $number,
                     'card_qualifier' => $card_qualifier,
                     'card' => $cards,
-                    'from_somewhere' => $from_somewhere_for_others,
+                    'from_somewhere' => [
+                        'i18n' => ['targetable_players'],
+                        'log' => $from_somewhere_for_others,
+                        'args' => ['targetable_players' => $targetable_players],
+                    ],
                     'to_somewhere' => $to_somewhere_for_others,
                     'targetable_players' => $targetable_players,
                 ],
