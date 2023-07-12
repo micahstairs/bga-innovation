@@ -2210,7 +2210,6 @@ class Innovation extends Table
 
         // Update text based on where the card is coming from
         if ($location_from === 'deck') {
-            $visible_for_player = true;
             $action_for_player = clienttranslate('draw');
             $action_for_others = clienttranslate('draws');
         } else if ($location_from === 'safe') {
