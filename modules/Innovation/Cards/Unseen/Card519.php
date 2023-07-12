@@ -9,8 +9,7 @@ class Card519 extends Card
 
   // Blackmail:
   //   - I DEMAND you reveal your hand! Meld a revealed card of my choice! Reveal your score pile!
-  //     Execute the non-demand effects of any revealed card of my choice for yourself only,
-  //     replacing 'may' with 'must'!
+  //     Self-execute any revealed card of my choice, replacing 'may' with 'must'!
 
   public function initialExecution()
   {
@@ -55,7 +54,8 @@ class Card519 extends Card
       foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
         self::transferToScorePile($card);
       }
-      $this->game->executeReplacingMayWithMust(self::getLastSelectedCard());
+      // TODO(4E): Since this is occuring during a demand, it can cause the launcher to get a sharing bonus.
+      $this->game->selfExecute(self::getLastSelectedCard(), /*replace_may_with_must=*/ true);
     }
   }
 

@@ -7190,10 +7190,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /** Nested dogma excution management system: FIFO stack **/
-    function selfExecute($card) {
+    function selfExecute($card, $replace_may_with_must = false) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
-        // TODO(4E): There's a bug here since some are some executions which are not self/full (e.g. Blackmail).
+        // TODO(4E): There may be a bug here if a card calls this which does not actually use the word "self-execute".
         if ($this->innovationGameState->get('current_nesting_index') >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
             self::incStat(1, 'execution_combo_count', $player_id);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You', ]);
@@ -7206,11 +7206,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
             return false;
         }
-        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} self-execute the non-demand effect(s) of ${card}.'),
-            ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
-        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} self-executes the non-demand effect(s) of ${card}.'),
-            ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
-        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false);
+        if ($replace_may_with_must) {
+            self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} self-execute the non-demand effect(s) of ${card}, replacing \'may\' with \'must\'.'),
+                ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
+            self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} self-executes the non-demand effect(s) of ${card}, replacing \'may\' with \'must\'.'),
+                ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
+        } else {
+            self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} self-execute the non-demand effect(s) of ${card}.'),
+                ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
+            self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} self-executes the non-demand effect(s) of ${card}.'),
+                ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
+        }
+        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false, $replace_may_with_must);
         return true;
     }
 
@@ -7218,7 +7225,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
         $current_nested_state = self::getCurrentNestedCardState();
 
-        // TODO(4E): There's a bug here since some are some executions which are not self/full (e.g. Blackmail).
+        // TODO(4E): There may be a bug here if a card calls this which does not actually use the phrase "fully execute".
         if ($current_nested_state['nesting_index'] >= 1 && $this->innovationGameState->usingFourthEditionRules()) {
             self::incStat(1, 'execution_combo_count', $player_id);
             self::notifyPlayer($player_id, 'log', clienttranslate('${You} receive a Chain Achievement.'), ['You' => 'You', ]);
@@ -7236,20 +7243,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} fully executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['player_name' => self::getColoredPlayerName($player_id), 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ true);
-    }
-
-    function executeReplacingMayWithMust($card) {
-        $player_id = self::getCurrentPlayerUnderDogmaEffect();
-        $card_args = self::getNotificationArgsForCardList([$card]);
-        if (self::getNonDemandEffect($card['id'], 1) === null) {
-            self::notifyAll('logWithCardTooltips', clienttranslate('There are no non-demand effects on ${card} to execute.'), ['card' => $card_args, 'card_ids' => [$card['id']]]);
-            return false;
-        }
-        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} execute the non-demand effect(s) of ${card}, replacing \'may\' with \'must\'.'),
-            ['You' => 'You', 'card' => $card_args, 'card_ids' => [$card['id']]]);
-        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} executes the non-demand effect(s) of ${card}, replacing \'may\' with \'must\'.'),
-            ['player_name' => self::getColoredPlayerName($player_id), 'card' => $card_args, 'card_ids' => [$card['id']]]);
-        self::pushCardIntoNestedDogmaStack($card, /*execute_demand_effects=*/ false, /*replace_may_with_must=*/ true);
     }
 
     function pushCardIntoNestedDogmaStack($card, $execute_demand_effects, $replace_may_with_must = false) {

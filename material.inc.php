@@ -2507,7 +2507,7 @@ $this->textual_card_infos = array(
 
     519 => array(
         'name'              => clienttranslate('Blackmail'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Execute the non-demand effects of any revealed card of my choice for yourself only, replacing \'may\' with \'must\'!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Self-execute any revealed card of my choice, replacing \'may\' with \'must\'!'),
     ),
 
     520 => array(
