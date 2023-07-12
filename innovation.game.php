@@ -16285,7 +16285,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "497N1":
                 // "If no card was transferred due to the demand,"
-                if (self::getAuxiliaryValue() == 0) {
+                if (self::getAuxiliaryValue() <= 0) {
                     $step_max = 1;
                 }
                 break;
