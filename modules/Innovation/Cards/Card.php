@@ -356,6 +356,11 @@ abstract class Card
     $this->game->splayAslant($playerId, $playerId, $color);
   }
 
+  protected function getSplayDirection(int $color, int $playerId = null): int
+  {
+    return self::getTopCardOfColor($color, self::coercePlayerId($playerId))['splay_direction'];
+  }
+
   // COLOR HELPERS
 
   protected function getAllColorsOtherThan(int $color)

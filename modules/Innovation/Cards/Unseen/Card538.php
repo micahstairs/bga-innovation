@@ -9,7 +9,7 @@ class Card538 extends Card
 
   // Sniping:
   //   - I DEMAND you unsplay the color on your board of my choice! Meld your bottom card of that
-  //     color! Transfer your bottom card of that color to my board!
+  //     color! Transfer your bottom non-top card of that color to my board!
 
   public function initialExecution()
   {
@@ -34,7 +34,9 @@ class Card538 extends Card
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     self::unsplay($color);
     self::meld(self::getBottomCardOfColor($color));
-    self::transferToBoard(self::getBottomCardOfColor($color), self::getLauncherId());
+    if (self::getTopCardOfColor($color)['position'] > 0) {
+      self::transferToBoard(self::getBottomCardOfColor($color), self::getLauncherId());
+    }
   }
 
 }

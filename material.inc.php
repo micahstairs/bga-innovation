@@ -2571,7 +2571,7 @@ $this->textual_card_infos = array(
     530 => array(
         'name'                => clienttranslate('Secret History'),
         'i_demand_effect_1'   => clienttranslate('${I demand} you transfer one of your secrets to my safe!'),
-        'non_demand_effect_1' => clienttranslate('Splay your red or purple cards right. If you don\'t, claim the Mystery achievement.'),
+        'non_demand_effect_1' => clienttranslate('If your red or purple cards are splayed, claim the Mystery achievement. Otherwise, splay your red or purple cards right.'),
     ),
 
     531 => array(
@@ -2618,7 +2618,7 @@ $this->textual_card_infos = array(
 
     538 => array(
         'name'              => clienttranslate('Sniping'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you unsplay the color on your board of my choice! Meld your bottom card of that color! Transfer your bottom card of that color to my board!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you unsplay the color on your board of my choice! Meld your bottom card of that color! Transfer your bottom non-top card of that color to my board!'),
     ),
 
     539 => array(

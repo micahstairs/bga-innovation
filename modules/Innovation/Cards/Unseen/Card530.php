@@ -9,11 +9,19 @@ class Card530 extends Card
 
   // Secret History:
   //   - I DEMAND you transfer one of your secrets to my safe!
-  //   - Splay your red or purple cards right. If you don't, claim the Mystery achievement.
+  //   - If your red or purple cards are splayed, claim the Mystery achievement. Otherwise, splay your red or purple cards right.
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isDemand()) {
+      self::setMaxSteps(1);
+    } else {
+      if (self::getSplayDirection($this->game::RED) == $this->game::RIGHT || self::getSplayDirection($this->game::PURPLE) == $this->game::RIGHT) {
+        $this->game->claimSpecialAchievement(self::getPlayerId(), 599);
+      } else {
+        self::setMaxSteps(1);
+      }
+    }
   }
 
   public function getInteractionOptions(): array
@@ -30,19 +38,6 @@ class Card530 extends Card
         'splay_direction' => $this->game::RIGHT,
         'color'           => [$this->game::RED, $this->game::PURPLE],
       ];
-    }
-  }
-
-  public function handleSpecialChoice(int $choice): void
-  {
-    self::selfExecute(self::getTopCardOfColor($choice));
-    self::setAuxiliaryValue($choice);
-  }
-
-  public function afterInteraction(): void
-  {
-    if (self::isNonDemand() && self::getNumChosen() == 0) {
-      $this->game->claimSpecialAchievement(self::getPlayerId(), 599);
     }
   }
 
