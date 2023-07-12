@@ -28,31 +28,35 @@ class Card588 extends Card
         'location_from' => 'board',
         'location_to'   => 'none',
       ];
-    } else if (self::getCurrentStep() == 1) {
-      return ['choices' => [1, 2]];
-    } else if (self::getAuxiliaryValue() == 1) {
-      return [
-        'can_pass'      => true,
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
-        'location_to'   => 'safe',
-        'n_min'         => 1,
-        'n_max'         => 'all',
-      ];
     } else {
-      return [
-        'can_pass'      => true,
-        'location_from' => 'safe',
-        'location_to'   => 'achievements',
-        'n_min'         => 1,
-        'n_max'         => 'all',
-      ];
+      if (self::getCurrentStep() == 1) {
+        return ['choices' => [1, 2]];
+      } else if (self::getAuxiliaryValue() == 1) {
+        return [
+          'can_pass'      => true,
+          'owner_from'    => 0,
+          'location_from' => 'achievements',
+          'location_to'   => 'safe',
+          'n_min'         => 1,
+          'n_max'         => $this->game->getSafeLimit(self::getPlayerId()) - $this->game->countCardsInLocation(self::getPlayerId(), 'safe'),
+        ];
+      } else {
+        return [
+          'can_pass'      => true,
+          'location_from' => 'safe',
+          'location_to'   => 'achievements',
+          'n_min'         => 1,
+          'n_max'         => 'all',
+        ];
+      }
     }
   }
 
   public function handleCardChoice(array $card)
   {
-    self::unsplay($card['color'], $card['owner'], self::getPlayerId());
+    if (self::getEffectNumber() == 1) {
+      self::unsplay($card['color'], $card['owner'], self::getPlayerId());
+	}
   }
 
   public function getSpecialChoicePrompt(): array
