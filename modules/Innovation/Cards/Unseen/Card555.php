@@ -18,10 +18,10 @@ class Card555 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
-      return ['choose_yes_or_no' => true];
+    if (self::getCurrentStep() === 1) {
+      return ['choices' => [1, 2]];
     } else {
-      if (self::getAuxiliaryValue() == 1) {
+      if (self::getAuxiliaryValue() === 1) {
          return [
           'splay_direction' => $this->game::UNSPLAYED,
          ];
@@ -36,20 +36,10 @@ class Card555 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Unsplay one color')
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Splay up and draw')
-        ],
-      ],
-    ];
+    return self::getPromptForChoiceFromList([
+      1 => clienttranslate('Unsplay one color'),
+      2 => [clienttranslate('Splay up and draw a ${age}'), 'age' => $this->game->getAgeSquare(9)],
+    ]);
   }
 
   public function handleSpecialChoice($choice)
@@ -59,7 +49,7 @@ class Card555 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 2 && self::getAuxiliaryValue() == 0) {
+    if (self::getCurrentStep() === 2 && self::getAuxiliaryValue() === 2) {
       self::draw(9);
     }
   }
