@@ -44,8 +44,9 @@ class Card484 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() == 0) {
+      $launcherCardsInHand = $this->game->getCardsInHand(self::getLauncherId());
       $cardsInHand = $this->game->getCardsInHand(self::getPlayerId());
-      if (self::getAuxiliaryValue() == 0 && count($cardsInHand) > 0) {
+      if (self::getAuxiliaryValue() == 0 && count($launcherCardsInHand) > 0) {
         $cardsInScorePile = $this->game->getCardsInScorePile(self::getLauncherId());
         foreach ($cardsInHand as $card) {
           $this->game->transferCardFromTo($card, self::getLauncherId(), 'score');
