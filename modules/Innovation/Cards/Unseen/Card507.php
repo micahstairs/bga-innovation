@@ -35,9 +35,11 @@ class Card507 extends Card
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() > 0) {
-      $card = self::getTopCardOfColor(self::getLastSelectedColor());
-      self::transferToScorePile($card, self::getLauncherId());
+    if (self::isDemand()) {
+        if (self::getNumChosen() > 0) {
+          $card = self::getTopCardOfColor(self::getLastSelectedColor());
+          self::transferToScorePile($card, self::getLauncherId());
+        }
     }
   }
 }
