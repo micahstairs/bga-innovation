@@ -15,7 +15,6 @@ class Card505 extends Card
   public function initialExecution()
   {
     self::setMaxSteps(1);
-    self::setActionScopedAuxiliaryArray([]);
   }
 
   public function getInteractionOptions(): array
