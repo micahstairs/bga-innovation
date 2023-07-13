@@ -7802,12 +7802,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         case 14: // Plus: Draw a card of value one higher than the city's age
                             self::executeDraw($player_id, $card['age'] + 1);
                             break;
+                        case 17: // Unsplay: Each opponent unsplays this color
+                            foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
+                                self::unsplay($opponent_id, $opponent_id, $card['color']);
+                            }
+                            break;
                     }
                 }
 
                 // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
-                // top-midddle of the card, that means that it is a Search icon.
-                if ($top_middle_icon >= 1 && $top_middle_icon <= 6) {
+                // top-midddle of the card that is age 5 or earlier (or using 3rd edition or earlier), that means that
+                // it is a Search icon.
+                if ($top_middle_icon >= 1 && $top_middle_icon <= 6 && (!$this->innovationGameState->usingFourthEditionRules() || $card['age'] <= 5)) {
                     // Determine how many cards can be drawn.
                     $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
                     $age_of_melded_card = $card['age'];
