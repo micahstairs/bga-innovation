@@ -120,13 +120,13 @@ $game_options = array(
     //     )
     // ),
 
-    // 103 => array(
-    //     'name' => totranslate('Cities of Destiny expansion'),
-    //     'values' => array(
-    //         1 => array('name' => totranslate('Disable')),
-    //         2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
-    //     )
-    // ),
+    103 => array(
+        'name' => totranslate('Cities of Destiny expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Cities Expansion'))
+        )
+    ),
 
     // 104 => array(
     //     'name' => totranslate('Echoes of the Past expansion'),
