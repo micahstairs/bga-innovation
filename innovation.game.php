@@ -7814,6 +7814,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
 
+                // Junk Achievement
+                if ($top_middle_icon == 15 || $bottom_middle_icon == 15) {
+                    $options = array(
+                        'player_id' => $player_id,
+                        'n' => 1,
+                        'owner_from' => 0,
+                        'location_from' => 'achievements',
+                        'owner_to' => 0,
+                        'location_to' => 'junk',
+                        'age' => $card['age'],
+                    );
+                    self::setSelectionRange($options);
+                    self::trace('playerTurn->preSelectionMove');
+                    $this->gamestate->nextState('preSelectionMove');
+                    return;
+                }
+
                 // NOTE: This logic relies on the (correct) assumption that whenever there is a resource icon in the
                 // top-midddle of the card that is age 5 or earlier (or using 3rd edition or earlier), that means that
                 // it is a Search icon.
@@ -9393,10 +9410,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $nested_card_state = self::getCurrentNestedCardState();
 
-        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
         if ($nested_card_state == null) {
             $card_id = $this->innovationGameState->get('melded_card_id');
             $code = null;
+            $current_effect_type = -1;
+            $current_effect_number = -1;
         } else {
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
@@ -24525,11 +24544,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         $nested_card_state = self::getCurrentNestedCardState();
 
-        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
         if ($nested_card_state == null) {
             $code = null;
             $step = 1;
             $step_max = 1;
+            $current_effect_type = -1;
+            $current_effect_number = -1;
         } else {
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
@@ -27757,7 +27778,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
         if ($nested_card_state == null) {
             self::trace('interInteractionStep->digArtifact');
             $this->gamestate->nextState('digArtifact');
@@ -27802,9 +27823,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             $nested_card_state = self::getCurrentNestedCardState();
 
-            // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+            // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
             if ($nested_card_state == null) {
                 $code = null;
+                $current_effect_type = -1;
+                $current_effect_number = -1;
             } else {
                 $card_id = $nested_card_state['card_id'];
                 $current_effect_type = $nested_card_state['current_effect_type'];
@@ -28102,9 +28125,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $nested_card_state = self::getCurrentNestedCardState();
 
-        // There won't be any nested card state if a player is returning cards after the Search icon was triggered.
+        // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
         if ($nested_card_state == null) {
             $code = null;
+            $current_effect_type = -1;
+            $current_effect_number = -1;
         } else {
             $card_id = $nested_card_state['card_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
