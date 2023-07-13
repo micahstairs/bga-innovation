@@ -10948,7 +10948,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (493 <= $card_id && $card_id <= 494)
-            || (505 <= $card_id && $card_id <= 507)
+            || (505 <= $card_id && $card_id <= 508)
             || $card_id == 509
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
@@ -16418,29 +16418,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 506, Unseen age 3: Secret Secretorum
             case "506N1":
-                break;
-                
-            // id 508, Unseen age 3: Red Envelope
-            case "508N1":
-                $hand_cards = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                $score_cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                $age_array = array();
-                for ($age = 1; $age < 12; $age++) {
-                    if ($hand_cards[$age] + $score_cards[$age] == 2 || 
-                    $hand_cards[$age] + $score_cards[$age] == 3) {
-                        $age_array[] = $age;
-                    }
-                }
-                if (count($age_array) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($age_array);
-                }
-                break;
-
-            case "508N2":
-                if (self::countCardsInHand($player_id) >= 2) {
-                    $step_max = 1;
-                }
                 break;
 
             // id 510, Unseen age 3: Smuggling
@@ -24270,33 +24247,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 508, Unseen age 3: Red Envelope
-        case "508N1A":
-            // "Choose a value of which you have exactly two or three cards altogether in your hand and score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "508N2A":
-            // "You may score exactly two or three cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 2,
-                'n_max' => 3,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-            );
-            break;
-
         // id 510, Unseen age 3: Smuggling
         case "510D1A":
             // "I demand you transfer a card of value equal to the top yellow card on your board"
@@ -27706,20 +27656,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 508, Unseen age 3: Red Envelope
-                case "508N1A":
-                    // "Transfer those cards to the score pile of the player on your right."
-                    $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand');
-                    $score_cards = self::getCardsInLocationKeyedByAge($player_id, 'score');
-                    $dest_player_id = self::getActivePlayerIdOnRightOfActingPlayer();
-                    foreach ($hand_cards[self::getAuxiliaryValue()] as $card) {
-                        self::transferCardFromTo($card, $dest_player_id, 'score');
-                    }
-                    foreach ($score_cards[self::getAuxiliaryValue()] as $card) {
-                        self::transferCardFromTo($card, $dest_player_id, 'score');
-                    }
-                    break;
-
                 // id 511, Unseen age 3: Freemasons
                 case "511N1A":
                     if ($n > 0) { 
@@ -29178,13 +29114,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color_in_clear = self::getColorInClear($choice);
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => $color_in_clear));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => $color_in_clear));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 508, Unseen age 3: Red Envelope
-            case "508N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
