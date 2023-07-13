@@ -12280,14 +12280,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($this->innovationGameState->usingFourthEditionRules()) {
                         // "junk each player's non-achievement cards, and the dogma action is complete!"
                         // The above action already removes the hands, boards, and score piles.
-                        // In fourth edition, display (artifacts) and forecast (echoes) needs to be
-                        // removed as well.
-                        // TODO(4E): Remove new locations too.
+                        // In fourth edition, safe (unseen, display (artifacts) and forecast (echoes) needs
+                        // to be removed as well.
                         foreach (self::getAllPlayerIds() as $player) {
                             foreach (self::getCardsInLocation($player, 'display') as $display_card) {
                                 self::junkCard($display_card);
                             }
                             foreach (self::getCardsInLocation($player, 'forecast') as $forecast_card) {
+                                self::junkCard($forecast_card);
+                            }
+                            foreach (self::getCardsInLocation($player, 'safe') as $forecast_card) {
                                 self::junkCard($forecast_card);
                             }
                         }
