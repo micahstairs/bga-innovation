@@ -3105,7 +3105,7 @@ class Innovation extends BgaGame {
         }
         if (icon <= 7) {
             let div = `<div class="square_card_icon ${size} color_${card.color} ${icon_location} icon_${icon}"></div>`;
-            if (icon != null && icon_location == 'top_center_icon') {
+            if (icon != null && icon_location == 'top_center_icon' && (!this.gamedatas.fourth_edition || card.age <= 5)) {
                 div += `<div class="city_search_icon ${size} color_${card.color}"></div>`;
             }
             return div;

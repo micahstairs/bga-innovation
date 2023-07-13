@@ -2846,7 +2846,7 @@ var Innovation = /** @class */ (function (_super) {
         }
         if (icon <= 7) {
             var div = "<div class=\"square_card_icon ".concat(size, " color_").concat(card.color, " ").concat(icon_location, " icon_").concat(icon, "\"></div>");
-            if (icon != null && icon_location == 'top_center_icon') {
+            if (icon != null && icon_location == 'top_center_icon' && (!this.gamedatas.fourth_edition || card.age <= 5)) {
                 div += "<div class=\"city_search_icon ".concat(size, " color_").concat(card.color, "\"></div>");
             }
             return div;
