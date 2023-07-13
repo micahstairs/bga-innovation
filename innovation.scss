@@ -2480,7 +2480,7 @@
         &.bonus_value {
             width: 20px;
             height: 22px;
-            background-size: 230px auto;
+            background-size: 235px auto;
             background-position-y: -40px;
 
             &.top_left_icon {
@@ -2514,14 +2514,12 @@
             }
         }
 
-        // 1, -20, -41 -63, -83, -104, -125, -146, -167, -188, -209
-        // 22.2029 −21.2258x^0.995702
-        @include m.generate-bonus-x-position-equation(1, 11, 22.2029px, 21.2258, 0.995702);
+        @include m.generate-bonus-x-position(1, 12, -1, 19.5px);
 
         &.bonus_color {
             width: 36px;
             height: 36px;
-            background-size: 230px auto;
+            background-size: 235px auto;
             background-position-y: -1px;
 
             &.top_left_icon {
@@ -2586,19 +2584,17 @@
             }
 
             &.top_right_icon {
-                top: 25px;
+                top: 44px;
                 right: 43px;
             }
 
             &.top_center_icon {
-                top: 25px;
+                top: 44px;
                 left: 211px;
             }
         }
 
-        //1,-41,-85,-128,-171,-213,-256,-298,-342,-384,-427
-        // 44.6125 −43.3471x^0.995277
-        @include m.generate-bonus-x-position-equation(1, 11, 44.6125px, 43.3471, 0.995277);
+        @include m.generate-bonus-x-position(1, 12, -1, 39px);
 
         &.bonus_color {
             width: 76px;
@@ -2637,7 +2633,7 @@
             }
         }
 
-        @include m.generate-color-x-position(0, 4, -1, 77.5px);
+        @include m.generate-color-x-position(0, 4, -1, 76px);
     }
 }
 
