@@ -3429,7 +3429,7 @@ class Innovation extends BgaGame {
         setTimeout(function () {
             for (let a = 1; a <= 11; a++) {
                 let opacity = document.getElementById(`deck_0_${a}`)!.childElementCount > 0 ? '1.0' : '0.35';
-                for (let t = 1; t <= 4; t++) {
+                for (let t = 1; t <= 5; t++) {
                     let deck = document.getElementById(`deck_${t}_${a}`);
                     if (deck != null) {
                         deck.parentElement!.style.opacity = opacity;

@@ -3147,7 +3147,7 @@ var Innovation = /** @class */ (function (_super) {
         setTimeout(function () {
             for (var a = 1; a <= 11; a++) {
                 var opacity = document.getElementById("deck_0_".concat(a)).childElementCount > 0 ? '1.0' : '0.35';
-                for (var t = 1; t <= 4; t++) {
+                for (var t = 1; t <= 5; t++) {
                     var deck = document.getElementById("deck_".concat(t, "_").concat(a));
                     if (deck != null) {
                         deck.parentElement.style.opacity = opacity;
