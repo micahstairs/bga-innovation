@@ -7802,6 +7802,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         case 14: // Plus: Draw a card of value one higher than the city's age
                             self::executeDraw($player_id, $card['age'] + 1);
                             break;
+                        case 16: // Uplift: Junk the deck one higher than this city, then draw a card of value one higher than that
+                            self::junkBaseDeck($card['age'] + 1);
+                            self::executeDraw($player_id, $card['age'] + 2);
+                            break;
                         case 17: // Unsplay: Each opponent unsplays this color
                             foreach (self::getActiveOpponentIds($player_id) as $opponent_id) {
                                 self::unsplay($opponent_id, $opponent_id, $card['color']);
