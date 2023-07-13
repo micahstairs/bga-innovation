@@ -2112,6 +2112,21 @@
 .city_special_icon.M.icon_14 {
   background-position-y: -1px;
 }
+.city_special_icon.M.icon_15 {
+  background-image: url("img/new_cities_icons.png");
+  background-size: 205px auto;
+  background-position-y: -1px;
+}
+.city_special_icon.M.icon_16 {
+  background-image: url("img/new_cities_icons.png");
+  background-size: 205px auto;
+  background-position-y: -42px;
+}
+.city_special_icon.M.icon_17 {
+  background-image: url("img/new_cities_icons.png");
+  background-size: 205px auto;
+  background-position-y: -83px;
+}
 .city_special_icon.M.color_0 {
   background-position-x: -1px;
 }
@@ -2151,6 +2166,21 @@
 }
 .city_special_icon.L.icon_14 {
   background-position-y: -1px;
+}
+.city_special_icon.L.icon_15 {
+  background-image: url("img/new_cities_icons.png");
+  background-size: 410px auto;
+  background-position-y: -1px;
+}
+.city_special_icon.L.icon_16 {
+  background-image: url("img/new_cities_icons.png");
+  background-size: 410px auto;
+  background-position-y: -83px;
+}
+.city_special_icon.L.icon_17 {
+  background-image: url("img/new_cities_icons.png");
+  background-size: 410px auto;
+  background-position-y: -165px;
 }
 .city_special_icon.L.color_0 {
   background-position-x: -1px;

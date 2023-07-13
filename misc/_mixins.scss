@@ -57,6 +57,9 @@
 @mixin city-special-icon-background {
     background-image: url('img/cities_special_icons.png');
 }
+@mixin new-city-special-icons {
+    background-image: url('img/new_cities_icons.png');
+}
 @mixin bonus-background {
     background-image: url('img/bonus_icons.png');
 }

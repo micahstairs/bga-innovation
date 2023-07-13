@@ -1756,7 +1756,7 @@
         &.icon_11,
         &.icon_12,
         &.icon_13 {
-            background-image: url("img/cities_special_icons.png");
+            @include m.city-special-icon-background;
             filter: grayscale(1);
             background-size: 115px auto;
             width: 20px;
@@ -2350,6 +2350,24 @@
             background-position-y: -1px;
         }
 
+        &.icon_15 {
+            @include m.new-city-special-icons;
+            background-size: 205px auto;
+            background-position-y: -1px;
+        }
+
+        &.icon_16 {
+            @include m.new-city-special-icons;
+            background-size: 205px auto;
+            background-position-y: -42px;
+        }
+
+        &.icon_17 {
+            @include m.new-city-special-icons;
+            background-size: 205px auto;
+            background-position-y: -83px;
+        }
+
         &.color_0 {
             background-position-x: -1px;
         }
@@ -2402,6 +2420,24 @@
 
         &.icon_14 {
             background-position-y: -1px;
+        }
+
+        &.icon_15 {
+            @include m.new-city-special-icons;
+            background-size: 410px auto;
+            background-position-y: -1px;
+        }
+
+        &.icon_16 {
+            @include m.new-city-special-icons;
+            background-size: 410px auto;
+            background-position-y: -83px;
+        }
+
+        &.icon_17 {
+            @include m.new-city-special-icons;
+            background-size: 410px auto;
+            background-position-y: -165px;
         }
 
         &.color_0 {
