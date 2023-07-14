@@ -9165,9 +9165,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 60: // Metric System
                 $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT);
-                $top_green_card = self::getTopCardOnBoard($executing_player_id, self::GREEN);
                 // The second non-demand effect has no effect if the player's green pile is not or cannot be splayed right
-                if ($top_green_card['splay_direction'] != 2 && !in_array(self::GREEN, $right_splayable_colors)) {
+                if (self::getCurrentSplayDirection($executing_player_id, self::GREEN) != self::RIGHT && !in_array(self::GREEN, $right_splayable_colors)) {
                     return true;
                 }
                 // The non-demand effects have no effect if the player has no piles that can be splayed right
