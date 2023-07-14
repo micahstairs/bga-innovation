@@ -508,6 +508,9 @@ class Innovation extends Table
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 220 <= id AND id <= 324");
             if ($edition == 4) {
                 self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 460 <= id AND id <= 469");
+                // In the 4th editions, Cities cannot be dogma'd.
+                self::DbQuery("UPDATE card SET dogma_icon = 'NULL' WHERE 220 <= id AND id <= 324");
+                self::DbQuery("UPDATE card SET dogma_icon = 'NULL' WHERE 460 <= id AND id <= 469");
             }
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
             if ($edition <= 3) {
@@ -7507,8 +7510,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $player_id = self::getCurrentPlayerId();
         $card = self::getArtifactOnDisplay($player_id);
 
-        // Battleship Yamato does not have any icons on it so it cannot be executed
-        if ($card['dogma_icon'] == null) {
+        // Cards without a featured icon cannot be dogma'd
+        if (!$card['dogma_icon']) {
             self::throwInvalidChoiceException();
         }
 
@@ -8038,8 +8041,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!self::isTopBoardCard($card)) {
             self::throwInvalidChoiceException();
         }
-        // Battleship Yamato does not have any icons on it so it cannot be executed
-        if ($card['dogma_icon'] == null) {
+        // Cards without a featured icon cannot be dogma'd
+        if (!$card['dogma_icon']) {
             self::throwInvalidChoiceException();
         }
         
@@ -8077,8 +8080,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!self::isTopBoardCard($card_to_endorse)) {
             self::throwInvalidChoiceException();
         }
-        // Battleship Yamato does not have any icons on it so it cannot be executed
-        if ($card_to_endorse['dogma_icon'] == null) {
+        // Cards without a featured icon cannot be dogma'd
+        if (!$card_to_endorse['dogma_icon']) {
             self::throwInvalidChoiceException();
         }
 
@@ -8184,11 +8187,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         
         $players = self::getCollectionFromDB(self::format("SELECT player_index, player_id, player_team, {icon_column} FROM player", array('icon_column' => $icon_column)));
         
-        // Compare players ressources on dogma icon_count;
+        // Count how many each player has of the featured icon
         $player_index = self::playerIdToPlayerIndex($player_id);
         $dogma_player_icon_count = $players[$player_index][$icon_column] + $extra_icons_from_artifact_on_display;
-        
-        // Count each player ressources
         foreach ($players as $index => $player) {
             $player_icon_count = $index == $player_index ? $dogma_player_icon_count : $player[$icon_column];
             self::notifyPlayerRessourceCount($player['player_id'], $dogma_icon, $player_icon_count);
@@ -8605,6 +8606,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function argPlayerArtifactTurn() {
         $player_id = $this->innovationGameState->get('active_player');
         $card = self::getArtifactOnDisplay($player_id);
+        // TODO(4E): Make sure this works with Battleship Yamato
         return array(
             '_private' => array(
                 'active' => array( // "Active" player only
@@ -8720,11 +8722,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getDogmaEffectInfoOfTopCards($launcher_id, $non_adjacent_player_ids=[]) {
         $dogma_effect_info = array();
         foreach (self::getTopCardsOnBoard($launcher_id) as $top_card) {
-            $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+            if ($top_card['dogma_icon']) {
+                $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+            }
         }
         foreach ($non_adjacent_player_ids as $player_id) {
             foreach (self::getTopCardsOnBoard($player_id) as $top_card) {
-                $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+                if ($top_card['dogma_icon']) {
+                    $dogma_effect_info[$top_card['id']] = self::getDogmaEffectInfo($top_card, $launcher_id);
+                }
             }
         }
         return $dogma_effect_info;
@@ -8733,11 +8739,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Returns dogma effect information of the specified card. */
     function getDogmaEffectInfo($card, $launcher_id, $is_on_display = false) {
         $dogma_effect_info = array();
-
-        // Battleship Yamato does not have any icons on it so it cannot be executed
-        if ($card['dogma_icon'] == null) {
-            return $dogma_effect_info;
-        }
 
         $dogma_icon = $card['dogma_icon'];
         $resource_column = 'player_icon_count_' . $dogma_icon;

@@ -1221,7 +1221,6 @@ class Innovation extends BgaGame {
                     cards_on_non_adjacent_board.addClass("clickable");
                     this.on(cards_on_non_adjacent_board, 'onclick', 'action_clickNonAdjacentDogma');
 
-
                     // Cards on board (endorse action)
                     // TODO(4E-CITIES): Make it possible to endorse dogmas on non-adjacent boards.
                     let endorsable_cards = this.selectMyTopCardsEligibleForEndorsedDogma(args.args._private.dogma_effect_info);
@@ -2317,15 +2316,13 @@ class Innovation extends BgaGame {
         cards.forEach(function (card) {
             let HTML_id = dojo.attr(card, "id");
             let id = self.getCardIdFromHTMLId(HTML_id);
-            if (dogma_effect_info[id].max_age_for_endorse_payment != undefined) {
-                dojo.attr(HTML_id, 'max_age_for_endorse_payment', dogma_effect_info[id].max_age_for_endorse_payment);
-            }
-            dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id].no_effect);
             dojo.attr(HTML_id, 'card_id', id);
-            dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
-            dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
-            dojo.attr(HTML_id, 'sharing_players', dogma_effect_info[id].sharing_players.join(','));
-            dojo.attr(HTML_id, 'on_non_adjacent_board', dogma_effect_info[id].on_non_adjacent_board);
+            dojo.attr(HTML_id, 'max_age_for_endorse_payment', dogma_effect_info[id]?.max_age_for_endorse_payment);
+            dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id]?.no_effect);
+            dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id]?.players_executing_non_demand_effects.join(','));
+            dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id]?.players_executing_echo_effects.join(','));
+            dojo.attr(HTML_id, 'sharing_players', dogma_effect_info[id]?.sharing_players.join(','));
+            dojo.attr(HTML_id, 'on_non_adjacent_board', dogma_effect_info[id]?.on_non_adjacent_board);
         });
     }
 
@@ -2461,11 +2458,16 @@ class Innovation extends BgaGame {
     createActionTextForDogma(self: Innovation, card: Card, dogma_effect_info: any, card_location: string): string {
         let info = dogma_effect_info[card.id];
 
+        // Some cards (i.e. Battleship Yamato and City cards) are not able to be executed
+        if (!info) {
+            return "";
+        }
+
         let on_display = card_location == 'display';
         let exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
         let exists_i_compel_effect = card.i_demand_effect_1_is_compel;
         let exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
-        let can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment != undefined;
+        let can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment;
         let on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
 
         if (info.no_effect) {
@@ -2761,9 +2763,9 @@ class Innovation extends BgaGame {
                     continue;
                 }
                 let top_card = pile[pile.length - 1];
-                // Battleship Yamato does not have any icons on it so it cannot be executed
                 let card_id = this.getCardIdFromHTMLId(top_card.id);
-                if (card_id != 188) {
+                // Only cards with a featured icon can be dogma'd
+                if (Number(this.cards[card_id].dogma_icon) != 0) {
                     list.push(dojo.byId(top_card.id));
                 }
             }
@@ -2781,7 +2783,8 @@ class Innovation extends BgaGame {
             }
             let top_card = pile[pile.length - 1];
             let card_id = this.getCardIdFromHTMLId(top_card.id);
-            if (dogma_effect_info[card_id].max_age_for_endorse_payment != undefined) {
+            // Only cards with a featured icon can be dogma'd
+            if (Number(this.cards[card_id].dogma_icon) != 0 && dogma_effect_info[card_id]?.max_age_for_endorse_payment) {
                 list.push(dojo.byId(top_card.id));
             }
         }

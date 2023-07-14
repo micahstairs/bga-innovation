@@ -2139,17 +2139,16 @@ var Innovation = /** @class */ (function (_super) {
         this.addTooltipsWithActionsTo(cards, this.createActionTextForDogma, dogma_effect_info, 'board');
         var self = this;
         cards.forEach(function (card) {
+            var _a, _b, _c, _d, _e, _f;
             var HTML_id = dojo.attr(card, "id");
             var id = self.getCardIdFromHTMLId(HTML_id);
-            if (dogma_effect_info[id].max_age_for_endorse_payment != undefined) {
-                dojo.attr(HTML_id, 'max_age_for_endorse_payment', dogma_effect_info[id].max_age_for_endorse_payment);
-            }
-            dojo.attr(HTML_id, 'no_effect', dogma_effect_info[id].no_effect);
             dojo.attr(HTML_id, 'card_id', id);
-            dojo.attr(HTML_id, 'non_demand_effect_players', dogma_effect_info[id].players_executing_non_demand_effects.join(','));
-            dojo.attr(HTML_id, 'echo_effect_players', dogma_effect_info[id].players_executing_echo_effects.join(','));
-            dojo.attr(HTML_id, 'sharing_players', dogma_effect_info[id].sharing_players.join(','));
-            dojo.attr(HTML_id, 'on_non_adjacent_board', dogma_effect_info[id].on_non_adjacent_board);
+            dojo.attr(HTML_id, 'max_age_for_endorse_payment', (_a = dogma_effect_info[id]) === null || _a === void 0 ? void 0 : _a.max_age_for_endorse_payment);
+            dojo.attr(HTML_id, 'no_effect', (_b = dogma_effect_info[id]) === null || _b === void 0 ? void 0 : _b.no_effect);
+            dojo.attr(HTML_id, 'non_demand_effect_players', (_c = dogma_effect_info[id]) === null || _c === void 0 ? void 0 : _c.players_executing_non_demand_effects.join(','));
+            dojo.attr(HTML_id, 'echo_effect_players', (_d = dogma_effect_info[id]) === null || _d === void 0 ? void 0 : _d.players_executing_echo_effects.join(','));
+            dojo.attr(HTML_id, 'sharing_players', (_e = dogma_effect_info[id]) === null || _e === void 0 ? void 0 : _e.sharing_players.join(','));
+            dojo.attr(HTML_id, 'on_non_adjacent_board', (_f = dogma_effect_info[id]) === null || _f === void 0 ? void 0 : _f.on_non_adjacent_board);
         });
     };
     Innovation.prototype.addTooltipWithMeldActionToMyArtifactOnDisplay = function (meld_info, city_draw_age, city_draw_type) {
@@ -2270,11 +2269,15 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.createActionTextForDogma = function (self, card, dogma_effect_info, card_location) {
         var info = dogma_effect_info[card.id];
+        // Some cards (i.e. Battleship Yamato and City cards) are not able to be executed
+        if (!info) {
+            return "";
+        }
         var on_display = card_location == 'display';
         var exists_i_demand_effect = card.i_demand_effect_1 !== undefined && !card.i_demand_effect_1_is_compel;
         var exists_i_compel_effect = card.i_demand_effect_1_is_compel;
         var exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
-        var can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment != undefined;
+        var can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment;
         var on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
         if (info.no_effect) {
             return "<p class='warning'>" + _('Activating this card will have no effect.') + "</p>";
@@ -2542,9 +2545,9 @@ var Innovation = /** @class */ (function (_super) {
                     continue;
                 }
                 var top_card = pile[pile.length - 1];
-                // Battleship Yamato does not have any icons on it so it cannot be executed
                 var card_id = this.getCardIdFromHTMLId(top_card.id);
-                if (card_id != 188) {
+                // Only cards with a featured icon can be dogma'd
+                if (Number(this.cards[card_id].dogma_icon) != 0) {
                     list.push(dojo.byId(top_card.id));
                 }
             }
@@ -2552,6 +2555,7 @@ var Innovation = /** @class */ (function (_super) {
         return list;
     };
     Innovation.prototype.selectMyTopCardsEligibleForEndorsedDogma = function (dogma_effect_info) {
+        var _a;
         var player_board = this.zone["board"][this.player_id];
         var list = new dojo.NodeList();
         for (var color = 0; color < 5; color++) {
@@ -2561,7 +2565,8 @@ var Innovation = /** @class */ (function (_super) {
             }
             var top_card = pile[pile.length - 1];
             var card_id = this.getCardIdFromHTMLId(top_card.id);
-            if (dogma_effect_info[card_id].max_age_for_endorse_payment != undefined) {
+            // Only cards with a featured icon can be dogma'd
+            if (Number(this.cards[card_id].dogma_icon) != 0 && ((_a = dogma_effect_info[card_id]) === null || _a === void 0 ? void 0 : _a.max_age_for_endorse_payment)) {
                 list.push(dojo.byId(top_card.id));
             }
         }
