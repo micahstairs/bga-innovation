@@ -1572,9 +1572,10 @@ $this->textual_card_infos = array(
     ),
 
     338 => array(
-        'name'                => clienttranslate('Umbrella'),
-        'echo_effect_1'       => clienttranslate('You may meld a card from your hand.'),
-        'non_demand_effect_1' => clienttranslate('Return any number of cards from your hand. Score two cards from your hand for every card you returned.'),
+        'name'                                => clienttranslate('Umbrella'),
+        'echo_effect_1'                       => clienttranslate('You may meld a card from your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return any number of cards from your hand. Score two cards from your hand for every card you returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return any number of cards from your hand. Score two cards from your hand for every card you return.'),
     ),
 
     339 => array(
@@ -1590,8 +1591,9 @@ $this->textual_card_infos = array(
     ),
 
     341 => array(
-        'name'                => clienttranslate('Soap'),
-        'non_demand_effect_1' => clienttranslate('Choose a color. You may tuck any number of cards of that color from your hand. If you tucked at least three, you may achieve (if eligible) a card from your hand.'),
+        'name'                                => clienttranslate('Soap'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color. You may tuck any number of cards of that color from your hand. If you tucked at least three, you may achieve (if eligible) a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color. You may tuck any number of cards of that color from your hand. If you tuck three or more, you may achieve (if eligible) a card from your hand.'),
     ),
 
     342 => array(
