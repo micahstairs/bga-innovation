@@ -2187,6 +2187,8 @@ class Innovation extends Table
     }
     
     function notifyWithOnePlayerInvolved($card, $transferInfo, $progressInfo) {
+        $is_special_achievement = $card['age'] === null;
+
         $location_from = $transferInfo['location_from'];
         $location_to = $transferInfo['location_to'];
         $owner_from = $transferInfo['owner_from'];
@@ -2255,6 +2257,9 @@ class Innovation extends Table
             $from_somewhere_for_player = clienttranslate(' from the junk');
             $from_somewhere_for_others = clienttranslate(' from the junk');
         } else if ($location_from === 'revealed') {
+            $visible_for_player = true;
+            $visible_for_others = true;
+        } else if ($location_from === 'flags' || $location_from === 'fountains') {
             $visible_for_player = true;
             $visible_for_others = true;
         }
@@ -2374,14 +2379,39 @@ class Innovation extends Table
         } else if ($location_to === 'removed') {
             $action_for_player = clienttranslate('remove');
             $action_for_others = clienttranslate('removes');
+        } else if ($location_to === 'flags' || $location_to === 'fountains') {
+            $visible_for_player = true;
+            $visible_for_others = true;
         }
 
         // Choose a pattern for the messages, depending on the context of the card transfer
         $notif_args_for_player = [];
         $notif_args_for_player['You'] = 'You';
         $notif_args_for_player['your'] = 'your';
+        if ($visible_for_player || $is_special_achievement) {
+            $notif_args_for_player['i18n'] = ['name'];
+            $notif_args_for_player['name'] = self::getCardName($card['id']);
+            // TODO(LATER): We should stop sending the properties of the card which aren't actually used.
+            $notif_args_for_player = array_merge($notif_args_for_player, $card);
+        } else {
+            $notif_args_for_player['age'] = $card['age'];
+            $notif_args_for_player['type'] = $card['type'];
+            $notif_args_for_player['is_relic'] = $card['is_relic'];
+        }
         $notif_args_for_others = [];
         $notif_args_for_others['player_name'] = self::getPlayerNameFromId($transferInfo['player_id']);
+        if ($visible_for_others || $is_special_achievement) {
+            $notif_args_for_others['i18n'] = ['name'];
+            $notif_args_for_others['name'] = self::getCardName($card['id']);
+            // TODO(LATER): We should stop sending the properties of the card which aren't actually used.
+            $notif_args_for_others = array_merge($notif_args_for_others, $card);
+        } else {
+            $notif_args_for_others['age'] = $card['age'];
+            $notif_args_for_others['type'] = $card['type'];
+            $notif_args_for_others['is_relic'] = $card['is_relic'];
+        }
+
+
         if ($location_from === 'fountains') {
             $message_for_player = clienttranslate('A fountain became visible on ${your} board so it now counts as an achievement.');
             $message_for_others = clienttranslate('A fountain became visible on ${player_name}\'s board so it now counts as an achievement.');
@@ -2401,46 +2431,19 @@ class Innovation extends Table
             $notif_args_for_others['action'] = $action_for_others;
             $notif_args_for_others['from_somewhere'] = $from_somewhere_for_others;
             $notif_args_for_others['to_somewhere'] = $to_somewhere_for_others;
-            if ($card['age'] === null) { // Special achievement
+            if ($is_special_achievement) {
                 $message_for_player = clienttranslate('${You} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.');
                 $message_for_others = clienttranslate('${player_name} ${action} ${<<<}${name}${>>>}${from_somewhere}${to_somewhere}.');
-                // TODO(LATER): We can deduplicate the following since notif_args_for_player and notif_args_for_others are the same.
-                $notif_args_for_player['i18n'] = array('name');
-                $notif_args_for_player['age'] = $card['age'];
-                $notif_args_for_player['type'] = $card['type'];
-                $notif_args_for_player['is_relic'] = $card['is_relic'];
-                $notif_args_for_player['id'] = $card['id'];
-                $notif_args_for_player['name'] = self::getCardName($card['id']);
-                $notif_args_for_others['i18n'] = array('name');
-                $notif_args_for_others['age'] = $card['age'];
-                $notif_args_for_others['type'] = $card['type'];
-                $notif_args_for_others['is_relic'] = $card['is_relic'];
-                $notif_args_for_others['id'] = $card['id'];
-                $notif_args_for_others['name'] = self::getCardName($card['id']);
             } else {
                 if ($visible_for_player) {
                     $message_for_player = clienttranslate('${You} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
-                    $notif_args_for_player['i18n'] = array('name');
-                    $notif_args_for_player['name'] = self::getCardName($card['id']);
-                    // TODO(LATER): We should stop sending the card's properties which aren't actually used.
-                    $notif_args_for_player = array_merge($notif_args_for_player, $card);
                 } else {
                     $message_for_player = clienttranslate('${You} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
-                    $notif_args_for_player['age'] = $card['age'];
-                    $notif_args_for_player['type'] = $card['type'];
-                    $notif_args_for_player['is_relic'] = $card['is_relic'];
                 }
                 if ($visible_for_others) {
                     $message_for_others = clienttranslate('${player_name} ${action} ${<}${age}${>} ${<<}${name}${>>}${from_somewhere}${to_somewhere}.');
-                    $notif_args_for_others['i18n'] = array('name');
-                    $notif_args_for_others['name'] = self::getCardName($card['id']);
-                    // TODO(LATER): We should stop sending the card's properties which aren't actually used.
-                    $notif_args_for_others = array_merge($notif_args_for_others, $card);
                 } else {
                     $message_for_others = clienttranslate('${player_name} ${action} a ${<}${age}${>}${from_somewhere}${to_somewhere}.');
-                    $notif_args_for_others['age'] = $card['age'];
-                    $notif_args_for_others['type'] = $card['type'];
-                    $notif_args_for_others['is_relic'] = $card['is_relic'];
                 }
             }
         }
