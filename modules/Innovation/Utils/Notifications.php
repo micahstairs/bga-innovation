@@ -70,28 +70,28 @@ class Notifications
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name}\'s safe was already full so the card was not transferred to his safe.'), ['player_name' => self::getColoredPlayerName($playerId)]);
   }
 
-  private function getIconSquare(int $icon): string
+  public function getIconSquare(int $icon): string
   {
     return $this->game->getIconSquare($icon);
   }
 
-  private function getAgeSquare(int $age): string
+  public function getAgeSquare(int $age): string
   {
     return $this->game->getAgeSquare($age);
   }
 
-  function getColoredText($text, $playerId): string
+  public function getColoredText($text, $playerId): string
   {
     $color = $this->game->getPlayerColorFromId($playerId);
     return "<span style='font-weight: bold; color:#" . $color . ";'>" . $text . "</span>";
   }
 
-  function getColoredPlayerName($playerId): string
+  public function getColoredPlayerName($playerId): string
   {
     return self::getColoredText($this->game->getPlayerNameFromId($playerId), $playerId);
   }
 
-  function notifyPlayerLoses(int $playerId): void
+  public function notifyPlayerLoses(int $playerId): void
   {
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} lose.'),  ['You' => 'You']);
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} loses.'), array(
@@ -99,24 +99,24 @@ class Notifications
     ));
   }
 
-  function notifyTeamLoses(int $playerId1, int $playerId2): void
+  public function notifyTeamLoses(int $playerId1, int $playerId2): void
   {
     $this->game->notifyPlayer($playerId1, 'log', clienttranslate('${Your} team loses.'), ['Your' => 'Your']);
     $this->game->notifyPlayer($playerId2, 'log', clienttranslate('${Your} team loses.'), ['Your' => 'Your']);
     $this->game->notifyAllPlayersBut([$playerId1, $playerId2], 'log', clienttranslate('The other team loses.'));
   }
 
-  function notifyPlayer($playerId, $type, $message, $args)
+  public function notifyPlayer($playerId, $type, $message, $args)
   {
     $this->game->notifyPlayer($playerId, $type, $message, $args);
   }
 
-  function notifyAllPlayersBut($playerId, $type, $message, $args)
+  public function notifyAllPlayersBut($playerId, $type, $message, $args)
   {
     $this->game->notifyAllPlayersBut($playerId, $type, $message, $args);
   }
 
-  function notifyGeneralInfo($message, $args)
+  public function notifyGeneralInfo($message, $args)
   {
     $this->game->notifyGeneralInfo($message, $args);
   }
