@@ -2933,7 +2933,7 @@ class Innovation extends Table
         self::notifyAllPlayersBut(array($transferInfo['player_id'], $transferInfo['opponent_id']), "transferedCard", $message_for_others, $notif_args_for_others);
     }
         
-    function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {
+    function getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $opponent_id_is_owner_from, $opponent_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards) {
     
         // TODO(4E): Pass these keywords in.
         $safeguard_keyword = false;
@@ -2964,17 +2964,27 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from your hand');
                 $from_somewhere_for_opponent = clienttranslate(' from his hand');
                 $from_somewhere_for_others = clienttranslate(' from his hand');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s hand');
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} hand');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s hand');
+            }
+        } else if ($location_from === 'board') {
+            if ($player_id_is_owner_from) {
+                $from_somewhere_for_player = clienttranslate(' from your board');
+                $from_somewhere_for_opponent = clienttranslate(' from his board');
+                $from_somewhere_for_others = clienttranslate(' from his board');
+            } else if ($opponent_id_is_owner_from) {
+                $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s board');
+                $from_somewhere_for_opponent = clienttranslate(' from ${your} board');
+                $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s board');
             }
         } else if ($location_from === 'score') {
             if ($player_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from your score pile');
                 $from_somewhere_for_opponent = clienttranslate(' from his score pile');
                 $from_somewhere_for_others = clienttranslate(' from his score pile');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s score pile');
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} score pile');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s score pile');
@@ -2984,7 +2994,7 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from your safe');
                 $from_somewhere_for_opponent = clienttranslate(' from his safe');
                 $from_somewhere_for_others = clienttranslate(' from his safe');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_from) {
                 $from_somewhere_for_player = clienttranslate(' from ${opponent_name}\'s safe');
                 $from_somewhere_for_opponent = clienttranslate(' from ${your} safe');
                 $from_somewhere_for_others = clienttranslate(' from ${opponent_name}\'s safe');
@@ -2999,7 +3009,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your hand');
                 $to_somewhere_for_opponent = clienttranslate(' to his hand');
                 $to_somewhere_for_others = clienttranslate(' to his hand');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_to) {
                 $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s hand');
                 $to_somewhere_for_opponent = clienttranslate(' to ${your} hand');
                 $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s hand');
@@ -3011,7 +3021,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your score pile');
                 $to_somewhere_for_opponent = clienttranslate(' to his score pile');
                 $to_somewhere_for_others = clienttranslate(' to his score pile');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_to) {
                 $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s score pile');
                 $to_somewhere_for_opponent = clienttranslate(' to ${your} score pile');
                 $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s score pile');
@@ -3025,7 +3035,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your board');
                 $to_somewhere_for_opponent = clienttranslate(' to his board');
                 $to_somewhere_for_others = clienttranslate(' to his board');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_to) {
                 $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s board');
                 $to_somewhere_for_opponent = clienttranslate(' to ${your} board');
                 $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s board');
@@ -3037,7 +3047,7 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your achievements');
                 $to_somewhere_for_opponent = clienttranslate(' to his achievements');
                 $to_somewhere_for_others = clienttranslate(' to his achievements');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_to) {
                 $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s achievements');
                 $to_somewhere_for_opponent = clienttranslate(' to ${your} achievements');
                 $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s achievements');
@@ -3049,11 +3059,13 @@ class Innovation extends Table
                 $to_somewhere_for_player = clienttranslate(' to your safe');
                 $to_somewhere_for_opponent = clienttranslate(' to his safe');
                 $to_somewhere_for_others = clienttranslate(' to his safe');
-            } else if ($player_id_is_owner_to) {
+            } else if ($opponent_id_is_owner_to) {
                 $to_somewhere_for_player = clienttranslate(' to ${opponent_name}\'s safe');
                 $to_somewhere_for_opponent = clienttranslate(' to ${your} safe');
                 $to_somewhere_for_others = clienttranslate(' to ${opponent_name}\'s safe');
             }
+        } else if ($location_to === 'none') {
+            $action = clienttranslate('choose');
         }
 
         // TODO(4E): Make sure this translates correctly.
@@ -10219,22 +10231,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $n_min = 1;
         }
 
+        $opponent_id = null;
         if ($splay_direction == -1) {
+            // Identification of the potential opponent(s)
+            if ($owner_from == -2 || $owner_from == -3 || $owner_from == -4) {
+                $opponent_id = $owner_from;
+            } else if ($owner_to == -2 || $owner_to == -3 || $owner_to == -4) {
+                $opponent_id = $owner_to;
+            } else if ($owner_from > 0 && $owner_from <> $player_id) {
+                $opponent_id = $owner_from;
+            } else if ($owner_to > 0 && $owner_to <> $player_id) {
+                $opponent_id = $owner_to;
+            }
+
             $player_id_is_owner_from = $owner_from == $player_id;
             $player_id_is_owner_to = $owner_to == $player_id;
-        }
-        
-        // Identification of the potential opponent(s)
-        if ($splay_direction == -1 && ($owner_from == -2 || $owner_from == -3 || $owner_from == -4)) {
-            $opponent_id = $owner_from;
-        } else if ($splay_direction == -1 && ($owner_to == -2 || $owner_to == -3 || $owner_to == -4)) {
-            $opponent_id = $owner_to;
-        } else if ($splay_direction == -1 && $owner_from > 0 && $owner_from <> $player_id) {
-            $opponent_id = $owner_from;
-        } else if ($splay_direction == -1 && $owner_to > 0 && $owner_to <> $player_id) {
-            $opponent_id = $owner_to;
-        } else {
-            $opponent_id = null;
+
+            $opponent_id_is_owner_from = $owner_from == $opponent_id;
+            $opponent_id_is_owner_to = $owner_to == $opponent_id;
         }
         
         if ($opponent_id === null) {
@@ -10299,7 +10313,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         // Creation of the message
-        if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4 || $location_to == 'none') {
+        if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4) {
             if ($splay_direction == -1) {
                 $messages = self::getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
@@ -10314,7 +10328,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
             }
         } else {
-            $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
+            $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $opponent_id_is_owner_from, $opponent_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
             $splay_direction = null;
             $splay_direction_in_clear = null;
         }
@@ -18766,7 +18780,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_from' => $player_id,
                 'location_from' => 'board',
                 'owner_to' => $player_id, // Nothing is to be done with that card
-                'location_to' => 'board',
+                'location_to' => 'none',
                 
                 // Exclude the card currently being executed (it's possible for the effects of Self Service to be executed as if it were on another card)
                 'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],

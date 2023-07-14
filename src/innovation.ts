@@ -5598,7 +5598,7 @@ class Innovation extends BgaGame {
                 if (typeof args.card_name == 'string') {
                     args.card_name = this.getCardChain(args);
                 }
-                if (this.player_id == args.opponent_id) { // Is that player the opponent?
+                if (this.player_id == args.opponent_id && args.message_for_opponent) { // Is that player the opponent?
                     args.message_for_others = args.message_for_opponent;
                 }
             }
