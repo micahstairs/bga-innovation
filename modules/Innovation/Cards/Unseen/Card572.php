@@ -17,16 +17,16 @@ class Card572 extends Card
   {
     if (self::isDemand()) {
       $this->game->revealHand(self::getPlayerId());
+      // Check each active opponent (we technically only need to check opponents which will be executing the non-demand, but doing them all is simpler)
       $colors = self::getUniqueColorsInHand(self::getPlayerId());
-      // Check each active opponent (we technically don't need to check opponents which won't be executing the non-demand, but this is simpler)
       foreach ($this->game->getActiveOpponentIds(self::getPlayerId()) as $opponentId) {
         $opponentColors = self::getUniqueColorsInHand($opponentId);
-        if (count($colors) === count($opponentColors) && array_diff($colors, $opponentColors) == []) {
+        if (count($colors) === count($opponentColors) && !array_diff($colors, $opponentColors) && !array_diff($opponentColors, $colors)) {
           $this->game->setIndexedAuxiliaryValue($opponentId, 1);
         }
       }
-    } else if (self::getEffectNumber() == 1) {
-      if ($this->game->getIndexedAuxiliaryValue(self::getPlayerId())) {
+    } else if (self::getEffectNumber() === 1) {
+      if (count($this->game->getCardsInHand(self::getPlayerId())) > 0 && $this->game->getIndexedAuxiliaryValue(self::getPlayerId())) {
         self::win();
       }
     } else {
