@@ -4145,7 +4145,7 @@ class Innovation extends BgaGame {
             card_id: card_id,
         };
         let card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
-        if (card_id_to_return != "null") {
+        if (card_id_to_return != null) {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
         let self = this;
