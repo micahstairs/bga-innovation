@@ -14,7 +14,14 @@ class Card512 extends Card
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isDemand()) {
+      self::setMaxSteps(1);
+    } else {
+      // There is no need to pick a color if the hand is empty
+      if ($this->game->countCardsInHand(self::getPlayerId()) > 0) {
+        self::setMaxSteps(1);
+      }
+    }
   }
 
   public function getInteractionOptions(): array
