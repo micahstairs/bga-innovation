@@ -47,14 +47,19 @@ class Card517 extends Card
 
   public function afterInteraction()
   {
-    if (self::isDemand() && self::getNumChosen() > 0) {
-      self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
+    if (self::isDemand()) {
+      if (self::getNumChosen() > 0) {
+        self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
+      } else {
+        $this->game->revealHand(self::getPlayerId());
+      }
     }
   }
 
-  public function handleSpecialChoice(int $choice): void
+  public function handleSpecialChoice(int $color): void
   {
-    self::setAuxiliaryValue($choice);
+    $this->notifications->notifyColorChoice($color, self::getPlayerId());
+    self::setAuxiliaryValue($color);
   }
 
 }

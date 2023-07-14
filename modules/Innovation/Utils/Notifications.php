@@ -32,8 +32,15 @@ class Notifications
 
   public function notifyValueChoice(int $value, int $playerId)
   {
-    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($value)));
+    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose the value ${age}.'), ['You' => 'You', 'age' => self::getAgeSquare($value)]);
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::getColoredPlayerName($playerId), 'age' => self::getAgeSquare($value)]);
+  }
+
+  public function notifyColorChoice(int $color, int $playerId)
+  {
+    $colorText = $this->game->getColorInClear($color);
+    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${color}.'), ['i18n' => ['color'], 'You' => 'You', 'color' => $colorText]);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${color}.'), ['i18n' => ['color'], 'player_name' => self::getColoredPlayerName($playerId), 'color' => $colorText]);
   }
 
   public function notifyPlayerChoice(int $chosenPlayerId, int $playerId) {
