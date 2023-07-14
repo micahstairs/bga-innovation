@@ -3754,7 +3754,7 @@ var Innovation = /** @class */ (function (_super) {
             card_id: card_id,
         };
         var card_id_to_return = dojo.attr(HTML_id, 'card_id_to_return');
-        if (card_id_to_return != null) {
+        if (card_id_to_return != null && card_id_to_return != "null") {
             payload["card_id_to_return"] = parseInt(card_id_to_return);
         }
         var self = this;
