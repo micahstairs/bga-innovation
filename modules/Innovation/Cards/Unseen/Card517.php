@@ -47,7 +47,7 @@ class Card517 extends Card
 
   public function afterInteraction()
   {
-    if (self::isDemand()) {
+    if (self::getCurrentStep() === 2) {
       if (self::getNumChosen() > 0) {
         self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
       } else {
