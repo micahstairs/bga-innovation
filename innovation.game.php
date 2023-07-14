@@ -24010,6 +24010,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $player_id,
                 'location_to' => 'score',
 
+                'score_keyword' => true,
+
                 'card_ids_are_in_auxiliary_array' => true,
             );
             break;
