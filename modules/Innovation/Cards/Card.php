@@ -569,7 +569,7 @@ abstract class Card
 
   // MISCELLANEOUS HELPERS
 
-  protected function getPlayerScore(int $playerId = null): int
+  protected function getScore(int $playerId = null): int
   {
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }

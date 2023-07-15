@@ -10970,7 +10970,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 334)
+            || (333 <= $card_id && $card_id <= 335)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14078,11 +14078,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;            
-
-            // id 335, Echoes age 1: Plumbing
-            case "335E1":
-                $step_max = 1;
                 break;
                 
             // id 336, Echoes age 1: Comb
@@ -20921,24 +20916,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'owner_to' => $launcher_id,
                 'location_to' => 'board'
             );
-            break;
-
-        // id 335, Echoes age 1: Plumbing
-        case "335E1A":
-            // "Score a bottom card from your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-
-                'bottom_from' => true,
-            );            
             break;
 
         // id 336, Echoes age 1: Comb

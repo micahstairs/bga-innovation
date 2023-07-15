@@ -18,10 +18,10 @@ class Card334 extends Card
   public function initialExecution()
   {
     if (self::isEcho()) {
-      $playerScore = self::getPlayerScore();
+      $playerScore = self::getScore();
       $minScore = true;
       foreach ($this->game->getOtherActivePlayers(self::getPlayerId()) as $otherPlayerId) {
-        $otherPlayerScore = self::getPlayerScore($otherPlayerId);
+        $otherPlayerScore = self::getScore($otherPlayerId);
         if (self::isFirstOrThirdEdition() && $otherPlayerScore <= $playerScore) {
           $minScore = false;
         } else if (self::isFourthEdition() && $otherPlayerScore < $playerScore) {

@@ -1560,9 +1560,11 @@ $this->textual_card_infos = array(
     ),
 
     335 => array(
-        'name'                => clienttranslate('Plumbing'),
-        'echo_effect_1'       => clienttranslate('Score a bottom card from your board.'),
-        'non_demand_effect_1' => clienttranslate('No effect.'),
+        'name'                                => clienttranslate('Plumbing'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Score a bottom card from your board.'),
+        'echo_effect_1_fourth'                => clienttranslate('Score a bottom blue card from your board.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('No effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Junk all cards in the ${age_1} deck.'),
     ),
 
     336 => array(
