@@ -6,6 +6,9 @@ namespace Innovation\Cards;
 class ExecutionState
 {
 
+  /* The edition of the rules being used */
+  private ?int $edition = null;
+
   /* The player who launched the card currently being executed */
   private ?int $launcherId = null;
 
@@ -35,6 +38,17 @@ class ExecutionState
   function __construct(\Table $game)
   {
       $this->game = $game;
+  }
+
+  function setEdition(?int $edition): ExecutionState
+  {
+    $this->edition = $edition;
+    return $this;
+  }
+
+  function getEdition(): ?int
+  {
+    return $this->edition;
   }
 
   function setLauncherId(?int $launcherId): ExecutionState
@@ -78,6 +92,11 @@ class ExecutionState
   function isNonDemand(): bool
   {
     return $this->effectType === $this->game::NON_DEMAND_EFFECT;
+  }
+
+  function isEcho(): bool
+  {
+    return $this->effectType === $this->game::ECHO_EFFECT;
   }
 
   function setEffectNumber(?int $effectNumber): ExecutionState

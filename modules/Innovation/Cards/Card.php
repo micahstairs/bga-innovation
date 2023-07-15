@@ -73,6 +73,16 @@ abstract class Card
 
   // EXECUTION HELPERS
 
+  protected function isFirstOrThirdEdition(): bool
+  {
+    return $this->state->getEdition() <= 3;
+  }
+
+  protected function isFourthEdition(): bool
+  {
+    return $this->state->getEdition() === 4;
+  }
+
   protected function getPlayerId(): int
   {
     return $this->state->getPlayerId();
@@ -96,6 +106,11 @@ abstract class Card
   protected function isNonDemand(): bool
   {
     return $this->state->isNonDemand();
+  }
+
+  protected function isEcho(): bool
+  {
+    return $this->state->isEcho();
   }
 
   protected function getCurrentStep(): int
@@ -272,6 +287,11 @@ abstract class Card
   protected function drawAndSafeguard(int $age, int $playerId = null)
   {
     return $this->game->executeDrawAndSafeguard(self::coercePlayerId($playerId), $age);
+  }
+
+  protected function drawAndForeshadow(int $age, int $playerId = null)
+  {
+    return $this->game->executeDrawAndForeshadow(self::coercePlayerId($playerId), $age);
   }
 
   protected function drawAndReveal(int $age, int $playerId = null)
