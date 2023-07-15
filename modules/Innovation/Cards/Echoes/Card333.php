@@ -73,4 +73,11 @@ class Card333 extends Card
     }
   }
 
+  public function afterInteraction(): void
+  {
+    if (self::isFirstOrThirdEdition() && self::isEcho() && self::getNumChosen() === 0) {
+      $this->game->revealHand(self::getPlayerId());
+    }
+  }
+
 }
