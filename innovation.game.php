@@ -3998,10 +3998,7 @@ class Innovation extends Table
     }
 
     function getEchoEffect($id) {
-        if (array_key_exists('echo_effect_1', $this->textual_card_infos[$id])) {
-            return $this->textual_card_infos[$id]['echo_effect_1'];
-        }
-        return null;
+        return self::getCardPropertyForCurrentVersion('echo_effect_1', $id);
     }
 
     function getCardPropertyForCurrentVersion($prefix, $id) {
@@ -4044,6 +4041,17 @@ class Innovation extends Table
         $textual_infos['name'] = self::getCardName($id);
         unset($textual_infos['name_first_and_third']);
         unset($textual_infos['name_fourth']);
+
+        // Make sure the echo effect reflects the current edition
+        $textual_infos['i_echo_effect_1'] = self::getEchoEffect($id);
+        if ($textual_infos['i_echo_effect_1'] === null) {
+            unset($textual_infos['i_echo_effect_1']);
+        }
+        unset($textual_infos['i_echo_effect_1_first']);
+        unset($textual_infos['i_echo_effect_1_first_and_third']);
+        unset($textual_infos['i_echo_effect_1_third']);
+        unset($textual_infos['i_echo_effect_1_third_and_fourth']);
+        unset($textual_infos['i_echo_effect_1_fourth']);
 
         // Make sure the demand effect reflects the current edition
         $textual_infos['i_demand_effect_1'] = self::getDemandEffect($id);

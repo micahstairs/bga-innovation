@@ -1544,9 +1544,11 @@ $this->textual_card_infos = array(
     ),
 
     333 => array(
-        'name'                => clienttranslate('Bangle'),
-        'echo_effect_1'       => clienttranslate('Tuck a red card from your hand.'),
-        'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_3}.'),
+        'name'                                => clienttranslate('Bangle'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Tuck a red card from your hand.'),
+        'echo_effect_1_fourth'                => clienttranslate('Tuck a ${age_1} from your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a ${age_3}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose to either draw and foreshadow a ${age_2}, or tuck a ${age_2} from your forecast.'),
     ),
 
     334 => array(
