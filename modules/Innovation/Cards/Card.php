@@ -567,6 +567,13 @@ abstract class Card
     return array_values(array_diff($this->game->getAllActivePlayerIds(), $idsToEliminate));
   }
 
+  // MISCELLANEOUS HELPERS
+
+  protected function getPlayerScore(int $playerId = null): int
+  {
+    return $this->game->getPlayerScore(self::coercePlayerId($playerId));
+  }
+
   // GENERAL UTILITY HELPERS
 
   protected function getCardIdFromClassName(): string

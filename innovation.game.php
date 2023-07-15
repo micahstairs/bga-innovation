@@ -10970,7 +10970,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || $card_id == 333
+            || (333 <= $card_id && $card_id <= 334)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14079,38 +14079,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
                 break;            
-            
-            // id 334, Echoes age 1: Candles
-            case "334D1":
-                $has_card_with_tower = false;
-                foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                    if (self::hasRessource($card, 4 /* tower */)) {
-                        $has_card_with_tower = true;
-                        break;
-                    }
-                }
-                if ($has_card_with_tower) {
-                    $step_max = 1;
-                } else {
-                    self::revealHand($player_id);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no cards with a ${tower} in your hand.'), array('You' => 'You', 'tower' => $tower));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no cards with a ${tower} in his hand.'), array('player_name' => self::getColoredPlayerName($player_id), 'tower' => $tower));
-                }
-                break;
-
-            case "334E1":
-                // "If every other player has a higher score than you, draw a 3."
-                $player_score = self::getPlayerScore($player_id);
-                $min_score = true;
-                foreach (self::getActiveOpponentIds($player_id) as $p_id) {
-                    if ($player_id != $p_id && $player_score >= self::getPlayerScore($p_id)) {
-                        $min_score = false;
-                    }
-                }
-                if ($min_score) {
-                    self::executeDraw($player_id, 3);
-                }
-                break;
 
             // id 335, Echoes age 1: Plumbing
             case "335E1":
@@ -20954,22 +20922,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-        
-        // 334, Echoes age 1: Candles
-        case "334D1A":
-            // "you transfer a card with a tower from your hand to my hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-                
-                'with_icon' => 4, /* tower */
-            );
-            break;
 
         // id 335, Echoes age 1: Plumbing
         case "335E1A":
@@ -26215,14 +26167,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do, draw and meld a card of equal value!"
                     if ($n > 0) {
                         self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected'));
-                    }
-                    break;
-
-                // id 334, Echoes age 1: Candles
-                case "334D1A":
-                    // "If you do, draw a 1!"
-                    if ($n > 0) {
-                        self::executeDraw($player_id, 1);
                     }
                     break;
 

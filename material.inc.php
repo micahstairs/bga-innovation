@@ -1552,9 +1552,11 @@ $this->textual_card_infos = array(
     ),
 
     334 => array(
-        'name'              => clienttranslate('Candles'),
-        'echo_effect_1'     => clienttranslate('If every other player has a higher score than you, draw a ${age_3}.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card with a ${icon_4} from your hand to my hand! If you do, draw a ${age_1}!'),
+        'name'                              => clienttranslate('Candles'),
+        'echo_effect_1_first_and_third'     => clienttranslate('If every other player has a higher score than you, draw a ${age_3}.'),
+        'echo_effect_1_fourth'              => clienttranslate('If no player has fewer points than you, draw a ${age_3}.'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer a card with a ${icon_4} or ${icon_3} from your hand to my hand! If you do, draw a ${age_1}!'),
+        'non_demand_effect_1_fourth'        => clienttranslate('If every other player has a higher score than you, draw a ${age_3}.'),
     ),
 
     335 => array(
