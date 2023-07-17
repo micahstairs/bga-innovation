@@ -1168,17 +1168,22 @@ var Innovation = /** @class */ (function (_super) {
                         if (visible_selectable_cards !== null) {
                             visible_selectable_cards.addClass("clickable").addClass('mid_dogma');
                             this.on(visible_selectable_cards, 'onclick', 'action_clicForChoose');
-                            if (args.args._private.must_show_score && !this.isInReplayMode()) {
-                                this.my_score_verso_window.show();
-                            }
-                            if (args.args._private.must_show_forecast && !this.isInReplayMode()) {
-                                this.my_forecast_verso_window.show();
+                            if (!this.isInReplayMode()) {
+                                if (args.args._private.must_show_score) {
+                                    this.my_score_verso_window.show();
+                                }
+                                if (args.args._private.must_show_forecast) {
+                                    this.my_forecast_verso_window.show();
+                                }
                             }
                         }
                         var selectable_rectos = this.selectRectosFromList(args.args._private.selectable_rectos);
                         if (selectable_rectos !== null) {
                             selectable_rectos.addClass("clickable").addClass('mid_dogma');
                             this.on(selectable_rectos, 'onclick', 'action_clicForChooseRecto');
+                            if (!this.isInReplayMode() && args.args._private.must_show_junk) {
+                                this.click_open_junk_browsing_window();
+                            }
                         }
                         if (args.args._private.show_all_cards_on_board) {
                             for (var color = 0; color < 5; color++) {
@@ -1292,7 +1297,9 @@ var Innovation = /** @class */ (function (_super) {
                     // Reset tooltips for board (in case there was a splaying choice)
                     this.addTooltipsWithoutActionsToMyBoard();
                     if (!this.isInReplayMode()) {
-                        this.my_score_verso_window.hide();
+                        this.click_close_score_window();
+                        this.click_close_forecast_window();
+                        this.click_close_card_browsing_window();
                     }
                     for (var player_id in this.players) {
                         for (var color = 0; color < 5; color++) {
@@ -4817,8 +4824,22 @@ var Innovation = /** @class */ (function (_super) {
     };
     Innovation.prototype.notif_junkedBaseDeck = function (notif) {
         var zone = this.zone["deck"][0][notif.args.age_to_junk];
-        zone.removeAll();
-        zone.counter.setValue(0);
+        var nextJunkPosition = notif.args.next_junk_position;
+        for (var i = zone.items.length - 1; i >= 0; i--) {
+            this.notif_transferedCard({
+                'args': {
+                    'age': notif.args.age_to_junk,
+                    'type': 0,
+                    'is_relic': 0,
+                    'owner_from': 0,
+                    'location_from': 'deck',
+                    'position_from': i,
+                    'owner_to': 0,
+                    'location_to': 'junk',
+                    'position_to': nextJunkPosition++,
+                },
+            });
+        }
         if (!zone.counter.display_zero) {
             dojo.style(zone.counter.span, 'visibility', zone.counter.getValue() == 0 ? 'hidden' : 'visible');
         }

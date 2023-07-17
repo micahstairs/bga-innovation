@@ -4050,15 +4050,15 @@ class Innovation extends Table
         unset($textual_infos['name_fourth']);
 
         // Make sure the echo effect reflects the current edition
-        $textual_infos['i_echo_effect_1'] = self::getEchoEffect($id);
-        if ($textual_infos['i_echo_effect_1'] === null) {
-            unset($textual_infos['i_echo_effect_1']);
+        $textual_infos['echo_effect_1'] = self::getEchoEffect($id);
+        if ($textual_infos['echo_effect_1'] === null) {
+            unset($textual_infos['echo_effect_1']);
         }
-        unset($textual_infos['i_echo_effect_1_first']);
-        unset($textual_infos['i_echo_effect_1_first_and_third']);
-        unset($textual_infos['i_echo_effect_1_third']);
-        unset($textual_infos['i_echo_effect_1_third_and_fourth']);
-        unset($textual_infos['i_echo_effect_1_fourth']);
+        unset($textual_infos['echo_effect_1_first']);
+        unset($textual_infos['echo_effect_1_first_and_third']);
+        unset($textual_infos['echo_effect_1_third']);
+        unset($textual_infos['echo_effect_1_third_and_fourth']);
+        unset($textual_infos['echo_effect_1_fourth']);
 
         // Make sure the demand effect reflects the current edition
         $textual_infos['i_demand_effect_1'] = self::getDemandEffect($id);
@@ -5946,25 +5946,51 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function junkBaseDeck($age) {
-        self::DbQuery(self::format("
-            UPDATE
+        $cardCount = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', self::BASE)[$age];
+        if ($cardCount == 0) {
+            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, self::BASE)));
+            return;
+        }
+
+       $nextJunkPosition = 1 + self::getUniqueValueFromDB(self::format("
+            SELECT
+                COALESCE(MAX(position), 0)
+            FROM
                 card
-            SET
-                location = 'junk',
-                position = NULL
             WHERE
                 owner = 0
-                AND location = 'deck'
+                AND location = 'junk'
                 AND age = {age}
                 AND type = 0
         ", ["age" => $age]));
-        if (self::DbAffectedRow() > 0) {
-            self::recordThatChangeOccurred();
-            self::notifyAll('junkedBaseDeck', clienttranslate('All cards in the ${age} deck were junked.'),  array('age' => self::getAgeSquareWithType($age, self::BASE), 'age_to_junk' => $age));
-        } else {
-            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, self::BASE)));
-        }
-        
+
+        self::DbQuery(
+            self::format("
+                UPDATE
+                    card
+                SET
+                    location = 'junk',
+                    position = {nextJunkPosition} + position
+                WHERE
+                    owner = 0
+                    AND location = 'deck'
+                    AND age = {age}
+                    AND type = 0
+            ", ["age" => $age, "nextJunkPosition" => $nextJunkPosition],
+            )
+        );
+        self::recordThatChangeOccurred();
+        self::notifyAll(
+            'junkedBaseDeck',
+            clienttranslate('The ${age} deck, which contained ${n} card(s), is junked.'),
+            [
+                'i18n' => ['n'],
+                'age' => self::getAgeSquareWithType($age, self::BASE),
+                'n' => self::getTranslatedNumber($cardCount),
+                'age_to_junk' => $age,
+                'next_junk_position' => $nextJunkPosition,
+            ]
+        );
     }
     
     function removeAllHandsBoardsAndScores() {
@@ -9789,15 +9815,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-
-            // id 339, Echoes age 1: Chopsticks
-            case "339N1A":
-                $message_args_for_player['age'] = self::getAgeSquare(1);
-                $message_args_for_others['age'] = self::getAgeSquare(1);        
-                $message_for_player = clienttranslate('Do ${you} want to transfer the bottom ${age} to the available achievements?');
-                $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
-                $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                break;
                 
             // id 341, Echoes age 1: Soap
             case "341N1A":
@@ -10337,7 +10354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         $must_show_score = false;
-        if ($special_type_of_choice == 0 && $splay_direction == -1 && $location_from == 'score') {
+        if ($special_type_of_choice == 0 && $splay_direction === null && $location_from == 'score') {
             if ($owner_from == $player_id) {
                 $must_show_score = true;
             } else if ($owner_from == -2) {
@@ -10352,7 +10369,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         $must_show_forecast = false;
-        if ($special_type_of_choice == 0 && $splay_direction == -1 && $location_from == 'forecast') {
+        if ($special_type_of_choice == 0 && $splay_direction === null && $location_from == 'forecast') {
             if ($owner_from == $player_id) {
                 $must_show_forecast = true;
             } else if ($owner_from == -2) {
@@ -10364,6 +10381,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
             }
+        }
+
+        $must_show_junk = false;
+        if ($special_type_of_choice == 0 && $splay_direction === null && $location_from == 'junk') {
+            $must_show_junk = true;
         }
         
         $card_names = self::getDogmaCardNames();
@@ -10388,6 +10410,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     "selectable_rectos" => self::getSelectableRectos($player_id), // Most of the time, the player choose among versos he can see this array is empty so this array is empty except for few dogma effects
                     "must_show_score" => $must_show_score,
                     "must_show_forecast" => $must_show_forecast,
+                    "must_show_junk" => $must_show_junk,
                     "show_all_cards_on_board" => $special_type_of_choice == 0 && ($splay_direction == -1 || $splay_direction === null) && $location_from == 'board' && $bottom_from == 1,
                 )
             ))
@@ -10962,7 +10985,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 338)
+            || (333 <= $card_id && $card_id <= 339)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14071,20 +14094,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, 2);
                 break;
 
-            // id 339, Echoes age 1: Chopsticks
-            case "339E1":
-                // "Draw a 1"
-                self::executeDraw($player_id, 1);
-                break;
-
-            case "339N1":
-                // "If the 1 deck has at least one card"
-                $deck_cards = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', self::BASE);
-                if ($deck_cards[1] > 0) {
-                    $step_max = 1;
-                }
-                break;
-                
             // id 340, Echoes age 1: Noodles
             case "340N1":
                 // "If you have more 1s in your hand than every other player, draw and score a 2"
@@ -16677,6 +16686,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if (!array_key_exists('player_id', $options)) {
                     $options['player_id'] = $player_id;
+                }
+                if (array_key_exists('location_from', $options) && ($options['location_from'] == 'deck' || $options['location_from'] == 'junk')) {
+                    $options['owner_from'] = 0;
                 }
                 if (!array_key_exists('owner_from', $options)) {
                     $options['owner_from'] = $player_id;
@@ -20889,15 +20901,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-
-        // id 339, Echoes age 1: Chopsticks
-        case "339N1A":
-            // "you may transfer its bottom card to the available achievements."
-            $options = array(
-                'player_id' => $player_id, 
-                
-                'choose_yes_or_no' => true,
-            );
 
         // id 341, Echoes age 1: Soap
         case "341N1A":
@@ -26011,14 +26014,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 339, Echoes age 1: Chopsticks
-                case "339N1A":
-                    // "you may transfer its bottom card to the available achievements"
-                    if (self::getAuxiliaryValue() == 1) { // yes
-                        self::executeDraw(0, /*age=*/ 1, 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
-                    }
-                    break;  
-
                 // id 341, Echoes age 1: Soap
                 case "341N1B":
                     // "If you tucked at least three,"
@@ -28357,15 +28352,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                }
-                self::setAuxiliaryValue($choice);
-                break;
-                
-            // id 339, Echoes age 1: Chopsticks
-            case "339N1A":
-                if ($choice == 0) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare(1)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(1)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;

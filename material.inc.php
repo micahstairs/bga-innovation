@@ -1588,9 +1588,11 @@ $this->textual_card_infos = array(
     ),
 
     339 => array(
-        'name'                => clienttranslate('Chopsticks'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_1}.'),
-        'non_demand_effect_1' => clienttranslate('If the ${age_1} deck has at least one card, you may transfer its bottom card to the available achievements.'),
+        'name'                                => clienttranslate('Chopsticks'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw a ${age_1}.'),
+        'echo_effect_1_fourth'                => clienttranslate('You may draw and foreshadow a ${age_1}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If the ${age_1} deck has at least one card, you may transfer its bottom card to the available achievements.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may junk all cards in the ${age_1} deck. If you do, achieve the highest junked card if eligible.'),
     ),
 
     340 => array(
