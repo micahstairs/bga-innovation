@@ -9790,17 +9790,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 337, Echoes age 1: Ice skates
-            case "337N1B":
-                $message_for_player = clienttranslate('${You} must make a choice');
-                $message_for_others = clienttranslate('${player_name} must make a choice among the two possibilities offered by the card');
-                // TODO(LATER): Use getAgeToDrawIn to alter the messages when supply piles are empty.
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate('Draw and meld a ${age}'), 'age' => self::getAgeSquare(2)),
-                                array('value' => 0, 'text' => clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::getAgeSquare(3)),
-                );
-                break;
-
             // id 339, Echoes age 1: Chopsticks
             case "339N1A":
                 $message_args_for_player['age'] = self::getAgeSquare(1);
@@ -10973,7 +10962,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 336)
+            || (333 <= $card_id && $card_id <= 337)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14081,11 +14070,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-
-            // id 337, Echoes age 1: Ice skates
-            case "337N1":
-                $step_max = 3;
                 break;
 
             // id 338, Echoes age 1: Umbrella
@@ -20915,46 +20899,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-                
-        // id 337, Echoes age 1: Ice skates
-        case "337N1A":
-            // "Return up to three cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'n_max' => 3,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-        
-        case "337N1B":
-            // "draw and meld a 2, or draw and foreshadow a 3"
-            $options = array(
-                'player_id' => $player_id, 
-
-                'choose_yes_or_no' => true
-            );
-            break;
-
-        case "337N1C":
-            // "Return your highest top card."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'age' => self::getMaxAgeOnBoardTopCards($player_id),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
 
         // id 338, Echoes age 1: Umbrella
         case "338N1A":
@@ -26122,31 +26066,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected'));
                     }
                     break;
-                    
-                // id 337, Echoes age 1: Ice skates
-                case "337N1A":
-                    if ($n == 0) {
-                        // No cards returned, skip the B interaction.
-                        self::incrementStep(1);
-                    }
-                    self::setAuxiliaryValue($n);                    
-                    break;
-
-                case "337N1B":
-                    // "For each card returned, either draw and meld a 2, or draw and foreshadow a 3."
-                    if (self::getAuxiliaryValue2() == 0) {
-                        self::executeDrawAndForeshadow($player_id, 3);
-                    }
-                    else {
-                        self::executeDrawAndMeld($player_id, 2);
-                    }
-                    
-                    $iterations_left = self::getAuxiliaryValue();
-                    if ($iterations_left > 1) {                        
-                        self::incrementStep(-1);
-                        self::setAuxiliaryValue($iterations_left - 1);
-                    }
-                    break;
 
                 // id 338, Echoes age 1: Umbrella
                 case "338N1A":
@@ -28504,18 +28423,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 337, Echoes age 1: Ice skates
-            case "337N1B":
-                if ($choice == 0) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and foreshadow a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(3)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and meld a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(2)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and meld a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(2)));
-                }
-                self::setAuxiliaryValue2($choice);
                 break;
                 
             // id 339, Echoes age 1: Chopsticks

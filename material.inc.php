@@ -1574,8 +1574,10 @@ $this->textual_card_infos = array(
     ),
 
     337 => array(
-        'name'                => clienttranslate('Ice Skates'),
-        'non_demand_effect_1' => clienttranslate('Return up to three cards from your hand. For each card returned, either draw and meld a ${age_2}, or draw and foreshadow a ${age_3}. Return your highest top card.'),
+        'name'                                => clienttranslate('Ice Skates'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return up to three cards from your hand. For each card returned, either draw and meld a ${age_2}, or draw and foreshadow a ${age_3}. Return your highest top card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If Ice Skates was foreseen, junk all cards in the ${age_1} deck and ${age_2} deck.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Return up to two cards from your hand. For each card you return, either draw and meld a ${age_2}, or draw and foreshadow a ${age_3}.'),
     ),
 
     338 => array(

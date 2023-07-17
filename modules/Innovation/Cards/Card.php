@@ -123,6 +123,11 @@ abstract class Card
     $this->state->setNextStep($step);
   }
 
+  protected function getMaxSteps(): int
+  {
+    return $this->state->getMaxSteps();
+  }
+
   protected function setMaxSteps(int $steps)
   {
     $this->state->setMaxSteps($steps);
