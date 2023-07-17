@@ -1568,8 +1568,9 @@ $this->textual_card_infos = array(
     ),
 
     336 => array(
-        'name'                => clienttranslate('Comb'),
-        'non_demand_effect_1' => clienttranslate('Choose a color, then draw and reveal five ${age_1}s. Keep all cards that match the color chosen. Return the rest of the drawn cards.'),
+        'name'                                => clienttranslate('Comb'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color, then draw and reveal five ${age_1}s. Keep all cards that match the color chosen. Return the rest of the drawn cards.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color, then draw and reveal five ${age_1}. Return the drawn cards that do not match the chosen color. If Comb was foreseen, return all cards of the chosen color from all boards.'),
     ),
 
     337 => array(

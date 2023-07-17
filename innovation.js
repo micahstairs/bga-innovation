@@ -1215,8 +1215,13 @@ var Innovation = /** @class */ (function (_super) {
                     }
                     if (args.args.color_pile !== null) { // The selection involves cards in a stack
                         this.color_pile = args.args.color_pile;
-                        var zone = this.zone["board"][this.player_id][this.color_pile];
-                        this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true); // Show all cards of that stack
+                        // Expand the color of all players which have selectable cards
+                        var owners = args.args._private.visible_selectable_cards.map(function (card) { return card.owner; }).filter(function (value, index, self) { return self.indexOf(value) === index; });
+                        var self_1 = this;
+                        owners.forEach(function (owner) {
+                            var zone = self_1.zone["board"][owner][self_1.color_pile];
+                            self_1.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true);
+                        });
                     }
                     if (args.args.splay_direction !== null) {
                         // Update tooltips for cards of stacks that can be splayed
@@ -1289,9 +1294,11 @@ var Innovation = /** @class */ (function (_super) {
                     if (!this.isInReplayMode()) {
                         this.my_score_verso_window.hide();
                     }
-                    for (var color = 0; color < 5; color++) {
-                        var zone = this.zone["board"][this.player_id][color];
-                        this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+                    for (var player_id in this.players) {
+                        for (var color = 0; color < 5; color++) {
+                            var zone = this.zone["board"][player_id][color];
+                            this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+                        }
                     }
             }
         }
@@ -3899,9 +3906,11 @@ var Innovation = /** @class */ (function (_super) {
             return;
         }
         // If the piles were forcibly made visible, collapse them
-        for (var color = 0; color < 5; color++) {
-            var zone = this.zone["board"][this.player_id][color];
-            this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+        for (var player_id in this.players) {
+            for (var color = 0; color < 5; color++) {
+                var zone = this.zone["board"][player_id][color];
+                this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+            }
         }
         var card_id = this.getCardIdFromHTMLId(HTML_id);
         var self = this;

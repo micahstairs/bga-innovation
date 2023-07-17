@@ -574,6 +574,11 @@ abstract class Card
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }
 
+  protected function wasForeseen(): bool
+  {
+    return $this->game->innovationGameState->get('foreseen_card_id') == self::getCardIdFromClassName();
+  }
+
   // GENERAL UTILITY HELPERS
 
   protected function getCardIdFromClassName(): string

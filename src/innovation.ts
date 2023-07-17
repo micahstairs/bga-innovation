@@ -1286,8 +1286,13 @@ class Innovation extends BgaGame {
 
                     if (args.args.color_pile !== null) { // The selection involves cards in a stack
                         this.color_pile = args.args.color_pile;
-                        let zone = this.zone["board"][this.player_id][this.color_pile!];
-                        this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true); // Show all cards of that stack
+                        // Expand the color of all players which have selectable cards
+                        let owners = args.args._private.visible_selectable_cards.map((card: any) => card.owner).filter((value, index, self) => self.indexOf(value) === index);
+                        const self = this;
+                        owners.forEach(function (owner) {
+                            const zone = self.zone["board"][owner][self.color_pile!];
+                            self.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ true);
+                        });
                     }
 
                     if (args.args.splay_direction !== null) {
@@ -1364,9 +1369,11 @@ class Innovation extends BgaGame {
                     if (!this.isInReplayMode()) {
                         this.my_score_verso_window!.hide();
                     }
-                    for (let color = 0; color < 5; color++) {
-                        let zone = this.zone["board"][this.player_id][color];
-                        this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+                    for (let player_id in this.players) {
+                        for (let color = 0; color < 5; color++) {
+                            let zone = this.zone["board"][player_id][color];
+                            this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+                        }
                     }
             }
         }
@@ -4327,9 +4334,11 @@ class Innovation extends BgaGame {
             return;
         }
         // If the piles were forcibly made visible, collapse them
-        for (let color = 0; color < 5; color++) {
-            let zone = this.zone["board"][this.player_id][color];
-            this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+        for (let player_id in this.players) {
+            for (let color = 0; color < 5; color++) {
+                let zone = this.zone["board"][player_id][color];
+                this.refreshSplay(zone, zone.splay_direction, /*force_full_visible=*/ false);
+            }
         }
 
         let card_id = this.getCardIdFromHTMLId(HTML_id);

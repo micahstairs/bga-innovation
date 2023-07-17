@@ -1,6 +1,6 @@
 <?php
 
-namespace Innovation\Cards\Unseen;
+namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 

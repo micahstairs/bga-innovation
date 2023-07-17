@@ -91,7 +91,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 52-68, 90-93
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 52-68, 90-92
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -153,6 +153,7 @@ class Innovation extends Table
             'without_bonus' => 88,
             'card_ids_are_in_auxiliary_array' => 89,
             
+            'foreseen_card_id' => 93, // ID of the card which was foreseen
             'melded_card_id' => 94, // ID of the card which was melded
             'relic_id' => 95, // ID of the relic which may be seized
             'current_action_number' => 96, // -1 = none, 0 = free action, 1 = first action, 2 = second action
@@ -161,7 +162,7 @@ class Innovation extends Table
             'debug_mode' => 99, // 0 for disabled, 1 for enabled
             
             'game_type' => 100, // 1 for normal game, 2/3/4/5 for team game
-            'game_rules' => 101, // 1 for third edition, 2 for first edition
+            'game_rules' => 101, // 1 for third edition, 2 for first edition, 3 for fourth edition
             'artifacts_mode' => 102, // 1 for "Disabled", 2 for "Enabled without Relics", 3 for "Enabled with Relics"
             'cities_mode' => 103, // 1 for "Disabled", 2 for "Enabled"
             'echoes_mode' => 104, // 1 for "Disabled", 2 for "Enabled"
@@ -200,6 +201,14 @@ class Innovation extends Table
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'replace_may_with_must'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `replace_may_with_must` BOOLEAN DEFAULT FALSE;");
         }
+
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2307142341) {
+            self::initGameStateLabels(array(
+                'foreseen_card_id' => 93,
+            ));
+        }
+
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2302100853) {
             self::initGameStateLabels(array(
@@ -465,6 +474,7 @@ class Innovation extends Table
         // Flags specific to the meld action
         $this->innovationGameState->setInitial('relic_id', -1);
         $this->innovationGameState->setInitial('melded_card_id', -1);
+        $this->innovationGameState->setInitial('foreseen_card_id', -1);
         
         // Init game statistics
         self::initStat('table', 'turns_number', 0);
@@ -2489,7 +2499,7 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from the score pile of ${targetable_players}');
                 $from_somewhere_for_others = clienttranslate(' from the score pile of ${targetable_players}');
             }
-        } else if ($location_from === 'board') {
+        } else if ($location_from === 'board' || $location_from === 'pile') {
             if ($targetable_players === null) {
                 $from_somewhere_for_player = clienttranslate(' from your board');
                 $from_somewhere_for_others = clienttranslate(' from his board');
@@ -2502,9 +2512,6 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from the board of ${targetable_players}');
                 $from_somewhere_for_others = clienttranslate(' from the board of ${targetable_players}');
             }
-        } else if ($location_from === 'pile') {
-            $from_somewhere_for_player = clienttranslate(' from your board');
-            $from_somewhere_for_others = clienttranslate(' from his board');
         } else if ($location_from === 'safe') {
             $from_somewhere_for_player = clienttranslate(' from your safe');
             $from_somewhere_for_others = clienttranslate(' from his safe');
@@ -7646,6 +7653,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return;
         }
         $this->innovationGameState->set('melded_card_id', $card_id);
+        $this->innovationGameState->set('foreseen_card_id', $card_id);
 
         self::incStat(1, 'promoted_number', $player_id);
 
@@ -9781,12 +9789,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-                
-            // id 336, Echoes age 1: Comb
-            case "336N1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
 
             // id 337, Echoes age 1: Ice skates
             case "337N1B":
@@ -10947,6 +10949,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('require_achievement_eligibility', -1);
             $this->innovationGameState->set('has_demand_effect', -1);
             $this->innovationGameState->set('has_splay_direction', -1);
+            $this->innovationGameState->set('foreseen_card_id', -1);
 
             // End of this player action
             self::trace('interDogmaEffect->interPlayerTurn');
@@ -10970,7 +10973,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 335)
+            || (333 <= $card_id && $card_id <= 336)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14078,11 +14081,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-                
-            // id 336, Echoes age 1: Comb
-            case "336N1":
-                $step_max = 2;
                 break;
 
             // id 337, Echoes age 1: Ice skates
@@ -20917,28 +20915,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-
-        // id 336, Echoes age 1: Comb
-        case "336N1A":
-            // "Choose a color"
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_color' => true,
-            );
-            break;
-            
-        case "336N1B":
-            // "Return the rest of the drawn cards"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
                 
         // id 337, Echoes age 1: Ice skates
         case "337N1A":
@@ -26146,22 +26122,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected'));
                     }
                     break;
-
-                // id 336, Echoes age 1: Comb
-                case "336N1A":
-                    // "Then draw and reveal five 1s"
-                    for ($i = 0; $i < 5; $i++) {
-                        self::executeDraw($player_id, 1, 'revealed');
-                    }
-                    // "Keep all cards that match the color chosen"
-                    $drawn_cards = self::getCardsInLocation($player_id, 'revealed');
-                    foreach ($drawn_cards as $card) {
-                        if ($card['color'] == self::getAuxiliaryValue()) {
-                            $card = self::getCardInfo($card['id']);
-                            self::transferCardFromTo($card, $player_id, 'hand');
-                        }
-                    }
-                    break;
                     
                 // id 337, Echoes age 1: Ice skates
                 case "337N1A":
@@ -28543,13 +28503,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
-                self::setAuxiliaryValue($choice);
-                break;
-                
-            // id 336, Echoes age 1: Comb
-            case "336N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
