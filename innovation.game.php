@@ -10962,13 +10962,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 337)
+            || (333 <= $card_id && $card_id <= 338)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (493 <= $card_id && $card_id <= 494)
-            || (505 <= $card_id && $card_id <= 508)
-            || $card_id == 509
+            || (505 <= $card_id && $card_id <= 509)
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
             || $card_id == 528
@@ -14070,15 +14069,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-
-            // id 338, Echoes age 1: Umbrella
-            case "338N1":
-                $step_max = 1;
-                break;
-
-            case "338E1":
-                $step_max = 1;
                 break;
 
             // id 339, Echoes age 1: Chopsticks
@@ -20900,52 +20890,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 338, Echoes age 1: Umbrella
-        case "338N1A":
-            // "Return any number of cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "338N1B":
-            // "Score two cards from your hand for every card you returned."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => self::getAuxiliaryValue() * 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'score_keyword' => true,
-            );
-            break;
-
-        case "338E1A":
-            // "You may meld a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-
         // id 339, Echoes age 1: Chopsticks
         case "339N1A":
             // "you may transfer its bottom card to the available achievements."
@@ -26066,14 +26010,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected'));
                     }
                     break;
-
-                // id 338, Echoes age 1: Umbrella
-                case "338N1A":
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                        self::setAuxiliaryValue($n);
-                    }
-                    break;                    
 
                 // id 339, Echoes age 1: Chopsticks
                 case "339N1A":
