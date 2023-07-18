@@ -1665,9 +1665,11 @@ $this->textual_card_infos = array(
     ),
 
     349 => array(
-        'name'                => clienttranslate('Glassblowing'),
-        'echo_effect_1'       => clienttranslate('Score a card with a bonus from your hand.'),
-        'non_demand_effect_1' => clienttranslate('Draw and foreshadow a card of value three higher than the lowest non-green top card on your board.'),
+        'name'                          => clienttranslate('Glassblowing'),
+        'echo_effect_1_first_and_third' => clienttranslate('Score a card with a bonus from your hand.'),
+        'echo_effect_1_fourth'          => clienttranslate('Score an expansion card from your hand.'),
+        'non_demand_effect_1'           => clienttranslate('Draw and foreshadow a card of value three higher than the lowest non-green top card on your board.'),
+        'non_demand_effect_2_fourth'    => clienttranslate('Choose ${age_2} or ${age_3}. Junk all cards in that deck.'),
     ),
 
     350 => array(
