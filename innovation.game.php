@@ -11026,6 +11026,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (493 <= $card_id && $card_id <= 494)
+            || $card_id == 498
             || (505 <= $card_id && $card_id <= 509)
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
@@ -16182,14 +16183,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 498, Unseen age 2: Password
-            case "498N1":
-                // "Draw and reveal a 2."
-                $card = self::executeDrawAndReveal($player_id, 2);
-                self::setAuxiliaryValue($card['id']);
-                $step_max = 1;
-                break;
-
             // id 499, Unseen age 2: Cipher
             case "499N1":
                 self::setAuxiliaryValue(0);
@@ -17012,10 +17005,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(1) /* red */
             );
             break;
-                
-            case "27N1":
-                $step_max = 1;
-                break;
                 
         // id 28, age 3: Optics
         case "28N1A":
@@ -23620,38 +23609,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'card_ids_are_in_auxiliary_array' => true,
             );
             break;
-            
-        // id 498, Unseen age 2: Password
-        case "498N1A":
-            // "You may safeguard another card from your hand of the color of the drawn card."
-            $revealed_card = self::getCardsInLocation($player_id, 'revealed')[0];
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id, 
-                'location_to' => 'safe',
-                
-                'color' => array($revealed_card['color']),
-            );
-            break;
-
-        case "498N1B":
-            // "Otherwise, return all cards from your hand except the drawn card."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'not_id' => self::getAuxiliaryValue(),
-            );
-            break;
 
         // id 499, Unseen age 2: Cipher
         case "499N1A":
@@ -24067,6 +24024,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // There wasn't an interaction needed in this step after all
         if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0) || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)) {
             self::notifyIfLocationLimitShrunkSelection($player_id);
+
+            if (self::isInSeparateFile($card_id)) {
+                $executionState = (new ExecutionState($this))
+                    ->setEdition($this->innovationGameState->getEdition())
+                    ->setLauncherId($launcher_id)
+                    ->setPlayerId($player_id)
+                    ->setEffectType($current_effect_type)
+                    ->setEffectNumber($current_effect_number)
+                    ->setCurrentStep(self::getStep())
+                    ->setNextStep(self::getStep() + 1)
+                    ->setMaxSteps(self::getStepMax());
+                self::getCardInstance($card_id, $executionState)->handleAbortedInteraction();
+                $step = $executionState->getNextStep() - 1;
+                self::setStep($step);
+                self::setStepMax($executionState->getMaxSteps());
+            }
+
             // The last step has been completed, so it's the end of the turn for the player involved
             if ($step == self::getStepMax()) {
                 self::trace('interactionStep->interPlayerInvolvedTurn');
@@ -27054,19 +27028,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::setAuxiliaryArray($selectable_card_ids);
                             self::incrementStepMax(1);
                         }
-                    }
-                    break;
-
-                // id 498, Unseen age 2: Password
-                case "498N1A":
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    if ($n > 0) { // "If you do,"
-                        // "score the drawn card."
-                        self::scoreCard($revealed_cards[0], $player_id);
-                    } else {
-                        // put the card in hand
-                        self::transferCardFromTo($revealed_cards[0], $player_id, 'hand');
-                        self::incrementStepMax(1);
                     }
                     break;
 

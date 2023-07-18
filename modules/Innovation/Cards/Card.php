@@ -34,12 +34,6 @@ abstract class Card
     return [];
   }
 
-  public function hasPostExecutionLogic(): bool
-  {
-    // Subclasses are expected to override this method and return true if the card needs to do any more logic after executing a card.
-    return false;
-  }
-
   public function getSpecialChoicePrompt(): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
@@ -56,19 +50,35 @@ abstract class Card
     }
   }
 
-  public function handleSpecialChoice(int $choice)
+  public function handleAbortedInteraction()
   {
-    // Subclasses are expected to override this method if the card has any special choices.
+    // Subclasses can optionally override this function if any extra handling needs to be done if
+    // the interaction was aborted before it started.
   }
 
   public function handleCardChoice(array $card)
   {
-    // Subclasses can optionally override this method if any extra handling is needed after individual cards are chosen.
+    // Subclasses can optionally override this function if any extra handling is needed after each individual card is chosen.
+  }
+
+  public function handleSpecialChoice(int $choice)
+  {
+    // Subclasses are expected to override this function if any of the interactions use a special choice.
   }
 
   public function afterInteraction()
   {
-    // Subclasses can optionally override this method if any extra handling needs to be done after an entire interaction is complete.
+    // Subclasses can optionally override this function if any extra handling needs to be done
+    // after an entire interaction (which could involve selecting multiple cards) is complete.
+    //
+    // NOTE: This function is not called if the interaction is aborted (e.g. safe is full).
+    // See handleAbortedInteraction() for that.
+  }
+
+  public function hasPostExecutionLogic(): bool
+  {
+    // Subclasses are expected to override this method and return true if the card needs to do any more logic after executing a card.
+    return false;
   }
 
   // EXECUTION HELPERS
