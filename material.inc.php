@@ -1596,9 +1596,11 @@ $this->textual_card_infos = array(
     ),
 
     340 => array(
-        'name'                => clienttranslate('Noodles'),
-        'non_demand_effect_1' => clienttranslate('If you have more ${age_1}s in your hand than every other player, draw and score a ${age_2}.'),
-        'non_demand_effect_2' => clienttranslate('Draw and reveal a ${age_1}. If it is yellow, score all ${age_1}s from your hand.'),
+        'name'                                => clienttranslate('Noodles'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have more ${age_1}s in your hand than every other player, draw and score a ${age_2}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have more ${age_1}s in your hand than every opponent, draw and score a ${age_2}.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Draw and reveal a ${age_1}. If it is yellow, score all ${age_1}s from your hand.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and reveal a ${age_1}. If it is yellow, score all ${age_1} from your hand.'),
     ),
 
     341 => array(

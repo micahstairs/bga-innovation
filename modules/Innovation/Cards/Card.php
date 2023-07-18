@@ -545,7 +545,7 @@ abstract class Card
     return $options;
   }
 
-  // WINNING AND LOSING HELPERS
+  // PLAYER HELPERS
 
   protected function win(int $playerId = null): void
   {
@@ -583,6 +583,16 @@ abstract class Card
   private function getRemainingPlayerIdsAfterEliminating(array $idsToEliminate): array
   {
     return array_values(array_diff($this->game->getAllActivePlayerIds(), $idsToEliminate));
+  }
+
+  protected function getOpponentIds(int $playerId = null): array
+  {
+    return $this->game->getActiveOpponentIds(self::coercePlayerId($playerId));
+  }
+
+  protected function getOtherPlayerIds(int $playerId = null): array
+  {
+    return $this->game->getOtherActivePlayerIds(self::coercePlayerId($playerId));
   }
 
   // MISCELLANEOUS HELPERS

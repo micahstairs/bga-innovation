@@ -20,7 +20,7 @@ class Card334 extends Card
     if (self::isEcho()) {
       $playerScore = self::getScore();
       $minScore = true;
-      foreach ($this->game->getOtherActivePlayers(self::getPlayerId()) as $otherPlayerId) {
+      foreach (self::getOtherPlayerIds() as $otherPlayerId) {
         $otherPlayerScore = self::getScore($otherPlayerId);
         if (self::isFirstOrThirdEdition() && $otherPlayerScore <= $playerScore) {
           $minScore = false;

@@ -1008,6 +1008,18 @@ class Innovation extends Table
         return self::getObjectListFromDB("SELECT player_id FROM player WHERE player_eliminated = 0", true);
     }
 
+    function getOtherActivePlayerIds($player_id) {
+        return self::getObjectListFromDB(self::format("
+            SELECT
+                player_id
+            FROM
+                player
+            WHERE
+                player_eliminated = 0 AND
+                player_id <> {player_id}
+        ", array('player_id' => $player_id)), true);
+    }
+
     function getActiveOpponentIds($player_id) {
         return self::getObjectListFromDB(self::format("
             SELECT
@@ -10985,7 +10997,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 339)
+            || (333 <= $card_id && $card_id <= 340)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14092,45 +14104,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-
-            // id 340, Echoes age 1: Noodles
-            case "340N1":
-                // "If you have more 1s in your hand than every other player, draw and score a 2"
-                $num_cards = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                
-                if ($num_cards[1] > 0) {
-                    $score_a_2 = true;
-                    foreach (self::getActiveOpponentIds($player_id) as $any_player_id) {
-                        $num_other_cards = self::countCardsInLocationKeyedByAge($any_player_id, 'hand');
-                        if ($num_cards[1] <= $num_other_cards[1]) {
-                            $score_a_2 = false;
-                        }
-                    }
-                    
-                    if ($score_a_2) {
-                        self::executeDrawAndScore($player_id, 2);
-                    }
-                }
-                break;
-            
-            case "340N2":
-                // "Draw and reveal a 1"
-                $card = self::executeDraw($player_id, 1, 'revealed');
-                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
-                self::transferCardFromTo($card, $player_id, 'hand');
-                
-                // "If it is yellow, score all 1s from your hand"
-                if ($card['color'] == 3) {
-                    $hand_cards = self::getCardsInHand($player_id);
-                
-                    foreach ($hand_cards as $card) {
-                        $card = self::getCardInfo($card['id']);
-                        if ($card['age'] == 1) {
-                            self::scoreCard($card, $player_id);
-                        }
-                    }
-                }
                 break;
 
             // id 341, Echoes age 1: Soap

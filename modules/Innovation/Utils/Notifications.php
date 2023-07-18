@@ -13,6 +13,8 @@ class Notifications
     $this->game = $game;
   }
 
+  // CARD PROPERTY NOTIFICATIONS
+
   public function notifyPresenceOfIcon(int $icon)
   {
     self::notifyGeneralInfo(clienttranslate('It has a ${icon}.'), ['icon' => self::getIconSquare($icon)]);
@@ -22,6 +24,13 @@ class Notifications
   {
     self::notifyGeneralInfo(clienttranslate('It does not have a ${icon}.'), ['icon' => self::getIconSquare($icon)]);
   }
+
+  public function notifyCardColor(int $color)
+  {
+    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => $this->game->getColorInClear($color)));
+  }
+
+  // CHOICE NOTIFICATIONS
 
   public function notifyIconChoice(int $icon, int $playerId)
   {
@@ -63,6 +72,8 @@ class Notifications
       )
     );
   }
+
+  // MISCELLANEOUS NOTIFICATIONS
 
   public function notifySafeIsFull(int $playerId)
   {
