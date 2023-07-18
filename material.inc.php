@@ -1538,9 +1538,10 @@ $this->textual_card_infos = array(
     ),
 
     332 => array(
-        'name'                => clienttranslate('Ruler'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_2}.'),
-        'non_demand_effect_1' => clienttranslate('No effect.'),
+        'name'                                => clienttranslate('Ruler'),
+        'echo_effect_1'                       => clienttranslate('Draw a ${age_2}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('No effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw two Echoes ${age_1}. Foreshadow one of them and return the other.'),
     ),
 
     333 => array(

@@ -10991,7 +10991,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 344)
+            || (332 <= $card_id && $card_id <= 344)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14094,12 +14094,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDrawAndTuck($player_id, 1);
                 break;
                 
-            // id 332, Echoes age 1: Ruler
-            case "332E1":
-                // "Draw a 2."
-                self::executeDraw($player_id, 2);
-                break;
-
             // id 345, Echoes age 2: Lever
             case "345E1":
                 // "Draw two 2s"
