@@ -5289,10 +5289,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         foreach (self::getCardsInLocation($player_id, 'score') as $card) {
             $score += $card['age'];
         }
-        $num_visible_bonus_icons = count(self::getVisibleBonusesOnBoard($player_id));
-        if ($num_visible_bonus_icons > 0) {
-            $score += self::getMaxBonusIconOnBoard($player_id) + $num_visible_bonus_icons - 1;
-        }
+        $score += self::countBonusPoints($player_id);
         self::DBQuery(self::format("
             UPDATE
                 player
@@ -5305,6 +5302,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
         self::setStat($score, 'score', $player_id);
         return $score;
+    }
+
+    function countBonusPoints($player_id) {
+        $num_visible_bonus_icons = count(self::getVisibleBonusesOnBoard($player_id));
+        if ($num_visible_bonus_icons > 0) {
+            return self::getMaxBonusIconOnBoard($player_id) + $num_visible_bonus_icons - 1;
+        }
+        return 0;
     }
     
     // Returns the icon count for a particular color on a player's board (also works for hexagon icons if icon=0)
@@ -5896,7 +5901,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function executeDrawAndReveal($player_id, $age_min = null, $type = null) {
-        return self::executeDraw($player_id, $age_min, 'revealed', /*bottom_to=*/ false, $type,);
+        return self::executeDraw($player_id, $age_min, 'revealed', /*bottom_to=*/ false, $type);
     }
 
     function executeDrawAndMeld($player_id, $age_min = null, $type = null) {
@@ -11016,7 +11021,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (331 <= $card_id && $card_id <= 344)
+            || (330 <= $card_id && $card_id <= 344)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14063,21 +14068,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 330, Echoes age 1: Dice
-            case "330N1":
-                // "Draw and reveal a 1"
-                $card = self::executeDraw($player_id, 1, 'revealed');
-                self::transferCardFromTo($card, $player_id, 'hand');
-                
-                // "If the card has a bonus, draw and meld a card of value equal to its bonus"
-                $bonuses = self::getBonusIcons($card);
-                if (count($bonuses) > 0) {
-                    // Only Cities cards can have more than one bonus (but these cards won't be drawn here) so we can just
-                    // pick the first (and only) bonus on the Echoes card.
-                    self::executeDrawAndMeld($player_id, $bonuses[0]);
-                }
                 break;
                 
             // id 345, Echoes age 2: Lever

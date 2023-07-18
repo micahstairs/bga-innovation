@@ -1527,8 +1527,10 @@ $this->textual_card_infos = array(
     /* Echoes - Age 1 */
 
     330 => array(
-        'name'                => clienttranslate('Dice'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If the card has a bonus, draw and meld a card of value equal to its bonus.'),
+        'name'                                => clienttranslate('Dice'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_1}. If the card has a bonus, draw and meld a card of value equal to its bonus.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal a Echoes ${age_1}. If the card has a bonus, draw and meld a card of value equal to its bonus.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If Dice was foreseen, draw a ${age_4}, then transfer it to the hand of an opponent with more bonus points than you.'),
     ),
 
     331 => array(
