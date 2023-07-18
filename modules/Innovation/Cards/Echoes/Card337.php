@@ -68,7 +68,7 @@ class Card337 extends Card
     }
   }
 
-  public function afterInteraction(): void
+  public function afterInteraction()
   {
     if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 1 && self::getNumChosen() === 0) {
       // Skip to the third interaction if no cards were returned

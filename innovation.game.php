@@ -9828,12 +9828,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
                 
-            // id 341, Echoes age 1: Soap
-            case "341N1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-
             // id 345, Echoes age 2: Lever
             case "345N1B":
                 $message_for_player = clienttranslate('Choose a value to draw');
@@ -10997,7 +10991,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 340)
+            || (333 <= $card_id && $card_id <= 341)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14104,13 +14098,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-
-            // id 341, Echoes age 1: Soap
-            case "341N1":
-                if (self::countCardsInHand($player_id) > 0) {
-                    $step_max = 2;
-                }
                 break;
 
             // id 342, Echoes age 1: Bell
@@ -20874,50 +20861,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-
-        // id 341, Echoes age 1: Soap
-        case "341N1A":
-            // "Choose a color"
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_color' => true,
-            );
-            break;
-
-        case "341N1B":
-            // "You may tuck any number of cards of that color from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-                
-                'color' => array(self::getAuxiliaryValue()),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-            );
-            break;
-        
-        case "341N1C":
-            // "you may achieve (if eligible) a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => true,
-            );
-            break;
             
         // id 342, Echoes age 1: Bell
         case "342E1A":
@@ -25987,14 +25930,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                     break;
 
-                // id 341, Echoes age 1: Soap
-                case "341N1B":
-                    // "If you tucked at least three,"
-                    if ($n >= 3) {
-                        self::incrementStepMax(1); // select a card
-                    }
-                    break; 
-
                 // id 343, Echoes age 1: Flute
                 case "343D1A":
                     if ($n == 0) {
@@ -28326,13 +28261,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
                 }
-                self::setAuxiliaryValue($choice);
-                break;
-                
-            // id 341, Echoes age 1: Soap
-            case "341N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 

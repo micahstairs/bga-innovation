@@ -23,7 +23,7 @@ class Card339 extends Card
       } else {
         self::drawAndForeshadow(1);
       }
-    } else if (self::getDeckCount(1) > 0) {
+    } else if (self::getBaseDeckCount(1) > 0) {
       self::setMaxSteps(1);
     }
   }

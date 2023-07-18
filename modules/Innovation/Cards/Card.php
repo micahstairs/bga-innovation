@@ -597,9 +597,14 @@ abstract class Card
 
   // MISCELLANEOUS HELPERS
 
-  protected function getDeckCount(int $age): int
+  protected function getBaseDeckCount(int $age): int
   {
     return $this->game->countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', $this->game::BASE)[$age];
+  }
+
+  protected function countCards(string $location, int $playerId = null): int
+  {
+    return $this->game->countCardsInLocation(self::coercePlayerId($playerId), $location);
   }
 
   protected function getScore(int $playerId = null): int

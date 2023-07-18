@@ -40,7 +40,7 @@ class Card338 extends Card
     }
   }
 
-  public function afterInteraction(): void
+  public function afterInteraction()
   {
     if (self::isNonDemand() && self::getNumChosen() > 0) {
       self::setMaxSteps(2);
