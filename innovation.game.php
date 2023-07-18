@@ -10991,7 +10991,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 341)
+            || (333 <= $card_id && $card_id <= 342)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14098,18 +14098,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-
-            // id 342, Echoes age 1: Bell
-            case "342N1":
-                //  "Draw and foreshadow a 2."
-                self::executeDrawAndForeshadow($player_id, 2);
-                break;
-
-            case "342E1":
-                if (self::countCardsInHand($player_id) > 0) {
-                    $step_max = 1;
-                }
                 break;
 
             // id 343, Echoes age 1: Flute
@@ -20862,23 +20850,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 342, Echoes age 1: Bell
-        case "342E1A":
-            // "You may score a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'score_keyword' => true,
-            );            
-            break;
-
         // id 343, Echoes age 1: Flute
         case "343E1A":
             // "You may splay any one color of your cards"

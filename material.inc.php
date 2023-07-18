@@ -1610,9 +1610,11 @@ $this->textual_card_infos = array(
     ),
 
     342 => array(
-        'name'                => clienttranslate('Bell'),
-        'echo_effect_1'       => clienttranslate('You may score a card from your hand.'),
-        'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_2}.'),
+        'name'                                => clienttranslate('Bell'),
+        'echo_effect_1'                       => clienttranslate('You may score a card from your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a ${age_2}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_1} and ${age_2}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If Bell was foreseen, return all cards from all hands.'),
     ),
 
     343 => array(
