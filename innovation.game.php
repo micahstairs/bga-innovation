@@ -11035,7 +11035,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 348)
+            || (330 <= $card_id && $card_id <= 349)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14083,25 +14083,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 349, Echoes age 2: Glassblowing
-            case "349E1":
-                if (self::countCardsInHand($player_id) > 0) {
-                    $step_max = 1;
-                }
-                break;
-
-            case "349N1":
-                $min_value = 10;
-                $cards = self::getTopCardsOnBoard($player_id);
-                foreach ($cards as $card) {
-                    if ($card['color'] != 2 && $min_value > $card['age']) {
-                        $min_value = $card['age'];
-                    }
-                }
-                // "Draw and foreshadow a card of value three higher than the lowest non-green top card on your board."
-                self::executeDrawAndForeshadow($player_id, $min_value + 3);
                 break;
 
             // id 350, Echoes age 2: Scissors
@@ -20716,24 +20697,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 349, Echoes age 2: Glassblowing
-        case "349E1A":
-            // "Score a card with a bonus from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-
-                'with_bonus' => true,
-            );       
-            break;
-
         // id 350, Echoes age 2: Scissors
         case "350E1A":
             // "Take a bottom card from your board into your hand."
@@ -25617,14 +25580,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 349, Echoes age 2: Glassblowing
-                case "349E1A":
-                    if ($n == 0) {
-                        // Reveal a hand with no bonuses
-                        self::revealHand($player_id);
-                    }
                     break;
 
                 // id 350, Echoes age 2: Scissors
