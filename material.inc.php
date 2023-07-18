@@ -1643,9 +1643,10 @@ $this->textual_card_infos = array(
     ),
 
     346 => array(
-        'name'                => clienttranslate('Linguistics'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_3} OR Draw and foreshadow a ${age_4}.'),
-        'non_demand_effect_1' => clienttranslate('Draw a card of value equal to a bonus on your board, if you have any.'),
+        'name'                                => clienttranslate('Linguistics'),
+        'echo_effect_1'                       => clienttranslate('Draw a ${age_3} OR Draw and foreshadow a ${age_4}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw a card of value equal to a bonus on your board, if you have any.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw a card of value equal to a bonus on any board, if there is one. If you do, and Linguistics was foreseen, junk all available achievements of that value.'),
     ),
 
     347 => array(

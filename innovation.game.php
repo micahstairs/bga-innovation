@@ -9857,22 +9857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-                
-            // id 346, Echoes age 2: Linguistics
-            case "346N1A":
-                $message_for_player = clienttranslate('Choose a value of a bonus icon on your board');
-                $message_for_others = clienttranslate('${player_name} must choose a value of a bonus icon on your board');
-                break;
-
-            case "346E1A":
-                $message_for_player = clienttranslate('${You} may make a choice');
-                $message_for_others = clienttranslate('${player_name} may make a choice among the two possibilities offered by the card');
-                // TODO(LATER): Use getAgeToDrawIn to alter the messages when supply piles are empty.
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate('Draw a ${age}'), 'age' => self::getAgeSquare(3)),
-                                array('value' => 0, 'text' => clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::getAgeSquare(4)),
-                );
-                break;
             
             // id 347, Echoes age 2: Crossbow
             case "347N1A":
@@ -11015,7 +10999,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 345)
+            || (330 <= $card_id && $card_id <= 346)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14062,22 +14046,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-                
-            // id 346, Echoes age 2: Linguistics
-            case "346N1":
-                $vis_bonuses = array_unique(self::getVisibleBonusesOnBoard($player_id));
-                if (count($vis_bonuses) > 1) {
-                    $step_max = 1;
-                }
-                elseif (count($vis_bonuses) == 1) {
-                    self::executeDraw($player_id, $vis_bonuses[0]);
-                }
-                // Otherwise no bonuses present so no choice to be made
-                break;
-
-            case "346E1":
                 $step_max = 1;
                 break;
 
@@ -20751,27 +20719,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 346, age 2: Linguistics          
-        case "346N1A":
-            // "Draw a card of value equal to a bonus on your board, if you have any."
-            $selectable_ages = array_unique(self::getVisibleBonusesOnBoard($player_id));
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_value' => true,
-                'age' => $selectable_ages,
-            );
-            break;
-
-        case "346E1A":
-            // "Draw a 3 OR Draw and foreshadow a 4."
-            $options = array(
-                'player_id' => $player_id, 
-                
-                'choose_yes_or_no' => true,
-            );
-            break;
 
         // id 347, Echoes age 2: Crossbow
         case "347D1A":
@@ -23968,7 +23915,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // There wasn't an interaction needed in this step after all
-        if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0) || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)) {
+        if ($options == null
+                || (array_key_exists('n', $options) && $options['n'] <= 0)
+                || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)
+                || (array_key_exists('choose_value', $options) && (array_key_exists('age', $options) && empty($options['age'])))) {
+
             self::notifyIfLocationLimitShrunkSelection($player_id);
 
             if (self::isInSeparateFile($card_id)) {
@@ -25727,21 +25678,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                
-                // id 346, Echoes age 2: Linguistics
-                case "346N1A":
-                    // "Draw a card of value equal to a bonus on your board, if you have any."
-                    self::executeDraw($player_id, self::getAuxiliaryValue());
-                    break;
-
-                case "346E1A":
-                    // "Draw a card of value equal to a bonus on your board, if you have any."
-                    if (self::getAuxiliaryValue() == 1) {
-                        self::executeDraw($player_id, 3);
-                    } else {
-                        self::executeDrawAndForeshadow($player_id, 4);
-                    }
-                    break;  
 
                 // id 348, Echoes age 2: Horseshoes
                 case "348D1A":
@@ -28004,18 +27940,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw and tuck.'), array('You' => 'You'));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw and tuck.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                }
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 346, Echoes age 2: Linguistics
-            case "346E1A":
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(3)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to foreshadow a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to foreshadow a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare(4)));
                 }
                 self::setAuxiliaryValue($choice);
                 break;

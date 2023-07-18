@@ -615,6 +615,11 @@ abstract class Card
     return $this->game->getOtherActivePlayerIds(self::coercePlayerId($playerId));
   }
 
+  protected function getPlayerIds(): array
+  {
+    return $this->game->getAllActivePlayerIds();
+  }
+
   // MISCELLANEOUS HELPERS
 
   protected function getBaseDeckCount(int $age): int
