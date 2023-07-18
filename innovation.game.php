@@ -9857,12 +9857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-            
-            // id 347, Echoes age 2: Crossbow
-            case "347N1A":
-                $message_for_player = clienttranslate('${You} must choose another player to transfer a card from your hand to his board');
-                $message_for_others = clienttranslate('${player_name} must choose another player to transfer a card from his hand to that player\'s board');
-                break;
 
             // id 350, Echoes age 2: Scissors
             case "350N1B":
@@ -10999,7 +10993,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 346)
+            || (330 <= $card_id && $card_id <= 347)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14047,19 +14041,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 347, Echoes age 2: Crossbow
-            case "347D1":
-                if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                    $step_max = 1;
-                }
-                break;
-
-            case "347N1":
-                if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                    $step_max = 2;
-                }
                 break;
 
             // id 348 Echoes age 2: Horseshoes
@@ -20718,46 +20699,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'age_min' => 7,
             );
-            break;
-
-        // id 347, Echoes age 2: Crossbow
-        case "347D1A":
-            // "I demand you transfer a card with a bonus from your hand to my score pile!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'with_bonus' => true,
-            );       
-            break;
-
-        case "347N1A":
-            // Choose a player for the transfer
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_player' => true,
-                'players' => self::getOtherActivePlayers($player_id),
-            );
-            break;
-
-        case "347N1B":
-            // "Transfer a card from your hand to any other player's board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => self::getAuxiliaryValue(),
-                'location_to' => 'board',
-            );       
             break;
 
         // id 348, Echoes age 2: Horseshoes
@@ -27947,11 +27888,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-            
-            // id 347, Echoes age 2: Crossbow
-            case "347N1A":
                 self::setAuxiliaryValue($choice);
                 break;
 

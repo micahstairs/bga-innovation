@@ -1650,9 +1650,11 @@ $this->textual_card_infos = array(
     ),
 
     347 => array(
-        'name'                => clienttranslate('Crossbow'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer a card with a bonus from your hand to my score pile!'),
-        'non_demand_effect_1' => clienttranslate('Transfer a card from your hand to any other player\'s board.'),
+        'name'                                => clienttranslate('Crossbow'),
+        'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you transfer a card with a bonus from your hand to my score pile!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you transfer an expansion card from your hand to my score pile!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Transfer a card from your hand to any other player\'s board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Transfer a card from your hand to any opponent\'s board.'),
     ),
 
     348 => array(
