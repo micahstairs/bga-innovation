@@ -91,7 +91,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 52-68, 90-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 52-67, 90-92
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -129,6 +129,7 @@ class Innovation extends Table
             'color_last_selected' => 47,
             'score_keyword' => 48,
             'meld_keyword' => 50,
+            'limit_shrunk_selection_size' => 68, // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
             'card_id_1' => 69,
             'card_id_2' => 70,
             'card_id_3' => 71,
@@ -205,8 +206,10 @@ class Innovation extends Table
         // TODO(4E): Update what we are using to compare from_version. 
         if ($from_version <= 2307142341) {
             self::initGameStateLabels(array(
+                'limit_shrunk_selection_size' => 68,
                 'foreseen_card_id' => 93,
             ));
+            $this->innovationGameState->set('limit_shrunk_selection_size', -1);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -1399,8 +1402,16 @@ class Innovation extends Table
         }
 
         // Do not move the card if the was was supposed to move to the safe but it is already full (unless we are returning the card to the safe after it was revealed)
-        if (!$force && $location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getSafeLimit($owner_to)) {
-            $this->notifications->notifySafeIsFull($owner_to);
+        if (!$force && $location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getForecastAndSafeLimit($owner_to)) {
+            self::notifyPlayer($owner_to, 'log', clienttranslate('${Your} safe was already full so the card was not transferred to your safe.'), ['Your' => 'Your']);
+            self::notifyAllPlayersBut($owner_to, 'log', clienttranslate('${player_name}\'s safe was already full so the card was not transferred to his safe.'), ['player_name' => self::getColoredPlayerName($owner_to)]);
+            return;
+        }
+
+        // Do not move the card if the was was supposed to move to the forecast but it is already full (unless we are returning the card to the forecast after it was revealed)
+        if (!$force && $location_to == 'forecast' && $this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocation($owner_to, 'forecast') >= self::getForecastAndSafeLimit($owner_to)) {
+            self::notifyPlayer($owner_to, 'log', clienttranslate('${Your} forecast was already full so the card was not transferred to your forecast.'), ['Your' => 'Your']);
+            self::notifyAllPlayersBut($owner_to, 'log', clienttranslate('${player_name}\'s forecast was already full so the card was not transferred to his forecast.'), ['player_name' => self::getColoredPlayerName($owner_to)]);
             return;
         }
 
@@ -1732,7 +1743,7 @@ class Innovation extends Table
         self::recordThatChangeOccurred();
     }
 
-    function getSafeLimit($player_id): int {
+    function getForecastAndSafeLimit($player_id): int {
         $maxSplayDirection = 0;
         foreach (self::getTopCardsOnBoard($player_id) as $card) {
             $maxSplayDirection = max($maxSplayDirection, $card['splay_direction']);
@@ -1896,6 +1907,20 @@ class Innovation extends Table
         
         // Notify spectator: same message but have to redirect on other handler in JS for spectators to see messages in logs
         self::notifyAllPlayers($notification_type . '_spectator', '', array_merge($notification_args, array('notification_type' => $notification_type, 'log' => $notification_log))); // Players won't suscribe to this: it is filtered by the JS
+    }
+
+    function notifyIfLocationLimitShrunkSelection($player_id) {
+        if ($this->innovationGameState->get('limit_shrunk_selection_size') == 1) {
+            $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
+            if ($location_to == 'safe') {
+                self::notifyPlayer($player_id, 'log', clienttranslate('${Your} safe is full so no more cards can be transferred to your safe.'), ['Your' => 'Your']);
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s safe is full so no more cards can be transferred to his safe.'), ['player_name' => self::getColoredPlayerName($player_id)]);
+            } else if ($location_to == 'forecast') {
+                self::notifyPlayer($player_id, 'log', clienttranslate('${Your} forecast is full so no more cards can be transferred to your forecast.'), ['Your' => 'Your']);
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name}\'s forecast is full so no more cards can be transferred to his forecast.'), ['player_name' => self::getColoredPlayerName($player_id)]);
+            }
+            $this->innovationGameState->set('limit_shrunk_selection_size', -1);
+        }
     }
     
     function updateGameSituation($card, $transferInfo) {
@@ -24082,26 +24107,31 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             break;
         }
 
-        // Decrease the number of cards to select based on the safe limit
-        // TODO(4E): Add similar logic for the forecast.
-        if ($options && array_key_exists('location_to', $options) && $options['location_to'] == 'safe') {
-            $space_left_in_safe = self::getSafeLimit($options['owner_to']) - self::countCardsInLocation($options['owner_to'], 'safe');
-            if ($space_left_in_safe < 0) {
-                $space_left_in_safe = 0;
+        // Decrease the number of cards to select based on the forecast/safe limit
+        if ($options && array_key_exists('location_to', $options) && ($options['location_to'] == 'forecast' || $options['location_to'] == 'safe')) {
+            $space_left = self::getForecastAndSafeLimit($options['owner_to']) - self::countCardsInLocation($options['owner_to'], $options['location_to']);
+            if ($space_left < 0) {
+                $space_left = 0;
             }
-            if (array_key_exists('n', $options)) {
-                $options['n'] = min($options['n'], $space_left_in_safe);
+            // NOTE: This is only being set now in case notifyIfLocationLimitShrunkSelection is called.
+            $this->innovationGameState->set('location_to', self::encodeLocation($options['location_to']));
+            if (array_key_exists('n', $options) && $options['n'] > $space_left) {
+                $options['n'] = $space_left;
+                $this->innovationGameState->set('limit_shrunk_selection_size', 1);
             }
-            if (array_key_exists('n_min', $options)) {
-                $options['n_min'] = min($options['n_min'], $space_left_in_safe);
+            if (array_key_exists('n_min', $options) && $options['n_min'] > $space_left) {
+                $options['n_min'] = $space_left;
+                $this->innovationGameState->set('limit_shrunk_selection_size', 1);
             }
-            if (array_key_exists('n_max', $options)) {
-                $options['n_max'] = min($options['n_max'], $space_left_in_safe);
+            if (array_key_exists('n_max', $options) && $options['n_max'] > $space_left) {
+                $options['n_max'] = $space_left;
+                $this->innovationGameState->set('limit_shrunk_selection_size', 1);
             }
         }
-        
+
         // There wasn't an interaction needed in this step after all
         if ($options == null || (array_key_exists('n', $options) && $options['n'] <= 0) || (array_key_exists('n_max', $options) && $options['n_max'] <= 0)) {
+            self::notifyIfLocationLimitShrunkSelection($player_id);
             // The last step has been completed, so it's the end of the turn for the player involved
             if ($step == self::getStepMax()) {
                 self::trace('interactionStep->interPlayerInvolvedTurn');
@@ -24162,6 +24192,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ->setCurrentStep($step)
             ->setNextStep($step + 1)
             ->setMaxSteps($step_max);
+
+        self::notifyIfLocationLimitShrunkSelection($player_id);
         
         if (!self::isZombie(self::getActivePlayerId())) {
             try {

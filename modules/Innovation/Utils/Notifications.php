@@ -75,12 +75,6 @@ class Notifications
 
   // MISCELLANEOUS NOTIFICATIONS
 
-  public function notifySafeIsFull(int $playerId)
-  {
-    self::notifyPlayer($playerId, 'log', clienttranslate('${Your} safe was already full so the card was not transferred to your safe.'), ['Your' => 'Your']);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name}\'s safe was already full so the card was not transferred to his safe.'), ['player_name' => self::getColoredPlayerName($playerId)]);
-  }
-
   public function getIconSquare(int $icon): string
   {
     return $this->game->getIconSquare($icon);
