@@ -612,6 +612,18 @@ abstract class Card
     return $this->game->countCardsInLocation(self::coercePlayerId($playerId), $location);
   }
 
+  protected function getUniqueValues(string $location, int $playerId = null): array
+  {
+    $values = [];
+    $cardsByAge = $this->game->countCardsInLocationKeyedByAge(self::coercePlayerId($playerId), $location);
+      for ($age = 1; $age <= 11; $age++) {
+        if ($cardsByAge[$age] > 0) {
+          $values[] = $age;
+        }
+      }
+      return $values;
+  }
+
   protected function getScore(int $playerId = null): int
   {
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));

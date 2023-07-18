@@ -36,7 +36,7 @@ class Card541 extends Card
     } else {
       return [
         'choose_value' => true,
-        'age'          => self::getUniqueValuesInScorePile(),
+        'age'          => self::getUniqueValues('score'),
       ];
     }
   }
@@ -94,15 +94,4 @@ class Card541 extends Card
     self::setAuxiliaryValue($choice);
   }
 
-  private function getUniqueValuesInScorePile(): array
-  {
-    $values = [];
-    $cardsByAge = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score');
-      for ($age = 1; $age <= 11; $age++) {
-        if ($cardsByAge[$age] > 0) {
-          $values[] = $age;
-        }
-      }
-      return $values;
-  }
 }

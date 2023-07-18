@@ -10991,7 +10991,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 343)
+            || (333 <= $card_id && $card_id <= 344)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
