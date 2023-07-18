@@ -314,11 +314,16 @@ abstract class Card
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  // BULK CARD TRANSFER HELPERS
+  // BULK CARD HELPERS
 
   protected function junkBaseDeck(int $age)
   {
     $this->game->junkBaseDeck($age);
+  }
+
+  protected function revealHand(int $playerId = null)
+  {
+    $this->game->revealHand(self::coercePlayerId($playerId));
   }
 
   // CARD ACCESSOR HELPERS
@@ -615,6 +620,11 @@ abstract class Card
   protected function wasForeseen(): bool
   {
     return $this->game->innovationGameState->get('foreseen_card_id') == self::getCardIdFromClassName();
+  }
+
+  protected function getAllTypesOtherThan(int $type)
+  {
+    return array_diff(range(0, 5), [$type]);
   }
 
   // GENERAL UTILITY HELPERS

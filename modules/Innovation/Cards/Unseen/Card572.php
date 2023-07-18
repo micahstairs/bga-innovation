@@ -16,7 +16,7 @@ class Card572 extends Card
   public function initialExecution()
   {
     if (self::isDemand()) {
-      $this->game->revealHand(self::getPlayerId());
+      self::revealHand();
       // Check each active opponent (we technically only need to check opponents which will be executing the non-demand, but doing them all is simpler)
       $colors = self::getUniqueColorsInHand(self::getPlayerId());
       foreach ($this->game->getActiveOpponentIds(self::getPlayerId()) as $opponentId) {

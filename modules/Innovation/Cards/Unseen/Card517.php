@@ -51,7 +51,7 @@ class Card517 extends Card
       if (self::getNumChosen() > 0) {
         self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
       } else {
-        $this->game->revealHand(self::getPlayerId());
+        self::revealHand();
       }
     }
   }

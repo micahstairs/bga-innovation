@@ -45,7 +45,7 @@ class Card591 extends Card
   {
     if (self::isDemand()) {
       if (self::getNumChosen() === 0) {
-        $this->game->revealHand(self::getPlayerId());
+        self::revealHand();
         self::lose();
       }
     }

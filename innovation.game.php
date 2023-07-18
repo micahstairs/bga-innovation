@@ -5870,8 +5870,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::executeDraw($player_id, $age_min, 'forecast');
     }
 
-    function executeDrawAndReveal($player_id, $age_min = null) {
-        return self::executeDraw($player_id, $age_min, 'revealed');
+    function executeDrawAndReveal($player_id, $age_min = null, $type = null) {
+        return self::executeDraw($player_id, $age_min, 'revealed', /*bottom_to=*/ false, $type,);
     }
 
     function executeDrawAndMeld($player_id, $age_min = null, $type = null) {
@@ -10991,7 +10991,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (333 <= $card_id && $card_id <= 342)
+            || (333 <= $card_id && $card_id <= 343)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14098,25 +14098,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "332E1":
                 // "Draw a 2."
                 self::executeDraw($player_id, 2);
-                break;
-
-            // id 343, Echoes age 1: Flute
-            case "343E1":
-                $step_max = 1;
-                break;
-
-            case "343D1":
-                $step_max = 1;
-                break;
-
-            case "343N1":
-                //  "Draw and reveal a 1."
-                $card = self::executeDraw($player_id, 1, 'revealed');
-                self::transferCardFromTo($card, $player_id, 'hand');
-                if (count(self::getBonusIcons($card)) > 0) {
-                    // "If it has a bonus, draw a 1."
-                    self::executeDraw($player_id, 1);
-                }
                 break;
 
             // id 345, Echoes age 2: Lever
@@ -20849,33 +20830,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'board'
             );
             break;
-            
-        // id 343, Echoes age 1: Flute
-        case "343E1A":
-            // "You may splay any one color of your cards"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'splay_direction' => self::LEFT,
-            );
-            break;
-
-        case "343D1A":
-            // "I demand you return a card with a bonus from your hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'with_bonus' => true,
-            );            
-            break;
 
         // id 345, age 2: Lever          
         case "345N1A":
@@ -25898,14 +25852,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do, draw and meld a card of equal value!"
                     if ($n > 0) {
                         self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected'));
-                    }
-                    break;
-
-                // id 343, Echoes age 1: Flute
-                case "343D1A":
-                    if ($n == 0) {
-                        // No cards returned, so reveal hand.
-                        self::revealHand($player_id);
                     }
                     break;
                     

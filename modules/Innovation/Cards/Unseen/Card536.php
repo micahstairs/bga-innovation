@@ -15,7 +15,7 @@ class Card536 extends Card
   public function initialExecution()
   {
     if (self::isDemand()) {
-      $this->game->revealHand(self::getPlayerId());
+      self::revealHand();
     } else {
       $cardIds = array();
       for ($i = 0; $i < 3; $i++) {

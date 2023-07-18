@@ -68,7 +68,7 @@ class Card334 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() === 0) {
-      $this->game->revealHand(self::getPlayerId());
+      self::revealHand();
     }
   }
 
