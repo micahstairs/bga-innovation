@@ -11016,7 +11016,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (332 <= $card_id && $card_id <= 344)
+            || (331 <= $card_id && $card_id <= 344)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14078,45 +14078,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // pick the first (and only) bonus on the Echoes card.
                     self::executeDrawAndMeld($player_id, $bonuses[0]);
                 }
-                break;
-
-            // id 331, Echoes age 1: Perfume
-            case "331D1":
-                // Find all colors with ages that are on the player's board, but not on the launcher's board
-                $colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($player_top_card == null) {
-                        continue;
-                    }
-                    $age_found = false;
-                    for ($color2 = 0; $color2 < 5; $color2++) {
-                        $launcher_top_card = self::getTopCardOnBoard($launcher_id, $color2);
-                        if ($launcher_top_card == null) {
-                            continue;
-                        }
-                        
-                        if ($player_top_card['faceup_age'] == $launcher_top_card['faceup_age']) {
-                            $age_found = true;
-                        }
-                    }
-                    if ($age_found == false) {
-                        $colors[] = $color;
-                    }
-                }
-                
-                if (count($colors) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($colors);
-                }
-                else {
-                    self::notifyGeneralInfo(clienttranslate('All top cards had identical values, so no transfer will occur.'));
-                }
-                break;
-
-            case "331E1":
-                // "Draw and tuck a 1."
-                self::executeDrawAndTuck($player_id, 1);
                 break;
                 
             // id 345, Echoes age 2: Lever
@@ -20833,22 +20794,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 331, Echoes age 1: Perfume
-        case "331D1A":
-            // "I demand you transfer a top card of different value from any top card on my board from your board to mine! "
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'color' => self::getAuxiliaryValueAsArray(),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board'
-            );
-            break;
 
         // id 345, age 2: Lever          
         case "345N1A":
@@ -25871,14 +25816,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 331, Echoes age 1: Perfume
-                case "331D1A":
-                    // "If you do, draw and meld a card of equal value!"
-                    if ($n > 0) {
-                        self::executeDrawAndMeld($player_id, $this->innovationGameState->get('age_last_selected'));
-                    }
                     break;
                     
                 // id 345, Echoes age 2: Lever
