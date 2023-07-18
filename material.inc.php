@@ -1635,9 +1635,11 @@ $this->textual_card_infos = array(
     /* Echoes - Age 2 */
 
     345 => array(
-        'name'                => clienttranslate('Lever'),
-        'echo_effect_1'       => clienttranslate('Draw two ${age_2}s.'),
-        'non_demand_effect_1' => clienttranslate('You may return any number of cards from your hand. For every two cards of matching value returned, draw a card of value one higher.'),
+        'name'                                => clienttranslate('Lever'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw two ${age_2}s.'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw two ${age_2}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return any number of cards from your hand. For every two cards of matching value returned, draw a card of value one higher.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return any number of cards from your hand. For every two cards of matching value you return, draw a card of value one higher.'),
     ),
 
     346 => array(
@@ -2505,7 +2507,7 @@ $this->textual_card_infos = array(
     515 => array(
         'name'                => clienttranslate('Quackery'),
         'non_demand_effect_1' => clienttranslate('Choose to either score a card from your hand, or draw a ${age_4}.'),
-        'non_demand_effect_2' => clienttranslate('Return exactly two cards in your hand. If you do, return draw a card of value equal to the sum number of ${icon_2} and ${icon_3} on the returned cards.'),
+        'non_demand_effect_2' => clienttranslate('Return exactly two cards in your hand. If you do, draw a card of value equal to the sum number of ${icon_2} and ${icon_3} on the returned cards.'),
     ),
 
     516 => array(
