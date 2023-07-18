@@ -91,7 +91,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 52-67, 90-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 54-67, 90-92
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -120,8 +120,10 @@ class Innovation extends Table
             'age_min' => 38,
             'age_max' => 39,
             'color_array' => 40,
-            'with_icon' => 41,
-            'without_icon' => 42,
+            'with_icon' => 41, // TODO(LATER): Remove this. It's now stored in with_icons instead.
+            'with_icons' => 52,
+            'without_icon' => 42, // TODO(LATER): Remove this. It's now stored in without_icons instead.
+            'without_icons' => 53,
             'not_id' => 43,
             'n' => 44,
             'id_last_selected' => 45,
@@ -208,8 +210,22 @@ class Innovation extends Table
             self::initGameStateLabels(array(
                 'limit_shrunk_selection_size' => 68,
                 'foreseen_card_id' => 93,
+                'with_icons' => 52,
+                'without_icons' => 53,
             ));
             $this->innovationGameState->set('limit_shrunk_selection_size', -1);
+            $with_icon = $this->innovationGameState->get('with_icon');
+            if ($with_icon > 0) {
+                $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([$with_icon]));
+            } else {
+                $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([]));
+            }
+            $without_icon = $this->innovationGameState->get('without_icon');
+            if ($without_icon > 0) {
+                $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([$without_icon]));
+            } else {
+                $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([]));
+            }
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -447,7 +463,9 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('icon_array', -1); // List of selectable icons encoded in a single value
         $this->innovationGameState->setInitial('player_array', -1); // List of selectable players encoded in a single value (players are listed by their 0-based 'player_index', not their 'player_id')
         $this->innovationGameState->setInitial('with_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon needed
+        $this->innovationGameState->setInitial('with_icons', -1); // List of selectable icons encoded in a single value (but an empty list does not filter anything out)
         $this->innovationGameState->setInitial('without_icon', -1); // 0 if there is no specific icon for the card to be selected, else the number of the icon which can't be selected
+        $this->innovationGameState->setInitial('without_icons', -1); // List of icons which are not selectable encoded in a single value
         $this->innovationGameState->setInitial('not_id', -1); // id of a card which cannot be selected, else -2
         $this->innovationGameState->setInitial('card_id_1', -1); // id of a card which is allowed to be selected, else -2
         $this->innovationGameState->setInitial('card_id_2', -1); // id of a card which is allowed to be selected, else -2
@@ -6245,6 +6263,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $rewritten_options['age_max'] = $value;
                 }
                 break;
+            case 'with_icon':
+                $rewritten_options['with_icons'] = [$value];
+                break;
+            case 'without_icon':
+                $rewritten_options['without_icons'] = [$value];
+                break;
             default:
                 $rewritten_options[$key] = $value;
                 break;
@@ -6325,11 +6349,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('age_max', $rewritten_options)) {
             $rewritten_options['age_max'] = 11;
         }
-        if (!array_key_exists('with_icon', $rewritten_options)) {
-            $rewritten_options['with_icon'] = 0;
+        if (!array_key_exists('with_icons', $rewritten_options)) {
+            $rewritten_options['with_icons'] = [];
         }
-        if (!array_key_exists('without_icon', $rewritten_options)) {
-            $rewritten_options['without_icon'] = 0;
+        if (!array_key_exists('without_icons', $rewritten_options)) {
+            $rewritten_options['without_icons'] = [];
         }
         if (!array_key_exists('not_id', $rewritten_options)) {
             $rewritten_options['not_id'] = -2;
@@ -6466,8 +6490,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'has_splay_direction':
                 $this->innovationGameState->setFromArray('has_splay_direction', $value);
                 break;
+            case 'with_icons':
+                $this->innovationGameState->setFromArray('with_icons', $value);
+                break;
+            case 'without_icons':
+                $this->innovationGameState->setFromArray('without_icons', $value);
+                break;
             }
-            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction') {
+            if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction' && $key <> 'with_icons' && $key <> 'without_icons') {
                 $this->innovationGameState->set($key, $value);
             }
         }
@@ -6566,22 +6596,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Condition for type
         $type_array = $this->innovationGameState->getAsArray('type_array');
-        $condition_for_type = count($type_array) == 0 ? "AND FALSE" : "AND type IN (".join(',', $type_array).")";
+        $condition_for_type = count($type_array) == 0 ? "FALSE" : "type IN (".join(',', $type_array).")";
         
         // Condition for icon
-        $with_icon = $this->innovationGameState->get('with_icon');
-        $without_icon = $this->innovationGameState->get('without_icon');
-        if ($with_icon > 0) {
-            $condition_for_icon = self::format("AND (spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon} OR spot_5 = {icon} OR spot_6 = {icon})", array('icon' => $with_icon));
+        $condition_for_icon = "TRUE";
+        $with_icons = $this->innovationGameState->getAsArray('with_icons');
+        if (count($with_icons) > 0) {
+            $condition_for_icon = "(FALSE"; 
+            foreach ($with_icons as $icon) {
+                $condition_for_icon = self::format(" OR spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon} OR spot_5 = {icon} OR spot_6 = {icon})", array('icon' => $icon));
+            }
+            $condition_for_icon = $condition_for_icon . ")"; 
         }
-        else if ($without_icon > 0) {
-            $condition_for_icon = self::format("AND (spot_1 IS NULL OR spot_1 <> {icon}) AND (spot_2 IS NULL OR spot_2 <> {icon}) AND (spot_3 IS NULL OR spot_3 <> {icon}) AND (spot_4 IS NULL OR spot_4 <> {icon}) AND (spot_5 IS NULL OR spot_5 <> {icon}) AND (spot_6 IS NULL OR spot_6 <> {icon})", array('icon' => $without_icon));
-        }
-        else {
-            $condition_for_icon = "";
+        foreach ($this->innovationGameState->getAsArray('without_icons') as $icon) {
+            $condition_for_icon = $condition_for_icon . self::format(" AND (spot_1 IS NULL OR spot_1 <> {icon}) AND (spot_2 IS NULL OR spot_2 <> {icon}) AND (spot_3 IS NULL OR spot_3 <> {icon}) AND (spot_4 IS NULL OR spot_4 <> {icon}) AND (spot_5 IS NULL OR spot_5 <> {icon}) AND (spot_6 IS NULL OR spot_6 <> {icon})", array('icon' => $icon));
         }
 
         // Condition for icon hash
+        $condition_for_icon_hash = "TRUE";
         $icon_hash_1 = $this->innovationGameState->get('icon_hash_1');
         $icon_hash_2 = $this->innovationGameState->get('icon_hash_2');
         $icon_hash_3 = $this->innovationGameState->get('icon_hash_3');
@@ -6589,7 +6621,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $icon_hash_5 = $this->innovationGameState->get('icon_hash_5');
         if ($icon_hash_1 >= 0 || $icon_hash_2 >= 0 || $icon_hash_3 >= 0 || $icon_hash_4 >= 0 || $icon_hash_5 >= 0) {
             $condition_for_icon_hash = self::format("
-                AND (
+                (
                     icon_hash = {icon_hash_1} OR
                     icon_hash = {icon_hash_2} OR
                     icon_hash = {icon_hash_3} OR
@@ -6603,28 +6635,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'icon_hash_5' => $icon_hash_5
                 )
             );
-        } else {
-            $condition_for_icon_hash = "";
         }
 
         // Condition for whether the stack is splayed
         $splay_directions = $this->innovationGameState->getAsArray('has_splay_direction');
-        $condition_for_splay = "";
+        $condition_for_splay = "TRUE";
         if (count($splay_directions) == 0) {
-            $condition_for_splay = "AND FALSE";
+            $condition_for_splay = "FALSE";
         } else if (($this->innovationGameState->get('release_version') <= 3 && count($splay_directions) < 4) || ($this->innovationGameState->get('release_version') >= 4 && count($splay_directions) < 5)) {
-            $condition_for_splay = "AND splay_direction IN (".join(',', $splay_directions).")";
+            $condition_for_splay = "splay_direction IN (".join(',', $splay_directions).")";
         }
 
         // Condition for requiring ID
-        $condition_for_requiring_id = "";
+        $condition_for_requiring_id = "TRUE";
         $card_ids_are_in_auxiliary_array = $this->innovationGameState->get('card_ids_are_in_auxiliary_array');
         if ($card_ids_are_in_auxiliary_array == 1) {
             $card_ids = self::getAuxiliaryArray();
             if (empty($card_ids)) {
-                $condition_for_requiring_id = "AND FALSE";
+                $condition_for_requiring_id = "FALSE";
             } else {
-                $condition_for_requiring_id = "AND id IN (";
+                $condition_for_requiring_id = "id IN (";
                 $first_id = true;
                 foreach ($card_ids as $card_id) {
                     if ($first_id) {
@@ -6641,40 +6671,40 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $card_id_2 = $this->innovationGameState->get('card_id_2');
             $card_id_3 = $this->innovationGameState->get('card_id_3');
             if ($card_id_3 != -2) {
-                $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2}, {card_id_3})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2, 'card_id_3' => $card_id_3));
+                $condition_for_requiring_id = self::format("id IN ({card_id_1}, {card_id_2}, {card_id_3})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2, 'card_id_3' => $card_id_3));
             } else if ($card_id_2 != -2) {
-                $condition_for_requiring_id = self::format("AND id IN ({card_id_1}, {card_id_2})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2));
+                $condition_for_requiring_id = self::format("id IN ({card_id_1}, {card_id_2})", array('card_id_1' => $card_id_1, 'card_id_2' => $card_id_2));
             } else if ($card_id_1 != -2) {
-                $condition_for_requiring_id = self::format("AND id IN ({card_id_1})", array('card_id_1' => $card_id_1));
+                $condition_for_requiring_id = self::format("id IN ({card_id_1})", array('card_id_1' => $card_id_1));
             }
         }
 
         // Condition for excluding ID
-        $condition_for_excluding_id = "";
+        $condition_for_excluding_id = "TRUE";
         $not_id = $this->innovationGameState->get('not_id');
         if ($not_id != -2) { // Used by cards like Fission and Self service
-            $condition_for_excluding_id = self::format("AND id <> {not_id}", array('not_id' => $not_id));
+            $condition_for_excluding_id = self::format("id <> {not_id}", array('not_id' => $not_id));
         }
 
         // Condition for including relic
-        $condition_for_including_relic = "";
+        $condition_for_including_relic = "TRUE";
         $include_relics = $this->innovationGameState->get('include_relics');
         if ($include_relics == 0) {
-            $condition_for_including_relic = "AND is_relic = FALSE";
+            $condition_for_including_relic = "is_relic = FALSE";
         }
 
         // Condition for including cards with at least one bonus icon
-        $condition_for_including_bonus = "";
+        $condition_for_including_bonus = "TRUE";
         $with_bonus = $this->innovationGameState->get('with_bonus');
         if ($with_bonus == 1) {
-            $condition_for_including_bonus = "AND (spot_1 >= 101 OR spot_2 >= 101 OR spot_3 >= 101 OR spot_4 >= 101 OR spot_5 >= 101 OR spot_6 >= 101)";
+            $condition_for_including_bonus = "(spot_1 >= 101 OR spot_2 >= 101 OR spot_3 >= 101 OR spot_4 >= 101 OR spot_5 >= 101 OR spot_6 >= 101)";
         }
 
         // Condition for excluding cards with at least one bonus icon
-        $condition_for_excluding_bonus = "";
+        $condition_for_excluding_bonus = "TRUE";
         $without_bonus = $this->innovationGameState->get('without_bonus');
         if ($without_bonus == 1) {
-            $condition_for_excluding_bonus = "AND (spot_1 IS NULL OR spot_1 < 101) AND (spot_2 IS NULL OR spot_2 < 101) AND (spot_3 IS NULL OR spot_3 < 101) AND (spot_4 IS NULL OR spot_4 < 101) AND (spot_5 IS NULL OR spot_5 < 101) AND (spot_6 IS NULL OR spot_6 < 101)";
+            $condition_for_excluding_bonus = "(spot_1 IS NULL OR spot_1 < 101) AND (spot_2 IS NULL OR spot_2 < 101) AND (spot_3 IS NULL OR spot_3 < 101) AND (spot_4 IS NULL OR spot_4 < 101) AND (spot_5 IS NULL OR spot_5 < 101) AND (spot_6 IS NULL OR spot_6 < 101)";
         }
         
         if ($this->innovationGameState->get('splay_direction') == -1 && $location_from == 'board') {
@@ -6695,15 +6725,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_claimable_ages} AND
                     {condition_for_demand_effect} AND
                     position = position_to_select AND
-                    {condition_for_color}
-                    {condition_for_type}
-                    {condition_for_icon}
-                    {condition_for_icon_hash}
-                    {condition_for_splay}
-                    {condition_for_requiring_id}
-                    {condition_for_excluding_id}
-                    {condition_for_including_relic}
-                    {condition_for_including_bonus}
+                    {condition_for_color} AND
+                    {condition_for_type} AND
+                    {condition_for_icon} AND
+                    {condition_for_icon_hash} AND
+                    {condition_for_splay} AND
+                    {condition_for_requiring_id} AND
+                    {condition_for_excluding_id} AND
+                    {condition_for_including_relic} AND
+                    {condition_for_including_bonus} AND
                     {condition_for_excluding_bonus}
             ",
                 array(
@@ -6738,15 +6768,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     {condition_for_age} AND
                     {condition_for_claimable_ages} AND
                     {condition_for_demand_effect} AND
-                    {condition_for_color}
-                    {condition_for_type}
-                    {condition_for_icon}
-                    {condition_for_icon_hash}
-                    {condition_for_splay}
-                    {condition_for_requiring_id}
-                    {condition_for_excluding_id}
-                    {condition_for_including_relic}
-                    {condition_for_including_bonus}
+                    {condition_for_color} AND
+                    {condition_for_type} AND
+                    {condition_for_icon} AND
+                    {condition_for_icon_hash} AND
+                    {condition_for_splay} AND
+                    {condition_for_requiring_id} AND
+                    {condition_for_excluding_id} AND
+                    {condition_for_including_relic} AND
+                    {condition_for_including_bonus} AND
                     {condition_for_excluding_bonus}
             ",
                 array(
@@ -10247,8 +10277,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $bottom_to = $this->innovationGameState->get("bottom_to");
             $age_min = $this->innovationGameState->get("age_min");
             $age_max = $this->innovationGameState->get("age_max");
-            $with_icon = $this->innovationGameState->get("with_icon");
-            $without_icon = $this->innovationGameState->get("without_icon");
+            $with_icons = $this->innovationGameState->getAsArray("with_icons");
+            $without_icons = $this->innovationGameState->getAsArray("without_icons");
             $with_demand_effect = $this->innovationGameState->get("has_demand_effect");
             $score_keyword = $this->innovationGameState->get("score_keyword");
             $meld_keyword = $this->innovationGameState->get("meld_keyword");
@@ -10331,7 +10361,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $number = self::getRecursivelyTranslatedNumberRange($n_min, $n_max);
         
         if ($splay_direction == -1) {
-            $cards = self::getRecursivelyTranslatedCardSelection($age_min, $age_max, $with_icon, $without_icon, $with_demand_effect);
+            $cards = self::getRecursivelyTranslatedCardSelection($age_min, $age_max, $with_icons, $without_icons, $with_demand_effect);
         } else { // splay_direction <> -1
             $splayable_colors = $this->innovationGameState->getAsArray('color_array');
             $splayable_colors_in_clear = array();
@@ -10454,7 +10484,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ];
     }
 
-    function getRecursivelyTranslatedCardSelection($age_min, $age_max, $with_icon, $without_icon, $with_demand_effect) {
+    function getRecursivelyTranslatedCardSelection($age_min, $age_max, $with_icons, $without_icons, $with_demand_effect) {
         $card_args = array();
 
         $selectable_colors = $this->innovationGameState->getAsArray('color_array');
@@ -10487,19 +10517,33 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             ];
         }
 
-        if ($with_icon > 0) {
+        if (count($with_icons) === 1) {
             $with_icon_log = clienttranslate(' with a ${[}${icon}${]}');
             $card_args['with_icon'] = [
                 'i18n' => ['log'],
                 'log' => $with_icon_log,
-                'args' => array_merge(self::getDelimiterMeanings($with_icon_log), ['icon' => $with_icon]),
+                'args' => array_merge(self::getDelimiterMeanings($with_icon_log), ['icon' => $with_icons[0]]),
             ];
-        } else if ($without_icon > 0) {
+        } else if (count($with_icons) === 2) {
+            $with_icon_log = clienttranslate(' with a ${[}${icon_1}${]} or a ${[}${icon_2}${]}');
+            $card_args['with_icon'] = [
+                'i18n' => ['log'],
+                'log' => $with_icon_log,
+                'args' => array_merge(self::getDelimiterMeanings($with_icon_log), ['icon_1' => $with_icons[0], 'icon_2' => $with_icons[1]]),
+            ];
+        } else if (count($without_icons) === 1) {
             $without_icon_log = clienttranslate(' without a ${[}${icon}${]}');
             $card_args['with_icon'] = [
                 'i18n' => ['log'],
                 'log' => $without_icon_log,
-                'args' => array_merge(self::getDelimiterMeanings($without_icon_log), ['icon' => $without_icon]),
+                'args' => array_merge(self::getDelimiterMeanings($without_icon_log), ['icon' => $without_icons[0]]),
+            ];
+        } else if (count($without_icons) === 2) {
+            $without_icon_log = clienttranslate(' without a ${[}${icon_1}${]} or a ${[}${icon_2}${]}');
+            $card_args['with_icon'] = [
+                'i18n' => ['log'],
+                'log' => $without_icon_log,
+                'args' => array_merge(self::getDelimiterMeanings($without_icon_log), ['icon_1' => $without_icons[0], 'icon_2' => $without_icons[1]]),
             ];
         }
 
@@ -10945,8 +10989,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('choice_array', -1);
             $this->innovationGameState->set('icon_array', -1);
             $this->innovationGameState->set('player_array', -1);
-            $this->innovationGameState->set('with_icon', -1);
-            $this->innovationGameState->set('without_icon', -1);
             $this->innovationGameState->set('not_id', -1);
             $this->innovationGameState->set('card_id_1', -1);
             $this->innovationGameState->set('card_id_2', -1);
@@ -10993,7 +11035,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 347)
+            || (330 <= $card_id && $card_id <= 348)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14041,33 +14083,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 348 Echoes age 2: Horseshoes
-            case "348E1":
-                // "Draw and foreshadow a 2."
-                self::executeDrawAndForeshadow($player_id, 2);
-                break;
-                
-            case "348D1":
-                // Find all colors with cards that don't have towers or factories
-                $colors = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $player_top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($player_top_card == null) {
-                        continue;
-                    }
-                    if (!self::hasRessource($player_top_card, 4) && !self::hasRessource($player_top_card, 5)) {
-                        $colors[] = $color;
-                    }
-                } 
-                if (count($colors) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($colors);
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no top cards with a ${icon_4} or ${icon_5}, so no transfer will occur.'), array('You' => 'You', 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('All of ${player_name}\'s top cards have ${icon_4} or ${icon_5}, so no transfer will occur.'), array('player_name' => self::getColoredPlayerName($player_id), 'icon_4' => self::getIconSquare(4), 'icon_5' => self::getIconSquare(5)));
-                }
                 break;
 
             // id 349, Echoes age 2: Glassblowing
@@ -20701,22 +20716,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 348, Echoes age 2: Horseshoes
-        case "348D1A":
-            // "I demand you transfer a top card without a tower or factory from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'color' => self::getAuxiliaryValueAsArray(),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-            );
-            break;
-
         // id 349, Echoes age 2: Glassblowing
         case "349E1A":
             // "Score a card with a bonus from your hand."
@@ -25620,14 +25619,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 348, Echoes age 2: Horseshoes
-                case "348D1A":
-                    // "If you do, draw and meld a 2!"
-                    if ($n > 0) {
-                        self::executeDrawAndMeld($player_id, 2);
-                    }
-                    break;
-
                 // id 349, Echoes age 2: Glassblowing
                 case "349E1A":
                     if ($n == 0) {
@@ -27013,8 +27004,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $location_to = self::decodeLocation($this->innovationGameState->get('location_to'));
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $colors = $this->innovationGameState->getAsArray('color_array');
-            $with_icon = $this->innovationGameState->get('with_icon');
-            $without_icon = $this->innovationGameState->get('without_icon');
+            $with_icons = $this->innovationGameState->getAsArray('with_icons');
+            $without_icons = $this->innovationGameState->getAsArray('without_icons');
             $with_bonus = $this->innovationGameState->get('with_bonus');
             $without_bonus = $this->innovationGameState->get('without_bonus');
             $card_id_returning_to_unique_supply_pile = $location_to == 'deck' || $location_to == 'revealed,deck' ? self::getSelectedCardIdBelongingToUniqueSupplyPile() : null;
@@ -27056,7 +27047,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Player is forced to choose a card based on a hidden property (e.g. color or icons). There are
                 // other hidden properties (has_demand_effect, icon_hash_X) that aren't included here because there
                 // are currently no cards where this would actually matter.
-                ($colors != array(0, 1, 2, 3, 4) || $with_icon > 0 || $without_icon > 0 || $with_bonus > 0 || $without_bonus > 0);
+                ($colors != array(0, 1, 2, 3, 4) || count($with_icons) > 0 || count($without_icons) > 0 || $with_bonus > 0 || $without_bonus > 0);
 
             // If all cards from the location must be chosen, then it doesn't matter if the information is hidden or not. It will soon come to light.
             if (($cards_chosen_so_far == 0 && $num_cards_in_location_from <= $n_max && !$can_pass) || ($cards_chosen_so_far > 0 && $n_min >= $num_cards_in_location_from)) {

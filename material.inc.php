@@ -1658,9 +1658,10 @@ $this->textual_card_infos = array(
     ),
 
     348 => array(
-        'name'              => clienttranslate('Horseshoes'),
-        'echo_effect_1'     => clienttranslate('Draw and foreshadow a ${age_2}.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card without a ${icon_4} or ${icon_5} from your board to my board! If you do, draw and meld a ${age_2}!'),
+        'name'                          => clienttranslate('Horseshoes'),
+        'echo_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a ${age_2}.'),
+        'echo_effect_1_fourth'          => clienttranslate('You may draw and foreshadow a ${age_2} or ${age_3}.'),
+        'i_demand_effect_1'             => clienttranslate('${I demand} you transfer a top card without a ${icon_4} or ${icon_5} from your board to my board! If you do, draw and meld a ${age_2}!'),
     ),
 
     349 => array(
