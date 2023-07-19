@@ -1682,10 +1682,11 @@ $this->textual_card_infos = array(
     ),
 
     351 => array(
-        'name'                => clienttranslate('Toothbrush'),
-        'echo_effect_1'       => clienttranslate('Tuck all cards of one present value from your hand.'),
-        'non_demand_effect_1' => clienttranslate('You may splay any one color of your cards left.'),
-        'non_demand_effect_2' => clienttranslate('If the ${age_2} deck has at least one card, you may transfer its bottom card to the available achievements.'),
+        'name'                                => clienttranslate('Toothbrush'),
+        'echo_effect_1'                       => clienttranslate('Tuck all cards of one present value from your hand.'),
+        'non_demand_effect_1'                 => clienttranslate('You may splay any one color of your cards left.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('If the ${age_2} deck has at least one card, you may transfer its bottom card to the available achievements.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('You may junk all cards in the ${age_2} deck. If you do, achieve the highest junked card if eligible.'),
     ),
 
     352 => array(
