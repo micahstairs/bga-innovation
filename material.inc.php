@@ -1697,8 +1697,9 @@ $this->textual_card_infos = array(
     ),
 
     353 => array(
-        'name'                => clienttranslate('Pagoda'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_3}. If you have a card of matching color in your hand, tuck the card from your hand and meld the drawn card. Otherwise, foreshadow the drawn card.'),
+        'name'                                => clienttranslate('Pagoda'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_3}. If you have a card of matching color in your hand, tuck the card from your hand and meld the drawn card. Otherwise, foreshadow the drawn card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_3}. You may tuck another card of matching color from your hand. If you do, meld the drawn card. If you do, and Pagoda was foreseen, meld all cards of that color from all other boards.'),
     ),
 
     354 => array(

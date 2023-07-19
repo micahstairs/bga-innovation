@@ -11001,7 +11001,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 352)
+            || (330 <= $card_id && $card_id <= 353)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14051,27 +14051,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
                 
-            // id 353 Echoes age 2: Pagoda
-            case "353N1":
-                // "Draw and reveal a 3."
-                $revealed_card = self::executeDraw($player_id, 3, 'revealed');
-                $cards = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                $color = $revealed_card['color'];
-                if ($cards[$color] > 0) {
-                    //"If you have a card of matching color in your hand,"
-                    $step_max = 1;
-                    self::setAuxiliaryValue($color);
-                } else {
-                    // Reveal hand to confirm no matching cards are there.
-                    self::revealHand($player_id);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${color} cards in your hand.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${color} cards in his hand.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($color)));
-                    
-                    // "Otherwise, foreshadow the drawn card."
-                    self::foreshadowCard($revealed_card, $player_id);
-                }
-                break;
-
             // id 354, Echoes age 2: Chaturanga
             case "354N1":
                 $step_max = 1;
@@ -20616,24 +20595,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 353 Echoes age 2: Pagoda
-        case "353N1A":
-            // "tuck the card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                         
-                'color' => array(self::getAuxiliaryValue()),
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-            );            
-            break;
-
         // id 354, Echoes age 2: Chaturanga
         case "354N1A":
             // "Meld a card with a bonus from your hand."
@@ -25355,13 +25316,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // 353, Echoes age 2: Pagoda
-                case "353N1A":
-                    // "and meld the drawn card."
-                    $card = self::getCardsInLocation($player_id, 'revealed');
-                    self::meldCard($card[0], $player_id);
                     break;
 
                 // id 354, Echoes age 2: Chaturanga

@@ -281,6 +281,14 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
+  protected function foreshadow($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->foreshadowCard($card, self::coercePlayerId($playerId));
+  }
+
   protected function putInHand($card, int $playerId = null)
   {
     if (!$card) {
@@ -327,6 +335,15 @@ abstract class Card
   protected function getBottomCardOfColor(int $color, int $playerId = null)
   {
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
+  }
+
+  protected function getRevealedCard(int $playerId = null)
+  {
+    $cards = $this->game->getCardsInLocation(self::coercePlayerId($playerId), 'revealed');
+    if (count($cards) === 0) {
+      return null;
+    }
+    return $cards[0];
   }
 
   // BULK CARD HELPERS
