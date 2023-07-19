@@ -16,18 +16,21 @@ class Card572 extends Card
   public function initialExecution()
   {
     if (self::isDemand()) {
-      self::revealHand();
-      // Check each active opponent (we technically only need to check opponents which will be executing the non-demand, but doing them all is simpler)
-      $colors = self::getUniqueColorsInHand(self::getPlayerId());
-      foreach ($this->game->getActiveOpponentIds(self::getPlayerId()) as $opponentId) {
-        $opponentColors = self::getUniqueColorsInHand($opponentId);
-        if (count($colors) === count($opponentColors) && !array_diff($colors, $opponentColors) && !array_diff($opponentColors, $colors)) {
-          $this->game->setIndexedAuxiliaryValue($opponentId, 1);
-        }
+      $this->game->revealHand(self::getPlayerId());
+      // Check each opponent affected by this demand (the others won't have their flag set)
+      $colors = self::getUniqueColorsInHand(self::getLauncherId());
+      $opponentColors = self::getUniqueColorsInHand(self::getPlayerId());
+                
+      if (count(array_diff($colors, $opponentColors)) == 0 && count(array_diff($opponentColors, $colors)) == 0) {
+        $this->game->setIndexedAuxiliaryValue(self::getPlayerId(), 1);
       }
+       
     } else if (self::getEffectNumber() === 1) {
-      if (count($this->game->getCardsInHand(self::getPlayerId())) > 0 && $this->game->getIndexedAuxiliaryValue(self::getPlayerId())) {
-        self::win();
+      foreach ($this->game->getActiveOpponentIds(self::getPlayerId()) as $opponentId) {
+        if ($this->game->countCardsInHand(self::getPlayerId()) > 0 && $this->game->getIndexedAuxiliaryValue($opponentId) == 1) {
+          $this->game->revealHand(self::getPlayerId()); // reveal hand to prove winning colors
+          self::win();
+        }
       }
     } else {
       self::draw(10);
