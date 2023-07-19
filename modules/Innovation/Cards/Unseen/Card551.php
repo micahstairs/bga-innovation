@@ -30,8 +30,7 @@ class Card551 extends Card
       return [
         'owner_from'    => 'any player',
         'location_from' => 'score',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
       ];
     } else {
       return [

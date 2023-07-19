@@ -29,8 +29,7 @@ class Card544 extends Card
     } else if (self::getCurrentStep() == 2) {
       return [
         'location_from' => 'hand',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
       ];
     } else {
       return [

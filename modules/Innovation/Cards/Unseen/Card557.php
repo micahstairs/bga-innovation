@@ -25,8 +25,7 @@ class Card557 extends Card
     return [
       'n' => 'all',
       'location_from' => 'safe',
-      'location_to'   => 'board',
-      'bottom_to'     => true,
+      'tuck_keyword'  => true,
     ];
   }
 

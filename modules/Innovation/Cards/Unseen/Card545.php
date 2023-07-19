@@ -25,8 +25,7 @@ class Card545 extends Card
   {
     return [
       'location_from' => 'board',
-      'location_to'   => 'board',
-      'bottom_to'     => true,
+      'tuck_keyword'  => true,
       'with_icon'     => $this->game::CONCEPT,
     ];
   }

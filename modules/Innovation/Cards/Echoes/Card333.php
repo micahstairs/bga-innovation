@@ -31,16 +31,14 @@ class Card333 extends Card
     if (self::isFirstOrThirdEdition()) {
       return [
         'location_from' => 'hand',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
         'color'         => [$this->game::RED],
       ];
     } else {
       if (self::isEcho()) {
         return [
           'location_from' => 'hand',
-          'location_to'   => 'board',
-          'bottom_to'     => true,
+          'tuck_keyword'  => true,
           'age'           => 1,
         ];
       } else if (self::getCurrentStep() === 1) {
@@ -48,8 +46,7 @@ class Card333 extends Card
       } else {
         return [
           'location_from' => 'forecast',
-          'location_to'   => 'board',
-          'bottom_to'     => true,
+          'tuck_keyword'  => true,
           'age'           => 2,
         ];
       }

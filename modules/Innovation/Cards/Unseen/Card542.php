@@ -33,8 +33,7 @@ class Card542 extends Card
       return [
         'n'             => 'all',
         'location_from' => 'score',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
         'color'         => [self::getLastSelectedColor()],
       ];
     }

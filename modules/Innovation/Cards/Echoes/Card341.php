@@ -28,8 +28,7 @@ class Card341 extends Card
         'n_min'         => 1,
         'n_max'         => 'all',
         'location_from' => 'hand',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
         'color'         => [self::getAuxiliaryValue()],
       ];
     } else {

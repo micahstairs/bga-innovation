@@ -30,8 +30,7 @@ class Card592 extends Card
         return [
           'n'                               => 'all',
           'location_from'                   => 'board',
-          'location_to'                     => 'board',
-          'bottom_to'                       => true,
+          'tuck_keyword'                    => true,
           'card_ids_are_in_auxiliary_array' => true,
         ];
       } else {

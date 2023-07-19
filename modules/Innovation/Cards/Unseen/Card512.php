@@ -29,8 +29,7 @@ class Card512 extends Card
     if (self::isDemand()) {
       return [
         'location_from' => 'hand',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
       ];
     } else if (self::getCurrentStep() === 1) {
       return [
@@ -42,8 +41,7 @@ class Card512 extends Card
         'can_pass'      => true,
         'n_min'         => 1,
         'location_from' => 'hand',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
         'color'         => [self::getAuxiliaryValue()],
       ];
     }

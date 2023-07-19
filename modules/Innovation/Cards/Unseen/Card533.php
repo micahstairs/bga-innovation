@@ -27,8 +27,7 @@ class Card533 extends Card
     if (self::getCurrentStep() == 1) {
       return [
         'location_from' => 'hand',
-        'location_to'   => 'board',
-        'bottom_to'     => true,
+        'tuck_keyword'  => true,
       ];
     } else {
       return [
