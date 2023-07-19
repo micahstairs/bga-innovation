@@ -11001,7 +11001,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 351)
+            || (330 <= $card_id && $card_id <= 352)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14051,11 +14051,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
                 
-            // id 352, Echoes age 2: Watermill
-            case "352N1":
-                $step_max = 1;
-                break;
-
             // id 353 Echoes age 2: Pagoda
             case "353N1":
                 // "Draw and reveal a 3."
@@ -20620,38 +20615,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 352, Echoes age 2: Watermill
-        case "352N1A":
-            // "Tuck a card with a bonus from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'bottom_to' => true,
-
-                'with_bonus' => true,
-            );            
-            break;
-
-        case "352N1B":
-            // "you may return a card from your hand to repeat this dogma effect."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                );
-            break;
 
         // id 353 Echoes age 2: Pagoda
         case "353N1A":
@@ -25393,32 +25356,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                    
-                // id 352, Echoes age 2: Watermill
-                case "352N1A":
-                    if ($n > 0) {
-                        // "If you do, draw a card of value equal to that card's bonus."
-                        $tucked_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        $bonuses = self::getBonusIcons($tucked_card);
-                        $card = self::executeDraw($player_id, $bonuses[0]);
-                        
-                        if (count(self::getBonusIcons($card)) > 0) {
-                            // "If the drawn card also has a bonus"
-                            self::setStepMax(2); // Add optional repeatable step
-                        }
-                    } else {
-                        // Reveal a hand with no bonuses
-                        self::revealHand($player_id);
-                    }
-                    break;
-
-                case "352N1B":
-                    if ($n > 0) {
-                        // card is returned, go back to step 1
-                        self::incrementStep(-2); $step -= 2;
-                        self::setStepMax(1);
-                    }
-                    break;  
 
                 // 353, Echoes age 2: Pagoda
                 case "353N1A":

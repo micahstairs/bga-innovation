@@ -36,7 +36,7 @@ class Card346 extends Card
       }
       return [
         'choose_value' => true,
-        'age'          => array_unique($values),
+        'age'          => $values,
       ];
     } else {
       return [

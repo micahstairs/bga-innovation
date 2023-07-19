@@ -1690,8 +1690,10 @@ $this->textual_card_infos = array(
     ),
 
     352 => array(
-        'name'                => clienttranslate('Watermill'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card with a bonus from your hand. If you do, draw a card of value equal to that card\'s bonus. If the drawn card also has a bonus, you may return a card from your hand to repeat this dogma effect.'),
+        'name'                                => clienttranslate('Watermill'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Tuck a card with a bonus from your hand. If you do, draw a card of value equal to that card\'s bonus. If the drawn card also has a bonus, you may return a card from your hand to repeat this dogma effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw a card of value equal to a bonus on your board, if you have one.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Tuck a card from your hand. If Watermill was foreseen, tuck all cards from the deck of value equal to the tucked card.'),
     ),
 
     353 => array(
