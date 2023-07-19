@@ -1388,8 +1388,14 @@ var Innovation = /** @class */ (function (_super) {
                         // Add a button for each available options
                         for (var i = 0; i < args.options.length; i++) {
                             var option = args.options[i];
-                            // NOTE: The option.age substitution is used by cards such as Evolution, option.splay_direction is used by Sunglasses, and option.name is used by Karaoke.
-                            this.addActionButton("choice_" + option.value, dojo.string.substitute(_(option.text), { 'age': option.age, 'name': option.name, 'splay_direction': option.splay_direction, 'i18n': option.i18n }), "action_clicForChooseSpecialOption");
+                            console.log(JSON.stringify(args));
+                            this.addActionButton("choice_" + option.value, this.format_string_recursive(_(option.text), {
+                                'age': option.age,
+                                'name': option.name,
+                                'splay_direction': option.splay_direction,
+                                'card': option.card,
+                                'i18n': option.i18n,
+                            }), "action_clicForChooseSpecialOption");
                         }
                         last_button_id = "choice_" + args.options[args.options.length - 1].value;
                     }

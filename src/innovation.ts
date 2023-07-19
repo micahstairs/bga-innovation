@@ -1463,8 +1463,17 @@ class Innovation extends BgaGame {
                         // Add a button for each available options
                         for (let i = 0; i < args.options.length; i++) {
                             let option = args.options[i];
-                            // NOTE: The option.age substitution is used by cards such as Evolution, option.splay_direction is used by Sunglasses, and option.name is used by Karaoke.
-                            this.addActionButton("choice_" + option.value, dojo.string.substitute(_(option.text), { 'age': option.age, 'name': option.name, 'splay_direction': option.splay_direction, 'i18n': option.i18n }), "action_clicForChooseSpecialOption")
+                            console.log(JSON.stringify(args));
+                            this.addActionButton(
+                                "choice_" + option.value,
+                                this.format_string_recursive(_(option.text), {
+                                    'age': option.age, // Used by cards like Evolution
+                                    'name': option.name, // Used by cards like Karaoke
+                                    'splay_direction': option.splay_direction, // Used by cards like Sunglasses
+                                    'card': option.card, // Used by cards like Scissors
+                                    'i18n': option.i18n,
+                                }
+                            ), "action_clicForChooseSpecialOption")
                         }
                         last_button_id = "choice_" + args.options[args.options.length - 1].value;
                     } else if (splay_choice) {

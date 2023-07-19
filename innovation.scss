@@ -67,6 +67,9 @@
     font-weight: bold;
     font-style: normal;
     color: black;
+    .action-button & {
+        color: white;
+    }
 }
 
 .player.whiteblock {

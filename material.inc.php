@@ -1673,10 +1673,12 @@ $this->textual_card_infos = array(
     ),
 
     350 => array(
-        'name'                => clienttranslate('Scissors'),
-        'echo_effect_1'       => clienttranslate('Take a bottom card from your board into your hand.'),
-        'non_demand_effect_1' => clienttranslate('You may choose up to two cards from your hand. For each card chosen, either meld it or score it.'),
-        'non_demand_effect_2' => clienttranslate('If Paper is a top card on any player\'s board, transfer it to your score pile.'),
+        'name'                                => clienttranslate('Scissors'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Take a bottom card from your board into your hand.'),
+        'echo_effect_1_fourth'                => clienttranslate('Score your bottom yellow card.'),
+        'non_demand_effect_1'                 => clienttranslate('You may choose up to two cards from your hand. For each card chosen, either meld it or score it.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('If Paper is a top card on any player\'s board, transfer it to your score pile.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If Paper is a top card on any player\'s board, score it.'),
     ),
 
     351 => array(

@@ -57,6 +57,9 @@
   font-style: normal;
   color: black;
 }
+.action-button .card_name {
+  color: white;
+}
 
 .player.whiteblock {
   border-width: 1px;

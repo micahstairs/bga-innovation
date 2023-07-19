@@ -2656,12 +2656,7 @@ class Innovation extends Table
 
         // Override the text for some specific cases
         // TODO(4E): Fix the following cases: Cyrus Cylinder (134N1+A, 134N1B), Kobukson (367E1A), Dark Web (588N1A), Tuning Fork
-        if ($code === '350N1B' || $code === '350N1D') { // Scissors
-            $from_somewhere_for_player = clienttranslate('from your hand');
-            $to_somewhere_for_player = clienttranslate('to meld or score');
-            $from_somewhere_for_others = clienttranslate('from his hand');
-            $to_somewhere_for_others = clienttranslate('to meld or score');
-        } else if ($code === '100N1A' || $code === '100N2A' || $code === '134N1A') { // Self Service (either edition) or Cyrus Cylinder
+        if ($code === '100N1A' || $code === '100N2A' || $code === '134N1A') { // Self Service (either edition) or Cyrus Cylinder
             $card_qualifier = clienttranslate('other top ');
         } else if ($code === '417N1A') { // Helicopter
             $to_somewhere_for_player = clienttranslate('to his score pile');
@@ -9887,21 +9882,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-
-            // id 350, Echoes age 2: Scissors
-            case "350N1B":
-            case "350N1D":
-                $selected_card = self::getCardInfo(self::getAuxiliaryValue2());
-                $card_args = self::getNotificationArgsForCardList([$selected_card]);
-                $message_args_for_player['selected_card'] = $card_args;
-                $message_args_for_others['selected_card'] = $card_args;
-                $message_for_player = clienttranslate('${You} must meld or score ${selected_card}');
-                $message_for_others = clienttranslate('${player_name} must meld or score ${selected_card}');
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate("Meld")),
-                                array('value' => 0, 'text' => clienttranslate("Score"))
-                );
-                break;
                 
             // id 351, Echoes age 2: Toothbrush
             case "351E1A":
@@ -11035,7 +11015,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 349)
+            || (330 <= $card_id && $card_id <= 350)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14083,23 +14063,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 350, Echoes age 2: Scissors
-            case "350E1":
-                $step_max = 1;
-                break;
-
-            case "350N1":
-                $step_max = 1;
-                break;
-
-            case "350N2":
-                // "If Paper is a top card on any player's board, transfer it to your score pile."
-                $paper_card = self::getCardInfo(30);
-                if (self::isTopBoardCard($paper_card)) {
-                    self::transferCardFromTo($paper_card, $player_id, 'score');
-                }
                 break;
                 
             // id 351, Echoes age 2: Toothbrush
@@ -20696,70 +20659,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 350, Echoes age 2: Scissors
-        case "350E1A":
-            // "Take a bottom card from your board into your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-
-                'bottom_from' => true,
-            );       
-            break;
-
-        case "350N1A":
-            // "You may choose up to two cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-            );       
-            break;
-
-        case "350N1B":
-            // "For each card chosen, either meld it or score it."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_yes_or_no' => true,
-            );
-            break;
-
-        case "350N1C":
-            // "You may choose up to two cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-            );       
-            break;
-
-        case "350N1D":
-            // "For each card chosen, either meld it or score it."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_yes_or_no' => true,
-            );
-            break;
             
         // id 351, age 2: Toothbrush          
         case "351E1A":
@@ -25581,54 +25480,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 350, Echoes age 2: Scissors
-                case "350N1A":
-                    if ($n > 0) { // card needs to be melded or returned
-                        $hand_card_count = self::countCardsInLocation($player_id, 'hand');
-                        if ($hand_card_count > 1) {
-                            self::incrementStepMax(1); // Next card choice must be given
-                        }
-                        self::incrementStepMax(1); // Must proceed to the meld/score choice
-                        
-                        self::setAuxiliaryValue2($this->innovationGameState->get('id_last_selected'));
-                    }
-                    break;
-
-                case "350N1B":
-                    $choice = self::getAuxiliaryValue();
-                    $chosen_card_id = self::getAuxiliaryValue2();
-                    $card = self::getCardInfo($chosen_card_id);
-                    
-                    if ($choice == 1) {
-                        // meld
-                        self::meldCard($card, $player_id);
-                    } else {
-                        // score
-                        self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword*/true);
-                    }                    
-                    break;
-                    
-                case "350N1C":
-                    if ($n > 0) {
-                        self::incrementStepMax(1); // Must proceed to the meld/score choice
-                        self::setAuxiliaryValue2($this->innovationGameState->get('id_last_selected'));
-                    }
-                    break;
-
-                case "350N1D":
-                    $choice = self::getAuxiliaryValue();
-                    $chosen_card_id = self::getAuxiliaryValue2();
-                    $card = self::getCardInfo($chosen_card_id);
-                    
-                    if ($choice == 1) {
-                        // meld
-                        self::meldCard($card, $player_id);
-                    } else {
-                        // score
-                        self::transferCardFromTo($card, $player_id, 'score', false, /*score_keyword*/true);
-                    }                    
-                    break;
                     
                 // 351, Echoes age 2: Toothbrush
                 case "351N2A":
@@ -27834,15 +27685,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 350, Echoes age 2: Scissors
-            case "350N1B":
-                self::setAuxiliaryValue($choice);
-                break;
-
-            case "350N1D":
                 self::setAuxiliaryValue($choice);
                 break;
 
