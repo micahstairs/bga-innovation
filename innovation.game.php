@@ -11001,7 +11001,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 353)
+            || (330 <= $card_id && $card_id <= 354)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14051,11 +14051,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
                 
-            // id 354, Echoes age 2: Chaturanga
-            case "354N1":
-                $step_max = 1;
-                break;
-
             // id 355, Echoes age 3: Almanac
             case "355E1":
                 // "Draw and foreshadow a 4."
@@ -20595,24 +20590,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 354, Echoes age 2: Chaturanga
-        case "354N1A":
-            // "Meld a card with a bonus from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'with_bonus' => true,
-
-                'meld_keyword' => true,
-            );            
-            break;
-
         // id 355, Echoes age 3: Almanac
         case "355N1A":
             // "You may return a card from your forecast with a bonus."
@@ -25316,24 +25293,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 354, Echoes age 2: Chaturanga
-                case "354N1A":
-                    if ($n > 0) {
-                        // "If you do, draw a two cards of value equal to that card's bonus."
-                        $melded_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        $bonuses = self::getBonusIcons($melded_card);
-                        self::executeDraw($player_id, $bonuses[0]);
-                        self::executeDraw($player_id, $bonuses[0]);
-                    }
-                    else {
-                        // Reveal a hand with no bonuses
-                        self::revealHand($player_id);
-                        
-                        // "Otherwise, draw and foreshadow a card of value equal to the number of top cards on your board."
-                        self::executeDrawAndForeshadow($player_id, count(self::getTopCardsOnBoard($player_id)));
-                    }
                     break;
 
                 // id 355, Echoes age 3: Almanac

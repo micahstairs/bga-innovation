@@ -332,6 +332,15 @@ abstract class Card
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
+  protected function getTopCards(int $playerId = null)
+  {
+    $cards = $this->game->getTopCardsOnBoard(self::coercePlayerId($playerId));
+    if ($cards === null) {
+      return [];
+    }
+    return $cards;
+  }
+
   protected function getBottomCardOfColor(int $color, int $playerId = null)
   {
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
@@ -664,6 +673,21 @@ abstract class Card
   protected function getScore(int $playerId = null): int
   {
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
+  }
+
+  protected function getBonusIcon(array $card): int
+  {
+    $bonusIcons = $this->game->getBonusIcons($card);
+    if (count($bonusIcons) > 0) {
+      // Whenever there is more than one bonus, they are always the same value.
+      return $bonusIcons[0];
+    }
+    return 0;
+  }
+
+  protected function hasBonusIcon(array $card): int
+  {
+    return self::getBonusIcon($card) > 0;
   }
 
   protected function wasForeseen(): bool

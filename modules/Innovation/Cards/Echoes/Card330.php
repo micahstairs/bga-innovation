@@ -23,11 +23,9 @@ class Card330 extends Card
         $card = $this->game->executeDraw(self::getPlayerId(), 1, 'revealed', /*bottom_to=*/ false, $this->game::ECHOES);
       }
       self::putInHand($card);
-      $bonuses = $this->game->getBonusIcons($card);
-      if (count($bonuses) > 0) {
-          // NOTE: Only Cities cards can have more than one bonus (but these cards won't be drawn here)
-          // so we can just pick the first (and only) bonus on the Echoes card.
-          self::drawAndMeld($bonuses[0]);
+      $bonus = self::getBonusIcon($card);
+      if ($bonus > 0) {
+          self::drawAndMeld($bonus);
       }
     } else if (self::wasForeseen()) {
       $card = self::draw(4);

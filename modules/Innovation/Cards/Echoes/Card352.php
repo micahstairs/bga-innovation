@@ -55,11 +55,8 @@ class Card352 extends Card
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::getCurrentStep() === 1) {
-        $bonuses = $this->game->getBonusIcons($card);
-        // NOTE: Only Cities cards can have more than one bonus (but these cards won't be drawn here)
-        // so we can just pick the first (and only) bonus on the Echoes card.
-        $drawnCard = self::draw($bonuses[0]);
-        if (count($this->game->getBonusIcons($drawnCard)) > 0) {
+        $drawnCard = self::draw(self::getBonusIcon($card));
+        if (self::hasBonusIcon($drawnCard)) {
           self::setMaxSteps(2);
         }
       } else {
