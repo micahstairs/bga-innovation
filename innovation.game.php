@@ -16119,6 +16119,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($card_id_array) >= 2) {
                     $step_max = 2;
                     self::setAuxiliaryArray($card_id_array);
+                } else if (self::countCardsInHand($player_id) >= 2) {
+                    self::revealHand($player_id); // reveal that no matching colors exist
                 }
                 break;
 
