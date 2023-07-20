@@ -5977,12 +5977,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function getCardTypeToDraw($age_to_draw, $player_id) {
         $card_type = self::BASE;
-        // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
-        if ($this->innovationGameState->echoesExpansionEnabled() &&
-                (self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
-                self::countCardsInLocation($player_id, 'hand', self::ECHOES) == 0 && 
-                self::countCardsInLocation($player_id, 'revealed', self::ECHOES) == 0) {
-            $card_type = self::ECHOES;
+
+        if ($this->innovationGameState->echoesExpansionEnabled()) {
+            if ($this->innovationGameState->usingFourthEditionRules()) {
+                // Draw an Echoes card if yellow top card is higher than the blue top card
+                $topBlue = self::getTopCardOnBoard($player_id, self::BLUE);
+                $topYellow = self::getTopCardOnBoard($player_id, self::YELLOW);
+                if ($topYellow && (!$topBlue || $topYellow['age'] > $topBlue['age'])) {
+                    $card_type = self::ECHOES;
+                }
+            } else {
+                // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
+                if ((self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
+                        self::countCardsInLocation($player_id, 'hand', self::ECHOES) == 0 && 
+                        self::countCardsInLocation($player_id, 'revealed', self::ECHOES) == 0) {
+                    $card_type = self::ECHOES;
+                }
+            }
         }
 
         if ($card_type == 0 && self::getPlayerWillDrawUnseenCardNext($player_id)) {
