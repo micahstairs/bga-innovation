@@ -1733,8 +1733,9 @@ $this->textual_card_infos = array(
     ),
 
     358 => array(
-        'name'              => clienttranslate('Katana'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer two top cards with a ${icon_4} from your board to my score pile! If you transferred any, draw a card of value equal to the total number of ${icon_4} on those cards and transfer it to my forecast!'),
+        'name'                              => clienttranslate('Katana'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer two top cards with a ${icon_4} from your board to my score pile! If you transferred any, draw a card of value equal to the total number of ${icon_4} on those cards and transfer it to my forecast!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer two top cards with a ${icon_4} from your board to my score pile! If you transfer exactly one and Katana was foreseen, junk all available standard achievements!'),
     ),
 
     359 => array(

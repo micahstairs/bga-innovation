@@ -11007,7 +11007,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 357)
+            || (330 <= $card_id && $card_id <= 358)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14060,12 +14060,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 358, Echoes age 3: Katana
-            case "358D1":
-                self::setAuxiliaryValue(0); // Total towers transferred
-                $step_max = 2;
                 break;
 
             // id 359, Echoes age 3: Charitable Trust
@@ -20543,23 +20537,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 358, Echoes age 3: Katana
-        case "358D1A":
-        case "358D1B":
-            // "I demand you transfer two top cards with a tower from your board to my score pile!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-
-                'with_icon' => 4, /* tower */
-            );
-            break;
-
         // id 359, Echoes age 3: Charitable Trust
         case "359E1A":
             // "Draw a 3 or 4."
@@ -25172,16 +25149,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                
-                // id 358, Echoes age 3: Katana
-                case "358D1B":
-                    // "If you transferred any, draw a card of value equal to the total number of towers on those cards and transfer it to my forecast!"
-                    $num_towers = self::getAuxiliaryValue();
-                    if ($num_towers > 0) {
-                        $card = self::executeDraw($player_id, $num_towers);
-                        self::foreshadowCard($card, $launcher_id);
-                    }
-                    break;
 
                 // id 359, Echoes age 3: Charitable Trust
                 case "359E1A":
@@ -27301,16 +27268,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 358, Echoes age 3: Katana
-            case "358D1A":
-            case "358D1B":
-                $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                self::setAuxiliaryValue(self::getAuxiliaryValue() + self::countIconsOnCard($card, 4));
-                
-                // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             // id 359, Echoes age 3: Charitable Trust
