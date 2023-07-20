@@ -1720,10 +1720,11 @@ $this->textual_card_infos = array(
     ),
 
     356 => array(
-        'name'                => clienttranslate('Magnifying Glass'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_4} then return a card from your hand.'),
-        'non_demand_effect_1' => clienttranslate('You may return three cards of equal value from your hand. If you do, draw a card of value two higher than the cards you returned.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your yellow or blue cards left.'),
+        'name'                                => clienttranslate('Magnifying Glass'),
+        'echo_effect_1'                       => clienttranslate('Draw a ${age_4} then return a card from your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return three cards of equal value from your hand. If you do, draw a card of value two higher than the cards you returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return exactly three cards of equal value from your hand. If you do, draw a card of value two higher than the cards you return.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your yellow or blue cards left.'),
     ),
 
     357 => array(

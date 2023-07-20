@@ -9894,12 +9894,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-                
-            // id 356, Echoes age 3: Magnifying Glass
-            case "356N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
 
             // id 359, Echoes age 3: Charitable Trust
             case "359E1A":
@@ -11013,7 +11007,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 355)
+            || (330 <= $card_id && $card_id <= 356)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14065,38 +14059,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 356, Echoes age 3: Magnifying Glass
-            case "356E1":
-                // "Draw a 4"
-                $card = self::executeDraw($player_id, 4);
-                $step_max = 1;
-                break;
-
-            case "356N1":
-                // "You may return three cards of equal value from your hand"
-                $cards_in_hand = self::getCardsInLocationKeyedByAge($player_id, 'hand');
-                $ages_with_3 = array();
-                for ($age = 1; $age <= 11; $age++) {
-                    if (count($cards_in_hand[$age]) >= 3) {
-                        $ages_with_3[] = $age;
-                    }
-                }
-                $num_ages_with_3 = count($ages_with_3);
-                if ($num_ages_with_3 > 0) {
-                    $step_max = 2; // Need to select age and cards.
-                    if ($num_ages_with_3 == 1) {
-                        $step = 2; // Skip the age selection if there is no option.
-                        self::setAuxiliaryValue($ages_with_3[0]); // store for selection later
-                    }  else {
-                        self::setAuxiliaryValueFromArray($ages_with_3); // store for selection later
-                    }
-                }
-                break;
-
-            case "356N2":
                 $step_max = 1;
                 break;
                 
@@ -20599,62 +20561,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 356, Echoes age 3: Magnifying Glass
-        case "356E1A":
-            // "then return a card from your hand."
-             $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "356N1A":
-            // "You may return three cards of equal value from your hand."
-            // First, select the value to return.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "356N1B":
-            // "You may return three cards of equal value from your hand."
-            // Second, return the cards of the selected value.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 3,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'age' => self::getAuxiliaryValue(), // return cards of age chosen
-            );
-            break;
-
-        case "356N2A":
-            // "You may splay your yellow or blue cards left."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::LEFT,
-                'color' => array(0,3) /* blue or yellow */
-            );
-            break;
-
         // id 358, Echoes age 3: Katana
         case "358D1A":
         case "358D1B":
@@ -25284,14 +25190,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 356, Echoes age 3: Magnifying Glass
-                case "356N1B":
-                    // "If you do, draw a card of value two higher than the cards you returned."
-                    if ($n > 0) {
-                        self::executeDraw($player_id, $this->innovationGameState->get('age_last_selected') + 2);
-                    }
-                    break;
                 
                 // id 358, Echoes age 3: Katana
                 case "358D1B":
@@ -27418,13 +27316,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "346N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-                
-            // id 356, Echoes age 3: Magnifying Glass
-            case "356N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
