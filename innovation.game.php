@@ -15927,6 +15927,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (count($card_id_array) >= 2) {
                     $step_max = 2;
                     self::setAuxiliaryArray($card_id_array);
+                } else if (self::countCardsInHand($player_id) >= 2) {
+                    self::revealHand($player_id); // reveal that no matching colors exist
                 }
                 break;
 
@@ -21177,8 +21179,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(https://github.com/micahstairs/bga-innovation/issues/472): This needs to have the "choose_draw_value" when
-            // that is implemented since 11s can appear as bonuses
+            // TODO(#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
@@ -26350,7 +26351,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                         if (count($selectable_card_ids) > 0) {
                             self::setAuxiliaryArray($selectable_card_ids);
-                            self::setAuxiliaryValue($age);
+                            self::setAuxiliaryValue2($age);
                             self::incrementStepMax(1);
                         }
                     }
@@ -26360,7 +26361,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) { // card scored
                         $selectable_card_ids = array();
                         $age = $this->innovationGameState->get('age_last_selected');
-                        $age2 = self::getAuxiliaryValue();
+                        $age2 = self::getAuxiliaryValue2();
                         foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
                             if ($age != $card['age'] && $age2 != $card['age'] ) {
                                 $selectable_card_ids[] = $card['id'];
