@@ -348,11 +348,15 @@ abstract class Card
 
   protected function getRevealedCard(int $playerId = null)
   {
-    $cards = $this->game->getCardsInLocation(self::coercePlayerId($playerId), 'revealed');
+    $cards = self::getCards('revealed');
     if (count($cards) === 0) {
       return null;
     }
     return $cards[0];
+  }
+
+  protected function getCards(string $location, int $playerId = null) {
+    return $this->game->getCardsInLocation(self::coercePlayerId($playerId), $location);
   }
 
   // BULK CARD HELPERS

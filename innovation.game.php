@@ -11007,7 +11007,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 356)
+            || (330 <= $card_id && $card_id <= 357)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14060,24 +14060,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 357, Echoes age 3: Liquid Fire
-            case "357D1":
-                // "I demand you draw a card of value equal to the highest bonus on your board!"
-                $max_bonus = self::getMaxBonusIconOnBoard($player_id);
-                $card = self::executeDraw($player_id, $max_bonus, 'revealed');
-                
-                // "Transfer it to my forecast! "
-                self::foreshadowCard($card, $launcher_id);
-                
-                if ($card['color'] == 1) { 
-                    // "If it is red, transfer all cards from your hand to my score pile!"
-                    $hand_cards = self::getCardsInHand($player_id);
-                    foreach ($hand_cards as $card) {
-                        self::transferCardFromTo($card, $launcher_id, 'score');
-                    }
-                }
                 break;
 
             // id 358, Echoes age 3: Katana
