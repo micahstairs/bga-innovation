@@ -11013,7 +11013,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 354)
+            || (330 <= $card_id && $card_id <= 355)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14065,16 +14065,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-                
-            // id 355, Echoes age 3: Almanac
-            case "355E1":
-                // "Draw and foreshadow a 4."
-                self::executeDrawAndForeshadow($player_id, 4);
-                break;
-
-            case "355N1":
                 $step_max = 1;
                 break;
 
@@ -20609,24 +20599,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 355, Echoes age 3: Almanac
-        case "355N1A":
-            // "You may return a card from your forecast with a bonus."
-            // First reveal the card to prove that it has a bonus.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-
-                'with_bonus' => true,
-            );
-            break;
-
         // id 356, Echoes age 3: Magnifying Glass
         case "356E1A":
             // "then return a card from your hand."
@@ -25311,16 +25283,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 355, Echoes age 3: Almanac
-                case "355N1A":
-                    // "If you do, draw and score a card of value one higher than that bonus."
-                    if ($n > 0) {
-                        $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        $bonuses = self::getBonusIcons($card);
-                        self::executeDrawAndScore($player_id, $bonuses[0] + 1);
-                    }
                     break;
 
                 // id 356, Echoes age 3: Magnifying Glass

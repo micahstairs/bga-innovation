@@ -1712,9 +1712,11 @@ $this->textual_card_infos = array(
     /* Echoes - Age 3 */
 
     355 => array(
-        'name'                => clienttranslate('Almanac'),
-        'echo_effect_1'       => clienttranslate('Draw and foreshadow a ${age_4}.'),
-        'non_demand_effect_1' => clienttranslate('You may return a card from your forecast with a bonus. If you do, draw and score a card of value one higher than that bonus.'),
+        'name'                          => clienttranslate('Almanac'),
+        'echo_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a ${age_4}.'),
+        'echo_effect_1_fourth'          => clienttranslate('Draw and foreshadow an Echoes ${age_4}.'),
+        'non_demand_effect_1'           => clienttranslate('You may return a card from your forecast with a bonus. If you do, draw and score a card of value one higher than that bonus.'),
+        'non_demand_effect_1_fourth'    => clienttranslate('If Almanac was foreseen, foreshadow all cards in another player\'s forecast.'),
     ),
 
     356 => array(
