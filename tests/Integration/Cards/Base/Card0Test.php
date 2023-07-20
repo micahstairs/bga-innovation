@@ -17,7 +17,7 @@ class Card0Test extends BaseIntegrationTest
     self::setHandSize(2);
 
     self::dogma();
-    self::selectRandomCard("hand");
+    self::selectRandomCard();
     self::pass();
 
     self::assertDogmaComplete();
@@ -30,9 +30,9 @@ class Card0Test extends BaseIntegrationTest
     self::setHandSize(4);
 
     self::dogma();
-    self::selectRandomCard("hand");
-    self::selectRandomCard("hand");
-    self::selectRandomCard("hand");
+    self::selectRandomCard();
+    self::selectRandomCard();
+    self::selectRandomCard();
 
     self::assertDogmaComplete();
     self::assertEquals(2, self::countCards('hand'));

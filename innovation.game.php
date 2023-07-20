@@ -491,6 +491,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         $this->innovationGameState->setInitial('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         $this->innovationGameState->setInitial('has_splay_direction', -1); // List of splay directions encoded in a single value
+        $this->innovationGameState->setInitial('limit_shrunk_selection_size', -1); // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
         
         // Flags specific to the meld action
         $this->innovationGameState->setInitial('relic_id', -1);
@@ -11016,7 +11017,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function getCardInstance($card_id, $execution_state) {
         $card = $this->getCardInfo($card_id);
-        $set = $card['type'] == 0 ? "Base" : $card['type'] == 3 ? "Echoes" : "Unseen";
+        $set = "Base";
+        if ($card['type'] == 3) {
+            $set = "Echoes";
+        } else if ($card['type'] == 5) {
+            $set = "Unseen";
+        }
         require_once("modules/Innovation/Cards/${set}/Card${card_id}.php");
         $classname = "Innovation\Cards\\${set}\Card${card_id}";
         return new $classname($this, $execution_state);
