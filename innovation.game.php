@@ -21681,8 +21681,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(https://github.com/micahstairs/bga.innovationkahliakahlia/issues/472): This needs to have the "choose_draw_value" when
-            // that is implemented since 11s can appear as bonuses
+            // TODO(#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
             $options = array(
                 'player_id' => $player_id,
                 'n' => 1,
