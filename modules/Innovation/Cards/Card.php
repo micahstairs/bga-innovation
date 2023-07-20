@@ -356,7 +356,7 @@ abstract class Card
   }
 
   protected function getCards(string $location, int $playerId = null) {
-    return $this->game->getCardsInLocation(self::coercePlayerId($playerId), $location);
+    return $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
   // BULK CARD HELPERS
@@ -375,18 +375,12 @@ abstract class Card
 
   protected function getMinValueInLocation(string $location, int $playerId = null): int
   {
-    if ($location === 'junk' || $location === 'deck') {
-      $playerId = 0;
-    }
-    return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MIN');
+    return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location, 'MIN');
   }
 
   protected function getMaxValueInLocation(string $location, int $playerId = null): int
   {
-    if ($location === 'junk' || $location === 'deck') {
-      $playerId = 0;
-    }
-    return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerId($playerId), $location, 'MAX');
+    return $this->game->getMinOrMaxAgeInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location, 'MAX');
   }
 
   protected function hasIcon($card, int $icon): bool
@@ -659,13 +653,13 @@ abstract class Card
 
   protected function countCards(string $location, int $playerId = null): int
   {
-    return $this->game->countCardsInLocation(self::coercePlayerId($playerId), $location);
+    return $this->game->countCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
   protected function getUniqueValues(string $location, int $playerId = null): array
   {
     $values = [];
-    $cardsByAge = self::getCardsKeyedByValue($location);
+    $cardsByAge = self::getCardsKeyedByValue($location, $playerId);
       for ($age = 1; $age <= 11; $age++) {
         if ($cardsByAge[$age] > 0) {
           $values[] = $age;
@@ -676,7 +670,12 @@ abstract class Card
 
   protected function getCardsKeyedByValue(string $location, int $playerId = null): array
   {
-    return $this->game->countCardsInLocationKeyedByAge(self::coercePlayerId($playerId), $location);
+    return $this->game->countCardsInLocationKeyedByAge(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+  }
+
+  protected function getCardsKeyedByColor(string $location, int $playerId = null): array
+  {
+    return $this->game->countCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
   protected function getScore(int $playerId = null): int
@@ -725,6 +724,14 @@ abstract class Card
       return $this->state->getPlayerId();
     }
     return $playerId;
+  }
+
+  private function coercePlayerIdUsingLocation(?int $playerId, string $location): int
+  {
+    if ($location === 'deck' || $location === 'junk' || $location === 'relics') {
+      return 0;
+    }
+    return self::coercePlayerId($playerId);
   }
 
 }

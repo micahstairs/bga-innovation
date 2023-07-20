@@ -16,7 +16,7 @@ class Card546 extends Card
   public function initialExecution()
   {
     if (self::isDemand()) {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'hand') as $card) {
+      foreach (self::getCards('hand') as $card) {
         self::reveal($card);
       }
     }
@@ -54,7 +54,7 @@ class Card546 extends Card
     if (self::isDemand()) {
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
       self::draw(7);
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards('revealed') as $card) {
         self::putInHand($card);
       }
     }

@@ -44,14 +44,14 @@ class Card519 extends Card
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     if (self::getCurrentStep() == 1) {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards('revealed') as $card) {
         self::putInHand($card);
       }
       foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
         self::reveal($card);
       }
     } else {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards('revealed') as $card) {
         self::transferToScorePile($card);
       }
       // TODO(4E): Since this is occuring during a demand, it can cause the launcher to get a sharing bonus.

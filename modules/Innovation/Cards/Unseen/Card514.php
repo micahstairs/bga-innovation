@@ -43,7 +43,7 @@ class Card514 extends Card
 
   public function handleSpecialChoice(int $color)
   {
-    foreach ($this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color] as $card) {
+    foreach (self::getCardsKeyedByColor('board')[$color] as $card) {
       self::putInHand($card);
     }
   }

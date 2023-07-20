@@ -20,7 +20,7 @@ class Card554 extends Card
     if (self::countRevealedGreenCards() >= 1) {
       self::setMaxSteps(1);
     } else {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards( 'revealed') as $card) {
         self::return($card);
       }
     }
@@ -38,7 +38,7 @@ class Card554 extends Card
   {
     $numRevealedGreenCards = self::countRevealedGreenCards();
     if ($numRevealedGreenCards >= 2) {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards( 'revealed') as $card) {
         self::score($card);
       }
       if ($numRevealedGreenCards >= 3) {
@@ -49,7 +49,7 @@ class Card554 extends Card
         throw new \EndOfGame();
       }
     } else {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards( 'revealed') as $card) {
         self::return($card);
       }
     }

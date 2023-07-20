@@ -33,7 +33,7 @@ class Card593 extends Card
 
   public function handleSpecialChoice(int $color)
   {
-    $cards = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color];
+    $cards = self::getCardsKeyedByColor('board')[$color];
     $scoredCard = false;
     for ($i = 0; $i < count($cards) - 4; $i++) {
       self::score($cards[$i]);
@@ -46,7 +46,7 @@ class Card593 extends Card
     if ($scoredCard && $splayedAslant) {
       $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), 'score');
       $minScoreValue = self::getMinValueInLocation('score');
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'achievements') as $card) {
+      foreach (self::getCards( 'achievements') as $card) {
         if (self::isValuedCard($card) && $card['age'] < $minScoreValue) {
           self::transferToScorePile($card);
         }

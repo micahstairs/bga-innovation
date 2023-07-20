@@ -29,7 +29,7 @@ class Card585 extends Card
   {
     $color = $card['color'];
     self::splayAslant($color);
-    foreach ($this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color] as $card) {
+    foreach (self::getCardsKeyedByColor('board')[$color] as $card) {
       if (!$this->game->hasRessource($card, $this->game::HEALTH)) {
         self::score($card);
       }

@@ -60,8 +60,8 @@ class Card508 extends Card
   public function afterInteraction()
   {
     if (self::getEffectNumber() === 1) {
-      $handCards = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'hand');
-      $scoreCards = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'score');
+      $handCards = self::getCardsKeyedByValue('hand');
+      $scoreCards = self::getCardsKeyedByValue('score');
       $playerIdOnRight = $this->game->getActivePlayerIdOnRightOfActingPlayer();
       foreach ($handCards[self::getAuxiliaryValue()] as $card) {
         self::transferToScorePile($card, $playerIdOnRight);

@@ -60,7 +60,7 @@ class Card592 extends Card
 
   public function handleSpecialChoice(int $color)
   {
-    $cards = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$color];
+    $cards = self::getCardsKeyedByColor('board')[$color];
     $scoredCard = false;
     for ($i = 0; $i < count($cards) - 3; $i++) {
       self::score($cards[$i]);

@@ -36,7 +36,7 @@ class Card505 extends Card
   public function afterInteraction() {
     $card = self::drawAndMeld(self::getAuxiliaryValue());
     self::setActionScopedAuxiliaryArray([$card['age']]);
-    $pile = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$card['color']];
+    $pile = self::getCardsKeyedByColor('board')[$card['color']];
     $numCards = count($pile);
     if ($numCards >= 2 && $this->game->hasRessource($pile[$numCards - 2], $this->game::CONCEPT)) {
       self::setNextStep(1);

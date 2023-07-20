@@ -12,7 +12,7 @@ class Card589 extends Card
 
   public function initialExecution()
   {
-    $greenCards = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board')[$this->game::GREEN];
+    $greenCards = self::getCardsKeyedByColor('board')[$this->game::GREEN];
     $topGreenCard = self::getTopCardOfColor($this->game::GREEN);
     $numScored = 0;
     foreach ($greenCards as $card) {

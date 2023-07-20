@@ -50,11 +50,12 @@ class Card516 extends Card
         self::putInHand($card);
       }
     } else if (self::getCurrentStep() == 3) {
-      $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'revealed')[0];
+      $revealedCard = self::getCards('revealed')[0];
       if (self::getNumChosen() > 0) {
         self::safeguard($revealedCard);
-        foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
-            self::putInHand($card); // put all revealed cards in hand if they can't fit in the safe
+        // Put all revealed cards in hand if they can't fit in the safe
+        foreach (self::getCards('revealed') as $card) {
+            self::putInHand($card);
         }
       } else {
         self::putInHand($revealedCard);
@@ -85,7 +86,7 @@ class Card516 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    $secrets = $this->game->getCardsInLocation(self::getPlayerId(), 'safe');
+    $secrets = self::getCards('safe');
     if ($choice === 1) {
       self::drawAndSafeguard(4);
     } else if (count($secrets) == 1) {

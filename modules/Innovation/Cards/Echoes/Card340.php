@@ -37,7 +37,7 @@ class Card340 extends Card
       $this->notifications->notifyCardColor($card['color']);
       self::putInHand($card);
       if ($card['color'] == $this->game::YELLOW) {
-        foreach ($this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[1] as $card) {
+        foreach (self::getCardsKeyedByValue('hand')[1] as $card) {
           self::score($card);
         }
       }

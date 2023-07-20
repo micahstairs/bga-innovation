@@ -17,7 +17,7 @@ class Card547 extends Card
     if (self::getEffectNumber() == 1) {
       self::setMaxSteps(3);
     } else {
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'achievements') as $card) {
+      foreach (self::getCards('achievements') as $card) {
         if ($card['age'] == null) {
           self::draw(7);
         }
@@ -88,7 +88,7 @@ class Card547 extends Card
   private function getCardIdsWithDuplicateValuesInLocation(string $location): array
   {
     $cardIds = [];
-    $cardsByAge = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), $location);
+    $cardsByAge = self::getCardsKeyedByValue($location);
     for ($age = 1; $age <= 11; $age++) {
       if (count($cardsByAge[$age]) >= 2) {
         foreach ($cardsByAge[$age] as $card) {

@@ -21,7 +21,7 @@ class Card520 extends Card
       }
     }
     if ($numCardsWithProsperityIcons == 3) {
-      $cardsInDeck = $this->game->getCardsInLocationKeyedByAge(0, 'deck');
+      $cardsInDeck = self::getCardsKeyedByValue('deck');
       foreach ($cardsInDeck[5] as $card) {
         if ($card['type'] == $this->game::BASE) {
           self::score($card);

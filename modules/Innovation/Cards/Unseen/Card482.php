@@ -19,7 +19,7 @@ class Card482 extends Card
     if ($card['color'] == $this->game::YELLOW || $card['color'] == $this->game::PURPLE) {
       $cardIds = [];
       $countsByAge = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'hand');
-      foreach ($this->game->getCardsInLocation(0, 'achievements') as $card) {
+      foreach (self::getCards('achievements', 0) as $card) {
         if (self::isValuedCard($card)) {
           if ($countsByAge[$card['age']] > 0) {
             $cardIds[] = $card['id'];

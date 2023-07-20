@@ -48,7 +48,7 @@ class Card536 extends Card
   public function afterInteraction()
   {
     if (self::getCurrentStep() == 1) {
-      $revealedCard = $this->game->getCardsInLocation(self::getPlayerId(), 'revealed')[0];
+      $revealedCard = self::getRevealedCard();
       self::putInHand($revealedCard);
       self::setAuxiliaryValue($revealedCard['color']);
     }

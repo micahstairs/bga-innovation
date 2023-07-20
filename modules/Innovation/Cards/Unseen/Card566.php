@@ -25,7 +25,7 @@ class Card566 extends Card
       if ($this->game->countCardsInLocation(self::getPlayerId(), 'board') == 0) {
         self::win();
       } else {
-        foreach ($this->game->getCardsInLocation(0, 'junk') as $card) {
+        foreach (self::getCards('junk') as $card) {
           if (self::isValuedCard($card)) {
             self::putInHand($card);
           }
@@ -44,7 +44,7 @@ class Card566 extends Card
   }
 
   public function afterInteraction() {
-    foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+    foreach (self::getCards( 'revealed') as $card) {
       self::placeOnTopOfDeck($card);
     }
   }

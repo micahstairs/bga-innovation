@@ -72,7 +72,7 @@ class Card549 extends Card
   private function getRevealedCardIdsWithoutEfficiencyOrAvatar()
   {
     $cardIds = [];
-    $revealed_cards = $this->game->getCardsInLocation(self::getPlayerId(), 'revealed');
+    $revealed_cards = self::getCards( 'revealed');
     foreach ($revealed_cards as $card) {
       if (
         !$this->game->hasRessource($card, $this->game::EFFICIENCY) &&

@@ -39,7 +39,7 @@ class Card540 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
-      $cards = $this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[self::getLastSelectedAge()];
+      $cards = self::getCardsKeyedByValue('hand')[self::getLastSelectedAge()];
       foreach ($cards as $card) {
         self::score($card);
       }

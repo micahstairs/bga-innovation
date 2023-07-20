@@ -44,7 +44,7 @@ class Card542 extends Card
     if (self::getNumChosen() > 0 && self::getCurrentStep() == 1) {
       self::tuck(self::getTopCardOfColor(self::getLastSelectedColor()));
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-      foreach ($this->game->getCardsInLocation(self::getPlayerId(), 'revealed') as $card) {
+      foreach (self::getCards('revealed') as $card) {
         self::putInHand($card);
       }
     }

@@ -60,7 +60,7 @@ class Card559 extends Card
       }
     } else {
       $this->notifications->notifyValueChoice($choice, self::getPlayerId());
-      foreach ($this->game->getCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[$choice] as $card) {
+      foreach (self::getCardsKeyedByValue('hand')[$choice] as $card) {
         self::score($card);
       };
     }

@@ -15,7 +15,7 @@ class Card552 extends Card
   public function initialExecution()
   {
     $card = self::drawAndTuck(7);
-    $pile = $this->game->getCardsInLocationKeyedByColor(self::getPlayerId(), 'board');
+    $pile = self::getCardsKeyedByColor('board');
     if ($this->game->countVisibleCards(self::getPlayerId(), $card['color']) >= 7) {
       self::draw(9);
     } else {
