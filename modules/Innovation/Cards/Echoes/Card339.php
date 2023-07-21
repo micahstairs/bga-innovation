@@ -21,7 +21,7 @@ class Card339 extends Card
       if (self::isFirstOrThirdEdition()) {
         self::draw(1);
       } else {
-        self::drawAndForeshadow(1);
+        self::setMaxSteps(1);
       }
     } else if (self::getBaseDeckCount(1) > 0) {
       self::setMaxSteps(1);
@@ -30,7 +30,12 @@ class Card339 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isEcho()) {
+      return [
+        'can_pass' => true,
+        'choices'  => [1],
+      ];
+    } if (self::getCurrentStep() === 1) {
       return [
         'can_pass' => true,
         'choices'  => [1],
@@ -47,7 +52,11 @@ class Card339 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::isFirstOrThirdEdition()) {
+    if (self::isEcho()) {
+      return self::getPromptForChoiceFromList([
+        1 => [clienttranslate('Draw and foreshadow a ${age} '), 'age' => $this->game->getAgeSquare(1)],
+      ]);
+    } else if (self::isFirstOrThirdEdition()) {
       return self::getPromptForChoiceFromList([
         1 => [clienttranslate('Transfer the bottom ${age} to the available achievements'), 'age' => $this->game->getAgeSquare(1)],
       ]);
@@ -60,41 +69,13 @@ class Card339 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    if (self::isFirstOrThirdEdition()) {
-      if ($choice === 1) {
-        $this->game->executeDraw(0, /*age=*/1, 'achievements', /*bottom_to=*/false, /*type=*/0, /*bottom_from=*/true);
-      } else {
-        $this->game->notifyPlayer(
-          self::getPlayerId(),
-          'log',
-          clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'),
-          ['You' => 'You', 'age' => $this->game->getAgeSquare(1)]
-        );
-        $this->game->notifyAllPlayersBut(
-          self::getPlayerId(),
-          'log',
-          clienttranslate('${player_name} chooses not to transfer a ${age} to the available achievements.'),
-          ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId()), 'age' => $this->game->getAgeSquare(1)]
-        );
-      }
+    if (self::isEcho()) {
+      self::drawAndForeshadow(1);
+    } else if (self::isFirstOrThirdEdition()) {
+      $this->game->executeDraw(0, /*age=*/1, 'achievements', /*bottom_to=*/false, /*type=*/0, /*bottom_from=*/true);
     } else {
-      if ($choice === 1) {
-        self::junkBaseDeck(1);
-        self::setMaxSteps(2);
-      } else {
-        $this->game->notifyPlayer(
-          self::getPlayerId(),
-          'log',
-          clienttranslate('${You} choose not to junk all cards in the ${age} deck.'),
-          ['You' => 'You', 'age' => $this->game->getAgeSquare(1)]
-        );
-        $this->game->notifyAllPlayersBut(
-          self::getPlayerId(),
-          'log',
-          clienttranslate('${player_name} chooses not to junk all cards in the ${age} deck.'),
-          ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId()), 'age' => $this->game->getAgeSquare(1)]
-        );
-      }
+      self::junkBaseDeck(1);
+      self::setMaxSteps(2);
     }
   }
 
