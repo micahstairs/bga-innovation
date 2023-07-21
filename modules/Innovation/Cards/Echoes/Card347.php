@@ -17,7 +17,11 @@ class Card347 extends Card
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::isDemand()) {
+      self::setMaxSteps(1);
+    } else {
+      self::setMaxSteps(2);
+    }
   }
 
   public function getInteractionOptions(): array
@@ -25,8 +29,8 @@ class Card347 extends Card
     if (self::isDemand()) {
       $options = [
         'location_from' => 'hand',
-        'owner_to' => self::getLauncherId(),
-        'location_to' => 'score',
+        'owner_to'      => self::getLauncherId(),
+        'location_to'   => 'score',
       ];
       if (self::isFirstOrThirdEdition()) {
         $options['with_bonus'] = true;
@@ -38,18 +42,19 @@ class Card347 extends Card
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
       return [
         'choose_player' => true,
-        'players' => $players,
+        'players'       => $players,
       ];
     } else {
       return [
         'location_from' => 'hand',
-        'owner_to' => self::getAuxiliaryValue(),
-        'location_to' => 'board',
+        'owner_to'      => self::getAuxiliaryValue(),
+        'location_to'   => 'board',
       ];
     }
   }
 
-  public function handleSpecialChoice(int $otherPlayerId) {
+  public function handleSpecialChoice(int $otherPlayerId)
+  {
     self::setAuxiliaryValue($otherPlayerId);
   }
 
