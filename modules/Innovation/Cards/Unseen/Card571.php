@@ -20,7 +20,7 @@ class Card571 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return ['choices' => [1, 2, 3]];
     } else {
       return [
@@ -34,7 +34,7 @@ class Card571 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       $card = self::drawAndTuck(8);
       $isRedOrPurple = $card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE;
       if ($isRedOrPurple) {
@@ -46,10 +46,10 @@ class Card571 extends Card
       if ($this->game->hasRessource($card, $this->game::CONCEPT)) {
         $this->notifications->notifyGeneralInfo(clienttranslate('It has a ${icon} so the wish is granted.'), ['icon' => $this->notifications->getIconSquare($this->game::CONCEPT)]);
         $choice = self::getAuxiliaryValue();
-        if ($choice == 1) {
+        if ($choice === 1) {
           self::draw(10);
           self::draw(10);
-        } else if ($choice == 2) {
+        } else if ($choice === 2) {
           self::drawAndScore(8);
           self::drawAndScore(8);
         } else {

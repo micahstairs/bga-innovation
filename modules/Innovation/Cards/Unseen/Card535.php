@@ -20,7 +20,7 @@ class Card535 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'location_from' => 'board',
         'location_to'   => 'deck',
@@ -47,11 +47,11 @@ class Card535 extends Card
   {
     if (self::getNumChosen() > 0) {
       self::setNextStep(2);
-    } else if (self::getCurrentStep() == 2) {
+    } else if (self::getCurrentStep() === 2) {
       for ($i = 0; $i < self::getAuxiliaryValue(); $i++) {
         self::draw(7);
       }
-      if (self::getAuxiliaryValue2() == 1) {
+      if (self::getAuxiliaryValue2() === 1) {
         self::draw(8);
       }
     }

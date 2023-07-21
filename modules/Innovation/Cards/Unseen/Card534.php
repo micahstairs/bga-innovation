@@ -18,9 +18,9 @@ class Card534 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return ['choices' => [1, 2]];
-    } else if (self::getAuxiliaryValue() == 1) {
+    } else if (self::getAuxiliaryValue() === 1) {
       return [
         'splay_direction'     => $this->game::LEFT,
         'has_splay_direction' => [$this->game::UNSPLAYED],

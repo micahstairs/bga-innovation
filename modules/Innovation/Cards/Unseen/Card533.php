@@ -15,7 +15,7 @@ class Card533 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else {
       self::drawAndTuck(4);
@@ -24,7 +24,7 @@ class Card533 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'location_from' => 'hand',
         'tuck_keyword'  => true,

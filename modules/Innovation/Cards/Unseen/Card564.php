@@ -14,7 +14,7 @@ class Card564 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       $cardIds = $this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), 'score');
       if (count($cardIds) >= 1) {
         self::setAuxiliaryValue(self::getCard($cardIds[0])['age']);

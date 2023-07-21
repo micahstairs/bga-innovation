@@ -34,7 +34,7 @@ class Card546 extends Card
         'owner_to'      => self::getLauncherId(),
         'location_to'   => 'board',
       ];
-    } else if (self::getEffectNumber() == 1) {
+    } else if (self::getEffectNumber() === 1) {
       return [
         'location_from' => 'safe',
         'location_to'   => 'score',

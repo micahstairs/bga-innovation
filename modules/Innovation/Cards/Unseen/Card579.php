@@ -19,7 +19,7 @@ class Card579 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       $this->game->setAuxiliaryArray([]);
       return [
         'n' => 'all',
@@ -46,7 +46,7 @@ class Card579 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       $values = $this->game->getAuxiliaryArray();
       for ($i = 0; $i < count($values); $i++) {
         self::drawAndScore(10);

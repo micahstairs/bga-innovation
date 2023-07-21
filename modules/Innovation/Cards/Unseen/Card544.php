@@ -21,12 +21,12 @@ class Card544 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'location_from' => 'hand',
         'location_to'   => 'deck',
       ];
-    } else if (self::getCurrentStep() == 2) {
+    } else if (self::getCurrentStep() === 2) {
       return [
         'location_from' => 'hand',
         'tuck_keyword'  => true,
@@ -41,7 +41,7 @@ class Card544 extends Card
 
   public function handleCardChoice(array $cardId)
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       self::splayRight(self::getLastSelectedColor());
     }
   }

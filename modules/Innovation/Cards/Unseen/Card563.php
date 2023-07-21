@@ -43,7 +43,7 @@ class Card563 extends Card
   }
 
   public function handleSpecialChoice(int $choice) {
-    if ($choice == 1) {
+    if ($choice === 1) {
       foreach ($this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), 'hand') as $cardId) {
         self::score(self::getCard($cardId));
       }

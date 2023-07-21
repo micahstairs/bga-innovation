@@ -21,7 +21,7 @@ class Card550 extends Card
   public function getInteractionOptions(): array
   {
 
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'location_from' => 'score',
         'location_to'   => 'board',
@@ -39,13 +39,13 @@ class Card550 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       self::setAuxiliaryValue($card['id']);
     } else {
       // Make sure the card is actually in the safe (the safe could have been full)
       if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
         $meldedCard = self::getCard(self::getAuxiliaryValue());
-        if (self::getPlayerId() == self::getLauncherId()) {
+        if (self::getPlayerId() === self::getLauncherId()) {
           self::fullyExecute($meldedCard);
         } else {
           self::selfExecute($meldedCard);

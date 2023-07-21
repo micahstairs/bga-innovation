@@ -19,7 +19,7 @@ class Card586 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return ['choices' => [1, 2]];
     } else {
       return [

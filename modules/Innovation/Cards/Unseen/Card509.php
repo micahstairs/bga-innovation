@@ -50,7 +50,7 @@ class Card509 extends Card
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() == 0) {
+    if (self::getNumChosen() === 0) {
       self::safeguard($this->game->getDeckTopCard(4, $this->game::BASE));
     }
   }

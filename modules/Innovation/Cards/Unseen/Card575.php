@@ -25,7 +25,7 @@ class Card575 extends Card
         'owner_to'      => self::getLauncherId(),
         'age'           => self::getMaxValueInLocation('safe'),
       ];
-    } else if (self::getCurrentStep() == 3) {
+    } else if (self::getCurrentStep() === 3) {
       return [
         'n'             => 'all',
         'location_from' => 'score',

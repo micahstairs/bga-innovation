@@ -26569,7 +26569,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     ->setEffectNumber($current_effect_number)
                     ->setCurrentStep(self::getStep())
                     ->setMaxSteps(self::getStepMax());
-                self::getCardInstance($card_id, $executionState)->handleSpecialChoice($choice);
+                self::getCardInstance($card_id, $executionState)->handleSpecialChoice(intval($choice));
                 self::setStepMax($executionState->getMaxSteps());
             }
 

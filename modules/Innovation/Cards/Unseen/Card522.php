@@ -19,7 +19,7 @@ class Card522 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'location_from' => 'safe',
         'owner_to'      => 0,
@@ -37,7 +37,7 @@ class Card522 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       if (self::getNumChosen() > 0) {
         self::draw(self::getLastSelectedAge() + 1);
       } else {

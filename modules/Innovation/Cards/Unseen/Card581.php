@@ -18,7 +18,7 @@ class Card581 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::UP,
@@ -37,8 +37,8 @@ class Card581 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() == 2) {
-      if (self::getNumChosen() == 1) {
+    if (self::getEffectNumber() === 2) {
+      if (self::getNumChosen() === 1) {
         self::selfExecute(self::getLastSelectedCard());
       } else {
         self::draw(11);

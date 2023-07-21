@@ -14,7 +14,7 @@ class Card523 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else {
       $numFours = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score')[4];
@@ -27,7 +27,7 @@ class Card523 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'n'             => 'all',
         'location_from' => 'board',
@@ -44,7 +44,7 @@ class Card523 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       if (self::getNumChosen() == 0) {
         self::setMaxSteps(2);
       }

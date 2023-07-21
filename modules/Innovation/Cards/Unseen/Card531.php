@@ -14,7 +14,7 @@ class Card531 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       for ($age = 3; $age <= 6; $age++) {
         self::drawAndReveal($age);
       }
@@ -26,8 +26,8 @@ class Card531 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
-      if (self::getCurrentStep() == 1) {
+    if (self::getEffectNumber() === 1) {
+      if (self::getCurrentStep() === 1) {
         return [
           'n' => 'all',
           'location_from' => 'revealed',

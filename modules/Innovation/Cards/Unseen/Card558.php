@@ -19,8 +19,8 @@ class Card558 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
-      if (self::getCurrentStep() == 1) {
+    if (self::getEffectNumber() === 1) {
+      if (self::getCurrentStep() === 1) {
         return ['choices' => [1, 2, 3]];
       } else {
         return [
@@ -49,13 +49,13 @@ class Card558 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    if ($choice == 1) {
+    if ($choice === 1) {
       self::setMaxSteps(2);;
-    } else if ($choice == 2) {
+    } else if ($choice === 2) {
       foreach (self::getCards( 'safe') as $card) {
         self::putInHand($card);
       }
-    } else if ($choice == 3) {
+    } else if ($choice === 3) {
       foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
         $this->game->transferCardFromTo($card, 0, 'achievements');
       }

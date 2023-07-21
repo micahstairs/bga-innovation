@@ -20,7 +20,7 @@ class Card520 extends Card
         $numCardsWithProsperityIcons++;
       }
     }
-    if ($numCardsWithProsperityIcons == 3) {
+    if ($numCardsWithProsperityIcons === 3) {
       $cardsInDeck = self::getCardsKeyedByValue('deck');
       foreach ($cardsInDeck[5] as $card) {
         if ($card['type'] == $this->game::BASE) {

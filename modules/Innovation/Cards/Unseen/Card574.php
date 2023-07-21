@@ -13,7 +13,7 @@ class Card574 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       $numCardsDrawn = 0;
       for ($color = 0; $color < 5; $color++) {
         if ($this->game->countVisibleIconsInPile(self::getPlayerId(), $this->game::INDUSTRY, $color) > 0) {
@@ -22,7 +22,7 @@ class Card574 extends Card
         }
       }
 
-      if ($numCardsDrawn == 5) {
+      if ($numCardsDrawn === 5) {
         self::win();
       }
     } else {

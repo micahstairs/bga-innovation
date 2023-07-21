@@ -14,7 +14,7 @@ class Card576 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(2);
     } else {
       $numColorsNotOnBoard = 5 - count($this->game->getTopCardsOnBoard(self::getPlayerId()));
@@ -26,7 +26,7 @@ class Card576 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       self::setAuxiliaryValue(0); // Track whether cards were transferred as part of either interaction
       return [
         'can_pass' => true,
@@ -48,7 +48,7 @@ class Card576 extends Card
   }
 
   public function afterInteraction() {
-    if (self::getCurrentStep() == 2 && self::getAuxiliaryValue() == 1) {
+    if (self::getCurrentStep() === 2 && self::getAuxiliaryValue() == 1) {
       self::setNextStep(1);
     }
   }

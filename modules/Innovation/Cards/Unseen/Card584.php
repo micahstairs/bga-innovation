@@ -14,11 +14,11 @@ class Card584 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       if ($this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score')[3] > 0) {
         self::lose();
       }
-    } else if (self::getEffectNumber() == 2) {
+    } else if (self::getEffectNumber() === 2) {
       if ($this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[7] > 0) {
         self::win();
       }
@@ -29,13 +29,13 @@ class Card584 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'n' => 2,
         'location_from' => 'hand',
         'meld_keyword'   => true,
       ];
-    } else if (self::getCurrentStep() == 2) {
+    } else if (self::getCurrentStep() === 2) {
       return [
         'n' => 4,
         'location_from' => 'hand',

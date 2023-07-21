@@ -29,7 +29,7 @@ class Card536 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'n'                               => 2,
         'location_from'                   => 'revealed',
@@ -47,7 +47,7 @@ class Card536 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       $revealedCard = self::getRevealedCard();
       self::putInHand($revealedCard);
       self::setAuxiliaryValue($revealedCard['color']);

@@ -33,14 +33,14 @@ class Card556 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getNumChosen() == 1) {
+    if (self::getNumChosen() === 1) {
       self::setAuxiliaryValue($card['color']);
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() == 2) {
+    if (self::getNumChosen() === 2) {
       $card = self::reveal($this->game->getDeckTopCard(10, $this->game::BASE));
       if ($card) {
         if ($card['color'] == self::getAuxiliaryValue() || $card['color'] == self::getLastSelectedColor()) {

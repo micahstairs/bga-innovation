@@ -13,7 +13,7 @@ class Card521 extends Card
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       $max_age_score = $this->game->getMaxAgeInScore(self::getPlayerId());
       $max_age_hand = $this->game->getMaxAgeInHand(self::getPlayerId());
       if ($max_age_score == 0 && $max_age_hand == 0) {
@@ -33,7 +33,7 @@ class Card521 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       return [
         'n'                               => 'all',
         'location_from'                   => 'hand,score',

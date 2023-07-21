@@ -61,7 +61,7 @@ class Card337 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    if ($choice == 1) {
+    if ($choice === 1) {
       self::drawAndMeld(2);
     } else {
       self::drawAndForeshadow(3);

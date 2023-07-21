@@ -19,7 +19,7 @@ class Card506 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       $this->game->setAuxiliaryValueFromArray([]);
       return [
         'location_from' => 'hand,score',
@@ -37,7 +37,7 @@ class Card506 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       // Keep track of the colors of the cards being returned
       $colors = $this->game->getAuxiliaryValueAsArray();
       $colors[] = $card['color'];
@@ -52,7 +52,7 @@ class Card506 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       // Draw two cards and store the IDs in the auxiliary array
       $numColors = count($this->game->getAuxiliaryValueAsArray());
       $card1 = self::draw($numColors);

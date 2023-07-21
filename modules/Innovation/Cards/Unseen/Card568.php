@@ -20,7 +20,7 @@ class Card568 extends Card
       if ($topPurpleCard !== null && $topPurpleCard['id'] == 84) {
         self::lose();
       }
-    } else if (self::getEffectNumber() == 1) {
+    } else if (self::getEffectNumber() === 1) {
       self::score(self::getTopCardOfColor($this->game::PURPLE));
     } else {
       self::setMaxSteps(1);

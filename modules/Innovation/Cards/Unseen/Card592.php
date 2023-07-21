@@ -15,7 +15,7 @@ class Card592 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(2);
     } else {
       self::setMaxSteps(1);
@@ -24,8 +24,8 @@ class Card592 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
-      if (self::getCurrentStep() == 1) {
+    if (self::getEffectNumber() === 1) {
+      if (self::getCurrentStep() === 1) {
         $this->game->setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
         return [
           'n'                               => 'all',

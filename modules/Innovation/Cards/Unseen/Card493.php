@@ -39,7 +39,7 @@ class Card493 extends Card
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() == 1) {
+    if (self::getNumChosen() === 1) {
       $card = self::getLastSelectedCard();
       $iconsMelded = array_unique(array_merge(self::getActionScopedAuxiliaryArray(self::getPlayerId()), self::getIcons($card)));
       self::setActionScopedAuxiliaryArray($iconsMelded, self::getPlayerId());

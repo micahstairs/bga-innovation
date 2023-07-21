@@ -14,7 +14,7 @@ class Card547 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(3);
     } else {
       foreach (self::getCards('achievements') as $card) {
@@ -27,10 +27,10 @@ class Card547 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return ['choose_yes_or_no' => true];
-    } else if (self::getCurrentStep() == 2) {
-      if (self::getAuxiliaryValue() == 1) {
+    } else if (self::getCurrentStep() === 2) {
+      if (self::getAuxiliaryValue() === 1) {
         return [
           'location_from' => 'board',
           'location_to'   => 'junk,safe',
@@ -45,7 +45,7 @@ class Card547 extends Card
         ];
       }
     } else {
-      if (self::getAuxiliaryValue() == 1) {
+      if (self::getAuxiliaryValue() === 1) {
         return [
           'location_from' => 'board',
           'location_to'   => 'junk,safe',

@@ -14,7 +14,7 @@ class Card515 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else if ($this->game->countCardsInHand(self::getPlayerId()) >= 2) {
       self::setMaxSteps(1);
@@ -24,8 +24,8 @@ class Card515 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
-      if (self::getCurrentStep() == 1) {
+    if (self::getEffectNumber() === 1) {
+      if (self::getCurrentStep() === 1) {
         return ['choose_yes_or_no' => true];
       } else {
         return [
@@ -52,7 +52,7 @@ class Card515 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() == 2) {
+    if (self::getEffectNumber() === 2) {
       self::draw(self::getAuxiliaryValue());
     }
   }

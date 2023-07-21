@@ -15,20 +15,20 @@ class Card541 extends Card
   public function initialExecution()
   {
     $scoreCards = $this->game->getCardsInScorePile(self::getPlayerId());
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(2);
-    } else if (self::getEffectNumber() == 2 || count($scoreCards) >= 1) {
+    } else if (self::getEffectNumber() === 2 || count($scoreCards) >= 1) {
       self::setMaxSteps(1);
-    } else if (self::getEffectNumber() == 3) {
+    } else if (self::getEffectNumber() === 3) {
       self::drawAndScore(1);
     }
   }
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       return self::getFirstInteractionOptions();
-    } else if (self::getEffectNumber() == 2) {
+    } else if (self::getEffectNumber() === 2) {
       return [
         'location_from' => 'score',
         'location_to'   => 'deck',
@@ -43,7 +43,7 @@ class Card541 extends Card
 
   private function getFirstInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'can_pass'         => true,
         'choose_yes_or_no' => true,
@@ -58,14 +58,14 @@ class Card541 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() == 3) {
+    if (self::getEffectNumber() === 3) {
       self::drawAndScore(self::getAuxiliaryValue());
     }
   }
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       return [
         "message_for_player" => clienttranslate('${You} may make a choice'),
         "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),

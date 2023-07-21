@@ -24,12 +24,12 @@ class Card486 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'choose_player' => true,
         'players'       => $this->game->getOtherActivePlayers(self::getPlayerId()),
       ];
-    } else if (self::getCurrentStep() == 2) {
+    } else if (self::getCurrentStep() === 2) {
       return [
         'location_from' => 'board',
         'owner_to'      => self::getAuxiliaryValue(),
@@ -55,7 +55,7 @@ class Card486 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getCurrentStep() == 2) {
+    if (self::getCurrentStep() === 2) {
       self::setMaxSteps(3);
       self::setAuxiliaryValue($card['owner']);
     }

@@ -14,7 +14,7 @@ class Card540 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       if ($this->game->countCardsInLocation(self::getPlayerId(), 'score') > 0) {
         self::setMaxSteps(1);
       }

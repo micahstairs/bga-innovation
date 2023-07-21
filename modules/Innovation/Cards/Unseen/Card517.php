@@ -24,7 +24,7 @@ class Card517 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      if (self::getCurrentStep() == 1) {
+      if (self::getCurrentStep() === 1) {
         return [
           'player_id'    => self::getLauncherId(),
           'choose_color' => true,

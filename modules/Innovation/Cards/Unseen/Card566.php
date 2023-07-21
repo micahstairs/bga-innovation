@@ -15,7 +15,7 @@ class Card566 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       $card1 = self::reveal($this->game->getDeckTopCard(9, $this->game::BASE));
       $card2 = self::reveal($this->game->getDeckTopCard(10, $this->game::BASE));
       if ($card1 || $card2) {

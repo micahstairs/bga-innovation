@@ -18,7 +18,7 @@ class Card580 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       return [
         'location_from' => 'safe',
         'location_to'   => 'achievements',

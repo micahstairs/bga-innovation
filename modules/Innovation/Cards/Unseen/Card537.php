@@ -14,7 +14,7 @@ class Card537 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() == 1) {
+    if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else {
       $card = self::drawAndTuck(6);
@@ -47,7 +47,7 @@ class Card537 extends Card
   {
     if ($choice === 1) {
       self::splayLeft($this->game::RED);
-    } else if ($choice == 2) {
+    } else if ($choice === 2) {
       self::splayRight($this->game::RED);
     } else {
       self::splayUp($this->game::RED);

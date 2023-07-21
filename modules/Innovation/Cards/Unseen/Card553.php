@@ -24,11 +24,11 @@ class Card553 extends Card
     $hadEight = false;
     $hadNine = false;
     foreach ($iconCounts as $count) {
-      if ($count == 7) {
+      if ($count === 7) {
         $hadSeven = true;
-      } else if ($count == 8) {
+      } else if ($count === 8) {
         $hadEight = true;
-      } else if ($count == 9) {
+      } else if ($count === 9) {
         $hadNine = true;
       }
     }
@@ -55,7 +55,7 @@ class Card553 extends Card
   public function afterInteraction()
   {
     self::draw(8);
-    if (self::getAuxiliaryValue() == 1) {
+    if (self::getAuxiliaryValue() === 1) {
       self::draw(9);
     }
   }

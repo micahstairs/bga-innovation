@@ -23,9 +23,9 @@ class Card516 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return ['choose_yes_or_no' => true];
-    } else if (self::getCurrentStep() == 2) {
+    } else if (self::getCurrentStep() === 2) {
       return [
         'location_from' => 'safe',
         'location_to'   => 'none',
@@ -41,7 +41,7 @@ class Card516 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 2) {
+    if (self::getCurrentStep() === 2) {
       $card = self::drawAndReveal(self::getLastSelectedAge() + 1);
       if ($card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE) {
         self::setAuxiliaryValue2(self::getLastSelectedId());
@@ -49,7 +49,7 @@ class Card516 extends Card
       } else {
         self::putInHand($card);
       }
-    } else if (self::getCurrentStep() == 3) {
+    } else if (self::getCurrentStep() === 3) {
       $revealedCard = self::getCards('revealed')[0];
       if (self::getNumChosen() > 0) {
         self::safeguard($revealedCard);
@@ -89,7 +89,7 @@ class Card516 extends Card
     $secrets = self::getCards('safe');
     if ($choice === 1) {
       self::drawAndSafeguard(4);
-    } else if (count($secrets) == 1) {
+    } else if (count($secrets) === 1) {
       $secret = $secrets[0];
       $card = self::drawAndReveal($secret['faceup_age'] + 1);
       if ($card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE) {

@@ -21,7 +21,7 @@ class Card543 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'location_from' => 'hand',
         'location_to'   => 'revealed,hand',
@@ -38,7 +38,7 @@ class Card543 extends Card
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() > 0 && self::getCurrentStep() == 1) {
+    if (self::getNumChosen() > 0 && self::getCurrentStep() === 1) {
       $color = self::getLastSelectedColor();
       self::splayRight($color);
       $topCard = self::getTopCardOfColor($color);

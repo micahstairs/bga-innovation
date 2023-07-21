@@ -26,7 +26,7 @@ class Card551 extends Card
         'location_to'   => 'safe',
         'age'           => self::getLowestSecretValue(),
       ];
-    } else if (self::getEffectNumber() == 1) {
+    } else if (self::getEffectNumber() === 1) {
       return [
         'owner_from'    => 'any player',
         'location_from' => 'score',

@@ -36,7 +36,7 @@ class Card482 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::getCurrentStep() === 1) {
       return [
         'owner_from'                      => 0,
         'location_from'                   => 'achievements',
