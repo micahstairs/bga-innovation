@@ -48,7 +48,7 @@ class Card349 extends Card
       }
       return $options;
     } else {
-      return ['choices' => [1, 2]];
+      return ['choices' => [2, 3]];
     }
   }
 
