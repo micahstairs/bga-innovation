@@ -1739,9 +1739,10 @@ $this->textual_card_infos = array(
     ),
 
     359 => array(
-        'name'                => clienttranslate('Charitable Trust'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_3} or ${age_4}.'),
-        'non_demand_effect_1' => clienttranslate('You may meld the card you drew due to Charitable Trust\'s echo effect. If you do, either return or achieve (if eligible) your top green card.'),
+        'name'                                => clienttranslate('Charitable Trust'),
+        'echo_effect_1'                       => clienttranslate('Draw a ${age_3} or ${age_4}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may meld the card you drew due to Charitable Trust\'s echo effect. If you do, either return or achieve (if eligible) your top green card.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may meld the card you drew due to Charitable Trust\'s echo effect. If you meld a ${age_3}, achieve your top green card, if eligible. If you meld a ${age_4}, return your top green card'),
     ),
 
     360 => array(

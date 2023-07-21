@@ -1463,7 +1463,6 @@ class Innovation extends BgaGame {
                         // Add a button for each available options
                         for (let i = 0; i < args.options.length; i++) {
                             let option = args.options[i];
-                            console.log(JSON.stringify(args));
                             this.addActionButton(
                                 "choice_" + option.value,
                                 this.format_string_recursive(_(option.text), {

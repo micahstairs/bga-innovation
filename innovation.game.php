@@ -9895,45 +9895,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 359, Echoes age 3: Charitable Trust
-            case "359E1A":
-                $message_for_player = clienttranslate('${You} must make a choice');
-                $message_for_others = clienttranslate('${player_name} must make a choice among the two possibilities offered by the card');
-                // TODO(LATER): Use getAgeToDrawIn to alter the messages when supply piles are empty.
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate('Draw a ${age}'), 'age' => self::getAgeSquare(3)),
-                                array('value' => 0, 'text' => clienttranslate('Draw a ${age}'), 'age' => self::getAgeSquare(4)),
-                );
-                break;
-
-            case "359N1A":
-                // NOTE: This is only used during the second execution of an endorse action (in all other cases, the player can simply select cards by clicking on them)
-                $message_for_player = clienttranslate('Choose which card you want to meld');
-                $message_for_others = clienttranslate('${player_name} must choose which card he wants to meld');
-
-                $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
-                $card_id_1 = $encoded_card_ids % 1000;
-                $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
-
-                $card_1 = self::getCardInfo($card_id_1);
-                $card_2 = self::getCardInfo($card_id_2);
-
-                $options = [
-                    ['value' => 1, 'text' => clienttranslate('${age} ${name}'), 'age' => self::getAgeSquareWithType($card_1['age'], $card_1['type']), 'name' => self::getCardName($card_id_1), 'i18n' => array('name')],
-                    ['value' => 0, 'text' => clienttranslate('${age} ${name}'), 'age' => self::getAgeSquareWithType($card_2['age'], $card_2['type']), 'name' => self::getCardName($card_id_2), 'i18n' => array('name')],
-                ];
-                break;
-
-            case "359N1B":
-                $message_for_player = clienttranslate('${You} must choose what to do with your top green card');
-                $message_for_others = clienttranslate('${player_name} must choose what to do with his top green card');
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate("Return")),
-                                array('value' => 0, 'text' => clienttranslate("Achieve")),
-                );
-                break;
-
-
             // id 364, Echoes age 3: Sunglasses
             case "364N1A":
                 $message_for_player = clienttranslate('${You} may choose what to do with your splayed piles');
@@ -11007,7 +10968,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function isInSeparateFile($card_id) {
         return $card_id <= 4
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 358)
+            || (330 <= $card_id && $card_id <= 359)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -14060,18 +14021,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 359, Echoes age 3: Charitable Trust
-            case "359E1":
-                $step_max = 1;
-                break;
-
-            case "359N1":
-                // Only execute the non-demand if the echo effect was executed
-                if (self::echoEffectWasExecuted()) {
-                    $step_max = 1;
-                }
                 break;
 
             // id 360, Echoes age 3: Homing Pigeons
@@ -20537,62 +20486,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 359, Echoes age 3: Charitable Trust
-        case "359E1A":
-            // "Draw a 3 or 4."
-            $options = array(
-                'player_id' => $player_id, 
-
-                'choose_yes_or_no' => true,
-            );
-            break;
-
-        case "359N1A":
-            // "You may meld the card you drew due to Charitable Trust's echo effect."
-            if (self::isExecutingAgainDueToEndorsedAction()) {
-                $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
-                $card_id_1 = $encoded_card_ids % 1000;
-                $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
-                // If two cards were drawn due to the Endorse action, let the player choose which gets melded (we can't let
-                // players click on the cards during the second execution because the first melded card might even be in the deck).
-                $options = array(
-                    'player_id' => $player_id, 
-                    'can_pass' => true,
-                    'choose_yes_or_no' => true,
-                );
-            } else {
-                $options = array(
-                    'player_id' => $player_id,                
-                    'n' => 1,
-                    'can_pass' => true,
-
-                    'owner_from' => $player_id,
-                    'location_from' => 'hand',
-                    'owner_to' => $player_id,
-                    'location_to' => 'board',
-
-                    'card_id_1' => self::getIndexedAuxiliaryValue($player_id),
-
-                    'meld_keyword' => true,
-                );
-                // Special case if Charitable Trust was endorsed
-                if ($options['card_id_1'] >= 1000) {
-                    $encoded_card_ids = $options['card_id_1'];
-                    $options['card_id_1'] = $encoded_card_ids % 1000;
-                    $options['card_id_2'] = (($encoded_card_ids - $options['card_id_1']) / 1000) - 1;
-                }
-            }
-            break;
-
-        case "359N1B":
-            // "either return or achieve (if eligible) your top green card."
-            $options = array(
-                'player_id' => $player_id, 
-
-                'choose_yes_or_no' => true,
-            );
-            break;
-
         // id 360, Echoes age 3: Homing Pigeons
         case "360D1A":
             // "I demand you return two cards from your score pile whose values each match at least one card in my hand!"
@@ -25149,57 +25042,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 359, Echoes age 3: Charitable Trust
-                case "359E1A":
-                    // "Draw a 3 or 4."
-                    if (self::getAuxiliaryValue() == 1) {
-                        $card = self::executeDraw($player_id, 3);
-                    } else {
-                        $card = self::executeDraw($player_id, 4);
-                    }
-                    if (self::isExecutingAgainDueToEndorsedAction()) {
-                        // NOTE: This encoding assumes that highest card ID won't be more than 999. The +1 in the encoding is necessary since the lowest card ID is 0 (not 1).
-                        self::setIndexedAuxiliaryValue($player_id, (self::getIndexedAuxiliaryValue($player_id) + 1) * 1000 + $card['id']);
-                    } else {
-                        self::setIndexedAuxiliaryValue($player_id, $card['id']);
-                    }
-                    break;
-
-                case "359N1A":
-                    $card_was_melded = $n > 0;
-
-                    if (self::isExecutingAgainDueToEndorsedAction()) {
-                        // "meld the card you drew due to Charitable Trust's echo effect"
-                        self::meldCard(self::getCardInfo(self::getAuxiliaryValue()), $player_id);
-                        $card_was_melded = true;
-                    }
-
-                    // "If you do"
-                    if ($card_was_melded) {
-                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card != null) {
-                            $claimable_ages = self::getClaimableAgesIgnoringAvailability($player_id);
-                            if (in_array($top_green_card['faceup_age'], $claimable_ages)) {
-                                self::incrementStepMax(1); // need to choose between returning and achieving
-                            } else {
-                                // If not eligible, then return green if present
-                                self::returnCard($top_green_card);
-                            }
-                        }
-                    }
-                    break;
-                    
-                case "359N1B":
-                    // "either return or achieve (if eligible) your top green card."
-                    $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    
-                    if (self::getAuxiliaryValue() == 1) {
-                        self::returnCard($top_green_card);
-                    } else {
-                        self::transferCardFromTo($top_green_card, $player_id, 'achievements');
-                    }
-                    break;
                 
                 // id 362, Echoes age 3: Sandpaper                   
                 case "362N1A":
@@ -27267,45 +27109,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 359, Echoes age 3: Charitable Trust
-            case "359E1A":
-                if ($choice == 1) {
-                    $age = 3;
-                } else {
-                    $age = 4;                
-                }
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to draw a ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to draw a ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
-                self::setAuxiliaryValue($choice);
-                break;
-            
-            case "359N1A":
-                if (self::isExecutingAgainDueToEndorsedAction()) {
-                    $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
-                    $card_id_1 = $encoded_card_ids % 1000;
-                    $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
-
-                    if ($choice == 1) {
-                        self::setAuxiliaryValue($card_id_1);
-                    } else {
-                        self::setAuxiliaryValue($card_id_2);
-                    }
-                } else {
-                    self::meldCard($card, $player_id);
-                }
-                break;
-
-            case "359N1B":
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to return your top green card.'), array('You' => 'You', 'age' => self::getAgeSquare(3)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to return his top green card.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to achieve your top green card.'), array('You' => 'You', 'age' => self::getAgeSquare(4)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to achieve his top green card.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                }
                 self::setAuxiliaryValue($choice);
                 break;
             

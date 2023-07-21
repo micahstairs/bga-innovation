@@ -257,6 +257,22 @@ abstract class Card
     return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), "achievements");
   }
 
+  protected function achieveIfEligible($card, int $playerId = null)
+  {
+    if (self::isEligibleForAchieving($card, self::coercePlayerId($playerId))) {
+      return self::achieve($card);
+    }
+    return $card;
+  }
+
+  protected function isEligibleForAchieving($card, int $playerId = null): bool
+  {
+    if (!$card) {
+      return false;
+    }
+    return in_array($card['age'], $this->game->getClaimableAgesIgnoringAvailability(self::coercePlayerId($playerId)));
+  }
+
   protected function return($card)
   {
     if (!$card) {

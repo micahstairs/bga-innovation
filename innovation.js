@@ -1388,7 +1388,6 @@ var Innovation = /** @class */ (function (_super) {
                         // Add a button for each available options
                         for (var i = 0; i < args.options.length; i++) {
                             var option = args.options[i];
-                            console.log(JSON.stringify(args));
                             this.addActionButton("choice_" + option.value, this.format_string_recursive(_(option.text), {
                                 'age': option.age,
                                 'name': option.name,
