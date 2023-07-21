@@ -15,7 +15,7 @@ class Card344 extends Card
 
   public function initialExecution()
   {
-    if (self::isFirstOrThirdEdition()) {
+    if (self::isFourthEdition()) {
       self::setMaxSteps(1);
     }
   }

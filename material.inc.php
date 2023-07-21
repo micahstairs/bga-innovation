@@ -1629,8 +1629,9 @@ $this->textual_card_infos = array(
     ),
 
     344 => array(
-        'name'                => clienttranslate('Puppet'),
-        'non_demand_effect_1' => clienttranslate('No effect.'),
+        'name'                                => clienttranslate('Puppet'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('No effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Junk an available achievement of value equal to the value of a card in your score pile.'),
     ),
 
     /* Echoes - Age 2 */
