@@ -1534,9 +1534,10 @@ $this->textual_card_infos = array(
     ),
 
     331 => array(
-        'name'              => clienttranslate('Perfume'),
-        'echo_effect_1'     => clienttranslate('Draw and tuck a ${age_1}.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card of different value from any top card on my board from your board to mine! If you do, draw and meld a card of equal value!'),
+        'name'                          => clienttranslate('Perfume'),
+        'echo_effect_1_first_and_third' => clienttranslate('Draw and tuck a ${age_1}.'),
+        'echo_effect_1_fourth'          => clienttranslate('Draw and tuck a ${age_1}. If it has a ${icon_4}, repeat this effect.'),
+        'i_demand_effect_1'             => clienttranslate('${I demand} you transfer a top card of different value from any top card on my board from your board to mine! If you do, draw and meld a card of equal value!'),
     ),
 
     332 => array(
