@@ -724,6 +724,21 @@ abstract class Card
     return array_diff(range(0, 5), [$type]);
   }
 
+  protected function notifyPlayer($log, array $args, int $playerId = null)
+  {
+    $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, $args);
+  }
+
+  protected function notifyOthers($log, array $args, int $playerId = null)
+  {
+    $this->game->notifyAllPlayersBut(self::coercePlayerId($playerId), 'log', $log, $args);
+  }
+
+  protected function renderIcon(int $icon)
+  {
+    return $this->game->getIconSquare($icon);
+  }
+
   // GENERAL UTILITY HELPERS
 
   protected function getCardIdFromClassName(): string

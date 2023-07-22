@@ -8,7 +8,7 @@ class Card1 extends Card
 {
 
   // Tools:
-  //   - You may return three cards from your hand. If you return three, draw and meld a [3].
+  //   - You may return three cards from your hand. If you do, draw and meld a [3].
   //   - You may return a [3] from your hand. If you do, draw three [1].
 
   public function initialExecution()

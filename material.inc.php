@@ -31,10 +31,9 @@ $this->textual_card_infos = array(
     ),
 
     1   => array(
-        'name'                                => clienttranslate('Tools'),
-        'non_demand_effect_1_first_and_third' => clienttranslate('You may return three cards from your hand. If you do, draw and meld a ${age_3}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('You may return three cards from your hand. If you return three, draw and meld a ${age_3}.'),
-        'non_demand_effect_2'                 => clienttranslate('You may return a ${age_3} from your hand. If you do, draw three ${age_1}.'),
+        'name'                => clienttranslate('Tools'),
+        'non_demand_effect_1' => clienttranslate('You may return three cards from your hand. If you do, draw and meld a ${age_3}.'),
+        'non_demand_effect_2' => clienttranslate('You may return a ${age_3} from your hand. If you do, draw three ${age_1}.'),
     ),
 
     2   => array(
@@ -156,9 +155,9 @@ $this->textual_card_infos = array(
 
     22  => array(
         'name'                                 => clienttranslate('Fermenting'),
-        'non_demand_effect_1_third_and_fourth' => clienttranslate('Draw a ${age_2} for every color on your board with one or more ${icon_2}.'),
         'non_demand_effect_1_first'            => clienttranslate('Draw a ${age_2} for every two ${icon_2} on your board.'),
-        'non_demand_effect_2_fourth'           => clienttranslate('You may tuck a green card from your hand. If you don\'t, junk Fermenting and all cards in the ${age_2} deck.'),
+        'non_demand_effect_1_third_and_fourth' => clienttranslate('Draw a ${age_2} for every color on your board with one or more ${icon_2}.'),
+        'non_demand_effect_2_fourth'           => clienttranslate('You may tuck a green card from your hand. If you don\'t, junk all cards in the ${age_2} deck, and junk Fermenting if it is a top card on any board.'),
     ),
 
     23  => array(
@@ -402,7 +401,7 @@ $this->textual_card_infos = array(
     59  => array(
         'name'                                => clienttranslate('Classification'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Reveal the color of a card in your hand. Take into your hand all cards of that color from all other player\'s hands. Then meld all cards of that color from your hand.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. Take into your hand all cards of that color from all opponents\' hands. Then, meld all cards of that color from it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. Take into your hand all cards of that color from all opponents\' hands. Then, meld all cards of that color from your hand.'),
     ),
 
     60  => array(

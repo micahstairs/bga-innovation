@@ -10967,6 +10967,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /* Whether or not the card's implementation is in a separate file */
     function isInSeparateFile($card_id) {
         return $card_id <= 4
+            || $card_id == 22
             || $card_id == 65
             || (330 <= $card_id && $card_id <= 359)
             || $card_id == 440
@@ -11320,40 +11321,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 } else {
                     $step_max = 1;
                 }
-                break;
-                
-            // id 22, age 2: Fermenting        
-            case "22N1":
-                if ($this->innovationGameState->usingFirstEditionRules()) {
-                    $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2 /* leaf */);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${leaves}.'), array('You' => 'You', 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${leaves}.'), array('player_name' => self::getColoredPlayerName($player_id), 'n' => $number_of_leaves, 'leaves' => $leaf));
-                    $number = self::intDivision($number_of_leaves,2); // "For every two leaves on your board"
-                } else {
-                    $number = 0;
-                    for($color=0; $color<5; $color++) {
-                        if (self::boardPileHasRessource($player_id, $color, 2 /* leaf */)) { // There is at least one visible leaf in that color
-                            $number++;
-                        }
-                    }
-                    if ($number <= 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} color with one or more visible ${leaves}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} color with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
-                    }
-                    else { // $number > 1
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} colors with one or more visible ${leaves}.'), array('i18n' => array('n'), 'You' => 'You', 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} colors with one or more ${leaves}.'), array('i18n' => array('n'), 'player_name' => self::getColoredPlayerName($player_id), 'n' => self::getTranslatedNumber($number), 'leaves' => $leaf));
-                    }
-                    // "For each color of your board that have one leaf or more"
-                }
-                
-                for($i=0; $i<$number; $i++) {
-                    self::executeDraw($player_id, 2); // "Draw a 2"
-                }
-                break;
-
-            case "22N2":
-                $step_max = 1; // 4th edition and beyond only
                 break;
                 
             // id 23, age 2: Monotheism        
@@ -16574,25 +16541,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'choose_yes_or_no' => true,
                 );
             }
-            break;
-
-       // id 22, age 2: Fermenting
-        case "22N2A":
-            // "You may tuck a green card from your hand."
-            // NOTE: This is only present in 4th edition and beyond
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                'bottom_to' => true,
-                
-                'color' => array(2),
-            );
             break;
             
         // id 23, age 2: Monotheism        
@@ -23509,19 +23457,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "20D1A":
                     if ($n > 0) {
                         self::setAuxiliaryValue(1); // A transfer has been made, flag it
-                    }
-                    break;
-
-                // id 22, age 2: Fermenting        
-                case "22N2A":
-                    // "If you don't, junk Fermenting and all cards in the 2 deck."
-                    // NOTE: This only occurs in the 4th edition and beyond
-                    if ($n == 0) {
-                        $fermenting_card = self::getCardInfo(22);
-                        if ($fermenting_card['location'] != 'junk') {
-                            self::transferCardFromTo($fermenting_card, 0, 'junk');
-                        }
-                        self::junkBaseDeck(2);
                     }
                     break;
                     
