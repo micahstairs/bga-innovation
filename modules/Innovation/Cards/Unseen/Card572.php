@@ -20,7 +20,7 @@ class Card572 extends Card
       $playerColors = self::getUniqueColors('hand', self::getPlayerId());
       $launcherColors = self::getUniqueColors('hand', self::getLauncherId());
       if (count($playerColors) > 0 && self::isUnorderedEqual($playerColors, $launcherColors)) {
-        self::win();
+        self::win(self::getLauncherId());
       }
     } else {
       self::draw(10);
