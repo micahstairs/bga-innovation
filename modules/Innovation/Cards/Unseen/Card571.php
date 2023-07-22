@@ -80,14 +80,14 @@ class Card571 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      $this->game->notifyPlayer(self::getPlayerId(), 'log', clienttranslate('${You} wish to draw two ${age}.'), ['age' => $this->game->getAgeSquare(10)]);
-      $this->game->notifyAllPlayersBut(self::getPlayerId(), 'log', clienttranslate('${player_name} wishes to draw two ${age}.'), ['age' => $this->game->getAgeSquare(10)]);
+      self::notifyPlayer(clienttranslate('${You} wish to draw two ${age}.'), ['age' => $this->game->getAgeSquare(10)]);
+      self::notifyOthers(clienttranslate('${player_name} wishes to draw two ${age}.'), ['age' => $this->game->getAgeSquare(10)]);
     } else if ($choice === 2) {
-      $this->game->notifyPlayer(self::getPlayerId(), 'log', clienttranslate('${You} wish to draw and score two ${age}.'), ['age' => $this->game->getAgeSquare(8)]);
-      $this->game->notifyAllPlayersBut(self::getPlayerId(), 'log', clienttranslate('${player_name} wishes to draw and score two ${age}.'), ['age' => $this->game->getAgeSquare(8)]);
+      self::notifyPlayer(clienttranslate('${You} wish to draw and score two ${age}.'), ['age' => $this->game->getAgeSquare(8)]);
+      self::notifyOthers(clienttranslate('${player_name} wishes to draw and score two ${age}.'), ['age' => $this->game->getAgeSquare(8)]);
     } else {
-      $this->game->notifyPlayer(self::getPlayerId(), 'log', clienttranslate('${You} wish to safeguard two available achievements.'), []);
-      $this->game->notifyAllPlayersBut(self::getPlayerId(), 'log', clienttranslate('${player_name} wishes to safeguard two available achievements.'), []);
+      self::notifyPlayer(clienttranslate('${You} wish to safeguard two available achievements.'), []);
+      self::notifyOthers(clienttranslate('${player_name} wishes to safeguard two available achievements.'), []);
     }
     self::setAuxiliaryValue($choice); // Tracks the wish that the player chose
   }

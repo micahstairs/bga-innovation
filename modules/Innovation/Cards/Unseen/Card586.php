@@ -45,10 +45,10 @@ class Card586 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    $this->notifications->notifyPlayer(self::getPlayerId(), 'log', clienttranslate('${You} call ${side}.'), 
+    self::notifyPlayer(clienttranslate('${You} call ${side}.'), 
       ['You' => 'You', 'side' => $this->getPrintableCoinSide($choice)]
     );
-    $this->notifications->notifyAllPlayersBut(self::getPlayerId(), 'log', clienttranslate('${player_name} calls ${side}.'),
+    self::notifyOthers(clienttranslate('${player_name} calls ${side}.'),
       [
         'player_name' => $this->notifications->getColoredPlayerName(self::getPlayerId()),
         'side' => $this->getPrintableCoinSide($choice),

@@ -42,11 +42,9 @@ class Card554 extends Card
         self::score($card);
       }
       if ($numRevealedGreenCards >= 3) {
-        $this->game->notifyPlayer(self::getPlayerId(), 'log', clienttranslate('${You} have drawn 3 green cards.'), array('You' => 'You'));
-        $this->game->notifyAllPlayersBut(self::getPlayerId(), 'log', clienttranslate('${player_name} has 3 drawn green cards.'), array('player_name' => $this->game->getColoredPlayerName(self::getPlayerId())));
-        $this->game->innovationGameState->set('winner_by_dogma', self::getPlayerId()); // "You win"
-        $this->game->trace('EOG bubbled from self::stPlayerInvolvedTurn Slot Machine');
-        throw new \EndOfGame();
+        self::notifyPlayer(clienttranslate('${You} have drawn 3 green cards.'), ['You' => 'You']);
+        self::notifyOthers(clienttranslate('${player_name} has drawn 3 green cards.'), ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId())]);
+        self::win();
       }
     } else {
       foreach (self::getCards( 'revealed') as $card) {
