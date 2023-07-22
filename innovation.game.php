@@ -3285,10 +3285,10 @@ class Innovation extends Table
             }
             
             switch ($achievement_id) {
-            case 105: // Empire: three or more icons of six types
+            case 105: // Empire: three or more icons of the six main icon types
                 $num_resources_with_three_or_more = 0;
                 foreach (self::getPlayerResourceCounts($player_id) as $icon => $count) {
-                    if ($count >= 3) {
+                    if ($icon <= 6 && $count >= 3) {
                         $num_resources_with_three_or_more++;
                     }
                 }

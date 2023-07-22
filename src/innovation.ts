@@ -1748,10 +1748,10 @@ class Innovation extends BgaGame {
             if (dojo.query(`#special_achievement_summary_${id}.unclaimed`).length == 1) {
                 switch (id) {
                     case 105:
-                        // Empire: three or more icons of six out of seven types
+                        // Empire: three or more icons of the six main icon types
                         numerator = 0;
                         denominator = 6;
-                        for (let i = 1; i <= 7; i++) {
+                        for (let i = 1; i <= 6; i++) {
                             if (self.counter["resource_count"][self.player_id][i].getValue() >= 3) {
                                 numerator++;
                                 if (numerator === 6) {
@@ -2257,7 +2257,6 @@ class Innovation extends BgaGame {
         text = text.replace(new RegExp("\\$\\{I compel\\}", "g"), "<strong class='i_compel'>" + _("I COMPEL") + "</strong>");
         text = text.replace(new RegExp("\\$\\{immediately\\}", "g"), "<strong class='immediately'>" + _("immediately") + "</strong>");
         text = text.replace(new RegExp("\\$\\{icons_1_to_6\\}", "g"), this.all_icons(6, 'in_tooltip'));
-        text = text.replace(new RegExp("\\$\\{icons_1_to_7\\}", "g"), this.all_icons(7, 'in_tooltip'));
         for (let age = 1; age <= 11; age++) {
             text = text.replace(new RegExp("\\$\\{age_" + age + "\\}", "g"), this.square(size, 'age', age));
         }
