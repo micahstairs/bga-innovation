@@ -9,7 +9,7 @@ class Arrays
     public static function flatten($array): array
     {
         $result = array();
-        foreach($array as $key => $subarray) {
+        foreach ($array as $key => $subarray) {
             $result = array_merge($result, $subarray);
         }
         return $result;
@@ -86,6 +86,19 @@ class Arrays
             $encodedValue /= 16;
         }
         return $returnArray;
+    }
+
+    /**
+     * Checks whether the two arrays contain the same elements, regardless of order
+     *
+     * @param array $a
+     * @param array $b
+     * @return bool
+     */
+    public static function isUnorderedEqual(array $a, array $b): bool
+    {
+        $intersectionCount = count(array_intersect($a, $b));
+        return $intersectionCount === count($a) && $intersectionCount === count($b);
     }
 
 }

@@ -30,7 +30,7 @@ class ArraysTest extends BaseTest
 
     public function testSetAsArrayAndGetAsArray()
     {
-        $original = [1,2,3,4,5];
+        $original = [1, 2, 3, 4, 5];
         $output = Arrays::getValueAsArray(Arrays::getArrayAsValue($original));
         $this->assertEmpty(array_diff($original, $output));
     }
@@ -45,7 +45,7 @@ class ArraysTest extends BaseTest
     public function providerTestGetValueFromBase16Array(): array
     {
         return [
-            [447395, [1,2,3,4,5]],
+            [447395, [1, 2, 3, 4, 5]],
         ];
     }
 
@@ -53,14 +53,14 @@ class ArraysTest extends BaseTest
     {
         $this->expectException(\BgaVisibleSystemException::class);
         $this->expectExceptionMessage('setGameStateBase16Array() cannot encode more than 5 integers at once');
-        Arrays::getValueFromBase16Array([1,2,3,4,5,6]);
+        Arrays::getValueFromBase16Array([1, 2, 3, 4, 5, 6]);
     }
 
     public function testGetValueFromBase16ArrayWithInvalidInputRange()
     {
         $this->expectException(\BgaVisibleSystemException::class);
         $this->expectExceptionMessage('setGameStateBase16Array() cannot encode integers smaller than 0 or larger than 15');
-        Arrays::getValueFromBase16Array([1,16,2]);
+        Arrays::getValueFromBase16Array([1, 16, 2]);
     }
 
     /**
@@ -73,14 +73,54 @@ class ArraysTest extends BaseTest
     public function providerTestGetBase16ArrayFromValue(): array
     {
         return [
-            [[5,4,3,2,1], 447395],
+            [[5, 4, 3, 2, 1], 447395],
         ];
     }
 
     public function testSetBase16ArrayAndGetBase16Array()
     {
-        $original = [1,2,3,4,5];
+        $original = [1, 2, 3, 4, 5];
         $output = Arrays::getBase16ArrayFromValue(Arrays::getValueFromBase16Array($original));
         $this->assertEmpty(array_diff($original, $output));
+    }
+
+    public function testIsUnorderedEqual_whenEqual_returnTrue()
+    {
+        $a = [1, 2, 3];
+        $b = [3, 2, 1];
+
+        $result = Arrays::isUnorderedEqual($a, $b);
+
+        $this->assertTrue($result);
+    }
+
+    public function testIsUnorderedEqual_whenNoIntersection_returnFalse()
+    {
+        $a = [1, 2, 3];
+        $b = [5, 4];
+
+        $result = Arrays::isUnorderedEqual($a, $b);
+
+        $this->assertFalse($result);
+    }
+
+    public function testIsUnorderedEqual_whenFirstIsSubsetOfSecond_returnFalse()
+    {
+        $a = [1, 2, 3];
+        $b = [1, 2, 3, 4];
+
+        $result = Arrays::isUnorderedEqual($a, $b);
+
+        $this->assertFalse($result);
+    }
+
+    public function testIsUnorderedEqual_whenSecondIsSubsetOfFirst_returnFalse()
+    {
+        $a = [1, 2, 3, 4];
+        $b = [1, 2, 3];
+
+        $result = Arrays::isUnorderedEqual($a, $b);
+
+        $this->assertFalse($result);
     }
 }

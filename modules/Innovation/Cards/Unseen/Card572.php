@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Utils\Arrays;
 
 class Card572 extends Card
 {
@@ -19,7 +20,7 @@ class Card572 extends Card
       self::revealHand(self::getLauncherId());
       $playerColors = self::getUniqueColors('hand', self::getPlayerId());
       $launcherColors = self::getUniqueColors('hand', self::getLauncherId());
-      if (count($playerColors) > 0 && self::isUnorderedEqual($playerColors, $launcherColors)) {
+      if (count($playerColors) > 0 && Arrays::isUnorderedEqual($playerColors, $launcherColors)) {
         self::win(self::getLauncherId());
       }
     } else {
@@ -36,11 +37,6 @@ class Card572 extends Card
       }
     }
     return $colors;
-  }
-
-  private function isUnorderedEqual(array $a, array $b): bool
-  {
-    return count(array_intersect($a, $b)) === count($a);
   }
 
 }
