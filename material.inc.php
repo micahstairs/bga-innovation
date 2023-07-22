@@ -2222,33 +2222,38 @@ $this->textual_card_infos = array(
     /* Echoes - Special achievements */
 
     435 => array(
-        'name'                               => clienttranslate('Wealth'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement ${immediately} if you have eight or more bonuses visible on your board.'),
-        'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_5} Palampore.')
+        'name'                                   => clienttranslate('Wealth'),
+        'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have eight or more bonuses visible on your board.'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have eight bonuses visible on your board.'),
+        'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_5} Palampore.')
     ),
 
     436 => array(
-        'name'                               => clienttranslate('Destiny'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement ${immediately} if you have seven or more cards in your forecast.'),
-        'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_4} Barometer.')
+        'name'                                   => clienttranslate('Destiny'),
+        'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have seven or more cards in your forecast.'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have five cards in your forecast.'),
+        'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_4} Barometer.')
     ),
 
     437 => array(
-        'name'                               => clienttranslate('Heritage'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement ${immediately} if you have eight or more ${icon_0} visible in one color.'),
-        'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_6} Loom.')
+        'name'                                   => clienttranslate('Heritage'),
+        'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have eight or more ${icon_0} visible in one color.'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have eight ${icon_0} visible in one color.'),
+        'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_6} Loom.')
     ),
 
     438 => array(
-        'name'                               => clienttranslate('History'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement ${immediately} if you have a color with four or more visible echo effects.'),
-        'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_7} Photography.')
+        'name'                                   => clienttranslate('History'),
+        'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have a color with four or more visible echo effects.'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have a color with four visible echo effects.'),
+        'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_7} Photography.')
     ),
 
     439 => array(
-        'name'                               => clienttranslate('Supremacy'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement ${immediately} if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
-        'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_3} Novel.')
+        'name'                                   => clienttranslate('Supremacy'),
+        'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
+        'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_3} Novel.')
     ),
 
     /* Base - Age 11 */

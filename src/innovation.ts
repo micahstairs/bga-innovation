@@ -1812,9 +1812,9 @@ class Innovation extends BgaGame {
                         break;
 
                     case 436:
-                        // Destiny: seven or more cards in your forecast
+                        // Destiny: five cards in your forecast (7 in earlier editions)
                         numerator = self.zone["forecast"][self.player_id].items.length;
-                        denominator = 7;
+                        denominator = self.gamedatas.fourth_edition ? 5 : 7;
                         break;
 
                     case 437:
