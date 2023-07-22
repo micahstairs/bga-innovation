@@ -689,6 +689,18 @@ abstract class Card
     return $this->game->countCardsInLocationKeyedByAge(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
+  protected function getUniqueColors(string $location, int $playerId = null): array
+  {
+    $colors = [];
+    $cardsByColor = self::getCardsKeyedByColor($location, $playerId);
+      for ($color = 0; $color < 5; $color++) {
+        if ($cardsByColor[$color] > 0) {
+          $colors[] = $color;
+        }
+      }
+      return $colors;
+  }
+
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
   {
     return $this->game->countCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);

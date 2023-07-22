@@ -2532,7 +2532,7 @@ $this->textual_card_infos = array(
 
     516 => array(
         'name'                => clienttranslate('The Prophecies'),
-        'non_demand_effect_1' => clienttranslate('Choose to either draw and safeguard a ${age_4}, or draw and reveal a card of value one higher than one your secrets. If you reveal a red or purple card, meld one of your other secrets. If you do, safeguard the drawn card.'),
+        'non_demand_effect_1' => clienttranslate('Choose to either draw and safeguard a ${age_4}, or draw and reveal a card of value one higher than one of your secrets. If you reveal a red or purple card, meld one of your other secrets. If you do, safeguard the drawn card.'),
     ),
 
     517 => array(
@@ -2554,7 +2554,7 @@ $this->textual_card_infos = array(
 
     520 => array(
         'name'                => clienttranslate('El Dorado'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}, a ${age_2}, and a ${age_1}. If all three have a ${icon_1}, score all cards in the ${age_5} deck. If two or more have a ${icon_1}, splay your green and blue cards right.'),
+        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}, a ${age_2}, and a ${age_1}. If all three cards have a ${icon_1}, score all cards in the ${age_5} deck. If two or more have a ${icon_1}, splay your green and blue cards right.'),
     ),
 
     521 => array(
@@ -2855,9 +2855,8 @@ $this->textual_card_infos = array(
 
     572 => array(
         'name'                => clienttranslate('Surveillance'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand!'),
-        'non_demand_effect_1' => clienttranslate('If the colors of cards in your hand match the colors of revealed cards in an opponent\'s hand, and you have a card in your hand, you win.'),
-        'non_demand_effect_2' => clienttranslate('Draw a ${age_10}.'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand! If the colors of cards in your hand match the colors of cards in my hand, and you have a card in your hand, I win!'),
+        'non_demand_effect_1' => clienttranslate('Draw a ${age_10}.'),
     ),
 
     573 => array(

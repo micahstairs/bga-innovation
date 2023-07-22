@@ -9,7 +9,7 @@ class Card516 extends Card
 
   // The Prophecies:
   //   - Choose to either draw and safeguard a [4], or draw and reveal a card of value one higher
-  //     than one your secrets. If you reveal a red or purple card, meld one of your other secrets.
+  //     than one of your secrets. If you reveal a red or purple card, meld one of your other secrets.
   //     If you do, safeguard the drawn card.
 
   public function initialExecution()
