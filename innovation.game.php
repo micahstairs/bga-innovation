@@ -10969,7 +10969,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 360)
+            || (330 <= $card_id && $card_id <= 361)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13988,28 +13988,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 361, Echoes age 3: Deoderant
-            case "361N1":
-                // "If you have a top card with a tower, draw and meld a 3. Otherwise, draw a 4."
-                $has_tower = false;
-                foreach (self::getTopCardsOnBoard($player_id) as $card) {
-                    if (self::hasRessource($card, 4) ) {
-                         $has_tower = true;
-                    }
-                }
-                if ($has_tower) {
-                    self::executeDrawAndMeld($player_id, 3);
-                } else {
-                    self::executeDraw($player_id, 4);
-                }
-                break;
- 
-            // id 361, Echoes age 3: Deoderant
-            case "361E1":
-                // "Draw and meld a 3."
-                self::executeDrawAndMeld($player_id, 3);
                 break;
 
             // id 362, Echoes age 3: Sandpaper

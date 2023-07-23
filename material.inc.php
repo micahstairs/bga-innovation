@@ -1755,9 +1755,10 @@ $this->textual_card_infos = array(
     ),
 
     361 => array(
-        'name'                => clienttranslate('Deoderant'),
-        'echo_effect_1'       => clienttranslate('Draw and meld a ${age_3}.'),
-        'non_demand_effect_1' => clienttranslate('If you have a top card with a ${icon_4}, draw and meld a ${age_3}. Otherwise, draw a ${age_4}.'),
+        'name'                       => clienttranslate('Deoderant'),
+        'echo_effect_1'              => clienttranslate('Draw and meld a ${age_3}.'),
+        'non_demand_effect_1'        => clienttranslate('If you have a top card with a ${icon_4}, draw and meld a ${age_3}. Otherwise, draw a ${age_4}.'),
+        'non_demand_effect_2_fourth' => clienttranslate('If you have a top card with a ${icon_5}, junk all cards in the ${age_4} deck.'),
     ),
 
     362 => array(
