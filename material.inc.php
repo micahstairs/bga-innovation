@@ -1747,9 +1747,11 @@ $this->textual_card_infos = array(
     ),
 
     360 => array(
-        'name'                => clienttranslate('Homing Pigeons'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return two cards from your score pile whose values each match at least one card in my hand!'),
-        'non_demand_effect_1' => clienttranslate('You may splay your red or green cards left.'),
+        'name'                                => clienttranslate('Homing Pigeons'),
+        'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you return two cards from your score pile whose values each match at least one card in my hand!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you return two cards from your score pile whose values each match a card in my hand!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may splay your red or green cards left.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may splay your red or green cards left. If Homing Pigeons was foreseen, splay all your colors left.'),
     ),
 
     361 => array(

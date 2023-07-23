@@ -686,6 +686,11 @@ abstract class Card
 
   protected function getCardsKeyedByValue(string $location, int $playerId = null): array
   {
+    return $this->game->getCardsInLocationKeyedByAge(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+  }
+
+  protected function countCardsKeyedByValue(string $location, int $playerId = null): array
+  {
     return $this->game->countCardsInLocationKeyedByAge(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
@@ -702,6 +707,11 @@ abstract class Card
   }
 
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
+  {
+    return $this->game->getCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);
+  }
+
+  protected function countCardsKeyedByColor(string $location, int $playerId = null): array
   {
     return $this->game->countCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }

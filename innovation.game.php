@@ -10969,7 +10969,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 359)
+            || (330 <= $card_id && $card_id <= 360)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13987,28 +13987,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 360, Echoes age 3: Homing Pigeons
-            case "360D1":
-                $cards_in_hand_count = self::countCardsInLocationKeyedByAge($launcher_id, 'hand');
-                $score_cards = self::getCardsInLocation($player_id, 'score');
-                
-                $card_ids_to_return = array();
-                foreach ($score_cards as $card) {
-                    if ($cards_in_hand_count[$card['age']] > 0) {
-                        $card_ids_to_return[] = $card['id'];
-                    }
-                }
-                
-                if (count($card_ids_to_return) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryArray($card_ids_to_return); // store ids for later
-                }
-                break;
-
-            case "360N1":
                 $step_max = 1;
                 break;
                 
@@ -20431,34 +20409,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 360, Echoes age 3: Homing Pigeons
-        case "360D1A":
-            // "I demand you return two cards from your score pile whose values each match at least one card in my hand!"
-            $options = array(
-                'player_id' => $player_id,                
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-
-        case "360N1A":
-            // "You may splay your red or green cards left."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::LEFT,
-                'color' => array(1,2) /* blue or yellow */
             );
             break;
 
