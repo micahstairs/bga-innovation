@@ -10969,7 +10969,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 361)
+            || (330 <= $card_id && $card_id <= 362)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13990,11 +13990,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
-            // id 362, Echoes age 3: Sandpaper
-            case "362N1":
-                $step_max = 2;
-                break;
-
             // id 363, Echoes age 3: Novel
             case "363E1":
                 // "Draw a 3"
@@ -16207,6 +16202,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (array_key_exists('achieve_keyword', $options)) {
                     $options['location_to'] = 'achievements';
                     unset($options['achieve_keyword']);
+                }
+                if (array_key_exists('foreshadow_keyword', $options)) {
+                    $options['location_to'] = 'forecast';
+                    unset($options['foreshadow_keyword']);
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;
@@ -20387,36 +20386,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 362, Echoes age 3: Sandpaper
-        case "362N1A":
-            // "You may return any number of cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "362N1B":
-            // "meld a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
             );
             break;
 
@@ -24904,13 +24873,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                
-                // id 362, Echoes age 3: Sandpaper                   
-                case "362N1A":
-                    for ($i = 0; $i < $n; $i++) {
-                        self::executeDraw($player_id, 3);
-                    }
                     break;
                     
                 // id 364, Echoes age 3: Sunglasses

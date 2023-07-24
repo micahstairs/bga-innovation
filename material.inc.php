@@ -1762,8 +1762,11 @@ $this->textual_card_infos = array(
     ),
 
     362 => array(
-        'name'                => clienttranslate('Sandpaper'),
-        'non_demand_effect_1' => clienttranslate('You may return any number of cards from your hand. Draw that many ${age_3}s, and then meld a card from your hand.'),
+        'name'                                => clienttranslate('Sandpaper'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return any number of cards from your hand. Draw that many ${age_3}, and then meld a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return any number of cards from your hand. Draw a ${age_3} for each card you return.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Meld a card from your hand.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If Sandpaper was foreseen, foreshadow all cards in your hand.'),
     ),
 
     363 => array(
