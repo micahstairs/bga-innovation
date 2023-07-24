@@ -1770,10 +1770,14 @@ $this->textual_card_infos = array(
     ),
 
     363 => array(
-        'name'                => clienttranslate('Novel'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_3}.'),
-        'non_demand_effect_1' => clienttranslate('Draw a ${age_3}. You may splay your purple cards left.'),
-        'non_demand_effect_2' => clienttranslate('If all your non-purple top cards share a common icon other than ${icon_1}, claim the Supremacy achievement.'),
+        'name'                                => clienttranslate('Novel'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw a ${age_3}.'),
+        'echo_effect_1_fourth'                => clienttranslate('Return all cards from your forecast.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw a ${age_3}. You may splay your purple cards left.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw a ${age_3}.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('If all your non-purple top cards share a common icon other than ${icon_1}, claim the Supremacy achievement.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('You may splay your purple cards left.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If all your non-purple top cards share a common icon other than ${icon_1}, claim the Supremacy achievement.'),
     ),
 
     364 => array(

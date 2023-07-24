@@ -213,19 +213,20 @@ class Innovation extends Table
                 'with_icons' => 52,
                 'without_icons' => 53,
             ));
+            // TODO(4E): Is there a way to make the deployment smoother?
             $this->innovationGameState->set('limit_shrunk_selection_size', -1);
-            $with_icon = $this->innovationGameState->get('with_icon');
-            if ($with_icon > 0) {
-                $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([$with_icon]));
-            } else {
-                $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([]));
-            }
-            $without_icon = $this->innovationGameState->get('without_icon');
-            if ($without_icon > 0) {
-                $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([$without_icon]));
-            } else {
+            // $with_icon = $this->innovationGameState->get('with_icon');
+            // if ($with_icon > 0) {
+            //     $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([$with_icon]));
+            // } else {
+            $this->innovationGameState->set('with_icons', Arrays::getArrayAsValue([]));
+            // }
+            // $without_icon = $this->innovationGameState->get('without_icon');
+            // if ($without_icon > 0) {
+            //     $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([$without_icon]));
+            // } else {
                 $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([]));
-            }
+            // }
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
