@@ -10940,7 +10940,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 364)
+            || (330 <= $card_id && $card_id <= 365)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13959,22 +13959,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 365, Echoes age 4: Slide Rule
-            case "365N1":
-                $step_max = 1;
-                break;
-
-            case "365N2":
-                // "Draw a card of value equal to the value of your lowest top card plus the number of colors you have splayed."
-                $age_to_draw = self::getMinAgeOnBoardTopCards($player_id);
-                for($color = 0; $color < 5 ; $color++) {
-                    if (self::getCurrentSplayDirection($player_id, $color) > 0) { // This color is splayed
-                        $age_to_draw++;
-                    }
-                }
-                $card = self::executeDraw($player_id, $age_to_draw);
                 break;
 
             // id 366, Echoes age 4: Telescope
@@ -20231,19 +20215,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 365, Echoes age 4: Slide Rule
-        case "365N1A":
-            // "You may splay your yellow cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(3) /* yellow */
             );
             break;
             
