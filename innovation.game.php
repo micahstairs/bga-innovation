@@ -6614,7 +6614,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (count($with_icons) > 0) {
             $condition_for_icon = "(FALSE"; 
             foreach ($with_icons as $icon) {
-                $condition_for_icon = self::format(" OR spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon} OR spot_5 = {icon} OR spot_6 = {icon})", array('icon' => $icon));
+                $condition_for_icon = $condition_for_icon . self::format(" OR spot_1 = {icon} OR spot_2 = {icon} OR spot_3 = {icon} OR spot_4 = {icon} OR spot_5 = {icon} OR spot_6 = {icon}", array('icon' => $icon));
             }
             $condition_for_icon = $condition_for_icon . ")"; 
         }
