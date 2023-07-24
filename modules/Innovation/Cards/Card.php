@@ -424,6 +424,15 @@ abstract class Card
 
   // SPLAY HELPERS
 
+  protected function splay(int $color, int $splayDirection, int $targetPlayerId = null, int $triggeringPlayerId = null)
+  {
+    $targetPlayerId = self::coercePlayerId($targetPlayerId);
+    if ($triggeringPlayerId === null) {
+      $triggeringPlayerId = $targetPlayerId;
+    }
+    $this->game->splay($triggeringPlayerId, $targetPlayerId, $color, $splayDirection);
+  }
+
   protected function unsplay(int $color, int $targetPlayerId = null, int $triggeringPlayerId = null)
   {
     $targetPlayerId = self::coercePlayerId($targetPlayerId);
@@ -460,6 +469,11 @@ abstract class Card
   protected function getSplayDirection(int $color, int $playerId = null): int
   {
     return $this->game->getCurrentSplayDirection(self::coercePlayerId($playerId), $color);
+  }
+
+  protected function isSplayed(int $color, int $playerId = null): int
+  {
+    return self::getSplayDirection(self::coercePlayerId($playerId), $color) > 0;
   }
 
   // COLOR HELPERS

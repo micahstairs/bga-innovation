@@ -1392,6 +1392,7 @@ var Innovation = /** @class */ (function (_super) {
                                 'age': option.age,
                                 'name': option.name,
                                 'splay_direction': option.splay_direction,
+                                'color': option.color,
                                 'card': option.card,
                                 'i18n': option.i18n,
                             }), "action_clicForChooseSpecialOption");

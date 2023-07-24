@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 
-class Card362 extends Card
+class Card363 extends Card
 {
 
   // Novel

@@ -1469,6 +1469,7 @@ class Innovation extends BgaGame {
                                     'age': option.age, // Used by cards like Evolution
                                     'name': option.name, // Used by cards like Karaoke
                                     'splay_direction': option.splay_direction, // Used by cards like Sunglasses
+                                    'color': option.color, // Used by cards like Sunglasses
                                     'card': option.card, // Used by cards like Scissors
                                     'i18n': option.i18n,
                                 }
