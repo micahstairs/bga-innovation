@@ -54,7 +54,9 @@ class Card588 extends Card
 
   public function handleCardChoice(array $card)
   {
-    self::unsplay($card['color'], $card['owner'], self::getPlayerId());
+    if (self::getEffectNumber() === 1) {
+      self::unsplay($card['color'], $card['owner'], self::getPlayerId());
+    }
   }
 
   public function getSpecialChoicePrompt(): array
