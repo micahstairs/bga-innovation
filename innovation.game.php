@@ -213,7 +213,7 @@ class Innovation extends Table
                 'with_icons' => 52,
                 'without_icons' => 53,
             ));
-            // TODO(4E): Is there a way to make the deployment smoother?
+            // TODO(4E): Is there a way to make the deployment smoother? Right now this will break a lot of cards when it's deployed.
             $this->innovationGameState->set('limit_shrunk_selection_size', -1);
             // $with_icon = $this->innovationGameState->get('with_icon');
             // if ($with_icon > 0) {
@@ -225,7 +225,7 @@ class Innovation extends Table
             // if ($without_icon > 0) {
             //     $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([$without_icon]));
             // } else {
-                $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([]));
+            $this->innovationGameState->set('without_icons', Arrays::getArrayAsValue([]));
             // }
         }
 
@@ -10970,7 +10970,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 362)
+            || (330 <= $card_id && $card_id <= 363)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13989,61 +13989,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 363, Echoes age 3: Novel
-            case "363E1":
-                // "Draw a 3"
-                $card = self::executeDraw($player_id, 3);
-                break;
-
-            case "363N1":
-                // "Draw a 3"
-                $card = self::executeDraw($player_id, 3);
-                $step_max = 1;
-                break;
-
-            case "363N2":
-                // "If all your non-purple cards share a common icon other than crown, "
-                $eligible = false;
-                $card_count = 0;
-                
-                for ($icon = 2; $icon <= 7 && !$eligible; $icon++) { // start after crown
-                    $matching_icon = true;
-                    for ($color = 0; $color < 4; $color++) {
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($top_card !== null) {
-                            if (!self::hasRessource($top_card, $icon)) {
-                                $matching_icon = false;
-                            }
-                            $card_count++;
-                        }                            
-                    }
-                    if ($matching_icon && $card_count > 0) {
-                        $eligible = true;
-                        $icon_match = $icon;
-                    }
-                }
-                
-                if ($eligible) {
-                    $achievement = self::getCardInfo(439);
-                    if ($achievement['owner'] == 0 && $achievement['location'] == 'achievements') {
-                        self::notifyPlayer($player_id, 'log', 
-                            clienttranslate('${You} have at least one non-purple top card and all your top cards have at least one ${icon}.'), 
-                            array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
-                        self::notifyAllPlayersBut($player_id, 'log', 
-                            clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon}.'), 
-                        array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($icon_match)));
-                        self::transferCardFromTo($achievement, $player_id, 'achievements');  // "Claim the Supremacy achievement"
-                    } else {
-                        self::notifyPlayer($player_id, 'log', 
-                            clienttranslate('${You} have at least one non-purple top card and all your top cards have at least one ${icon} but the Supremacy achievement has already been claimed.'), 
-                            array('You' => 'You', 'icon' => self::getIconSquare($icon_match)));
-                        self::notifyAllPlayersBut($player_id, 'log', 
-                            clienttranslate('${player_name} has at least one non-purple top card and all his top cards have at least one ${icon} but the Supremacy achievement has already been claimed.'), 
-                            array('player_name' => self::getColoredPlayerName($player_id), 'icon' => self::getIconSquare($icon_match)));
-                    }
-                }
                 break;
 
             // id 364, Echoes age 3: Sunglasses
@@ -20387,19 +20332,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 363, Echoes age 3: Novel
-        case "363N1A":
-            // "You may splay your purple cards left."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::LEFT,
-                'color' => array(4) /* purple */
             );
             break;
 

@@ -401,6 +401,9 @@ abstract class Card
 
   protected function hasIcon($card, int $icon): bool
   {
+    if (!$card) {
+      return false;
+    }
     return $this->game->hasRessource($card, $icon);
   }
 
