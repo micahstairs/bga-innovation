@@ -10940,7 +10940,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 365)
+            || (330 <= $card_id && $card_id <= 366)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13958,16 +13958,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 366, Echoes age 4: Telescope
-            case "366E1":
-                // "Draw and foreshadow a 5."
-                self::executeDrawAndForeshadow($player_id, 5);
-                break;
-
-            case "366N1":
                 $step_max = 1;
                 break;
 
@@ -20217,38 +20207,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 366, Echoes age 4: Telescope
-        case "366N1A":
-            // "You may place a card from your forecast on top of its deck."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'bottom_to' => false, // put on top
-            );
-            break;
-
-        case "366N1B":
-            // "achieve a card from your forecast if you meet the requirements to do so."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-                
-                'require_achievement_eligibility' => true,
-            );
-            break;
 
         // id 367, Echoes age 4: Kobukson
         case "367E1A":
@@ -24625,14 +24583,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 366, Echoes age 4: Telescope
-                case "366N1A":
-                    // "If you do,"
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
                     break;
                     
                 // id 367, Echoes age 4: Kobukson

@@ -1795,9 +1795,11 @@ $this->textual_card_infos = array(
     ),
 
     366 => array(
-        'name'                => clienttranslate('Telescope'),
-        'echo_effect_1'       => clienttranslate('Draw and foreshadow a ${age_5}.'),
-        'non_demand_effect_1' => clienttranslate('You may place a card from your forecast on top of its deck. If you do, achieve a card from your forecast if you meet the requirements to do so.'),
+        'name'                                => clienttranslate('Telescope'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw and foreshadow a ${age_5}.'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw and foreshadow an Echoes ${age_5}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may place a card from your forecast on top of its deck. If you do, achieve a card from your forecast if you meet the requirements to do so.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may place a card from your forecast on top of its deck. If you do, exchange all cards in your forecast with an equal number of available standard achievements, and junk all the cards in the ${age_5} deck.'),
     ),
 
     367 => array(
