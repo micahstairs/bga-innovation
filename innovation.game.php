@@ -10940,7 +10940,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 366)
+            || (330 <= $card_id && $card_id <= 367)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13959,24 +13959,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 367, Echoes age 4: Kobukson
-            case "367E1":
-                self::setAuxiliaryValue(0);
-                $step_max = 1;
-                break;
-
-            case "367D1":
-                $step_max = 1;
-                break;
-
-            case "367N1":
-                // "For every two cards returned as a result of the demand, draw and tuck a 4."
-                $num_cards_to_draw_and_tuck = self::intDivision(self::getAuxiliaryValue(), 2);
-                for ($i = 0; $i < $num_cards_to_draw_and_tuck; $i++) {
-                    self::executeDrawAndTuck($player_id, 4);
-                }
                 break;
 
             // id 368, Echoes age 4: Shuriken
@@ -20208,33 +20190,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 367, Echoes age 4: Kobukson
-        case "367E1A":
-            // "Splay left one color on any player's board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-            );
-            break;
-
-        case "367D1A":
-            // "I demand you you return all your top cards with a tower"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'with_icon' => 4, /* tower */
-            );
-            break;
-
         // id 368, Echoes age 4: Shuriken
         case "368D1A":
             // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
@@ -24585,23 +24540,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
                     
-                // id 367, Echoes age 4: Kobukson
-                case "367E1A":
-                    // "Splay left a color on any player's board"
-                    if ($n > 0) {
-                        $color = $this->innovationGameState->get('color_last_selected');
-                        $target_player_id = $this->innovationGameState->get('owner_last_selected');
-                        self::splayLeft($player_id, $target_player_id, $color);
-                    }
-                    break;
-                    
-                case "367D1A":
-                    //"Draw and tuck a 4!"
-                    self::executeDrawAndTuck($player_id, 4);
-                    
-                    self::setAuxiliaryValue(self::getAuxiliaryValue() + $n); // track the number of cards returned
-                    break;
-
                 // id 368, Echoes age 4: Shuriken
                 case "368D1A":
                     // "If you do, draw a 4!"
