@@ -330,12 +330,26 @@ abstract class Card
 
   protected function drawAndSafeguard(int $age, int $playerId = null)
   {
-    return $this->game->executeDrawAndSafeguard(self::coercePlayerId($playerId), $age);
+    $playerId = self::coercePlayerId($playerId);
+    if (self::isFourthEdition() && self::countCards('safe') >= $this->game->getForecastAndSafeLimit($playerId)) {
+      $card = self::draw($age, $playerId);
+      $this->notifications->notifyLocationFull(clienttranslate('safe'), $playerId);
+    } else {
+      $card = $this->game->executeDrawAndSafeguard($playerId, $age);
+    }
+    return $card;
   }
 
   protected function drawAndForeshadow(int $age, int $playerId = null)
   {
-    return $this->game->executeDrawAndForeshadow(self::coercePlayerId($playerId), $age);
+    $playerId = self::coercePlayerId($playerId);
+    if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
+      $card = self::draw($age, $playerId);
+      $this->notifications->notifyLocationFull(clienttranslate('forecast'), $playerId);
+    } else {
+      $card = $this->game->executeDrawAndForeshadow($playerId, $age);
+    }
+    return $card;
   }
 
   protected function drawAndReveal(int $age, int $playerId = null)

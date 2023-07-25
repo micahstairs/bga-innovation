@@ -14,6 +14,7 @@ class Card516 extends Card
 
   public function initialExecution()
   {
+    // TODO(4E): This is a bug. The player can deliberately choose a choice which will fail.
     if ($this->game->countCardsInLocation(self::getPlayerId(), 'safe') > 0) {
       self::setMaxSteps(1);
     } else {

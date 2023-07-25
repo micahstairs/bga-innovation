@@ -1423,15 +1423,13 @@ class Innovation extends Table
 
         // Do not move the card if the was was supposed to move to the safe but it is already full (unless we are returning the card to the safe after it was revealed)
         if (!$force && $location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getForecastAndSafeLimit($owner_to)) {
-            self::notifyPlayer($owner_to, 'log', clienttranslate('${Your} safe was already full so the card was not transferred to your safe.'), ['Your' => 'Your']);
-            self::notifyAllPlayersBut($owner_to, 'log', clienttranslate('${player_name}\'s safe was already full so the card was not transferred to his safe.'), ['player_name' => self::getColoredPlayerName($owner_to)]);
+            $this->notifications->notifyLocationFull(clienttranslate('safe'), $owner_to);
             return;
         }
 
         // Do not move the card if the was was supposed to move to the forecast but it is already full (unless we are returning the card to the forecast after it was revealed)
         if (!$force && $location_to == 'forecast' && $this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocation($owner_to, 'forecast') >= self::getForecastAndSafeLimit($owner_to)) {
-            self::notifyPlayer($owner_to, 'log', clienttranslate('${Your} forecast was already full so the card was not transferred to your forecast.'), ['Your' => 'Your']);
-            self::notifyAllPlayersBut($owner_to, 'log', clienttranslate('${player_name}\'s forecast was already full so the card was not transferred to his forecast.'), ['player_name' => self::getColoredPlayerName($owner_to)]);
+            $this->notifications->notifyLocationFull(clienttranslate('forecast'), $owner_to);
             return;
         }
 
@@ -2110,6 +2108,14 @@ class Innovation extends Table
         $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your score pile: ${card_list}.'),
             array_merge($args, ['You' => 'You']));
         $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his score pile: ${card_list}.'),
+            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+    }
+
+    function revealCardWithoutMoving($player_id, $card) {
+        $args = ['i18n' => ['location'], 'location' => self::renderLocation($card['location']), 'card_ids' => [$card['id']], 'card_list' => self::getNotificationArgsForCardList([$card])];
+        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal ${card_list} from your ${location}.'),
+            array_merge($args, ['You' => 'You']));
+        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals ${card_list} from his ${location}.'),
             array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
 
@@ -6810,6 +6816,26 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
         
         return self::getUniqueValueFromDB("SELECT COUNT(*) FROM card WHERE selected IS TRUE");
+    }
+
+    function renderLocation($location) {
+        switch($location) {
+        case 'deck':
+            return clienttranslate('deck');
+        case 'hand':
+            return clienttranslate('hand');
+        case 'board':
+            return clienttranslate('board');
+        case 'score':
+            return clienttranslate('score pile');
+        case 'forecast':
+            return clienttranslate('forecast');
+        case 'safe':
+            return clienttranslate('safe');
+        default:
+            // NOTE: If this code path gets hit, then that means we are not properly translating it.
+            return $location;
+        }
     }
     
     function encodeLocation($location) {

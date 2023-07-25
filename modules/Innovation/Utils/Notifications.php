@@ -96,6 +96,18 @@ class Notifications
     return self::getColoredText($this->game->getPlayerNameFromId($playerId), $playerId);
   }
 
+  public function notifyLocationFull(string $location, int $playerId): void
+  {
+    self::notifyPlayer($playerId, 'log',
+      clienttranslate('${Your} ${location} was already full so the card was not transferred to your ${location}.'),
+      ['i18n' => ['location'], 'Your' => 'Your', 'location' => $location],
+    );
+    self::notifyAllPlayersBut($playerId, 'log',
+      clienttranslate('${player_name}\'s ${location} was already full so the card was not transferred to his ${location}.'),
+      ['i18n' => ['location'], 'player_name' => self::getColoredPlayerName($playerId), 'location' => $location],
+    );
+  }
+
   public function notifyPlayerLoses(int $playerId): void
   {
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} lose.'),  ['You' => 'You']);

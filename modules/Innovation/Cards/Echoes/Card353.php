@@ -19,25 +19,26 @@ class Card353 extends Card
   public function initialExecution()
   {
     $card = self::isFirstOrThirdEdition() ? self::drawAndReveal(3) : self::drawAndForeshadow(3);
-    self::setAuxiliaryValue($card['color']);
+    self::setAuxiliaryValue($card['id']); // Track the drawn card
     self::setMaxSteps(1);
   }
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep()) {
+    $color = self::getCard(self::getAuxiliaryValue())['color'];
+    if (self::getCurrentStep() === 1) {
       return [
         'can_pass'      => self::isFourthEdition(),
         'location_from' => 'hand',
         'tuck_keyword'  => true,
-        'color'         => [self::getAuxiliaryValue()],
+        'color'         => [$color],
       ];
     } else {
       return [
         'n'             => 'all',
         'owner_from'    => 'any other player',
         'location_from' => 'pile',
-        'color'         => [self::getAuxiliaryValue()],
+        'color'         => [$color],
       ];
     }
   }
@@ -45,12 +46,18 @@ class Card353 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() === 0) {
-      // Reveal hand to prove that there were no matching cards of the drawn card's color.
-      self::revealHand();
       if (self::isFirstOrThirdEdition()) {
+        // Reveal hand to prove that there were no matching cards of the drawn card's color.
+        self::revealHand();
         self::foreshadow(self::getRevealedCard());
       }
     } else {
+      // Only reveal (in 4th edition) if a card was actually tucked
+      if (self::isFourthEdition()) {
+        // TODO(LATER): It would be a bit more natural if this was revealed before the card was
+        // actually tucked (but after the player decided to tuck a card).
+        $this->game->revealCardWithoutMoving(self::getPlayerId(), self::getCard(self::getAuxiliaryValue()));
+      }
       self::meld(self::getRevealedCard());
       if (self::isFourthEdition() && self::wasForeseen()) {
         self::setMaxSteps(2);
