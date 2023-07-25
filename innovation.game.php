@@ -3326,7 +3326,7 @@ class Innovation extends Table
                 $eligible = count(self::getVisibleBonusesOnBoard($player_id)) >= 8;
                 break;
             case 436: // Destiny: A total of 5 cards in forecast (7 in earlier editions)
-                $eligible = self::countCardsInLocation($player_id, 'forecast') >= $this->innovationGameState->usingFourthEditionRules() ? 5 : 7;
+                $eligible = self::countCardsInLocation($player_id, 'forecast') >= ($this->innovationGameState->usingFourthEditionRules() ? 5 : 7);
                 break;
             case 437: // Heritage: 8 or more visible hexagons in a pile
                 $eligible = false;
