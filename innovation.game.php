@@ -642,10 +642,14 @@ class Innovation extends Table
         if ($this->innovationGameState->unseenExpansionEnabled()) {
             self::DbQuery("UPDATE player SET will_draw_unseen_card_next = TRUE");
         }
-        for ($times = 0; $times < 2; $times++) {
+        for ($i = 1; $i <= 2; $i++) {
             foreach ($players as $player_id => $player) {
                 $this->gamestate->changeActivePlayer($player_id);
-                self::executeDraw($player_id, 1);
+                if ($i === 2 && $this->innovationGameState->echoesExpansionEnabled()) {
+                    self::executeDraw($player_id, 1, "hand", /*bottom_to=*/ false, self::ECHOES);
+                } else {
+                    self::executeDraw($player_id, 1);
+                }
             }
         }
 
@@ -1435,6 +1439,7 @@ class Innovation extends Table
 
         // Players can only draw an Unseen card on the first draw of a turn
         if ($card['location'] == 'deck') {
+            // TODO(4E): Is there a bug here when there is the "look" keyword?
             self::setPlayerWillDrawUnseenCardNext($owner_to, false);
         }
 
@@ -6003,7 +6008,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             }
         }
 
-        if ($card_type == 0 && self::getPlayerWillDrawUnseenCardNext($player_id)) {
+        if ($card_type === self::BASE && self::getPlayerWillDrawUnseenCardNext($player_id)) {
             $card_type = self::UNSEEN;
         }
 
