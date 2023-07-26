@@ -1815,9 +1815,10 @@ $this->textual_card_infos = array(
     ),
 
     368 => array(
-        'name'                => clienttranslate('Shuriken'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_4} or ${icon_3} from your board to my board! If you do, draw a ${age_4}!'),
-        'non_demand_effect_1' => clienttranslate('You may splay your purple cards right.'),
+        'name'                              => clienttranslate('Shuriken'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_4} or ${icon_3} from your board to my board! If you do, draw a ${age_4}!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer two non-red top cards with a ${icon_4} or ${icon_7} from your board to my board! If you do, and Shuriken was foreseen, you lose!'),
+        'non_demand_effect_1'               => clienttranslate('You may splay your purple cards right.'),
     ),
 
     369 => array(

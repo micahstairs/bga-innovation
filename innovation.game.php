@@ -10971,7 +10971,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 367)
+            || (330 <= $card_id && $card_id <= 368)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13989,27 +13989,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 368, Echoes age 4: Shuriken
-            case "368D1":
-                $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if ($color != 1) { // non-red
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if (self::hasRessource($top_card, 4) || self::hasRessource($top_card, 3) ){
-                            $color_array[] = $color; // has a tower or bulb
-                        }
-                    }
-                }
-                if (count($color_array) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($color_array);
-                }
-                break;
-
-            case "368N1":
                 $step_max = 1;
                 break;
 
@@ -20221,34 +20200,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 368, Echoes age 4: Shuriken
-        case "368D1A":
-            // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-
-                'color' => self::getAuxiliaryValueAsArray(), 
-            );
-            break;
-
-        case "368N1A":
-            // "You may splay your purple cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(4) /* purple */
-            );
-            break;
-
         // id 370, Echoes age 4: Globe
         case "370N1A":
             // Choose color to return
@@ -24569,14 +24520,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 368, Echoes age 4: Shuriken
-                case "368D1A":
-                    // "If you do, draw a 4!"
-                    if ($n > 0) {
-                        self::executeDraw($player_id, 4);
-                    }
                     break;
 
                 // id 370, Echoes age 4: Globe
