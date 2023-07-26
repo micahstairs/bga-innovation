@@ -1621,10 +1621,12 @@ $this->textual_card_infos = array(
     ),
 
     343 => array(
-        'name'                => clienttranslate('Flute'),
-        'echo_effect_1'       => clienttranslate('You may splay one color of your cards left.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return a card with a bonus from your hand!'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}. If it has a bonus, draw a ${age_1}.'),
+        'name'                                => clienttranslate('Flute'),
+        'echo_effect_1'                       => clienttranslate('You may splay one color of your cards left.'),
+        'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you return a card with a bonus from your hand!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you return an expansion card from your hand!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_1}. If it has a bonus, draw a ${age_1}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal an Echoes ${age_1}. If it has a bonus, draw a ${age_1}.'),
     ),
 
     344 => array(
