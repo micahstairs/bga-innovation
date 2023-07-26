@@ -9929,12 +9929,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
                 
-            // id 370, Echoes age 4: Globe
-            case "370N1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-                
             // id 371, Echoes age 4: Barometer
             case "371N1A":
                 $message_for_player = clienttranslate('Choose a value to draw and foreshadow');
@@ -10971,7 +10965,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 369)
+            || (330 <= $card_id && $card_id <= 370)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13990,21 +13984,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 370, Echoes age 4: Globe
-            case "370N1":
-                $hand_cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
-                $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if (count($hand_cards[$color]) > 0) {
-                        $color_array[] = $color;
-                    }
-                }
-                if (count($color_array) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($color_array);
-                }
                 break;
 
             // id 371, Echoes age 4: Barometer
@@ -20188,45 +20167,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 370, Echoes age 4: Globe
-        case "370N1A":
-            // Choose color to return
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => true,
-
-                'choose_color' => true,
-                'color' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "370N1B": 
-             $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'n_max' => 3,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-
-                'color' => array(self::getAuxiliaryValue()), 
-            );
-            break;
-
-        case "370N1C":
-            // "If you return one, splay any color left; two, right; three, up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'splay_direction' => self::getAuxiliaryValue(),
-                'color' => array(0,1,2,3,4) /* any color */
-            );
-            break;
-
         // id 371, Echoes age 4: Barometer
         case "371E1A":
             // "Transfer a 5 from your forecast to your hand."
@@ -24509,30 +24449,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 370, Echoes age 4: Globe
-                case "370N1A":
-                    // If you do not pass, proceed to color selection
-                    if ($this->innovationGameState->get('choice') >= 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "370N1B":
-                    // "If you do,"
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                        
-                        self::setAuxiliaryValue($n); // determines the splay direction.  If $n=3: up, $n=2: right, $n=1: left
-                    }
-                    break;
-
-                case "370N1C":
-                    // "If you returned at least one card, draw and foreshadow a 6."
-                    self::executeDrawAndForeshadow($player_id, 6);
-                    // TODO(LATER): Remove the following line. This was only necessary to fix a game which got stuck during a release push (https://boardgamearena.com/bug?id=79588).
-                    self::setStepMax(3);
-                    break;
                     
                 // id 372, Echoes age 4: Pencil
                 case "372N1A":
@@ -26501,13 +26417,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-            
-            // id 370, Echoes age 4: Globe
-            case "370N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::getColorInClear($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => self::getColorInClear($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 

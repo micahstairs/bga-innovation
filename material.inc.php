@@ -1829,8 +1829,10 @@ $this->textual_card_infos = array(
     ),
 
     370 => array(
-        'name'                => clienttranslate('Globe'),
-        'non_demand_effect_1' => clienttranslate('You may return up to three cards from hand of the same color. If you return one, splay any color left; two, right; three, up. If you returned at least one card, draw and foreshadow a ${age_6}.'),
+        'name'                                => clienttranslate('Globe'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return up to three cards from hand of the same color. If you return one, splay any color left; two, right; three, up. If you returned at least one card, draw and foreshadow a ${age_6}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return all cards from your hand. If you return three cards, splay any color on your board right, and draw and foreshadow a ${age_6}, a ${age_7}, and then an ${age_8}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If Globe was foreseen, foreshadow a top card from any board.'),
     ),
 
     371 => array(
