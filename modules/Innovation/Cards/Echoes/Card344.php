@@ -22,7 +22,14 @@ class Card344 extends Card
 
   public function getInteractionOptions(): array
   {
-    self::setAuxiliaryArray(self::getUniqueValues('score'));
+    $values = self::getUniqueValues('score');
+    $cardIds = [];
+    foreach (self::getCards('achievements', 0) as $card)  {
+      if (self::isValuedCard($card) && in_array(intval($card['age']), $values)) {
+        $cardIds[] = $card['id'];
+      }
+    }
+    self::setAuxiliaryArray($cardIds);
     return [
       'owner_from'                      => 0,
       'location_from'                   => 'achievements',
