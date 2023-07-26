@@ -31,7 +31,8 @@ class Card370 extends Card
     return self::isFirstOrThirdEdition() ? self::getFirstAndThirdEditionInteractionOptions() : self::getFourthInteractionOptions();
   }
 
-  private function getFirstAndThirdEditionInteractionOptions(): array {
+  private function getFirstAndThirdEditionInteractionOptions(): array
+  {
     if (self::getCurrentStep() === 1) {
       return [
         'can_pass'     => true,
@@ -52,25 +53,26 @@ class Card370 extends Card
     }
   }
 
-  private function getFourthInteractionOptions(): array {
+  private function getFourthInteractionOptions(): array
+  {
     if (self::isFirstNonDemand()) {
       if (self::getCurrentStep() === 1) {
-      return [
-        'can_pass'       => true,
-        'n'              => 'all',
-        'location_from'  => 'hand',
-        'return_keyword' => true,
-      ];
+        return [
+          'can_pass'       => true,
+          'n'              => 'all',
+          'location_from'  => 'hand',
+          'return_keyword' => true,
+        ];
+      } else {
+        return ['splay_direction' => $this->game::RIGHT];
+      }
     } else {
-      return ['splay_direction' => $this->game::RIGHT];
+      return [
+        'location_from'     => 'board',
+        'owner_from'        => 'any player',
+        'forshadow_keyword' => true,
+      ];
     }
-  } else {
-    return [
-      'location_from'     => 'board',
-      'owner_from'        => 'any player',
-      'forshadow_keyword' => true,
-    ];
-  }
   }
 
   public function handleSpecialChoice(int $color)
@@ -99,7 +101,8 @@ class Card370 extends Card
     }
   }
 
-  public function handleAbortedInteraction() {
+  public function handleAbortedInteraction()
+  {
     if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 3 && self::getAuxiliaryValue() > 0) {
       self::drawAndForeshadow(6);
     } else if (self::isFourthEdition() && self::getCurrentStep() === 2) {
