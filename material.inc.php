@@ -1822,9 +1822,10 @@ $this->textual_card_infos = array(
     ),
 
     369 => array(
-        'name'                => clienttranslate('Chintz'),
-        'non_demand_effect_1' => clienttranslate('Draw a ${age_4}.'),
-        'non_demand_effect_2' => clienttranslate('If you have exactly one card in your hand, draw a ${age_4}, then draw and score a ${age_4}.'),
+        'name'                       => clienttranslate('Chintz'),
+        'non_demand_effect_1'        => clienttranslate('Draw a ${age_4}.'),
+        'non_demand_effect_2'        => clienttranslate('If you have exactly one card in your hand, draw a ${age_4}, then draw and score a ${age_4}.'),
+        'non_demand_effect_3_fourth' => clienttranslate('If Chintz was foreseen, transfer all cards from your hand to the available achievements.'),
     ),
 
     370 => array(

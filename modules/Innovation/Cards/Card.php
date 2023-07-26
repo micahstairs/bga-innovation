@@ -118,6 +118,21 @@ abstract class Card
     return $this->state->isNonDemand();
   }
 
+  protected function isFirstNonDemand(): bool
+  {
+    return self::isNonDemand() && self::getEffectNumber() === 1;
+  }
+
+  protected function isSecondNonDemand(): bool
+  {
+    return self::isNonDemand() && self::getEffectNumber() === 2;
+  }
+
+  protected function isThirdNonDemand(): bool
+  {
+    return self::isNonDemand() && self::getEffectNumber() === 3;
+  }
+
   protected function isEcho(): bool
   {
     return $this->state->isEcho();

@@ -10971,7 +10971,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 368)
+            || (330 <= $card_id && $card_id <= 369)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13990,18 +13990,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 369, Echoes age 4: Chintz
-            case "369N1":
-                self::executeDraw($player_id, 4);
-                break;
-
-            case "369N2":
-                if (self::countCardsInLocation($player_id, 'hand') == 1 ) {
-                    self::executeDraw($player_id, 4);
-                    self::executeDrawAndScore($player_id, 4);
-                }
                 break;
 
             // id 370, Echoes age 4: Globe
