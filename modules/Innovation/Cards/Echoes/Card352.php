@@ -70,6 +70,10 @@ class Card352 extends Card
     }
   }
 
+  public function handleSpecialChoice(int $value) {
+    self::draw($value);
+  }
+
   public function afterInteraction()
   {
     if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 1) {
