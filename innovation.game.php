@@ -10967,7 +10967,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 371)
+            || (330 <= $card_id && $card_id <= 372)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13985,19 +13985,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 372, Echoes age 4: Pencil
-            case "372E1":
-                self::executeDraw($player_id, 5);
-                break;
-
-            case "372N1":
-                $this->innovationGameState->set('card_id_1', -1);
-                $this->innovationGameState->set('card_id_2', -1);
-                $this->innovationGameState->set('card_id_3', -1);
-                self::setAuxiliaryValue(0);
                 $step_max = 1;
                 break;
 
@@ -20133,56 +20120,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 372, Echoes age 4: Pencil
-        case "372N1A":
-            // "You may return up to three cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'n_max' => 3,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );            
-            break;
-
-        case "372N1B":
-            // "Foreshadow one of them"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'forecast',
-                
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-                'card_id_3' => $card_id_3,
-            );
-            
-            break;
-
-        case "372N1C":
-            // "return the rest of the drawn cards."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-                'card_id_3' => $card_id_3,
-            );
-            break;         
             
         // id 373, Echoes age 4: Clock
         case "373E1A":
@@ -24377,20 +24314,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
                     
-                // id 372, Echoes age 4: Pencil
-                case "372N1A":
-                    // "If you do,"
-                    if($n > 0) {
-                        // "draw that many cards of value one higher than the highest card you returned."
-                        $max_age_returned = self::getAuxiliaryValue();
-                        for ($i = 1; $i <= $n; $i++) {
-                            $card = self::executeDraw($player_id, $max_age_returned + 1);
-                            $this->innovationGameState->set('card_id_'.$i, $card['id']);
-                        }
-                        self::incrementStepMax(2); // Add interactions
-                    }
-                    break;
-                    
                 // id 373, Echoes age 4: Clock
                 case "373D1A":
                     // "Transfer all cards of that value from your hand and score pile to my score pile!"
@@ -26345,17 +26268,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 372, Echoes age 4: Pencil
-            case "372N1A":
-                $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                if ($card['age'] > self::getAuxiliaryValue()) {
-                    self::setAuxiliaryValue($card['age']); // track max age
-                }
-                
-                // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             // id 379, Echoes age 5: Palampore

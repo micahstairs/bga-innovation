@@ -1845,9 +1845,10 @@ $this->textual_card_infos = array(
     ),
 
     372 => array(
-        'name'                => clienttranslate('Pencil'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_5}.'),
-        'non_demand_effect_1' => clienttranslate('You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you returned. Foreshadow one of them, and return the rest of the drawn cards.'),
+        'name'                                => clienttranslate('Pencil'),
+        'echo_effect_1'                       => clienttranslate('Draw a ${age_5}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you returned. Foreshadow one of them, and return the rest of the drawn cards.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return up to three cards from your hand. If you do, draw that many cards of value one higher than the highest card you return. Foreshadow one of them, and return the rest of the drawn cards.'),
     ),
 
     373 => array(
