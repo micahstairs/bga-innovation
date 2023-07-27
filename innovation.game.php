@@ -2116,12 +2116,20 @@ class Innovation extends Table
             array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
 
-    function revealCardWithoutMoving($player_id, $card) {
-        $args = ['i18n' => ['location'], 'location' => self::renderLocation($card['location']), 'card_ids' => [$card['id']], 'card_list' => self::getNotificationArgsForCardList([$card])];
-        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal ${card_list} from your ${location}.'),
-            array_merge($args, ['You' => 'You']));
-        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals ${card_list} from his ${location}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+    function revealCardWithoutMoving($player_id, $card, $mentionLocation = true) {
+        if ($mentionLocation) {
+            $args = ['i18n' => ['location'], 'location' => self::renderLocation($card['location']), 'card_ids' => [$card['id']], 'card_list' => self::getNotificationArgsForCardList([$card])];
+            $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal ${card_list} from your ${location}.'),
+                array_merge($args, ['You' => 'You']));
+            $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals ${card_list} from his ${location}.'),
+                array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+        } else {
+            $args = ['card_ids' => [$card['id']], 'card_list' => self::getNotificationArgsForCardList([$card])];
+            $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal ${card_list}.'),
+                array_merge($args, ['You' => 'You']));
+            $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals ${card_list}.'),
+                array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+        }
     }
 
     function getNotificationArgsForCardList($cards) {
@@ -9929,12 +9937,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
                 
-            // id 371, Echoes age 4: Barometer
-            case "371N1A":
-                $message_for_player = clienttranslate('Choose a value to draw and foreshadow');
-                $message_for_others = clienttranslate('${player_name} must choose a draw and foreshadow');
-                break;
-                
             // id 379, Echoes age 5: Palampore
             case "379N1A":
                 $message_for_player = clienttranslate('Choose a value to draw and score');
@@ -10965,7 +10967,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 370)
+            || (330 <= $card_id && $card_id <= 371)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13985,41 +13987,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-
-            // id 371, Echoes age 4: Barometer
-            case "371E1":
-                $step_max = 1;
-                break;
-
-            case "371N1":
-                // Determine what selections will be valid based on the visible bonuses on all boards.
-                $all_player_ids = self::getAllActivePlayerIds();
-                $all_bonuses = array();
-                foreach ($all_player_ids as $this_player_id) {
-                    $all_bonuses = array_merge($all_bonuses, self::getVisibleBonusesOnBoard($this_player_id));
-                }
-                $all_bonuses = array_unique($all_bonuses); // only need one selection per visible bonus value
-                
-                if (count($all_bonuses) > 1) {
-                    $age_to_foreshadow = array();
-                    foreach ($all_bonuses as $bonus) {
-                        // TODO(https://github.com/micahstairs/bga-innovation/issues/472): The value here could be as high
-                        // as 13 with a visible bonus of 11 which would end the game. This could be presented as a
-                        // game-ending option like with Evolution.
-                        $age_to_foreshadow[] = $bonus + 2;
-                    }
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray(array_unique($age_to_foreshadow));
-                } else if (count($all_bonuses) == 1) {
-                    self::executeDrawAndForeshadow($player_id, $all_bonuses[0] + 2);
-                } else {
-                    self::executeDrawAndForeshadow($player_id, 2);
-                }
-                break;   
-
-            case "371N2":
-                $step_max = 1;
-                break;   
 
             // id 372, Echoes age 4: Pencil
             case "372E1":
@@ -20166,46 +20133,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 371, Echoes age 4: Barometer
-        case "371E1A":
-            // "Transfer a 5 from your forecast to your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-
-                'age' => 5, 
-            );
-            break;
-
-        case "371N1A":
-            // "Draw and foreshadow a card of value two higher than a bonus on any board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "371N2A":
-            // "You may reveal and return all cards in your forecast."
-            $options = array(
-                'player_id' => $player_id,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',                
-            );
-            break;   
 
         // id 372, Echoes age 4: Pencil
         case "372N1A":
@@ -26420,25 +26347,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
-            // id 371, Echoes age 4: Barometer
-            case "371N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                // "Draw and foreshadow a card of value two higher than a bonus on any board."
-                self::executeDrawAndForeshadow($player_id, $choice);
-                break;
-
-            case "371N2A":
-                // "You may reveal and return all cards in your forecast."
-                $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                $card = self::transferCardFromTo($card, $player_id, 'revealed');
-                if ($card['color'] == 0) {
-                    // "If any were blue, claim the Destiny achievement."
-                    self::claimSpecialAchievement($player_id, 436);
-                }
-                self::returnCard($card);
-                break;
-                
             // id 372, Echoes age 4: Pencil
             case "372N1A":
                 $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
