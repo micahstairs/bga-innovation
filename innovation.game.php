@@ -2088,32 +2088,29 @@ class Innovation extends Table
         }
     }
 
-    function revealHand($player_id) {
-        $cards = self::getCardsInHand($player_id);
+    function revealLocation($player_id, $location) {
+        $cards = self::getCardsInLocation($player_id, $location);
+        $args = ['i18n' => ['location'], 'location' => self::renderLocation($location)];
         if (count($cards) == 0) {
-            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty hand.'), ['You' => 'You']);
-            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty hand.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
+            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty ${location}.'),
+                array_merge($args, ['You' => 'You']));
+            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty ${location}.'),
+                array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
             return;
         }
-        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
-        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your hand: ${card_list}.'),
+        $args = array_merge($args, ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)]);
+        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your ${location}: ${card_list}.'),
             array_merge($args, ['You' => 'You']));
-        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his hand: ${card_list}.'),
+        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his ${location}: ${card_list}.'),
             array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
     }
-    
+
+    function revealHand($player_id) {
+        self::revealLocation($player_id, 'hand');
+    }
+
     function revealScorePile($player_id) {
-        $cards = self::getCardsInScorePile($player_id);
-        if (count($cards) == 0) {
-            $this->notifyPlayer($player_id, 'log', clienttranslate('${You} reveal an empty score pile.'), ['You' => 'You']);
-            $this->notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} reveals an empty score pile.'), ['player_name' => self::getPlayerNameFromId($player_id)]);
-            return;
-        }
-        $args = ['card_ids' => self::getCardIds($cards), 'card_list' => self::getNotificationArgsForCardList($cards)];
-        $this->notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} reveal your score pile: ${card_list}.'),
-            array_merge($args, ['You' => 'You']));
-        $this->notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} reveals his score pile: ${card_list}.'),
-            array_merge($args, ['player_name' => self::getPlayerNameFromId($player_id)]));
+        self::revealLocation($player_id, 'score');
     }
 
     function revealCardWithoutMoving($player_id, $card, $mentionLocation = true) {
@@ -10967,7 +10964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 372)
+            || (330 <= $card_id && $card_id <= 373)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13988,21 +13985,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
 
-            // id 373, Echoes age 4: Clock
-            case "373E1":
-                // "You may splay your color with the most cards right"
-                $stack_size = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                $largest_stack = max($stack_size);
-                $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if ($stack_size[$color] == $largest_stack) {
-                        $color_array[] = $color;
-                    }
-                }
-                $step_max = 1;
-                self::setAuxiliaryValueFromArray($color_array);
-                break;
-
             // id 374, Echoes age 4: Toilet
             case "374E1":
                 // "Draw and tuck a 4."
@@ -14027,20 +14009,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "374N1":
                $step_max = 1;
-                break;
-
-            // id 373, Echoes age 4: Clock
-            case "373D1":
-                $total_clocks = 0;
-                // "I demand you draw and reveal three 10s"
-                for ($i = 0; $i < 3; $i++) {
-                    $card = self::executeDraw($player_id, 10, 'revealed');
-                    // "total the number of clocks on them"
-                    $total_clocks = $total_clocks + self::countIconsOnCard($card, 6); // clocks
-                }
-                self::notifyGeneralInfo(clienttranslate('There were a total of ${n} ${clocks} on the drawn cards.'), array('n' => $total_clocks, 'clocks' => $clock));
-                self::setAuxiliaryValue($total_clocks);
-                $step_max = 1;
                 break;
 
             // id 375, Echoes age 5: Lightning Rod
@@ -20120,31 +20088,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 373, Echoes age 4: Clock
-        case "373E1A":
-            // "You may splay your color with the most cards right"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 2,
-                'color' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "373D1A":
-            // "I demand you draw and reveal three 10s, total the number of clocks on them, and then return them!"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
 
         // id 374, Echoes age 4: Toilet            
         case "374D1A":
@@ -24312,24 +24255,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 373, Echoes age 4: Clock
-                case "373D1A":
-                    // "Transfer all cards of that value from your hand and score pile to my score pile!"
-                    $age_to_transfer = self::getAuxiliaryValue();
-                    
-                    $hand_cards = self::getCardsInLocationKeyedByAge($player_id, 'hand')[$age_to_transfer];
-                    for ($i = 0; $i < count($hand_cards); $i++) {
-                        $hand_cards[$i] = self::getCardInfo($hand_cards[$i]['id']);
-                        self::transferCardFromTo($hand_cards[$i], $launcher_id, 'score');
-                    }
-
-                    $score_cards = self::getCardsInLocationKeyedByAge($player_id, 'score')[$age_to_transfer];
-                    for ($i = 0; $i < count($score_cards); $i++) {
-                        $score_cards[$i] = self::getCardInfo($score_cards[$i]['id']);
-                        self::transferCardFromTo($score_cards[$i], $launcher_id, 'score');
-                    }
                     break;
 
                 // id 374, Echoes age 4: Toilet

@@ -413,7 +413,12 @@ abstract class Card
 
   protected function revealHand(int $playerId = null)
   {
-    $this->game->revealHand(self::coercePlayerId($playerId));
+    $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');
+  }
+
+  protected function revealForecast(int $playerId = null)
+  {
+    $this->game->revealLocation(self::coercePlayerId($playerId), 'forecast');
   }
 
   // CARD ACCESSOR HELPERS
@@ -718,6 +723,11 @@ abstract class Card
     return $this->game->countCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
+  protected function hasCards(string $location, int $playerId = null): int
+  {
+    return self::countCards($location, $playerId) > 0;
+  }
+
   protected function getUniqueValues(string $location, int $playerId = null): array
   {
     $values = [];
@@ -790,6 +800,11 @@ abstract class Card
   protected function getAllTypesOtherThan(int $type)
   {
     return array_diff(range(0, 5), [$type]);
+  }
+
+  protected function notifyAll($log, array $args)
+  {
+    $this->game->notifyGeneralInfo($log, $args);
   }
 
   protected function notifyPlayer($log, array $args, int $playerId = null)

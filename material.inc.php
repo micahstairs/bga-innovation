@@ -1840,8 +1840,7 @@ $this->textual_card_infos = array(
         'echo_effect_1'                       => clienttranslate('Transfer a ${age_5} from your forecast to your hand.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a card of value two higher than a bonus on any board.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a card of value two higher than a bonus on any board, if there is one.'),
-        'non_demand_effect_2_first_and_third' => clienttranslate('You may reveal and return all cards in your forecast. If any were blue, claim the Destiny achievement.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('You may return all cards in your forecast. If any are blue, claim the Destiny achievement.'),
+        'non_demand_effect_2'                 => clienttranslate('You may return all cards in your forecast. If any were blue, claim the Destiny achievement.'),
     ),
 
     372 => array(
@@ -1852,9 +1851,10 @@ $this->textual_card_infos = array(
     ),
 
     373 => array(
-        'name'              => clienttranslate('Clock'),
-        'echo_effect_1'     => clienttranslate('You may splay your color with the most cards right.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal three ${age_10}s, total the number of ${icon_6} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!'),
+        'name'                              => clienttranslate('Clock'),
+        'echo_effect_1'                     => clienttranslate('You may splay your color with the most cards right.'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you draw and reveal three ${age_10}, total the number of ${icon_6} on them, and then return them! Transfer all cards of that value from your hand and score pile to my score pile!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer all cards of value equal to the number of visible cards of the color of my choice on my board from your hand and your score pile to my score pile! Junk an available achievement of that value!'),
     ),
 
     374 => array(
