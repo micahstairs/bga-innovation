@@ -1877,9 +1877,11 @@ $this->textual_card_infos = array(
     ),
 
     376 => array(
-        'name'                => clienttranslate('Thermometer'),
-        'echo_effect_1'       => clienttranslate('Meld your bottom green card. Maintain its splay.'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, repeat this dogma effect.'),
+        'name'                                => clienttranslate('Thermometer'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Meld your bottom green card. Maintain its splay.'),
+        'echo_effect_1_fourth'                => clienttranslate('Meld your bottom green card.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, repeat this dogma effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a card of value one higher than the value of your top yellow card. If the melded card is yellow, or if Thermometer was foreseen and the melded card is red or purple, repeat this effect.'),
     ),
 
     377 => array(

@@ -10964,7 +10964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 375)
+            || (330 <= $card_id && $card_id <= 376)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13983,29 +13983,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 376, Echoes age 5: Thermometer
-            case "376E1":
-                // "Meld your bottom green card. Maintain its splay."
-                $bottom_card = self::getBottomCardOnBoard($player_id, 2);
-                if ($bottom_card != null) {
-                    self::meldCard($bottom_card, $player_id);
-                }
-                break;
-
-            case "376N1":
-                do {
-                    // "Draw and meld a card of value one higher than the value of your top yellow card."
-                    $top_yellow_card = self::getTopCardOnBoard($player_id, 3);
-                    if ($top_yellow_card != null) {
-                        $age_to_draw = $top_yellow_card['faceup_age'] + 1;
-                    }
-                    else {
-                        $age_to_draw = 1; // No yellow card means melding a 1
-                    }
-                    $card = self::executeDrawAndMeld($player_id, $age_to_draw);
-                } while ($card['color'] == 3); // "If the melded card is yellow, repeat this dogma effect."
                 break;
 
             // id 377, Echoes age 5: Coke
