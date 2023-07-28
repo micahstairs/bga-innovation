@@ -16,7 +16,6 @@ class Card377 extends Card
   //   - Draw and reveal a [6]. If it has a [INDUSTRY], meld it and repeat this effect. Otherwise, foreshadow it.
   //   - If Coke was foreseen, score your top card of each non-red color.
 
-
   public function initialExecution()
   {
     if (self::isEcho()) {

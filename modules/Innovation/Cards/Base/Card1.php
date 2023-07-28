@@ -18,35 +18,31 @@ class Card1 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
-        'can_pass'      => true,
-        'n'             => 3,
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
+        'can_pass'       => true,
+        'n'              => 3,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else {
       return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
-        'age'           => 3,
+        'can_pass'       => true,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'age'            => 3,
       ];
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 1) {
-      if (self::getNumChosen() === 3) {
-        self::drawAndMeld(3);
-      }
-    } else {
-      if (self::getNumChosen() > 0) {
-        for ($i = 0; $i < 3; $i++) {
-          self::draw(1);
-        }
-      }
+    if (self::isFirstNonDemand() && self::getNumChosen() === 3) {
+      self::drawAndMeld(3);
+    } else if (self::isSecondNonDemand() && self::getNumChosen() > 0) {
+      self::draw(1);
+      self::draw(1);
+      self::draw(1);
     }
   }
 }

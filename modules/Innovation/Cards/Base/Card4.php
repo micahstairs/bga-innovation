@@ -14,7 +14,7 @@ class Card4 extends Card
   {
     while (true) {
       $card = self::drawAndReveal(1);
-      if ($this->game->hasRessource($card, $this->game::AUTHORITY)) {
+      if (self::hasIcon($card, $this->game::AUTHORITY)) {
         $this->notifications->notifyPresenceOfIcon($this->game::AUTHORITY);
         self::score($card);
       } else {

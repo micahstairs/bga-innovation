@@ -14,7 +14,7 @@ class Card0 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else {
       self::draw(1);
@@ -24,11 +24,11 @@ class Card0 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'can_pass'      => true,
-      'n_min'         => 1,
-      'n_max'         => 3,
-      'location_from' => 'hand',
-      'location_to'   => 'deck',
+      'can_pass'       => true,
+      'n_min'          => 1,
+      'n_max'          => 3,
+      'location_from'  => 'hand',
+      'return_keyword' => true,
     ];
   }
 
