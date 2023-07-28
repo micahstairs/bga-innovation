@@ -10964,7 +10964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 374)
+            || (330 <= $card_id && $card_id <= 375)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13982,26 +13982,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 375, Echoes age 5: Lightning Rod
-            case "375E1":
-                // "Draw and tuck a 5."
-                self::executeDrawAndTuck($player_id, 5);
-                break;
-
-            case "375D1":
-                // "I demand you draw and tuck a 5!"
-                $card = self::executeDrawAndTuck($player_id, 5);
-                $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                // "Return your top card of the tucked card's color!"
-                self::returnCard($top_card);
-                break;            
-                
-            case "375N1":
-                // "Draw and tuck a 5."
-                self::executeDrawAndTuck($player_id, 5);
                 $step_max = 1;
                 break;
 
@@ -20060,21 +20040,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 375, Echoes age 5: Lightning Rod
-        case "375N1A":
-            // "You may return a top card from your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
             );
             break;
 

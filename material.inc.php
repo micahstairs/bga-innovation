@@ -1868,10 +1868,12 @@ $this->textual_card_infos = array(
     /* Echoes - Age 5 */
 
     375 => array(
-        'name'                => clienttranslate('Lightning Rod'),
-        'echo_effect_1'       => clienttranslate('Draw and tuck a ${age_5}.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you draw and tuck a ${age_5}! Return your top card of the tucked card\'s color!'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_5}. You may return a top card from your board.'),
+        'name'                                => clienttranslate('Lightning Rod'),
+        'echo_effect_1'                       => clienttranslate('Draw and tuck a ${age_5}.'),
+        'i_demand_effect_1'                   => clienttranslate('${I demand} you draw and tuck a ${age_5}! Return your top card of the tucked card\'s color!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and tuck a ${age_5}. You may return a top card from your board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a top card from your board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Junk all cards in the ${age_6} deck.'),
     ),
 
     376 => array(
