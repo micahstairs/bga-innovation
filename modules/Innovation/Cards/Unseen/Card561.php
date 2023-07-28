@@ -53,8 +53,11 @@ class Card561 extends Card
     $colors = [];
     for ($color = 0; $color < 5; $color++) {
       $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
-      if ($numVisibleCards == $mostVisibleCards) {
+      if ($numVisibleCards > 1 && $numVisibleCards > $mostVisibleCards) {
         $colors = [$color];
+      }
+      if ($numVisibleCards == $mostVisibleCards) {
+        $colors[] = $color;
       }
     }
     return $colors;
