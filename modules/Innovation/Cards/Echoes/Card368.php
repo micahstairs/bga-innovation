@@ -57,7 +57,7 @@ class Card368 extends Card
     if (self::isDemand()) {
       if (self::isFirstOrThirdEdition() && self::getNumChosen() === 1) {
         self::draw(4);
-      } else if (self::isFourthEdition() && self::wasForeseen()) {
+      } else if (self::wasForeseen()) {
         self::lose();
       }
     }

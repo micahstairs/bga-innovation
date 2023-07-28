@@ -59,7 +59,7 @@ class Card353 extends Card
         $this->game->revealCardWithoutMoving(self::getPlayerId(), self::getCard(self::getAuxiliaryValue()));
       }
       self::meld(self::getRevealedCard());
-      if (self::isFourthEdition() && self::wasForeseen()) {
+      if (self::wasForeseen()) {
         self::setMaxSteps(2);
       }
     }

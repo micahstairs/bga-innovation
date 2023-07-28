@@ -21,7 +21,7 @@ class Card370 extends Card
   {
     if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
-    } else if (self::isFourthEdition() && self::wasForeseen()) {
+    } else if (self::wasForeseen()) {
       self::setMaxSteps(1);
     }
   }

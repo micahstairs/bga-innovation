@@ -54,7 +54,7 @@ class Card336 extends Card
         self::putInHand($card);
       }
     }
-    if (self::isFourthEdition() && self::wasForeseen()) {
+    if (self::wasForeseen()) {
       self::setAuxiliaryValue($color);
       self::setMaxSteps(3);   
     }

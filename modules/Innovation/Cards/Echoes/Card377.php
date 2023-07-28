@@ -31,7 +31,7 @@ class Card377 extends Card
           break;
         }
       }
-    } else if (self::isFourthEdition() && self::wasForeseen()) {
+    } else if (self::wasForeseen()) {
       foreach (self::getAllColorsOtherThan($this->game::RED) as $color) {
         self::score(self::getTopCardOfColor($color));
       }

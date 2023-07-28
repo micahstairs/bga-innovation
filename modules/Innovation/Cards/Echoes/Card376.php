@@ -28,7 +28,7 @@ class Card376 extends Card
         $value = $topCard ? $topCard['faceup_age'] + 1 : 0;
         $meldedCard = self::drawAndMeld($value);
         $repeat = $meldedCard['color'] == $this->game::YELLOW;
-        if (!$repeat && self::isFourthEdition() && self::wasForeseen()) {
+        if (!$repeat && self::wasForeseen()) {
           $repeat = $meldedCard['color'] == $this->game::RED || $meldedCard['color'] == $this->game::PURPLE;
         }
       } while ($repeat);

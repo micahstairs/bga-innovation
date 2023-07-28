@@ -67,7 +67,7 @@ class Card346 extends Card
       }
     } else {
       self::draw($choice);
-      if (self::isFourthEdition() && self::wasForeseen()) {
+      if (self::wasForeseen()) {
         self::setAuxiliaryValue($choice); // Track the value of the achievements which needs to be junked
         self::setMaxSteps(2);
       }

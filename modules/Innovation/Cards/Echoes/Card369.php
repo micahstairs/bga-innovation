@@ -25,7 +25,7 @@ class Card369 extends Card
         self::draw(4);
         self::drawAndScore(4);
       }
-    } else if (self::isFourthEdition() && self::wasForeseen()) {
+    } else if (self::wasForeseen()) {
       foreach (self::getCards('hand') as $card) {
         $this->game->transferCardFromTo($card, 0, 'achievements');
       }

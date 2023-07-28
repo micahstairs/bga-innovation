@@ -794,7 +794,8 @@ abstract class Card
 
   protected function wasForeseen(): bool
   {
-    return $this->game->innovationGameState->get('foreseen_card_id') == self::getCardIdFromClassName();
+    // NOTE: The phrase "was foreseen" didn't appear on cards until the fourth edition.
+    return self::isFourthEdition() && $this->game->innovationGameState->get('foreseen_card_id') == self::getCardIdFromClassName();
   }
 
   protected function getAllTypesOtherThan(int $type)
