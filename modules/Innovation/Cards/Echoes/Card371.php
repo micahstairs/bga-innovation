@@ -22,10 +22,10 @@ class Card371 extends Card
     if (self::isEcho()) {
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
-      $bonuses = $this->game->getVisibleBonusesOnBoard(self::getPlayerId());
+      $bonuses = self::getBonuses();
       if (self::isFirstOrThirdEdition()) {
         foreach (self::getOtherPlayerIds() as $playerId) {
-          $bonuses = array_merge($bonuses, $this->game->getVisibleBonusesOnBoard($playerId));
+          $bonuses = array_merge($bonuses, self::getBonuses($playerId));
         }
       }
       if ($bonuses) {

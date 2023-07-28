@@ -41,7 +41,7 @@ class Card352 extends Card
     } else if (self::getEffectNumber() === 1) {
       return [
         'choose_value' => true,
-        'age'          => $this->game->getVisibleBonusesOnBoard(self::getPlayerId()),
+        'age'          => self::getBonuses(),
       ];
     } else {
       return [

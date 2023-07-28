@@ -123,4 +123,14 @@ class ArraysTest extends BaseTest
 
         $this->assertFalse($result);
     }
+
+    public function testGetRepeatedValues()
+    {
+        $array = [1, 2, 3, 2, 4, 1];
+        $expected = [1, 2];
+        
+        $result = Arrays::getRepeatedValues($array);
+        
+        $this->assertEquals($expected, $result);
+    }
 }

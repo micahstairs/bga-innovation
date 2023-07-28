@@ -441,6 +441,11 @@ abstract class Card
     return $this->game->hasRessource($card, $icon);
   }
 
+  protected function getBonuses(int $playerId = null): array
+  {
+    return $this->game->getVisibleBonusesOnBoard(self::coercePlayerId($playerId));
+  }
+
   protected function isValuedCard($card): bool
   {
     return $card['age'] !== null;

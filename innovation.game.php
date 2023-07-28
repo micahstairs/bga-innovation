@@ -9934,12 +9934,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
                 
-            // id 379, Echoes age 5: Palampore
-            case "379N1A":
-                $message_for_player = clienttranslate('Choose a value to draw and score');
-                $message_for_others = clienttranslate('${player_name} must choose a value to draw and score');
-                break;
-
             // id 380, Echoes age 5: Seed Drill
             case "380N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10964,7 +10958,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 378)
+            || (330 <= $card_id && $card_id <= 379)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13983,36 +13977,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 379, Echoes age 5: Palampore
-            case "379N1":
-                $all_bonuses = self::getVisibleBonusesOnBoard($player_id);
-                $repeat_bonus = array(0,0,0,0,0,0,0,0,0,0,0);
-                foreach ($all_bonuses as $bonus) {
-                    $repeat_bonus[$bonus - 1]++;
-                }
-                $bonus_select = array();
-                for ($bonus = 0; $bonus < 11; $bonus++) {
-                    if ($repeat_bonus[$bonus] > 1) {
-                        $bonus_select[] = $bonus + 1;
-                    }
-                }
-                if (count($bonus_select) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($bonus_select);
-                }
-                break;
-                
-            case "379N2":
-                $step_max = 1;
-                break;
-
-            case "379N3":
-                // "If you have six or more bonuses on your board, claim the Wealth achievement."
-                if (count(self::getVisibleBonusesOnBoard($player_id)) > 5) {
-                    self::claimSpecialAchievement($player_id, 435);
-                }
                 break;
 
             // id 380, Echoes age 5: Seed Drill
@@ -19974,31 +19938,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 379, Echoes age 5: Palampore
-        case "379N1A":
-            // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
-            // TODO(#472): This needs to have the "choose_draw_value" when that is implemented since 11s can appear as bonuses
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "379N2A":
-            // "You may splay your purple cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(4) /* purple */
-            );
-            break;
-
         // id 380, Echoes age 5: Seed Drill
         case "380D1A":
             $options = array(
@@ -24082,11 +24021,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 379, Echoes age 5: Palampore
-                case "379N1A":
-                    self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
-                    break;
-
                 // id 380, Echoes age 5: Seed Drill
                 case "380N1A":
                     // "If there is at least one card in that deck"
@@ -25999,13 +25933,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "346N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 379, Echoes age 5: Palampore
-            case "379N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);

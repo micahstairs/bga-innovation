@@ -27,11 +27,11 @@ class Card346 extends Card
       return ['choices' => [1, 2]];
     } else if (self::getCurrentStep() === 1) {
       if (self::isFirstOrThirdEdition()) {
-        $values = $this->game->getVisibleBonusesOnBoard(self::getPlayerId());
+        $values = self::getBonuses();
       } else {
         $values = [];
         foreach (self::getPlayerIds() as $playerId) {
-          $values = array_merge($values, $this->game->getVisibleBonusesOnBoard($playerId));
+          $values = array_merge($values, self::getBonuses($playerId));
         }
       }
       return [

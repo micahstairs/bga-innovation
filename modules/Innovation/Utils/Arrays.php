@@ -101,4 +101,18 @@ class Arrays
         return $intersectionCount === count($a) && $intersectionCount === count($b);
     }
 
+    /**
+     * Get all repeated values in an array
+     *
+     * @param array $array The input array
+     * @return array The values that appear more than once
+     */
+    public static function getRepeatedValues(array $array): array
+    {
+        $counts = array_count_values($array);
+        return array_keys(array_filter($counts, function($count) {
+            return $count > 1;
+        }));
+    }
+
 }

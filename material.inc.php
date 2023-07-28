@@ -1900,10 +1900,12 @@ $this->textual_card_infos = array(
     ),
 
     379 => array(
-        'name'                => clienttranslate('Palampore'),
-        'non_demand_effect_1' => clienttranslate('Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your purple cards right.'),
-        'non_demand_effect_3' => clienttranslate('If you have six or more bonuses on your board, claim the Wealth achievement.'),
+        'name'                                => clienttranslate('Palampore'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score a card of value equal to a bonus that occurs more than once on your board, if there is one.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your purple cards right.'),
+        'non_demand_effect_3_first_and_third' => clienttranslate('If you have six or more bonuses on your board, claim the Wealth achievement.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If you have six bonuses on your board, claim the Wealth achievement.'),
     ),
 
     380 => array(

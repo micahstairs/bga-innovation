@@ -32,7 +32,7 @@ class Card374 extends Card
       if (self::isFirstOrThirdEdition()) {
         $value = $this->game->getMaxBonusIconOnBoard(self::getLauncherId());
       } else {
-        $bonuses = $this->game->getVisibleBonusesOnBoard(self::getLauncherId());
+        $bonuses = self::getBonuses(self::getLauncherId());
         $scorePileValues = self::getUniqueValues('score');
         $intersection = array_intersect($bonuses, $scorePileValues);
         if (!$intersection) {
