@@ -10964,7 +10964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 373)
+            || (330 <= $card_id && $card_id <= 374)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13983,32 +13983,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 374, Echoes age 4: Toilet
-            case "374E1":
-                // "Draw and tuck a 4."
-                self::executeDrawAndTuck($player_id, 4);
-                break;
-            
-            case "374D1":
-                $max_bonus = self::getMaxBonusIconOnBoard($launcher_id);
-                if ($max_bonus > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValue($max_bonus);
-                } else {
-                    self::notifyPlayer($player_id, 'log', 
-                        clienttranslate('${You} have no bonuses on your board.'), 
-                        array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', 
-                        clienttranslate('${player_name} has no bonuses on his board.'), 
-                        array('player_name' => self::getColoredPlayerName($player_id)));
-
-                }
-                break;
-
-            case "374N1":
-               $step_max = 1;
                 break;
 
             // id 375, Echoes age 5: Lightning Rod
@@ -20089,35 +20063,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 374, Echoes age 4: Toilet            
-        case "374D1A":
-            // "I demand you return all cards from your score pile of value matching the highest bonus on my board!"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'age' => self::getAuxiliaryValue(),
-            );
-            break;
-
-        case "374N1A":
-            // "'You may return a card in your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
         // id 375, Echoes age 5: Lightning Rod
         case "375N1A":
             // "You may return a top card from your board."
@@ -24255,14 +24200,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 374, Echoes age 4: Toilet
-                case "374N1A":
-                    // "and draw a card of the same value."
-                    if ($n > 0) {
-                        self::executeDraw($player_id, $this->innovationGameState->get('age_last_selected'));
-                    }
                     break;
 
                 // id 378, Echoes age 5: Octant
