@@ -1885,9 +1885,11 @@ $this->textual_card_infos = array(
     ),
 
     377 => array(
-        'name'                => clienttranslate('Coke'),
-        'echo_effect_1'       => clienttranslate('Draw and tuck a ${age_4}.'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_6}. If it has a ${icon_5}, meld it and repeat this dogma effect. Otherwise, foreshadow it.'),
+        'name'                                => clienttranslate('Coke'),
+        'echo_effect_1'                       => clienttranslate('Draw and tuck a ${age_4}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and reveal a ${age_6}. If it has a ${icon_5}, meld it and repeat this dogma effect. Otherwise, foreshadow it.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal a ${age_6}. If it has a ${icon_5}, meld it and repeat this effect. Otherwise, foreshadow it.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If Coke was foreseen, score your top card of each non-red color.'),
     ),
 
     378 => array(

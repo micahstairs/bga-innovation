@@ -10964,7 +10964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 376)
+            || (330 <= $card_id && $card_id <= 377)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13983,29 +13983,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 377, Echoes age 5: Coke
-            case "377E1":
-                // "Draw and tuck a 4."
-                self::executeDrawAndTuck($player_id, 4);
-                break;
-
-            case "377N1":
-                // "Draw and reveal a 6."
-                $keep_going = true;
-                while ($keep_going) {
-                    $card = self::executeDraw($player_id, 6, 'revealed');
-                    if (!self::hasRessource($card, 5)) {
-                        $keep_going = false;
-                        // "Otherwise, foreshadow it."
-                        self::foreshadowCard($card, $player_id);
-                    }
-                    else {
-                        // "If it has a factory, meld it"
-                        self::meldCard($card, $player_id);
-                    }
-                } // "and repeat this dogma effect"
                 break;
 
             // id 378, Echoes age 5: Octant

@@ -15,7 +15,8 @@ class Card376 extends Card
   // - 4th edition:
   //  - ECHO: Meld your bottom green card.
   //  - Draw and meld a card of value one higher than the value of your top yellow card. If the
-  //    melded card is yellow, or if Thermometer was foreseen and the melded card is red or purple, repeat this effect.
+  //    melded card is yellow, or if Thermometer was foreseen and the melded card is red or purple,
+  //    repeat this effect.
 
   public function initialExecution()
   {
