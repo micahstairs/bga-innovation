@@ -1893,9 +1893,10 @@ $this->textual_card_infos = array(
     ),
 
     378 => array(
-        'name'                => clienttranslate('Octant'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_2} or ${icon_5} from your board to my board! If you do, draw and foreshadow a ${age_6}!'),
-        'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_6}.'),
+        'name'                              => clienttranslate('Octant'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer a top non-red card with a ${icon_2} or ${icon_5} from your board to my board! If you do, draw and foreshadow a ${age_6}!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer your top card with a ${icon_2} or ${icon_5} of each non-red color to my board! If you do, and Octant wasn\'t foreseen, draw and foreshadow a ${age_6}!'),
+        'non_demand_effect_1'               => clienttranslate('Draw and foreshadow a ${age_6}.'),
     ),
 
     379 => array(

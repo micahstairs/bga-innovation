@@ -10964,7 +10964,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 377)
+            || (330 <= $card_id && $card_id <= 378)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13984,29 +13984,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-
-            // id 378, Echoes age 5: Octant
-            case "378D1":
-                $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
-                    if ($color != 1) { // non-red
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if (self::hasRessource($top_card, 2) || self::hasRessource($top_card, 5) ){
-                            $color_array[] = $color; // has a leaf or factory
-                        }
-                    }
-                }
-                if (count($color_array) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($color_array);
-                }
-                break;
-
-            case "378N1":
-                // Draw and foreshadow a 6."
-                self::executeDrawAndForeshadow($player_id, 6);
-                break;
-                
                 
             // id 379, Echoes age 5: Palampore
             case "379N1":
@@ -19997,22 +19974,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 378, Echoes age 5: Octant
-        case "378D1A":
-            // "I demand you transfer a top non-red card with a tower or bulb from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-
-                'color' => self::getAuxiliaryValueAsArray(), 
-            );
-            break;
-
         // id 379, Echoes age 5: Palampore
         case "379N1A":
             // "Draw and score a card of value equal to a bonus that occurs more than once on your board, if you have such a bonus."
@@ -24119,14 +24080,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 378, Echoes age 5: Octant
-                case "378D1A":
-                    // "If you do, draw and foreshadow a 6!"
-                    if ($n > 0) {
-                        self::executeDrawAndForeshadow($player_id, 6);
-                    }
                     break;
 
                 // id 379, Echoes age 5: Palampore
