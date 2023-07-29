@@ -17,39 +17,43 @@ class Card554 extends Card
     for ($i = 1; $i <= 5; $i++) {
       self::drawAndReveal($i);
     }
-    if (self::countRevealedGreenCards() >= 1) {
-      self::setMaxSteps(1);
-    } else {
-      foreach (self::getCards( 'revealed') as $card) {
-        self::return($card);
-      }
+    self::setMaxSteps(2);
+    if (self::countRevealedGreenCards() == 0) {
+      self::setNextStep(2);
     }
   }
 
   public function getInteractionOptions(): array
   {
-    return [
-      'splay_direction' => $this->game::RIGHT,
-      'color'           => array($this->game::GREEN, $this->game::PURPLE),
-    ];
+      if (self::getCurrentStep() == 1) {
+        return [
+          'splay_direction' => $this->game::RIGHT,
+          'color'           => array($this->game::GREEN, $this->game::PURPLE),
+        ];
+      } else {
+        return [
+          'n'                               => 'all',
+          'location_from'                   => 'revealed',
+          'location_to'                     => 'deck',
+        ];
+          
+      }
   }
 
   public function afterInteraction()
   {
-    $numRevealedGreenCards = self::countRevealedGreenCards();
-    if ($numRevealedGreenCards >= 2) {
-      foreach (self::getCards( 'revealed') as $card) {
-        self::score($card);
-      }
-      if ($numRevealedGreenCards >= 3) {
-        self::notifyPlayer(clienttranslate('${You} have drawn 3 green cards.'), ['You' => 'You']);
-        self::notifyOthers(clienttranslate('${player_name} has drawn 3 green cards.'), ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId())]);
-        self::win();
-      }
-    } else {
-      foreach (self::getCards( 'revealed') as $card) {
-        self::return($card);
-      }
+    if (self::getCurrentStep() == 1) {
+        $numRevealedGreenCards = self::countRevealedGreenCards();
+        if ($numRevealedGreenCards >= 2) {
+          foreach (self::getCards( 'revealed') as $card) {
+            self::score($card);
+          }
+          if ($numRevealedGreenCards >= 3) {
+            self::notifyPlayer(clienttranslate('${You} have drawn 3 green cards.'), ['You' => 'You']);
+            self::notifyOthers(clienttranslate('${player_name} has drawn 3 green cards.'), ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId())]);
+            self::win();
+          }
+        }
     }
   }
 
