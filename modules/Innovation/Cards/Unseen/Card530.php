@@ -9,7 +9,8 @@ class Card530 extends Card
 
   // Secret History:
   //   - I DEMAND you transfer one of your secrets to my safe!
-  //   - If your red or purple cards are splayed, claim the Mystery achievement. Otherwise, splay your red or purple cards right.
+  //   - If your red or purple cards are splayed right, claim the Mystery achievement. Otherwise,
+  //     splay your red or purple cards right.
 
   public function initialExecution()
   {
