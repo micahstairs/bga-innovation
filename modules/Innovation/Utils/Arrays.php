@@ -115,4 +115,20 @@ class Arrays
         }));
     }
 
+    /**
+     * Remove one occurance of the specified element from array
+     * 
+     * @param array $array The input array
+     * @param mixed $element The element to remove  
+     * @return array The array with the element removed
+     */
+    public static function removeElement(array $array, $element): array
+    {
+        $index = array_search($element, $array);
+        if ($index !== false) {
+            unset($array[$index]);
+        }
+        return array_values($array);
+    }
+
 }

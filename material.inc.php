@@ -1916,8 +1916,9 @@ $this->textual_card_infos = array(
     ),
 
     381 => array(
-        'name'                => clienttranslate('Pressure Cooker'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. For each top card on your board with a bonus, draw a card of value equal to that bonus.'),
+        'name'                                => clienttranslate('Pressure Cooker'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. For each top card on your board with a bonus, draw a card of value equal to that bonus.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand. For each top card on your board with a bonus, both draw a card and junk an available achievement of value equal to that bonus.'),
     ),
 
     382 => array(

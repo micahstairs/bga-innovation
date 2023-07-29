@@ -128,9 +128,20 @@ class ArraysTest extends BaseTest
     {
         $array = [1, 2, 3, 2, 4, 1];
         $expected = [1, 2];
-        
+
         $result = Arrays::getRepeatedValues($array);
-        
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testRemoveElement()
+    {
+        $array = [1, 2, 3, 2, 4];
+        $element = 2;
+        $expected = [1, 3, 2, 4];
+
+        $result = Arrays::removeElement($array, $element);
+
         $this->assertEquals($expected, $result);
     }
 }

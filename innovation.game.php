@@ -9934,12 +9934,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 381, Echoes age 5: Pressure Cooker
-            case "381N1B":
-                $message_for_player = clienttranslate('Choose a value to draw');
-                $message_for_others = clienttranslate('${player_name} must choose a draw');
-                break;
-
             // id 383, Echoes age 5: Piano
             case "383E1A":
                 $message_for_player = clienttranslate('Choose a value to draw');
@@ -10943,7 +10937,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 380)
+            || (330 <= $card_id && $card_id <= 381)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13963,11 +13957,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-
-            // id 381, Echoes age 5: Pressure Cooker
-            case "381N1":
-                $step_max = 1;
-                break;  
 
             // id 382, Echoes age 5: Stove
             case "382E1":
@@ -19907,30 +19896,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 381, Echoes age 5: Pressure Cooker
-        case "381N1A":
-            // "Return all cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "381N1B":
-            // "For each top card on your board with a bonus, draw a card of value equal to that bonus"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-                'age' => array_unique(Arrays::getBase16ArrayFromValue(self::getAuxiliaryValue())),
-            );
-            break;
-
         // id 382, Echoes age 5: Stove
         case "382E1A":
             // "Score a top card from your board without a factory."
@@ -23955,58 +23920,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 381, Echoes age 5: Pressure Cooker
-                case "381N1A":
-                    $bonus_array = array();
-                    for ($color = 0; $color < 5; $color++) {
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        $bonuses = self::getBonusIcons($top_card);
-                        if (count($bonuses) > 0) {
-                            $bonus_array[] = $bonuses[0];
-                        }
-                    }
-                    
-                    if (count(array_unique($bonus_array)) == 1) {
-                        // multiple identical bonuses
-                        for ($i=0; $i < count($bonus_array); $i++) {
-                            self::executeDraw($player_id, $bonus_array[0]);
-                        }
-                    } elseif (count($bonus_array) > 1) {
-                        // multiple bonuses, but different
-                        self::setStepMax(2);
-                        self::setAuxiliaryValue(Arrays::getValueFromBase16Array($bonus_array));
-                    }
-                    break;
-                    
-                case "381N1B":
-                    $curr_bonuses = Arrays::getBase16ArrayFromValue(self::getAuxiliaryValue());
-                    $this_bonus = self::getAuxiliaryValue2();
-                    
-                    self::executeDraw($player_id, $this_bonus);
-                    
-                    $found = false;
-                    $next_bonuses = array();
-                    for ($i=0; $i < count($curr_bonuses); $i++) {
-                        if ($this_bonus == $curr_bonuses[$i] && $found == false){
-                            $found = true;
-                        }
-                        else {
-                            $next_bonuses[] = $curr_bonuses[$i];
-                        }
-                    }
-
-                    if (count(array_unique($next_bonuses)) == 1) {
-                        // identical bonuses
-                        for ($i=0; $i < count($next_bonuses); $i++) {
-                            self::executeDraw($player_id, $next_bonuses[0]);
-                        }
-                    } elseif (count($next_bonuses) > 1) {
-                        // multiple bonuses left, but different
-                        self::setAuxiliaryValue(Arrays::getValueFromBase16Array($next_bonuses));
-                        $step--; self::incrementStep(-1); // repeat until no bonuses remain
-                    }
-                    break;
-
                 // id 383, Echoes age 5: Piano
                 case "383E1A":
                     self::executeDraw($player_id, self::getAuxiliaryValue2());
@@ -25854,13 +25767,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 381, Echoes age 5: Pressure Cooker
-            case "381N1B":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue2($choice);
                 break;
 
             // id 383, Echoes age 5: Piano
