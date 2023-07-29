@@ -736,9 +736,9 @@ abstract class Card
   protected function getUniqueValues(string $location, int $playerId = null): array
   {
     $values = [];
-    $cardsByAge = self::getCardsKeyedByValue($location, $playerId);
+    $countsByValue = self::countCardsKeyedByValue($location, $playerId);
       for ($age = 1; $age <= 11; $age++) {
-        if ($cardsByAge[$age] > 0) {
+        if ($countsByValue[$age] > 0) {
           $values[] = $age;
         }
       }
