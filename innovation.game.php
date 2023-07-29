@@ -1634,10 +1634,10 @@ class Innovation extends Table
                 if ($card['type'] == 2) {
                     if ($location_from == 'hand' && $location_to == 'junk') {
                         if (self::hasRessource($card, 8)) { // has a flag
-                            self::claimSpecialAchievement($owner_to, 328); // Glory (4th edition)
+                            self::claimSpecialAchievement($owner_from, 328); // Glory (4th edition)
                         }
                         if (self::hasRessource($card, 9)) { // has a fountain
-                            self::claimSpecialAchievement($owner_to, 329); // Victory (4th edition)
+                            self::claimSpecialAchievement($owner_from, 329); // Victory (4th edition)
                         }
                     } else if ($location_to == 'board' && $bottom_to && $this->innovationGameState->getEdition() <= 3) { // tuck
                         if (self::hasRessource($card, 8)) { // has a flag
