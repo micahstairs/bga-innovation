@@ -9933,21 +9933,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                                         : clienttranslate('${player_name} may finish the game (attempting to draw above ${age_10})');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
-                
-            // id 380, Echoes age 5: Seed Drill
-            case "380N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-                
-            case "380N1B":
-                $age_value = self::getAuxiliaryValue2();
-                $message_args_for_player['age'] = self::getAgeSquare($age_value);
-                $message_args_for_others['age'] = self::getAgeSquare($age_value);        
-                $message_for_player = clienttranslate('Do ${you} want to transfer the bottom ${age} to the available achievements?');
-                $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
-                $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                break;
 
             // id 381, Echoes age 5: Pressure Cooker
             case "381N1B":
@@ -13976,26 +13961,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 380, Echoes age 5: Seed Drill
-            case "380D1":
-                $color_array = array();
-                for ($color = 0; $color < 5; $color++) {
-                    $top_card = self::getTopCardOnBoard($player_id, $color);
-                    if ($top_card != null && $top_card['faceup_age'] < 3 ){
-                        $color_array[] = $color; // less than 3
-                    }
-                    
-                }
-                if (count($color_array) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($color_array);
-                }
-                break;
-
-            case "380N1":
                 $step_max = 1;
                 break;
 
@@ -19938,41 +19903,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 380, Echoes age 5: Seed Drill
-        case "380D1A":
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'color' => self::getAuxiliaryValueAsArray(), 
-            );
-            break;
-
-        case "380N1A":
-            // "Choose the 3, 4, or 5 deck."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-                'age' => array(3,4,5),
-            );
-            break;
-
-        case "380N1B":
-            // "you may transfer its bottom card to the available achievements."
-            $options = array(
-                'player_id' => $player_id, 
-                
-                'choose_yes_or_no' => true,
-            );
-            break;
-
         // id 381, Echoes age 5: Pressure Cooker
         case "381N1A":
             // "Return all cards from your hand."
@@ -24021,22 +23951,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 380, Echoes age 5: Seed Drill
-                case "380N1A":
-                    // "If there is at least one card in that deck"
-                    $cards_to_draw_from = self::countCardsInLocationKeyedByAge(0, 'deck', /*base*/0);
-                    if ($cards_to_draw_from[self::getAuxiliaryValue2()] > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "380N1B":
-                    // "you may transfer its bottom card to the available achievements"
-                    if (self::getAuxiliaryValue() == 1) { // yes
-                        self::executeDraw(0, /*age=*/ self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
-                    }
-                    break;
-
                 // id 381, Echoes age 5: Pressure Cooker
                 case "381N1A":
                     $bonus_array = array();
@@ -25935,25 +25849,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "346N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 380, Echoes age 5: Seed Drill
-            case "380N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue2($choice);
-                break;
-
-            case "380N1B":
-                $age_value = self::getAuxiliaryValue2();
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to not transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
-                }
                 self::setAuxiliaryValue($choice);
                 break;
 

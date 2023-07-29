@@ -33,59 +33,59 @@ class Card359 extends Card
 
   public function getInteractionOptions(): array
   {
-  if (self::isEcho()) {
-    return ['choices' => [3, 4]];
-  } else if (self::getCurrentStep() === 1) {
-    if ($this->game->isExecutingAgainDueToEndorsedAction()) {
-      // If two cards were drawn due to the Endorse action, the launcher is allowed to choose to meld
-      // the same card twice. Unfortunately, this means the card may no longer be in a visible
-      // location so we need to use a special prompt.
-      return [
-        'can_pass' => true,
-        'choices' => [0, 1],
-      ];
+    if (self::isEcho()) {
+      return ['choices' => [3, 4]];
+    } else if (self::getCurrentStep() === 1) {
+      if ($this->game->isExecutingAgainDueToEndorsedAction()) {
+        // If two cards were drawn due to the Endorse action, the launcher is allowed to choose to meld
+        // the same card twice. Unfortunately, this means the card may no longer be in a visible
+        // location so we need to use a special prompt.
+        return [
+          'can_pass' => true,
+          'choices'  => [0, 1],
+        ];
+      } else {
+        self::setAuxiliaryArray(self::getActionScopedAuxiliaryArray(self::getPlayerId()));
+        return [
+          'can_pass'                        => true,
+          'location_from'                   => 'hand',
+          'meld_keyword'                    => true,
+          'card_ids_are_in_auxiliary_array' => true,
+        ];
+      }
     } else {
-      self::setAuxiliaryArray(self::getActionScopedAuxiliaryArray(self::getPlayerId()));
-      return [
-        'can_pass' => true,
-        'location_from' => 'hand',
-        'meld_keyword' => true,
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
+      if (self::isEligibleForAchieving(self::getCard(self::getAuxiliaryValue()))) {
+        return ['choices' => [1, 2]];
+      } else {
+        return ['choices' => [1]];
+      }
     }
-  } else {
-    if (self::isEligibleForAchieving(self::getCard(self::getAuxiliaryValue()))) {
-      return ['choices' => [1, 2]];
-    } else {
-      return ['choices' => [1]];
-    }
-  }
 
-}
+  }
 
   public function getSpecialChoicePrompt(): array
   {
     if (self::isEcho()) {
-    return self::getPromptForChoiceFromList([
-      3 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(3)],
-      4 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(4)],
-    ]);
-  } else if (self::getCurrentStep() === 1)  {
-    $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-    return self::getPromptForChoiceFromList([
-      0 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[0])])],
-      1 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[1])])],
-    ]);
-  } else {
-    $cardArgs = $this->game->getNotificationArgsForCardList([self::getCard(self::getAuxiliaryValue())]);
-    return self::getPromptForChoiceFromList([
-      1 => [clienttranslate('Return ${card}'), 'card' => $cardArgs],
-      2 => [clienttranslate('Achieve ${card}, if eligible'), 'card' => $cardArgs],
-    ]);
-  }
+      return self::getPromptForChoiceFromList([
+        3 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(3)],
+        4 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(4)],
+      ]);
+    } else if (self::getCurrentStep() === 1) {
+      $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
+      return self::getPromptForChoiceFromList([
+        0 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[0])])],
+        1 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[1])])],
+      ]);
+    } else {
+      $cardArgs = $this->game->getNotificationArgsForCardList([self::getCard(self::getAuxiliaryValue())]);
+      return self::getPromptForChoiceFromList([
+        1 => [clienttranslate('Return ${card}'), 'card' => $cardArgs],
+        2 => [clienttranslate('Achieve ${card}, if eligible'), 'card' => $cardArgs],
+      ]);
+    }
   }
 
-  
+
   public function handleSpecialChoice($choice)
   {
     if (self::isEcho()) {
@@ -113,7 +113,8 @@ class Card359 extends Card
     self::respondToMeld($card);
   }
 
-  private function respondToMeld($card) {
+  private function respondToMeld($card)
+  {
     $topGreenCard = self::getTopCardOfColor($this->game::GREEN);
     if (!$topGreenCard) {
       return;

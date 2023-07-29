@@ -1909,9 +1909,10 @@ $this->textual_card_infos = array(
     ),
 
     380 => array(
-        'name'                => clienttranslate('Seed Drill'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return a top card from your board of value less than ${age_3}!'),
-        'non_demand_effect_1' => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
+        'name'                                => clienttranslate('Seed Drill'),
+        'i_demand_effect_1'                   => clienttranslate('${I demand} you return a top card from your board of value less than ${age_3}!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose the ${age_3}, ${age_4}, or ${age_5} deck. You may junk all cards in the chosen deck. If you do, achieve the highest junked card if eligible.'),
     ),
 
     381 => array(
