@@ -10943,7 +10943,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 379)
+            || (330 <= $card_id && $card_id <= 380)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -15720,6 +15720,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (array_key_exists('foreshadow_keyword', $options)) {
                     $options['location_to'] = 'forecast';
                     unset($options['foreshadow_keyword']);
+                }
+                if (array_key_exists('return_keyword', $options)) {
+                    $options['location_to'] = 'deck';
+                    unset($options['return_keyword']);
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;
