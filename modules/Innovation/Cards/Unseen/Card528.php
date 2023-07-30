@@ -44,7 +44,9 @@ class Card528 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 2 && self::getAuxiliaryValue() === 3) {
+    if (self::getCurrentStep() === 1 && self::getAuxiliaryValue() === 0) {
+        self::revealHand();
+    } else if (self::getCurrentStep() === 2 && self::getAuxiliaryValue() === 3) {
       self::setNextStep(1);
     }
   }
