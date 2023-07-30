@@ -10937,7 +10937,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 381)
+            || (330 <= $card_id && $card_id <= 382)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13957,25 +13957,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-
-            // id 382, Echoes age 5: Stove
-            case "382E1":
-                $step_max = 1;
-                break;  
-
-            case "382N1":
-                // "Draw and tuck a 4."
-                $tucked_card = self::executeDrawAndTuck($player_id, 4);
-                $top_card = self::getTopCardOnBoard($player_id, $tucked_card['color']);
-                // "If your top card of the tucked card's color has value less than 4, draw and score a 4."
-                if ($top_card['faceup_age'] < 4) {
-                    self::executeDraw($player_id, 4, 'score');
-                }
-                break; 
-
-            case "382N2":
-                $step_max = 1;
-                break; 
 
             // id 383, Echoes age 5: Piano
             case "383E1":
@@ -19893,36 +19874,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 382, Echoes age 5: Stove
-        case "382E1A":
-            // "Score a top card from your board without a factory."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'score_keyword' => true,
-                
-                'without_icon' => 5, /* factory */
-            );
-            break;
-
-        case "382N2A":
-            // "You may splay your green cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(2) /* green */
             );
             break;
 
