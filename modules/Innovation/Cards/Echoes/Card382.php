@@ -19,7 +19,7 @@ class Card382 extends Card
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
       $tuckedCard = self::drawAndTuck(4);
-      $topCard = self::getTopCardOfColor($tuckedCard);
+      $topCard = self::getTopCardOfColor($tuckedCard['color']);
       if ($topCard['age'] < 4) {
         self::drawAndScore(4);
       }

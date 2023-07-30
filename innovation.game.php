@@ -10931,7 +10931,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 383)
+            || (330 <= $card_id && $card_id <= 384)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13951,29 +13951,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-
-            // id 384, Echoes age 5: Tuning Fork
-            case "384E1":
-                // "Look at the top card of any deck"
-                $card_ids = array();
-                for ($age = 1; $age <= 10; $age++) {
-                    for ($type = 0; $type <= 5; $type++) {
-                        $card = self::getDeckTopCard($age, $type);
-                        if ($card !== null) {
-                            $card_ids[] = $card['id'];
-                        }
-                    }
-                }
-                
-                if (count($card_ids) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryArray($card_ids);
-                }
-                break;
-
-            case "384N1":
-                $step_max = 1;
-                break;
                     
             // id 385, Echoes age 6: Bifocals
             case "385E1":
@@ -15652,6 +15629,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (array_key_exists('return_keyword', $options)) {
                     $options['location_to'] = 'deck';
                     unset($options['return_keyword']);
+                }
+                if (array_key_exists('topdeck_keyword', $options)) {
+                    $options['location_to'] = 'deck';
+                    $options['bottom_to'] = false;
+                    unset($options['topdeck_keyword']);
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;
@@ -19834,69 +19816,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 384, Echoes age 5: Tuning Fork
-        case "384E1A":
-            // "Look at the top card of any deck,"
-            // TODO(4E): Make sure the "look" doesn't count as a draw otherwise it will mess up the Unseen draw rule. This will likely
-            // become a no-op because the 4E version of this card has changed.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'deck',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-            
-        case "384E1B":
-            // "then place it back on top."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'enable_autoselection' => false, // Give the player the chance to read the card
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'bottom_to' => false, // Topdeck
-                
-                'card_id_1' => $this->innovationGameState->get('card_id_1'),
-            );       
-            break;
-
-        case "384N1A":
-            // "Return a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "384N1B":
-            // "You may repeat this dogma effect."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
             
         // id 385, Echoes age 6: Bifocals
         case "385E1A":
@@ -23802,46 +23721,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 384, Echoes age 5: Tuning Fork
-                case "384E1A":
-                    if ($n > 0) {
-                        $this->innovationGameState->set('card_id_1', $this->innovationGameState->get('id_last_selected'));
-                        self::incrementStepMax(1); // return it
-                    }
-                    break;
-
-                case "384N1A":
-                    if ($n > 0) { // "If you do,"
-                        // "draw and reveal a card of the same value"
-                        $card = self::executeDrawAndReveal($player_id, $this->innovationGameState->get('age_last_selected'));
-                        $top_card_by_color = self::getTopCardOnBoard($player_id, $card['color']);
-                        if ($top_card_by_color == null || $card['faceup_age'] > $top_card_by_color['faceup_age']) {
-                            // "and meld it if it is higher than a top card of the same color on your board. "
-                            self::meldCard($card, $player_id);
-                        } else {
-                            // "Otherwise, return it."
-                            self::returnCard($card);
-                        }
-                        self::setStepMax(2); // see if the player wants to repeat
-                    }
-                    break;
-
-                case "384N1B":
-                    if ($n > 0) { // "If you do,"
-                        // "draw and reveal a card of the same value"
-                        $card = self::executeDrawAndReveal($player_id, $this->innovationGameState->get('age_last_selected'));
-                        $top_card_by_color = self::getTopCardOnBoard($player_id, $card['color']);
-                        if ($top_card_by_color == null || $card['faceup_age'] > $top_card_by_color['faceup_age']) {
-                            // "and meld it if it is higher than a top card of the same color on your board. "
-                            self::meldCard($card, $player_id);
-                        } else {
-                            // "Otherwise, return it."
-                            self::returnCard($card);
-                        }
-                        self::setStep(1); $step=1; // repeat this step
-                    }
                     break;
                     
                 // id 385, Echoes age 6: Bifocals

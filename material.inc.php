@@ -1935,9 +1935,11 @@ $this->textual_card_infos = array(
     ),
 
     384 => array(
-        'name'                => clienttranslate('Tuning Fork'),
-        'echo_effect_1'       => clienttranslate('Look at the top card of any deck, then place it back on top.'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. If you do, draw and reveal a card of the same value, and meld it if it is higher than a top card of the same color on your board. Otherwise, return it. You may repeat this dogma effect.'),
+        'name'                                => clienttranslate('Tuning Fork'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Look at the top card of any deck, then place it back on top.'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw a card of value present in any score pile.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. If you do, draw and reveal a card of the same value, and meld it if it is higher than a top card of the same color on your board. Otherwise, return it. You may repeat this dogma effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Foreshadow a card from your hand. If you do, draw and reveal a card of the same value, and meld it if it is higher than a top card of the same color on your board. If you don\'t meld it, return it, and you may repeat this effect.'),
     ),
 
     /* Echoes - Age 6 */
