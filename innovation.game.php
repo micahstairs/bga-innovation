@@ -9934,12 +9934,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 383, Echoes age 5: Piano
-            case "383E1A":
-                $message_for_player = clienttranslate('Choose a value to draw');
-                $message_for_others = clienttranslate('${player_name} must choose a value to draw');
-                break;
-
             // id 385, Echoes age 6: Bifocals
             case "385E1A":
                 $message_for_player = clienttranslate('Choose a value to foreshadow');
@@ -10937,7 +10931,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 382)
+            || (330 <= $card_id && $card_id <= 383)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13956,42 +13950,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 383, Echoes age 5: Piano
-            case "383E1":
-                // Check for unique hand values across all players
-                $age_array = array();
-                foreach (self::getAllPlayerIds() as $this_player_id) {
-                    $count_cards = self::countCardsInLocationKeyedByAge($this_player_id, 'hand');
-                    
-                    for ($age = 1; $age <= 11; $age++) {
-                        if ($count_cards[$age] > 0) {
-                            $age_array[] = $age;
-                        }
-                    }
-                }
-                $age_array = array_unique($age_array);
-                if (count($age_array) > 1) { // at least two different cards were found
-                    $step_max = 1;
-                    self::setAuxiliaryValueFromArray($age_array);
-                }
-                else if (count($age_array) == 1) {
-                    // Draw the card if there is only one choice
-                    self::executeDraw($player_id, $age_array[0]);
-                }
-                break;
-
-            case "383N1":
-                // Get all top ages.  If they are unique, go to the first interaction
-                $age_array = array();
-                foreach(self::getTopCardsOnBoard($player_id) as $card) {
-                    $age_array[] = $card['faceup_age'];
-                }
-                if (count(array_unique($age_array)) == 5) { // 5 unique values
-                    $step_max = 1;
-                    self::setAuxiliaryValue(Arrays::getValueFromBase16Array($age_array));
-                }
                 break;
 
             // id 384, Echoes age 5: Tuning Fork
@@ -19877,31 +19835,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 383, Echoes age 5: Piano
-        case "383E1A":
-            // "Draw a card of a value present in any player's hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "383N1A":
-            // "If you have five top cards, each with a different value, return five cards from your score pile "
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 5,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
         // id 384, Echoes age 5: Tuning Fork
         case "384E1A":
             // "Look at the top card of any deck,"
@@ -23871,21 +23804,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 383, Echoes age 5: Piano
-                case "383E1A":
-                    self::executeDraw($player_id, self::getAuxiliaryValue2());
-                    break;
-
-                case "383N1A":
-                    // "and then draw and score a card of each of your top card's values in ascending order."
-                    $top_card_values = Arrays::getBase16ArrayFromValue(self::getAuxiliaryValue());
-                    sort($top_card_values);
-                    
-                    foreach ($top_card_values as $sorted_value) {
-                        self::executeDrawAndScore($player_id, $sorted_value);
-                    }
-                    break;
-
                 // id 384, Echoes age 5: Tuning Fork
                 case "384E1A":
                     if ($n > 0) {
@@ -25718,13 +25636,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 383, Echoes age 5: Piano
-            case "383E1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue2($choice);
                 break;
 
             // id 385, Echoes age 6: Bifocals
