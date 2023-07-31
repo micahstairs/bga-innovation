@@ -1955,10 +1955,11 @@ $this->textual_card_infos = array(
     ),
 
     386 => array(
-        'name'                => clienttranslate('Stethoscope'),
-        'echo_effect_1'       => clienttranslate('Meld a blue or yellow card from your hand.'),
-        'non_demand_effect_1' => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your yellow cards right.'),
+        'name'                               => clienttranslate('Stethoscope'),
+        'echo_effect_1'                      => clienttranslate('Meld a blue or yellow card from your hand.'),
+        'non_demand_effect_1_first_or_third' => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}.'),
+        'non_demand_effect_1_fourth'         => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}, and if Stethoscope was foreseen, draw a ${age_9}.'),
+        'non_demand_effect_2'                => clienttranslate('You may splay your yellow cards right.'),
     ),
 
     387 => array(

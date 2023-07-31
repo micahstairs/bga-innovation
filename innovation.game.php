@@ -10925,7 +10925,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 385)
+            || (330 <= $card_id && $card_id <= 386)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13943,28 +13943,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 386, Echoes age 6: Stethoscope
-            case "386E1":
-                // Only reset the auxiliary value if the echo effect is not being repeated for a second time
-                if (!self::isExecutingAgainDueToEndorsedAction()) {
-                    self::setIndexedAuxiliaryValue($player_id, -1);
-                }
-                $step_max = 1;
-                break;
-
-            case "386N1":
-                // "Draw a 7."
-                self::executeDraw($player_id, 7);
-                //  "If you melded a blue card due to Stethoscope's echo effect, draw an 8."
-                if (self::echoEffectWasExecuted() && self::getIndexedAuxiliaryValue($player_id) == 1) {
-                    self::executeDraw($player_id, 8);
-                }
-                break;
-
-            case "386N2":
                 $step_max = 1;
                 break;
 
@@ -19798,36 +19776,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 386, Echoes age 6: Stethoscope
-        case "386E1A":
-            // "Meld a blue or yellow card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'color' => array(0,3), /* blue or yellow */
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "386N2A":
-            // "You may splay your yellow cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(3) /* yellow */
-            );
-            break;
-        
         // id 389 Echoes age 6: Hot Air Balloon
         case "389N1A":
             // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
@@ -23665,17 +23613,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 386, Echoes age 6: Stethoscope
-                case "386E1A":
-                    if ($n <= 0) {
-                        // Prove that they did not have any blue or yellow cards in hand.
-                        self::revealHand($player_id);
-                    }
-                    if ($n > 0 && $this->innovationGameState->get('color_last_selected') == 0) {
-                        self::setIndexedAuxiliaryValue($player_id, 1); // it is blue
-                    }
                     break;
 
                 // id 387, Echoes age 6: Loom
