@@ -1945,10 +1945,13 @@ $this->textual_card_infos = array(
     /* Echoes - Age 6 */
 
     385 => array(
-        'name'                => clienttranslate('Bifocals'),
-        'echo_effect_1'       => clienttranslate('Draw and foreshadow a card of any value.'),
-        'non_demand_effect_1' => clienttranslate('You may return a card from your forecast. If you do, draw and foreshadow a card of equal value to the card returned.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your green cards right.'),
+        'name'                                => clienttranslate('Bifocals'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw and foreshadow a card of any value.'),
+        'echo_effect_1_fourth'                => clienttranslate('Return a card from your forecast.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return a card from your forecast. If you do, draw and foreshadow a card of equal value to the card returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_7}, and then if Bifocals was foreseen, a card of value equal to the number of available special achievements.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your green cards right.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('You may splay your green cards right. If Bifocals was foreseen, splay any color of your cards up.'),
     ),
 
     386 => array(
