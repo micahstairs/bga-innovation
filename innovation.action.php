@@ -197,10 +197,12 @@
         self::setAjaxMode();
         
         // Retrieve arguments
+        $owner = self::getArg("owner", AT_posint, true);
+        $location = self::getArg("location", AT_alphanum, true);
         $age = self::getArg("age", AT_posint, true);
         
         // Call achieve from game logic
-        $this->game->achieve($age);
+        $this->game->achieve($owner, $location, $age);
         
         self::ajaxResponse();
     }

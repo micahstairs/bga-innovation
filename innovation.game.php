@@ -6603,7 +6603,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Condition for age because of achievement eligibility
         $claimable_ages = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
         if ($this->innovationGameState->get('require_achievement_eligibility') == 1) {
-            $claimable_ages = self::getClaimableAgesIgnoringAvailability($player_id);
+            $claimable_ages = self::getClaimableValuesIgnoringAvailability($player_id);
             if (count($claimable_ages) == 0) {
                 // Avoid calling a SQL query with 'age IN ()' in it since it isn't correct syntax.
                 $claimable_ages[] = -1;
@@ -7844,13 +7844,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $this->gamestate->nextState('dogmaEffect');
     }
     
-    function achieve($age) {
+    function achieve($owner, $location, $age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('achieve');
         $player_id = self::getActivePlayerId();
         
-        // Check if there are any achievements (or secrets) available to claim
-        $card = self::getObjectFromDB(self::format("SELECT * FROM card WHERE (location = 'achievements' AND owner = 0 OR location = 'safe' AND owner = {player_id}) AND age = {age} ORDER BY location, type LIMIT 1", array('age' => $age, 'player_id' => $player_id)));
+        // Check if there are any achievements/secrets available to claim
+        $card = self::getObjectFromDB(
+            self::format("SELECT * FROM card WHERE location = '{location}' AND owner = {owner} AND age = {age} ORDER BY type LIMIT 1",
+            ['owner' => $owner, 'location' => $location, 'age' => $age, 'player_id' => $player_id])
+        );
         if ($card === null) {
             self::throwInvalidChoiceException();
         }
@@ -7874,7 +7877,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // Make sure the player has enough points to claim the card
         $can_claim = false;
-        foreach (self::getClaimableAgesIgnoringAvailability($player_id) as $claimable_age) {
+        foreach (self::getClaimableValuesIgnoringAvailability($player_id) as $claimable_age) {
             if ($claimable_age == $card['age']) {
                 $can_claim = true;
                 break;
@@ -8817,7 +8820,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                   ($this->innovationGameState->get('has_second_action') ? clienttranslate('a first action') : clienttranslate('a second action')),
             'age_to_draw' => $age_to_draw,
             'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
-            'claimable_ages' => self::getClaimableAgesIncludingSecrets($player_id),
+            'claimable_standard_achievement_values' => self::getClaimableStandardAchievementValues($player_id),
+            'claimable_secret_values' => self::getClaimableSecretValues($player_id),
             'city_draw_falls_back_to_other_type' => $age_to_draw > 11 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', self::CITIES)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
@@ -8853,33 +8857,32 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $info_by_card_id;
     }
 
-    /** Returns the ages that are currently claimable from the standard achievements pile */
-    function getClaimableAges($player_id) {
-        $claimable_ages = array();
+    /** Returns the values of the standard achievements that are currently claimable */
+    function getClaimableStandardAchievementValues($player_id) {
+        $values = [];
         $unclaimed_achievement_count = self::countCardsInLocationKeyedByAge(0, 'achievements');
-        foreach (self::getClaimableAgesIgnoringAvailability($player_id) as $age) {
+        foreach (self::getClaimableValuesIgnoringAvailability($player_id) as $age) {
             if ($unclaimed_achievement_count[$age] > 0) {
-                $claimable_ages[] = $age;
+                $values[] = $age;
             }
         }
-        return $claimable_ages;
+        return $values;
     }
 
-    /** Returns the ages that are currently claimable from the standard achievements pile or from the player's safe */
-    function getClaimableAgesIncludingSecrets($player_id) {
-        $claimable_ages = array();
-        $unclaimed_achievement_count = self::countCardsInLocationKeyedByAge(0, 'achievements');
+    /** Returns the values of the secrets that are currently claimable */
+    function getClaimableSecretValues($player_id) {
+        $values = [];
         $unclaimed_secret_count = self::countCardsInLocationKeyedByAge($player_id, 'safe');
-        foreach (self::getClaimableAgesIgnoringAvailability($player_id) as $age) {
-            if ($unclaimed_achievement_count[$age] > 0 || $unclaimed_secret_count[$age] > 0) {
-                $claimable_ages[] = $age;
+        foreach (self::getClaimableValuesIgnoringAvailability($player_id) as $age) {
+            if ($unclaimed_secret_count[$age] > 0) {
+                $values[] = $age;
             }
         }
-        return $claimable_ages;
+        return $values;
     }
 
-    /** Returns the ages that would be claimable (ignoring whether they actually exist in the standard achievements pile) */
-    function getClaimableAgesIgnoringAvailability($player_id) {
+    /** Returns the values that would be claimable (ignoring whether they actually exist in the standard achievements pile) */
+    function getClaimableValuesIgnoringAvailability($player_id) {
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
         $player_score = self::getPlayerScore($player_id);
         $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);

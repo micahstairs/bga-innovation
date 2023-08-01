@@ -285,7 +285,7 @@ abstract class Card
     if (!$card) {
       return false;
     }
-    return in_array($card['age'], $this->game->getClaimableAgesIgnoringAvailability(self::coercePlayerId($playerId)));
+    return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
   protected function return($card)

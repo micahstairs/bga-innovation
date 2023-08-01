@@ -1116,9 +1116,15 @@ var Innovation = /** @class */ (function (_super) {
                     this.on(promoted_card, 'onclick', 'action_clickForDogmaPromoted');
                     break;
                 case 'playerTurn':
-                    // Claimable achievements (achieve action)
-                    if (args.args.claimable_ages.length > 0) {
-                        var claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
+                    // Claimable standard achievements (achieve action)
+                    if (args.args.claimable_standard_achievement_values.length > 0) {
+                        var claimable_achievements = this.selectClaimableStandardAchievements(args.args.claimable_standard_achievement_values);
+                        claimable_achievements.addClass("clickable");
+                        this.on(claimable_achievements, 'onclick', 'action_clickCardBackForAchieve');
+                    }
+                    // Claimable secrets (achieve action)
+                    if (args.args.claimable_secret_values.length > 0) {
+                        var claimable_achievements = this.selectClaimableSecrets(args.args.claimable_secret_values);
                         claimable_achievements.addClass("clickable");
                         this.on(claimable_achievements, 'onclick', 'action_clickCardBackForAchieve');
                     }
@@ -1343,11 +1349,18 @@ var Innovation = /** @class */ (function (_super) {
                     this.addActionButton("pass_dogma_promoted", _("Pass"), "action_clickForPassDogmaPromoted");
                     break;
                 case 'playerTurn':
-                    // Red buttons for claimable_achievements
-                    for (var i = 0; i < args.claimable_ages.length; i++) {
-                        var age = args.claimable_ages[i];
-                        var HTML_id = "achieve_" + age;
-                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieve");
+                    // Red buttons for claimable standard achievements and secrets
+                    for (var i = 0; i < args.claimable_standard_achievement_values.length; i++) {
+                        var age = args.claimable_standard_achievement_values[i];
+                        var HTML_id = "achieve_standard_" + age;
+                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieveStandardAchievement");
+                        dojo.removeClass(HTML_id, 'bgabutton_blue');
+                        dojo.addClass(HTML_id, 'bgabutton_red');
+                    }
+                    for (var i = 0; i < args.claimable_secret_values.length; i++) {
+                        var age = args.claimable_secret_values[i];
+                        var HTML_id = "achieve_secret_" + age;
+                        this.addActionButton(HTML_id, _("Achieve ${age} from safe").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieveSecret");
                         dojo.removeClass(HTML_id, 'bgabutton_blue');
                         dojo.addClass(HTML_id, 'bgabutton_red');
                     }
@@ -2598,11 +2611,18 @@ var Innovation = /** @class */ (function (_super) {
         }
         return dojo.query(queries.join(","));
     };
-    Innovation.prototype.selectClaimableAchievements = function (claimable_ages) {
+    Innovation.prototype.selectClaimableStandardAchievements = function (claimable_ages) {
         var queries = [];
         for (var i = 0; i < claimable_ages.length; i++) {
             var age = claimable_ages[i];
             queries.push("#achievements > .age_" + age);
+        }
+        return dojo.query(queries.join(","));
+    };
+    Innovation.prototype.selectClaimableSecrets = function (claimable_ages) {
+        var queries = [];
+        for (var i = 0; i < claimable_ages.length; i++) {
+            var age = claimable_ages[i];
             queries.push("#safe_".concat(this.player_id, " > .age_").concat(age));
         }
         return dojo.query(queries.join(","));
@@ -3551,16 +3571,34 @@ var Innovation = /** @class */ (function (_super) {
         }, this, function (result) { }, function (is_error) { if (is_error)
             self.resurrectClickEvents(true); });
     };
-    Innovation.prototype.action_clickButtonForAchieve = function (event) {
+    Innovation.prototype.action_clickButtonForAchieveStandardAchievement = function (event) {
         if (!this.checkAction('achieve')) {
             return;
         }
         this.deactivateClickEvents();
         var HTML_id = this.getCardHTMLIdFromEvent(event);
-        var age = HTML_id.split("_")[1];
+        var age = HTML_id.split("_")[2];
         var self = this;
         this.ajaxcall("/innovation/innovation/achieve.html", {
             lock: true,
+            owner: 0,
+            location: 'achievements',
+            age: age,
+        }, this, function (result) { }, function (is_error) { if (is_error)
+            self.resurrectClickEvents(true); });
+    };
+    Innovation.prototype.action_clickButtonForAchieveSecret = function (event) {
+        if (!this.checkAction('achieve')) {
+            return;
+        }
+        this.deactivateClickEvents();
+        var HTML_id = this.getCardHTMLIdFromEvent(event);
+        var age = HTML_id.split("_")[2];
+        var self = this;
+        this.ajaxcall("/innovation/innovation/achieve.html", {
+            lock: true,
+            owner: this.player_id,
+            location: 'safe',
             age: age,
         }, this, function (result) { }, function (is_error) { if (is_error)
             self.resurrectClickEvents(true); });

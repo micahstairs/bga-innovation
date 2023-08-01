@@ -1180,9 +1180,16 @@ class Innovation extends BgaGame {
                     this.on(promoted_card, 'onclick', 'action_clickForDogmaPromoted');
                     break;
                 case 'playerTurn':
-                    // Claimable achievements (achieve action)
-                    if (args.args.claimable_ages.length > 0) {
-                        let claimable_achievements = this.selectClaimableAchievements(args.args.claimable_ages);
+                    // Claimable standard achievements (achieve action)
+                    if (args.args.claimable_standard_achievement_values.length > 0) {
+                        let claimable_achievements = this.selectClaimableStandardAchievements(args.args.claimable_standard_achievement_values);
+                        claimable_achievements.addClass("clickable");
+                        this.on(claimable_achievements, 'onclick', 'action_clickCardBackForAchieve');
+                    }
+
+                    // Claimable secrets (achieve action)
+                    if (args.args.claimable_secret_values.length > 0) {
+                        let claimable_achievements = this.selectClaimableSecrets(args.args.claimable_secret_values);
                         claimable_achievements.addClass("clickable");
                         this.on(claimable_achievements, 'onclick', 'action_clickCardBackForAchieve');
                     }
@@ -1419,11 +1426,18 @@ class Innovation extends BgaGame {
                     this.addActionButton("pass_dogma_promoted", _("Pass"), "action_clickForPassDogmaPromoted");
                     break;
                 case 'playerTurn':
-                    // Red buttons for claimable_achievements
-                    for (let i = 0; i < args.claimable_ages.length; i++) {
-                        let age = args.claimable_ages[i];
-                        let HTML_id = "achieve_" + age;
-                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieve");
+                    // Red buttons for claimable standard achievements and secrets
+                    for (let i = 0; i < args.claimable_standard_achievement_values.length; i++) {
+                        let age = args.claimable_standard_achievement_values[i];
+                        let HTML_id = "achieve_standard_" + age;
+                        this.addActionButton(HTML_id, _("Achieve ${age}").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieveStandardAchievement");
+                        dojo.removeClass(HTML_id, 'bgabutton_blue');
+                        dojo.addClass(HTML_id, 'bgabutton_red');
+                    }
+                    for (let i = 0; i < args.claimable_secret_values.length; i++) {
+                        let age = args.claimable_secret_values[i];
+                        let HTML_id = "achieve_secret_" + age;
+                        this.addActionButton(HTML_id, _("Achieve ${age} from safe").replace("${age}", this.square('N', 'age', age)), "action_clickButtonForAchieveSecret");
                         dojo.removeClass(HTML_id, 'bgabutton_blue');
                         dojo.addClass(HTML_id, 'bgabutton_red');
                     }
@@ -2821,11 +2835,19 @@ class Innovation extends BgaGame {
         return dojo.query(queries.join(","));
     }
 
-    selectClaimableAchievements(claimable_ages) {
+    selectClaimableStandardAchievements(claimable_ages) {
         let queries: string[] = [];
         for (let i = 0; i < claimable_ages.length; i++) {
             let age = claimable_ages[i];
             queries.push("#achievements > .age_" + age);
+        }
+        return dojo.query(queries.join(","));
+    }
+
+    selectClaimableSecrets(claimable_ages) {
+        let queries: string[] = [];
+        for (let i = 0; i < claimable_ages.length; i++) {
+            let age = claimable_ages[i];
             queries.push(`#safe_${this.player_id} > .age_${age}`);
         }
         return dojo.query(queries.join(","));
@@ -3891,19 +3913,42 @@ class Innovation extends BgaGame {
         );
     }
 
-    action_clickButtonForAchieve(event: any) {
+    action_clickButtonForAchieveStandardAchievement(event: any) {
         if (!this.checkAction('achieve')) {
             return;
         }
         this.deactivateClickEvents();
 
         let HTML_id = this.getCardHTMLIdFromEvent(event);
-        let age = HTML_id.split("_")[1];
+        let age = HTML_id.split("_")[2];
 
         let self = this;
         this.ajaxcall("/innovation/innovation/achieve.html",
             {
                 lock: true,
+                owner: 0,
+                location: 'achievements',
+                age: age,
+            },
+            this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
+        );
+    }
+
+    action_clickButtonForAchieveSecret(event: any) {
+        if (!this.checkAction('achieve')) {
+            return;
+        }
+        this.deactivateClickEvents();
+
+        let HTML_id = this.getCardHTMLIdFromEvent(event);
+        let age = HTML_id.split("_")[2];
+
+        let self = this;
+        this.ajaxcall("/innovation/innovation/achieve.html",
+            {
+                lock: true,
+                owner: this.player_id,
+                location: 'safe',
                 age: age,
             },
             this, function (result) { }, function (is_error) { if (is_error) self.resurrectClickEvents(true) }
