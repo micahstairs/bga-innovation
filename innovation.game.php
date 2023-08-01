@@ -10926,7 +10926,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 387)
+            || (330 <= $card_id && $card_id <= 388)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13947,28 +13947,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
                 
-            // id 388, Echoes age 6: Shrapnel
-            case "388D1":
-                // "I demand you draw and tuck a 6!"
-                $tucked_card = self::executeDrawAndTuck($player_id, 6);
-                
-                // "Transfer the top two cards of its color from your board to my score pile!"
-                $top_card_1 = self::getTopCardOnBoard($player_id, $tucked_card['color']);
-                self::transferCardFromTo($top_card_1, $launcher_id, 'score');
-                
-                $top_card_2 = self::getTopCardOnBoard($player_id, $tucked_card['color']);
-                if ($top_card_2 != null) { // Make sure there is a second card
-                    self::transferCardFromTo($top_card_2, $launcher_id, 'score');
-                }
-                
-                // "Transfer the bottom card of its color from my board to your score pile!"
-                $bottom_card = self::getBottomCardOnBoard($launcher_id, $tucked_card['color']);
-                if ($bottom_card != null) {
-                    self::transferCardFromTo($bottom_card, $player_id, 'score');
-                }
-                
-                break;
-
             // id 389, Echoes age 6: Hot Air Balloon
             case "389E1":
                 // "Draw and score a 7."

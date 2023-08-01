@@ -1971,8 +1971,9 @@ $this->textual_card_infos = array(
     ),
 
     388 => array(
-        'name'              => clienttranslate('Shrapnel'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you draw and tuck a ${age_6}! Transfer the top two cards of its color from your board to my score pile! Transfer the bottom card of its color from my board to your score pile!'),
+        'name'                              => clienttranslate('Shrapnel'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you draw and tuck a ${age_6}! Transfer the top two cards of its color from your board to my score pile! Transfer the bottom card of its color from my board to your score pile!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you draw and tuck a ${age_6}! Transfer the top two cards of its color from your board to my score pile! Score the bottom card of its color on my board!'),
     ),
 
     389 => array(
