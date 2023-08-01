@@ -53,10 +53,9 @@ class Card561 extends Card
     $colors = [];
     for ($color = 0; $color < 5; $color++) {
       $numVisibleCards = $this->game->countVisibleCards(self::getPlayerId(), $color);
-      if ($numVisibleCards > 1 && $numVisibleCards > $mostVisibleCards) {
-        $colors = [$color];
-      }
-      if ($numVisibleCards == $mostVisibleCards) {
+      // TODO(LATER): Move this optimization to a more central place (if no color has more than
+      // one card, then the unsplay is a no-op).
+      if ($numVisibleCards > 1 && $numVisibleCards === $mostVisibleCards) {
         $colors[] = $color;
       }
     }
