@@ -38,13 +38,33 @@ class Card534 extends Card
   {
     return self::getPromptForChoiceFromList([
       1 => clienttranslate('Splay a non-purple color left and self-execute the top card'),
-      2 => clienttranslate('Meld a card and splay its color right'),
+      2 => clienttranslate('Meld a card from your hand and splay its color right'),
     ]);
   }
 
   public function handleSpecialChoice(int $choice): void
   {
+    if ($choice === 1) {
+      self::notifyPlayer(
+          clienttranslate('${You} have chosen to splay a non-purple color left and self-execute the top card.'),
+          ['You' => 'You']
+        );
+      self::notifyOthers(
+          clienttranslate('${player_name} has chosen to splay a non-purple color left and self-execute the top card.'),
+          ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId())]
+        );
+    } else {
+      self::notifyPlayer(
+          clienttranslate('${You} have chosen to meld a card from your hand and splay its color right.'),
+          ['You' => 'You']
+        );
+      self::notifyOthers(
+          clienttranslate('${player_name} has chosen to meld a card from his hand and splay its color right.'),
+          ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId())]
+        );
+    }
     self::setAuxiliaryValue($choice);
+    
   }
 
   public function handleCardChoice(array $card)

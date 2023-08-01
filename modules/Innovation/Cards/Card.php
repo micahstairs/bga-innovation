@@ -416,6 +416,11 @@ abstract class Card
     $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');
   }
 
+  protected function revealScorePile(int $playerId = null)
+  {
+    $this->game->revealLocation(self::coercePlayerId($playerId), 'score');
+  }
+
   protected function revealForecast(int $playerId = null)
   {
     $this->game->revealLocation(self::coercePlayerId($playerId), 'forecast');

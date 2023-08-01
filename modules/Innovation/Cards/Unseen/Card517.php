@@ -58,7 +58,7 @@ class Card517 extends Card
 
   public function handleSpecialChoice(int $color): void
   {
-    $this->notifications->notifyColorChoice($color, self::getPlayerId());
+    $this->notifications->notifyColorChoice($color, self::getLauncherId());
     self::setAuxiliaryValue($color);
   }
 
