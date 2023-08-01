@@ -50,6 +50,7 @@ class Innovation extends Table
     const ASLANT = 4;
 
     // Icons
+    const HEX_IMAGE = 0;
     const PROSPERITY = 1;
     const HEALTH = 2;
     const CONCEPT = 3;
@@ -10925,7 +10926,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 386)
+            || (330 <= $card_id && $card_id <= 387)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13944,40 +13945,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 387, Echoes age 6: Loom
-            case "387E1":
-                $step_max = 1;
-                break;
-                
-            case "387N1":
-                $card_ages = array();
-                $score_cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                $count = 0;
-                for ($age = 1; $age <= 11; $age++) {
-                    if ($score_cards[$age] > 0) {
-                        $count++;
-                    }
-                }
-                
-                if ($count >= 2) {
-                    $step_max = 1;
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have two different values in your score pile.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two different values in his score pile.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                }
-                break;
-            
-            case "387N2":
-                // "If you have five or more hexes visible on your board in one color, claim the Heritage achievement."
-                for ($color = 0; $color < 5 ; $color++) {
-                    if (self::countVisibleIconsInPile($player_id, 0 /* empty hex */, $color) >= 5) {
-                        self::claimSpecialAchievement($player_id, 437);
-                        break;
-                    }
-                }
-                
                 break;
                 
             // id 388, Echoes age 6: Shrapnel
@@ -19794,53 +19761,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'require_achievement_eligibility' => true,
             );
             break;
-
-        // id 387 Echoes age 6: Loom
-        case "387E1A":
-            // "Score your lowest top card."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-                
-                'age' => self::getMinAgeOnBoardTopCards($player_id),
-            );
-            break;
-
-        case "387N1A":
-            // "You may return two cards of different value from your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "387N1B":
-            // "You may return two cards of different value from your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
             
         // id 390 Echoes age 6: Steamboat
         case "390D1A":
@@ -23613,29 +23533,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 387, Echoes age 6: Loom
-                case "387N1A":
-                    if ($n > 0) { // card returned
-                        $selectable_card_ids = array();
-                        foreach (self::getCardsInLocation($player_id, 'score') as $card) {
-                            if ($this->innovationGameState->get('age_last_selected') != $card['age']) {
-                                $selectable_card_ids[] = $card['id'];
-                            }
-                        }
-                        self::setAuxiliaryArray($selectable_card_ids);
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "387N1B":
-                    if ($n > 0) { // "If you do"
-                        // "draw and tuck three 6s."
-                        self::executeDrawAndTuck($player_id, 6);
-                        self::executeDrawAndTuck($player_id, 6);
-                        self::executeDrawAndTuck($player_id, 6);
-                    }
                     break;
     
                 // id 389, Echoes age 6: Hot Air Balloon

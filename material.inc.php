@@ -1963,10 +1963,11 @@ $this->textual_card_infos = array(
     ),
 
     387 => array(
-        'name'                => clienttranslate('Loom'),
-        'echo_effect_1'       => clienttranslate('Score your lowest top card.'),
-        'non_demand_effect_1' => clienttranslate('You may return two cards of different value from your score pile. If you do, draw and tuck three ${age_6}s.'),
-        'non_demand_effect_2' => clienttranslate('If you have five or more ${icon_0} visible on your board in one color, claim the Heritage achievement.'),
+        'name'                                => clienttranslate('Loom'),
+        'echo_effect_1'                       => clienttranslate('Score your lowest top card.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may return two cards of different value from your score pile. If you do, draw and tuck three ${age_6}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may return exactly two cards of different value from your score pile. If you do, draw and tuck three ${age_6}.'),
+        'non_demand_effect_2'                 => clienttranslate('If you have five or more ${icon_0} visible on your board in one color, claim the Heritage achievement.'),
     ),
 
     388 => array(
