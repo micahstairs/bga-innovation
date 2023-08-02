@@ -10929,7 +10929,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 392)
+            || (330 <= $card_id && $card_id <= 393)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13948,24 +13948,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 393, Echoes age 6: Indian Clubs
-            case "393D1":
-                $step_max = 1;
-                break;
-
-            case "393N1":
-                $cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                $cards_in_hand = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                $ages_to_score = array();
-                for ($age=1; $age <= 11; $age++) {
-                    if ($cards_in_score_pile[$age] > 0 && $cards_in_hand[$age] > 0) {
-                        self::setAuxiliaryValue($age);
-                        $step_max = 1;
-                        break;
-                    }
-                }
                 break;
                 
             // id 394, Echoes age 6: Kaleidoscope
@@ -19577,37 +19559,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 393, Echoes age 6: Indian Clubs
-        case "393D1A":
-            // "I demand you return two cards from your score pile!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;
-
-        case "393N1A":
-            // "For every value of card you have in your score pile, score a card from your hand of that value."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-                
-                'age' => self::getAuxiliaryValue(),
-            );
-            break;
-            
         // id 394 Echoes age 6: Kaleidoscope
         case "394N1A":
             // "You may splay your cards of that color right."
@@ -23276,22 +23227,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 393, Echoes age 6: Indian Clubs
-                case "393N1A":
-                    $prev_value = self::getAuxiliaryValue();
-                    
-                    $cards_in_score_pile = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                    $cards_in_hand = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                    for ($age=$prev_value+1; $age <= 11; $age++) {
-                        if ($cards_in_score_pile[$age] > 0 && $cards_in_hand[$age] > 0) {
-                            self::setAuxiliaryValue($age);
-                            $step--;
-                            self::incrementStep(-1);
-                            break;
-                        }
-                    }
                     break;
 
                 // id 396, Echoes age 7: Typewriter

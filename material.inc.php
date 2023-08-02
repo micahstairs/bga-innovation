@@ -2007,9 +2007,10 @@ $this->textual_card_infos = array(
     ),
 
     393 => array(
-        'name'                => clienttranslate('Indian Clubs'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return two cards from your score pile!'),
-        'non_demand_effect_1' => clienttranslate('For every value of card you have in your score pile, score a card from your hand of that value.'),
+        'name'                              => clienttranslate('Indian Clubs'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you return two cards from your score pile!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you return two cards from your score pile! If Indian Clubs was foreseen, return all cards from your score pile!'),
+        'non_demand_effect_1'               => clienttranslate('For every value of card you have in your score pile, score a card from your hand of that value.'),
     ),
 
     394 => array(
