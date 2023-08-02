@@ -1990,10 +1990,11 @@ $this->textual_card_infos = array(
     ),
 
     391 => array(
-        'name'                => clienttranslate('Dentures'),
-        'echo_effect_1'       => clienttranslate('Draw and tuck a ${age_6}.'),
-        'non_demand_effect_1' => clienttranslate('Score the top two non-bottom cards of the color of the last card you tucked due to Dentures. If there are none to score, draw and tuck a ${age_6}, then repeat this dogma effect.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your blue cards right.'),
+        'name'                                => clienttranslate('Dentures'),
+        'echo_effect_1'                       => clienttranslate('Draw and tuck a ${age_6}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score the top two non-bottom cards of the color of the last card you tucked due to Dentures. If there are none to score, draw and tuck a ${age_6}, then repeat this dogma effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score the top two non-bottom cards of the color of the last card you tucked due to Dentures. If there are none to score, draw and tuck a ${age_6}, then repeat this effect.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your blue cards right.'),
     ),
 
     392 => array(

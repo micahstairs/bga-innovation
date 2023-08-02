@@ -10929,7 +10929,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 390)
+            || (330 <= $card_id && $card_id <= 391)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13947,50 +13947,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 391, Echoes age 6: Dentures
-            case "391E1":
-                // "Draw and tuck a 6."
-                $card = self::executeDrawAndTuck($player_id, 6);
-                self::setIndexedAuxiliaryValue($player_id, $card['color']);
-                break;
-                
-            case "391N1":
-                // "Score the top two non-bottom cards of the color of the last card you tucked due to Dentures."
-                if (self::echoEffectWasExecuted()) {
-                    $color = self::getIndexedAuxiliaryValue($player_id);
-                } else {
-                    $color = -1;
-                }
-                $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                
-                $continue = false;
-                do {
-                    if ($color >= 0 && $color_count[$color] > 2) {
-                        // Score the top two cards
-                        $card = self::getTopCardOnBoard($player_id, $color);
-                        self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
-                        $card = self::getTopCardOnBoard($player_id, $color);
-                        self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
-                        $continue = false;
-                    } else if ($color >= 0 && $color_count[$color] == 2) {
-                        // Score the top card only
-                        $card = self::getTopCardOnBoard($player_id, $color);
-                        self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true);
-                        $continue = false;
-                    } else if ($color < 0 || $color_count[$color] == 1) {
-                        // "If there are none to score, draw and tuck a 6, then repeat this dogma effect."
-                        $continue = true;
-                        $card = self::executeDrawAndTuck($player_id, 6);
-                        $color = $card['color'];
-                        $color_count = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                    }
-                } while($continue);
-                break;
-
-            case "391N2":
                 $step_max = 1;
                 break;
 
@@ -19667,19 +19623,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 391 Echoes age 6: Dentures
-        case "391N2A":
-            // "You may splay your blue cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(0) /* blue */
             );
             break;
 
