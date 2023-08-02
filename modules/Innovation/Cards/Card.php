@@ -549,6 +549,11 @@ abstract class Card
     return $this->game->innovationGameState->get('color_last_selected');
   }
 
+  protected function getLastSelectedOwner(): int
+  {
+    return $this->game->innovationGameState->get('owner_last_selected');
+  }
+
   // AUXILARY VALUE HELPERS
 
   protected function getAuxiliaryValue(): int

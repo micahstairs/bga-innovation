@@ -10929,7 +10929,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 388)
+            || (330 <= $card_id && $card_id <= 389)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13948,35 +13948,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 389, Echoes age 6: Hot Air Balloon
-            case "389E1":
-                // "Draw and score a 7."
-                self::executeDrawAndScore($player_id, 7);
-                break;
-                
-            case "389N1":
-                // "You may achieve (if eligible) a top card from any other player's board if they have an achievement of matching value."
-                $card_id_list = array();
-                foreach (self::getAllActivePlayerIds() as $any_player_id) {
-                    if ($player_id != $any_player_id) {
-                        $top_cards = self::getTopCardsOnBoard($any_player_id);
-                        $achievement_age_counts = self::countCardsInLocationKeyedByAge($any_player_id, 'achievements');
-                        foreach ($top_cards as $card) {
-                            if ($achievement_age_counts[$card['faceup_age']] > 0) {
-                                $card_id_list[] = $card['id'];
-                            }
-                        }
-                    }
-                }
-                if (count($card_id_list) > 0) {
-                    self::setAuxiliaryArray($card_id_list);
-                    $step_max = 1;
-                } else {
-                    // "Otherwise, draw and meld a 7"
-                    self::executeDrawAndMeld($player_id, 7);
-                }
                 break;
                 
             // id 390, Echoes age 6: Steamboat
@@ -19723,25 +19694,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 389 Echoes age 6: Hot Air Balloon
-        case "389N1A":
-            // "You may achieve (if eligible) a top card from any player's board if they have an achievement of matching value."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'card_ids_are_in_auxiliary_array' => true,
-                
-                'require_achievement_eligibility' => true,
-            );
-            break;
             
         // id 390 Echoes age 6: Steamboat
         case "390D1A":
@@ -23514,21 +23466,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-    
-                // id 389, Echoes age 6: Hot Air Balloon
-                case "389N1A":
-                    // "If you do, transfer your top green card to that player's board."
-                    if ($n > 0) {
-                        $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                        if ($top_green_card != null) {
-                            $last_owner = $this->innovationGameState->get('owner_last_selected');
-                            self::transferCardFromTo($top_green_card, $last_owner, 'board');
-                        }
-                        // "Otherwise, draw and meld a 7."
-                    } else {
-                        self::executeDrawAndMeld($player_id, 7);
-                    }
                     break;
                     
                 // id 392, Echoes age 6: Morphine
