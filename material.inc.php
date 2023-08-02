@@ -2014,8 +2014,9 @@ $this->textual_card_infos = array(
     ),
 
     394 => array(
-        'name'                => clienttranslate('Kaleidoscope'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_7}. You may splay your cards of that color right.'),
+        'name'                       => clienttranslate('Kaleidoscope'),
+        'non_demand_effect_1'        => clienttranslate('Draw and meld a ${age_7}. You may splay your cards of that color right.'),
+        'non_demand_effect_2_fourth' => clienttranslate('Junk an available achievement of value equal to the number of ${icon_3} on your board. If Kaleidoscope was foreseen, junk all available achievements of lower value.'),
     ),
 
     /* Echoes - age 7 */

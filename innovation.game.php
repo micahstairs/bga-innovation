@@ -10929,7 +10929,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 393)
+            || (330 <= $card_id && $card_id <= 394)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13949,14 +13949,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-                
-            // id 394, Echoes age 6: Kaleidoscope
-            case "394N1":
-                // "Draw and meld a 7"
-                $card = self::executeDrawAndMeld($player_id, 7);
-                self::setAuxiliaryValue($card['color']);
-                $step_max = 1;
-                break;
 
             // id 395, Echoes age 7: Photography
             case "395E1":
@@ -15376,6 +15368,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $options['location_to'] = 'deck';
                     $options['bottom_to'] = false;
                     unset($options['topdeck_keyword']);
+                }
+                if (array_key_exists('junk_keyword', $options)) {
+                    $options['location_to'] = 'junk';
+                    unset($options['junk_keyword']);
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;
@@ -19556,19 +19552,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-            
-        // id 394 Echoes age 6: Kaleidoscope
-        case "394N1A":
-            // "You may splay your cards of that color right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(self::getAuxiliaryValue()),
             );
             break;
 
