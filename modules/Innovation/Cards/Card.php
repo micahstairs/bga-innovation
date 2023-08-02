@@ -200,6 +200,14 @@ abstract class Card
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/ false, /*type=*/ $type);
   }
 
+  protected function transferToHand($card, int $playerId = null)
+  {
+    if (!$card) {
+      return null;
+    }
+    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
+  }
+
   protected function score($card, int $playerId = null)
   {
     if (!$card) {
@@ -459,6 +467,31 @@ abstract class Card
   protected function isSpecialAchievement($card): bool
   {
     return $card['age'] === null;
+  }
+
+  protected function isBlue($card): bool
+  {
+    return $card['color'] == $this->game::BLUE;
+  }
+
+  protected function isRed($card): bool
+  {
+    return $card['color'] == $this->game::RED;
+  }
+
+  protected function isGreen($card): bool
+  {
+    return $card['color'] == $this->game::GREEN;
+  }
+
+  protected function isYellow($card): bool
+  {
+    return $card['color'] == $this->game::YELLOW;
+  }
+
+  protected function isPurple($card): bool
+  {
+    return $card['color'] == $this->game::PURPLE;
   }
 
   protected function getCard(int $cardId)

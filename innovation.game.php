@@ -10929,7 +10929,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 389)
+            || (330 <= $card_id && $card_id <= 390)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13948,31 +13948,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-                
-            // id 390, Echoes age 6: Steamboat
-            case "390D1":
-                // "I demand you draw and reveal a 6!"
-                $drawn_card = self::executeDraw($player_id, 6, 'revealed');
-                
-                if ($drawn_card['color'] == 0 || $drawn_card['color'] == 3) {
-                    // "If it is blue or yellow, transfer it and all cards in your hand to my hand!"
-                    $ids_of_cards_in_player_hand = self::getIdsOfCardsInLocation($player_id, 'hand');
-                    
-                    self::transferCardFromTo($drawn_card, $launcher_id, 'hand');
-                    
-                    foreach($ids_of_cards_in_player_hand as $id) {
-                        $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $launcher_id, 'hand');
-                    }
-                } else if ($drawn_card['color'] == 1 || $drawn_card['color'] == 2) {
-                    // "If it is red or green, keep it and transfer two cards from your score pile to mine!"
-                    $step_max = 1;
-                    self::transferCardFromTo($drawn_card, $player_id, 'hand');
-                } else {
-                    // "If it is purple, keep it!"
-                    self::transferCardFromTo($drawn_card, $player_id, 'hand');
-                }
                 break;
 
             // id 391, Echoes age 6: Dentures
@@ -19692,20 +19667,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-            
-        // id 390 Echoes age 6: Steamboat
-        case "390D1A":
-            // "transfer two cards from your score pile to mine!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
             );
             break;
 

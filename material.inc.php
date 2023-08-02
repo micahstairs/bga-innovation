@@ -1984,8 +1984,9 @@ $this->textual_card_infos = array(
     ),
 
     390 => array(
-        'name'              => clienttranslate('Steamboat'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal a ${age_6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine! If it is purple, keep it!'),
+        'name'                              => clienttranslate('Steamboat'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you draw and reveal a ${age_6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, keep it and transfer two cards from your score pile to mine! If it is purple, keep it!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you draw and reveal a ${age_6}! If it is blue or yellow, transfer it and all cards in your hand to my hand! If it is red or green, transfer two cards from your score pile to mine!'),
     ),
 
     391 => array(
