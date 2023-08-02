@@ -1998,11 +1998,12 @@ $this->textual_card_infos = array(
     ),
 
     392 => array(
-        'name'                => clienttranslate('Morphine'),
-        'echo_effect_1'       => clienttranslate('Score an odd-valued card from your hand.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return all odd-valued cards in your hand! Draw a ${age_6}!'),
-        'non_demand_effect_1' => clienttranslate('Draw a card of value one higher than the highest card returned due to the demand, if any were returned.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your red cards right.'),
+        'name'                                => clienttranslate('Morphine'),
+        'echo_effect_1'                       => clienttranslate('Score an odd-valued card from your hand.'),
+        'i_demand_effect_1'                   => clienttranslate('${I demand} you return all odd-valued cards in your hand! Draw a ${age_6}!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw a card of value one higher than the highest card returned due to the demand, if any were returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw a card of value one higher than the highest card returned due to the demand.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your red cards right.'),
     ),
 
     393 => array(

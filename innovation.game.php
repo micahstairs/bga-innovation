@@ -10929,7 +10929,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 391)
+            || (330 <= $card_id && $card_id <= 392)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13947,55 +13947,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 392, Echoes age 6: Morphine
-            case "392E1":
-                // Get list of odd-valued cards in hand
-                $odd_card_ids = array();
-                foreach (self::getCardsInHand($player_id) as $card) {
-                    if ($card['age'] % 2 == 1) {
-                        $odd_card_ids[] = $card['id'];
-                    }
-                }
-                if (count($odd_card_ids) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryArray($odd_card_ids);
-                }
-                
-                // Initialize the auxiliary value before the demand begins
-                self::setAuxiliaryValue(0);
-                break;
-
-            case "392D1":
-                $odd_card_ids = array();
-                $max_value = self::getAuxiliaryValue();
-                foreach (self::getCardsInHand($player_id) as $card) {
-                    if ($card['age'] % 2 == 1) {
-                        $odd_card_ids[] = $card['id'];
-                        $max_value = max($card['age'], $max_value);
-                    }
-                }
-                self::setAuxiliaryValue($max_value);
-                
-                if (count($odd_card_ids) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryArray($odd_card_ids);
-                } else {
-                    self::executeDraw($player_id, 6);
-                }
-                break;
-
-            case "392N1":
-                // "Draw a card of value one higher than the highest card returned due to the demand, if any were returned."
-                $max_value_returned = self::getAuxiliaryValue();
-                if ($max_value_returned > 0) {
-                    self::executeDraw($player_id, $max_value_returned + 1);
-                }
-                break;
-
-            case "392N2":
                 $step_max = 1;
                 break;
                 
@@ -19625,51 +19576,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 392 Echoes age 6: Morphine
-        case "392E1A":
-            // "Score an odd-valued card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-
-        case "392D1A":
-            // "I demand you return all odd-valued cards in your hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => count(self::getAuxiliaryArray()),
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-            
-        case "392N2A":
-            // "You may splay your red cards right."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => self::RIGHT,
-                'color' => array(1), /* red */
-            );
-            break;
             
         // id 393, Echoes age 6: Indian Clubs
         case "393D1A":
@@ -23368,12 +23274,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
                 // id 219, Relic age 7: Safety Pin
                 case "219D1A":
-                    // "Draw a 6!"
-                    self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 392, Echoes age 6: Morphine
-                case "392D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
