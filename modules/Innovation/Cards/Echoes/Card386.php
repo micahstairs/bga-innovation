@@ -58,7 +58,7 @@ class Card386 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::isEcho() && $card['color'] == $this->game::BLUE) {
+    if (self::isEcho() && self::isBlue($card)) {
       $this->game->setIndexedAuxiliaryValue(self::getPlayerId(), 1); // Track whether a blue card was melded
     }
   }

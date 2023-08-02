@@ -16,7 +16,7 @@ class Card357 extends Card
     $maxBonus = $this->game->getMaxBonusIconOnBoard(self::getPlayerId());
     $card = self::drawAndReveal($maxBonus);
     self::foreshadow($card, self::getLauncherId());
-    if ($card['color'] == $this->game::RED) {
+    if (self::isRed($card)) {
       foreach (self::getCards('hand') as $card) {
         self::transferToScorePile($card, self::getLauncherId());
       }

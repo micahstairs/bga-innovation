@@ -44,7 +44,7 @@ class Card516 extends Card
   {
     if (self::getCurrentStep() === 2) {
       $card = self::drawAndReveal(self::getLastSelectedAge() + 1);
-      if ($card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE) {
+      if (self::isRed($card) || self::isPurple($card)) {
         self::setAuxiliaryValue2(self::getLastSelectedId());
         self::setMaxSteps(3);
       } else {
@@ -93,7 +93,7 @@ class Card516 extends Card
     } else if (count($secrets) === 1) {
       $secret = $secrets[0];
       $card = self::drawAndReveal($secret['faceup_age'] + 1);
-      if ($card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE) {
+      if (self::isRed($card) || self::isPurple($card)) {
         self::safeguard($card);
       } else {
         self::putInHand($card);

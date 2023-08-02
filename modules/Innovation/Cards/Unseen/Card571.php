@@ -36,7 +36,7 @@ class Card571 extends Card
   {
     if (self::getCurrentStep() === 1) {
       $card = self::drawAndTuck(8);
-      $isRedOrPurple = $card['color'] == $this->game::RED || $card['color'] == $this->game::PURPLE;
+      $isRedOrPurple = self::isRed($card) || self::isPurple($card);
       if ($isRedOrPurple) {
         self::setNextStep(1);
       }

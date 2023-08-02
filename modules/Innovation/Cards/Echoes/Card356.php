@@ -61,7 +61,7 @@ class Card356 extends Card
     } else {
       return [
         'can_pass' => true,
-          'splay_direction' => self::LEFT,
+          'splay_direction' => $this->game::LEFT,
           'color' => [$this->game::YELLOW, $this->game::BLUE],
       ];
     }
