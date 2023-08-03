@@ -10930,7 +10930,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 395)
+            || (330 <= $card_id && $card_id <= 396)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13949,19 +13949,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 396, Echoes age 7: Typewriter
-            case "396N1":
-                $cards_to_draw = 0;
-                $hand_color_counts = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                for ($color = 0; $color < 5 ; $color++) {
-                    if ($hand_color_counts[$color] > 0) {
-                        $cards_to_draw++;
-                    }
-                }
-                $step_max = 1;
-                self::setAuxiliaryValue($cards_to_draw);
                 break;
 
             // id 397, Echoes age 7: Machine Gun
@@ -19536,19 +19523,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 396 Echoes age 7: Typewriter
-        case "396N1A":
-            // "Return all cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-            );
-            break;
-
         // id 397 Echoes age 7: Machine Gun
         case "397D1A":
             // "I demand you transfer all of your top cards with a bonus to my score pile!"
@@ -23159,14 +23133,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 396, Echoes age 7: Typewriter
-                case "396N1A":
-                    // "Draw a 6. For each color of card returned, draw a card of the next higher value."
-                    for ($i = 0; $i <= self::getAuxiliaryValue(); $i++) {
-                        self::executeDraw($player_id, 6 + $i);
-                    }
                     break;
 
                 // id 397 Echoes age 7: Machine Gun

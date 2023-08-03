@@ -2031,8 +2031,9 @@ $this->textual_card_infos = array(
     ),
 
     396 => array(
-        'name'                => clienttranslate('Typewriter'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card returned, draw a card of the next higher value.'),
+        'name'                               => clienttranslate('Typewriter'),
+        'non_demand_effect_1_first_and_thid' => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card returned, draw a card of the next higher value.'),
+        'non_demand_effect_1_fourth'         => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card you return, draw a card of value one higher than the highest card in your hand.'),
     ),
 
     397 => array(
