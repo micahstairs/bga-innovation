@@ -2054,9 +2054,13 @@ $this->textual_card_infos = array(
     ),
 
     399 => array(
-        'name'                => clienttranslate('Jeans'),
-        'echo_effect_1'       => clienttranslate('Draw two ${age_9}s. Return one, foreshadow the other.'),
-        'non_demand_effect_1' => clienttranslate('Choose two different values less than ${age_7}. Draw and reveal a card of each value. Meld one, and return the other.'),
+        'name'                                => clienttranslate('Jeans'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw two ${age_9}. Return one, foreshadow the other.'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw two ${age_8}. Return one, foreshadow the other.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose two different values less than ${age_7}. Draw and reveal a card of each value. Meld one, and return the other.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and reveal two cards of value equal to your top blue card. Meld one, and return the other.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Junk all cards in the ${age_7} or ${age_8} deck.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If Jeans was foreseen, transfer a valued junked card to your hand.'),
     ),
 
     400 => array(
