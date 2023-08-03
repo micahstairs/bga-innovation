@@ -58,6 +58,7 @@ class Innovation extends Table
     const INDUSTRY = 5;
     const EFFICIENCY = 6;
     const AVATAR = 7;
+    const ECHO_EFFECT_ICON = 10;
 
     // Colors
     const BLUE = 0;
@@ -10929,7 +10930,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 394)
+            || (330 <= $card_id && $card_id <= 395)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13948,26 +13949,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 395, Echoes age 7: Photography
-            case "395E1":
-                $step_max = 1;
-                break;
-
-            case "395D1":
-                $step_max = 1;
-                break;
-
-            case "395N1":
-                // "If you have at least three echo effects visible in one color, claim the History achievement."
-                $eligible = false;
-                for ($color = 0; $color < 5 ; $color++) {
-                    if (self::countVisibleIconsInPile($player_id, 10 /* echo effect */, $color) >= 3) {
-                        self::claimSpecialAchievement($player_id, 438); // History
-                        break;
-                    }
-                }
                 break;
 
             // id 396, Echoes age 7: Typewriter
@@ -19552,38 +19533,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 395 Echoes age 7: Photography
-        case "395E1A":
-            // "Meld a card from your forecast."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "395D1A":
-            // "I demand you take the highest top card from your board into your hand!"
-            // TODO(ECHOES): Test that this behaves correctly with Battleship Yamato.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-                
-                'age' => self::getMaxAgeOnBoardTopCards($player_id),
             );
             break;
 

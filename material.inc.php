@@ -2022,10 +2022,12 @@ $this->textual_card_infos = array(
     /* Echoes - age 7 */
 
     395 => array(
-        'name'                => clienttranslate('Photography'),
-        'echo_effect_1'       => clienttranslate('Meld a card from your forecast.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you take the highest top card from your board into your hand!'),
-        'non_demand_effect_1' => clienttranslate('If you have at least three echo effects visible in one color, claim the History achievement.'),
+        'name'                               => clienttranslate('Photography'),
+        'echo_effect_1'                      => clienttranslate('Meld a card from your forecast.'),
+        'i_demand_effect_1_first_or_third'   => clienttranslate('${I demand} you take the highest top card from your board into your hand!'),
+        'i_demand_effect_1_fourth'           => clienttranslate('${I demand} you transfer the highest top card from your board to your hand!'),
+        'non_demand_effect_1_first_or_third' => clienttranslate('If you have at least three echo effects visible in one color, claim the History achievement.'),
+        'non_demand_effect_1_fourth'         => clienttranslate('If you have three or more echo effects visible in one color, claim the History achievement. If you do, and Photography was foreseen, you win.'),
     ),
 
     396 => array(
