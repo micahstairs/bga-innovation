@@ -2574,7 +2574,7 @@ class Innovation extends Table
                 $from_somewhere_for_player = clienttranslate(' from the score pile of ${targetable_players}');
                 $from_somewhere_for_others = clienttranslate(' from the score pile of ${targetable_players}');
             }
-        } else if ($location_from === 'board' || $location_from === 'pile') {
+        } else if ($location_from === 'board') {
             if ($targetable_players === null) {
                 $from_somewhere_for_player = clienttranslate(' from your board');
                 $from_somewhere_for_others = clienttranslate(' from his board');
@@ -2583,6 +2583,14 @@ class Innovation extends Table
                 } else {
                     $card_qualifier = clienttranslate('top ');
                 }
+            } else {
+                $from_somewhere_for_player = clienttranslate(' from the board of ${targetable_players}');
+                $from_somewhere_for_others = clienttranslate(' from the board of ${targetable_players}');
+            }
+        } else if ($location_from === 'pile') {
+            if ($targetable_players === null) {
+                $from_somewhere_for_player = clienttranslate(' from your board');
+                $from_somewhere_for_others = clienttranslate(' from his board');
             } else {
                 $from_somewhere_for_player = clienttranslate(' from the board of ${targetable_players}');
                 $from_somewhere_for_others = clienttranslate(' from the board of ${targetable_players}');
@@ -9962,30 +9970,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 401, Echoes age 7: Elevator
-            case "401E1A":
-                $message_for_player = clienttranslate('${You} must choose which green card to score');
-                $message_for_others = clienttranslate('${player_name} must choose which green card to score');
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate("Top")),
-                                array('value' => 0, 'text' => clienttranslate("Bottom")),
-                );
-                break;
-
-            case "401N1A":
-                $message_for_player = clienttranslate('Choose a value present in your score pile');
-                $message_for_others = clienttranslate('${player_name} must choose a value present in his score pile');
-                break;
-                
-            case "401N1B":
-                $message_for_player = clienttranslate('${You} must choose where to transfer cards from');
-                $message_for_others = clienttranslate('${player_name} must choose where to transfer cards from');
-                $options = array(
-                                array('value' => 1, 'text' => clienttranslate("Hands")),
-                                array('value' => 0, 'text' => clienttranslate("Score piles")),
-                );
-                break;
-
             // id 402, Echoes age 7: Fertilizer
             case "402N2A":
                 $message_for_player = clienttranslate('Choose a value to draw and foreshadow');
@@ -10931,7 +10915,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 400)
+            || (330 <= $card_id && $card_id <= 401)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13950,42 +13934,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 401, Echoes age 7: Elevator
-            case "401E1":
-                // TODO(LATER): Instead of clicking buttons to choose the top or bottom card, it would a better user experience
-                // if we allowed them to directly click on the cards (we will require an option to force the pile to expand so
-                // that the bottom and top cards are both visible).
-                $green_card_count = self::countCardsInLocationKeyedByColor($player_id, 'board')[2];
-                if ($green_card_count > 1) {
-                    $step_max = 1;
-                } else if ($green_card_count == 1) {
-                    // No choice to be made. Score the card that is there.
-                    $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    self::scoreCard($top_green_card, $player_id);
-                }
-                break;
-
-            case "401N1":
-                $age_list = array();
-                $cards = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                for ($age = 1; $age <= 11; $age++) {
-                    if ($cards[$age] > 0) {
-                        $age_list[] = $age;
-                    }
-                }
-
-                // TODO(#601): Simplify this once choose_value choices are automated.
-                if (count($age_list) > 1) {
-                    self::setAuxiliaryValueFromArray($age_list);
-                    $step_max = 2;
-                } else if (count($age_list) == 1) {
-                    // Only one card value present.  No decision needed.
-                    $step_max = 2;
-                    $step = 2; self::incrementStep(1);
-                    self::setAuxiliaryValue($age_list[0]);
-                }
                 break;
 
             // id 402, Echoes age 7: Fertilizer
@@ -19469,36 +19417,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 401, Echoes age 7: Elevator
-        case "401E1A":
-            // "Score your top or bottom green card."
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_yes_or_no' => true
-            );
-            break;
-            
-        case "401N1A":
-            // "Choose a value present in your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-            );
-            break;
-
-        case "401N1B":
-            // "Choose to transfer all cards of the chosen value from either all other players' hands or all their score piles to your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_yes_or_no' => true
-            );
-            break;
         
         // id 402, Echoes age 7: Fertilizer
         case "402N1A":
@@ -22918,26 +22836,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 401, Echoes age 7: Elevator
-                case "401N1B":
-                    // "Choose to transfer all cards of the chosen value from either all other players' hands or all their score piles to your score pile."
-                    $age_to_transfer = self::getAuxiliaryValue();
-                    if (self::getAuxiliaryValue2() == 1) {
-                        $source = 'hand';
-                    } else {
-                        $source = 'score';
-                    }
-                    foreach (self::getAllActivePlayerIds() as $player) {
-                        if ($player != $player_id) {
-                            $cards = self::getCardsInLocationKeyedByAge($player, $source)[$age_to_transfer];
-                            for ($i = 0; $i < count($cards); $i++) {
-                                $cards[$i] = self::getCardInfo($cards[$i]['id']);
-                                self::transferCardFromTo($cards[$i], $player_id, 'score');
-                            }
-                        }
-                    }
-                    break;
-                    
                 // id 402, Echoes age 7: Fertilizer
                 case "402N1A":
                     if ($n > 0) { // "if you do"
@@ -24583,34 +24481,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 401, Echoes age 7: Elevator
-            case "401E1A":
-                if ($choice == 1) {
-                    $card = self::getTopCardOnBoard($player_id, 2); /* green */
-                } else {
-                    $card = self::getBottomCardOnBoard($player_id, 2); /* green */
-                }
-                self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/false, /*score_keyword=*/true, /*bottom_from=*/ false, $meld_keyword);
-                break;
-
-            case "401N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            case "401N1B":
-                $age = self::getAuxiliaryValue();
-                if ($choice == 0) { // Score piles
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other score piles to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other score piles to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
-                } else { // Hands
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer the ${age}s from all other hands to your score pile.'), array('You' => 'You', 'age' => self::getAgeSquare($age)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer the ${age}s from all other hands to his score pile.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age)));
-                }
-                self::setAuxiliaryValue2($choice);
                 break;
 
             // id 402, Echoes age 7: Fertilizer

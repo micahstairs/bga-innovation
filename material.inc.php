@@ -2072,9 +2072,10 @@ $this->textual_card_infos = array(
     ),
 
     401 => array(
-        'name'                => clienttranslate('Elevator'),
-        'echo_effect_1'       => clienttranslate('Score your top or bottom green card.'),
-        'non_demand_effect_1' => clienttranslate('Choose a value present in your score pile. Choose to transfer all cards of the chosen value from either all other players\' hands or all their score piles to your score pile.'),
+        'name'                               => clienttranslate('Elevator'),
+        'echo_effect_1'                      => clienttranslate('Score your top or bottom green card.'),
+        'non_demand_effect_1_first_or_third' => clienttranslate('Choose a value present in your score pile. Choose to transfer all cards of the chosen value from either all other players\' hands or all their score piles to your score pile.'),
+        'non_demand_effect_1_fourth'         => clienttranslate('Choose a value present in your score pile. Choose to score all cards of the chosen value from either all opponents\' hands or all their score piles. Draw and foreshadow a card of the chosen value.'),
     ),
 
     402 => array(
