@@ -45,7 +45,7 @@ class Card355 extends Card
     } else if (self::getCurrentStep() === 1) {
       return [
         'choose_player' => true,
-        'players' => self::getOtherPlayerIds(),
+        'players' => $this->game->getOtherActivePlayers(self::getPlayerId()),
       ];
     } else {
       return [

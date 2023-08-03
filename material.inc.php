@@ -2064,9 +2064,11 @@ $this->textual_card_infos = array(
     ),
 
     400 => array(
-        'name'                => clienttranslate('Telegraph'),
-        'non_demand_effect_1' => clienttranslate('You may choose an opponent and a color. Match your splay in that color to theirs.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your blue cards up.'),
+        'name'                                => clienttranslate('Telegraph'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may choose an opponent and a color. Match your splay in that color to theirs.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may choose another player and a color, and match your splay in that color to theirs.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your blue cards up.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If Telegraph was foreseen, splay all your splayed colors up.'),
     ),
 
     401 => array(
