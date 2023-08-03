@@ -72,11 +72,4 @@ class Card367 extends Card
     }
   }
 
-  public function handleAbortedInteraction()
-  {
-    if (self::isDemand()) {
-      self::drawAndTuck(4);
-    }
-  }
-
 }

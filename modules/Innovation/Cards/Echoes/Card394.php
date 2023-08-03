@@ -52,12 +52,6 @@ class Card394 extends Card
     }
   }
 
-  public function handleAbortedInteraction() {
-    if (self::isSecondNonDemand() && self::wasForeseen()) {
-      self::junkAchievementsOfLowerValue(self::getAuxiliaryValue());
-    }
-  }
-
   public function junkAchievementsOfLowerValue($value) {
     foreach (self::getCards('achievements', 0) as $card) {
       if (self::isValuedCard($card) && $card['age'] < $value) {

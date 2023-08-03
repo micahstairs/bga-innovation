@@ -103,6 +103,7 @@ class Card370 extends Card
 
   public function handleAbortedInteraction()
   {
+    // TODO(LATER): Deduplicate this code with the above.
     if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 3 && self::getAuxiliaryValue() > 0) {
       self::drawAndForeshadow(6);
     } else if (self::isFourthEdition() && self::getCurrentStep() === 2) {

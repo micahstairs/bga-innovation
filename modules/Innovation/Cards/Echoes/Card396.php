@@ -36,6 +36,7 @@ class Card396 extends Card
     self::drawForEachColorReturned();
   }
 
+  // TODO(LATER): This can probably be removed.
   public function handleAbortedInteraction()
   {
     self::draw(6);

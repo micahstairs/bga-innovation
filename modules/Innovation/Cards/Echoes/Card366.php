@@ -35,15 +35,15 @@ class Card366 extends Card
   {
     if (self::getCurrentStep() === 1) {
       return [
-        'can_pass' => true,
-              'location_from' => 'forecast',
-              'location_to' => 'deck',
-              'bottom_to' => false, // put on top
-      ];
-    } else if (self::isFirstOrThirdEdition()){
-      return [
+        'can_pass'      => true,
         'location_from' => 'forecast',
-        'achieve_keyword' => true,
+        'location_to'   => 'deck',
+        'bottom_to'     => false, // put on top
+      ];
+    } else if (self::isFirstOrThirdEdition()) {
+      return [
+        'location_from'                   => 'forecast',
+        'achieve_keyword'                 => true,
         'require_achievement_eligibility' => true,
       ];
     } else {
@@ -53,16 +53,17 @@ class Card366 extends Card
         $this->game->transferCardFromTo($card, 0, 'achievements');
       }
       return [
-        'n' => count($forecastCards),
-        'owner_from' => 0,
-        'location_from' => 'achievements',
-        'location_to' => 'forecast',
+        'n'                               => count($forecastCards),
+        'owner_from'                      => 0,
+        'location_from'                   => 'achievements',
+        'location_to'                     => 'forecast',
         'card_ids_are_in_auxiliary_array' => true,
       ];
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::getCurrentStep() === 1 && self::getNumChosen() > 0) {
       self::setMaxSteps(2);
     } else if (self::isFourthEdition() && self::getCurrentStep() === 2) {
@@ -70,21 +71,23 @@ class Card366 extends Card
     }
   }
 
-  public function handleAbortedInteraction() {
+  public function handleAbortedInteraction()
+  {
     // Still junk the cards in the [5] deck even if there were no cards to exchange
     if (self::isFourthEdition() && self::getCurrentStep() === 2) {
       self::junk(5);
     }
   }
 
-  private function getAvailableStandardAchievementIds(): array {
+  private function getAvailableStandardAchievementIds(): array
+  {
     $cardIds = [];
-      foreach (self::getCards('achievements', 0) as $card)  {
-        if (self::isValuedCard($card)) {
-          $cardIds[] = $card['id'];
-        }
+    foreach (self::getCards('achievements', 0) as $card) {
+      if (self::isValuedCard($card)) {
+        $cardIds[] = $card['id'];
       }
-      return $cardIds;
+    }
+    return $cardIds;
   }
 
 }

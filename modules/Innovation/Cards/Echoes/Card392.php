@@ -81,6 +81,7 @@ class Card392 extends Card
   public function handleAbortedInteraction()
   {
     if (self::isDemand()) {
+      // If no odd cards were returned, a [6] still needs to be drawn
       self::draw(6);
     }
   }
