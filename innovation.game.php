@@ -7766,6 +7766,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('passPromoteCard');
 
+        // Promoting became mandatory in 4th edition
+        if (!$this->innovationGameState->usingFourthEditionRules()) {
+            self::throwInvalidChoiceException();
+        }
+
         $player_id = self::getCurrentPlayerId();
         self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to promote a card from your forecast.'), array('You' => 'You'));    
         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to promote a card from his forecast.'), array('player_name' => self::getPlayerNameFromId($player_id)));
@@ -7803,8 +7808,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         self::incStat(1, 'promoted_number', $player_id);
 
-        self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
-        $this->gamestate->nextState('promoteDogmaPlayerTurn');
+        if ($this->innovationGameState->usingFourthEditionRules()) {
+            self::setUpDogma($player_id, self::getCardInfo($card_id));
+            self::trace('promoteCardPlayerTurn->dogmaEffect (promoteCard)');
+            $this->gamestate->nextState('dogmaEffect');
+        } else {
+            self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
+            $this->gamestate->nextState('promoteDogmaPlayerTurn');
+        }
     }
 
     function promoteCardBack($owner, $location, $age, $type, $is_relic, $position) {
@@ -8797,8 +8808,20 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function argPromoteCardPlayerTurn() {
+        $player_id = $this->innovationGameState->get('active_player');
+        $must = $this->innovationGameState->usingFourthEditionRules() ? clienttranslate('must') : clienttranslate('may');
         return [
             "max_age_to_promote" => self::getCardInfo($this->innovationGameState->get('melded_card_id'))['age'],
+            'message_for_player' => [
+                'i18n' => ['log'],
+                'log' => clienttranslate('${You} ${must} choose a card to promote from your forecast'),
+                'args' => ['i18n' => ['must'], 'You' => 'You', 'must' => $must],
+            ],
+            'message_for_others' => [
+                'i18n' => ['log'],
+                'log' => clienttranslate('${player_name} ${must} choose a card to promote from your forecast'),
+                'args' => ['i18n' => ['must'], 'player_name' => self::getColoredPlayerName($player_id), 'must' => $must],
+            ],
         ];
     }
 

@@ -1342,7 +1342,9 @@ var Innovation = /** @class */ (function (_super) {
                     this.addActionButton("pass_artifact", _("Pass"), "action_clicForPassArtifact");
                     break;
                 case 'promoteCardPlayerTurn':
-                    this.addActionButton("pass_promote", _("Pass"), "action_clickForPassPromote");
+                    if (!this.gamedatas.fourth_edition) {
+                        this.addActionButton("pass_promote", _("Pass"), "action_clickForPassPromote");
+                    }
                     break;
                 case 'dogmaPromotedPlayerTurn':
                     this.addActionButton("dogma_promoted", _("Dogma"), "action_clickForDogmaPromoted");
