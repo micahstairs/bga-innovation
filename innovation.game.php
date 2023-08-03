@@ -10930,7 +10930,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 397)
+            || (330 <= $card_id && $card_id <= 398)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13950,21 +13950,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-                
-            // id 398, Echoes age 7: Rubber
-            case "398E1":
-                // "Draw and tuck two 8s."
-                self::executeDrawAndTuck($player_id, 8);
-                self::executeDrawAndTuck($player_id, 8);
-                break;
-
-            case "398N1":
-                $step_max = 1;
-                break;                
-
-            case "398N2":
-                $step_max = 1;
-                break;  
 
            // id 399, Echoes age 7: Jeans
             case "399E1":
@@ -19504,36 +19489,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 398 Echoes age 7: Rubber
-        case "398N1A":
-            // "Score a top card from your board without a bonus."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'without_bonus' => true,
-                
-                'score_keyword' => true,
-            );
-            break;
-        
-        case "398N2A":
-            // "You may splay your red cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3 /* up */,
-                'color' => array(1) /* red */
             );
             break;
 

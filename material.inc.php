@@ -2046,10 +2046,11 @@ $this->textual_card_infos = array(
     ),
 
     398 => array(
-        'name'                => clienttranslate('Rubber'),
-        'echo_effect_1'       => clienttranslate('Draw and tuck two ${age_8}s.'),
-        'non_demand_effect_1' => clienttranslate('Score a top card from your board without a bonus.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your red cards up.'),
+        'name'                       => clienttranslate('Rubber'),
+        'echo_effect_1'              => clienttranslate('Draw and tuck two ${age_8}'),
+        'non_demand_effect_1'        => clienttranslate('Score a top card from your board without a bonus.'),
+        'non_demand_effect_2'        => clienttranslate('You may splay your red cards up.'),
+        'non_demand_effect_3_fourth' => clienttranslate('If Rubber was foreseen, foreshadow a top card on your board.'),
     ),
 
     399 => array(
