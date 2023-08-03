@@ -10930,7 +10930,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 396)
+            || (330 <= $card_id && $card_id <= 397)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13948,22 +13948,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 397, Echoes age 7: Machine Gun
-            case "397E1":
-                // "If you have five top cards, draw and score a 7."
-                if (count(self::getTopCardsOnBoard($player_id)) == 5) {
-                    self::executeDrawAndScore($player_id, 7);
-                }
-                break;
-
-            case "397D1":
-                $step_max = 1;
-                break;
-                
-            case "397N1":
                 $step_max = 1;
                 break;
                 
@@ -19523,35 +19507,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 397 Echoes age 7: Machine Gun
-        case "397D1A":
-            // "I demand you transfer all of your top cards with a bonus to my score pile!"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'score',
-                
-                'with_bonus' => true,
-            );
-            break;
-
-        case "397N1A":
-            // "Return all your top non-red cards."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'color' => array(0,2,3,4),
-            );
-            break;
-        
         // id 398 Echoes age 7: Rubber
         case "398N1A":
             // "Score a top card from your board without a bonus."
@@ -23133,13 +23088,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 397 Echoes age 7: Machine Gun
-                case "397D1A":
-                    if ($n > 0) { // "If you transfered any, draw a 7!"
-                        self::executeDraw($player_id, 7);
-                    }
                     break;
 
                 // id 399 Echoes age 7: Jeans

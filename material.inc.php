@@ -2037,10 +2037,12 @@ $this->textual_card_infos = array(
     ),
 
     397 => array(
-        'name'                => clienttranslate('Machine Gun'),
-        'echo_effect_1'       => clienttranslate('If you have five top cards, draw and score a ${age_7}.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer all of your top cards with a bonus to my score pile! If you transfered any, draw a ${age_7}!'),
-        'non_demand_effect_1' => clienttranslate('Return all your top non-red cards.'),
+        'name'                                => clienttranslate('Machine Gun'),
+        'echo_effect_1'                       => clienttranslate('If you have five top cards, draw and score a ${age_7}.'),
+        'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you transfer all of your top cards with a bonus to my score pile! If you transfered any, draw a ${age_7}!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you transfer a top card with a bonus of each color from your board to my score pile! If you transfer any, junk four available achievements, and draw a ${age_7}!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all your top non-red cards.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return your top card of each non-red color.'),
     ),
 
     398 => array(
