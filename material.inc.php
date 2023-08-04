@@ -2086,10 +2086,11 @@ $this->textual_card_infos = array(
     ),
 
     403 => array(
-        'name'                => clienttranslate('Ice Cream'),
-        'echo_effect_1'       => clienttranslate('Score a non-purple top card from your board without a bonus.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you draw and meld a ${age_1}!'),
-        'non_demand_effect_1' => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
+        'name'                               => clienttranslate('Ice Cream'),
+        'echo_effect_1'                      => clienttranslate('Score a non-purple top card from your board without a bonus.'),
+        'i_demand_effect_1'                  => clienttranslate('${I demand} you draw and meld a ${age_1}!'),
+        'non_demand_effect_1_first_or_third' => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
+        'non_demand_effect_1_fourth'         => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. You may junk all cards in the chosen deck. If you do, achieve the highest junked card if eligible.'),
     ),
 
     404 => array(

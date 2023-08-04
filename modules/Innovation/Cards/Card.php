@@ -414,9 +414,9 @@ abstract class Card
 
   // BULK CARD HELPERS
 
-  protected function junkBaseDeck(int $age)
+  protected function junkBaseDeck(int $age): bool
   {
-    $this->game->junkBaseDeck($age);
+    return $this->game->junkBaseDeck($age);
   }
 
   protected function revealHand(int $playerId = null)

@@ -78,6 +78,7 @@ class Card380 extends Card
         self::setMaxSteps(2);
       }
     } else if (self::isFirstOrThirdEdition()) {
+      // TODO(LATER): This shouldn't really be a draw.
       $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
     } else {
       self::junkBaseDeck(self::getAuxiliaryValue2());

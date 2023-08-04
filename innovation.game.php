@@ -6039,11 +6039,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $this->innovationGameState->usingFourthEditionRules() ? 11 : 10;
     }
 
-    function junkBaseDeck($age) {
+    function junkBaseDeck($age): bool {
         $cardCount = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', self::BASE)[$age];
         if ($cardCount == 0) {
             self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, self::BASE)));
-            return;
+            return false;
         }
 
        $nextJunkPosition = 1 + self::getUniqueValueFromDB(self::format("
@@ -6085,6 +6085,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'next_junk_position' => $nextJunkPosition,
             ]
         );
+        return true;
     }
     
     function removeAllHandsBoardsAndScores() {
@@ -9970,21 +9971,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 403, Echoes age 7: Ice Cream
-            case "403N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-                
-            case "403N1B":
-                $age_value = self::getAuxiliaryValue2();
-                $message_args_for_player['age'] = self::getAgeSquare($age_value);
-                $message_args_for_others['age'] = self::getAgeSquare($age_value);        
-                $message_for_player = clienttranslate('Do ${you} want to transfer the bottom ${age} to the available achievements?');
-                $message_for_others = clienttranslate('${player_name} must decide whether to transfer the bottom ${age} to the available achievements');
-                $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                break;
-
             // id 406, Echoes age 8: X-ray
             case "406N1A":
                 $message_for_player = clienttranslate('Choose a value to foreshadow');
@@ -10909,7 +10895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 402)
+            || (330 <= $card_id && $card_id <= 403)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13927,20 +13913,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 403, Echoes age 7: Ice Cream
-            case "403E1":
-                $step_max = 1;
-                break;
-
-            case "403D1":
-                // "I demand you draw and meld a 1!"
-                self::executeDrawAndMeld($player_id, 1);
-                break;
-
-            case "403N1":
                 $step_max = 1;
                 break;
 
@@ -19402,46 +19374,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 403, Echoes age 7: Ice Cream
-        case "403E1A":
-            // "Score a non-purple top card from your board without a bonus."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'without_bonus' => true,
-                
-                'color' => array(0,1,2,3),
-                
-                'score_keyword' => true,
-            );
-            break;         
-
-        case "403N1A":
-            // "Choose the 6, 7, 8, or 9 deck."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-                'age' => array(6,7,8,9),
-            );
-            break;
-
-        case "403N1B":
-            // "you may transfer its bottom card to the available achievements."
-            $options = array(
-                'player_id' => $player_id, 
-                
-                'choose_yes_or_no' => true,
-            );
-            break;
             
         // id 404, Echoes age 7: Saxophone
         case "404N1A":
@@ -22798,22 +22730,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 403, Echoes age 7: Ice Cream
-                case "403N1A":
-                    // "If there is at least one card in that deck"
-                    $cards_to_draw_from = self::countCardsInLocationKeyedByAge(0, 'deck', /*base*/0);
-                    if ($cards_to_draw_from[self::getAuxiliaryValue2()] > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "403N1B":
-                    // "you may transfer its bottom card to the available achievements"
-                    if (self::getAuxiliaryValue() == 1) { // yes
-                        self::executeDraw(0, /*age=*/ self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/ false, 0, /*bottom_from=*/ true);
-                    }
-                    break;
-
                 // id 405, Echoes age 8: Radio Telescope
                 case "405N1A":
                     if ($n > 0) { // If a card was melded
@@ -24427,30 +24343,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
-            // id 403, Echoes age 7: Ice Cream
-            case "403N1A":
-                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue2($choice);
-                break;
-
             // id 406, Echoes age 8: X-ray
             case "406N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue2($choice);
-                break;
-                
-            case "403N1B":
-                $age_value = self::getAuxiliaryValue2();
-                if ($choice == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
-                } else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose not to transfer a ${age} to the available achievements.'), array('You' => 'You', 'age' => self::getAgeSquare($age_value)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses not to transfer a ${age} to the available achievements.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($age_value)));
-                }
-                self::setAuxiliaryValue($choice);
                 break;
 
             // id 413, Echoes age 8: Crossword
