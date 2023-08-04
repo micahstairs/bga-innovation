@@ -10895,7 +10895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 403)
+            || (330 <= $card_id && $card_id <= 404)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13914,49 +13914,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 404, Echoes age 7: Saxophone
-            case "404N1":
-                $step_max = 1;
-                break;
-
-            case "404N2":
-                // "If the music note for Bell, Flute, Piano, and Saxophone are visible anywhere"
-                $cards_to_draw = 0;
-                
-                // Check Bell
-                $bell_card = self::getCardInfo(342);
-                if (self::getIfTopCardOnBoard(342) || ($bell_card['location'] == 'board' && $bell_card['splay_direction'] >= 2)) { // up, right, or aslant
-                    $cards_to_draw++;
-                }
-                // Check Flute
-                $flute_card = self::getCardInfo(343);
-                if (self::getIfTopCardOnBoard(343) || ($flute_card['location'] == 'board' && $flute_card['splay_direction'] >= 2)) { // up, right, or aslant
-                    $cards_to_draw++;
-                }                
-                // Check Piano
-                $piano_card = self::getCardInfo(383);
-                if (self::getIfTopCardOnBoard(383) || ($piano_card['location'] == 'board' && $piano_card['splay_direction'] >= 3)) { // up or aslant
-                    $cards_to_draw++;
-                }
-                // Check Saxophone
-                $sax_card = self::getCardInfo(404);
-                if (self::getIfTopCardOnBoard(404) || ($sax_card['location'] == 'board' && $sax_card['splay_direction'] >= 3)) { // up or aslant
-                    $cards_to_draw++;
-                }
-                self::notifyGeneralInfo(clienttranslate('There is ${n} ${music_note} visible across all player boards.'), array('n' => $cards_to_draw, 'music_note' => self::getMusicNoteIcon()));
-                if ($cards_to_draw == 4) {
-                    // "you win"
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Saxophone');
-                    throw new EndOfGame();
-                } else {
-                    // "Otherwise, draw a 7 for each music note that is visible."
-                    for ($i = 0; $i < $cards_to_draw; $i++) {
-                        self::executeDraw($player_id, 7);
-                    }
-                }
                 break;
 
             // id 405, Echoes age 8: Radio Telescope
@@ -19374,19 +19331,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 404, Echoes age 7: Saxophone
-        case "404N1A":
-            // "You may splay your purple cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3 /* up */,
-                'color' => array(4) /* purple */
-            );
-            break;  
 
         // id 405 Echoes age 8: Radio Telescope
         case "405N1A":
