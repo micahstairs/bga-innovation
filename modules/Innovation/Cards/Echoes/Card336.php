@@ -51,7 +51,7 @@ class Card336 extends Card
     }
     foreach ($revealedCards as $card) {
       if ($card['color'] == $color) {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
     }
     if (self::wasForeseen()) {

@@ -14,7 +14,7 @@ class Card498 extends Card
 
   public function initialExecution()
   {
-    $card = self::putInHand(self::drawAndReveal(2));
+    $card = self::transferToHand(self::drawAndReveal(2));
     self::setAuxiliaryValue($card['id']);
     self::setMaxSteps(1);
   }

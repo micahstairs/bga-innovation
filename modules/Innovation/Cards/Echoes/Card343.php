@@ -27,7 +27,7 @@ class Card343 extends Card
       } else {
         $card = $this->game->executeDrawAndReveal(self::getPlayerId(), 1, $this->game::ECHOES);
       }
-      self::putInHand($card);
+      self::transferToHand($card);
       if (self::hasBonusIcon($card)) {
         self::draw(1);
       }

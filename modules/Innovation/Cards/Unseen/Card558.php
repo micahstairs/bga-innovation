@@ -53,7 +53,7 @@ class Card558 extends Card
       self::setMaxSteps(2);;
     } else if ($choice === 2) {
       foreach (self::getCards( 'safe') as $card) {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
     } else if ($choice === 3) {
       foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {

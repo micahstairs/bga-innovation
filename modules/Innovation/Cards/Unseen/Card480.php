@@ -33,9 +33,9 @@ class Card480 extends Card
       $hasColor = self::hasCardWithColor($cardsInHand, $card['color']);
     }
     if ($hasColor) {
-      self::putInHand($card);
+      self::transferToHand($card);
     } else {
-      self::putInHand($card, self::getLauncherId());
+      self::transferToHand($card, self::getLauncherId());
       self::setNextStep(1);
     }
   }

@@ -27,7 +27,7 @@ class Card566 extends Card
       } else {
         foreach (self::getCards('junk') as $card) {
           if (self::isValuedCard($card)) {
-            self::putInHand($card);
+            self::transferToHand($card);
           }
         }
       }

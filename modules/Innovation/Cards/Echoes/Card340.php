@@ -35,7 +35,7 @@ class Card340 extends Card
     } else {
       $card = self::drawAndReveal(1);
       $this->notifications->notifyCardColor($card['color']);
-      self::putInHand($card);
+      self::transferToHand($card);
       if (self::isYellow($card)) {
         foreach (self::getCardsKeyedByValue('hand')[1] as $card) {
           self::score($card);

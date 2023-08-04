@@ -45,7 +45,7 @@ class Card519 extends Card
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
     if (self::getCurrentStep() === 1) {
       foreach (self::getCards('revealed') as $card) {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
       foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
         self::reveal($card);

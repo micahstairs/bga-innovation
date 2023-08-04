@@ -14,8 +14,8 @@ class Card556 extends Card
 
   public function initialExecution()
   {
-    $card1 = self::putInHand(self::drawAndReveal(9));
-    $card2 = self::putInHand(self::drawAndReveal(9));
+    $card1 = self::transferToHand(self::drawAndReveal(9));
+    $card2 = self::transferToHand(self::drawAndReveal(9));
     $this->game->setAuxiliaryArray([$card1['id'], $card2['id']]);
     self::setMaxSteps(1);
   }
@@ -44,7 +44,7 @@ class Card556 extends Card
       $card = self::reveal($this->game->getDeckTopCard(10, $this->game::BASE));
       if ($card) {
         if ($card['color'] == self::getAuxiliaryValue() || $card['color'] == self::getLastSelectedColor()) {
-          self::putInHand($card);
+          self::transferToHand($card);
         } else {
           self::placeOnTopOfDeck($card);
         }

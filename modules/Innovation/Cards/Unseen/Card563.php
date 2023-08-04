@@ -17,10 +17,10 @@ class Card563 extends Card
       $cardsInPlayerHand = $this->game->getCardsInHand(self::getPlayerId());
       $lowestCardIdsInLauncherHand = $this->game->getIdsOfLowestCardsInLocation(self::getLauncherId(), 'hand');
       foreach ($cardsInPlayerHand as $card) {
-        self::putInHand($card, self::getLauncherId());
+        self::transferToHand($card, self::getLauncherId());
       }
       foreach ($lowestCardIdsInLauncherHand as $cardId) {
-        self::putInHand(self::getCard($cardId));
+        self::transferToHand(self::getCard($cardId));
       }
     } else {
       self::setMaxSteps(1);

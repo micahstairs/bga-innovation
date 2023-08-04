@@ -22,7 +22,7 @@ class Card330 extends Card
       } else {
         $card = $this->game->executeDraw(self::getPlayerId(), 1, 'revealed', /*bottom_to=*/ false, $this->game::ECHOES);
       }
-      self::putInHand($card);
+      self::transferToHand($card);
       $bonus = self::getBonusIcon($card);
       if ($bonus > 0) {
           self::drawAndMeld($bonus);
@@ -52,7 +52,7 @@ class Card330 extends Card
   }
 
   public function handleSpecialChoice(int $opponentId) {
-    self::putInHand(self::getCard(self::getAuxiliaryValue2()), $opponentId);
+    self::transferToHand(self::getCard(self::getAuxiliaryValue2()), $opponentId);
   }
 
 }

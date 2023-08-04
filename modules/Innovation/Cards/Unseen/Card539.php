@@ -23,10 +23,10 @@ class Card539 extends Card
         self::meld($secondCard);
         self::draw(8);
       } else {
-        self::putInHand($secondCard);
+        self::transferToHand($secondCard);
       }
     } else {
-      self::putInHand($card);
+      self::transferToHand($card);
     }
   }
 

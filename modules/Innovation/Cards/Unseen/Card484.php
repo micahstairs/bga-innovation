@@ -52,7 +52,7 @@ class Card484 extends Card
           $this->game->transferCardFromTo($card, self::getLauncherId(), 'score');
         }
         foreach ($cardsInScorePile as $card) {
-          self::putInHand($card);
+          self::transferToHand($card);
         }
       }
     } else {

@@ -49,7 +49,7 @@ class Card536 extends Card
   {
     if (self::getCurrentStep() === 1) {
       $revealedCard = self::getRevealedCard();
-      self::putInHand($revealedCard);
+      self::transferToHand($revealedCard);
       self::setAuxiliaryValue($revealedCard['color']);
     }
   }

@@ -42,7 +42,7 @@ class Card402 extends Card
       $value = $card['age'];
       foreach (self::getPlayerIds() as $playerId) {
         foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $scoreCard) {
-          self::putInHand($scoreCard);
+          self::transferToHand($scoreCard);
         }
       }
     }

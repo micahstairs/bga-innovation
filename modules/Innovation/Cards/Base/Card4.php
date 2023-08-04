@@ -19,7 +19,7 @@ class Card4 extends Card
         self::score($card);
       } else {
         $this->notifications->notifyAbsenceOfIcon($this->game::AUTHORITY);
-        self::putInHand($card);
+        self::transferToHand($card);
         return;
       }
     }

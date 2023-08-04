@@ -26,10 +26,10 @@ class Card390 extends Card
         self::transferToHand($cardInHand, self::getLauncherId());
       }
     } else if (self::isRed($card) || self::isGreen($card)) {
-      self::putInHand($card);
+      self::transferToHand($card);
       self::setMaxSteps(1);
     } else {
-      self::putInHand($card);
+      self::transferToHand($card);
     }
   }
 

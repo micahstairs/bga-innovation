@@ -20,7 +20,7 @@ class Card483 extends Card
         self::transferToScorePile($card, self::getLauncherId());
         self::transferToScorePile(self::getTopCardOfColor($card['color']), self::getLauncherId());
       } else {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
     } else {
       $isGreenCardOnAnyBoard = false;

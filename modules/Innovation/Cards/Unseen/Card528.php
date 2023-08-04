@@ -20,7 +20,7 @@ class Card528 extends Card
   public function getInteractionOptions(): array
   {
     if (self::getCurrentStep() === 1) {
-      $card = self::putInHand(self::drawAndReveal(5));
+      $card = self::transferToHand(self::drawAndReveal(5));
       $returnedCard = self::return(self::getTopCardOfColor($card['color']));
       self::setAuxiliaryValue($returnedCard ? 1 : 0); // Track how many cards were returned
       return [

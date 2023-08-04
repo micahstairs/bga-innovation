@@ -55,7 +55,7 @@ class Card546 extends Card
       $this->game->gamestate->changeActivePlayer(self::getPlayerId());
       self::draw(7);
       foreach (self::getCards('revealed') as $card) {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
     }
   }

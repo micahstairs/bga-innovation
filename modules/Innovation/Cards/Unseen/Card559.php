@@ -52,7 +52,7 @@ class Card559 extends Card
     if (self::getCurrentStep() === 1) {
       if ($choice === 1) {
         for ($color = 0; $color < 5; $color++) {
-          self::putInHand(self::getBottomCardOfColor($color));
+          self::transferToHand(self::getBottomCardOfColor($color));
         }
       } else {
         self::setAuxiliaryValue($choice);

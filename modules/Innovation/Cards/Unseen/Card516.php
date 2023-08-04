@@ -48,7 +48,7 @@ class Card516 extends Card
         self::setAuxiliaryValue2(self::getLastSelectedId());
         self::setMaxSteps(3);
       } else {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
     } else if (self::getCurrentStep() === 3) {
       $revealedCard = self::getCards('revealed')[0];
@@ -56,10 +56,10 @@ class Card516 extends Card
         self::safeguard($revealedCard);
         // Put all revealed cards in hand if they can't fit in the safe
         foreach (self::getCards('revealed') as $card) {
-            self::putInHand($card);
+            self::transferToHand($card);
         }
       } else {
-        self::putInHand($revealedCard);
+        self::transferToHand($revealedCard);
       }
     }
 
@@ -96,7 +96,7 @@ class Card516 extends Card
       if (self::isRed($card) || self::isPurple($card)) {
         self::safeguard($card);
       } else {
-        self::putInHand($card);
+        self::transferToHand($card);
       }
     } else {
       self::setMaxSteps(2);
