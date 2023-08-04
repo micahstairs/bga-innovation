@@ -10895,7 +10895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 404)
+            || (330 <= $card_id && $card_id <= 405)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13914,27 +13914,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 405, Echoes age 8: Radio Telescope
-            case "405N1":
-                // "For every two bulbs on your board, draw a 9."
-                $number_of_bulbs = self::getPlayerSingleRessourceCount($player_id, 3);
-                $cards_to_draw = self::intDivision($number_of_bulbs, 2);
-                
-                if ($cards_to_draw > 0) {
-                    $card_array = array();
-                    for ($i = 0; $i < $cards_to_draw; $i++) {
-                        $card = self::executeDraw($player_id, 9);
-                        $card_array[] = $card['id'];
-                    }
-                    if ($cards_to_draw > 1) {
-                        $step_max = 2; // Do the rest of the interactions now.
-                    } else {
-                        $step_max = 1; // No cards to return
-                    }
-                    self::setAuxiliaryArray($card_array);
-                }
                 break;
 
             // id 406, Echoes age 8: X-Ray
@@ -19332,39 +19311,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 405 Echoes age 8: Radio Telescope
-        case "405N1A":
-            // "Meld one of the cards drawn."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'card_ids_are_in_auxiliary_array' => true,
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "405N1B":
-            // "and return the rest"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => count(self::getAuxiliaryArray()),
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-
         // id 406, Echoes age 8: X-Ray
         case "406N1A":
             // "draw and foreshadow a card of any value."
@@ -22672,24 +22618,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 405, Echoes age 8: Radio Telescope
-                case "405N1A":
-                    if ($n > 0) { // If a card was melded
-                        // Remove selected card from the list so it isn't returned.
-                        $selected_card_id = $this->innovationGameState->get('id_last_selected');
-                        $card_list = self::getAuxiliaryArray();
-                        $new_card_list = array_diff($card_list, array($selected_card_id));
-                        self::setAuxiliaryArray($new_card_list);
-                        
-                        // "If you meld A. I. due to this dogma effect, you win."
-                        if ($selected_card_id == 103) { // A. I.
-                            $this->innovationGameState->set('winner_by_dogma', $player_id);
-                            self::trace('EOG bubbled from self::stInterInteractionStep Radio Telescope');
-                            throw new EndOfGame();
-                        }
-                    }
                     break;
 
                 // id 406, Echoes age 8: X-ray

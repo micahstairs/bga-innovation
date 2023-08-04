@@ -2102,8 +2102,9 @@ $this->textual_card_infos = array(
     /* Echoes - Age 8 */
 
     405 => array(
-        'name'                => clienttranslate('Radio Telescope'),
-        'non_demand_effect_1' => clienttranslate('For every two ${icon_3} on your board, draw a ${age_9}. Meld one of the cards drawn and return the rest. If you meld A. I. due to this dogma effect, you win.'),
+        'name'                                => clienttranslate('Radio Telescope'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('For every two ${icon_3} on your board, draw a ${age_9}. Meld one of the cards drawn and return the rest. If you meld A. I. due to this dogma effect, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('For every two ${icon_3} on your board, draw a ${age_9}, and if Radio Telescope was foreseen, draw a ${age_10}. Meld one of the cards you draw and return the rest. If you meld A. I. due to this effect, you win.'),
     ),
 
     406 => array(
