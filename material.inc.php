@@ -2079,9 +2079,10 @@ $this->textual_card_infos = array(
     ),
 
     402 => array(
-        'name'                => clienttranslate('Fertilizer'),
-        'non_demand_effect_1' => clienttranslate('You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value equal to the returned card.'),
-        'non_demand_effect_2' => clienttranslate('Draw and foreshadow a card of any value.'),
+        'name'                               => clienttranslate('Fertilizer'),
+        'non_demand_effect_1'                => clienttranslate('You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value equal to the returned card.'),
+        'non_demand_effect_2_first_or_third' => clienttranslate('Draw and foreshadow a card of any value.'),
+        'non_demand_effect_2_fourth'         => clienttranslate('Draw and foreshadow a card of value equal to the number of cards in your hand.'),
     ),
 
     403 => array(

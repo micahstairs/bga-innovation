@@ -9970,12 +9970,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 402, Echoes age 7: Fertilizer
-            case "402N2A":
-                $message_for_player = clienttranslate('Choose a value to draw and foreshadow');
-                $message_for_others = clienttranslate('${player_name} must choose a value to draw and foreshadow');
-                break;
-
             // id 403, Echoes age 7: Ice Cream
             case "403N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10915,7 +10909,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 401)
+            || (330 <= $card_id && $card_id <= 402)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13933,15 +13927,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break;
-
-            // id 402, Echoes age 7: Fertilizer
-            case "402N1":
-                $step_max = 1;
-                break;
-
-            case "402N2":
                 $step_max = 1;
                 break;
 
@@ -19417,29 +19402,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-        
-        // id 402, Echoes age 7: Fertilizer
-        case "402N1A":
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;            
-
-        case "402N2A":
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-            );
-            break;        
 
         // id 403, Echoes age 7: Ice Cream
         case "403E1A":
@@ -22836,24 +22798,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 402, Echoes age 7: Fertilizer
-                case "402N1A":
-                    if ($n > 0) { // "if you do"
-                        // "transfer all cards from all score piles to your hand of value to the returned card."
-                        $age_to_transfer = $this->innovationGameState->get('age_last_selected');
-                        
-                        $all_players = self::getAllActivePlayerIds();
-                        foreach ($all_players as $player) {
-                            $cards = self::getCardsInLocationKeyedByAge($player, 'score')[$age_to_transfer];
-                            for ($i = 0; $i < count($cards); $i++) {
-                                $cards[$i] = self::getCardInfo($cards[$i]['id']);
-                                self::transferCardFromTo($cards[$i], $player_id, 'hand');
-                            }
-                            
-                        }
-                    }
-                    break;                
-
                 // id 403, Echoes age 7: Ice Cream
                 case "403N1A":
                     // "If there is at least one card in that deck"
@@ -24481,14 +24425,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 402, Echoes age 7: Fertilizer
-            case "402N2A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                // "Draw and foreshadow a card of any value."
-                self::executeDrawAndForeshadow($player_id, $choice);
                 break;
 
             // id 403, Echoes age 7: Ice Cream
