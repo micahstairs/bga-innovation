@@ -9971,12 +9971,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 406, Echoes age 8: X-ray
-            case "406N1A":
-                $message_for_player = clienttranslate('Choose a value to foreshadow');
-                $message_for_others = clienttranslate('${player_name} must choose a value to foreshadow');
-                break;
-
             // id 413, Echoes age 8: Crossword
             case "413N1A":
                 $message_for_player = clienttranslate('Choose a value to draw');
@@ -10895,7 +10889,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 405)
+            || (330 <= $card_id && $card_id <= 406)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13914,28 +13908,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 406, Echoes age 8: X-Ray
-            case "406E1":
-                // "Draw and tuck an 8."
-                self::executeDrawAndTuck($player_id, 8);
-                break;
-
-            case "406N1":
-                // "For every three leaves on your board,"
-                $number_of_leaves = self::getPlayerSingleRessourceCount($player_id, 2);
-                $num_foreshadows = self::intDivision($number_of_leaves, 3);
-                
-                if ($num_foreshadows > 0) {
-                    self::setAuxiliaryValue($num_foreshadows);
-                    $step_max = 1;
-                }
-                break;
-
-            case "406N2":
-                $step_max = 1;
-                break;      
+                break; 
 
             // id 407, Echoes age 8: Bandage
             case "407E1":
@@ -19311,29 +19284,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 406, Echoes age 8: X-Ray
-        case "406N1A":
-            // "draw and foreshadow a card of any value."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-            );
-            break;
-
-        case "406N2A":
-            // "You may splay your yellow cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3 /* up */,
-                'color' => array(3) /* yellow */
-            );
-            break; 
-
         // id 407, Echoes age 8: Bandage
         case "407E1A":
             // "Meld a card from hand with a leaf"
@@ -22620,17 +22570,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 406, Echoes age 8: X-ray
-                case "406N1A":
-                    self::executeDrawAndForeshadow($player_id, self::getAuxiliaryValue2());
-                    $cards_left = self::getAuxiliaryValue() - 1;
-                    if ($cards_left > 0) {
-                        self::setAuxiliaryValue($cards_left);
-                        self::incrementStep(-1);
-                        $step--;
-                    }
-                    break;            
-
                 // id 410, Echoes age 8: Sliced Bread
                 case "410E1A":
                     self::executeDraw($player_id, 8);
@@ -24213,13 +24152,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 406, Echoes age 8: X-ray
-            case "406N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue2($choice);
                 break;
 
             // id 413, Echoes age 8: Crossword
