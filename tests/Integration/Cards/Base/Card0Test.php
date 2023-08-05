@@ -2,9 +2,9 @@
 
 namespace Integration\Cards\Base;
 
-use Integration\BaseIntegrationTest;
+use Integration\Cards\BaseCardIntegrationTest;
 
-class Card0Test extends BaseIntegrationTest
+class Card0Test extends BaseCardIntegrationTest
 {
   // Pottery:
   //   - You may return up to three cards from your hand. If you return any cards, draw and score a

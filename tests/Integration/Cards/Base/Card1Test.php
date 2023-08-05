@@ -2,9 +2,9 @@
 
 namespace Integration\Cards\Base;
 
-use Integration\BaseIntegrationTest;
+use Integration\Cards\BaseCardIntegrationTest;
 
-class Card1Test extends BaseIntegrationTest
+class Card1Test extends BaseCardIntegrationTest
 {
   // Tools:
   //   - You may return three cards from your hand. If you return three, draw and meld a [3].

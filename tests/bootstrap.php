@@ -24,6 +24,7 @@ require_once 'Helpers/Mocks.php';
 require_once 'Helpers/TestHelpers.php';
 require_once 'BaseTest.php';
 require_once 'Integration/BaseIntegrationTest.php';
+require_once 'Integration/Cards/BaseCardIntegrationTest.php';
 
 $cardsDir = __DIR__ . '/../modules/Innovation/Cards';
 foreach (glob($cardsDir . '/*.php') as $filename) {

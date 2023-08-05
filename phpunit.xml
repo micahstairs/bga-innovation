@@ -6,6 +6,7 @@
         </testsuite>
         <!-- <testsuite name="Integration">
             <directory>tests/Integration</directory>
+            <exclude>tests/Integration/Cards</exclude>
         </testsuite> -->
     </testsuites>
     <php>

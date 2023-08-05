@@ -2,9 +2,9 @@
 
 namespace Integration\Cards\Base;
 
-use Integration\BaseIntegrationTest;
+use Integration\Cards\BaseCardIntegrationTest;
 
-class Card2Test extends BaseIntegrationTest
+class Card2Test extends BaseCardIntegrationTest
 {
   // Writing:
   //   - Draw a [2].

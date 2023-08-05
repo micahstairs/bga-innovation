@@ -32,18 +32,7 @@ abstract class BaseIntegrationTest extends BaseTest
       ->createDatabase()
       ->setupNewGame();
 
-    // Meld initial cards then pull them back into hand
     $this->chooseRandomCardsForInitialMeld();
-    $this->returnAllCardsOnBoardsToHand();
-
-    // Place the card under test on the first player's board and replenish their hand
-    $this->meld();
-    self::setHandSize(2);
-  }
-
-  protected function getInitialHandSize(): int
-  {
-    return 2;
   }
 
   protected function tearDown(): void
@@ -98,52 +87,6 @@ abstract class BaseIntegrationTest extends BaseTest
     $this->tableInstance->advanceGame();
   }
 
-  /* Return all cards on the player's board to their hand */
-  protected function returnAllCardsOnBoardsToHand()
-  {
-    foreach ($this->getPlayerIds() as $playerId) {
-      $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, "board");
-      foreach ($cards as $card) {
-        $this->tableInstance
-          ->createActionInstanceForCurrentPlayer($playerId)
-          ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])
-          ->debug_transfer();
-      }
-    }
-  }
-
-  /* Move the card to the player's board. If the ID is null, it's assumed the card under test is the one that should be melded. */
-  protected function meld(int $cardId = null, int $playerId = null)
-  {
-    if ($cardId === null) {
-      $cardId = self::getCardIdFromTestClassName();
-    }
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    $this->tableInstance
-      ->createActionInstanceForCurrentPlayer($playerId)
-      ->stubActivePlayerId($playerId)
-      ->stubArgs(["card_id" => $cardId, "transfer_action" => "meld"])
-      ->debug_transfer();
-  }
-
-  /* Initiate a dogma action (assumes the card is on the player's board). If the ID is null, it's assumed the card under test is the one that should be dogma'd. */
-  protected function dogma(int $id = null)
-  {
-    if ($id === null) {
-      $id = self::getCardIdFromTestClassName();
-    }
-    $playerId = self::getActivePlayerId();
-    $this->tableInstance
-      ->createActionInstanceForCurrentPlayer($playerId)
-      ->stubActivePlayerId($playerId)
-      ->stubArgs(["card_id" => $id])
-      ->dogma();
-    $this->tableInstance->getTable()->stubCurrentPlayerId($playerId);
-    $this->tableInstance->advanceGame();
-  }
-
   /* Choose a random card from the currently selected cards */
   protected function selectRandomCard()
   {
@@ -153,18 +96,6 @@ abstract class BaseIntegrationTest extends BaseTest
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => self::getRandomCardId($cards)])
-      ->choose();
-    $this->tableInstance->advanceGame();
-  }
-
-  /* Select the specified card */
-  protected function selectCard(int $cardId)
-  {
-    $playerId = self::getActivePlayerId();
-    $this->tableInstance
-      ->createActionInstanceForCurrentPlayer($playerId)
-      ->stubActivePlayerId($playerId)
-      ->stubArgs(["card_id" => $cardId])
       ->choose();
     $this->tableInstance->advanceGame();
   }
@@ -189,106 +120,9 @@ abstract class BaseIntegrationTest extends BaseTest
     }
   }
 
-  /* Return cards or draw 1s until the hand is of the specified size */
-  protected function setHandSize(int $targetSize)
-  {
-    $playerId = self::getActivePlayerId();
-    $currentSize = $this->tableInstance->getTable()->countCardsInLocation($playerId, "hand");
-    while ($currentSize > $targetSize) {
-      $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, "hand");
-      $this->tableInstance
-        ->createActionInstanceForCurrentPlayer($playerId)
-        ->stubActivePlayerId($playerId)
-        ->stubArgs(["card_id" => self::getRandomCardId($cards), "transfer_action" => "return"])
-        ->debug_transfer();
-      $currentSize--;
-    }
-    while ($currentSize < $targetSize) {
-      $this->tableInstance->getTable()->executeDraw($playerId, 1);
-      $currentSize++;
-    }
-  }
-
-  /* Draw a base card of the specified value */
-  protected function drawBaseCard(int $age, int $playerId = null): array
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    $card = $this->tableInstance->getTable()->getDeckTopCard($age, \Innovation::BASE);
-    $this->tableInstance
-        ->createActionInstanceForCurrentPlayer($playerId)
-        ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])
-        ->debug_transfer();
-    return $this->tableInstance->getTable()->getCardInfo($card['id']);
-  }
-
-  protected function assertDogmaComplete(): void
-  {
-    self::assertEquals("playerTurn", self::getCurrentStateName());
-  }
-
-  protected function getMaxAgeOnBoard(int $playerId = null): int
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    return $this->tableInstance->getTable()->getMaxAgeOnBoardTopCards($playerId);
-  }
-
-  protected function getMaxAge(string $location, int $playerId = null): int
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    $cards = $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
-    $maxAge = 0;
-    foreach ($cards as $card) {
-      $maxAge = max($maxAge, $card['age']);
-    }
-    return $maxAge;
-  }
-
-  protected function getScore(int $playerId = null): int
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    return $this->tableInstance->getTable()->getPlayerScore($playerId);
-  }
-
-  protected function countCards(string $location, int $playerId = null): int
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    return $this->tableInstance->getTable()->countCardsInLocation($playerId, $location);
-  }
-
-  protected function assertCardInLocation(int $cardId, string $location, int $playerId = null): void
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    $card = $this->tableInstance->getTable()->getCardInfo($cardId);
-    self::assertEquals($location, $card['location']);
-    self::assertEquals($playerId, $card['owner']);
-  }
-
   protected function getActivePlayerId(): int
   {
     return $this->tableInstance->getTable()->getActivePlayerId();
-  }
-
-  protected function getNonActivePlayerId(): int
-  {
-    $activePlayerId = self::getActivePlayerId();
-    foreach (self::getPlayerIds() as $playerId) {
-      if ($playerId !== $activePlayerId) {
-        return $playerId;
-      }
-    }
-    throw new \Exception("No non-active player found");
   }
 
   protected function getPlayerIds(): array
@@ -309,13 +143,6 @@ abstract class BaseIntegrationTest extends BaseTest
   protected function getRandomCardId(array $cards): int
   {
     return $cards[array_rand($cards)]['id'];
-  }
-
-  /* Returns the ID of the card associated with the test (assumes CardXTest naming, where X is the card ID) */
-  protected function getCardIdFromTestClassName(): int
-  {
-    $className = get_class($this);
-    return intval(substr($className, strrpos($className, "\\") + 5, -4));
   }
 
 }

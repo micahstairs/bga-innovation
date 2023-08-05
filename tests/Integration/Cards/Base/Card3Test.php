@@ -2,9 +2,9 @@
 
 namespace Integration\Cards\Base;
 
-use Integration\BaseIntegrationTest;
+use Integration\Cards\BaseCardIntegrationTest;
 
-class Card3Test extends BaseIntegrationTest
+class Card3Test extends BaseCardIntegrationTest
 {
   // Archery:
   //   - I DEMAND you draw a [1], then transfer the highest card in your hand to my hand!

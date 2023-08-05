@@ -5965,7 +5965,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if ($age_to_draw > $max_age) {
             // Attempt to draw a card above the max age : end of the game by score
             $this->innovationGameState->set('game_end_type', 1);
-            $this->innovationGameState->setInitial('player_who_could_not_draw', $player_id);
+            $this->innovationGameState->set('player_who_could_not_draw', $player_id);
             self::trace('EOG bubbled from self::executeDraw (age higher than highest deck age');
             throw new EndOfGame();
         }
