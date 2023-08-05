@@ -2118,9 +2118,10 @@ $this->textual_card_infos = array(
     ),
 
     407 => array(
-        'name'              => clienttranslate('Bandage'),
-        'echo_effect_1'     => clienttranslate('Meld a card from hand with a ${icon_2}.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you return the highest card in your score pile for which you do not have a card of matching value in your hand! Return a top card from your board with a ${icon_6}!'),
+        'name'                              => clienttranslate('Bandage'),
+        'echo_effect_1'                     => clienttranslate('Meld a card from hand with a ${icon_2}.'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you return the highest card in your score pile for which you do not have a card of matching value in your hand! Return a top card from your board with a ${icon_6}!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you return a card with a ${icon_6} from your score pile! Return a top card with a ${icon_6} from your board! If you do both, junk an available achievement for each achievement you have!'),
     ),
 
     408 => array(
@@ -2136,7 +2137,7 @@ $this->textual_card_infos = array(
 
     410 => array(
         'name'                => clienttranslate('Sliced Bread'),
-        'echo_effect_1'       => clienttranslate('Return all cards from your hand and draw two ${age_8}s.'),
+        'echo_effect_1'       => clienttranslate('Return all cards from your hand and draw two ${age_8}.'),
         'non_demand_effect_1' => clienttranslate('Return a card from your score pile. Draw and score two cards of value one less than the value of the card returned.'),
     ),
 

@@ -10889,7 +10889,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 406)
+            || (330 <= $card_id && $card_id <= 407)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13909,26 +13909,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 407, Echoes age 8: Bandage
-            case "407E1":
-                $step_max = 1;
-                break;
-
-            case "407D1":
-                // "I demand you return the highest card in your score pile for which you do not have a card of matching value in your hand"
-                $step_max = 2;
-                $score_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                $hand_counts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                for ($age = 11; $age >= 1; $age--) {
-                    if ($score_counts[$age] > 0 && $hand_counts[$age] == 0) {
-                        self::setAuxiliaryValue($age);
-                        break 2;
-                    }
-                }
-                // No card to return so skip that step
-                $step = 2;
-                break;
 
             // id 408, Echoes age 8: Parachute
             case "408D1":
@@ -19281,55 +19261,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 407, Echoes age 8: Bandage
-        case "407E1A":
-            // "Meld a card from hand with a leaf"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'with_icon' => 2, /* leaf */
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "407D1A":
-            // "I demand you return the highest card in your score pile 
-            // for which you do not have a card of matching value in your hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'age' => self::getAuxiliaryValue(),
-            );
-            break;
-
-        case "407D1B":
-            // "Return a top card from your board with a clock!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'with_icon' => 6,
             );
             break;
 
