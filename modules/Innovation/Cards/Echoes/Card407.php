@@ -63,7 +63,7 @@ class Card407 extends Card
       }
     } else {
       if (self::getCurrentStep() === 1) {
-        self::setAuxiliaryValue(0); // Count how many of the first two interactions happened
+        self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
         return [
           'location_from' => 'score',
           'return_keyword' => true,

@@ -2125,8 +2125,9 @@ $this->textual_card_infos = array(
     ),
 
     408 => array(
-        'name'              => clienttranslate('Parachute'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer all cards without a ${icon_6} from your hand to my hand!'),
+        'name'                       => clienttranslate('Parachute'),
+        'i_demand_effect_1'          => clienttranslate('${I demand} you transfer all cards without a ${icon_6} from your hand to my hand!'),
+        'non_demand_effect_1_fourth' => clienttranslate('If Parachute was foreseen, junk all cards from all boards.'),
     ),
 
     409 => array(

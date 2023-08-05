@@ -10889,7 +10889,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 407)
+            || (330 <= $card_id && $card_id <= 408)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -12191,6 +12191,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, 10, 'revealed'); // "Draw a 10"
                 if ($card['color'] == self::RED) { // "If it is red"
                     self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::getColorInClear($card['color'])));
+                    // TODO(4E): These need to be junked instead.
                     self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
                     // TODO(4E): Create new bulk notification for 4th edition.
                     self::notifyAll('removedHandsBoardsAndScores', clienttranslate('All hands, boards and score piles are removed from the game. Achievements are kept.'), array());
@@ -13909,17 +13910,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 408, Echoes age 8: Parachute
-            case "408D1":
-                // "I demand you transfer all cards without a clock from your hand to my hand!"
-                foreach (self::getCardsInLocation($player_id, 'hand') as $card) {
-                    $card = self::getCardInfo($card['id']);
-                    if (!self::hasRessource($card, 6)) {
-                        self::transferCardFromTo($card, $launcher_id, 'hand');
-                    }
-                }
-                break;
 
             // id 409, Echoes age 8: Nylon
             case "409N1":
