@@ -120,6 +120,22 @@ abstract class BaseIntegrationTest extends BaseTest
     }
   }
 
+  protected function countCards(string $location, int $playerId = null): int
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    return $this->tableInstance->getTable()->countCardsInLocation($playerId, $location);
+  }
+
+  protected function getCards(string $location, int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    return $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
+  }
+
   protected function getActivePlayerId(): int
   {
     return $this->tableInstance->getTable()->getActivePlayerId();

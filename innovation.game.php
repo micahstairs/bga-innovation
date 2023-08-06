@@ -1412,7 +1412,7 @@ class Innovation extends Table
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false, $force = false) {
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
-            error_log("Transferring card=". $card['id'] . " from " . $card['location'] . " to " . $location_to);
+            error_log("Transferring card=". $card['id'] . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
         }
 
         // Get updated state of card in case a stale reference was passed.

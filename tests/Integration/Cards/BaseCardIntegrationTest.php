@@ -166,14 +166,6 @@ abstract class BaseCardIntegrationTest extends BaseIntegrationTest
     return $this->tableInstance->getTable()->getPlayerScore($playerId);
   }
 
-  protected function countCards(string $location, int $playerId = null): int
-  {
-    if ($playerId === null) {
-      $playerId = self::getActivePlayerId();
-    }
-    return $this->tableInstance->getTable()->countCardsInLocation($playerId, $location);
-  }
-
   protected function assertCardInLocation(int $cardId, string $location, int $playerId = null): void
   {
     if ($playerId === null) {
