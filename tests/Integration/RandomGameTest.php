@@ -45,7 +45,8 @@ class RandomGameTest extends BaseIntegrationTest
   private function meld()
   {
     $cardId = self::getRandomCardId(self::getCards('hand'));
-    error_log("* MELD $cardId");
+    $cardName = $this->tableInstance->getTable()->getCardName($cardId);
+    error_log("* MELD $cardName");
     $this->tableInstance
         ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
         ->stubArg('card_id', $cardId)
@@ -56,7 +57,8 @@ class RandomGameTest extends BaseIntegrationTest
   private function dogma()
   {
     $cardId = self::getRandomCardId(self::getCardsToDogma());
-    error_log("* DOGMA $cardId");
+    $cardName = $this->tableInstance->getTable()->getCardName($cardId);
+    error_log("* DOGMA $cardName");
     $this->tableInstance
         ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
         ->stubArg('card_id', $cardId)
@@ -85,7 +87,7 @@ class RandomGameTest extends BaseIntegrationTest
         }
         $choices[array_rand($choices)]();
       }
-    } while (self::getCurrentStateName() != 'playerTurn');
+    } while (self::getCurrentStateName() != 'playerTurn' && self::getCurrentStateName() != 'gameEnd');
   }
 
   private function selectSpecialChoice()
@@ -108,9 +110,7 @@ class RandomGameTest extends BaseIntegrationTest
         $choice = self::getRandomFromArray(self::getGlobalVariableAsArray('age_array'));
         break;
       case 'choose_color':
-        error_log("colors: " . implode(self::getGlobalVariableAsArray('color_array')));
         $choice = self::getRandomFromArray(self::getGlobalVariableAsArray('color_array'));
-        error_log("chosen color: $choice");
         break;
       case 'choose_two_colors':
         $chosenColors = self::getRandomElementsFromArray(self::getGlobalVariableAsArray('color_array'), 2);
@@ -142,6 +142,6 @@ class RandomGameTest extends BaseIntegrationTest
       $choices[] = self::getRandomFromArray($array);
       $array = Arrays::removeElement($array, $choices[$i]);
     }
-    return $array;
+    return $choices;
   }
 }
