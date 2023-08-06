@@ -7448,6 +7448,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function pushCardIntoNestedDogmaStack($card, $execute_demand_effects, $replace_may_with_must = false) {
+        error_log("pushCardIntoNestedDogmaStack");
         self::trace('nesting++');
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         $nested_card_state = self::getCurrentNestedCardState();
@@ -7482,6 +7483,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function popCardFromNestedDogmaStack() {
+        error_log("popCardFromNestedDogmaStack");
         self::trace('nesting--');
         self::DbQuery(self::format("DELETE FROM indexed_auxiliary_value WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
         self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
@@ -10066,12 +10068,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose a value');
                 break;
 
-            // id 529, Unseen age 5: Buried Treasure
-            case "529N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-
             default:
                 // This should not happen
                 if (!self::isInSeparateFile($card_id)) {
@@ -10899,8 +10895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (505 <= $card_id && $card_id <= 509)
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
-            || $card_id == 528
-            || $card_id >= 530;
+            || $card_id >= 528;
     }
 
     function getCardInstance($card_id, $execution_state) {
@@ -14874,11 +14869,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                     self::setAuxiliaryArray($card_id_array);
                 }
-                break;
-
-            // id 529, Unseen age 5: Buried Treasure
-            case "529N1":
-                $step_max = 1;
                 break;
 
             default:
@@ -20682,33 +20672,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
            );
            break;
 
-       // id 529, Unseen age 5: Buried Treasure
-       case "529N1A":
-           // "Choose an odd value."
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 1,
-
-               'choose_value' => true,
-               'age' => array(1,3,5,7,9,11),
-           );
-           break;
-
-       case "529N1B":
-           // " and score three available standard achievements."
-           $options = array(
-               'player_id' => $player_id,
-               'n' => 3,
-
-               'owner_from' => 0,
-               'location_from' => 'achievements',
-               'owner_to' => $player_id,
-               'location_to' => 'score',
-
-               'score_keyword' => true,
-           );
-           break;
-
         default:
             if (!self::isInSeparateFile($card_id)) {
                 // This should not happen
@@ -23085,24 +23048,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6."
                     self::executeDraw($player_id, 6);
                     break;          
-                
-                // id 529, Unseen age 5: Buried Treasure
-                case "529N1A":
-                    // "Transfer all cards of that value from all score piles to the available achievements."
-                    $card_count = 0;
-                    foreach (self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer() as $all_player_id) {
-                        $cards_by_age = self::getCardsInLocationKeyedByAge($all_player_id, 'score');
-                        foreach ($cards_by_age[self::getAuxiliaryValue()] as $card) {
-                            self::transferCardFromTo($card, 0, 'achievements');
-                            $card_count++;
-                        }
-                    }
-                    // "If you transfer four or more cards, draw and safeguard a card of that value"
-                    if ($card_count >= 4) {
-                        self::executeDrawAndSafeguard($player_id, self::getAuxiliaryValue());
-                        self::incrementStepMax(1);
-                    }
-                    break;
 
                 // id 511, Unseen age 3: Freemasons
                 case "511N1A":
@@ -24215,13 +24160,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 525, Unseen age 5: Popular Science
             case "525N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 529, Unseen age 5: Buried Treasure
-            case "529N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
