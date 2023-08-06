@@ -42,8 +42,8 @@ extract_icon "30" "008" $BOTTOM_CENTER
 extract_icon "24" "009" $TOP_CENTER
 
 # Extract blue, red, green, yellow, purple Unsplay icons
-extract_icon "11" "010" $TOP_CENTER
-extract_icon "16" "011" $TOP_CENTER
+extract_icon "113" "010" $TOP_CENTER
+extract_icon "107" "011" $TOP_CENTER
 extract_icon "101" "012" $TOP_CENTER
 extract_icon "98" "013" $TOP_CENTER
 extract_icon "105" "014" $TOP_CENTER
