@@ -61,14 +61,30 @@ abstract class BaseIntegrationTest extends BaseTest
     if (strpos($testName, 'fourthEdition')) {
       $game_rules = 3;
     }
+    $artifacts = 1; // disabled
+    if (strpos($testName, 'artifacts')) {
+      $artifacts = 2; // enabled
+    }
+    $cities = 1; // disabled
+    if (strpos($testName, 'cities')) {
+      $cities = 2; // enabled
+    }
+    $echoes = 1; // disabled
+    if (strpos($testName, 'echoes')) {
+      $echoes = 2; // enabled
+    }
+    $unseen = 1; // disabled
+    if (strpos($testName, 'unseen')) {
+      $unseen = 2; // enabled
+    }
 
     return [
       "game_type"                => 1, // non-2v2
       "game_rules"               => $game_rules,
-      "artifacts_mode"           => 1, // disabled
-      "cities_mode"              => 1, // disabled
-      "echoes_mode"              => 1, // disabled
-      "unseen_mode"              => 1, // disabled
+      "artifacts_mode"           => $artifacts,
+      "cities_mode"              => $cities,
+      "echoes_mode"              => $echoes,
+      "unseen_mode"              => $unseen,
       "extra_achievement_to_win" => 1, // disabled
     ];
   }
@@ -91,13 +107,18 @@ abstract class BaseIntegrationTest extends BaseTest
   protected function selectRandomCard()
   {
     $playerId = self::getActivePlayerId();
-    $cards = $this->tableInstance->getTable()->getSelectedCards();
+    $cards = self::getSelectedCards();
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer($playerId)
       ->stubActivePlayerId($playerId)
       ->stubArgs(["card_id" => self::getRandomCardId($cards)])
       ->choose();
     $this->tableInstance->advanceGame();
+  }
+
+  protected function getSelectedCards(): array
+  {
+    return $this->tableInstance->getTable()->getSelectedCards();
   }
 
   /* Choose to pass */
@@ -136,6 +157,15 @@ abstract class BaseIntegrationTest extends BaseTest
     return $this->tableInstance->getTable()->getCardsInLocation($playerId, $location);
   }
 
+  protected function getCardsToDogma(int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    // TODO: Exclude cards which do not have a featured icon on them
+    return $this->tableInstance->getTable()->getTopCardsOnBoard($playerId);
+  }
+
   protected function getActivePlayerId(): int
   {
     return $this->tableInstance->getTable()->getActivePlayerId();
@@ -159,6 +189,16 @@ abstract class BaseIntegrationTest extends BaseTest
   protected function getRandomCardId(array $cards): int
   {
     return $cards[array_rand($cards)]['id'];
+  }
+
+  protected function getGlobalVariable(string $name): int
+  {
+    return $this->tableInstance->getTable()->innovationGameState->get($name);
+  }
+
+  protected function getGlobalVariableAsArray(string $name): array
+  {
+    return $this->tableInstance->getTable()->innovationGameState->getAsArray($name);
   }
 
 }

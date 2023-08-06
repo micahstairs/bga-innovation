@@ -4,10 +4,10 @@
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
-        <!-- <testsuite name="Integration">
+        <testsuite name="Integration">
             <directory>tests/Integration</directory>
             <exclude>tests/Integration/Cards</exclude>
-        </testsuite> -->
+        </testsuite>
     </testsuites>
     <php>
         <env name="DB_NAME_PREFIX" value="innovation_test_"/>

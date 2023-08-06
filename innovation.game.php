@@ -500,6 +500,8 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('relic_id', -1);
         $this->innovationGameState->setInitial('melded_card_id', -1);
         $this->innovationGameState->setInitial('foreseen_card_id', -1);
+
+        $this->innovationGameState->setInitial('winner_by_dogma', -1);
         
         // Init game statistics
         self::initStat('table', 'turns_number', 0);
@@ -8492,7 +8494,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('choose');
         $players = array_keys(self::loadPlayersBasicInfos());
-        $player_id = self::getActivePlayerId();
         if ($this->innovationGameState->get('special_type_of_choice') != 0) {
             self::throwInvalidChoiceException();
         }
@@ -23181,7 +23182,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function stPreSelectionMove() {
-        $player_id = self::getCurrentPlayerId();
+        $player_id = self::getActivePlayerId();
         $special_type_of_choice = $this->innovationGameState->get('special_type_of_choice');
         $can_pass = $this->innovationGameState->get('can_pass') == 1;
 
