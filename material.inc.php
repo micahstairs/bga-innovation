@@ -2138,9 +2138,10 @@ $this->textual_card_infos = array(
     ),
 
     410 => array(
-        'name'                => clienttranslate('Sliced Bread'),
-        'echo_effect_1'       => clienttranslate('Return all cards from your hand and draw two ${age_8}.'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your score pile. Draw and score two cards of value one less than the value of the card returned.'),
+        'name'                                => clienttranslate('Sliced Bread'),
+        'echo_effect_1'                       => clienttranslate('Return all cards from your hand and draw two ${age_8}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your score pile. Draw and score two cards of value one less than the value of the card returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your score pile. Draw and score two cards of value one less than the value of the card you return.'),
     ),
 
     411 => array(

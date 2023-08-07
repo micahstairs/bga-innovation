@@ -10882,7 +10882,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 409)
+            || (330 <= $card_id && $card_id <= 410)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13902,15 +13902,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 410, Echoes age 8: Sliced Bread
-            case "410E1":
-                $step_max = 1;
-                break;
-
-            case "410N1":
-                $step_max = 1;
-                break;
 
             // id 411, Echoes age 8: Air Conditioner
             case "411E1":
@@ -19215,32 +19206,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 410, Echoes age 8: Sliced Bread
-        case "410E1A":
-            // "Return all cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;         
-
-        case "410N1A":
-            // "Return a card from your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-            );
-            break;     
             
         // id 411, Echoes age 8: Air Conditioner
         case "411E1A":
@@ -22412,22 +22377,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 410, Echoes age 8: Sliced Bread
-                case "410E1A":
-                    self::executeDraw($player_id, 8);
-                    self::executeDraw($player_id, 8);
-                    break;            
-
-                case "410N1A":
-                    // "Draw and score two cards of value one less than the value of the card returned."
-                    $value_to_score = 1;
-                    if ($n > 0) {
-                        $value_to_score = $this->innovationGameState->get('age_last_selected') - 1;
-                    }
-                    self::executeDrawAndScore($player_id, $value_to_score);
-                    self::executeDrawAndScore($player_id, $value_to_score);
-                    break;     
 
                 // id 413, Echoes age 8: Crossword
                 case "413N1A":
