@@ -7,8 +7,17 @@ use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
 {
-  public function test_randomGame_fourthEdition_cities()
+  public function test_randomGame_thirdEdition_cities_echoes()
   {
+    self::executeGame();
+  }
+
+  public function test_randomGame_fourthEdition_cities_echoes_unseen()
+  {
+    self::executeGame();
+  }
+
+  private function executeGame() {
     while (self::getCurrentStateName() !== 'gameEnd') {
       $actions = [
         [$this, 'draw'],
@@ -16,12 +25,10 @@ class RandomGameTest extends BaseIntegrationTest
       if (self::countCards('hand') > 0) {
         $actions[] = [$this, 'meld'];
       }
-
       if (count(self::getCardsToDogma()) > 0) {
         $actions[] = [$this, 'dogma'];
       }
-
-      // Perform random action
+      // TODO: Add other actions here (e.g. achieve, endorse, etc.)
       $actions[array_rand($actions)]();
     }
 
