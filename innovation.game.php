@@ -546,8 +546,8 @@ class Innovation extends Table
             if ($edition == 4) {
                 self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 460 <= id AND id <= 469");
                 // In the 4th editions, Cities cannot be dogma'd.
-                self::DbQuery("UPDATE card SET dogma_icon = 'NULL' WHERE 220 <= id AND id <= 324");
-                self::DbQuery("UPDATE card SET dogma_icon = 'NULL' WHERE 460 <= id AND id <= 469");
+                self::DbQuery("UPDATE card SET dogma_icon = NULL WHERE 220 <= id AND id <= 324");
+                self::DbQuery("UPDATE card SET dogma_icon = NULL WHERE 460 <= id AND id <= 469");
             }
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 325 <= id AND id <= 329");
             if ($edition <= 3) {
@@ -1414,7 +1414,7 @@ class Innovation extends Table
     function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false, $force = false) {
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
-            error_log("Transferring ". self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
+            error_log("  - Transferring ". self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
         }
 
         // Get updated state of card in case a stale reference was passed.
@@ -7448,8 +7448,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function pushCardIntoNestedDogmaStack($card, $execute_demand_effects, $replace_may_with_must = false) {
-        error_log("pushCardIntoNestedDogmaStack");
-        self::trace('nesting++');
         $current_player_id = self::getCurrentPlayerUnderDogmaEffect();
         $nested_card_state = self::getCurrentNestedCardState();
         // Every card that says "execute the effects" also says "as if they were on this card"
@@ -7483,8 +7481,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function popCardFromNestedDogmaStack() {
-        error_log("popCardFromNestedDogmaStack");
-        self::trace('nesting--');
         self::DbQuery(self::format("DELETE FROM indexed_auxiliary_value WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
         self::DbQuery(self::format("DELETE FROM nested_card_execution WHERE nesting_index = {nesting_index}", array('nesting_index' => $this->innovationGameState->get('current_nesting_index'))));
         $this->innovationGameState->increment('current_nesting_index', -1);

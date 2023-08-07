@@ -162,8 +162,17 @@ abstract class BaseIntegrationTest extends BaseTest
     if ($playerId === null) {
       $playerId = self::getActivePlayerId();
     }
-    // TODO: Exclude cards which do not have a featured icon on them
-    return $this->tableInstance->getTable()->getTopCardsOnBoard($playerId);
+
+    $cards = $this->tableInstance->getTable()->getTopCardsOnBoard($playerId);
+
+    $cardsToDogma = [];
+    foreach ($cards as $card) {
+      if ($card['dogma_icon']) {
+        $cardsToDogma[] = $card;
+      }
+    }
+
+    return $cardsToDogma;
   }
 
   protected function getActivePlayerId(): int

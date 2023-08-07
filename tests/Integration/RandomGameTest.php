@@ -7,7 +7,7 @@ use Integration\BaseIntegrationTest;
 
 class RandomGameTest extends BaseIntegrationTest
 {
-  public function test_randomGame_fourthEdition_unseen()
+  public function test_randomGame_fourthEdition_cities()
   {
     while (self::getCurrentStateName() !== 'gameEnd') {
       $actions = [
@@ -66,7 +66,6 @@ class RandomGameTest extends BaseIntegrationTest
       $this->tableInstance->advanceGame();
 
     do {
-      error_log(self::getCurrentStateName());
       while (self::getCurrentStateName() === 'selectionMove') {
         $choices = [];
 
@@ -119,6 +118,10 @@ class RandomGameTest extends BaseIntegrationTest
       case 'choose_three_colors':
         $chosenColors = self::getRandomElementsFromArray(self::getGlobalVariableAsArray('color_array'), 3);
         $choice = pow(2, $chosenColors[0]) + pow(2, $chosenColors[1]) + pow(2, $chosenColors[2]);
+        break;
+      case 'choose_player':
+        $playerIndex = self::getRandomFromArray(self::getGlobalVariableAsArray('player_array'));
+        $choice = $this->tableInstance->getTable()->playerIndexToPlayerId($playerIndex);
         break;
       default:
         error_log("WARNING: Unknown special type of choice: $decodedChoiceType");
