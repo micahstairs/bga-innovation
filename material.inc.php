@@ -2152,9 +2152,12 @@ $this->textual_card_infos = array(
     ),
 
     412 => array(
-        'name'                => clienttranslate('Tractor'),
-        'echo_effect_1'       => clienttranslate('Draw a ${age_7}.'),
-        'non_demand_effect_1' => clienttranslate('Draw and score a ${age_7}. Draw a ${age_7}.'),
+        'name'                                => clienttranslate('Tractor'),
+        'echo_effect_1'                       => clienttranslate('Draw a ${age_7}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and score a ${age_7}. Draw a ${age_7}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score a ${age_7}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw a ${age_7}.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('If Tractor was foreseen, draw and score seven ${age_7}.'),
     ),
 
     413 => array(

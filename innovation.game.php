@@ -10882,7 +10882,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 411)
+            || (330 <= $card_id && $card_id <= 412)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13902,18 +13902,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 412, Echoes age 8: Tractor
-            case "412E1":
-                // "Draw a 7."
-                self::executeDraw($player_id, 7);
-                break;
-
-            case "412N1":
-                // "Draw and score a 7. Draw a 7."
-                self::executeDrawAndScore($player_id, 7);
-                self::executeDraw($player_id, 7);
-                break;
 
             // id 413, Echoes age 8: Crossword
             case "413N1":
