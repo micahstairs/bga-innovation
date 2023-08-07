@@ -3,6 +3,7 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
 /* Abstract class of all card implementations */
@@ -617,6 +618,16 @@ abstract class Card
   protected function setAuxiliaryArray(array $array)
   {
     return $this->game->setAuxiliaryArray($array);
+  }
+
+  protected function addToAuxiliaryArray(int $value)
+  {
+    return $this->game->setAuxiliaryArray(array_merge($this->game->getAuxiliaryArray(), [$value]));
+  }
+
+  protected function removeFromAuxiliaryArray(int $value)
+  {
+    return $this->game->setAuxiliaryArray(Arrays::removeElement($this->game->getAuxiliaryArray(), $value));
   }
 
   protected function getAuxiliaryArray(): array

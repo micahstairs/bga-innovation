@@ -46,8 +46,7 @@ class Card332 extends Card
 
   public function handleCardChoice(array $card) {
     if (self::getCurrentStep() === 1) {
-      // Remove forecasted card from auxiliary array
-      self::setAuxiliaryArray(array_diff(self::getAuxiliaryArray(), [$card['id']]));
+      self::removeFromAuxiliaryArray($card['id']);
     }
   }
 

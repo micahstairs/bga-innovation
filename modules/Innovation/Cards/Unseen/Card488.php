@@ -45,7 +45,7 @@ class Card488 extends Card
       // Do not allow the player to pass when the interaction is repeated
       self::setAuxiliaryValue(0);
       // Do not allow the same color to be chosen again
-      self::setAuxiliaryArray(array_diff(self::getAuxiliaryArray(), [self::getLastSelectedColor()]));
+      self::removeFromAuxiliaryArray(self::getLastSelectedColor());
       self::setNextStep(1);
     }
   }

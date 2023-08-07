@@ -60,7 +60,7 @@ class Card372 extends Card
     if (self::getCurrentStep() === 1) {
       self::setAuxiliaryValue(max(self::getAuxiliaryValue(), $card['age']));
     } else if (self::getCurrentStep() === 2) {
-      self::setAuxiliaryArray(array_diff(self::getAuxiliaryArray(), [$card['id']]));
+      self::removeFromAuxiliaryArray($card['id']);
     }
   }
 

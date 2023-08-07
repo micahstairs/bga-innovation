@@ -10865,7 +10865,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 414)
+            || (330 <= $card_id && $card_id <= 415)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13885,16 +13885,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 415, Echoes age 9: Calculator
-            case "415N1":
-                self::setAuxiliaryArray(array());
-                $step_max = 1;
-                break;
-
-            case "415N2":
-                $step_max = 1;
-                break;
 
             // id 416, Echoes age 9: Laser
             case "416N1":
@@ -19115,57 +19105,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 415, Echoes age 9: Calculator
-        case "415N1A":
-            // "Score two bottom non-blue cards from your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'score_keyword' => true,
-
-                'bottom_from' => true,
-                
-                'color' => array(1, 2, 3, 4), // non-blue
-            );
-            break; 
-
-       case "415N1B":
-            // "and repeat this dogma effect (once only)."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-
-                'bottom_from' => true,
-                
-                'color' => array(1, 2, 3, 4), // non-blue
-            );
-            break; 
-
-        case "415N2A":
-            // "You may splay your blue cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3, // up
-                'color' => array(0), // blue
-            );
-            break; 
             
         // id 416, Echoes age 9: Laser
         case "416N1A":
@@ -22177,35 +22116,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                    
-               // id 415, Echoes age 9: Calculator
-                case "415N1A":
-                    if ($n == 2) {
-                        // "If you scored two"
-                        $card_values = self::getAuxiliaryArray();
-                        // "and they have a total value less than 11"
-                        $total_value = $card_values[0] + $card_values[1];
-                        if ($total_value < 11) {
-                            // "draw a card of that total value and repeat this dogma effect (once only)."
-                            self::executeDraw($player_id, $total_value);
-                            self::setAuxiliaryArray(array());
-                            self::incrementStepMax(1);
-                        }
-                    } 
-                    break;
-                    
-                case "415N1B":
-                    if ($n == 2) {
-                        // "If you scored two"
-                        $card_values = self::getAuxiliaryArray();
-                        // "and they have a total value less than 11"
-                        $total_value = $card_values[0] + $card_values[1];
-                        if ($total_value < 11) {
-                            // "draw a card of that total value."
-                            self::executeDraw($player_id, $total_value);
-                        }
-                    } 
-                    break;                    
 
                 // id 416, Echoes age 9: Laser
                 case "416N1A":
@@ -23689,17 +23599,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 415, Echoes age 9: Calculator
-            case "415N1A":
-            case "415N1B":
-                // Track the cards scored
-                $card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                $card_values = self::getAuxiliaryArray();
-                $card_values[] = $card['faceup_age'];
-                self::setAuxiliaryArray($card_values);
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                 break;
 
             // id 421, Echoes age 9: ATM
