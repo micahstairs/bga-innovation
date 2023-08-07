@@ -10865,7 +10865,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 415)
+            || (330 <= $card_id && $card_id <= 416)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13885,11 +13885,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 416, Echoes age 9: Laser
-            case "416N1":
-                $step_max = 2;
-                break;
                 
             // id 417, Echoes age 9: Helicopter
             case "417N1":
@@ -19105,32 +19100,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 416, Echoes age 9: Laser
-        case "416N1A":
-            // "Return all unclaimed standard achievements."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => 0,
-                'location_to' => 'deck',                
-            );
-            break;
-            
-        case "416N1B":
-            // "Then, return half (rounded up) of the cards in your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => ceil(self::countCardsInLocation($player_id, 'score') / 2),
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',                
-            );
-            break;
 
         // id 417, Echoes age 9: Helicopter
         case "417N1A":
@@ -22117,22 +22086,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 416, Echoes age 9: Laser
-                case "416N1A":
-                    $number_of_cards_to_return = ceil(self::countCardsInLocation($player_id, 'score') / 2);
-                    if ($number_of_cards_to_return == 0) {
-                        // "Draw and meld two 10s."
-                        self::executeDrawAndMeld($player_id, 10);
-                        self::executeDrawAndMeld($player_id, 10);
-                    }
-                    break;
-
-                case "416N1B":
-                    // "Draw and meld two 10s."
-                    self::executeDrawAndMeld($player_id, 10);
-                    self::executeDrawAndMeld($player_id, 10);
-                    break;
-                    
                 // id 417, Echoes age 9: Helicopter
                 case "417N1A":
                     if ($n > 0) {
