@@ -9970,12 +9970,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 413, Echoes age 8: Crossword
-            case "413N1A":
-                $message_for_player = clienttranslate('Choose a value to draw');
-                $message_for_others = clienttranslate('${player_name} must choose a value to draw');
-                break;
-                
             // id 414, Echoes age 8: Television
             case "414N1A":
                 $message_for_player = clienttranslate('${You} must choose a value');
@@ -10882,7 +10876,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 412)
+            || (330 <= $card_id && $card_id <= 413)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13903,29 +13897,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break; 
 
-            // id 413, Echoes age 8: Crossword
-            case "413N1":
-                // "For each visible bonus your board, draw a card of that value."
-                $visible_bonuses = self::getVisibleBonusesOnBoard($player_id);
-                $num_bonuses = count($visible_bonuses);
-
-                // Automate the choice if there is no more than one unique bonus value or if the player already has an
-                // Echoes card in hand (the drawing order only matters to allow the player to control which Echoes card they draw)
-                // TODO(LATER): Move this logic to a more generic location so that this is not card-specific.
-                if (count(array_unique($visible_bonuses)) <= 1 || self::countCardsInLocation($player_id, 'hand', self::ECHOES)) {
-                    foreach ($visible_bonuses as $bonus) {
-                        self::executeDraw($player_id, $bonus);
-                    }
-                } else {
-                    $bonus_counts = array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-                    foreach ($visible_bonuses as $bonus) {
-                        $bonus_counts[$bonus]++;
-                    }
-                    $step_max = 1;
-                    self::setAuxiliaryArray($bonus_counts);
-                }
-                break;
-                
             // id 414, Echoes age 8: Television
             case "414E1":
                 // "Draw and meld an 8."
@@ -19165,28 +19136,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 413, Echoes age 8: Crossword
-        case "413N1A":
-            // "For each visible bonus on your board, draw a card of that value."
-            $age_counts = self::getAuxiliaryArray();
-            $age_choices = array();
-            for ($age = 1; $age <= 11; $age++) {
-                if ($age_counts[$age] > 0) {
-                    $age_choices[] = $age;
-                }
-            }
-
-            // Guaranteed that if we are in this state, we have at least 2+ ages 
-            // to choose from; otherwise: would have drawn in A, or not looped back around
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => $age_choices,
-            );
-            break;
             
         // id 414, Echoes age 8: Television
         case "414N1A":
@@ -22304,31 +22253,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 413, Echoes age 8: Crossword
-                case "413N1A":
-                    $age_counts = self::getAuxiliaryArray();
-                    $unique_values_left_to_draw = 0;
-                    for ($age = 1; $age <= 11; $age++) {
-                        if ($age_counts[$age] > 0) {
-                            $unique_values_left_to_draw++;
-                        }
-                    }
-                    
-                    // Automate the choice if there is no more than one unique bonus value or if the player already has an
-                    // Echoes card in hand (the drawing order only matters to allow the player to control which Echoes card they draw)
-                    // TODO(LATER): Move this logic to a more generic location so that this is not card-specific.
-                    if ($unique_values_left_to_draw <= 1 || self::countCardsInLocation($player_id, 'hand', self::ECHOES)) {
-                        for ($age = 1; $age <= 11; $age++) {
-                            for ($i = 0; $i < $age_counts[$age]; $i++) {
-                                self::executeDraw($player_id, $age);
-                            }
-                        }
-                    } else {
-                        $step--;
-                        self::incrementStep(-1);
-                    }
-                    break;
                     
                 // id 414, Echoes age 8: Television
                 case "414N1C":
@@ -23853,16 +23777,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 413, Echoes age 8: Crossword
-            case "413N1A":   
-                $age_counts = self::getAuxiliaryArray();
-                $age_counts[$choice]--;
-                self::setAuxiliaryArray($age_counts);
-
-                // Draw the card of the selected age
-                self::executeDraw($player_id, $choice);
                 break;
                 
             // id 414, Echoes age 8: Television

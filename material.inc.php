@@ -2161,8 +2161,10 @@ $this->textual_card_infos = array(
     ),
 
     413 => array(
-        'name'                => clienttranslate('Crossword'),
-        'non_demand_effect_1' => clienttranslate('For each visible bonus on your board, draw a card of that value.'),
+        'name'                                => clienttranslate('Crossword'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('For each visible bonus on your board, draw a card of that value.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('For each even bonus on your board, draw a card of that value. If Crossword was foreseen, transfer the drawn cards to the available achievements.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('For each odd bonus on your board, return the lowest card from your hand.'),
     ),
 
     414 => array(
