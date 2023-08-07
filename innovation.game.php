@@ -10882,7 +10882,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 410)
+            || (330 <= $card_id && $card_id <= 411)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13902,35 +13902,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 411, Echoes age 8: Air Conditioner
-            case "411E1":
-                $step_max = 1;
-                break;
-
-            case "411D1":
-                // "I demand you return all cards from your score pile of value matching any of your top cards!"
-                $top_cards = self::getTopCardsOnBoard($player_id);
-                $card_ids_to_return = array();
-                foreach (self::getCardsInLocation($player_id, 'score') as $score_card) {
-                    $found = false;
-                    foreach ($top_cards as $top_card) {
-                        if ($top_card['faceup_age'] == $score_card['age']) {
-                            $found = true;
-                            break;
-                        }
-                    }
-                    
-                    if ($found) {
-                        $card_ids_to_return[] = $score_card['id'];
-                    }
-                }   
-                
-                if (count($card_ids_to_return) > 0) {
-                    $step_max = 1;
-                    self::setAuxiliaryArray($card_ids_to_return);
-                }
-                break;
 
             // id 412, Echoes age 8: Tractor
             case "412E1":
@@ -19204,38 +19175,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-            
-        // id 411, Echoes age 8: Air Conditioner
-        case "411E1A":
-            // "You may score a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true,
-            );
-            break;
-
-        case "411D1A":
-            // "I demand you return all cards from your score pile of value matching any of your top cards!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => count(self::getAuxiliaryArray()),
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_ids_are_in_auxiliary_array' => true,
             );
             break;
 

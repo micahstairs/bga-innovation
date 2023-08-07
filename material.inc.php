@@ -2145,9 +2145,10 @@ $this->textual_card_infos = array(
     ),
 
     411 => array(
-        'name'              => clienttranslate('Air Conditioner'),
-        'echo_effect_1'     => clienttranslate('You may score a card from your hand.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you return all cards from your score pile of value matching any of your top cards!'),
+        'name'                       => clienttranslate('Air Conditioner'),
+        'echo_effect_1'              => clienttranslate('You may score a card from your hand.'),
+        'i_demand_effect_1'          => clienttranslate('${I demand} you return all cards from your score pile of value matching any of your top cards!'),
+        'non_demand_effect_1_fourth' => clienttranslate('Junk all cards in the ${age_9} deck.'),
     ),
 
     412 => array(
