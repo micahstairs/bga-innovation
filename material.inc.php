@@ -2131,9 +2131,10 @@ $this->textual_card_infos = array(
     ),
 
     409 => array(
-        'name'                => clienttranslate('Nylon'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck an ${age_8} for every three ${icon_5} on your board. If any of the tucked cards were green, repeat this dogma effect.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your red cards up.'),
+        'name'                                => clienttranslate('Nylon'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and tuck an ${age_8} for every three ${icon_5} on your board. If any of the tucked cards were green, repeat this dogma effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and tuck an ${age_8} for every three ${icon_5} on your board. If any of the tucked cards are green, repeat this effect.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your red cards up.'),
     ),
 
     410 => array(

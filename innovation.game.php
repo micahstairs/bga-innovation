@@ -10882,7 +10882,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 408)
+            || (330 <= $card_id && $card_id <= 409)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13902,31 +13902,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 409, Echoes age 8: Nylon
-            case "409N1":
-                // "Draw and tuck an 8 for every three factories on your board."
-                do {
-                    $number_of_factories = self::getPlayerSingleRessourceCount($player_id, 5);
-                    $num_tucks = self::intDivision($number_of_factories, 3);
-
-                    $green_tucked = false;
-                    for ($i = 1; $i <= $num_tucks; $i++) {
-                        $card = self::executeDrawAndTuck($player_id, 8);
-                        if ($card['color'] == 2) {
-                            // "If any of the tucked cards were green, repeat this dogma effect."
-                            $green_tucked = true;
-                        }
-                    }
-                    if ($green_tucked) {
-                        self::notifyGeneralInfo(clienttranslate("At least one of the tucked cards was green so the dogma effect is repeating."));
-                    }
-                } while ($green_tucked);
-                break;
-            
-            case "409N2":
-                $step_max = 1;
-                break;
 
             // id 410, Echoes age 8: Sliced Bread
             case "410E1":
@@ -19240,19 +19215,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 409, Echoes age 8: Nylon
-        case "409N2A":
-            // "You may splay your red cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3 /* up */,
-                'color' => array(1) /* red */
-            );
-            break; 
 
         // id 410, Echoes age 8: Sliced Bread
         case "410E1A":

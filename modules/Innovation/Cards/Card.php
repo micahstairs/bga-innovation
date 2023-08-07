@@ -851,7 +851,7 @@ abstract class Card
     return array_diff(range(0, 5), [$type]);
   }
 
-  protected function notifyAll($log, array $args)
+  protected function notifyAll($log, array $args = [])
   {
     $this->game->notifyGeneralInfo($log, $args);
   }
