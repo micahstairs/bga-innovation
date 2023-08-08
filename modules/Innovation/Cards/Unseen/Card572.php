@@ -28,15 +28,4 @@ class Card572 extends Card
     }
   }
 
-  private function getUniqueColorsInHand(int $playerId): array
-  {
-    $colors = [];
-    foreach ($this->game->getCardsInHand($playerId) as $card) {
-      if (!in_array($card['color'], $colors)) {
-        $colors[] = $card['color'];
-      }
-    }
-    return $colors;
-  }
-
 }
