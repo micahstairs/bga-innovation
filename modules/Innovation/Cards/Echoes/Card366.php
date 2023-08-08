@@ -67,7 +67,7 @@ class Card366 extends Card
     if (self::getCurrentStep() === 1 && self::getNumChosen() > 0) {
       self::setMaxSteps(2);
     } else if (self::isFourthEdition() && self::getCurrentStep() === 2) {
-      self::junk(5);
+      self::junkBaseDeck(5);
     }
   }
 
@@ -75,7 +75,7 @@ class Card366 extends Card
   {
     // Still junk the cards in the [5] deck even if there were no cards to exchange
     if (self::isFourthEdition() && self::getCurrentStep() === 2) {
-      self::junk(5);
+      self::junkBaseDeck(5);
     }
   }
 
