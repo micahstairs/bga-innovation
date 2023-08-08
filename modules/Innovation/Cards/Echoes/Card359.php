@@ -123,9 +123,9 @@ class Card359 extends Card
       self::setAuxiliaryValue($topGreenCard['id']); // Track card ID which will be returned or achieved
       self::setMaxSteps(2);
     } else if ($card['age'] == 3) {
-      self::achieveIfEligible($card);
+      self::achieveIfEligible($topGreenCard);
     } else if ($card['age'] == 4) {
-      self::return($card);
+      self::return($topGreenCard);
     }
   }
 
