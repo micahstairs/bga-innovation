@@ -5203,7 +5203,7 @@ class Innovation extends BgaGame {
             visible_to = true;
         }
 
-        if (card.location_from === 'forecast' || card.location_to === 'forecast') {
+        if (this.gamedatas.fourth_edition && (card.location_from === 'forecast' || card.location_to === 'forecast')) {
             this.refreshForecastCounts();
         }
         if (card.location_from === 'achievements' || card.location_to === 'achievements') {
@@ -5302,6 +5302,14 @@ class Innovation extends BgaGame {
             if (this.number_of_splayed_piles == 1) { // Now there is one color splayed for one player
                 this.enableButtonForSplayMode();
             }
+        }
+
+        // Splays often cause the forecast and safe limit to change
+        if (this.gamedatas.echoes_expansion_enabled && this.gamedatas.fourth_edition) {
+            this.refreshForecastCounts();
+        }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            this.refreshSafeCounts();
         }
 
         // Update special achievements overview with progression towards each achievement
