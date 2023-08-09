@@ -1,8 +1,9 @@
 name: Run integration tests
 
 on:
-  schedule:
-    - cron: '0 * * * *'  # Schedule to run hourly
+  push:
+    branches:
+      - 'main-4'
 
 jobs:
   build-test:
