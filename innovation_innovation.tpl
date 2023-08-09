@@ -48,18 +48,21 @@
                         </div>
                     </div>
                     <div id="score_container_{PLAYER_ID}" class="score_container">
-                        <p id="score_text_{PLAYER_ID}"{OPT_SCORE_CLASS}>{SCORE_PILE}</p>
-                        <div id="score_{PLAYER_ID}" class="score"></div>
-                    </div>
-                    <div id="reference_card_{PLAYER_ID}" class="reference_card S"></div>
-                    <div id="achievement_container_{PLAYER_ID}" class="achievement_container">
-                        <p id="achievements_text_{PLAYER_ID}"></p>
-                        <div id="achievements_{PLAYER_ID}" class="achievements"></div>
+                        <div style="background-color:rgba({R}, {G}, {B}, .2);">
+                            <p id="score_text_{PLAYER_ID}"{OPT_SCORE_CLASS}>{SCORE_PILE}</p>
+                            <div id="score_{PLAYER_ID}" class="score"></div>
+                        </div>
                     </div>
                     <div id="safe_container_{PLAYER_ID}" class="safe_container">
                         <div style="background-color:rgba({R}, {G}, {B}, .2);">
                             <p id="safe_text_{PLAYER_ID}"></p>
                             <div id="safe_{PLAYER_ID}" class="safe"></div>
+                        </div>
+                    </div>
+                    <div id="achievement_container_{PLAYER_ID}" class="achievement_container">
+                        <div style="background-color:rgba({R}, {G}, {B}, .2);">
+                            <p id="achievements_text_{PLAYER_ID}"></p>
+                            <div id="achievements_{PLAYER_ID}" class="achievements"></div>
                         </div>
                     </div>
                 </div>
