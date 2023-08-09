@@ -619,6 +619,7 @@ class Innovation extends BgaGame {
 
             if (!this.gamedatas.echoes_expansion_enabled) {
                 dojo.byId('forecast_text_' + player_id).style.display = 'none';
+                dojo.byId('forecast_count_' + player_id).style.display = 'none';
                 dojo.byId('forecast_count_container_' + player_id).style.display = 'none';
                 dojo.byId('forecast_container_' + player_id).style.display = 'none';
             }
@@ -858,6 +859,14 @@ class Innovation extends BgaGame {
             if (this.players[player_id].eliminated == 1) {
                 dojo.byId('player_' + player_id).style.display = 'none';
             }
+        }
+
+        this.refreshAchievementsCounts();
+        if (this.gamedatas.echoes_expansion_enabled) {
+            this.refreshForecastCounts();
+        }
+        if (this.gamedatas.unseen_expansion_enabled) {
+            this.refreshSafeCounts();
         }
 
         this.default_viewport = "width=640"; // 640 is set in game_interface_width.min in gameinfos.inc.php
@@ -2005,6 +2014,46 @@ class Innovation extends BgaGame {
             ids.push(595, 596, 597, 598, 599);
         }
         return ids;
+    }
+
+    refreshForecastCounts() {
+        for (let player_id in this.players) {
+            if (this.gamedatas.fourth_edition) {
+                const numerator = this.zone["forecast"][player_id].items.length;
+                let denominator = 5;
+                for (let i = 0; i < 5; i++) {
+                    let splay_direction = this.zone["board"][player_id][i].splay_direction;
+                    if (splay_direction > 0) {
+                        denominator--;
+                    }
+                }
+                dojo.byId(`forecast_text_${player_id}`).innerHTML = `Forecast<br/>(${numerator}/${denominator})`;
+            } else {
+                dojo.byId(`forecast_text_${player_id}`).innerHTML = `Forecast`;
+            }
+        }
+    }
+
+    refreshAchievementsCounts() {
+        for (let player_id in this.players) {
+            const numerator = this.zone["achievements"][player_id].items.length;
+            const denominator = this.gamedatas.number_of_achievements_needed_to_win;
+            dojo.byId(`achievements_text_${player_id}`).innerHTML = `Achievements<br/>(${numerator}/${denominator})`;
+        }
+    }
+
+    refreshSafeCounts() {
+        for (let player_id in this.players) {
+            const numerator = this.zone["safe"][player_id].items.length;
+            let denominator = 5;
+            for (let i = 0; i < 5; i++) {
+                let splay_direction = this.zone["board"][player_id][i].splay_direction;
+                if (splay_direction > 0) {
+                    denominator--;
+                }
+            }
+            dojo.byId(`safe_text_${player_id}`).innerHTML = `Safe<br/>(${numerator}/${denominator})`;
+        }
     }
 
     /*
@@ -5214,17 +5263,9 @@ class Innovation extends BgaGame {
             this.number_of_scored_cards = card.monument_counters[this.player_id].number_of_scored_cards;
         }
 
-        // Handle case where card is being removed from the game.
         if (card.location_to == 'removed') {
             this.removeFromZone(zone_from, id_from, true, card.age, card.type, card.is_relic);
-            if (this.canShowCardTooltip(card.id)) {
-                this.addCustomTooltipToClass("card_id_" + card.id, this.getTooltipForCard(card.id), "");
-            }
-            this.refreshSpecialAchievementProgression();
-            return;
-        }
-
-        if (is_fountain_or_flag && card.owner_from == 0) {
+        } else  if (is_fountain_or_flag && card.owner_from == 0) {
             // Make the card appear that it is coming from the card with the fountain/flag icon
             let pile = this.zone["board"][card.owner_to][card.color].items;
             let top_card = pile[pile.length - 1];
@@ -5257,6 +5298,16 @@ class Innovation extends BgaGame {
                 this.createAndAddToZone(this.zone["my_score_verso"], card.position_to, card.age, card.type, card.is_relic, card.id, dojo.body(), card);
             }
             visible_to = true;
+        }
+
+        if (card.location_from === 'forecast' || card.location_to === 'forecast') {
+            this.refreshForecastCounts();
+        }
+        if (card.location_from === 'achievements' || card.location_to === 'achievements') {
+            this.refreshAchievementsCounts();
+        }
+        if (card.location_from === 'safe' || card.location_to === 'safe') {
+            this.refreshSafeCounts();
         }
 
         // Add tooltip to card
