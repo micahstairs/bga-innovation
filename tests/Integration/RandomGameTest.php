@@ -59,6 +59,26 @@ class RandomGameTest extends BaseIntegrationTest
         ->stubArg('card_id', $cardId)
         ->meld();
     $this->tableInstance->advanceGame();
+
+    if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
+      $promotedCardId = self::getRandomCardId(self::getCards('forecast'));
+      $promotedCardName = $this->tableInstance->getTable()->getCardName($cardId);
+      error_log("* PROMOTE $promotedCardName");
+      $this->tableInstance
+        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+        ->stubArg('card_id', $promotedCardId)
+        ->promoteCard();
+      $this->tableInstance->advanceGame();
+    }
+
+    if (self::getCurrentStateName() === 'promoteDogmaPlayerTurn') {
+      $this->tableInstance
+        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+        ->dogmaPromotedCard();
+      $this->tableInstance->advanceGame();
+    }
+
+    self::excecuteInteractions();
   }
 
   private function dogma()
@@ -70,8 +90,13 @@ class RandomGameTest extends BaseIntegrationTest
         ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
         ->stubArg('card_id', $cardId)
         ->dogma();
-      $this->tableInstance->advanceGame();
+    $this->tableInstance->advanceGame();
 
+    self::excecuteInteractions();
+  }
+
+  private function excecuteInteractions()
+  {
     do {
       while (self::getCurrentStateName() === 'selectionMove') {
         $choices = [];
