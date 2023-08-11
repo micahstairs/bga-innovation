@@ -175,6 +175,24 @@ abstract class BaseIntegrationTest extends BaseTest
     return $cardsToDogma;
   }
 
+  protected function getCardsToPromote(int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+
+    $meldedCard = $this->tableInstance->getTable()->getCardInfo(self::getGlobalVariable('melded_card_id'));
+
+    $cardsToPromote = [];
+    foreach (self::getCards('forecast', $playerId) as $card) {
+      if ($card['age'] <= $meldedCard['age']) {
+        $cardsToPromote[] = $card;
+      }
+    }
+
+    return $cardsToPromote;
+  }
+
   protected function getActivePlayerId(): int
   {
     return $this->tableInstance->getTable()->getActivePlayerId();

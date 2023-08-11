@@ -61,7 +61,7 @@ class RandomGameTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
 
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
-      $promotedCardId = self::getRandomCardId(self::getCards('forecast'));
+      $promotedCardId = self::getRandomCardId(self::getCardsToPromote());
       $promotedCardName = $this->tableInstance->getTable()->getCardName($cardId);
       error_log("* PROMOTE $promotedCardName");
       $this->tableInstance
@@ -71,7 +71,7 @@ class RandomGameTest extends BaseIntegrationTest
       $this->tableInstance->advanceGame();
     }
 
-    if (self::getCurrentStateName() === 'promoteDogmaPlayerTurn') {
+    if (self::getCurrentStateName() === 'dogmaPromotedPlayerTurn') {
       $this->tableInstance
         ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
         ->dogmaPromotedCard();
@@ -97,28 +97,31 @@ class RandomGameTest extends BaseIntegrationTest
 
   private function excecuteInteractions()
   {
-    do {
-      while (self::getCurrentStateName() === 'selectionMove') {
-        $choices = [];
+    while (self::getCurrentStateName() === 'selectionMove') {
+      $choices = [];
 
-        if (count(self::getSelectedCards()) > 0) {
-          $choices[] = [$this, 'selectRandomCard'];
-        }
-
-        if (!(self::getGlobalVariable('can_pass') == 0 && self::getGlobalVariable('n_min') > 0)) {
-          $choices[] = [$this, 'pass'];
-        }
-
-        if (self::getGlobalVariable('special_type_of_choice') > 0) {
-          $choices[] = [$this, 'selectSpecialChoice'];
-        }
-
-        if (empty($choices)) {
-          error_log("ERROR: Player is forced to do something something else, but it's not implemented yet");
-        }
-        $choices[array_rand($choices)]();
+      if (count(self::getSelectedCards()) > 0) {
+        $choices[] = [$this, 'selectRandomCard'];
       }
-    } while (self::getCurrentStateName() != 'playerTurn' && self::getCurrentStateName() != 'gameEnd');
+
+      if (!(self::getGlobalVariable('can_pass') == 0 && self::getGlobalVariable('n_min') > 0)) {
+        $choices[] = [$this, 'pass'];
+      }
+
+      if (self::getGlobalVariable('special_type_of_choice') > 0) {
+        $choices[] = [$this, 'selectSpecialChoice'];
+      }
+
+      if (empty($choices)) {
+        error_log("ERROR: Player is forced to do something something else, but it's not implemented yet");
+      }
+      $choices[array_rand($choices)]();
+    }
+
+    $state = self::getCurrentStateName();
+    if ($state !== 'playerTurn' && $state !== 'gameEnd') {
+      error_log("ERROR: Unexpected state after doing interactions: $state");
+    }
   }
 
   private function selectSpecialChoice()
