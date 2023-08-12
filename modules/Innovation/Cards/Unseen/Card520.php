@@ -9,7 +9,7 @@ class Card520 extends Card
 
   // El Dorado:
   //   - Draw and meld a [3], a [2], and a [1]. If all three cards have a PROSPERITY, score all cards
-  //     in the [5] deck. If two or more have a PROSPERITY, splay your green and blue cards right.
+  //     in the [5] deck. If two have a PROSPERITY, splay your green and blue cards right.
 
   public function initialExecution()
   {

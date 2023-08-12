@@ -8,8 +8,8 @@ class Card552 extends Card
 {
 
   // Subway
-  //   - Draw and tuck a [7]. If you have seven or more visible cards on your board of the color of
-  //     the tucked card, draw a [9]. Otherwise, junk all cards on your board of that color, and
+  //   - Draw and tuck a [7]. If you have seven visible cards on your board of the color of the
+  //     tucked card, draw a [9]. Otherwise, junk all cards on your board of that color, and
   //     draw an [8].
 
   public function initialExecution()

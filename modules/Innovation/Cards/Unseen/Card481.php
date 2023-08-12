@@ -9,7 +9,7 @@ class Card481 extends Card
 
   // Palmistry:
   //   - Draw and meld a [1].
-  //   - Return two cards from your hand. If you return two, draw and score a [2].
+  //   - Return two cards from your hand. If you do, draw and score a [2].
 
   public function initialExecution()
   {

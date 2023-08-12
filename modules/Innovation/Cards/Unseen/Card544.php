@@ -8,9 +8,8 @@ class Card544 extends Card
 {
 
   // Triad:
-  //   - If you have three or more cards in your hand, return a card from your hand and splay the
-  //     color of the returned card right, tuck a card from your hand, and score a card from your
-  //     hand.
+  //   - If you have three cards in your hand, return a card from your hand and splay the color of
+  //     the returned card right, tuck a card from your hand, and score a card from your hand.
 
   public function initialExecution()
   {

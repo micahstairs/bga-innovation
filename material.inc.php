@@ -2424,7 +2424,7 @@ $this->textual_card_infos = array(
     481 => array(
         'name'                => clienttranslate('Palmistry'),
         'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_1}.'),
-        'non_demand_effect_2' => clienttranslate('Return two cards from your hand. If you return two, draw and score a ${age_2}.'),
+        'non_demand_effect_2' => clienttranslate('Return two cards from your hand. If you do, draw and score a ${age_2}.'),
     ),
 
     482 => array(
@@ -2522,7 +2522,7 @@ $this->textual_card_infos = array(
 
     499 => array(
         'name'                => clienttranslate('Cipher'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. If you return two or more, draw a card of value one higher than the highest value of card you return.'),
+        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. If you return two, draw a card of value one higher than the highest value of card you return.'),
         'non_demand_effect_2' => clienttranslate('Draw a ${age_2}. You may splay your blue cards left.'),
     ),
 
@@ -2645,7 +2645,7 @@ $this->textual_card_infos = array(
 
     520 => array(
         'name'                => clienttranslate('El Dorado'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}, a ${age_2}, and a ${age_1}. If all three cards have a ${icon_1}, score all cards in the ${age_5} deck. If two or more have a ${icon_1}, splay your green and blue cards right.'),
+        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}, a ${age_2}, and a ${age_1}. If all three cards have a ${icon_1}, score all cards in the ${age_5} deck. If two have a ${icon_1}, splay your green and blue cards right.'),
     ),
 
     521 => array(
@@ -2698,7 +2698,7 @@ $this->textual_card_infos = array(
 
     529 => array(
         'name'                => clienttranslate('Buried Treasure'),
-        'non_demand_effect_1' => clienttranslate('Choose an odd value. Transfer all cards of that value from all score piles to the available achievements. If you transfer four or more cards, draw and safeguard a card of that value, and score three available standard achievements.'),
+        'non_demand_effect_1' => clienttranslate('Choose an odd value. Transfer all cards of that value from all score piles to the available achievements. If you transfer four cards, draw and safeguard a card of that value, and score three available standard achievements.'),
     ),
 
     530 => array(
@@ -2784,7 +2784,7 @@ $this->textual_card_infos = array(
 
     544 => array(
         'name'                => clienttranslate('Triad'),
-        'non_demand_effect_1' => clienttranslate('If you have three or more cards in your hand, return a card from your hand and splay the color of the returned card right, tuck a card from your hand, and score a card from your hand.'),
+        'non_demand_effect_1' => clienttranslate('If you have three cards in your hand, return a card from your hand and splay the color of the returned card right, tuck a card from your hand, and score a card from your hand.'),
     ),
 
     /* Unseen - Age 7 */
@@ -2832,7 +2832,7 @@ $this->textual_card_infos = array(
 
     552 => array(
         'name'                => clienttranslate('Subway'),
-        'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_7}. If you have seven or more visible cards on your board of the color of the tucked card, draw a ${age_9}. Otherwise, junk all cards on your board of that color, and draw an ${age_8}.'),
+        'non_demand_effect_1' => clienttranslate('Draw and tuck a ${age_7}. If you have seven visible cards on your board of the color of the tucked card, draw a ${age_9}. Otherwise, junk all cards on your board of that color, and draw an ${age_8}.'),
     ),
 
     553 => array(
@@ -2946,7 +2946,7 @@ $this->textual_card_infos = array(
 
     572 => array(
         'name'                => clienttranslate('Surveillance'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand! If the colors of cards in your hand match the colors of cards in my hand, and you have a card in your hand, I win!'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you reveal your hand! If the colors present in your hand and my hand match exactly, and your hand is not empty, I win!'),
         'non_demand_effect_1' => clienttranslate('Draw a ${age_10}.'),
     ),
 
@@ -3081,7 +3081,7 @@ $this->textual_card_infos = array(
 
     595 => array(
         'name'                               => clienttranslate('Confidence'),
-        'condition_for_claiming'             => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 5 or higher and four or more secrets.'),
+        'condition_for_claiming'             => clienttranslate('Claim this special achievement at the end of any action if you have a top card on your board of value 5 or higher and four secrets.'),
         'alternative_condition_for_claiming' => clienttranslate('May also be claimed via ${age_1} Assassination.')
     ),
 
