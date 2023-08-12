@@ -10865,7 +10865,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 416)
+            || (330 <= $card_id && $card_id <= 417)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13885,11 +13885,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-                
-            // id 417, Echoes age 9: Helicopter
-            case "417N1":
-                $step_max = 2;
-                break;
                 
             // id 418, Echoes age 9: Jet
             case "418E1":
@@ -19100,38 +19095,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 417, Echoes age 9: Helicopter
-        case "417N1A":
-            // "Transfer a top card other than Helicopter from any player's board to its owner's score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-                
-                'not_id' => 417, // Helicopter
-            );
-            break;
-
-        case "417N1B":
-            // "You may return a card from your hand which shares an icon with the transferred card."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'card_ids_are_in_auxiliary_array' => true,
-                'enable_autoselection' => false,
-            );
-            break;
             
         // id 418, Echoes age 9: Jet
         case "418E1A":
@@ -22086,34 +22049,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 417, Echoes age 9: Helicopter
-                case "417N1A":
-                    if ($n > 0) {
-                        $transferred_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                        self::transferCardFromTo($transferred_card, $this->innovationGameState->get('owner_last_selected'), 'score');
-                        
-                        // Fill the auxiliary array with all eligible cards in hand.
-                        $eligible_cards = array();
-                        foreach (self::getCardsInHand($player_id) as $card) {
-                            // TODO(LATER): It's not clear whether we should be checking for other matching icons too (e.g. bonus icons).
-                            for ($icon = 1; $icon <= 7; $icon++) {
-                                if (self::hasRessource($card, $icon) && self::hasRessource($transferred_card, $icon)) {
-                                    $eligible_cards[] = $card['id'];
-                                    break; // only 1 icon needs to be common
-                                }
-                            }
-                        }
-                        self::setAuxiliaryArray($eligible_cards);
-                    }
-                    break;
-
-                case "417N1B":
-                    // "If you do, repeat this dogma effect."
-                    if ($n > 0) {
-                        $step = 0; self::setStep(0); // go back to the first interaction
-                    }
-                    break;
-                    
                 // id 418, Echoes age 9: Jet
                 case "418E1A":
                     if ($n > 0 && $player_id == $launcher_id) {

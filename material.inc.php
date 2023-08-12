@@ -2194,8 +2194,9 @@ $this->textual_card_infos = array(
     ),
 
     417 => array(
-        'name'                => clienttranslate('Helicopter'),
-        'non_demand_effect_1' => clienttranslate('Transfer a top card other than Helicopter from any player\'s board to its owner\'s score pile. You may return a card from your hand which shares an icon with the transferred card. If you do, repeat this dogma effect.'),
+        'name'                                => clienttranslate('Helicopter'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Transfer a top card other than Helicopter from any player\'s board to its owner\'s score pile. You may return a card from your hand which shares an icon with the transferred card. If you do, repeat this dogma effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Transfer a top card other than Helicopter from any player\'s board to its owner\'s score pile. You may return a card from your hand which shares an icon with the transferred card. If you do, repeat this effect.'),
     ),
 
     418 => array(

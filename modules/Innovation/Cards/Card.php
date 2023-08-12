@@ -851,6 +851,24 @@ abstract class Card
     return self::getBonusIcon($card) > 0;
   }
 
+  protected function hasIconInCommon(array $card1, array $card2): bool
+  {
+    return count(array_intersect(self::getIconTypes($card1), self::getIconTypes($card2))) > 0;
+  }
+
+  protected function getIconTypes(array $card): array
+  {
+    $icons = [];
+    for ($i = 1; $i <= 6; $i++) {
+      $icon = $card['spot_'.$i];
+      // Echo effects don't actually count as an icon type
+      if ($icon && !$this->game::ECHO_EFFECT_ICON) {
+        $icons[] = min($icon, 100);
+      }
+    }
+    return $icons;
+  }
+
   protected function wasForeseen(): bool
   {
     // NOTE: The phrase "was foreseen" didn't appear on cards until the fourth edition.
