@@ -10863,7 +10863,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 421)
+            || (330 <= $card_id && $card_id <= 422)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13883,20 +13883,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 422, Echoes age 9: Wristwatch
-            case "422E1":
-                $step_max = 1;
-                break;
-
-            case "422N1":
-                // "For each visible bonus on your board, draw and tuck a card of that value, in ascending order."
-                $bonuses = self::getVisibleBonusesOnBoard($player_id);
-                sort($bonuses); // put in ascending order
-                foreach ($bonuses as $bonus) {
-                    self::executeDrawAndTuck($player_id, $bonus);
-                }
-                break;
 
             // id 423, Echoes age 9: Karaoke
             case "423E1":
@@ -19004,24 +18990,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-
-        // id 422, Echoes age 9: Wristwatch
-        case "422E1A":
-            // "Take a non-yellow top card from your board and tuck it."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-                
-                'color' => array(0,1,2,4), // non-yellow
             );
             break;
 

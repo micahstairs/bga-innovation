@@ -2234,9 +2234,12 @@ $this->textual_card_infos = array(
     ),
 
     422 => array(
-        'name'                => clienttranslate('Wristwatch'),
-        'echo_effect_1'       => clienttranslate('Take a non-yellow top card from your board and tuck it.'),
-        'non_demand_effect_1' => clienttranslate('For each visible bonus on your board, draw and tuck a card of that value, in ascending order.'),
+        'name'                                => clienttranslate('Wristwatch'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Take a non-yellow top card from your board and tuck it.'),
+        'echo_effect_1_fourth'                => clienttranslate('Tuck a top card from your board.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('For each visible bonus on your board, draw and tuck a card of that value, in ascending order.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If Wristwatch was foreseen, return all non-bottom cards from your board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('For each visible bonus on your board, draw and meld a card of that value, in ascending order.'),
     ),
 
     423 => array(
