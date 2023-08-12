@@ -104,6 +104,11 @@ abstract class Card
     return $this->state->getLauncherId();
   }
 
+  protected function isLauncher(): bool
+  {
+    return self::getPlayerId() === self::getLauncherId();
+  }
+
   protected function getEffectNumber(): int
   {
     return $this->state->getEffectNumber();

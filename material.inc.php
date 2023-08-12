@@ -2200,9 +2200,11 @@ $this->textual_card_infos = array(
     ),
 
     418 => array(
-        'name'              => clienttranslate('Jet'),
-        'echo_effect_1'     => clienttranslate('Meld a card from your hand.'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect!'),
+        'name'                                => clienttranslate('Jet'),
+        'echo_effect_1'                       => clienttranslate('Meld a card from your hand.'),
+        'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect! Junk all available achievements of values equal to the melded card and the returned card!'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_10}.'),
     ),
 
     419 => array(

@@ -6315,8 +6315,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('can_pass', $rewritten_options) || self::getCurrentNestedCardState()['replace_may_with_must']) {
             $rewritten_options['can_pass'] = false;
         }
-        if (!array_key_exists('color', $rewritten_options)) {
-            $rewritten_options['color'] = array(0, 1, 2, 3, 4);
+        if (array_key_exists('color', $rewritten_options)) {
+            $rewritten_options['color'] = array_unique($rewritten_options['color']);
+        } else {
+            $rewritten_options['color'] = [0, 1, 2, 3, 4];
         }
         if (!array_key_exists('type', $rewritten_options)) {
             $rewritten_options['type'] = self::getActiveCardTypes();
@@ -10865,7 +10867,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 417)
+            || (330 <= $card_id && $card_id <= 418)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13885,39 +13887,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-                
-            // id 418, Echoes age 9: Jet
-            case "418E1":
-                if ($player_id == $launcher_id && !self::isExecutingAgainDueToEndorsedAction()) {
-                    if ($this->innovationGameState->get('release_version') >= 3) {
-                        self::setAuxiliaryArray(array());
-                    } else {
-                        self::setAuxiliaryValue(-1);
-                    }
-                }
-                $step_max = 1;
-                break;
-
-            case "418D1":
-                // "I demand you return your top card of the color I melded due to Jet's echo effect!"
-                // NOTE: If the action was endorsed, there could be two colors (or the same color twice).
-                if ($this->innovationGameState->get('release_version') >= 3) {
-                    if (count(self::getAuxiliaryArray()) >= 1) {
-                        if (!self::isExecutingAgainDueToEndorsedAction()) {
-                            self::setIndexedAuxiliaryValue($player_id, -1);
-                        }
-                        $step_max = 1;
-                    }
-                } else {
-                    $color = self::getAuxiliaryValue();
-                    if ($color >= 0) {
-                        $card = self::getTopCardOnBoard($player_id, $color);
-                        if ($card !== null) {
-                            self::returnCard($card);
-                        }
-                    }
-                }
-                break;
 
             // id 419, Echoes age 9: Credit Card
             case "419E1":
@@ -19095,38 +19064,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 418, Echoes age 9: Jet
-        case "418E1A":
-            // "Meld a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "418D1A":
-            // "I demand you return your top card of the color I melded due to Jet's echo effect!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                // TODO(LATER): Remove array_unique since it's now redundant.
-                'color' => array_unique(self::getAuxiliaryArray()),
-            );
-            break;
         
         // id 419, Echoes age 9: Credit Card
         case "419N1A":
@@ -22047,26 +21984,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 418, Echoes age 9: Jet
-                case "418E1A":
-                    if ($n > 0 && $player_id == $launcher_id) {
-                        // Remember which color was melded
-                        if ($this->innovationGameState->get('release_version') >= 3) {
-                            $colors = self::getAuxiliaryArray();
-                            $colors[] = $this->innovationGameState->get('color_last_selected');
-                            self::setAuxiliaryArray(array_unique($colors));
-                        } else {
-                            self::setAuxiliaryValue($this->innovationGameState->get('color_last_selected'));
-                        }
-                    }
-                    break;
-
-                case "418D1A":
-                    if ($n > 0) {
-                        self::setIndexedAuxiliaryValue($player_id, $this->innovationGameState->get('color_last_selected'));
-                    }
                     break;
                     
                 // id 419, Echoes age 9: Credit Card
