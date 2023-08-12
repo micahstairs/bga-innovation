@@ -2211,15 +2211,17 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Credit Card'),
         'echo_effect_1'                       => clienttranslate('Draw and foreshadow a ${age_9}.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may take a top non-green card from your board into your hand. If you do, draw and score a card of equal value.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('YYou may transfer a top non-green card from your board to your hand. If you do, draw and score a card of equal value. If you do, and Credit Card was foreseen, repeat this effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may transfer a top non-green card from your board to your hand. If you do, draw and score a card of equal value. If you do, and Credit Card was foreseen, repeat this effect.'),
         'non_demand_effect_2'                 => clienttranslate('You may splay your green cards up.'),
     ),
 
     420 => array(
-        'name'                => clienttranslate('Email'),
-        'echo_effect_1'       => clienttranslate('Draw and foreshadow a ${age_10}.'),
-        'non_demand_effect_1' => clienttranslate('Draw and foreshadow a ${age_9}.'),
-        'non_demand_effect_2' => clienttranslate('Execute all non-demand dogma effects on your lowest non-green top card. Do not share them.'),
+        'name'                                => clienttranslate('Email'),
+        'echo_effect_1'                       => clienttranslate('Draw and foreshadow a ${age_10}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a ${age_9}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_9}. If Email was foreseen, draw and foreshadow an ${age_11}'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Execute all non-demand dogma effects on your lowest non-green top card. Do not share them.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Self-execute your lowest non-green top card.'),
     ),
 
     421 => array(

@@ -4510,7 +4510,8 @@ class Innovation extends Table
         /**
             Get all the cards in a particular location, keyed by age, then sorted by position.
         **/
-        return self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location, 'age');
+        $column = $location === 'board' ? 'faceup_age' : 'age';
+        return self::getOrCountCardsInLocation(/*count=*/ false, $owner, $location, $column);
     }
 
     function getCardsInLocationKeyedByColor($owner, $location) {
@@ -4543,7 +4544,8 @@ class Innovation extends Table
         /**
             Count all the cards in a particular location, keyed by age.
         **/
-        return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, 'age', $type, $is_relic);
+        $column = $location === 'board' ? 'faceup_age' : 'age';
+        return self::getOrCountCardsInLocation(/*count=*/ true, $owner, $location, $column, $type, $is_relic);
     }
 
     function countCardsInLocationKeyedByColor($owner, $location) {
@@ -10867,7 +10869,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 419)
+            || (330 <= $card_id && $card_id <= 420)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13887,33 +13889,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 420, Echoes age 9: Email
-            case "420E1":
-                self::executeDrawAndForeshadow($player_id, 10);
-                break;
-
-            case "420N1":
-                self::executeDrawAndForeshadow($player_id, 9);
-                break;
-
-            case "420N2":
-                // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
-                $lowest_card_age = null;
-                for ($color = 0; $color < 5; $color++) {
-                    if ($color != 2) { // non-green
-                        $top_card = self::getTopCardOnBoard($player_id, $color);
-                        if ($top_card !== null && ($lowest_card_age == null || $top_card['faceup_age'] < $lowest_card_age)) {
-                            $lowest_card_age = $top_card['faceup_age'];
-                            self::setAuxiliaryValue($lowest_card_age);
-                        }
-                    }
-                }
-                
-                if ($lowest_card_age != null) { // non-green card exists
-                    $step_max = 1;
-                }
-                break;
 
             // id 421, Echoes age 9: ATM
             case "421E1":
@@ -19051,24 +19026,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 420, Echoes age 9: Email
-        case "420N2A":
-            // "Execute all non-demand dogma effects on your lowest non-green top card. Do not share them."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'none',
-                
-                'age' => self::getAuxiliaryValue(), // lowest age
-                
-                'color' => array(0,1,3,4), // non-green
-            );
-            break;
-
         // id 421, Echoes age 9: ATM
         case "421E1A":
             // "Draw and score a card of any value."
@@ -21941,13 +21898,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 420, Echoes age 9: Email
-                case "420N2A":
-                    if ($n > 0) {
-                        self::selfExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
-                    }
                     break;
                     
                 // id 421, Echoes age 9: ATM
