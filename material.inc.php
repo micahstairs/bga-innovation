@@ -2208,10 +2208,11 @@ $this->textual_card_infos = array(
     ),
 
     419 => array(
-        'name'                => clienttranslate('Credit Card'),
-        'echo_effect_1'       => clienttranslate('Draw and foreshadow a ${age_9}.'),
-        'non_demand_effect_1' => clienttranslate('You may take a top non-green card from your board into your hand. If you do, draw and score a card of equal value.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your green cards up.'),
+        'name'                                => clienttranslate('Credit Card'),
+        'echo_effect_1'                       => clienttranslate('Draw and foreshadow a ${age_9}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may take a top non-green card from your board into your hand. If you do, draw and score a card of equal value.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('YYou may transfer a top non-green card from your board to your hand. If you do, draw and score a card of equal value. If you do, and Credit Card was foreseen, repeat this effect.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your green cards up.'),
     ),
 
     420 => array(

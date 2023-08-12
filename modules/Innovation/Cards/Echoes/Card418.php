@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 
-class Card417 extends Card
+class Card418 extends Card
 {
 
   // Jet

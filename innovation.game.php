@@ -10867,7 +10867,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 418)
+            || (330 <= $card_id && $card_id <= 419)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13887,20 +13887,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 419, Echoes age 9: Credit Card
-            case "419E1":
-                // "Draw and foreshadow a 9."
-                self::executeDrawAndForeshadow($player_id, 9);
-                break;
-
-            case "419N1":
-                $step_max = 1;
-                break;
-
-            case "419N2":
-                $step_max = 1;
-                break;
 
             // id 420, Echoes age 9: Email
             case "420E1":
@@ -19064,35 +19050,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-        
-        // id 419, Echoes age 9: Credit Card
-        case "419N1A":
-            // "You may take a top non-green card from your board into your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-                
-                'color' => array(0,1,3,4),
-            );
-            break;
-
-        case "419N2A":
-            // "You may splay your green cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3, // up
-                'color' => array(2), // green
-            );
-            break; 
 
         // id 420, Echoes age 9: Email
         case "420N2A":
@@ -21984,13 +21941,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-                    
-                // id 419, Echoes age 9: Credit Card
-                case "419N1A":
-                    if ($n > 0) { // "if you do, draw and score a card of equal value."
-                        self::executeDrawAndScore($player_id, $this->innovationGameState->get('age_last_selected'));
-                    }
                     break;
 
                 // id 420, Echoes age 9: Email
