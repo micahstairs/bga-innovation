@@ -26,18 +26,18 @@ class Card417 extends Card
   {
     if (self::getCurrentStep() === 1) {
       return [
-        'owner_from' => 'any player',
+        'owner_from'    => 'any player',
         'location_from' => 'board',
-        'location_to' => 'none',
-        'not_id' => 417, // Helicopter
+        'location_to'   => 'none',
+        'not_id'        => 417, // Helicopter
       ];
     } else {
       return [
-        'can_pass' => true,
-        'location_from' => 'hand',
-        'return_keyword' => true,
+        'can_pass'                        => true,
+        'location_from'                   => 'hand',
+        'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
-        'enable_autoselection' => false,
+        'enable_autoselection'            => false,
       ];
     }
   }
