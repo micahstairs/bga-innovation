@@ -2225,10 +2225,12 @@ $this->textual_card_infos = array(
     ),
 
     421 => array(
-        'name'                => clienttranslate('ATM'),
-        'echo_effect_1'       => clienttranslate('Draw and score a card of any value.'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer the highest top non-yellow card without a ${icon_1} from your board to my board!'),
-        'non_demand_effect_1' => clienttranslate('You may splay your purple cards up.'),
+        'name'                              => clienttranslate('ATM'),
+        'echo_effect_1'                     => clienttranslate('Draw and score a card of any value.'),
+        'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer the highest top non-yellow card without a ${icon_1} from your board to my board!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer your highest top non-yellow card without a ${icon_1} to my board!'),
+        'non_demand_effect_1'               => clienttranslate('You may splay your purple cards up.'),
+        'non_demand_effect_2_fourth'        => clienttranslate('Junk all cards in the ${age_10} deck.'),
     ),
 
     422 => array(

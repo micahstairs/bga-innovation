@@ -9974,12 +9974,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 421, Echoes age 9: ATM
-            case "421E1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-
             // id 423, Echoes age 9: Karaoke
             case "423E1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10869,7 +10863,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 420)
+            || (330 <= $card_id && $card_id <= 421)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13889,19 +13883,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 421, Echoes age 9: ATM
-            case "421E1":
-                $step_max = 1;
-                break;
-
-            case "421D1":
-                $step_max = 1;
-                break;
-
-            case "421N1":
-                $step_max = 1;
-                break;
 
             // id 422, Echoes age 9: Wristwatch
             case "422E1":
@@ -19026,46 +19007,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 421, Echoes age 9: ATM
-        case "421E1A":
-            // "Draw and score a card of any value."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-            );
-            break;
-
-        case "421D1A":
-            // "I demand you transfer the highest top non-yellow card without a crown from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'age' => self::getMaxAgeOnBoardOfColorsWithoutIcon($player_id, array(0,1,2,4), 1), // no crown
-                
-                'color' => array(0,1,2,4), // non-yellow
-            );
-            break;
-            
-        case "421N1A":
-            // "You may splay your purple cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3, // up
-                'color' => array(4), // purple
-            );
-            break; 
-
         // id 422, Echoes age 9: Wristwatch
         case "422E1A":
             // "Take a non-yellow top card from your board and tuck it."
@@ -21899,12 +21840,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                    
-                // id 421, Echoes age 9: ATM
-                case "421E1A":
-                    // "Draw and score a card of any value."
-                    $card = self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
-                    break;
 
                 // id 423, Echoes age 9: Karaoke
                 case "423E1A":
@@ -23301,13 +23236,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "346N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 421, Echoes age 9: ATM
-            case "421E1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
