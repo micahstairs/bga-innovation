@@ -9974,29 +9974,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 423, Echoes age 9: Karaoke
-            case "423E1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-
-            case "423N1A":
-                $message_for_player = clienttranslate('Choose which card\'s non-demand dogma effects you want to execute');
-                $message_for_others = clienttranslate('${player_name} must choose which card\'s non-demand dogma effects he wants to execute');
-
-                $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
-                $card_id_1 = $encoded_card_ids % 1000;
-                $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
-
-                $card_1 = self::getCardInfo($card_id_1);
-                $card_2 = self::getCardInfo($card_id_2);
-
-                $options = [
-                    ['value' => 1, 'text' => clienttranslate('${age} ${name}'), 'age' => self::getAgeSquareWithType($card_1['age'], $card_1['type']), 'name' => self::getCardName($card_id_1), 'i18n' => array('name')],
-                    ['value' => 0, 'text' => clienttranslate('${age} ${name}'), 'age' => self::getAgeSquareWithType($card_2['age'], $card_2['type']), 'name' => self::getCardName($card_id_2), 'i18n' => array('name')],
-                ];
-                break;
-
             // id 426, Echoes age 10: Human Genome
             case "426N1A":
                 $message_for_player = clienttranslate('You may choose a value to draw and score');
@@ -10863,7 +10840,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 422)
+            || (330 <= $card_id && $card_id <= 423)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13883,30 +13860,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 423, Echoes age 9: Karaoke
-            case "423E1":
-                $step_max = 1;
-                break;
-                
-            case "423N1":
-                // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
-                if (self::echoEffectWasExecuted()) {
-                    $melded_card_id = self::getIndexedAuxiliaryValue($player_id);
-                    if ($melded_card_id != null) { // This check is required since the echo effect is not always executed during nested execution
-                        // If two cards were melded as part of the Endorse action, then let the player choose which one to execute
-                        if ($melded_card_id >= 1000) {
-                            $step_max = 1;
-                        } else {
-                            self::selfExecute(self::getCardInfo($melded_card_id));
-                        }
-                    }
-                }
-                break;
-
-            case "423N2":
-                $step_max = 1;
-                break;
                 
             // id 424, Echoes age 9: Rock
             case "424D1":
@@ -18993,42 +18946,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 423, Echoes age 9: Karaoke
-        case "423E1A":
-            // "Draw and meld a card of value less than 10."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-                'age' => array(1,2,3,4,5,6,7,8,9),
-            );
-            break;
-
-        case "423N1A":
-            // If two cards were melded due to the Endorse action, let the player choose which gets executed
-            $options = array(
-                'player_id' => $player_id,
-                'choose_yes_or_no' => true,
-            );
-            break;
-        
-        case "423N2A":
-            // "You may take a bottom card from your board into your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-                
-                'bottom_from' => true,
-             );
-            break;
-
         // id 424, Echoes age 9: Rock
         case "424D1A":
             // "I demand you transfer your top green card to my hand!"
@@ -21809,24 +21726,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 423, Echoes age 9: Karaoke
-                case "423E1A":
-                    $card = self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
-                    // Save the card's ID for later
-                    if (self::isExecutingAgainDueToEndorsedAction()) {
-                        // NOTE: This encoding assumes that highest card ID won't be more than 999. The +1 in the encoding is necessary since the lowest card ID is 0 (not 1).
-                        self::setIndexedAuxiliaryValue($player_id, (self::getIndexedAuxiliaryValue($player_id) + 1) * 1000 + $card['id']);
-                    } else {
-                        self::setIndexedAuxiliaryValue($player_id, $card['id']);
-                    }
-                    break;
-
-                case "423N1A":
-                    // "Execute all of the non-demand dogma effects of the card you melded due to Karaoke's echo effect. Do not share them."
-                    // NOTE: This code is only hit when the action is endorsed (otherwise we don't need an interaction to choose which card to execute)
-                    self::selfExecute(self::getCardInfo(self::getAuxiliaryValue()));
-                    break;
-
                 // id 424, Echoes age 9: Rock
                 case "424D1A":
                     // "If Scissors is your new top green card, I win!"
@@ -23207,25 +23106,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 423, Echoes age 9: Karaoke
-            case "423E1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            case "423N1A":
-                $encoded_card_ids = self::getIndexedAuxiliaryValue($player_id);
-                $card_id_1 = $encoded_card_ids % 1000;
-                $card_id_2 = (($encoded_card_ids - $card_id_1) / 1000) - 1;
-
-                if ($choice == 1) {
-                    self::setAuxiliaryValue($card_id_1);
-                } else {
-                    self::setAuxiliaryValue($card_id_2);
-                }
                 break;
 
             // id 426, Echoes age 10: Human Genome

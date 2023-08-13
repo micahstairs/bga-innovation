@@ -2243,10 +2243,13 @@ $this->textual_card_infos = array(
     ),
 
     423 => array(
-        'name'                => clienttranslate('Karaoke'),
-        'echo_effect_1'       => clienttranslate('Draw and meld a card of value less than ${age_10}.'),
-        'non_demand_effect_1' => clienttranslate('Execute all of the non-demand dogma effects of the card you melded due to Karaoke\'s echo effect. Do not share them.'),
-        'non_demand_effect_2' => clienttranslate('You may take a bottom card from your board into your hand.'),
+        'name'                                => clienttranslate('Karaoke'),
+        'echo_effect_1_first_and_third'       => clienttranslate('Draw and meld a card of value less than ${age_10}.'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw and meld a card of value present in your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Execute all of the non-demand dogma effects of the card you melded due to Karaoke\'s echo effect. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Transfer your bottom card of each color to your hand.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('You may take a bottom card from your board into your hand.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Claim an available achievement of value equal to the card you last melded due to Karaoke\'s echo effect during this action, regardless of eligibility. If you do, self-execute the melded card.'),
     ),
 
     424 => array(
