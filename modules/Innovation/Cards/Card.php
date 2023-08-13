@@ -645,6 +645,11 @@ abstract class Card
     $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId, $array);
   }
 
+  protected function addToActionScopedAuxiliaryArray(int $value, $playerId = 0)
+  {
+    return self::setActionScopedAuxiliaryArray(array_merge(self::getActionScopedAuxiliaryArray($playerId), [$value]), $playerId);
+  }
+
   protected function getActionScopedAuxiliaryArray($playerId = 0): array
   {
     return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId);

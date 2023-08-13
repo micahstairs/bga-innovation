@@ -13,21 +13,19 @@ class Card418 extends Card
   //   - I DEMAND you return your top card of the color I melded due to Jet's echo effect!
   // - 4th edition
   //   - ECHO: Meld a card from your hand.
-  //   - I DEMAND you return your top card of the color I melded due to Jet's echo effect! Junk
-  //     all available achievements of values equal to the melded card and the returned card!
+  //   - I DEMAND you return your top card of the last color I melded due to Jet's echo effect this
+  //     action! Junk all available achievements of values equal to the melded card and the returned card!
   //   - Draw and foreshadow a [10].
-
-  // TODO(4E): Implement 4th edition once we get clarification on the intended behavior.
 
   public function initialExecution()
   {
     if (self::isEcho()) {
-      if (self::isLauncher() && !$this->game->isExecutingAgainDueToEndorsedAction()) {
+      if (self::isFirstOrThirdEdition() && self::isLauncher() && !$this->game->isExecutingAgainDueToEndorsedAction()) {
         self::setAuxiliaryArray([]); // Track colors melded by launcher due to echo effect
       }
       self::setMaxSteps(1);
     } else if (self::isDemand()) {
-      self::setMaxSteps(1);
+      self::setMaxSteps(self::isFirstOrThirdEdition() ? 1 : 2);
     } else {
       self::drawAndForeshadow(10);
     }
@@ -41,17 +39,48 @@ class Card418 extends Card
         'meld_keyword'  => true,
       ];
     } else {
+      if (self::isFirstOrThirdEdition()) {
+        $colors = self::getAuxiliaryArray();
+      } else {
+        $colors = [];
+        $faceupValues = [];
+        // NOTE: A loop is used here for convenience, but this array will contain at most one element.
+        foreach (self::getActionScopedAuxiliaryArray(self::getPlayerId()) as $cardId) {
+          $card = self::getCard($cardId);
+          $colors[] = $card['color'];
+          $faceupValues[] = $card['faceup_value'];
+        }
+        self::setActionScopedAuxiliaryArray($faceupValues, self::getPlayerId()); // Repurpose array to store the values to junk
+      }
       return [
         'location_from'  => 'board',
         'return_keyword' => true,
-        'color'          => self::getAuxiliaryArray(),
+        'color'          => $colors,
       ];
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isEcho() && self::isLauncher()) {
-      self::addToAuxiliaryArray($card['color']);
+      if (self::isFirstOrThirdEdition()) {
+        self::addToAuxiliaryArray($card['color']);
+      } else {
+        self::setActionScopedAuxiliaryArray([$card['id']], self::getPlayerId()); // Track melded card
+      }
+    } else if (self::isDemand() && self::isFourthEdition()) {
+      self::addToActionScopedAuxiliaryArray(self::getPlayerId(), $card['age']); // Track value of returned card
+    }
+  }
+
+  public function afterInteraction()
+  {
+    if (self::isFourthEdition() && self::isDemand()) {
+      foreach (self::getActionScopedAuxiliaryArray(self::getPlayerId()) as $value) {
+        foreach (self::getCardsKeyedByValue('achievements', 0)[$value] as $card) {
+          self::junk($card);
+        }
+      }
     }
   }
 

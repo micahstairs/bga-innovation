@@ -529,7 +529,7 @@ $this->textual_card_infos = array(
     78  => array(
         'name'                              => clienttranslate('Mobility'),
         'i_demand_effect_1_first_and_third' => clienttranslate('${I demand} you transfer the two highest non-red top cards without a ${icon_5} from your board to my score pile! If you transferred any cards, draw an ${age_8}!'),
-        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer the two highest non-red top cards without a ${icon_5} from your board to my score pile! If you transfer any cards, draw an ${age_8}!'),
+        'i_demand_effect_1_fourth'          => clienttranslate('${I demand} you transfer your two highest non-red top cards without a ${icon_5} to my score pile! If you transfer any cards, draw an ${age_8}!'),
     ),
 
     79  => array(
@@ -2203,7 +2203,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Jet'),
         'echo_effect_1'                       => clienttranslate('Meld a card from your hand.'),
         'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect!'),
-        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you return your top card of the color I melded due to Jet\'s echo effect! Junk all available achievements of values equal to the melded card and the returned card!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you return your top card of the last color I melded due to Jet\'s echo effect this action! Junk all available achievements of values equal to the melded card and the returned card!'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and foreshadow a ${age_10}.'),
     ),
 
@@ -2597,7 +2597,7 @@ $this->textual_card_infos = array(
 
     510 => array(
         'name'              => clienttranslate('Smuggling'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card of value equal to the top yellow card on your board and a card of value equal to the top yellow card on my board from your score pile to my score pile!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a card of value equal to your top yellow card and a card of value equal to my top yellow card from your score pile to my score pile!'),
     ),
 
     511 => array(
@@ -2651,7 +2651,7 @@ $this->textual_card_infos = array(
 
     519 => array(
         'name'              => clienttranslate('Blackmail'),
-        'i_demand_effect_1' => clienttranslate('${I demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Self-execute any revealed card of my choice, replacing \'may\' with \'must\'!'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you reveal your hand! Meld a revealed card of my choice! Reveal your score pile! Self-execute a card revealed due to this effect of my choice, replacing \'may\' with \'must\'!'),
     ),
 
     520 => array(
