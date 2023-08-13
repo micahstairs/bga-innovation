@@ -2273,9 +2273,10 @@ $this->textual_card_infos = array(
     ),
 
     427 => array(
-        'name'                => clienttranslate('Camcorder'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer all cards in your hand to my hand! Draw a ${age_9}!'),
-        'non_demand_effect_1' => clienttranslate('Meld all ${age_9}s from your hand. Return all other cards from your hand. Draw three ${age_9}s.'),
+        'name'                                => clienttranslate('Camcorder'),
+        'i_demand_effect_1'                   => clienttranslate('${I demand} you transfer all cards in your hand to my hand! Draw a ${age_9}!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld all ${age_9} from your hand. Return all other cards from your hand. Draw three ${age_9}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld all ${age_9} from your hand. If Camcorder wasn\'t foreseen, return all other cards from your hand, and draw three ${age_9}.'),
     ),
 
     428 => array(

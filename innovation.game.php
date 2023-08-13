@@ -10834,7 +10834,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 426)
+            || (330 <= $card_id && $card_id <= 427)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13854,15 +13854,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-                
-            // id 427, Echoes age 10: Camcorder
-            case "427D1":
-                $step_max = 1;
-                break;
-
-            case "427N1":
-                $step_max = 2;
-                break;
 
             // id 428, Echoes age 10: Social Networking
             case "428D1":
@@ -18901,47 +18892,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-            
-        // id 427, Echoes age 10: Camcorder
-        case "427D1A":
-            // "I demand you transfer all cards in your hand to my hand!"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-             );
-            break;
-
-        case "427N1A":
-            // "Meld all 9s from your hand."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'age' => 9,
-
-                'meld_keyword' => true,
-             );
-            break;
-
-        case "427N1B":
-            // "Return all other cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-             );
-            break;
 
         // id 428, Echoes age 10: Social Networking
         case "428D1A":
@@ -21606,19 +21556,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                    
-                // id 427, Echoes age 10: Camcorder
-                case "427D1A":
-                    // "Draw a 9!"
-                    self::executeDraw($player_id, 9);
-                    break;                 
-
-                case "427N1B":
-                    // "Draw three 9s."
-                    self::executeDraw($player_id, 9);
-                    self::executeDraw($player_id, 9);
-                    self::executeDraw($player_id, 9);
-                    break; 
 
                 // id 430, Echoes age 10: Flash Drive
                 case "430N1A":
