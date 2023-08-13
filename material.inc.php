@@ -2261,8 +2261,9 @@ $this->textual_card_infos = array(
     /* Echoes - Age 10 */
 
     425 => array(
-        'name'                => clienttranslate('Artificial Heart'),
-        'non_demand_effect_1' => clienttranslate('Claim one standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility.'),
+        'name'                                => clienttranslate('Artificial Heart'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Claim one standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Claim one standard achievement, if eligible, doubling your current score for the purpose of checking eligibility. If you do, and Artifical Heart was foreseen, repeat this effect.'),
     ),
 
     426 => array(

@@ -8918,9 +8918,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     /** Returns the values that would be claimable (ignoring whether they actually exist in the standard achievements pile) */
-    function getClaimableValuesIgnoringAvailability($player_id) {
+    function getClaimableValuesIgnoringAvailability($player_id, $score_multiplier = 1) {
         $age_max = self::getMaxAgeOnBoardTopCards($player_id);
-        $player_score = self::getPlayerScore($player_id);
+        $player_score = self::getPlayerScore($player_id) * $score_multiplier;
         $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
         
         $claimable_ages = array();
@@ -10840,7 +10840,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 424)
+            || (330 <= $card_id && $card_id <= 425)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13861,29 +13861,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break; 
                 
-            // id 425, Echoes age 10: Artificial Heart
-            case "425N1":
-                $age_max = self::getMaxAgeOnBoardTopCards($player_id);
-                $player_score = self::getPlayerScore($player_id) * 2; // double the score
-                $claimed_achievement_count = self::countCardsInLocationKeyedByAge($player_id, 'achievements', $type=null, $is_relic=false);
-                $unclaimed_achievements = self::getCardsInLocation(0, 'achievements');
-
-                $claimable_cards = array();
-                foreach ($unclaimed_achievements as $card) {
-                    $card_age = $card['age'];
-                    if ($card_age !== null) { // ignore special achievements
-                        // Rule: to achieve the age X, the player has to have a top card of his board of age >= X and 5*X points in his score pile
-                        if ($card_age <= $age_max && $player_score >= 5 * $card_age * ($claimed_achievement_count[$card_age] + 1)) {
-                            $claimable_cards[] = $card['id'];
-                        }
-                    }
-                }
-                
-                if (count($claimable_cards) > 0) {
-                    self::setAuxiliaryArray($claimable_cards);                
-                    $step_max = 1;
-                }
-                break;
+            
 
             // id 426, Echoes age 10: Human Genome
             case "426N1":
@@ -18934,22 +18912,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'location_to' => 'deck',
                 
                 'age_min' => 7,
-            );
-            break;
-        
-        // id 425, Echoes age 10: Artificial Heart
-        case "425N1A":
-            // "Claim one standard achievement, if eligible. Your current score is doubled for the purpose of checking eligibility."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-                
-                'card_ids_are_in_auxiliary_array' => true,
             );
             break;
 
