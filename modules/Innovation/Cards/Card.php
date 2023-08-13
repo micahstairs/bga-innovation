@@ -729,8 +729,7 @@ abstract class Card
 
   protected function win(int $playerId = null): void
   {
-    $playerId = self::coercePlayerId($playerId);
-    $this->game->innovationGameState->set('winner_by_dogma', $playerId);
+    $this->game->innovationGameState->set('winner_by_dogma', self::coercePlayerId($playerId));
     throw new \EndOfGame();
   }
 

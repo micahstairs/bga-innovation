@@ -10840,7 +10840,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 423)
+            || (330 <= $card_id && $card_id <= 424)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13861,15 +13861,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break; 
                 
-            // id 424, Echoes age 9: Rock
-            case "424D1":
-                $step_max = 1;
-                break;
-
-            case "424N1":
-                $step_max = 1;
-                break;
-
             // id 425, Echoes age 10: Artificial Heart
             case "425N1":
                 $age_max = self::getMaxAgeOnBoardTopCards($player_id);
@@ -18945,38 +18936,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 424, Echoes age 9: Rock
-        case "424D1A":
-            // "I demand you transfer your top green card to my hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-                
-                'color' => array(2), // green
-             );
-            break;
-
-        case "424N1A":
-            // "You may score a top card from your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'score_keyword' => true,
-             );
-            break;
         
         // id 425, Echoes age 10: Artificial Heart
         case "425N1A":
@@ -21724,33 +21683,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 424, Echoes age 9: Rock
-                case "424D1A":
-                    // "If Scissors is your new top green card, I win!"
-                    $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    if ($top_green_card !== null && $top_green_card['id'] == 350) {
-                        $card_args = self::getNotificationArgsForCardList([$top_green_card]);
-                        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${your} new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'your' => 'your'));
-                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s new top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $launcher_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
-                        throw new EndOfGame();
-                    }
-                    break;
-
-                case "424N1A":
-                    // "If Paper is your top green card, you win."
-                    $top_green_card = self::getTopCardOnBoard($player_id, 2);
-                    if ($top_green_card !== null && $top_green_card['id'] == 30) {
-                        $card_args = self::getNotificationArgsForCardList([$top_green_card]);
-                        self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${your} top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'your' => 'your'));
-                        self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${card} is ${player_name}\'s top green card.'), array('card' => $card_args, 'card_ids' => [$top_green_card['id']], 'player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id);
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Rock');
-                        throw new EndOfGame();
-                    }
                     break;
 
                 // id 426, Echoes age 10: Human Genome
