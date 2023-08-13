@@ -27,9 +27,9 @@ class Card547 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choose_yes_or_no' => true];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === 1) {
         return [
           'location_from' => 'board',

@@ -19,7 +19,7 @@ class Card583 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       // Skip the first interaction if no color has more than 1 card on the board
       $needsToChoose = false;
       $cardCounts = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'board');
@@ -30,7 +30,7 @@ class Card583 extends Card
         }
       }
       return ['choices' => $needsToChoose ? [1, 2] : [1]];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       $returnBottomCard = self::getAuxiliaryValue() === 2;
       self::setAuxiliaryValue(0); // Track which value was returned
       return [
@@ -38,7 +38,7 @@ class Card583 extends Card
         'bottom_from'   => $returnBottomCard,
         'location_to'   => 'deck',
       ];
-    } else if (self::getCurrentStep() === 3) {
+    } else if (self::isThirdInteraction()) {
       $value = self::getAuxiliaryValue();
       self::setAuxiliaryValue(0); // Track how many cards were transferred in the 2nd sentence of the effect
       return [
@@ -57,7 +57,7 @@ class Card583 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return self::getPromptForChoiceFromList([
         1 => clienttranslate('Return top card'),
         2 => clienttranslate('Return bottom card'),
@@ -74,7 +74,7 @@ class Card583 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getCurrentStep() === 2) {
+    if (self::isSecondInteraction()) {
       self::setAuxiliaryValue($card['age']);
     } else {
       self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
@@ -83,7 +83,7 @@ class Card583 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 4 && self::getAuxiliaryValue() === 2) {
+    if (self::isFourthInteraction() && self::getAuxiliaryValue() === 2) {
       self::setNextStep(1);
     }
   }

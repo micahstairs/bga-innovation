@@ -38,7 +38,7 @@ class Card347 extends Card
         $options['type'] = self::getAllTypesOtherThan($this->game::BASE);
       }
       return $options;
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       $players = self::isFirstOrThirdEdition() ? $this->game->getOtherActivePlayers(self::getPlayerId()) : $this->game->getActiveOpponents(self::getPlayerId());
       return [
         'choose_player' => true,

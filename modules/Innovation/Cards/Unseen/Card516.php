@@ -24,9 +24,9 @@ class Card516 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choose_yes_or_no' => true];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'location_from' => 'safe',
         'location_to'   => 'none',
@@ -42,7 +42,7 @@ class Card516 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 2) {
+    if (self::isSecondInteraction()) {
       $card = self::drawAndReveal(self::getLastSelectedAge() + 1);
       if (self::isRed($card) || self::isPurple($card)) {
         self::setAuxiliaryValue2(self::getLastSelectedId());
@@ -50,7 +50,7 @@ class Card516 extends Card
       } else {
         self::transferToHand($card);
       }
-    } else if (self::getCurrentStep() === 3) {
+    } else if (self::isThirdInteraction()) {
       $revealedCard = self::getCards('revealed')[0];
       if (self::getNumChosen() > 0) {
         self::safeguard($revealedCard);

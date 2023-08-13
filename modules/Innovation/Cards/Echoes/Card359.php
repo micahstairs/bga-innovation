@@ -35,7 +35,7 @@ class Card359 extends Card
   {
     if (self::isEcho()) {
       return ['choices' => [3, 4]];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       if (count(self::getActionScopedAuxiliaryArray(self::getPlayerId())) === 2) {
         // If two cards were drawn due to the Endorse action, the launcher is allowed to choose to meld
         // the same card twice. Unfortunately, this means the card may no longer be in a visible
@@ -70,7 +70,7 @@ class Card359 extends Card
         3 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(3)],
         4 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(4)],
       ]);
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
       return self::getPromptForChoiceFromList([
         0 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[0])])],
@@ -91,7 +91,7 @@ class Card359 extends Card
     if (self::isEcho()) {
       $card = self::draw($choice);
       self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
       $card = self::getCard($cardIds[$choice]);
       self::meld($card);

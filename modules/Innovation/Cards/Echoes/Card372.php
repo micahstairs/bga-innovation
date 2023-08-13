@@ -31,7 +31,7 @@ class Card372 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'       => true,
         'n_min'          => 1,
@@ -39,7 +39,7 @@ class Card372 extends Card
         'location_from'  => 'hand',
         'return_keyword' => true,
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'location_from'                   => 'hand',
         'foreshadow_keyword'              => true,
@@ -57,16 +57,16 @@ class Card372 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::setAuxiliaryValue(max(self::getAuxiliaryValue(), $card['age']));
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       self::removeFromAuxiliaryArray($card['id']);
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1 && self::getNumChosen() > 0) {
+    if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       $valueToDraw = self::getAuxiliaryValue() + 1;
       $cardIds = [];
       for ($i = 1; $i <= self::getNumChosen(); $i++) {

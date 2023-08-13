@@ -35,7 +35,7 @@ class Card339 extends Card
         'can_pass' => true,
         'choices'  => [1],
       ];
-    } if (self::getCurrentStep() === 1) {
+    } if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
         'choices'  => [1],

@@ -24,7 +24,7 @@ class Card338 extends Card
           'location_from' => 'hand',
           'meld_keyword' => true,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
           'can_pass' => true,
           'n_min' => 1,

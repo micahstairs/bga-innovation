@@ -33,7 +33,7 @@ class Card397 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
       return [
         'location_from' => 'board',
         'owner_to'      => self::getLauncherId(),
@@ -61,7 +61,7 @@ class Card397 extends Card
   public function afterInteraction()
   {
     if (self::isDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         if (self::getNumChosen() > 0) {
           if (self::isFirstOrThirdEdition()) {
             self::draw(7);

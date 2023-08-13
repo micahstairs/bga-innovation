@@ -18,7 +18,7 @@ class Card534 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choices' => [1, 2]];
     } else if (self::getAuxiliaryValue() === 1) {
       return [

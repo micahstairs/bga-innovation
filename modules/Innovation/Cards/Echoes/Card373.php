@@ -62,7 +62,7 @@ class Card373 extends Card
         'location_from'  => 'revealed',
         'return_keyword' => true,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       $values = [];
       for ($color = 0; $color < 5; $color++) {
         $count = $this->game->countVisibleCards(self::getPlayerId(), $color);

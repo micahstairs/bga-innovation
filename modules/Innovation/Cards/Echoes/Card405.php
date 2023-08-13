@@ -38,7 +38,7 @@ class Card405 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'location_from' => 'hand',
         'meld_keyword' => true,
@@ -55,7 +55,7 @@ class Card405 extends Card
   }
 
   public function handleCardChoice(array $card) {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       if ($card['id'] == 103) { // 'A. I.'
         self::win();
       } else {

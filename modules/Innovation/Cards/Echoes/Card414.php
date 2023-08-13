@@ -24,14 +24,14 @@ class Card414 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choose_value' => true];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'choose_player' => true,
         'players'       => $this->game->getActiveOpponents(self::getPlayerId()),
       ];
-    } else if (self::getCurrentStep() === 3) {
+    } else if (self::isThirdInteraction()) {
       return [
         'owner_from'    => self::getAuxiliaryValue2(),
         'location_from' => 'score',
@@ -52,16 +52,16 @@ class Card414 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::setAuxiliaryValue($choice); // Track value chosen
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       self::setAuxiliaryValue2($choice); // Track opponent chosen
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 3) {
+    if (self::isThirdInteraction()) {
       $value = self::getAuxiliaryValue();
       $opponentId = self::getAuxiliaryValue2();
       if (self::countCardsKeyedByValue('achievements', $opponentId)[$value] > 0) {

@@ -29,7 +29,7 @@ class Card588 extends Card
         'location_to'   => 'none',
       ];
     } else {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return ['choices' => [1, 2]];
       } else if (self::getAuxiliaryValue() === 1) {
         return [
@@ -61,7 +61,7 @@ class Card588 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return self::getPromptForChoiceFromList([
         1 => clienttranslate('Safeguard standard achievements'),
         2 => clienttranslate('Achieve secrets'),

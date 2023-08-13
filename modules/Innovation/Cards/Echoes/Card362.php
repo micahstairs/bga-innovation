@@ -26,7 +26,7 @@ class Card362 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1 && self::getCurrentStep() === 1) {
+    if (self::getEffectNumber() === 1 && self::isFirstInteraction()) {
       return [
         'can_pass'      => true,
         'n_min'         => 1,
@@ -50,7 +50,7 @@ class Card362 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 1 && self::getCurrentStep() === 1) {
+    if (self::getEffectNumber() === 1 && self::isFirstInteraction()) {
       for ($i = 0; $i < self::getNumChosen(); $i++) {
         self::draw(3);
       }

@@ -24,7 +24,7 @@ class Card417 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'owner_from'    => 'any player',
         'location_from' => 'board',
@@ -44,7 +44,7 @@ class Card417 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::transferToScorePile($card, $card['owner']);
       $cardIds = [];
       foreach (self::getCards('hand') as $cardInHand) {

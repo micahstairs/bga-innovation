@@ -18,7 +18,7 @@ class Card65 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'         => true,
         'choose_yes_or_no' => true,

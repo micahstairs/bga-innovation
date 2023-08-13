@@ -25,7 +25,7 @@ class Card554 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::isFirstInteraction()) {
       return [
         'splay_direction' => $this->game::RIGHT,
         'color'           => array($this->game::GREEN, $this->game::PURPLE),
@@ -42,7 +42,7 @@ class Card554 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() == 1) {
+    if (self::isFirstInteraction()) {
       $numRevealedGreenCards = self::countRevealedGreenCards();
       if ($numRevealedGreenCards >= 2) {
         foreach (self::getCards('revealed') as $card) {

@@ -23,9 +23,9 @@ class Card336 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choose_color' => true];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'n'             => 'all',
         'location_from' => 'revealed',

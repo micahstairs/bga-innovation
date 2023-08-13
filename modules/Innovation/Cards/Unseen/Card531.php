@@ -27,7 +27,7 @@ class Card531 extends Card
   public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() === 1) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'n' => 'all',
           'location_from' => 'revealed',

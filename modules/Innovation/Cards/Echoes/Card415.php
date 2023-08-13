@@ -25,7 +25,7 @@ class Card413 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         self::setAuxiliaryArray([]); // Tracks total value of cards scored
       }
       return [

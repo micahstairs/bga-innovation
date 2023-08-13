@@ -20,7 +20,7 @@ class Card558 extends Card
   public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() === 1) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return ['choices' => [1, 2, 3]];
       } else {
         return [

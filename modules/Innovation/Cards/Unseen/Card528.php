@@ -19,7 +19,7 @@ class Card528 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       $card = self::transferToHand(self::drawAndReveal(5));
       $returnedCard = self::return(self::getTopCardOfColor($card['color']));
       self::setAuxiliaryValue($returnedCard ? 1 : 0); // Track how many cards were returned
@@ -44,9 +44,9 @@ class Card528 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1 && self::getNumChosen() === 0) {
+    if (self::isFirstInteraction() && self::getNumChosen() === 0) {
         self::revealHand();
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       if (self::getNumChosen() === 0) {
         self::revealScorePile();
       }

@@ -29,7 +29,7 @@ class Card332 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'location_from'                   => 'hand',
         'location_to'                     => 'forecast',
@@ -45,7 +45,7 @@ class Card332 extends Card
   }
 
   public function handleCardChoice(array $card) {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::removeFromAuxiliaryArray($card['id']);
     }
   }

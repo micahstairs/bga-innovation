@@ -19,7 +19,7 @@ class Card559 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choices' => [1, 2, 3]];
     } else {
       if (self::getAuxiliaryValue() === 2) {
@@ -36,7 +36,7 @@ class Card559 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return self::getPromptForChoiceFromList([
         1 => clienttranslate('Transfer your bottom cards to your hand'),
         2 => clienttranslate('Tuck all cards from your score pile'),
@@ -49,7 +49,7 @@ class Card559 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       if ($choice === 1) {
         for ($color = 0; $color < 5; $color++) {
           self::transferToHand(self::getBottomCardOfColor($color));

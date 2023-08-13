@@ -52,7 +52,7 @@ class Card358 extends Card
   public function afterInteraction() {
     $auxiliaryValue = self::getAuxiliaryValue();
 
-    if ($auxiliaryValue === 0 || self::getCurrentStep() === 2) {
+    if ($auxiliaryValue === 0 || self::isSecondInteraction()) {
       if (self::isFirstOrThirdEdition()) {
         if ($auxiliaryValue > 0) {
           $card = self::draw($auxiliaryValue);

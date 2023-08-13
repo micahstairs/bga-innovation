@@ -35,7 +35,7 @@ class Card401 extends Card
         'color'                           => [$this->game::GREEN],
         'card_ids_are_in_auxiliary_array' => true,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'choose_value' => true,
         'age'          => self::getUniqueValues('score'),
@@ -63,7 +63,7 @@ class Card401 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::setAuxiliaryValue($choice); // Track the value which will be taken from hands or score piles
       self::setMaxSteps(2);
     } else {

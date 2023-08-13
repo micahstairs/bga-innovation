@@ -41,7 +41,7 @@ class Card333 extends Card
           'tuck_keyword'  => true,
           'age'           => 1,
         ];
-      } else if (self::getCurrentStep() === 1) {
+      } else if (self::isFirstInteraction()) {
         return ['choices' => [1, 2]];
       } else {
         return [

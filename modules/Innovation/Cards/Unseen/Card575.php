@@ -18,14 +18,14 @@ class Card575 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() <= 2) {
+    if (self::isFirstInteraction() || self::isSecondInteraction()) {
       return [
         'location_from' => 'safe',
         'location_to'   => 'safe',
         'owner_to'      => self::getLauncherId(),
         'age'           => self::getMaxValueInLocation('safe'),
       ];
-    } else if (self::getCurrentStep() === 3) {
+    } else if (self::isThirdInteraction()) {
       return [
         'n'             => 'all',
         'location_from' => 'score',

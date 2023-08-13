@@ -25,7 +25,7 @@ class Card592 extends Card
   public function getInteractionOptions(): array
   {
     if (self::getEffectNumber() === 1) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         $this->game->setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
         return [
           'n'                               => 'all',

@@ -33,7 +33,7 @@ class Card366 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'      => true,
         'location_from' => 'forecast',
@@ -64,9 +64,9 @@ class Card366 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1 && self::getNumChosen() > 0) {
+    if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       self::setMaxSteps(2);
-    } else if (self::isFourthEdition() && self::getCurrentStep() === 2) {
+    } else if (self::isFourthEdition() && self::isSecondInteraction()) {
       self::junkBaseDeck(5);
     }
   }
@@ -74,7 +74,7 @@ class Card366 extends Card
   public function handleAbortedInteraction()
   {
     // Still junk the cards in the [5] deck even if there were no cards to exchange
-    if (self::isFourthEdition() && self::getCurrentStep() === 2) {
+    if (self::isFourthEdition() && self::isSecondInteraction()) {
       self::junkBaseDeck(5);
     }
   }

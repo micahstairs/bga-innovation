@@ -26,7 +26,7 @@ class Card353 extends Card
   public function getInteractionOptions(): array
   {
     $color = self::getCard(self::getAuxiliaryValue())['color'];
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'      => self::isFourthEdition(),
         'location_from' => 'hand',

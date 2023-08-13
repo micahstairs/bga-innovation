@@ -40,7 +40,7 @@ class Card350 extends Card
         'bottom_from'   => true,
         'location_to'   => 'hand',
       ];
-    } else if (self::getCurrentStep() === 1 || self::getCurrentStep() === 3) {
+    } else if (self::isFirstInteraction() || self::isThirdInteraction()) {
       return [
         'can_pass'      => true,
         'location_from' => 'hand',
@@ -80,7 +80,7 @@ class Card350 extends Card
     } else {
       self::score($card);
     }
-    if (self::getCurrentStep() === 2 && self::countCards("hand") > 0) {
+    if (self::isSecondInteraction() && self::countCards("hand") > 0) {
       self::setMaxSteps(self::getMaxSteps() + 1);
     }
   }

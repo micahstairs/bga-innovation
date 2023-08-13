@@ -33,13 +33,13 @@ class Card370 extends Card
 
   private function getFirstAndThirdEditionInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'     => true,
         'choose_color' => true,
         'color'        => self::getUniqueColors('hand'),
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'can_pass'      => true,
         'n_min'         => 1,
@@ -56,7 +56,7 @@ class Card370 extends Card
   private function getFourthInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'can_pass'       => true,
           'n'              => 'all',
@@ -84,16 +84,16 @@ class Card370 extends Card
   public function afterInteraction(array $card)
   {
     if (self::isFirstOrThirdEdition()) {
-      if (self::getCurrentStep() === 2 && self::getNumChosen() > 0) {
+      if (self::isSecondInteraction() && self::getNumChosen() > 0) {
         self::setAuxiliaryValue(self::getNumChosen()); // Repurpose auxiliary value to store the number of cards returned
         self::setMaxSteps(3);
-      } else if (self::getCurrentStep() === 3 && self::getAuxiliaryValue() > 0) {
+      } else if (self::isThirdInteraction() && self::getAuxiliaryValue() > 0) {
         self::drawAndForeshadow(6);
       }
     } else if (self::isFirstNonDemand()) {
-      if (self::getCurrentStep() === 1 && self::getNumChosen() === 3) {
+      if (self::isFirstInteraction() && self::getNumChosen() === 3) {
         self::setMaxSteps(2);
-      } else if (self::getCurrentStep() === 2) {
+      } else if (self::isSecondInteraction()) {
         self::drawAndForeshadow(6);
         self::drawAndForeshadow(7);
         self::drawAndForeshadow(8);
@@ -104,9 +104,9 @@ class Card370 extends Card
   public function handleAbortedInteraction()
   {
     // TODO(LATER): Deduplicate this code with the above.
-    if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 3 && self::getAuxiliaryValue() > 0) {
+    if (self::isFirstOrThirdEdition() && self::isThirdInteraction() && self::getAuxiliaryValue() > 0) {
       self::drawAndForeshadow(6);
-    } else if (self::isFourthEdition() && self::getCurrentStep() === 2) {
+    } else if (self::isFourthEdition() && self::isSecondInteraction()) {
       self::drawAndForeshadow(6);
       self::drawAndForeshadow(7);
       self::drawAndForeshadow(8);

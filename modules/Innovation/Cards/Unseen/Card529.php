@@ -19,7 +19,7 @@ class Card529 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'choose_value' => true,
         'age'          => [1, 3, 5, 7, 9, 11],

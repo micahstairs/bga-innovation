@@ -20,20 +20,20 @@ class Card549 extends Card
   public function getInteractionOptions(): array
   {
 
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'      => true,
         'location_from' => 'hand',
         'location_to'   => 'safe',
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'n'             => 2,
         'owner_from'    => 0,
         'location_from' => 'achievements',
         'location_to'   => 'revealed',
       ];
-    } else if (self::getCurrentStep() === 3) {
+    } else if (self::isThirdInteraction()) {
       return [
         'can_pass'                        => true,
         'location_from'                   => 'revealed',
@@ -52,14 +52,14 @@ class Card549 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       if (self::getNumChosen() > 0) {
         $card = self::getLastSelectedCard();
         if ($card['location'] == 'safe' && $card['owner'] == self::getPlayerId()) {
           self::setMaxSteps(4);
         }
       }
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       $cardIds = self::getRevealedCardIdsWithoutEfficiencyOrAvatar();
       if (count($cardIds) > 0) {
         $this->game->setAuxiliaryArray($cardIds);

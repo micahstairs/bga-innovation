@@ -69,7 +69,7 @@ class Card385 extends Card
         'location_from'  => 'forecast',
         'return_keyword' => true,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::RIGHT,

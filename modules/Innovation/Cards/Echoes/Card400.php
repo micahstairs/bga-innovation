@@ -32,7 +32,7 @@ class Card400 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'can_pass'      => true,
           'choose_player' => true,
@@ -56,7 +56,7 @@ class Card400 extends Card
 
   public function handleSpecialChoice(int $choice)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::setAuxiliaryValue($choice); // Track chosen player
       self::setMaxSteps(2);
     } else {

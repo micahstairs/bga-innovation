@@ -43,7 +43,7 @@ class Card356 extends Card
           'location_to' => 'deck',
       ];
     } else if (self::getEffectNumber() === 1) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'can_pass' => true,
           'choose_value' => true,

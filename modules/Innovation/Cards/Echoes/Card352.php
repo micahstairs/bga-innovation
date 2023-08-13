@@ -25,7 +25,7 @@ class Card352 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isFirstOrThirdEdition()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'location_from' => 'hand',
           'tuck_keyword'  => true,
@@ -54,7 +54,7 @@ class Card352 extends Card
   public function handleCardChoice(array $card)
   {
     if (self::isFirstOrThirdEdition()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         $drawnCard = self::draw(self::getBonusIcon($card));
         if (self::hasBonusIcon($drawnCard)) {
           self::setMaxSteps(2);
@@ -76,7 +76,7 @@ class Card352 extends Card
 
   public function afterInteraction()
   {
-    if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 1) {
+    if (self::isFirstOrThirdEdition() && self::isFirstInteraction()) {
       // Reveal hand to prove that there are no bonuses
       self::revealHand();
     }

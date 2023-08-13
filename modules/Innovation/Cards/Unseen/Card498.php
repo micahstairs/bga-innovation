@@ -22,7 +22,7 @@ class Card498 extends Card
   public function getInteractionOptions(): array
   {
     $drawnCardId = self::getAuxiliaryValue();
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'      => true,
         'location_from' => 'hand',

@@ -47,7 +47,7 @@ class Card387 extends Card
         'score_keyword' => true,
         'age'           => $this->game->getMinAgeOnBoardTopCards(self::getPlayerId()),
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'can_pass'       => true,
         'location_from'  => 'score',
@@ -65,7 +65,7 @@ class Card387 extends Card
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         $cardIds = [];
         foreach (self::getCards('score') as $scoreCard) {
           if ($scoreCard['age'] != $card['age']) {

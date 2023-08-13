@@ -26,7 +26,7 @@ class Card345 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'      => true,
         'n_min'         => 1,
@@ -66,7 +66,7 @@ class Card345 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       $returnedValues = self::getAuxiliaryArray();
       $valuesToDraw = array_fill(0, 12, 0);
       for ($i = 0; $i < count($returnedValues); $i++) {

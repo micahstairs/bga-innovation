@@ -21,7 +21,7 @@ class Card519 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'player_id'     => self::getLauncherId(),
         'owner_from'    => self::getPlayerId(),
@@ -43,7 +43,7 @@ class Card519 extends Card
   public function afterInteraction()
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       foreach (self::getCards('revealed') as $card) {
         self::transferToHand($card);
       }

@@ -42,7 +42,7 @@ class Card355 extends Card
           'location_to' => 'revealed,deck',
           'with_bonus' => true,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'choose_player' => true,
         'players' => $this->game->getOtherActivePlayers(self::getPlayerId()),

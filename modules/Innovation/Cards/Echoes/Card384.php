@@ -35,7 +35,7 @@ class Card384 extends Card
     } else {
       $keyword = self::isFirstOrThirdEdition() ? 'return_keyword' : 'foreshadow_keyword';
       return [
-        'can_pass'      => self::getCurrentStep() === 2,
+        'can_pass'      => self::isSecondInteraction(),
         'location_from' => 'hand',
         $keyword        => true,
       ];
@@ -44,7 +44,7 @@ class Card384 extends Card
 
   private function getThirdEditionEchoInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       $cardIds = [];
       for ($age = 1; $age <= 11; $age++) {
         for ($type = 0; $type <= 5; $type++) {
@@ -89,9 +89,9 @@ class Card384 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::isEcho() && self::getCurrentStep() === 1) {
+    if (self::isEcho() && self::isFirstInteraction()) {
       self::setMaxSteps(2);
-    } else if (self::isFirstNonDemand() && self::getCurrentStep() === 1) {
+    } else if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $revealedCard = self::drawAndReveal($card['age']);
       $topCard = self::getTopCardOfColor($revealedCard['colo']);
       if (!$topCard || $revealedCard['faceup_age'] > $topCard['faceup_age']) {

@@ -43,7 +43,7 @@ class Card541 extends Card
 
   private function getFirstInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass'         => true,
         'choose_yes_or_no' => true,

@@ -33,7 +33,7 @@ class Card351 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'choose_value' => true,
           'age'          => self::getAuxiliaryArray(),
@@ -50,7 +50,7 @@ class Card351 extends Card
         'can_pass'        => true,
         'splay_direction' => $this->game::LEFT,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
         'choices'  => [1],

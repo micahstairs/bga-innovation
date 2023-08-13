@@ -21,7 +21,7 @@ class Card440 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'player_id'        => self::getLauncherId(),
           'choose_icon_type' => true,
@@ -35,7 +35,7 @@ class Card440 extends Card
         ];
       }
     }
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'location_from' => 'board',
         'location_to'   => 'deck',
@@ -52,7 +52,7 @@ class Card440 extends Card
 
   public function afterInteraction()
   {
-    if (self::isNonDemand() && self::getCurrentStep() === 1) {
+    if (self::isNonDemand() && self::isFirstInteraction()) {
       $minAgeToReturn = 0;
       if (self::getNumChosen() > 0) {
         $minAgeToReturn = self::getLastSelectedAge();

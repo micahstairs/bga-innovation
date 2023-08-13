@@ -69,12 +69,12 @@ class Card371 extends Card
         'location_from' => 'forecast',
         'location_to'   => 'deck',
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
         'choices'  => [1],
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'location_from' => 'forecast',
         'location_to'   => 'none',
@@ -111,9 +111,9 @@ class Card371 extends Card
   public function afterInteraction()
   {
     if (self::isSecondNonDemand()) {
-      if (self::getCurrentStep() === 1 && self::getAuxiliaryValue() === 1 && self::getNumChosen() === 1) {
+      if (self::isFirstInteraction() && self::getAuxiliaryValue() === 1 && self::getNumChosen() === 1) {
         self::setMaxSteps(3);
-      } else if (self::getCurrentStep() === 2) {
+      } else if (self::isSecondInteraction()) {
         if (self::getNumChosen() === 0) {
           // Prove that there were no blue cards in the forecast
           self::revealForecast();
@@ -121,7 +121,7 @@ class Card371 extends Card
           $this->game->revealCardWithoutMoving(self::getPlayerId(), self::getLastSelectedCard());
           self::setAuxiliaryValue2(1);
         }
-      } else if (self::getCurrentStep() === 3 && self::getAuxiliaryValue2() === 1) {
+      } else if (self::isThirdInteraction() && self::getAuxiliaryValue2() === 1) {
         $this->game->claimSpecialAchievement(self::getPlayerId(), 436);
       }
     }

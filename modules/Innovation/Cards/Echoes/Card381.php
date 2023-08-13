@@ -23,13 +23,13 @@ class Card381 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'n'              => 'all',
         'location_from'  => 'hand',
         'return_keyword' => true,
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'choose_value' => true,
         'age'          => self::getAuxiliaryArray(),
@@ -60,13 +60,13 @@ class Card381 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       $bonuses = self::getTopBonuses();
       if (count($bonuses) > 0) {
         self::setAuxiliaryArray($bonuses);
         self::setMaxSteps(self::isFirstOrThirdEdition() ? 2 : 3);
       }
-    } else if (self::getCurrentStep() === 3) {
+    } else if (self::isThirdInteraction()) {
       if (count(self::getAuxiliaryArray()) > 0) {
         self::setNextStep(2);
       }

@@ -27,7 +27,7 @@ class Card523 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'n'             => 'all',
         'location_from' => 'board',
@@ -44,7 +44,7 @@ class Card523 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       if (self::getNumChosen() == 0) {
         self::setMaxSteps(2);
       }

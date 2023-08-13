@@ -20,7 +20,7 @@ class Card571 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choices' => [1, 2, 3]];
     } else {
       return [
@@ -34,7 +34,7 @@ class Card571 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       $card = self::drawAndTuck(8);
       $isRedOrPurple = self::isRed($card) || self::isPurple($card);
       if ($isRedOrPurple) {

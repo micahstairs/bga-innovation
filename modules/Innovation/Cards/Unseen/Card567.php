@@ -28,7 +28,7 @@ class Card567 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'n'             => 'all',
         'location_from' => 'board',

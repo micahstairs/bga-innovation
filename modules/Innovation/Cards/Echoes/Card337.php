@@ -32,7 +32,7 @@ class Card337 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
         'n_min' => 1,
@@ -40,7 +40,7 @@ class Card337 extends Card
         'location_from' => 'hand',
         'location_to' => 'deck',
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return ['choices' => [1, 2]];
     } else {
       return [
@@ -70,16 +70,16 @@ class Card337 extends Card
 
   public function afterInteraction()
   {
-    if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 1 && self::getNumChosen() === 0) {
+    if (self::isFirstOrThirdEdition() && self::isFirstInteraction() && self::getNumChosen() === 0) {
       // Skip to the third interaction if no cards were returned
       self::setNextStep(3);
     }
-    if (self::getCurrentStep() === 1 && self::getNumChosen() > 0) {
+    if (self::isFirstInteraction() && self::getNumChosen() > 0) {
       self::setAuxiliaryValue(self::getNumChosen()); // Tracks how many cards need to be melded or foreshadowed
       if (self::getMaxSteps() < 2) {
         self::setMaxSteps(2);
       }
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       $choicesLeft = self::getAuxiliaryValue() - 1;
       if ($choicesLeft > 0) {
         self::setAuxiliaryValue($choicesLeft);

@@ -29,13 +29,13 @@ class Card584 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'n' => 2,
         'location_from' => 'hand',
         'meld_keyword'   => true,
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'n' => 4,
         'location_from' => 'hand',

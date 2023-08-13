@@ -38,7 +38,7 @@ class Card402 extends Card
   }
 
   public function handleCardChoice(array $card) {
-    if (self::isFirstNonDemand()&& self::getCurrentStep() === 1) {
+    if (self::isFirstNonDemand()&& self::isFirstInteraction()) {
       $value = $card['age'];
       foreach (self::getPlayerIds() as $playerId) {
         foreach (self::getCardsKeyedByValue('score', $playerId)[$value] as $scoreCard) {

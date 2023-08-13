@@ -24,7 +24,7 @@ class Card517 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'player_id'    => self::getLauncherId(),
           'choose_color' => true,
@@ -47,7 +47,7 @@ class Card517 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 2) {
+    if (self::isSecondInteraction()) {
       if (self::getNumChosen() > 0) {
         self::transferToBoard(self::getTopCardOfColor(self::getAuxiliaryValue()), self::getLauncherId());
       } else {

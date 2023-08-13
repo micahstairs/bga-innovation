@@ -26,7 +26,7 @@ class Card569 extends Card
         'color'           => array($this->game::GREEN),
       ];
     } else if (self::getEffectNumber() === 2) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return ['choices' => [1, 2]];
       } else {
         return [

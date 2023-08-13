@@ -37,12 +37,12 @@ class Card403 extends Card
         'without_bonus' => true,
         'color'         => self::getAllColorsOtherThan($this->game::PURPLE),
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'choose_value' => true,
         'age'          => [6, 7, 8, 9],
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'can_pass' => true,
         'choices'  => [1],
@@ -59,7 +59,7 @@ class Card403 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return self::getPromptForValueChoice();
     } else {
       if (self::isFirstOrThirdEdition()) {
@@ -75,7 +75,7 @@ class Card403 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       $value = self::getAuxiliaryValue2();
       if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', $this->game::BASE)[$value] > 0) {
         self::setAuxiliaryValue2($choice); // Track chosen deck

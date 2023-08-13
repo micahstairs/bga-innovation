@@ -31,7 +31,7 @@ class Card512 extends Card
         'location_from' => 'hand',
         'tuck_keyword'  => true,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'can_pass'     => true,
         'choose_color' => true,

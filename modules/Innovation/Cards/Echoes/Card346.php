@@ -25,7 +25,7 @@ class Card346 extends Card
   {
     if (self::isEcho()) {
       return ['choices' => [1, 2]];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       if (self::isFirstOrThirdEdition()) {
         $values = self::getBonuses();
       } else {

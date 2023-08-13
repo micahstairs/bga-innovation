@@ -49,17 +49,17 @@ class Card399 extends Card
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else if (self::isFirstNonDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'choose_value' => true,
           'age'          => [1, 2, 3, 4, 5, 6],
         ];
-      } else if (self::getCurrentStep() === 2) {
+      } else if (self::isSecondInteraction()) {
         return [
           'choose_value' => true,
           'age'          => array_diff([1, 2, 3, 4, 5, 6], [self::getAuxiliaryValue()])
         ];
-      } else if (self::getCurrentStep() === 3) {
+      } else if (self::isThirdInteraction()) {
         self::drawAndReveal(self::getAuxiliaryValue());
         self::drawAndReveal(self::getAuxiliaryValue2());
         return [
@@ -91,7 +91,7 @@ class Card399 extends Card
 
   public function handleSpecialChoice($value)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       self::setAuxiliaryValue($value);
     } else {
       self::setAuxiliaryValue2($value);

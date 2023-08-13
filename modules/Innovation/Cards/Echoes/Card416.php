@@ -30,7 +30,7 @@ class Card416 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 1 || self::isFourthEdition() && self::getCurrentStep() === 2) {
+    if (self::isFirstOrThirdEdition() && self::isFirstInteraction() || self::isFourthEdition() && self::isSecondInteraction()) {
       return [
         'n' => 'all',
         'owner_from' => 0,
@@ -48,7 +48,7 @@ class Card416 extends Card
 
   public function afterInteraction()
   {
-    if (self::isFirstOrThirdEdition() && self::getCurrentStep() === 2) {
+    if (self::isFirstOrThirdEdition() && self::isSecondInteraction()) {
       self::drawAndMeld(10);
       self::drawAndMeld(10);
     }

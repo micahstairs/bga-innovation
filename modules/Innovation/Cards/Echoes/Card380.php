@@ -32,12 +32,12 @@ class Card380 extends Card
         'age_min'        => 1,
         'age_max'        => 2,
       ];
-    } else if (self::getCurrentStep() === 1) {
+    } else if (self::isFirstInteraction()) {
       return [
         'choose_value' => true,
         'age'          => [3, 4, 5],
       ];
-    } else if (self::getCurrentStep() === 2) {
+    } else if (self::isSecondInteraction()) {
       return [
         'can_pass' => true,
         'choices'  => [1],
@@ -54,7 +54,7 @@ class Card380 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return self::getPromptForValueChoice();
     } else if (self::isFirstOrThirdEdition()) {
       return self::getPromptForChoiceFromList([
@@ -72,7 +72,7 @@ class Card380 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', $this->game::BASE) > 0) {
         self::setAuxiliaryValue2($choice); // Track which deck was chosen
         self::setMaxSteps(2);

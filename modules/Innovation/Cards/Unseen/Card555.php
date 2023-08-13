@@ -18,7 +18,7 @@ class Card555 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return ['choices' => [1, 2]];
     } else {
       if (self::getAuxiliaryValue() === 1) {
@@ -49,7 +49,7 @@ class Card555 extends Card
 
   public function afterInteraction()
   {
-    if (self::getCurrentStep() === 2 && self::getAuxiliaryValue() === 2) {
+    if (self::isSecondInteraction() && self::getAuxiliaryValue() === 2) {
       self::draw(9);
     }
   }

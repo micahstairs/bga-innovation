@@ -24,7 +24,7 @@ class Card533 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getCurrentStep() === 1) {
+    if (self::isFirstInteraction()) {
       return [
         'location_from' => 'hand',
         'tuck_keyword'  => true,

@@ -48,7 +48,7 @@ class Card407 extends Card
         'with_icon' => $this->game::HEALTH,
       ];
     } else if (self::isFirstOrThirdEdition()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         return [
           'location_from' => 'score',
           'return_keyword' => true,
@@ -62,14 +62,14 @@ class Card407 extends Card
         ];
       }
     } else {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
         return [
           'location_from' => 'score',
           'return_keyword' => true,
           'with_icon' => $this->game::EFFICIENCY,
         ];
-      } else if (self::getCurrentStep() === 2) {
+      } else if (self::isSecondInteraction()) {
         return [
           'location_from' => 'board',
           'return_keyword' => true,
@@ -89,7 +89,7 @@ class Card407 extends Card
 
   public function handleCardChoice(array $card) {
     if (self::isFourthEdition() && self::isDemand()) {
-      if (self::getCurrentStep() === 1) {
+      if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(1);
       } else if (self::getAuxiliaryValue() === 1) {
         self::setMaxSteps(3);
