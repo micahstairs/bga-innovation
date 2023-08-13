@@ -14,14 +14,14 @@ class Card359 extends Card
   //     return or achieve (if eligible) your top green card.
   // - 4th edition:
   //   - ECHO: Draw a [3] or [4].
-  //   - You may meld the card you drew due to Charitable Trust's echo effect. If you meld a [3],
+  //   - You may meld the last card drawn due to Charitable Trust's echo effect. If you meld a [3],
   //     achieve your top green card, if eligible. If you meld a [4], return your top green card.
 
   public function initialExecution()
   {
     if (self::isEcho()) {
-      // Do not re-initialize the array if this was endorsed
-      if (!$this->game->isExecutingAgainDueToEndorsedAction()) {
+      // No not re-initialize the array if this is a first or third edition game and the echo effect is executing for a second time
+      if (self::isFourthEdition() || !$this->game->isExecutingAgainDueToEndorsedAction()) {
         self::setActionScopedAuxiliaryArray([], self::getPlayerId()); // Track which card IDs are drawn in the echo effect
       }
       self::setMaxSteps(1);
@@ -36,7 +36,7 @@ class Card359 extends Card
     if (self::isEcho()) {
       return ['choices' => [3, 4]];
     } else if (self::getCurrentStep() === 1) {
-      if ($this->game->isExecutingAgainDueToEndorsedAction()) {
+      if (count(self::getActionScopedAuxiliaryArray(self::getPlayerId())) === 2) {
         // If two cards were drawn due to the Endorse action, the launcher is allowed to choose to meld
         // the same card twice. Unfortunately, this means the card may no longer be in a visible
         // location so we need to use a special prompt.
@@ -90,9 +90,7 @@ class Card359 extends Card
   {
     if (self::isEcho()) {
       $card = self::draw($choice);
-      $drawnCards = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-      $drawnCards[] = $card['id'];
-      self::setActionScopedAuxiliaryArray($drawnCards, self::getPlayerId());
+      self::addToActionScopedAuxiliaryArray($card['id'], self::getPlayerId());
     } else if (self::getCurrentStep() === 1) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
       $card = self::getCard($cardIds[$choice]);
