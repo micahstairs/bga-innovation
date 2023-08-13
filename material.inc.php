@@ -2267,8 +2267,9 @@ $this->textual_card_infos = array(
     ),
 
     426 => array(
-        'name'                => clienttranslate('Human Genome'),
-        'non_demand_effect_1' => clienttranslate('You may draw and score a card of any value. Take a bottom card from your board into your hand. If the values of all of the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
+        'name'                                => clienttranslate('Human Genome'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may draw and score a card of any value. Take a bottom card from your board into your hand. If the values of all of the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may draw and score a card of any value. Transfer your bottom red card to your hand. If the values of all the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
     ),
 
     427 => array(

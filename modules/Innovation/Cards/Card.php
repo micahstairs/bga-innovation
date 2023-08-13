@@ -149,6 +149,16 @@ abstract class Card
     return $this->state->getCurrentStep();
   }
 
+  protected function isFirstInteraction(): int
+  {
+    return self::getCurrentStep() === 1;
+  }
+
+  protected function isSecondInteraction(): int
+  {
+    return self::getCurrentStep() === 2;
+  }
+
   protected function setNextStep(int $step)
   {
     $this->state->setNextStep($step);

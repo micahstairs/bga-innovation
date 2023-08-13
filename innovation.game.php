@@ -9974,12 +9974,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 426, Echoes age 10: Human Genome
-            case "426N1A":
-                $message_for_player = clienttranslate('You may choose a value to draw and score');
-                $message_for_others = clienttranslate('${player_name} may choose a value to draw and score');
-                break;
-                
             // id 428, Echoes age 10: Social Networking
             case "428D1A":
                 $message_for_player = clienttranslate('Choose an icon');
@@ -10840,7 +10834,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 425)
+            || (330 <= $card_id && $card_id <= 426)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13860,13 +13854,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-                
-            
-
-            // id 426, Echoes age 10: Human Genome
-            case "426N1":
-                $step_max = 2;
-                break;
                 
             // id 427, Echoes age 10: Camcorder
             case "427D1":
@@ -18914,33 +18901,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 426, Echoes age 10: Human Genome
-        case "426N1A":
-            // "You may draw and score a card of any value."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-                
-                'choose_value' => true,
-            );
-            break;
-
-        case "426N1B":
-            // "Take a bottom card from your board into your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-
-                'bottom_from' => true,
-            );       
-            break;
             
         // id 427, Echoes age 10: Camcorder
         case "427D1A":
@@ -21646,38 +21606,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-
-                // id 426, Echoes age 10: Human Genome
-                case "426N1A":
-                    // "You may draw and score a card of any value."
-                    $choice = self::getAuxiliaryValue();
-                    if ($choice > 0) {
-                        $card = self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
-                    }
-                    break;
-                    
-                case "426N1B":
-                    // "If the values of all of the cards in your hand match the values of all the cards in your score pile exactly, you win."
-                    $hand_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'hand');
-                    $score_card_counts = self::countCardsInLocationKeyedByAge($player_id, 'score');
-                    $eligible = true;
-                    for ($age = 1; $age <= 11; $age++) {
-                        if ($hand_card_counts[$age] != $score_card_counts[$age]) {
-                            $eligible = false;
-                        }
-                    }
-                    if ($eligible) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the exact same values in your score pile and in hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the exact same values in his score pile and in hand.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Human Genome');
-                        throw new EndOfGame();
-                    }
-                    else {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} do not have the exact same values in your score pile and hand.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have the exact same values in his score pile and hand.'), array('player_name' => self::getColoredPlayerName($player_id)));                        
-                    }
-                    break;
                     
                 // id 427, Echoes age 10: Camcorder
                 case "427D1A":
@@ -23002,13 +22930,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
 
-            // id 426, Echoes age 10: Human Genome
-            case "426N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-                
             // id 428, Echoes age 10: Social Networking
             case "428D1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${icon}.'), array('You' => 'You', 'icon' => self::getIconSquare($choice)));
