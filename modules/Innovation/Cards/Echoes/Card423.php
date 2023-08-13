@@ -43,9 +43,17 @@ class Card423 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
+      if (self::isFirstOrThirdEdition()) {
+        $values = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      } else {
+        $values = self::getUniqueValues('hand');
+        if (empty($values)) {
+          $values[] = 0;
+        }
+      }
       return [
         'choose_value' => true,
-        'age'          => self::isFirstOrThirdEdition() ? [1, 2, 3, 4, 5, 6, 7, 8, 9] : self::getUniqueValues('hand'),
+        'age'          => $values,
       ];
     } else if (self::isFirstNonDemand()) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
