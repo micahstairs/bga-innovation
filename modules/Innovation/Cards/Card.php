@@ -20,7 +20,7 @@ abstract class Card
     $this->state = $state;
     $this->notifications = $game->notifications;
   }
-  
+
   public function oneTimeSetup()
   {
     // Subclasses are expected to override this method if the card need to do any one-time setup before any player executes anything.
@@ -218,7 +218,7 @@ abstract class Card
 
   protected function drawFromSet(int $age, int $type, int $playerId = null)
   {
-    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/ false, /*type=*/ $type);
+    return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
   }
 
   protected function transferToHand($card, int $playerId = null)
@@ -317,7 +317,7 @@ abstract class Card
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return($card)
+  protected function return ($card)
   {
     if (!$card) {
       return null;
@@ -330,7 +330,7 @@ abstract class Card
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
+    return $this->game->transferCardFromTo($card, 0, 'deck', /*bottom_to=*/false);
   }
 
   protected function junk($card)
@@ -429,7 +429,8 @@ abstract class Card
     return $cards[0];
   }
 
-  protected function getCards(string $location, int $playerId = null) {
+  protected function getCards(string $location, int $playerId = null)
+  {
     return $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
@@ -813,7 +814,7 @@ abstract class Card
 
   protected function getBaseDeckCount(int $age): int
   {
-    return $this->game->countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', $this->game::BASE)[$age];
+    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', $this->game::BASE)[$age];
   }
 
   protected function countCards(string $location, int $playerId = null): int
@@ -830,12 +831,12 @@ abstract class Card
   {
     $values = [];
     $countsByValue = self::countCardsKeyedByValue($location, $playerId);
-      for ($age = 1; $age <= 11; $age++) {
-        if ($countsByValue[$age] > 0) {
-          $values[] = $age;
-        }
+    for ($age = 1; $age <= 11; $age++) {
+      if ($countsByValue[$age] > 0) {
+        $values[] = $age;
       }
-      return $values;
+    }
+    return $values;
   }
 
   protected function getCardsKeyedByValue(string $location, int $playerId = null): array
@@ -852,12 +853,12 @@ abstract class Card
   {
     $colors = [];
     $cardsByColor = self::getCardsKeyedByColor($location, $playerId);
-      for ($color = 0; $color < 5; $color++) {
-        if ($cardsByColor[$color] > 0) {
-          $colors[] = $color;
-        }
+    for ($color = 0; $color < 5; $color++) {
+      if ($cardsByColor[$color] > 0) {
+        $colors[] = $color;
       }
-      return $colors;
+    }
+    return $colors;
   }
 
   protected function getCardsKeyedByColor(string $location, int $playerId = null): array
@@ -899,13 +900,23 @@ abstract class Card
   {
     $icons = [];
     for ($i = 1; $i <= 6; $i++) {
-      $icon = $card['spot_'.$i];
+      $icon = $card['spot_' . $i];
       // Echo effects don't actually count as an icon type
       if ($icon && !$this->game::ECHO_EFFECT_ICON) {
         $icons[] = min($icon, 100);
       }
     }
     return $icons;
+  }
+
+  protected function getIconCount(int $icon, int $playerId = null): int
+  {
+    return $this->game->getPlayerSingleRessourceCount(self::coercePlayerId($playerId), $icon);
+  }
+
+  protected function getIconCounts(int $playerId = null): array
+  {
+    return $this->game->getPlayerResourceCounts(self::coercePlayerId($playerId));
   }
 
   protected function wasForeseen(): bool

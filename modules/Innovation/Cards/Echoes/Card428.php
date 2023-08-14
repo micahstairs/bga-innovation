@@ -24,10 +24,10 @@ class Card428 extends Card
       self::setMaxSteps(2);
     } else {
       $hasFewerIcons = true;
-      $playerIconCounts = $this->game->getPlayerResourceCounts(self::getPlayerId());
+      $playerIconCounts = self::getIconCounts();
       $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
       foreach ($playerIds as $playerId) {
-        $otherIconCounts = $this->game->getPlayerResourceCounts($playerId);
+        $otherIconCounts = self::getIconCounts($playerId);
         foreach ([$this->game::INDUSTRY, $this->game::PROSPERITY, $this->game::AUTHORITY] as $icon) {
           if ($otherIconCounts[$icon] <= $playerIconCounts[$icon]) {
             $hasFewerIcons = false;

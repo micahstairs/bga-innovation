@@ -17,7 +17,7 @@ class Card494 extends Card
     $count2 = 0;
     $count3 = 0;
     $count4 = 0;
-    foreach ($this->game->getPlayerResourceCounts(self::getPlayerId()) as $icon => $count) {
+    foreach (self::getIconCounts() as $icon => $count) {
       if ($count >= 2) {
         $count2++;
       }

@@ -21,8 +21,7 @@ class Card409 extends Card
   {
     if (self::isFirstNonDemand()) {
       do {
-        $numIndustryIcons = $this->game->getPlayerSingleRessourceCount(self::getPlayerId(), $this->game::INDUSTRY);
-        $numCardsToTuck = $this->game->intDivision($numIndustryIcons, 3);
+        $numCardsToTuck = $this->game->intDivision(self::getIconCount($this->game::INDUSTRY), 3);
 
         $tuckedGreenCard = false;
         for ($i = 0; $i < $numCardsToTuck; $i++) {

@@ -21,7 +21,7 @@ class Card22 extends Card
       $renderedIcon = self::renderIcon($this->game::HEALTH);
       $numToDraw = 0;
       if (self::isFirstOrThirdEdition()) {
-        $iconCount = $this->game->getPlayerSingleRessourceCount(self::getPlayerId(), $this->game::HEALTH);
+        $iconCount = self::getIconCount($this->game::HEALTH);
         self::notifyPlayer(
           clienttranslate('${You} have ${n} visible ${icon} on your board.'),
           ['You' => 'You', 'n' => $iconCount, 'icon' => $renderedIcon]

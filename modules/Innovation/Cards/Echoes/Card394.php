@@ -35,7 +35,7 @@ class Card394 extends Card
         'color' => [self::getAuxiliaryValue()],
       ];
     } else {
-      $count = $this->game->getPlayerResourceCounts(self::getPlayerId())[$this->game::CONCEPT];
+      $count = self::getIconCount($this->game::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
       return [
         'owner_from' => 0,

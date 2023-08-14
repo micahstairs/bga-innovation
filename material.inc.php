@@ -2307,10 +2307,12 @@ $this->textual_card_infos = array(
     ),
 
     431 => array(
-        'name'                => clienttranslate('Cell Phone'),
-        'non_demand_effect_1' => clienttranslate('Draw a ${age_10} for every two ${icon_6} on your board.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your green cards up.'),
-        'non_demand_effect_3' => clienttranslate('You may tuck any number of cards with a ${icon_6} from your hand, splaying up each color you tucked into.'),
+        'name'                                => clienttranslate('Cell Phone'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw and foreshadow an ${age_11}.'),
+        'non_demand_effect_1'                 => clienttranslate('Draw a ${age_10} for every two ${icon_6} on your board.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your green cards up.'),
+        'non_demand_effect_3_first_and_third' => clienttranslate('You may tuck any number of cards with a ${icon_6} from your hand, splaying up each color you tucked into.'),
+        'non_demand_effect_3_fourth'          => clienttranslate('You may tuck any number of cards with a ${icon_6} from your hand, splaying up each color into which you tuck.'),
     ),
 
     432 => array(

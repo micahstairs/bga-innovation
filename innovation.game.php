@@ -10836,7 +10836,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 430)
+            || (330 <= $card_id && $card_id <= 431)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13854,23 +13854,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "219D1":
-                $step_max = 1;
-                break; 
-
-            // id 431, Echoes age 10: Cell Phone
-            case "431N1":
-                // "Draw a 10 for every two clocks on your board."
-                $num_cards = self::intDivision(self::getPlayerSingleRessourceCount($player_id, 6), 2);
-                for ($i = 0; $i < $num_cards; $i++) {
-                    self::executeDraw($player_id, 10);
-                }
-                break;
-
-            case "431N2":
-                $step_max = 1;
-                break;
-
-            case "431N3":
                 $step_max = 1;
                 break;
 
@@ -18845,37 +18828,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 431, Echoes age 10: Cell Phone
-        case "431N2A":
-            // "You may splay your green cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3, // up
-                'color' => array(2), // green
-            );
-            break; 
-
-        case "431N3A":
-            // "You may tuck any number of cards with a clock from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'with_icon' => 6, /* clock */
-                
-                'bottom_to' => true,
-             );
-            break; 
-
         // id 432, Echoes age 10: MP3
         case "432N1A":
             // "Return any number of cards from your hand."
@@ -22722,15 +22674,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
-                break;
-
-            // id 431, Echoes age 10: Cell Phone
-            case "431N3A":
-                // Do the transfer
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
-                
-                // "splaying up each color you tucked into."
-                self::splayUp($player_id, $player_id, $card['color']);                
                 break;
 
             // id 432, Echoes age 10: MP3
