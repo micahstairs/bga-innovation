@@ -2289,10 +2289,12 @@ $this->textual_card_infos = array(
     ),
 
     429 => array(
-        'name'                => clienttranslate('GPS'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return all cards from your forecast!'),
-        'non_demand_effect_1' => clienttranslate('Draw and foreshadow three ${age_10}s.'),
-        'non_demand_effect_2' => clienttranslate('You may splay your yellow cards up.'),
+        'name'                                => clienttranslate('GPS'),
+        'i_demand_effect_1'                   => clienttranslate('${I demand} you return all cards from your forecast!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and foreshadow three ${age_10}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may splay your yellow cards up.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('You may splay your yellow cards up.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw three ${age_11}. If GPS was foreseen, foreshadow them.'),
     ),
 
     430 => array(

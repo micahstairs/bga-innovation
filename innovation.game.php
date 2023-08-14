@@ -10836,7 +10836,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 428)
+            || (330 <= $card_id && $card_id <= 429)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13856,22 +13856,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break; 
-
-            // id 429, Echoes age 10: GPS
-            case "429D1":
-                $step_max = 1;
-                break;
-
-            case "429N1":
-                // "Draw and foreshadow three 10s."
-                self::executeDrawAndForeshadow($player_id, 10);
-                self::executeDrawAndForeshadow($player_id, 10);
-                self::executeDrawAndForeshadow($player_id, 10);
-                break;
-
-            case "429N2":
-                $step_max = 1;
-                break;
 
             // id 430, Echoes age 10: Flash Drive
             case "430D1":
@@ -18869,31 +18853,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age_min' => 7,
             );
             break;
-
-        // id 429, Echoes age 10: GPS
-        case "429D1A":
-            // "I demand you return all cards from your forecast!"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'forecast',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-             );
-            break;
-
-        case "429N2A":
-            // "You may splay your yellow cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3, // up
-                'color' => array(3), // yellow
-            );
-            break; 
 
         // id 430, Echoes age 10: Flash Drive
         case "430D1A":
