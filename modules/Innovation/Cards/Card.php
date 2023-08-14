@@ -620,9 +620,11 @@ abstract class Card
     return $this->game->setAuxiliaryValue($value);
   }
 
-  protected function incrementAuxiliaryValue(int $value = 1)
+  protected function incrementAuxiliaryValue(int $value = 1): int
   {
-    return self::setAuxiliaryValue(self::getAuxiliaryValue() + $value);
+    $newValue = self::getAuxiliaryValue() + $value;
+    self::setAuxiliaryValue($newValue);
+    return $newValue;
   }
 
   protected function getAuxiliaryValue2(): int
@@ -640,14 +642,18 @@ abstract class Card
     return $this->game->setAuxiliaryArray($array);
   }
 
-  protected function addToAuxiliaryArray(int $value)
+  protected function addToAuxiliaryArray(int $value): array
   {
-    return $this->game->setAuxiliaryArray(array_merge($this->game->getAuxiliaryArray(), [$value]));
+    $array = array_merge(self::getAuxiliaryArray(), [$value]);
+    self::setAuxiliaryArray($array);
+    return $array;
   }
 
-  protected function removeFromAuxiliaryArray(int $value)
+  protected function removeFromAuxiliaryArray(int $value): array
   {
-    return $this->game->setAuxiliaryArray(Arrays::removeElement($this->game->getAuxiliaryArray(), $value));
+    $array = Arrays::removeElement(self::getAuxiliaryArray(), $value);
+    self::setAuxiliaryArray($array);
+    return $array;
   }
 
   protected function getAuxiliaryArray(): array
@@ -660,9 +666,18 @@ abstract class Card
     $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId, $array);
   }
 
-  protected function addToActionScopedAuxiliaryArray(int $value, $playerId = 0)
+  protected function addToActionScopedAuxiliaryArray(int $value, $playerId = 0): array
   {
-    return self::setActionScopedAuxiliaryArray(array_merge(self::getActionScopedAuxiliaryArray($playerId), [$value]), $playerId);
+    $array = array_merge(self::getActionScopedAuxiliaryArray($playerId), [$value]);
+    self::setActionScopedAuxiliaryArray($array, $playerId);
+    return $array;
+  }
+
+  protected function removeFromActionScopedAuxiliaryArray(int $value, $playerId = 0): array
+  {
+    $array = Arrays::removeElement(self::getActionScopedAuxiliaryArray($playerId), $value);
+    self::setActionScopedAuxiliaryArray($array, $playerId);
+    return $array;
   }
 
   protected function getActionScopedAuxiliaryArray($playerId = 0): array

@@ -10836,7 +10836,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 429)
+            || (330 <= $card_id && $card_id <= 430)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13857,15 +13857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break; 
 
-            // id 430, Echoes age 10: Flash Drive
-            case "430D1":
-                $step_max = 1;
-                break;
-
-            case "430N1":
-                $step_max = 1;
-                break;
-                                
             // id 431, Echoes age 10: Cell Phone
             case "431N1":
                 // "Draw a 10 for every two clocks on your board."
@@ -18854,45 +18845,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 430, Echoes age 10: Flash Drive
-        case "430D1A":
-            // "I demand you return four cards from your score pile!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 4,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-             );
-            break;
-
-        case "430N1A":
-            // "Return a card from your score pile."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-             );
-            break; 
-            
-        case "430N1B":
-            // "you may splay any one color of your cards up."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'splay_direction' => 3, // up
-                'color' => array(0,1,2,3,4), // any color
-            );
-            break; 
-
         // id 431, Echoes age 10: Cell Phone
         case "431N2A":
             // "You may splay your green cards up."
@@ -21467,13 +21419,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 430, Echoes age 10: Flash Drive
-                case "430N1A":
-                    if ($n > 0) { // "if you do"
-                        self::incrementStepMax(1);
-                    }
                     break;
 
                 // id 432, Echoes age 10: MP3
