@@ -2296,9 +2296,10 @@ $this->textual_card_infos = array(
     ),
 
     430 => array(
-        'name'                => clienttranslate('Flash Drive'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you return four cards from your score pile!'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your score pile. If you do, you may splay any one color of your cards up.'),
+        'name_first_and_third' => clienttranslate('Flash Drive'),
+        'name_fourth'          => clienttranslate('Barcode'),
+        'i_demand_effect_1'    => clienttranslate('${I demand} you return four cards from your score pile!'),
+        'non_demand_effect_1'  => clienttranslate('Return a card from your score pile. If you do, you may splay any one color of your cards up.'),
     ),
 
     431 => array(

@@ -584,6 +584,14 @@ class Innovation extends Table
         if ($this->innovationGameState->echoesExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
+            if ($edition <= 3) {
+                self::DbQuery("UPDATE card SET spot_2 = 3 WHERE id = 426"); // Human Genome
+                self::DbQuery("UPDATE card SET spot_3 = 6, spot_4 = 6, dogma_icon = 6 WHERE id = 428"); // Social Networking
+                self::DbQuery("UPDATE card SET spot_4 = 6 WHERE id = 431"); // Cell Phone
+                self::DbQuery("UPDATE card SET spot_1 = 1, spot_3 = 0, spot_4 = 1, dogma_icon = 1 WHERE id = 432"); // MP3
+                self::DbQuery("UPDATE card SET spot_1 = 3, spot_2 = 3, spot_4 = 3, dogma_icon = 3 WHERE id = 433"); // Puzzle Cube
+                self::DbQuery("UPDATE card SET spot_3 = 3 WHERE id = 434"); // Sudoku
+            }
         }
 
         if ($this->innovationGameState->unseenExpansionEnabled()) {
