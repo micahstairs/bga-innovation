@@ -2280,9 +2280,12 @@ $this->textual_card_infos = array(
     ),
 
     428 => array(
-        'name'                => clienttranslate('Social Networking'),
-        'i_demand_effect_1'   => clienttranslate('${I demand} you choose an icon type! Transfer all top cards without that icon from your board to my score pile!'),
-        'non_demand_effect_1' => clienttranslate('If you have fewer ${icon_5}, fewer ${icon_1}, and ${icon_4} than each other player, you win.'),
+        'name'                                => clienttranslate('Social Networking'),
+        'echo_effect_1_fourth'                => clienttranslate('Score a top non-red card from your board.'),
+        'i_demand_effect_1_first_and_third'   => clienttranslate('${I demand} you choose an icon type! Transfer all top cards without that icon from your board to my score pile!'),
+        'i_demand_effect_1_fourth'            => clienttranslate('${I demand} you choose an icon type! Transfer a top card without that icon of each color from your board to my score pile!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have fewer ${icon_5}, fewer ${icon_1}, and fewer ${icon_4} than each other player, you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have fewer ${icon_5}, fewer ${icon_1}, and fewer ${icon_4} than each opponent, you win.'),
     ),
 
     429 => array(
