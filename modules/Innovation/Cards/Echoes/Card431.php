@@ -7,7 +7,7 @@ use Innovation\Cards\Card;
 class Card431 extends Card
 {
 
-  // GPS
+  // Cell Phone
   // - 3rd edition 
   //   - Draw a [10] for every two [EFFICIENCY] on your board.
   //   - You may splay your green cards up.
@@ -25,7 +25,7 @@ class Card431 extends Card
     if (self::isEcho()) {
       self::drawAndForeshadow(11);
     } else if (self::isFirstNonDemand()) {
-      $numCards = self::intDivision(self::getIconCount($this->game::EFFICIENCY), 2);
+      $numCards = $this->game->intDivision(self::getIconCount($this->game::EFFICIENCY), 2);
       for ($i = 0; $i < $numCards; $i++) {
         self::draw(10);
       }

@@ -9982,12 +9982,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 432, Echoes age 10: MP3
-            case "432N2A":
-                $message_for_player = clienttranslate('Choose a value to draw and score');
-                $message_for_others = clienttranslate('${player_name} must choose a value to draw and score');
-                break;
-                
             // id 434, Echoes age 10: Sudoku
             case "434N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10836,7 +10830,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 431)
+            || (330 <= $card_id && $card_id <= 432)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13855,21 +13849,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 432, Echoes age 10: MP3
-            case "432N1":
-                if (self::countCardsInLocation($player_id, 'hand') > 0) {
-                    $step_max = 1;
-                }
-                break;
-
-            case "432N2":
-                $bonuses = self::getVisibleBonusesOnBoard($player_id);
-                if (count($bonuses) > 0) {
-                    self::setAuxiliaryValueFromArray(array_unique($bonuses));
-                    $step_max = 1;
-                }
                 break;
 
             // id 433, Echoes age 10: Puzzle Cube
@@ -18828,47 +18807,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 432, Echoes age 10: MP3
-        case "432N1A":
-            // "Return any number of cards from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n_min' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-             );
-            break;
-
-        case "432N1B":
-            // "For each card returned, claim two standard achievements for which you are eligible."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => self::getAuxiliaryValue(),
-
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-                
-                'require_achievement_eligibility' => true,
-             );
-            break;
-
-        case "432N2A":
-            // "Draw and score a card of value equal to a bonus on your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => self::getAuxiliaryValueAsArray(),
-             );
-            break;
-
         // id 433, Echoes age 10: Puzzle Cube
         case "433N1A":
             // "You may score the bottom card or two bottom cards of one color from your board."
@@ -21373,20 +21311,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 6);
                     break;
 
-                // id 432, Echoes age 10: MP3
-                case "432N1A":
-                    // "For each card returned, claim two standard achievements for which you are eligible."
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                        self::setAuxiliaryValue($n * 2);
-                    }
-                    break;
-                    
-                case "432N2A":
-                    // "Draw and score a card of value equal to a bonus on your board"
-                    self::executeDrawAndScore($player_id, self::getAuxiliaryValue());
-                    break;  
-
                 // id 433, Echoes age 10: Puzzle Cube
                 case "433N1A":
                     if ($n > 0) {
@@ -22671,13 +22595,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
 
             case "346N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
-            // id 432, Echoes age 10: MP3
-            case "432N2A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);

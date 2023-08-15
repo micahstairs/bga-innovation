@@ -2316,9 +2316,12 @@ $this->textual_card_infos = array(
     ),
 
     432 => array(
-        'name'                => clienttranslate('MP3'),
-        'non_demand_effect_1' => clienttranslate('Return any number of cards from your hand. For each card returned, claim two standard achievements for which you are eligible.'),
-        'non_demand_effect_2' => clienttranslate('Draw and score a card of value equal to a bonus on your board.'),
+        'name'                                => clienttranslate('MP3'),
+        'echo_effect_1_fourth'                => clienttranslate('Draw and score a ${age_10}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return any number of cards from your hand. For each card returned, claim two standard achievements for which you are eligible.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and score a card of value equal to a bonus on your board, if there is one.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Draw and score a card of value equal to a bonus on your board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Return any number of cards from your hand. For each card returned, claim two standard achievements for which you are eligible.'),
     ),
 
     433 => array(
