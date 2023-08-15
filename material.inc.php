@@ -2333,8 +2333,9 @@ $this->textual_card_infos = array(
     ),
 
     434 => array(
-        'name'                => clienttranslate('Sudoku'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card\'s non-demand dogma effects. Do not share them.'),
+        'name'                                => clienttranslate('Sudoku'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card\'s non-demand dogma effects. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a card of any value. If you have nine different bonus values visible on your board, you win. Otherwise, self-execute the melded card.'),
     ),
 
     /* Echoes - Special achievements */

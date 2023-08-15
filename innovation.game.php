@@ -9982,12 +9982,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 434, Echoes age 10: Sudoku
-            case "434N1A":
-                $message_for_player = clienttranslate('Choose a value');
-                $message_for_others = clienttranslate('${player_name} must choose a value');
-                break;
-
             // id 443, age 11: Fusion
             case "443N1B":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10830,7 +10824,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 433)
+            || (330 <= $card_id && $card_id <= 434)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13851,11 +13845,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
                 
-            // id 434, Echoes age 10: Sudoku
-            case "434N1":
-                $step_max = 1;
-                break;
-
             // id 441, age 11: Solar Sailing
             case "441N1":
                 // "Draw and meld an 11."
@@ -18801,17 +18790,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 434, Echoes age 10: Sudoku
-        case "434N1A":
-            // "Draw and meld a card of any value."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_value' => true,
-            );
-            break;
-
         // id 443, age 11: Fusion
         case "443N1A":
         case "443N1C": // We have to use a third interaction because if we repeat the first interaction then we wind up overwriting the auxiliary value with 11
@@ -21265,23 +21243,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
                     break;
-                    
-                // id 434, Echoes age 10: Sudoku
-                case "434N1A":
-                    // "Draw and meld a card of any value."
-                    $card = self::executeDrawAndMeld($player_id, self::getAuxiliaryValue());
-                    
-                    // "If you have at least nine different bonus values visible on your board, you win."
-                    if (count(array_unique(self::getVisibleBonusesOnBoard($player_id))) >= 9) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have at least nine unique bonues visible on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has at least nine unique bonuses visible on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Sudoku');
-                        throw new EndOfGame();                
-                    }
-                    // "Execute each of the melded card's non-demand dogma effects. Do not share them."
-                    self::selfExecute($card);
-                    break;
 
                 // id 443, age 11: Fusion
                 case "443N1A":
@@ -22512,21 +22473,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setAuxiliaryValue($choice);
                 break;
                 
-            // id 434, Echoes age 10: Sudoku
-            case "434N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-
             // id 443, age 11: Fusion
             case "443N1B":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
-
-            
 
             // id 489, Unseen age 1: Handshake     
             case "489D1A":
