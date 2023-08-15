@@ -76,8 +76,6 @@ class Card423 extends Card
         $value = self::getCard($cardId)['faceup_age'];
       }
       return [
-        'location_from' => 'achievements',
-        'owner_from' => 0,
         'achieve_keyword' => true,
         'age' => $value,
       ];

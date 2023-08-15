@@ -39,8 +39,6 @@ class Card432 extends Card
       } else {
         return [
           'n'                               => self::getAuxiliaryValue(),
-          'owner_from'                      => 0,
-          'location_from'                   => 'achievements',
           'achieve_keyword'                 => true,
           'require_achievement_eligibility' => true,
         ];

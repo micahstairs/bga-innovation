@@ -31,8 +31,6 @@ class Card425 extends Card
     }
     self::setAuxiliaryArray($cardIds);
     return [
-      'owner_from'                      => 0,
-      'location_from'                   => 'achievements',
       'achieve_keyword'                 => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
