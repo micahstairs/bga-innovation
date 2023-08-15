@@ -2325,9 +2325,11 @@ $this->textual_card_infos = array(
     ),
 
     433 => array(
-        'name'                => clienttranslate('Puzzle Cube'),
-        'non_demand_effect_1' => clienttranslate('You may score the bottom card or two bottom cards of one color from your board. If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win.'),
-        'non_demand_effect_2' => clienttranslate('Draw and meld a ${age_10}.'),
+        'name'                                => clienttranslate('Puzzle Cube'),
+        'echo_effect_1_fourth'                => clienttranslate('Meld a card from your score pile.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('You may score the bottom card or two bottom cards of one color from your board. If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('You may score the bottom card or two bottom cards of one color from your board.  If all colors on your board contain the same number of visible cards, you win.'),
+        'non_demand_effect_2'                 => clienttranslate('Draw and meld a ${age_10}.'),
     ),
 
     434 => array(

@@ -10830,7 +10830,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
-            || (330 <= $card_id && $card_id <= 432)
+            || (330 <= $card_id && $card_id <= 433)
             || $card_id == 440
             || (480 <= $card_id && $card_id <= 486)
             || $card_id == 488
@@ -13849,16 +13849,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "219D1":
                 $step_max = 1;
-                break;
-
-            // id 433, Echoes age 10: Puzzle Cube
-            case "433N1":
-                $step_max = 1;
-                break;
-
-            case "433N2":
-                // "Draw and meld a 10."
-                self::executeDrawAndMeld($player_id, 10);
                 break;
                 
             // id 434, Echoes age 10: Sudoku
@@ -18811,45 +18801,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 433, Echoes age 10: Puzzle Cube
-        case "433N1A":
-            // "You may score the bottom card or two bottom cards of one color from your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'bottom_from' => true,
-                
-                'score_keyword' => true,
-            );       
-            break;
-
-        case "433N1B":
-            // "You may score the bottom card or two bottom cards of one color from your board."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                'can_pass' => true,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'bottom_from' => true,
-                
-                'score_keyword' => true,
-                
-                'color' => array($this->innovationGameState->get('color_last_selected')),
-            );       
-            break;
-            
         // id 434, Echoes age 10: Sudoku
         case "434N1A":
             // "Draw and meld a card of any value."
@@ -21313,49 +21264,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "219D1A":
                     // "Draw a 6!"
                     self::executeDraw($player_id, 6);
-                    break;
-
-                // id 433, Echoes age 10: Puzzle Cube
-                case "433N1A":
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    
-                    // "If all the colors on your board contain the same number of visible cards (unsplayed = 1), you win."
-                    $card_counts = array();
-                    for ($color = 0; $color < 5; $color++) {
-                        $card_count =  self::countVisibleCards($player_id, $color);
-                        if ($card_count > 0) { // ignore the empty piles
-                            $card_counts[] = $card_count;
-                        }
-                    }
-                    
-                    if (count(array_unique($card_counts)) <= 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
-                        throw new EndOfGame();
-                    }
-                    break;
-
-                case "433N1B":                   
-                    // "If all the colors on your board contain  the same number of visible cards (unsplayed = 1), you win."
-                    $card_counts = array();
-                    for ($color = 0; $color < 5; $color++) {
-                        $card_count =  self::countVisibleCards($player_id, $color);
-                        if ($card_count > 0) { // ignore the empty piles
-                            $card_counts[] = $card_count;
-                        }
-                    }
-                    
-                    if (count(array_unique($card_counts)) == 1) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} have the same number of visible cards in every pile on your board.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has the same number of visible cards in every pile on his board.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Puzzle Cube');
-                        throw new EndOfGame();
-                    }
                     break;
                     
                 // id 434, Echoes age 10: Sudoku
