@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 
-class Card434 extends Card
+class Card470 extends Card
 {
 
   // Streaming
