@@ -44,10 +44,9 @@ class Card380 extends Card
       ];
     } else {
       return [
-        'location_from'                   => 'junk',
-        'achieve_keyword'                 => true,
-        'require_achievement_eligibility' => true,
-        'age'                             => self::getMaxValueInLocation('junk'),
+        'location_from'       => 'junk',
+        'achieve_if_eligible' => true,
+        'age'                 => self::getMaxValueInLocation('junk'),
       ];
     }
   }

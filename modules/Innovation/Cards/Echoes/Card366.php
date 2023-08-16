@@ -42,9 +42,8 @@ class Card366 extends Card
       ];
     } else if (self::isFirstOrThirdEdition()) {
       return [
-        'location_from'                   => 'forecast',
-        'achieve_keyword'                 => true,
-        'require_achievement_eligibility' => true,
+        'location_from'       => 'forecast',
+        'achieve_if_eligible' => true,
       ];
     } else {
       self::setAuxiliaryArray(self::getAvailableStandardAchievementIds());

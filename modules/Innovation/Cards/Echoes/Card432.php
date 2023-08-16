@@ -38,9 +38,8 @@ class Card432 extends Card
         ];
       } else {
         return [
-          'n'                               => self::getAuxiliaryValue(),
-          'achieve_keyword'                 => true,
-          'require_achievement_eligibility' => true,
+          'n'                   => self::getAuxiliaryValue(),
+          'achieve_if_eligible' => true,
         ];
       }
     } else {
@@ -55,11 +54,13 @@ class Card432 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $value) {
+  public function handleSpecialChoice(int $value)
+  {
     self::drawAndScore($value);
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if ((self::isFirstOrThirdEdition() && self::isFirstNonDemand()) || (self::isFourthEdition() && self::isSecondNonDemand())) {
       if (self::getNumChosen() > 0) {
         self::setAuxiliaryValue(self::getNumChosen() * 2); // Track number of achievements to achieve

@@ -57,10 +57,9 @@ class Card351 extends Card
       ];
     } else {
       return [
-        'location_from'                   => 'junk',
-        'age'                             => self::getMaxValueInLocation('junk'),
-        'achieve_keyword'                 => 'true',
-        'require_achievement_eligibility' => true
+        'location_from'       => 'junk',
+        'age'                 => self::getMaxValueInLocation('junk'),
+        'achieve_if_eligible' => true
       ];
     }
   }
@@ -85,7 +84,7 @@ class Card351 extends Card
     if (self::isEcho()) {
       self::setAuxiliaryValue($choice);
     } else if (self::isFirstOrThirdEdition()) {
-      $this->game->executeDraw(0, /*age=*/ 2, 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
+      $this->game->executeDraw(0, /*age=*/2, 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
     } else {
       self::junkBaseDeck(2);
       self::setMaxSteps(2);

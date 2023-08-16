@@ -45,8 +45,7 @@ class Card389 extends Card
       'can_pass'                        => true,
       'owner_from'                      => 'any player',
       'location_from'                   => 'board',
-      'achieve_keyword'                 => true,
-      'require_achievement_eligibility' => true,
+      'achieve_if_eligible'             => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
   }

@@ -41,11 +41,10 @@ class Card414 extends Card
       ];
     } else {
       return [
-        'owner_from'                      => self::getAuxiliaryValue2(),
-        'location_from'                   => 'score',
-        'achieve_keyword'                 => true,
-        'require_achievement_eligibility' => true,
-        'age'                             => self::getAuxiliaryValue(),
+        'owner_from'          => self::getAuxiliaryValue2(),
+        'location_from'       => 'score',
+        'achieve_if_eligible' => true,
+        'age'                 => self::getAuxiliaryValue(),
       ];
     }
   }

@@ -33,10 +33,9 @@ class Card341 extends Card
       ];
     } else {
       return [
-        'can_pass'                        => true,
-        'location_from'                   => 'hand',
-        'location_to'                     => 'achievements',
-        'require_achievement_eligibility' => true,
+        'can_pass'            => true,
+        'location_from'       => 'hand',
+        'achieve_if_eligible' => true,
       ];
     }
   }

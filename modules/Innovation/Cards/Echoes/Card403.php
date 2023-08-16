@@ -49,10 +49,9 @@ class Card403 extends Card
       ];
     } else {
       return [
-        'location_from'                   => 'junk',
-        'location_to'                     => 'achievements',
-        'require_achievement_eligibility' => true,
-        'age'                             => self::getMaxValueInLocation('junk'),
+        'location_from'       => 'junk',
+        'achieve_if_eligible' => true,
+        'age'                 => self::getMaxValueInLocation('junk'),
       ];
     }
   }

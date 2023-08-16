@@ -35,17 +35,17 @@ class Card339 extends Card
         'can_pass' => true,
         'choices'  => [1],
       ];
-    } if (self::isFirstInteraction()) {
+    }
+    if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
         'choices'  => [1],
       ];
     } else {
       return [
-        'location_from'                   => 'junk',
-        'location_to'                     => 'achievements',
-        'require_achievement_eligibility' => true,
-        'age'                             => self::getMaxValueInLocation('junk'),
+        'location_from'       => 'junk',
+        'achieve_if_eligible' => true,
+        'age'                 => self::getMaxValueInLocation('junk'),
       ];
     }
   }
