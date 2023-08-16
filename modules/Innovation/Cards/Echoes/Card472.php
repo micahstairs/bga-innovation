@@ -4,12 +4,13 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 
-class Card471 extends Card
+class Card472 extends Card
 {
 
   // Drone
-  //   - You may achieve a card from any player's hand, if eligible. If you do, and Exoskeleton was
-  //     foreseen, repeat this effect.
+  //   - Reveal a card in your hand. If you have fewer than five cards of that color on your board,
+  //     splay that color aslant on your board. Otherwise, return the bottom four cards of that
+  //     color from all boards. If you do, repeat this effect.
 
   public function initialExecution()
   {
@@ -19,16 +20,26 @@ class Card471 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'location_from'       => 'hand',
-      'owner_from'          => 'any player',
-      'achieve_if_eligible' => true,
+      'location_from' => 'hand',
+      'location_to'   => 'revealed',
     ];
   }
 
   public function handleCardChoice(array $card)
   {
-    if (self::wasForeseen()) {
-      self::setNextStep(1);
+    self::putInHand($card);
+    $color = $card['color'];
+    if (self::countCardsKeyedByColor('board')[$color] < 5) {
+      self::splayAslant($color);
+    } else {
+      foreach (self::getPlayerIds() as $playerId) {
+        foreach (self::getCardsKeyedByColor('board', $playerId)[$color] as $card) {
+          if ($card['position'] < 4) {
+            self::return($card);
+            self::setNextStep(1);
+          }
+        }
+      }
     }
   }
 

@@ -2459,13 +2459,13 @@ $this->textual_card_infos = array(
 
     472 => array(
         'name'                => clienttranslate('Drone'),
-        'non_demand_effect_1' => clienttranslate('You may achieve a card from any player\'s hand, if eligible. If you do, and Exoskeleton was foreseen, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. If you have fewer than five cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom four cards of that color from all boards. If you do, repeat this effect.'),
     ),
 
     473 => array(
         'name'                => clienttranslate('Exoskeleton'),
         'i_demand_effect_1'   => clienttranslate('${I demand} you transfer all but the lowest cards in your hand to my score pile!'),
-        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. If you have fewer than five cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom four cards of that color from all boards. If you do, repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('You may achieve a card from any player\'s hand, if eligible. If you do, and Exoskeleton was foreseen, repeat this effect.'),
     ),
 
     474 => array(
