@@ -14580,6 +14580,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $options['location_to'] = 'none';
                     unset($options['choose_from']);
                 }
+                if (array_key_exists('achieve_if_eligible', $options)) {
+                    $options['achieve_keyword'] = true;
+                    $options['require_achievement_eligibility'] = true;
+                }
                 if (array_key_exists('meld_keyword', $options)) {
                     $options['location_to'] = 'board';
                 }
