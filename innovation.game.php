@@ -583,6 +583,9 @@ class Innovation extends Table
 
         if ($this->innovationGameState->echoesExpansionEnabled()) {
             self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 330 <= id AND id <= 434");
+            if ($edition == 4) {
+                self::DbQuery("UPDATE card SET location = 'deck', position = NULL WHERE 470 <= id AND id <= 479");
+            }
             self::DbQuery("UPDATE card SET location = 'achievements' WHERE 435 <= id AND id <= 439");
             if ($edition <= 3) {
                 self::DbQuery("UPDATE card SET spot_2 = 3 WHERE id = 426"); // Human Genome
@@ -10826,7 +10829,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 65
             || (330 <= $card_id && $card_id <= 434)
             || $card_id == 440
-            || (480 <= $card_id && $card_id <= 486)
+            || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (493 <= $card_id && $card_id <= 494)
             || $card_id == 498
@@ -14571,6 +14574,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 if (!array_key_exists('can_pass', $options)) {
                     $options['can_pass'] = false;
+                }
+                if (array_key_exists('choose_from', $options)) {
+                    $options['location_from'] = $options['choose_from'];
+                    $options['location_to'] = 'none';
+                    unset($options['choose_from']);
                 }
                 if (array_key_exists('meld_keyword', $options)) {
                     $options['location_to'] = 'board';
