@@ -2445,7 +2445,58 @@ $this->textual_card_infos = array(
     468 => array('name' => clienttranslate('Lima')),
     469 => array('name' => clienttranslate('Brisbane')),
 
-    /* 470-479 are reserved for Echoes - Age 11 */
+    /* Echoes - Age 11 */
+
+    470 => array(
+        'name'                => clienttranslate('Streaming'),
+        'non_demand_effect_1' => clienttranslate('Choose a color on your board. Choose to either achieve the top card of that color on your board, if eligible, or score it. If you do either, and Streaming was foreseen, repeat this effect using the same color.'),
+    ),
+
+    471 => array(
+        'name'                => clienttranslate('Touchscreen'),
+        'non_demand_effect_1' => clienttranslate('Splay each color on your board in a direction according to the number of cards of that color on your board — two or three, aslant; four or five, up; six or seven, right; eight or more, left. If you splay five colors, you win.'),
+    ),
+
+    472 => array(
+        'name'                => clienttranslate('Drone'),
+        'non_demand_effect_1' => clienttranslate('You may achieve a card from any player\'s hand, if eligible. If you do, and Exoskeleton was foreseen, repeat this effect.'),
+    ),
+
+    473 => array(
+        'name'                => clienttranslate('Exoskeleton'),
+        'i_demand_effect_1'   => clienttranslate('${I demand} you transfer all but the lowest cards in your hand to my score pile!'),
+        'non_demand_effect_1' => clienttranslate('Reveal a card in your hand. If you have fewer than five cards of that color on your board, splay that color aslant on your board. Otherwise, return the bottom four cards of that color from all boards. If you do, repeat this effect.'),
+    ),
+
+    474 => array(
+        'name'                => clienttranslate('Algocracy'),
+        'non_demand_effect_1' => clienttranslate('Choose an icon type. Transfer all cards with that featured icon from all hands and score piles to the hand of the single player with the most of the chosen icon on their board.'),
+    ),
+
+    475 => array(
+        'name'                => clienttranslate('Robocar'),
+        'non_demand_effect_1' => clienttranslate('Choose an opponent. That player chooses a card (unrevealed) in your hand. Meld the chosen card. If you do, and it is your turn, self-execute the card, then repeat this effect.'),
+    ),
+
+    476 => array(
+        'name'              => clienttranslate('Digital Pet'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you draw and reveal an ${age_11}! Return all cards from your board and score pile of color matching the drawn card!'),
+    ),
+
+    477 => array(
+        'name'                => clienttranslate('Esports'),
+        'non_demand_effect_1' => clienttranslate('For each non-yellow top card on your board, draw and score a card of equal value, in ascending order. If you do, and Esports was foreseen, you win.'),
+    ),
+
+    478 => array(
+        'name'                => clienttranslate('Deep Fake'),
+        'non_demand_effect_1' => clienttranslate('If it is your turn, transfer a top card from any board to your board, then fully execute a top card on your board other than Deepfake. If the transferred card is still a top card, transfer it to its original board.'),
+    ),
+
+    479 => array(
+        'name'              => clienttranslate('Meritocracy'),
+        'i_demand_effect_1' => clienttranslate('${I demand} you transfer a top card of each color from your board to mine, each card with any icon of which there are more of on my board than yours! If you transfer a card, and Meritocracy was foreseen, repeat this effect!'),
+    ),
 
     /* Unseen - Age 1 */
 
