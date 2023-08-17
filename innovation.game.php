@@ -9124,6 +9124,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the non-demand and echo effects (without revealing hidden info to the launching player). */    
     function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects) {
 
+        // TODO(4E): Add proper no-op detection for 4th edition cards.
+        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == self::ECHOES || $card['type'] == self::ARTIFACTS)) {
+            return false;
+        }
+
         // Check all echo effects that will be executed
         foreach ($card_ids_with_visible_echo_effects as $card_id) {
             // NOTE: All cards with echo effects must be included in this switch statement, otherwise it breaks the logic
@@ -9457,6 +9462,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the demand effect (without revealing hidden info to the launching player). */
     function demandHasNoEffect($card, $launcher_id, $executing_player_id) {
 
+        // TODO(4E): Add proper no-op detection for 4th edition cards.
+        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == self::ECHOES || $card['type'] == self::ARTIFACTS)) {
+            return false;
+        }
+
         // Many cards do not have a demand effect on them
         if (self::getDemandEffect($card['id']) == null) {
             return true;
@@ -9577,6 +9587,11 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     /** Returns true if the dogma is guaranteed to have no effect when the specified player executes the compel effect (without revealing hidden info to the launching player). */
     function compelHasNoEffect($card, $launcher_id, $executing_player_id) {
+
+        // TODO(4E): Add proper no-op detection for 4th edition cards.
+        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == self::ECHOES || $card['type'] == self::ARTIFACTS)) {
+            return false;
+        }
 
         // Many cards do not have a compel effect on them
         if (!self::isCompelEffect($card['id'])) {
