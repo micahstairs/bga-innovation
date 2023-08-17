@@ -13,8 +13,7 @@ class Card354 extends Card
   //     card's bonus. Otherwise, draw and foreshadow a card of value equal to the number of top
   //     cards on your board.
   // - 4th edition:
-  //   - Meld a card from your hand. If you do, draw and foreshadow a card of lowest value not on
-  //     your board.
+  //   - Meld a card from your hand. Draw and foreshadow a card of lowest value not on your board.
   //   - If Chaturanga was foreseen, draw and foreshadow a card of value equal to the number of
   //     colors on your board.
 
@@ -42,8 +41,6 @@ class Card354 extends Card
       $bonus = self::getBonusIcon($card);
       self::draw($bonus);
       self::draw($bonus);
-    } else {
-      self::drawAndForeshadow(self::getLowestValuesNotOnBoard());
     }
   }
 
@@ -53,6 +50,8 @@ class Card354 extends Card
       // Prove that there are no bonuses in hand
       self::revealHand();
       self::drawAndForeshadow(count(self::getTopCards()));
+    } else if (self::isFourthEdition()) {
+      self::drawAndForeshadow(self::getLowestValuesNotOnBoard());
     }
   }
 

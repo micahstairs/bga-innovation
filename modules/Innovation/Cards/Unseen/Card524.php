@@ -10,7 +10,7 @@ class Card524 extends Card
   // Legend:
   //   - Choose a non-purple color. Self-execute your top card of that color. Score your top card
   //     of that color. If you do, repeat this effect with the same color if you have scored fewer
-  //     than nine points due to Legend this action.
+  //     than nine points due to Legend during this action.
 
   public function hasPostExecutionLogic(): bool
   {

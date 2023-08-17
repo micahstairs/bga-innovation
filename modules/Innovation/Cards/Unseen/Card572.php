@@ -9,8 +9,8 @@ class Card572 extends Card
 {
 
   // Surveillance:
-  //   - I DEMAND you reveal your hand! If the colors present in your hand and my hand match
-  //     exactly, and your hand is not empty, I win!
+  //   - I DEMAND you reveal your hand! If each color present in my hand is present in yours, and
+  //     vice versa, and your hand is not empty, I win!
   //   - Draw a [10].
 
   public function initialExecution()

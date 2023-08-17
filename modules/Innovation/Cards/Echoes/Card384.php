@@ -16,7 +16,7 @@ class Card384 extends Card
   // - 4th edition
   //   - ECHO: Draw a card of value present in any score pile.
   //   - Foreshadow a card from your hand. If you do, draw and reveal a card of the same value, and
-  //     meld it if it is higher than a top card of the same color on your board. If you don't meld
+  //     meld it if it is higher than the top card of the same color on your board. If you don't meld
   //     it, return it, and you may repeat this effect.
 
   public function initialExecution()

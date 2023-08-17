@@ -13,7 +13,7 @@ class Card418 extends Card
   //   - I DEMAND you return your top card of the color I melded due to Jet's echo effect!
   // - 4th edition
   //   - ECHO: Meld a card from your hand.
-  //   - I DEMAND you return your top card of the last color I melded due to Jet's echo effect this
+  //   - I DEMAND you return your top card of the last color I melded due to Jet's echo effect during this
   //     action! Junk all available achievements of values equal to the melded card and the returned card!
   //   - Draw and foreshadow a [10].
 

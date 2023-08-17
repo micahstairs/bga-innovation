@@ -14,8 +14,8 @@ class Card395 extends Card
   //   - If you have at least three echo effects visible in one color, claim the History achievement.
   // - 4th edition
   //   - ECHO: Meld a card from your forecast.
-  //   - I DEMAND you transfer the highest top card from your board to your hand!
-  //   - If you have three or more echo effects visible in one color, claim the History achievement.
+  //   - I DEMAND you transfer your highest top card to your hand!
+  //   - If you have three echo effects visible in one color, claim the History achievement.
   //     If you do, and Photography was foreseen, you win.
 
   public function initialExecution()

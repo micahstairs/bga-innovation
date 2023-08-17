@@ -14,7 +14,7 @@ class Card417 extends Card
   //     card. If you do, repeat this dogma effect.
   // - 4th edition
   //   - Transfer a top card other than Helicopter from any player's board to its owner's score
-  //     pile. You may return a card from your hand which shares an icon with the transferred
+  //     pile. You may return a card from your hand which shares an icon type with the transferred
   //     card. If you do, repeat this effect.
 
   public function initialExecution()

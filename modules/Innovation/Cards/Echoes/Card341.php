@@ -8,8 +8,12 @@ class Card341 extends Card
 {
 
   // Soap
-  //   - Choose a color. You may tuck any number of cards of that color from your hand. If you
-  //     tuck three or more, you may achieve (if eligible) a card from your hand.
+  // - 3rd edition
+  //   - Choose a color. You may tuck any number of cards of that color from your hand. If you tucked
+  //     at least three, you may achieve (if eligible) a card from your hand.
+  // - 4th edition
+  //   - Choose a color. You may tuck any number of cards of that color from your hand. If you tuck
+  //     three, you may achieve (if eligible) a card from your hand.
 
   public function initialExecution()
   {

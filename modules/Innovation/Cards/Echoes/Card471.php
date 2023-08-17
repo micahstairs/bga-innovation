@@ -9,7 +9,7 @@ class Card471 extends Card
 
   // Touchscreen
   //   - Splay each color on your board in a direction according to the number of cards of that
-  //     color on your board — two or three, aslant; four or five, up; six or seven, right; eight
+  //     color on your board: two or three, aslant; four or five, up; six or seven, right; eight
   //     or more, left. If you splay five colors, you win.
 
   public function initialExecution()

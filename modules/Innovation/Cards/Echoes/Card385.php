@@ -15,10 +15,9 @@ class Card385 extends Card
   //   - You may splay your green cards right.
   // - 4th edition
   //   - ECHO: Return a card from your forecast.
-  //   - Draw and foreshadow a [7], and then if Bifocals was foreseen, a card of value equal to the
-  //     number of available special achievements.
-  //   - You may splay your green cards right. If Bifocals was foreseen, splay any color of your
-  //     cards up.
+  //   - Draw and foreshadow a [7], and then if Bifocals was foreseen, draw and foreshadow a card
+  //     of value equal to the number of available special achievements.
+  //   - You may splay your green cards right. If you do, splay any color of your cards up.
 
   public function initialExecution()
   {
@@ -27,8 +26,6 @@ class Card385 extends Card
       if (self::wasForeseen()) {
         self::drawAndForeshadow(self::getNumberOfAvailableSpecialAchievements());
       }
-    } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
-      self::setMaxSteps(self::wasForeseen() ? 2 : 1);
     } else {
       self::setMaxSteps(1);
     }
@@ -92,6 +89,12 @@ class Card385 extends Card
   {
     if (self::isFirstOrThirdEdition() && self::isFirstNonDemand()) {
       self::drawAndForeshadow($card['age']);
+    }
+  }
+
+  public function afterInteraction() {
+    if (self::isFourthEdition() && self::isSecondNonDemand() && self::isFirstInteraction() && self::getNumChosen() > 0) {
+      self::setMaxSteps(2);
     }
   }
 

@@ -13,8 +13,8 @@ class Card434 extends Card
   //     visible on your board, you win. Execute each of the melded card's non-demand dogma
   //     effects. Do not share them.
   // - 4th edition
-  //   - Draw and meld a card of any value. If you have nine different bonus values visible
-  //     on your board, you win. Otherwise, self-execute the melded card.
+  //   - Draw and meld a card of any value. If you have nine different bonus values on your
+  //     board, you win. Otherwise, self-execute the melded card.
 
   public function initialExecution()
   {

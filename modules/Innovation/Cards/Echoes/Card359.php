@@ -14,7 +14,7 @@ class Card359 extends Card
   //     return or achieve (if eligible) your top green card.
   // - 4th edition:
   //   - ECHO: Draw a [3] or [4].
-  //   - You may meld the last card drawn due to Charitable Trust's echo effect. If you meld a [3],
+  //   - You may meld the last card you drew due to Charitable Trust's echo effect. If you meld a [3],
   //     achieve your top green card, if eligible. If you meld a [4], return your top green card.
 
   public function initialExecution()

@@ -18,8 +18,7 @@ class Card387 extends Card
   //   - ECHO: Score your lowest top card.
   //   - You may return exactly two cards of different value from your score pile. If you do, draw
   //     and tuck three [6].
-  //   - If you have five or more [IMAGE] visible on your board in one color, claim the Heritage
-  //     achievement.
+  //   - If you have five [IMAGE] on your board in one color, claim the Heritage achievement.
 
   public function initialExecution()
   {

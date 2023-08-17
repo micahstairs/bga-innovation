@@ -12,7 +12,7 @@ class Card335 extends Card
   //   - ECHO: Score a bottom card from your board.
   //   - No effect.
   // - 4th edition:
-  //   - ECHO: Score a bottom blue card from your board.
+  //   - ECHO: Score the bottom blue card from your board.
   //   - Junk all cards in the [1] deck.
 
   public function initialExecution()
