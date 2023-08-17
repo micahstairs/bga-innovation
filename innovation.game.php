@@ -3842,11 +3842,17 @@ class Innovation extends Table
         
         // Mark that the player under effect made a change in the game
         self::markExecutingPlayer($current_player_under_dogma_effect);
-        
-        if ($this->innovationGameState->get('sharing_bonus') != 0) { // The sharing bonus is already on
+
+        // We only need to check for sharing bonuses for the initially triggered card (otherwise Blackmail can incorrectly trigger the bonus)
+        if ($nested_card_state['nesting_index'] > 0) {
             return;
         }
         
+        // The sharing bonus is already on
+        if ($this->innovationGameState->get('sharing_bonus') != 0) {
+            return;
+        }
+
         // A sharing bonus is triggered if an opponent was affected by a non-demand or echo effect
         $player_who_launched_the_dogma = $this->innovationGameState->get('active_player');
         if (($current_effect_type == 1 || $current_effect_type == 3) && $current_player_under_dogma_effect <> $player_who_launched_the_dogma && self::getPlayerTeammate($current_player_under_dogma_effect) <> $player_who_launched_the_dogma) {

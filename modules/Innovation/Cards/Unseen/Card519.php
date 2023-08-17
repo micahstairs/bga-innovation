@@ -9,12 +9,14 @@ class Card519 extends Card
 
   // Blackmail:
   //   - I DEMAND you reveal your hand! Meld a revealed card of my choice! Reveal your score pile!
-  //     Self-execute any revealed card of my choice, replacing 'may' with 'must'!
+  //     Self-execute a card revealed due to this effect of my choice, replacing 'may' with 'must'!
 
   public function initialExecution()
   {
+    self::setAuxiliaryArray([]);
     foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
       self::reveal($card);
+      self::addToAuxiliaryArray($card['id']);
     }
     self::setMaxSteps(2);
   }
@@ -30,32 +32,47 @@ class Card519 extends Card
         'meld_keyword'  => true,
       ];
     } else {
+      $choices = [];
+      $array = self::getAuxiliaryArray();
+      for ($i = 0; $i < count($array); $i++) {
+        $choices[] = $i;
+      }
       return [
-        'player_id'     => self::getLauncherId(),
-        'owner_from'    => self::getPlayerId(),
-        'location_from' => 'revealed',
-        'owner_to'      => self::getPlayerId(),
-        'location_to'   => 'none',
+        'player_id' => self::getLauncherId(),
+        'choices'   => $choices,
       ];
     }
+  }
+
+  public function getSpecialChoicePrompt(): array
+  {
+    $cardIds = self::getAuxiliaryArray();
+    $choices = [];
+    for ($i = 0; $i < count($cardIds); $i++) {
+      $choices[$i] = [
+        clienttranslate('Self-execute ${card}'),
+        'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[$i])]),
+      ];
+    }
+    return self::getPromptForChoiceFromList($choices);
+  }
+
+  public function handleSpecialChoice(int $index)
+  {
+    $this->game->gamestate->changeActivePlayer(self::getPlayerId());
+    $cardId = self::getAuxiliaryArray()[$index];
+    $this->game->selfExecute(self::getCard($cardId), /*replace_may_with_must=*/true);
   }
 
   public function afterInteraction()
   {
     $this->game->gamestate->changeActivePlayer(self::getPlayerId());
-    if (self::isFirstInteraction()) {
-      foreach (self::getCards('revealed') as $card) {
-        self::transferToHand($card);
-      }
-      foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
-        self::reveal($card);
-      }
-    } else {
-      foreach (self::getCards('revealed') as $card) {
-        self::transferToScorePile($card);
-      }
-      // TODO(4E): Since this is occuring during a demand, it can cause the launcher to get a sharing bonus.
-      $this->game->selfExecute(self::getLastSelectedCard(), /*replace_may_with_must=*/ true);
+    foreach (self::getCards('revealed') as $card) {
+      self::transferToHand($card);
+    }
+    self::revealScorePile();
+    foreach (self::getCards('score') as $card) {
+      self::addToAuxiliaryArray($card['id']);
     }
   }
 
