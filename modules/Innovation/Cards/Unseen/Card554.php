@@ -8,9 +8,9 @@ class Card554 extends Card
 {
 
   // Slot Machine:
-  //   - Draw and reveal a [1], [2], [3], [4], and [5], then return them. If one drawn card is
-  //     green, splay your green or purple cards right. If two drawn cards are green, also score
-  //     all drawn cards. If three drawn cards are green, you win.
+  //   - Draw and reveal a [1], [2], [3], [4], and [5]. If one drawn card is green, splay your
+  //     green or purple cards right. If two drawn cards are green, score all drawn cards,
+  //     otherwise return them. If three drawn cards are green, you win.
 
   public function initialExecution()
   {
@@ -28,7 +28,7 @@ class Card554 extends Card
     if (self::isFirstInteraction()) {
       return [
         'splay_direction' => $this->game::RIGHT,
-        'color'           => array($this->game::GREEN, $this->game::PURPLE),
+        'color'           => [$this->game::GREEN, $this->game::PURPLE],
       ];
     } else {
       return [
@@ -59,7 +59,7 @@ class Card554 extends Card
 
   private function countRevealedGreenCards(): int
   {
-    return $this->game->countCardsInLocationKeyedByColor(self::getPlayerId(), 'revealed')[$this->game::GREEN];
+    return self::countCardsKeyedByColor('revealed')[$this->game::GREEN];
   }
 
 }

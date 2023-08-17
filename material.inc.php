@@ -2926,7 +2926,7 @@ $this->textual_card_infos = array(
 
     554 => array(
         'name'                => clienttranslate('Slot Machine'),
-        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}, ${age_2}, ${age_3}, ${age_4}, and ${age_5}, then return them. If one drawn card is green, splay your green or purple cards right. If two drawn cards are green, also score all drawn cards. If three drawn cards are green, you win.'),
+        'non_demand_effect_1' => clienttranslate('Draw and reveal a ${age_1}, ${age_2}, ${age_3}, ${age_4}, and ${age_5}. If one drawn card is green, splay your green or purple cards right. If two drawn cards are green, score all drawn cards, otherwise return them. If three drawn cards are green, you win.'),
     ),
 
     /* Unseen - Age 8 */
