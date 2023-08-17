@@ -2633,6 +2633,9 @@ class Innovation extends Table
         } else if ($location_from === 'revealed,score') {
             $from_somewhere_for_player = clienttranslate(' that you revealed and from your score pile');
             $from_somewhere_for_others = clienttranslate(' that he revealed and from his score pile');
+        } else if ($location_from === 'pile,score') {
+            $from_somewhere_for_player = clienttranslate(' from your board and score pile');
+            $from_somewhere_for_others = clienttranslate(' from his board and score pile');
         }
 
         // Update text based on where the card is going to
@@ -6617,6 +6620,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $condition_for_location = "location IN ('hand', 'score')";
         } else if ($location_from == 'pile') {
             $condition_for_location = "location = 'board'";
+        } else if ($location_from == 'pile,score') {
+            $condition_for_location = "location IN ('board', 'score')";
         } else {
             $condition_for_location = self::format("location = '{location_from}'", array('location_from' => $location_from));
         }
@@ -6916,6 +6921,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 17;
         case 'junk,safe':
             return 18;
+        case 'pile,score':
+            return 19;
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "encodeLocation()", 'code' => $location)));
@@ -6962,6 +6969,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return 'safe';
         case 18:
             return 'junk,safe';
+        case 19:
+            return 'pile,score';
         default:
             // This should not happen
             throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "decodeLocation()", 'code' => $location_code)));
@@ -10228,7 +10237,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'opponent_id' => $opponent_id,
             'splay_direction' => $splay_direction,
             'splay_direction_in_clear' => $splay_direction_in_clear,
-            'color_pile' => $splay_direction === null && $location_from == 'pile' ? $this->innovationGameState->getAsArray('color_array')[0] : null,
+            'color_pile' => $splay_direction === null && ($location_from == 'pile' || $location_from == 'pile,score') ? $this->innovationGameState->getAsArray('color_array')[0] : null,
             'card_interaction' => $code,
             'num_cards_already_chosen' => $n,
             
