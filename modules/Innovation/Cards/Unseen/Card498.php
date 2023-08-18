@@ -15,8 +15,10 @@ class Card498 extends Card
   public function initialExecution()
   {
     $card = self::transferToHand(self::drawAndReveal(2));
-    self::setAuxiliaryValue($card['id']);
-    self::setMaxSteps(1);
+    if (self::countCards('hand') > 2) {
+      self::setAuxiliaryValue($card['id']);
+      self::setMaxSteps(1);
+    }
   }
 
   public function getInteractionOptions(): array
