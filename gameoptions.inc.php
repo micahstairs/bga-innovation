@@ -128,13 +128,13 @@ $game_options = array(
         )
     ),
 
-    // 104 => array(
-    //     'name' => totranslate('Echoes of the Past expansion'),
-    //     'values' => array(
-    //         1 => array('name' => totranslate('Disable')),
-    //         2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Echoes Expansion'))
-    //     ),
-    // ),
+    104 => array(
+        'name' => totranslate('Echoes of the Past expansion'),
+        'values' => array(
+            1 => array('name' => totranslate('Disable')),
+            2 => array('name' => totranslate('Enable'), 'no_beginner' => true, 'tmdisplay' => totranslate('Echoes Expansion'))
+        ),
+    ),
 
     /* TODO(FIGURES): Add game options.
     105 => array(
