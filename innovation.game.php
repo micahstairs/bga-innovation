@@ -10027,12 +10027,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_others = clienttranslate('${player_name} must choose two colors');
                 break;
 
-            // id 503, Unseen age 2: Propaganda
-            case "503D1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-
             // id 525, Unseen age 5: Popular Science
             case "525N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10863,6 +10857,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 488
             || (493 <= $card_id && $card_id <= 494)
             || $card_id == 498
+            || $card_id == 503
             || (505 <= $card_id && $card_id <= 509)
             || $card_id == 512
             || (514 <= $card_id && $card_id <= 524)
@@ -14284,15 +14279,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
                 
             case "502N2":
-                $step_max = 1;
-                break;
-                
-            // id 503, Unseen age 2: Propaganda
-            case "503D1":
-                $step_max = 2;
-                break;
-
-            case "503N1":
                 $step_max = 1;
                 break;
                 
@@ -19269,45 +19255,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 503, Unseen age 2: Propaganda
-        case "503D1A":
-            // "I demand you meld a card of the color of my choice from your hand!"
-            $options = array(
-                'player_id' => $launcher_id,
-                'n' => 1,
-                
-                'choose_color' => true,
-            );
-            break;
-  
-        case "503D1B":
-            // "I demand you meld a card of the color of my choice from your hand!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'color' => array(self::getAuxiliaryValue()),
-            );
-            break;
-
-        case "503N1A":
-            // "Meld a card from your hand."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-            );
-            break;
-
         // id 504, Unseen age 2: Steganography
         case "504N1A":
             // "You may splay left a color on your board with a visible bulb."
@@ -21500,21 +21447,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "501D1B":
                     self::setAuxiliaryValue($n + self::getAuxiliaryValue());
                     break;
-                    
-                // id 503, Unseen age 2: Propaganda
-                case "503D1B":
-                    if ($n > 0) { // "If you do,"
-                        // "transfer the card beneath it to my board!"
-                        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                        $pile = $board[self::getAuxiliaryValue()];
-                        $pile_size = count($pile);
-
-                        // underneath card available
-                        if ($pile_size > 1) {
-                            self::transferCardFromTo($pile[$pile_size - 2], $launcher_id, 'board');
-                        }
-                    }
-                    break;
 
                 // id 504, Unseen age 2: Steganography
                 case "504N1A":
@@ -22539,14 +22471,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 // Do the transfer as stated in B (return)
                 self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
-                break;
-
-            // id 503, Unseen age 2: Propaganda
-            case "503D1A":
-                $color_in_clear = self::getColorInClear($choice);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => $color_in_clear));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::getColoredPlayerName($player_id), 'color' => $color_in_clear));
-                self::setAuxiliaryValue($choice);
                 break;
             
             // id 525, Unseen age 5: Popular Science
