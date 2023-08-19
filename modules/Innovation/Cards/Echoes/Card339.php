@@ -54,7 +54,7 @@ class Card339 extends Card
   {
     if (self::isEcho()) {
       return self::getPromptForChoiceFromList([
-        1 => [clienttranslate('Draw and foreshadow a ${age} '), 'age' => $this->game->getAgeSquare(1)],
+        1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => $this->game->getAgeSquare(1)],
       ]);
     } else if (self::isFirstOrThirdEdition()) {
       return self::getPromptForChoiceFromList([

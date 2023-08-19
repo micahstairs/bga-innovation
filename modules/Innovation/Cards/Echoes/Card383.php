@@ -21,7 +21,7 @@ class Card383 extends Card
       foreach (self::getTopCards() as $card) {
         $values[] = $card['faceup_age'];
       }
-      if (count(array_unique($values)) == 5) {
+      if (count(array_unique($values)) === 5) {
         self::setMaxSteps(1);
         self::setAuxiliaryArray($values);
       }
@@ -56,7 +56,7 @@ class Card383 extends Card
   public function afterInteraction()
   {
     if (self::isFirstNonDemand()) {
-      $values = self::getAuxiliaryValue();
+      $values = self::getAuxiliaryArray();
       sort($values);
       foreach ($values as $value) {
         self::drawAndScore($value);
