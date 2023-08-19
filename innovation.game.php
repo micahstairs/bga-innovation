@@ -14599,6 +14599,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (array_key_exists('achieve_if_eligible', $options)) {
                     $options['achieve_keyword'] = true;
                     $options['require_achievement_eligibility'] = true;
+                    unset($options['achieve_if_eligible']);
                 }
                 if (array_key_exists('meld_keyword', $options)) {
                     $options['location_to'] = 'board';
