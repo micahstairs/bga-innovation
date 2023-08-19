@@ -35,6 +35,8 @@ class Card399 extends Card
         self::setNextStep(3);
       }
       self::setMaxSteps(4);
+    } else if (self::isSecondNonDemand()) {
+      self::setMaxSteps(1);
     } else if (self::wasForeseen()) {
       self::setMaxSteps(1);
     }
@@ -72,6 +74,8 @@ class Card399 extends Card
           'return_keyword' => true,
         ];
       }
+    } else if (self::isSecondNonDemand()) {
+      return ['choices' => [7, 8]];
     } else {
       return [
         'location_from' => 'junk',
@@ -89,12 +93,28 @@ class Card399 extends Card
     }
   }
 
-  public function handleSpecialChoice($value)
+  public function getSpecialChoicePrompt(): array
   {
-    if (self::isFirstInteraction()) {
-      self::setAuxiliaryValue($value);
+    if (self::isFirstNonDemand()) {
+      return self::getPromptForValueChoice();
     } else {
-      self::setAuxiliaryValue2($value);
+      return self::getPromptForChoiceFromList([
+        7 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(7)],
+        8 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(8)],
+      ]);
+    }
+  }
+
+  public function handleSpecialChoice($choice)
+  {
+    if (self::isFirstNonDemand()) {
+      if (self::isFirstInteraction()) {
+        self::setAuxiliaryValue($choice);
+      } else {
+        self::setAuxiliaryValue2($choice);
+      }
+    } else {
+      self::junkBaseDeck($choice);
     }
   }
 
