@@ -11,6 +11,13 @@ class Card475 extends Card
   //   - Choose an opponent. That player chooses a card (unrevealed) in your hand. Meld the chosen
   //     card. If you do, and it is your turn, self-execute the card, then repeat this effect.
 
+  // TODO(4E): Fix bug when this is repeated.
+
+  public function hasPostExecutionLogic(): bool
+  {
+    return true;
+  }
+
   public function initialExecution()
   {
     self::setMaxSteps(2);
@@ -18,6 +25,9 @@ class Card475 extends Card
 
   public function getInteractionOptions(): array
   {
+    if (self::getPostExecutionIndex() > 0) {
+      self::setPostExecutionIndex(0);
+    }
     if (self::isFirstInteraction()) {
       return [
         'choose_player' => true,
@@ -27,9 +37,6 @@ class Card475 extends Card
       return [
         'player_id' => self::getAuxiliaryValue(),
         'location_from' => 'hand',
-        'owner_from' => self::getPlayerId(),
-        'location_to' => 'board',
-        'owner_to' => self::getPlayerId(),
         'meld_keyword' => true,
       ];
     }
@@ -43,7 +50,7 @@ class Card475 extends Card
   public function handleCardChoice(array $card) {
     if (self::isLauncher()) {
       self::selfExecute($card);
-      // TODO(4E): Handle "repeat this effect" after confirming with Carl that this card will not change.
+      self::setNextStep(1);
     }
   }
 
