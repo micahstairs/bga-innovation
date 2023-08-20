@@ -81,7 +81,7 @@ class Card370 extends Card
     self::setMaxSteps(2);
   }
 
-  public function afterInteraction(array $card)
+  public function afterInteraction()
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::isSecondInteraction() && self::getNumChosen() > 0) {
