@@ -37,15 +37,24 @@ class Card403 extends Card
         'without_bonus' => true,
         'color'         => self::getAllColorsOtherThan($this->game::PURPLE),
       ];
-    } else if (self::isFirstInteraction()) {
-      return [
-        'choose_value' => true,
-        'age'          => [6, 7, 8, 9],
-      ];
-    } else if (self::isSecondInteraction()) {
+    }
+    if (self::isFirstOrThirdEdition()) {
+      if (self::isFirstInteraction()) {
+        return [
+          'choose_value' => true,
+          'age'          => [6, 7, 8, 9],
+        ];
+      } else {
+        return [
+          'can_pass' => true,
+          'choices'  => [1],
+        ];
+      }
+    }
+    if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
-        'choices'  => [1],
+        'choices'  => [6, 7, 8, 9],
       ];
     } else {
       return [
@@ -58,33 +67,41 @@ class Card403 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    if (self::isFirstInteraction()) {
-      return self::getPromptForValueChoice();
-    } else {
-      if (self::isFirstOrThirdEdition()) {
-        $text = clienttranslate('Transfer bottom card from ${age} deck to the available achievements');
+    if (self::isFirstOrThirdEdition()) {
+      if (self::isFirstInteraction()) {
+        return self::getPromptForValueChoice();
       } else {
-        $text = clienttranslate('Junk ${age} deck');
+        return self::getPromptForChoiceFromList([
+          1 => [
+            clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
+            'age' => self::renderValue(self::getAuxiliaryValue2()),
+          ],
+        ]);
       }
+    } else {
       return self::getPromptForChoiceFromList([
-        1 => [$text, 'age' => $this->game->getAgeSquare(self::getAuxiliaryValue2())],
+        6 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(6, $this->game::BASE)],
+        7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, $this->game::BASE)],
+        8 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(8, $this->game::BASE)],
+        9 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(9, $this->game::BASE)],
       ]);
     }
   }
 
-  public function handleSpecialChoice($choice)
+  public function handleSpecialChoice(int $choice)
   {
-    if (self::isFirstInteraction()) {
-      $value = self::getAuxiliaryValue2();
-      if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', $this->game::BASE)[$value] > 0) {
-        self::setAuxiliaryValue2($choice); // Track chosen deck
-        self::setMaxSteps(2);
+    if (self::isFirstOrThirdEdition()) {
+      if (self::isFirstInteraction()) {
+        if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', $this->game::BASE)[$choice] > 0) {
+          self::setAuxiliaryValue2($choice); // Track chosen deck
+          self::setMaxSteps(2);
+        }
+      } else {
+        // TODO(LATER): This shouldn't really be a draw.
+        $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
       }
-    } else if (self::isFirstOrThirdEdition()) {
-      // TODO(LATER): This shouldn't really be a draw.
-      $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
-    } else if (self::junkBaseDeck(self::getAuxiliaryValue2())) {
-      self::setMaxSteps(3);
+    } else if (self::junkBaseDeck($choice)) {
+      self::setMaxSteps(2);
     }
   }
 

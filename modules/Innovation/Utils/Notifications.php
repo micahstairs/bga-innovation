@@ -41,8 +41,8 @@ class Notifications
 
   public function notifyValueChoice(int $value, int $playerId)
   {
-    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose the value ${age}.'), ['You' => 'You', 'age' => self::getAgeSquare($value)]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::getColoredPlayerName($playerId), 'age' => self::getAgeSquare($value)]);
+    self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose the value ${age}.'), ['You' => 'You', 'age' => self::renderValue($value)]);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::getColoredPlayerName($playerId), 'age' => self::renderValue($value)]);
   }
 
   public function notifyColorChoice(int $color, int $playerId)
@@ -80,9 +80,14 @@ class Notifications
     return $this->game->getIconSquare($icon);
   }
 
-  public function getAgeSquare(int $age): string
+  public function renderValue(int $value): string
   {
-    return $this->game->getAgeSquare($age);
+    return $this->game->getAgeSquare($value);
+  }
+
+  public function renderValueWithType(int $value, int $type): string
+  {
+    return $this->game->getAgeSquareWithType($value, $type);
   }
 
   public function getColoredText($text, $playerId): string

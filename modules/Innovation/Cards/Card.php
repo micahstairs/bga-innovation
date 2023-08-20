@@ -950,6 +950,16 @@ abstract class Card
     return $this->game->getIconSquare($icon);
   }
 
+  public function renderValue(int $value): string
+  {
+    return $this->notifications->renderValue($value);
+  }
+
+  public function renderValueWithType(int $value, int $type): string
+  {
+    return $this->notifications->renderValueWithType($value, $type);
+  }
+
   // GENERAL UTILITY HELPERS
 
   protected function getCardIdFromClassName(): string
