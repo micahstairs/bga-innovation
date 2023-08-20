@@ -54,15 +54,15 @@ class Card339 extends Card
   {
     if (self::isEcho()) {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => $this->game->getAgeSquare(1)],
+        1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::renderValue(1)],
       ]);
     } else if (self::isFirstOrThirdEdition()) {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Transfer the bottom ${age} to the available achievements'), 'age' => $this->game->getAgeSquare(1)],
+        1 => [clienttranslate('Transfer the bottom ${age} to the available achievements'), 'age' => self::renderValue(1)],
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(1)],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(1, $this->game::BASE)],
       ]);
     }
   }

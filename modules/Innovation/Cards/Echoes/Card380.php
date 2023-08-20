@@ -57,12 +57,12 @@ class Card380 extends Card
       return self::buildPromptFromList([
         1 => [
           clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
-          'age' => $this->game->getAgeSquare(self::getAuxiliaryValue2()),
+          'age' => self::renderValueWithType(self::getAuxiliaryValue2(), $this->game::BASE),
         ],
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(self::getAuxiliaryValue2())],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(self::getAuxiliaryValue2(), $this->game::BASE)],
       ]);
     }
   }

@@ -71,8 +71,8 @@ class Card571 extends Card
   public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Draw two ${age}'), 'age' => $this->game->getAgeSquare(10)],
-      2 => [clienttranslate('Draw and score two ${age}'), 'age' => $this->game->getAgeSquare(8)],
+      1 => [clienttranslate('Draw two ${age}'), 'age' => self::renderValue(10)],
+      2 => [clienttranslate('Draw and score two ${age}'), 'age' => self::renderValue(8)],
       3 => clienttranslate('Safeguard two available achievements'),
     ]);
   }
@@ -80,11 +80,11 @@ class Card571 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      self::notifyPlayer(clienttranslate('${You} wish to draw two ${age}.'), ['age' => $this->game->getAgeSquare(10)]);
-      self::notifyOthers(clienttranslate('${player_name} wishes to draw two ${age}.'), ['age' => $this->game->getAgeSquare(10)]);
+      self::notifyPlayer(clienttranslate('${You} wish to draw two ${age}.'), ['age' => self::renderValue(10)]);
+      self::notifyOthers(clienttranslate('${player_name} wishes to draw two ${age}.'), ['age' => self::renderValue(10)]);
     } else if ($choice === 2) {
-      self::notifyPlayer(clienttranslate('${You} wish to draw and score two ${age}.'), ['age' => $this->game->getAgeSquare(8)]);
-      self::notifyOthers(clienttranslate('${player_name} wishes to draw and score two ${age}.'), ['age' => $this->game->getAgeSquare(8)]);
+      self::notifyPlayer(clienttranslate('${You} wish to draw and score two ${age}.'), ['age' => self::renderValue(8)]);
+      self::notifyOthers(clienttranslate('${player_name} wishes to draw and score two ${age}.'), ['age' => self::renderValue(8)]);
     } else {
       self::notifyPlayer(clienttranslate('${You} wish to safeguard two available achievements.'), []);
       self::notifyOthers(clienttranslate('${player_name} wishes to safeguard two available achievements.'), []);

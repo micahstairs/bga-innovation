@@ -20,45 +20,29 @@ class Card65 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'         => true,
-        'choose_yes_or_no' => true,
+        'can_pass' => true,
+        'choices'  => [0, 1],
       ];
     } else {
       return [
-        'location_from' => 'score',
-        'location_to'   => 'deck'
+        'location_from'  => 'score',
+        'return_keyword' => true,
       ];
     }
   }
 
   public function getPromptForListChoice(): array
   {
-    $player_id = self::getPlayerId();
-    $age_to_score = $this->game->getAgeToDrawIn($player_id, 8);
-    $age_to_draw = $this->game->getAgeToDrawIn($player_id, $this->game->getMaxAgeInScore($player_id) + 1);
-    $max_age = $this->game->getMaxAge();
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => $age_to_score <= $max_age ? clienttranslate('Draw and score a ${age}, then return a card from your score pile') : clienttranslate('Finish the game (attempt to draw above ${age})'),
-          'age'   => $this->game->getAgeSquare($age_to_score)
-        ],
-        [
-          'value' => 0,
-          'text'  => $age_to_draw <= $max_age ? clienttranslate('Draw a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'),
-          'age'   => $this->game->getAgeSquare($age_to_draw)
-        ],
-      ],
-    ];
+    return self::buildPromptFromList([
+      0 => [clienttranslate('Draw a ${age}'), 'age' => self::renderValue(self::getMaxValueInLocation('score') + 1)],
+      1 => [clienttranslate('Draw and score a ${age}'), 'age' => self::renderValue(8)],
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 0) {
-      self::draw($this->game->getMaxAgeInScore(self::getPlayerId()) + 1);
+      self::draw(self::getMaxValueInLocation('score') + 1);
     } else {
       self::drawAndScore(8);
       self::setMaxSteps(2);

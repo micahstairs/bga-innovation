@@ -38,7 +38,7 @@ class Card555 extends Card
   {
     return self::buildPromptFromList([
       1 => clienttranslate('Unsplay one color'),
-      2 => [clienttranslate('Splay up and draw a ${age}'), 'age' => $this->game->getAgeSquare(9)],
+      2 => [clienttranslate('Splay up and draw a ${age}'), 'age' => self::renderValue(9)],
     ]);
   }
 

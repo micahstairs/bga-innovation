@@ -67,22 +67,10 @@ class Card516 extends Card
 
   public function getPromptForListChoice(): array
   {
-    $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 4);
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => $ageToDraw <= $this->game->getMaxAge() ? clienttranslate('Draw and safeguard a ${age}') : clienttranslate('Finish the game (attempt to draw above ${age})'),
-          'age'   => $this->game->getAgeSquare($ageToDraw),
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Draw and reveal a card of value one higher than one your secrets'),
-        ],
-      ],
-    ];
+    return self::buildPromptFromList([
+      0 => [clienttranslate('Draw and reveal a card of value one higher than one your secrets'), []],
+      1 => [clienttranslate('Draw and safeguard a ${age}'), 'age' => self::renderValue(4)],
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

@@ -56,8 +56,8 @@ class Card333 extends Card
   public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => $this->game->getAgeSquare(2)],
-      2 => [clienttranslate('Tuck a ${age} from your forecast'), 'age' => $this->game->getAgeSquare(2)],
+      1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => self::renderValue(2)],
+      2 => [clienttranslate('Tuck a ${age} from your forecast'), 'age' => self::renderValue(2)],
     ]);
   }
 

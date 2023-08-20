@@ -67,8 +67,8 @@ class Card359 extends Card
   {
     if (self::isEcho()) {
       return self::buildPromptFromList([
-        3 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(3)],
-        4 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(4)],
+        3 => [clienttranslate('Draw a ${age}'), 'age' => self::renderValue(3)],
+        4 => [clienttranslate('Draw a ${age}'), 'age' => self::renderValue(4)],
       ]);
     } else if (self::isFirstInteraction()) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());

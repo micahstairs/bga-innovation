@@ -6034,7 +6034,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // Draw an Echoes card if yellow top card is higher than the blue top card
                 $topBlue = self::getTopCardOnBoard($player_id, self::BLUE);
                 $topYellow = self::getTopCardOnBoard($player_id, self::YELLOW);
-                if ($topYellow && (!$topBlue || $topYellow['age'] > $topBlue['age'])) {
+                if ($topYellow && (!$topBlue || $topYellow['faceup_age'] > $topBlue['faceup_age'])) {
                     $card_type = self::ECHOES;
                 }
             } else {

@@ -68,11 +68,11 @@ class Card351 extends Card
   {
     if (self::isFirstOrThirdEdition()) {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Transfer bottom ${age} to the available achievements'), 'age' => $this->game->getAgeSquare(1)],
+        1 => [clienttranslate('Transfer bottom ${age} to the available achievements'), 'age' => self::renderValueWithType(1, $this->game::BASE)],
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(2)],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(2, $this->game::BASE)],
       ]);
     }
   }

@@ -59,7 +59,7 @@ class Card569 extends Card
   public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      1 => [clienttranslate('Draw an ${age}'), 'age' => $this->game->getAgeSquare(11)],
+      1 => [clienttranslate('Draw an ${age}'), 'age' => self::renderValue(11)],
       2 => clienttranslate('Safeguard an available achievement'),
     ]);
   }
