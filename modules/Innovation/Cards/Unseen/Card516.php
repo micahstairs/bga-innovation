@@ -65,7 +65,7 @@ class Card516 extends Card
 
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     $ageToDraw = $this->game->getAgeToDrawIn(self::getPlayerId(), 4);
     return [

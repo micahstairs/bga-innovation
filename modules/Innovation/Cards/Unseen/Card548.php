@@ -24,7 +24,7 @@ class Card548 extends Card
     ];
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => [clienttranslate('Draw and junk two ${age}'), 'age' => $this->game->getAgeSquare(7)],

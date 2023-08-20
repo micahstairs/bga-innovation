@@ -63,30 +63,22 @@ class Card541 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
-    if (self::getEffectNumber() === 1) {
-      return [
-        "message_for_player" => clienttranslate('${You} may make a choice'),
-        "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-        "options"            => [
-          [
-            'value' => 1,
-            'text'  => clienttranslate('Score a card from hand'),
-          ],
-          [
-            'value' => 0,
-            'text'  => clienttranslate('Safeguard a card from hand'),
-          ],
+    return [
+      "message_for_player" => clienttranslate('${You} may make a choice'),
+      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
+      "options"            => [
+        [
+          'value' => 1,
+          'text'  => clienttranslate('Score a card from hand'),
         ],
-      ];
-    } else {
-      return [
-        "message_for_player" => clienttranslate('${You} must choose a value'),
-        "message_for_others" => clienttranslate('${player_name} must choose a value'),
-      ];
-
-    }
+        [
+          'value' => 0,
+          'text'  => clienttranslate('Safeguard a card from hand'),
+        ],
+      ],
+    ];
   }
 
   public function handleSpecialChoice(int $choice): void

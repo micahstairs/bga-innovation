@@ -34,7 +34,7 @@ class Card555 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => clienttranslate('Unsplay one color'),

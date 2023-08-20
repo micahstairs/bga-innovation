@@ -64,11 +64,9 @@ class Card351 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
-    if (self::isEcho()) {
-      return self::getPromptForValueChoice();
-    } else if (self::isFirstOrThirdEdition()) {
+    if (self::isFirstOrThirdEdition()) {
       return self::buildPromptFromList([
         1 => [clienttranslate('Transfer bottom ${age} to the available achievements'), 'age' => $this->game->getAgeSquare(1)],
       ]);

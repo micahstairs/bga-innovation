@@ -38,7 +38,7 @@ class Card558 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => clienttranslate('Safeguard all available standard achievements'),

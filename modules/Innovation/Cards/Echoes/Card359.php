@@ -63,7 +63,7 @@ class Card359 extends Card
 
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     if (self::isEcho()) {
       return self::buildPromptFromList([

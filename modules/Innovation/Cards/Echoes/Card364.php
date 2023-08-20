@@ -57,7 +57,7 @@ class Card364 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     $choiceMap = [];
     for ($splayDirection = 1; $splayDirection <= 4; $splayDirection++) {

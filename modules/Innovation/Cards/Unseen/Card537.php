@@ -34,7 +34,7 @@ class Card537 extends Card
     return ['choices' => [1, 2, 3]];
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => clienttranslate('Splay red left'),

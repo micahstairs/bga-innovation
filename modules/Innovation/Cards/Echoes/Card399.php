@@ -93,16 +93,12 @@ class Card399 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
-    if (self::isFirstNonDemand()) {
-      return self::getPromptForValueChoice();
-    } else {
-      return self::buildPromptFromList([
-        7 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(7)],
-        8 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(8)],
-      ]);
-    }
+    return self::buildPromptFromList([
+      7 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(7)],
+      8 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(8)],
+    ]);
   }
 
   public function handleSpecialChoice($choice)

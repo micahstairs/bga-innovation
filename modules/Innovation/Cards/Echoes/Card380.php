@@ -51,11 +51,9 @@ class Card380 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
-    if (self::isFirstInteraction()) {
-      return self::getPromptForValueChoice();
-    } else if (self::isFirstOrThirdEdition()) {
+    if (self::isFirstOrThirdEdition()) {
       return self::buildPromptFromList([
         1 => [
           clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),

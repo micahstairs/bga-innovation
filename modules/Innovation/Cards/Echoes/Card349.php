@@ -52,7 +52,7 @@ class Card349 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       2 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(2)],

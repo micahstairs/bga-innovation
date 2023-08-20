@@ -51,7 +51,7 @@ class Card337 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => [clienttranslate('Draw and meld a ${age}'), 'age' => $this->game->getAgeSquare(2)],

@@ -44,7 +44,7 @@ class Card519 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     $cardIds = self::getAuxiliaryArray();
     $choices = [];

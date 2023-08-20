@@ -31,7 +31,7 @@ class Card65 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     $player_id = self::getPlayerId();
     $age_to_score = $this->game->getAgeToDrawIn($player_id, 8);

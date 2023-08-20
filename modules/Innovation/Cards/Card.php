@@ -35,10 +35,11 @@ abstract class Card
     return [];
   }
 
-  public function getSpecialChoicePrompt(): array
+  public final function getSpecialChoicePrompt(): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
       case 1: // choose_from_list
+      case 7: // choose_yes_or_no
         return self::getPromptForListChoice();
       case 3: // choose_value
         return self::getPromptForValueChoice();

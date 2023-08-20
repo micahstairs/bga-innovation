@@ -50,7 +50,7 @@ class Card339 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     if (self::isEcho()) {
       return self::buildPromptFromList([
@@ -62,7 +62,7 @@ class Card339 extends Card
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(1)],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(1)],
       ]);
     }
   }

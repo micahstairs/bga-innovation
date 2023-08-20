@@ -50,14 +50,6 @@ class Card533 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
-  {
-    return [
-      "message_for_player" => clienttranslate('${You} must choose a color and score all cards on your board of that color'),
-      "message_for_others" => clienttranslate('${player_name} must choose a color and score all cards on his board of that color'),
-    ];
-  }
-
   public function handleSpecialChoice(int $choice): void
   {
     while (($card = self::getTopCardOfColor($choice)) !== null) {

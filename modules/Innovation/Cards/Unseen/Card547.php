@@ -62,7 +62,7 @@ class Card547 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return [
       "message_for_player" => clienttranslate('${You} may make a choice'),

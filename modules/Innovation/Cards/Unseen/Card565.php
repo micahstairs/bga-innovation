@@ -36,14 +36,6 @@ class Card565 extends Card
     self::selfExecute($card);
   }
 
-  public function getSpecialChoicePrompt(): array
-  {
-    return [
-      "message_for_player" => clienttranslate('${You} must choose an opponent to choose a card to self-execute:'),
-      "message_for_others" => clienttranslate('${player_name} must choose an opponent to choose a card to self-execute'),
-    ];
-  }
-
   public function handleSpecialChoice(int $choice): void
   {
     $this->notifications->notifyPlayerChoice($choice, self::getPlayerId());

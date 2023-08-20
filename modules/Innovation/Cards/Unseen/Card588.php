@@ -59,16 +59,12 @@ class Card588 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
-    if (self::isFirstInteraction()) {
-      return self::buildPromptFromList([
-        1 => clienttranslate('Safeguard standard achievements'),
-        2 => clienttranslate('Achieve secrets'),
-      ]);
-    } else {
-      return self::getPromptForValueChoice();
-    }
+    return self::buildPromptFromList([
+      1 => clienttranslate('Safeguard standard achievements'),
+      2 => clienttranslate('Achieve secrets'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice)

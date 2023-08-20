@@ -62,7 +62,7 @@ class Card350 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     $card = self::getCard(self::getAuxiliaryValue2());
     $cardArgs = $this->game->getNotificationArgsForCardList([$card]);

@@ -82,21 +82,17 @@ class Card423 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
-    if (self::isEcho()) {
-      return self::getPromptForValueChoice();
-    } else {
-      $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-      $choices = [];
-      for ($i = 0; $i < count($cardIds); $i++) {
-        $choices[$i] = [
-          clienttranslate('Self-execute ${card}'),
-          'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[$i])]),
-        ];
-      }
-      return self::buildPromptFromList($choices);
+    $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
+    $choices = [];
+    for ($i = 0; $i < count($cardIds); $i++) {
+      $choices[$i] = [
+        clienttranslate('Self-execute ${card}'),
+        'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[$i])]),
+      ];
     }
+    return self::buildPromptFromList($choices);
   }
 
   public function handleSpecialChoice(int $choice)

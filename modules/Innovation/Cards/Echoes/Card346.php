@@ -49,7 +49,7 @@ class Card346 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(3)],

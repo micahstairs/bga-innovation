@@ -65,19 +65,15 @@ class Card403 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     if (self::isFirstOrThirdEdition()) {
-      if (self::isFirstInteraction()) {
-        return self::getPromptForValueChoice();
-      } else {
-        return self::buildPromptFromList([
-          1 => [
-            clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
-            'age' => self::renderValue(self::getAuxiliaryValue2()),
-          ],
-        ]);
-      }
+      return self::buildPromptFromList([
+        1 => [
+          clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
+          'age' => self::renderValue(self::getAuxiliaryValue2()),
+        ],
+      ]);
     } else {
       return self::buildPromptFromList([
         6 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(6, $this->game::BASE)],
