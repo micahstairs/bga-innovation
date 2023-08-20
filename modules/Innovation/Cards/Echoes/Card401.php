@@ -45,16 +45,16 @@ class Card401 extends Card
     }
   }
 
-  public function getSpecialChoicePrompt(): array
+  public function getPromptForListChoice(): array
   {
     $value = self::getAuxiliaryValue();
     if (self::isFirstOrThirdEdition()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Transfer all ${age} from all other players\' hands to your score pile'), 'age' => $this->game->getAgeSquare($value)],
         2 => [clienttranslate('Transfer all ${age} from all other players\' score piles to your score pile'), 'age' => $this->game->getAgeSquare($value)],
       ]);
     } else {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Score ${age} from all opponents\' hands'), 'age' => $this->game->getAgeSquare($value)],
         2 => [clienttranslate('Score ${age} from all opponents\' score piles'), 'age' => $this->game->getAgeSquare($value)],
       ]);

@@ -95,7 +95,7 @@ class Card423 extends Card
           'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[$i])]),
         ];
       }
-      return self::getPromptForChoiceFromList($choices);
+      return self::buildPromptFromList($choices);
     }
   }
 

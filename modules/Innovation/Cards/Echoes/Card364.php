@@ -77,7 +77,7 @@ class Card364 extends Card
         'splay_direction' => $this->game->getSplayDirectionInClear($purpleSplayDirection),
       ];
     }
-    return self::getPromptForChoiceFromList($choiceMap);
+    return self::buildPromptFromList($choiceMap);
   }
 
   public function handleSpecialChoice(int $choice)

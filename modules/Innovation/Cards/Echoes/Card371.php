@@ -94,7 +94,7 @@ class Card371 extends Card
     if (self::isFirstNonDemand()) {
       return self::getPromptForValueChoice();
     }
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => clienttranslate('Return all cards in forecast'),
     ]);
   }

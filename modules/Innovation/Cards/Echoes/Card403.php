@@ -71,7 +71,7 @@ class Card403 extends Card
       if (self::isFirstInteraction()) {
         return self::getPromptForValueChoice();
       } else {
-        return self::getPromptForChoiceFromList([
+        return self::buildPromptFromList([
           1 => [
             clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
             'age' => self::renderValue(self::getAuxiliaryValue2()),
@@ -79,7 +79,7 @@ class Card403 extends Card
         ]);
       }
     } else {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         6 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(6, $this->game::BASE)],
         7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, $this->game::BASE)],
         8 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(8, $this->game::BASE)],

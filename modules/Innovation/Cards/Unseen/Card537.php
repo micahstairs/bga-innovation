@@ -36,7 +36,7 @@ class Card537 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => clienttranslate('Splay red left'),
       2 => clienttranslate('Splay red right'),
       3 => clienttranslate('Splay red up'),

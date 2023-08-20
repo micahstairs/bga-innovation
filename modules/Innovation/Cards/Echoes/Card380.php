@@ -56,14 +56,14 @@ class Card380 extends Card
     if (self::isFirstInteraction()) {
       return self::getPromptForValueChoice();
     } else if (self::isFirstOrThirdEdition()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [
           clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
           'age' => $this->game->getAgeSquare(self::getAuxiliaryValue2()),
         ],
       ]);
     } else {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(self::getAuxiliaryValue2())],
       ]);
     }

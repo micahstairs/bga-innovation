@@ -36,7 +36,7 @@ class Card555 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => clienttranslate('Unsplay one color'),
       2 => [clienttranslate('Splay up and draw a ${age}'), 'age' => $this->game->getAgeSquare(9)],
     ]);

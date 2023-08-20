@@ -38,6 +38,8 @@ abstract class Card
   public function getSpecialChoicePrompt(): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
+      case 1: // choose_from_list
+        return self::getPromptForListChoice();
       case 3: // choose_value
         return self::getPromptForValueChoice();
       case 4: // choose_color
@@ -49,6 +51,12 @@ abstract class Card
       default:
         return [];
     }
+  }
+
+  protected function getPromptForListChoice():  array
+  {
+    // Subclasses are expected to override this method if the card has any interactions which use the 'choices' option.
+    return [];
   }
 
   public function handleAbortedInteraction()
@@ -690,40 +698,68 @@ abstract class Card
 
   protected function getPromptForColorChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('Choose a color'),
-      "message_for_others" => clienttranslate('${player_name} must choose a color'),
-    ];
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a color'),
+        "message_for_others" => clienttranslate('${player_name} may choose a color'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose a color'),
+        "message_for_others" => clienttranslate('${player_name} must choose a color'),
+      ];
+    }
   }
 
   protected function getPromptForIconChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('Choose an icon'),
-      "message_for_others" => clienttranslate('${player_name} must choose an icon'),
-    ];
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a value'),
+        "message_for_others" => clienttranslate('${player_name} may choose a value'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose an icon'),
+        "message_for_others" => clienttranslate('${player_name} must choose an icon'),
+      ];
+    }
   }
 
   protected function getPromptForValueChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('Choose a value'),
-      "message_for_others" => clienttranslate('${player_name} must choose a value'),
-    ];
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a value'),
+        "message_for_others" => clienttranslate('${player_name} may choose a value'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose a value'),
+        "message_for_others" => clienttranslate('${player_name} must choose a value'),
+      ];
+    }
   }
 
   protected function getPromptForPlayerChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('Choose a player'),
-      "message_for_others" => clienttranslate('${player_name} must choose a player'),
-    ];
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a player'),
+        "message_for_others" => clienttranslate('${player_name} may choose a player'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose a player'),
+        "message_for_others" => clienttranslate('${player_name} must choose a player'),
+      ];
+    }
   }
 
-  protected function getPromptForChoiceFromList(array $choiceMap): array
+  protected function buildPromptFromList(array $choiceMap): array
   {
     $options = self::getOptionsForChoiceFromList($choiceMap);
-    if ($this->game->innovationGameState->get('can_pass')) {
+    if (self::canPass()) {
       return [
         "message_for_player" => clienttranslate('${You} may make a choice'),
         "message_for_others" => clienttranslate('${player_name} may make a choice among the possibilities offered by the card'),
@@ -754,6 +790,11 @@ abstract class Card
       ]);
     }
     return $options;
+  }
+
+  private function canPass(): bool
+  {
+    return $this->game->innovationGameState->get('can_pass');
   }
 
   // PLAYER HELPERS

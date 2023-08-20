@@ -36,7 +36,7 @@ class Card534 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => clienttranslate('Splay a non-purple color left and self-execute the top card'),
       2 => clienttranslate('Meld a card from your hand and splay its color right'),
     ]);

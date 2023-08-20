@@ -70,7 +70,7 @@ class Card571 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => [clienttranslate('Draw two ${age}'), 'age' => $this->game->getAgeSquare(10)],
       2 => [clienttranslate('Draw and score two ${age}'), 'age' => $this->game->getAgeSquare(8)],
       3 => clienttranslate('Safeguard two available achievements'),

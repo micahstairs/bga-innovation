@@ -66,19 +66,19 @@ class Card359 extends Card
   public function getSpecialChoicePrompt(): array
   {
     if (self::isEcho()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         3 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(3)],
         4 => [clienttranslate('Draw a ${age}'), 'age' => $this->game->getAgeSquare(4)],
       ]);
     } else if (self::isFirstInteraction()) {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         0 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[0])])],
         1 => [clienttranslate('Meld ${card}'), 'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[1])])],
       ]);
     } else {
       $cardArgs = $this->game->getNotificationArgsForCardList([self::getCard(self::getAuxiliaryValue())]);
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Return ${card}'), 'card' => $cardArgs],
         2 => [clienttranslate('Achieve ${card}, if eligible'), 'card' => $cardArgs],
       ]);

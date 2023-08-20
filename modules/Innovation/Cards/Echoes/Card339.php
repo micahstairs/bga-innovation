@@ -53,15 +53,15 @@ class Card339 extends Card
   public function getSpecialChoicePrompt(): array
   {
     if (self::isEcho()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Draw and foreshadow a ${age}'), 'age' => $this->game->getAgeSquare(1)],
       ]);
     } else if (self::isFirstOrThirdEdition()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Transfer the bottom ${age} to the available achievements'), 'age' => $this->game->getAgeSquare(1)],
       ]);
     } else {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(1)],
       ]);
     }

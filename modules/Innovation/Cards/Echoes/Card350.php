@@ -66,7 +66,7 @@ class Card350 extends Card
   {
     $card = self::getCard(self::getAuxiliaryValue2());
     $cardArgs = $this->game->getNotificationArgsForCardList([$card]);
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => [clienttranslate('Meld ${card}'), 'card' => $cardArgs],
       2 => [clienttranslate('Score ${card}'), 'card' => $cardArgs],
     ]);

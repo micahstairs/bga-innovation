@@ -40,7 +40,7 @@ class Card558 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => clienttranslate('Safeguard all available standard achievements'),
       2 => clienttranslate('Transfer all your secrets to your hand'),
       3 => clienttranslate('Transfer all cards in your hand to the available achievements'),

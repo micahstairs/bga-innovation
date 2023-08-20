@@ -37,7 +37,7 @@ class Card563 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => clienttranslate('Score all the highest cards in your hand'),
     ]);
   }

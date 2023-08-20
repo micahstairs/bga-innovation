@@ -37,7 +37,7 @@ class Card559 extends Card
   public function getSpecialChoicePrompt(): array
   {
     if (self::isFirstInteraction()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => clienttranslate('Transfer your bottom cards to your hand'),
         2 => clienttranslate('Tuck all cards from your score pile'),
         3 => clienttranslate('Score all cards from your hand of a specific value'),

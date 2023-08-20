@@ -52,7 +52,7 @@ class Card592 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       $this->game::YELLOW => clienttranslate('Score all but top three yellow cards'),
       $this->game::PURPLE => clienttranslate('Score all but top three purple cards'),
     ]);

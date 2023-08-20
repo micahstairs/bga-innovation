@@ -26,7 +26,7 @@ class Card548 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => [clienttranslate('Draw and junk two ${age}'), 'age' => $this->game->getAgeSquare(7)],
       2 => clienttranslate('Exchange all cards in your score pile with all valued junked cards'),
     ]);

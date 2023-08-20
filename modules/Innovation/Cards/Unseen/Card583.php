@@ -58,7 +58,7 @@ class Card583 extends Card
   public function getSpecialChoicePrompt(): array
   {
     if (self::isFirstInteraction()) {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         1 => clienttranslate('Return top card'),
         2 => clienttranslate('Return bottom card'),
       ]);

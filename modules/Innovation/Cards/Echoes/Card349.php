@@ -54,7 +54,7 @@ class Card349 extends Card
 
   public function getSpecialChoicePrompt(): array
   {
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       2 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(2)],
       3 => [clienttranslate('Junk ${age} deck'), 'age' => $this->game->getAgeSquare(3)],
     ]);

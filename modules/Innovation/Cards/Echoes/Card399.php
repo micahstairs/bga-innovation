@@ -98,7 +98,7 @@ class Card399 extends Card
     if (self::isFirstNonDemand()) {
       return self::getPromptForValueChoice();
     } else {
-      return self::getPromptForChoiceFromList([
+      return self::buildPromptFromList([
         7 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(7)],
         8 => [clienttranslate('Junk all cards in the ${age} deck'), 'age' => $this->game->getAgeSquare(8)],
       ]);

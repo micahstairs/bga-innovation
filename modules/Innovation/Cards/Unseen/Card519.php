@@ -54,7 +54,7 @@ class Card519 extends Card
         'card' => $this->game->getNotificationArgsForCardList([self::getCard($cardIds[$i])]),
       ];
     }
-    return self::getPromptForChoiceFromList($choices);
+    return self::buildPromptFromList($choices);
   }
 
   public function handleSpecialChoice(int $index)

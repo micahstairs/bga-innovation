@@ -36,7 +36,7 @@ class Card470 extends Card
   {
     $cardId = self::getAuxiliaryValue();
     $cardArgs = $this->game->getNotificationArgsForCardList([self::getCard($cardId)]);
-    return self::getPromptForChoiceFromList([
+    return self::buildPromptFromList([
       1 => [clienttranslate('Achieve ${card} if eligible'), 'card' => $cardArgs],
       2 => [clienttranslate('Score ${card}'), 'card' => $cardArgs],
     ]);
