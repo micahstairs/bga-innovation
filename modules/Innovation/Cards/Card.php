@@ -32,33 +32,34 @@ abstract class Card
   public function getInteractionOptions(): array
   {
     // Subclasses are expected to override this method if the card has any interactions.
-    return [];
+    throw new \RuntimeException("Unimplemented getInteractionOptions");
   }
 
   public final function getSpecialChoicePrompt(): array
   {
-    switch ($this->game->innovationGameState->get('special_type_of_choice')) {
+    $choiceType = $this->game->innovationGameState->get('special_type_of_choice');
+    switch ($choiceType) {
       // TODO:(LATER): Remove choose_yes_or_no.
       case 1: // choose_from_list
       case 7: // choose_yes_or_no
-        return self::getPromptForListChoice();
+        return static::getPromptForListChoice();
       case 3: // choose_value
-        return self::getPromptForValueChoice();
+        return static::getPromptForValueChoice();
       case 4: // choose_color
-        return self::getPromptForColorChoice();
+        return static::getPromptForColorChoice();
       case 10: // choose_player
-        return self::getPromptForPlayerChoice();
+        return static::getPromptForPlayerChoice();
       case 12: // choose_icon_type
-        return self::getPromptForIconChoice();
+        return static::getPromptForIconChoice();
       default:
-        return [];
+        throw new \RuntimeException("Unhandled value in getSpecialChoicePrompt: " . $choiceType);
     }
   }
 
   protected function getPromptForListChoice():  array
   {
     // Subclasses are expected to override this method if the card has any interactions which use the 'choices' option.
-    return [];
+    throw new \RuntimeException("Unimplemented getPromptForListChoice");
   }
 
   public function handleAbortedInteraction()

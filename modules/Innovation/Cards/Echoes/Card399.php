@@ -93,7 +93,7 @@ class Card399 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, $this->game::BASE)],

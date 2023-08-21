@@ -62,7 +62,7 @@ class Card541 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       0 => clienttranslate('Safeguard a card from your hand'),

@@ -34,7 +34,7 @@ class Card534 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => clienttranslate('Splay a non-purple color left and self-execute the top card'),

@@ -29,7 +29,7 @@ class Card586 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return [
       "message_for_player" => clienttranslate('${You} must call whether the coin will land heads or tails'),

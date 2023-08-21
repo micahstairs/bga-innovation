@@ -62,7 +62,7 @@ class Card547 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       0 => clienttranslate('Score two of your secrets'),

@@ -31,7 +31,7 @@ class Card65 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       0 => [clienttranslate('Draw a ${age}'), 'age' => self::renderValue(self::getMaxValueInLocation('score') + 1)],

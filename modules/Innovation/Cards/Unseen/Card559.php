@@ -34,7 +34,7 @@ class Card559 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => clienttranslate('Transfer your bottom cards to your hand'),

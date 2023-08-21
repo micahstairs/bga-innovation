@@ -45,7 +45,7 @@ class Card401 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     $renderedValue = self::renderValue(self::getAuxiliaryValue());
     if (self::isFirstOrThirdEdition()) {

@@ -20,7 +20,7 @@ class Card335 extends Card
     if (self::isEcho()) {
       self::setMaxSteps(1);
     } else if (self::isFourthEdition()) {
-      $this->game->junkBaseDeck(1);
+      self::junkBaseDeck(1);
     }
   }
 

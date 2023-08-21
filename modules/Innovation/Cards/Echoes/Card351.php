@@ -64,7 +64,7 @@ class Card351 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     if (self::isFirstOrThirdEdition()) {
       return self::buildPromptFromList([

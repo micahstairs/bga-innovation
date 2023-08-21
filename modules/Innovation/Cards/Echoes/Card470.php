@@ -32,7 +32,7 @@ class Card470 extends Card
     self::setMaxSteps(2);
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     $cardId = self::getAuxiliaryValue();
     $cardArgs = $this->game->getNotificationArgsForCardList([self::getCard($cardId)]);

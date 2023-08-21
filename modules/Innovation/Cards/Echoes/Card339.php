@@ -50,7 +50,7 @@ class Card339 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     if (self::isEcho()) {
       return self::buildPromptFromList([

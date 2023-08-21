@@ -46,7 +46,7 @@ class Card521 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       0 => clienttranslate('Splay purple right and unsplay yellow'),

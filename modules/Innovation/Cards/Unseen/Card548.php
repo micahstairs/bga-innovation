@@ -24,7 +24,7 @@ class Card548 extends Card
     ];
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => [clienttranslate('Draw and junk two ${age}'), 'age' => self::renderValue(7)],

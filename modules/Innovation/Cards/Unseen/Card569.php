@@ -56,7 +56,7 @@ class Card569 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       1 => [clienttranslate('Draw an ${age}'), 'age' => self::renderValue(11)],

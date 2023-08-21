@@ -65,7 +65,7 @@ class Card516 extends Card
 
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       0 => [clienttranslate('Draw and reveal a card of value one higher than one your secrets'), []],

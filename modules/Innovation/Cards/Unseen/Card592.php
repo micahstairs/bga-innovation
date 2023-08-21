@@ -50,7 +50,7 @@ class Card592 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       $this->game::YELLOW => clienttranslate('Score all but top three yellow cards'),

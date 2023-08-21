@@ -22,7 +22,7 @@ class Card593 extends Card
     return ['choices' => [$this->game::RED, $this->game::BLUE, $this->game::GREEN]];
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
       $this->game::RED => clienttranslate('Score all but top four red cards'),

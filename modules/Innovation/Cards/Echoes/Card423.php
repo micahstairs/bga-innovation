@@ -82,7 +82,7 @@ class Card423 extends Card
     }
   }
 
-  public function getPromptForListChoice(): array
+  protected function getPromptForListChoice(): array
   {
     $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $choices = [];
