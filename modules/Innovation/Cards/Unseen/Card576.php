@@ -17,7 +17,7 @@ class Card576 extends Card
     if (self::getEffectNumber() === 1) {
       self::setMaxSteps(2);
     } else {
-      $numColorsNotOnBoard = 5 - count($this->game->getTopCardsOnBoard(self::getPlayerId()));
+      $numColorsNotOnBoard = 5 - count(self::getTopCards());
       for ($i = 0; $i < $numColorsNotOnBoard; $i++) {
         self::draw(11);
       }

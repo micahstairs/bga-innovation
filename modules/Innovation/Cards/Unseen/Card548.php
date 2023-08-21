@@ -38,9 +38,8 @@ class Card548 extends Card
       self::junk(self::draw(7));
       self::junk(self::draw(7));
     } else {
-      $scoreCards = $this->game->getCardsInScorePile(self::getPlayerId());
       $junkCards = self::getCards('junk');
-      foreach ($scoreCards as $card) {
+      foreach (self::getCards('score') as $card) {
         self::junk($card);
       }
       foreach ($junkCards as $card) {

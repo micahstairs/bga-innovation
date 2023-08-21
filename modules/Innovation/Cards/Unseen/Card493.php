@@ -20,9 +20,9 @@ class Card493 extends Card
   {
     $iconsMelded = self::getActionScopedAuxiliaryArray(self::getPlayerId());
     $cardIds = [];
-    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+    foreach (self::getCards('hand') as $card) {
       foreach ($iconsMelded as $icon) {
-        if ($this->game->hasRessource($card, $icon)) {
+        if (self::hasIcon($card, $icon)) {
           continue 2;
         }
       }

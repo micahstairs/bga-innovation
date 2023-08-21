@@ -22,7 +22,7 @@ class Card349 extends Card
       self::setMaxSteps(1);
     } else {
       $minValue = null;
-      foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
+      foreach (self::getTopCards() as $card) {
         if ($card['color'] != $this->game::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
           $minValue = $card['faceup_age'];
         }

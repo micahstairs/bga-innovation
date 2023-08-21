@@ -17,13 +17,13 @@ class Card518 extends Card
     if (self::isDemand()) {
       $cardIds = [];
       $maxAgeInHand = $this->game->getMaxAgeInHand(self::getPlayerId());
-      foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+      foreach (self::getCards('hand') as $card) {
         if ($card['age'] < $maxAgeInHand) {
           $cardIds[] = $card['id'];
         }
       }
       $maxAgeInScore = $this->game->getMaxAgeInScore(self::getPlayerId());
-      foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
+      foreach (self::getCards('score') as $card) {
         if ($card['age'] < $maxAgeInScore) {
           $cardIds[] = $card['id'];
         }

@@ -34,8 +34,8 @@ class Card331 extends Card
   public function getInteractionOptions(): array
   {
     $colors = [];
-    $playerCards = $this->game->getTopCardsOnBoard(self::getPlayerId());
-    $launcherCards = $this->game->getTopCardsOnBoard(self::getLauncherId());
+    $playerCards = self::getTopCards(self::getPlayerId());
+    $launcherCards = self::getTopCards(self::getLauncherId());
     foreach ($playerCards as $playerCard) {
       $matchFound = false;
       foreach ($launcherCards as $launcherCard) {

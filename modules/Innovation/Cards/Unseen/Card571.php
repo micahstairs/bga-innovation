@@ -43,7 +43,7 @@ class Card571 extends Card
       self::setAuxiliaryValue2($isRedOrPurple ? 1 : 0);
 
       // Check if the wish should be granted
-      if ($this->game->hasRessource($card, $this->game::CONCEPT)) {
+      if (self::hasIcon($card, $this->game::CONCEPT)) {
         $this->notifications->notifyGeneralInfo(clienttranslate('It has a ${icon} so the wish is granted.'), ['icon' => $this->notifications->getIconSquare($this->game::CONCEPT)]);
         $choice = self::getAuxiliaryValue();
         if ($choice === 1) {

@@ -14,7 +14,7 @@ class Card563 extends Card
   public function initialExecution()
   {
     if (self::isDemand()) {
-      $cardsInPlayerHand = $this->game->getCardsInHand(self::getPlayerId());
+      $cardsInPlayerHand = self::getCards('hand');
       $lowestCardIdsInLauncherHand = $this->game->getIdsOfLowestCardsInLocation(self::getLauncherId(), 'hand');
       foreach ($cardsInPlayerHand as $card) {
         self::transferToHand($card, self::getLauncherId());

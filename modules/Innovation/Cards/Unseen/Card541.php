@@ -14,10 +14,9 @@ class Card541 extends Card
 
   public function initialExecution()
   {
-    $scoreCards = $this->game->getCardsInScorePile(self::getPlayerId());
     if (self::getEffectNumber() === 1) {
       self::setMaxSteps(2);
-    } else if (self::getEffectNumber() === 2 || count($scoreCards) >= 1) {
+    } else if (self::getEffectNumber() === 2 || self::countCards('score') >= 1) {
       self::setMaxSteps(1);
     } else if (self::getEffectNumber() === 3) {
       self::drawAndScore(1);

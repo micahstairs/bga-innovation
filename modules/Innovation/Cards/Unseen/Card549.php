@@ -75,8 +75,8 @@ class Card549 extends Card
     $revealed_cards = self::getCards( 'revealed');
     foreach ($revealed_cards as $card) {
       if (
-        !$this->game->hasRessource($card, $this->game::EFFICIENCY) &&
-        !$this->game->hasRessource($card, $this->game::AVATAR)
+        !self::hasIcon($card, $this->game::EFFICIENCY) &&
+        !self::hasIcon($card, $this->game::AVATAR)
       ) {
         $cardIds[] = $card['id'];
       }

@@ -74,8 +74,8 @@ class Card592 extends Card
   private function getTopCardIdsWithProsperityOrIndustryIcons(): array
   {
     $cardIds = [];
-    foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
-      if ($this->game->hasRessource($card, $this->game::PROSPERITY) || $this->game->hasRessource($card, $this->game::INDUSTRY)) {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, $this->game::PROSPERITY) || self::hasIcon($card, $this->game::INDUSTRY)) {
         $cardIds[] = $card['id'];
       }
     }

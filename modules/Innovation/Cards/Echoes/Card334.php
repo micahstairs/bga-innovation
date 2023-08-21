@@ -75,7 +75,7 @@ class Card334 extends Card
   private function getCardIdsInHandWithAuthorityOrConceptIcon(): array
   {
     $cardIds = [];
-    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+    foreach (self::getCards('hand') as $card) {
       if (self::hasIcon($card, $this->game::AUTHORITY) || self::hasIcon($card, $this->game::CONCEPT)) {
         $cardIds[] = $card['id'];
       }

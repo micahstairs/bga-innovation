@@ -14,8 +14,8 @@ class Card486 extends Card
   public function initialExecution()
   {
     // Only bother making the player choose another player if they have a top card with any [AUTHORITY] icons
-    foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
-      if ($this->game->hasRessource($card, $this->game::AUTHORITY)) {
+    foreach (self::getTopCards() as $card) {
+      if (self::hasIcon($card, $this->game::AUTHORITY)) {
         self::setMaxSteps(2);
         break;
       }

@@ -14,7 +14,7 @@ class Card567 extends Card
   public function initialExecution()
   {
     $colors = [];
-    foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
+    foreach (self::getTopCards() as $card) {
       if ($card['splay_direction'] > 0) {
         $colors[] = $card['color'];
         self::unsplay($card['color']);

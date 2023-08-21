@@ -28,7 +28,7 @@ class Card573 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (!$this->game->hasRessource($card, $this->game::PROSPERITY)) {
+    if (!self::hasIcon($card, $this->game::PROSPERITY)) {
       self::setNextStep(1);
     }
   }

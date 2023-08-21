@@ -15,7 +15,7 @@ class Card562 extends Card
   {
     while (true) {
       $card = self::drawAndTuck(8);
-      if ($this->game->hasRessource($card, $this->game::INDUSTRY)) {
+      if (self::hasIcon($card, $this->game::INDUSTRY)) {
         self::score($card);
         break;
       } else {

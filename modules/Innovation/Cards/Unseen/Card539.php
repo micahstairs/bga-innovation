@@ -16,10 +16,10 @@ class Card539 extends Card
   {
     $card = self::drawAndReveal(6);
     $topCard = self::getTopCardOfColor($card['color']);
-    if ($this->game->hasRessource($topCard, $this->game::INDUSTRY)) {
+    if (self::hasIcon($topCard, $this->game::INDUSTRY)) {
       self::tuck($card);
       $secondCard = self::drawAndReveal(7);
-      if ($this->game->hasRessource($secondCard, $this->game::HEALTH)) {
+      if (self::hasIcon($secondCard, $this->game::HEALTH)) {
         self::meld($secondCard);
         self::draw(8);
       } else {

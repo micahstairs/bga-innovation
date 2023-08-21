@@ -15,7 +15,7 @@ class Card484 extends Card
   public function initialExecution()
   {
     $colorCounts = [0, 0, 0, 0, 0];
-    foreach ($this->game->getCardsInHand(self::getLauncherId()) as $card) {
+    foreach (self::getCards('hand', self::getLauncherId()) as $card) {
       $colorCounts[$card['color']]++;
     }
     self::setActionScopedAuxiliaryArray($colorCounts);
@@ -27,7 +27,7 @@ class Card484 extends Card
   {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
-    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+    foreach (self::getCards('hand') as $card) {
       if ($colorCounts[$card['color']] > 0) {
         $cardIds[] = $card['id'];
       }
@@ -44,10 +44,10 @@ class Card484 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() === 0) {
-      $launcherCardsInHand = $this->game->getCardsInHand(self::getLauncherId());
-      $cardsInHand = $this->game->getCardsInHand(self::getPlayerId());
+      $launcherCardsInHand = self::getCards('hand', self::getLauncherId());
+      $cardsInHand = self::getCards('hand');
       if (self::getAuxiliaryValue() === 0 && count($launcherCardsInHand) > 0) {
-        $cardsInScorePile = $this->game->getCardsInScorePile(self::getLauncherId());
+        $cardsInScorePile = self::getCards('score', self::getLauncherId());
         foreach ($cardsInHand as $card) {
           $this->game->transferCardFromTo($card, self::getLauncherId(), 'score');
         }
@@ -68,7 +68,7 @@ class Card484 extends Card
   private function getSelectableCardIds($playerId) {
     $cardIds = [];
     $colorCounts = self::getActionScopedAuxiliaryArray();
-    foreach ($this->game->getCardsInHand($playerId) as $card) {
+    foreach (self::getCards('hand', $playerId) as $card) {
       if ($colorCounts[$card['color']] > 0) {
         $cardIds[] = $card['id'];
       }

@@ -22,8 +22,8 @@ class Card337 extends Card
       self::setMaxSteps(3);
     } else if (self::getEffectNumber() === 1) {
       if (self::wasForeseen()) {
-        $this->game->junkBaseDeck(1);
-        $this->game->junkBaseDeck(2);
+        self::junkBaseDeck(1);
+        self::junkBaseDeck(2);
       }
     } else {
       self::setMaxSteps(1);

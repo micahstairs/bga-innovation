@@ -16,7 +16,7 @@ class Card520 extends Card
     $numCardsWithProsperityIcons = 0;
     for ($i = 3; $i >= 1; $i--) {
       $card = self::drawAndMeld($i);
-      if ($this->game->hasRessource($card, $this->game::PROSPERITY)) {
+      if (self::hasIcon($card, $this->game::PROSPERITY)) {
         $numCardsWithProsperityIcons++;
       }
     }

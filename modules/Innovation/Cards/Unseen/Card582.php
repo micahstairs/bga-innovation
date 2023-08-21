@@ -13,12 +13,12 @@ class Card582 extends Card
   public function initialExecution()
   {
     $values = [];
-    foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
+    foreach (self::getTopCards() as $card) {
       if (!in_array($card['faceup_age'], $values)) {
         $values[] = $card['faceup_age'];
       }
     }
-    foreach ($this->game->getCardsInScorePile(self::getPlayerId()) as $card) {
+    foreach (self::getCards('score') as $card) {
       if (!in_array($card['age'], $values)) {
         $values[] = $card['age'];
       }

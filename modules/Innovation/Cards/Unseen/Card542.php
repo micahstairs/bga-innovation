@@ -15,7 +15,7 @@ class Card542 extends Card
   public function initialExecution()
   {
     self::draw(6);
-    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+    foreach (self::getCards('hand') as $card) {
       self::reveal($card);
       self::setMaxSteps(2);
     }

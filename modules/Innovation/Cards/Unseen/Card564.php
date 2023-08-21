@@ -21,7 +21,7 @@ class Card564 extends Card
         self::setMaxSteps(1);
       }
     } else {
-      foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
+      foreach (self::getTopCards() as $card) {
         if ($card['splay_direction'] == $this->game::UP) {
           self::draw(8);
         }

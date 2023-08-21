@@ -56,7 +56,7 @@ class Card558 extends Card
         self::transferToHand($card);
       }
     } else if ($choice === 3) {
-      foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+      foreach (self::getCards('hand') as $card) {
         $this->game->transferCardFromTo($card, 0, 'achievements');
       }
     }

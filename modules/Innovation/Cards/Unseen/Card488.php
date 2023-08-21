@@ -53,7 +53,7 @@ class Card488 extends Card
   private function getColorsOnBoard(): array
   {
     $colors = [];
-    foreach ($this->game->getTopCardsOnBoard(self::getPlayerId()) as $card) {
+    foreach (self::getTopCards() as $card) {
       if (!in_array($card['color'], $colors)) {
         $colors[] = $card['color'];
       }

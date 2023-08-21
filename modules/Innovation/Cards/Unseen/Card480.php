@@ -26,7 +26,7 @@ class Card480 extends Card
 
   public function handleCardChoice(array $card)
   {
-    $cardsInHand = $this->game->getCardsInHand(self::getLauncherId());
+    $cardsInHand = self::getCards('hand', self::getLauncherId());
     $hasColor = false;
     if (count($cardsInHand) > 0) {
       $this->game->revealHand(self::getLauncherId());

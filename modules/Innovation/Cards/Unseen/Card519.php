@@ -14,7 +14,7 @@ class Card519 extends Card
   public function initialExecution()
   {
     self::setAuxiliaryArray([]);
-    foreach ($this->game->getCardsInHand(self::getPlayerId()) as $card) {
+    foreach (self::getCards('hand') as $card) {
       self::reveal($card);
       self::addToAuxiliaryArray($card['id']);
     }
