@@ -15,8 +15,8 @@ class Card508 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() === 1) {
-      $handCards = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'hand');
-      $scoreCards = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score');
+      $handCards = self::countCardsKeyedByValue('hand');
+      $scoreCards = self::countCardsKeyedByValue('score');
       $values = [];
       for ($age = 1; $age <= 11; $age++) {
         if ($handCards[$age] + $scoreCards[$age] == 2 || $handCards[$age] + $scoreCards[$age] == 3) {
@@ -28,7 +28,7 @@ class Card508 extends Card
         $this->game->setAuxiliaryValueFromArray($values);
       }
     } else {
-      if ($this->game->countCardsInHand(self::getPlayerId()) >= 2) {
+      if (self::countCards('hand') >= 2) {
         self::setMaxSteps(1);
       }
     }

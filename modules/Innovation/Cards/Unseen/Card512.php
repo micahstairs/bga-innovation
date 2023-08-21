@@ -18,7 +18,7 @@ class Card512 extends Card
       self::setMaxSteps(1);
     } else {
       // There is no need to pick a color if the hand is empty
-      if ($this->game->countCardsInHand(self::getPlayerId()) > 0) {
+      if (self::countCards('hand') > 0) {
         self::setMaxSteps(1);
       }
     }

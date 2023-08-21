@@ -17,7 +17,7 @@ class Card523 extends Card
     if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
     } else {
-      $numFours = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score')[4];
+      $numFours = self::countCardsKeyedByValue('score')[4];
       for ($i = 0; $i < $numFours; $i++) {
         self::draw(4);
       }

@@ -14,7 +14,7 @@ class Card543 extends Card
 
   public function initialExecution()
   {
-    if ($this->game->countCardsInHand(self::getPlayerId()) > 0) {
+    if (self::countCards('hand') > 0) {
       self::setMaxSteps(1);
     }
   }

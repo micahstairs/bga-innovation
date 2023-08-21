@@ -16,7 +16,7 @@ class Card515 extends Card
   {
     if (self::getEffectNumber() === 1) {
       self::setMaxSteps(1);
-    } else if ($this->game->countCardsInHand(self::getPlayerId()) >= 2) {
+    } else if (self::countCards('hand') >= 2) {
       self::setMaxSteps(1);
       self::setAuxiliaryValue(0);
     }

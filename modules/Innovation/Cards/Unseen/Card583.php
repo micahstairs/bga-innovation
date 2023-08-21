@@ -22,7 +22,7 @@ class Card583 extends Card
     if (self::isFirstInteraction()) {
       // Skip the first interaction if no color has more than 1 card on the board
       $needsToChoose = false;
-      $cardCounts = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'board');
+      $cardCounts = self::countCardsKeyedByValue('board');
       for ($i = 1; $i <= 11; $i++) {
         if ($cardCounts[$i] > 1) {
           $needsToChoose = true;

@@ -15,11 +15,11 @@ class Card584 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() === 1) {
-      if ($this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'score')[3] > 0) {
+      if (self::countCardsKeyedByValue('score')[3] > 0) {
         self::lose();
       }
     } else if (self::getEffectNumber() === 2) {
-      if ($this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[7] > 0) {
+      if (self::countCardsKeyedByValue('hand')[7] > 0) {
         self::win();
       }
     } else {

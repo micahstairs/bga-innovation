@@ -18,12 +18,12 @@ class Card340 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() === 1) {
-      $numCards = $this->game->countCardsInLocationKeyedByAge(self::getPlayerId(), 'hand')[1];
+      $numCards = self::countCardsKeyedByValue('hand')[1];
       if ($numCards > 0) {
         $willScore = true;
         $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds(self::getPlayerId()) : self::getOpponentIds(self::getPlayerId());
         foreach ($playerIds as $otherPlayerId) {
-          if ($numCards <= $this->game->countCardsInLocationKeyedByAge($otherPlayerId, 'hand')[1]) {
+          if ($numCards <= self::countCardsKeyedByValue('hand', $otherPlayerId)[1]) {
             $willScore = false;
             break;
           }
