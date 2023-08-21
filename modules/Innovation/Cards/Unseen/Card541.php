@@ -45,8 +45,8 @@ class Card541 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'         => true,
-        'choose_yes_or_no' => true,
+        'can_pass' => true,
+        'choices'  => [0, 1],
       ];
     } else {
       return [
@@ -65,20 +65,10 @@ class Card541 extends Card
 
   public function getPromptForListChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Score a card from hand'),
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Safeguard a card from hand'),
-        ],
-      ],
-    ];
+    return self::buildPromptFromList([
+      0 => clienttranslate('Safeguard a card from your hand'),
+      1 => clienttranslate('Score a card from your hand'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

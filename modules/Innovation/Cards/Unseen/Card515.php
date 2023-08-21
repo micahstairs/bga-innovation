@@ -26,7 +26,7 @@ class Card515 extends Card
   {
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
-        return ['choose_yes_or_no' => true];
+        return ['choices' => [0, 1]];
       } else {
         return [
           'location_from' => 'hand',

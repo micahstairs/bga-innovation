@@ -17,17 +17,17 @@ class Card521 extends Card
       $max_age_score = $this->game->getMaxAgeInScore(self::getPlayerId());
       $max_age_hand = $this->game->getMaxAgeInHand(self::getPlayerId());
       if ($max_age_score == 0 && $max_age_hand == 0) {
-          $this->game->claimSpecialAchievement(self::getPlayerId(), 598);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), 598);
       } else {
-          if ($max_age_score > $max_age_hand) {
-              self::setAuxiliaryValue($max_age_score);
-          } else {
-              self::setAuxiliaryValue($max_age_hand);
-          }
-          self::setMaxSteps(1);
+        if ($max_age_score > $max_age_hand) {
+          self::setAuxiliaryValue($max_age_score);
+        } else {
+          self::setAuxiliaryValue($max_age_hand);
+        }
+        self::setMaxSteps(1);
       }
     } else {
-        self::setMaxSteps(1);
+      self::setMaxSteps(1);
     }
   }
 
@@ -35,33 +35,23 @@ class Card521 extends Card
   {
     if (self::getEffectNumber() === 1) {
       return [
-        'n'                               => 'all',
-        'location_from'                   => 'hand,score',
-        'owner_to'                        => $this->game->getActivePlayerIdOnRightOfActingPlayer(),
-        'location_to'                     => 'board',
-        'age'                             => self::getAuxiliaryValue(),
+        'n'             => 'all',
+        'location_from' => 'hand,score',
+        'owner_to'      => $this->game->getActivePlayerIdOnRightOfActingPlayer(),
+        'location_to'   => 'board',
+        'age'           => self::getAuxiliaryValue(),
       ];
     } else {
-      return ['choose_yes_or_no' => true];
+      return ['choices' => [0, 1]];
     }
   }
 
   public function getPromptForListChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Splay yellow right and unsplay purple'),
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Splay purple right and unsplay yellow'),
-        ],
-      ],
-    ];
+    return self::buildPromptFromList([
+      0 => clienttranslate('Splay purple right and unsplay yellow'),
+      1 => clienttranslate('Splay yellow right and unsplay purple'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

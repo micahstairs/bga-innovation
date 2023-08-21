@@ -38,6 +38,7 @@ abstract class Card
   public final function getSpecialChoicePrompt(): array
   {
     switch ($this->game->innovationGameState->get('special_type_of_choice')) {
+      // TODO:(LATER): Remove choose_yes_or_no.
       case 1: // choose_from_list
       case 7: // choose_yes_or_no
         return self::getPromptForListChoice();

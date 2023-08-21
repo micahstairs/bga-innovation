@@ -28,7 +28,7 @@ class Card547 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_yes_or_no' => true];
+      return ['choices' => [0, 1]];
     } else if (self::isSecondInteraction()) {
       if (self::getAuxiliaryValue() === 1) {
         return [
@@ -64,20 +64,10 @@ class Card547 extends Card
 
   public function getPromptForListChoice(): array
   {
-    return [
-      "message_for_player" => clienttranslate('${You} may make a choice'),
-      "message_for_others" => clienttranslate('${player_name} may make a choice among the two possibilities offered by the card'),
-      "options"            => [
-        [
-          'value' => 1,
-          'text'  => clienttranslate('Junk and safeguard two top cards')
-        ],
-        [
-          'value' => 0,
-          'text'  => clienttranslate('Score two secrets')
-        ],
-      ],
-    ];
+    return self::buildPromptFromList([
+      0 => clienttranslate('Score two of your secrets'),
+      1 => clienttranslate('Junk and safeguard two of your top cards'),
+    ]);
   }
 
   public function handleSpecialChoice(int $choice): void

@@ -25,7 +25,7 @@ class Card516 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isFirstInteraction()) {
-      return ['choose_yes_or_no' => true];
+      return ['choices' => [0, 1]];
     } else if (self::isSecondInteraction()) {
       return [
         'location_from' => 'safe',
