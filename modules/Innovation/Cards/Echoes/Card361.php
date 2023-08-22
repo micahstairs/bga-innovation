@@ -7,7 +7,7 @@ use Innovation\Cards\Card;
 class Card361 extends Card
 {
 
-  // Deoderant
+  // Deodorant
   // - 3rd edition:
   //   - ECHO: Draw and meld a [3].
   //   - If you have a top card with a [AUTHORITY], draw and meld a [3]. Otherwise, draw a [4].

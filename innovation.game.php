@@ -9149,7 +9149,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case 355: // Almanac
                 case 356: // Magnifying Glass
                 case 359: // Charitable Trust
-                case 361: // Deoderant
+                case 361: // Deodorant
                 case 363: // Novel
                 case 366: // Telescope
                 case 372: // Pencil
