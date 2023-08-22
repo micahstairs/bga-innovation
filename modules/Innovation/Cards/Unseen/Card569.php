@@ -19,13 +19,13 @@ class Card569 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::UP,
         'color'           => array($this->game::GREEN),
       ];
-    } else if (self::getEffectNumber() === 2) {
+    } else if (self::isSecondNonDemand()) {
       if (self::isFirstInteraction()) {
         return ['choices' => [1, 2]];
       } else {
@@ -46,13 +46,11 @@ class Card569 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 3) {
-      if (self::getNumChosen() > 0) {
-        if ($this->game->getActivePlayerId() == self::getPlayerId()) {
-          self::fullyExecute(self::getLastSelectedCard());
-        }
-        self::putBackInSafe(self::getLastSelectedCard());
+    if (self::isThirdNonDemand() && self::getNumChosen() > 0) {
+      if (self::isTheirTurn()) {
+        self::fullyExecute(self::getLastSelectedCard());
       }
+      self::putBackInSafe(self::getLastSelectedCard());
     }
   }
 

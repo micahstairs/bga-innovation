@@ -120,6 +120,11 @@ abstract class Card
     return self::getPlayerId() === self::getLauncherId();
   }
 
+  protected function isTheirTurn(int $playerId = null): bool
+  {
+    return self::coercePlayerId($playerId) == $this->game->getNestedCardState(0)['launcher_id'];
+  }
+
   protected function getEffectNumber(): int
   {
     return $this->state->getEffectNumber();

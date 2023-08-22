@@ -48,7 +48,7 @@ class Card475 extends Card
   }
 
   public function handleCardChoice(array $card) {
-    if (self::isLauncher()) {
+    if (self::isTheirTurn()) {
       self::selfExecute($card);
       self::setNextStep(1);
     }
