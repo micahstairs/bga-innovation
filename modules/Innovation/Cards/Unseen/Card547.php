@@ -18,7 +18,7 @@ class Card547 extends Card
       self::setMaxSteps(3);
     } else {
       foreach (self::getCards('achievements') as $card) {
-        if ($card['age'] == null) {
+        if (self::isSpecialAchievement($card)) {
           self::draw(7);
         }
       }

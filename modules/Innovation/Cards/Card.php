@@ -491,7 +491,7 @@ abstract class Card
 
   protected function isSpecialAchievement($card): bool
   {
-    return $card['age'] === null;
+    return $card['age'] === null && $card['id'] < 1000;
   }
 
   protected function isBlue($card): bool
