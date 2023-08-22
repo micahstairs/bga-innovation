@@ -1892,7 +1892,7 @@ var Innovation = /** @class */ (function (_super) {
                 for (var i = 0; i < 5; i++) {
                     var splay_direction = this.zone["board"][player_id][i].splay_direction;
                     if (splay_direction > 0) {
-                        denominator--;
+                        denominator = Math.min(denominator, 5 - splay_direction);
                     }
                 }
                 dojo.byId("forecast_text_".concat(player_id)).innerHTML = "Forecast<br/>(".concat(numerator, "/").concat(denominator, ")");
@@ -1916,7 +1916,7 @@ var Innovation = /** @class */ (function (_super) {
             for (var i = 0; i < 5; i++) {
                 var splay_direction = this.zone["board"][player_id][i].splay_direction;
                 if (splay_direction > 0) {
-                    denominator--;
+                    denominator = Math.min(denominator, 5 - splay_direction);
                 }
             }
             dojo.byId("safe_text_".concat(player_id)).innerHTML = "Safe<br/>(".concat(numerator, "/").concat(denominator, ")");

@@ -2022,7 +2022,7 @@ class Innovation extends BgaGame {
                 for (let i = 0; i < 5; i++) {
                     let splay_direction = this.zone["board"][player_id][i].splay_direction;
                     if (splay_direction > 0) {
-                        denominator--;
+                        denominator = Math.min(denominator, 5 - splay_direction);
                     }
                 }
                 dojo.byId(`forecast_text_${player_id}`).innerHTML = `Forecast<br/>(${numerator}/${denominator})`;
@@ -2047,7 +2047,7 @@ class Innovation extends BgaGame {
             for (let i = 0; i < 5; i++) {
                 let splay_direction = this.zone["board"][player_id][i].splay_direction;
                 if (splay_direction > 0) {
-                    denominator--;
+                    denominator = Math.min(denominator, 5 - splay_direction);
                 }
             }
             dojo.byId(`safe_text_${player_id}`).innerHTML = `Safe<br/>(${numerator}/${denominator})`;
