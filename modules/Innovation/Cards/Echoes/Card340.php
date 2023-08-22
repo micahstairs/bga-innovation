@@ -17,7 +17,7 @@ class Card340 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       $numCards = self::countCardsKeyedByValue('hand')[1];
       if ($numCards > 0) {
         $willScore = true;

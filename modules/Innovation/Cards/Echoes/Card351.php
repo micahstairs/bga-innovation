@@ -25,7 +25,7 @@ class Card351 extends Card
         self::setMaxSteps(2);
         self::setAuxiliaryArray($values);
       }
-    } else if (self::getEffectNumber() === 1 || self::getBaseDeckCount(self::isFirstOrThirdEdition() ? 1 : 2) > 0) {
+    } else if (self::isFirstNonDemand() || self::getBaseDeckCount(self::isFirstOrThirdEdition() ? 1 : 2) > 0) {
       self::setMaxSteps(1);
     }
   }
@@ -45,7 +45,7 @@ class Card351 extends Card
           'age'           => self::getAuxiliaryValue(),
         ];
       }
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::LEFT,

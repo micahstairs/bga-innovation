@@ -24,7 +24,7 @@ class Card356 extends Card
     if (self::isEcho()) {
       self::draw(4);
       self::setMaxSteps(1);
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       $values = self::getValuesWithThreeOrMoreInHand();
       if (count($values) > 0) {
           self::setMaxSteps(2);
@@ -42,7 +42,7 @@ class Card356 extends Card
         'location_from' => 'hand',
           'location_to' => 'deck',
       ];
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
         return [
           'can_pass' => true,
@@ -73,7 +73,7 @@ class Card356 extends Card
   }
 
   public function afterInteraction() {
-    if (self::isNonDemand() && self::getEffectNumber() === 1) {
+    if (self::isNonDemand() && self::isFirstNonDemand()) {
       self::draw(self::getLastSelectedAge() + 2);
     }
   }

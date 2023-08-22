@@ -20,7 +20,7 @@ class Card342 extends Card
   {
     if (self::isEcho()) {
       self::setMaxSteps(1);
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       if (self::isFourthEdition()) {
         self::drawAndForeshadow(1);
       }

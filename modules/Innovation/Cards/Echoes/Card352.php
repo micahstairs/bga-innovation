@@ -38,7 +38,7 @@ class Card352 extends Card
           'location_to'   => 'deck',
         ];
       }
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       return [
         'choose_value' => true,
         'age'          => self::getBonuses(),
@@ -63,7 +63,7 @@ class Card352 extends Card
         self::setNextStep(1);
         self::setMaxSteps(1);
       }
-    } else if (self::getEffectNumber() === 2 && self::wasForeseen()) {
+    } else if (self::isSecondNonDemand() && self::wasForeseen()) {
       while ($topCard = $this->game->getDeckTopCard($card['age'], $this->game::BASE)) {
         self::tuck($topCard);
       }

@@ -26,7 +26,7 @@ class Card355 extends Card
       } else {
         self::foreshadow(self::drawFromSet(4, $this->game::ECHOES));
       }
-   } else if (self::getEffectNumber() === 1) {
+   } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
    } else if (self::wasForeseen()) {
       self::setMaxSteps(2);
@@ -35,7 +35,7 @@ class Card355 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
         'can_pass' => true,
           'location_from' => 'forecast',
@@ -59,7 +59,7 @@ class Card355 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::drawAndScore(self::getBonusIcon($card) + 1); 
     }
   }

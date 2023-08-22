@@ -17,7 +17,7 @@ class Card22 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       $renderedIcon = self::renderIcon($this->game::HEALTH);
       $numToDraw = 0;
       if (self::isFirstOrThirdEdition()) {

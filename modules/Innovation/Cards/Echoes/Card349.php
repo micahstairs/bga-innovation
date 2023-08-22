@@ -18,7 +18,7 @@ class Card349 extends Card
 
   public function initialExecution()
   {
-    if (self::isEcho() || self::getEffectNumber() === 2) {
+    if (self::isEcho() || self::isSecondNonDemand()) {
       self::setMaxSteps(1);
     } else {
       $minValue = null;

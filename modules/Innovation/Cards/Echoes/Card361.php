@@ -20,7 +20,7 @@ class Card361 extends Card
   {
     if (self::isEcho()) {
       self::drawAndMeld(3);
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       $hasAuthority = false;
       $hasIndustry = false;
       foreach (self::getTopCards() as $card) {

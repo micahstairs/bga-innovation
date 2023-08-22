@@ -16,7 +16,7 @@ class Card330 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       if (self::isFirstOrThirdEdition()) {
         $card = self::drawAndReveal(1);
       } else {

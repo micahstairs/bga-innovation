@@ -20,7 +20,7 @@ class Card337 extends Card
   {
     if (self::isFirstOrThirdEdition()) {
       self::setMaxSteps(3);
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       if (self::wasForeseen()) {
         self::junkBaseDeck(1);
         self::junkBaseDeck(2);

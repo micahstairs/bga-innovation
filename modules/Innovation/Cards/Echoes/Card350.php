@@ -25,7 +25,7 @@ class Card350 extends Card
       } else {
         self::score(self::getBottomCardOfColor($this->game::YELLOW));
       }
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else {
       self::putPaperInScorePileIfTopCard();
