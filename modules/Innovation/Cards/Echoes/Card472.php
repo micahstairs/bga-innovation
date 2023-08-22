@@ -27,7 +27,7 @@ class Card472 extends Card
 
   public function handleCardChoice(array $card)
   {
-    self::putInHand($card);
+    self::transferToHand($card);
     $color = $card['color'];
     if (self::countCardsKeyedByColor('board')[$color] < 5) {
       self::splayAslant($color);

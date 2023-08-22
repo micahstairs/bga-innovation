@@ -1382,47 +1382,46 @@ class Innovation extends Table
             ", ["max_achievement_age" => $this->innovationGameState->usingFourthEditionRules() ? 10 : 9]));
     }
     
-    function tuckCard($card, $owner_to) {
+    function tuckCard($card, $owner_to): ?array {
         return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ true);
     }
 
-    function scoreCard($card, $owner_to) {
+    function scoreCard($card, $owner_to): ?array {
         return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
     }
 
-    function meldCard($card, $owner_to) {
+    function meldCard($card, $owner_to): ?array {
     return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ false, /*score_keyword=*/ false, /*bottom_from=*/ false, /*meld_keyword=*/ true);
     }
 
-    function returnCard($card) {
+    function returnCard($card): ?array {
         return self::transferCardFromTo($card, 0, 'deck');
     }
 
-    function digCard($card, $owner_to) {
-        self::transferCardFromTo($card, $owner_to, "display");
+    function digCard($card, $owner_to): ?array {
+        return self::transferCardFromTo($card, $owner_to, "display");
     }
 
-    function foreshadowCard($card, $owner_to) {
+    function foreshadowCard($card, $owner_to): ?array {
         return self::transferCardFromTo($card, $owner_to, 'forecast');
     }
 
-    function junkCard($card) {
+    function junkCard($card): ?array {
         return self::transferCardFromTo($card, 0, 'junk');
     }
 
-    function safeguardCard($card, $owner_to) {
+    function safeguardCard($card, $owner_to): ?array {
         return self::transferCardFromTo($card, $owner_to, 'safe');
     }
 
-    function putCardBackInSafe($card, $owner_to) {
-        // TOOD:
+    function putCardBackInSafe($card, $owner_to): ?array {
         return self::transferCardFromTo($card, $owner_to, 'safe', /*bottom_to=*/ null, /*score_keyword=*/ false, /*bottom_from=*/ false, /*meld_keyword=*/ false, /*force=*/ true);
     }
 
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false, $force = false) {
+    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false, $force = false): ?array {
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("  - Transferring ". self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
@@ -1437,19 +1436,19 @@ class Innovation extends Table
 
         // Do not move the card at all.
         if ($location_to == 'none') {
-            return;
+            return null;
         }
 
         // Do not move the card if the was was supposed to move to the safe but it is already full (unless we are returning the card to the safe after it was revealed)
         if (!$force && $location_to == 'safe' && self::countCardsInLocation($owner_to, 'safe') >= self::getForecastAndSafeLimit($owner_to)) {
             $this->notifications->notifyLocationFull(clienttranslate('safe'), $owner_to);
-            return;
+            return null;
         }
 
         // Do not move the card if the was was supposed to move to the forecast but it is already full (unless we are returning the card to the forecast after it was revealed)
         if (!$force && $location_to == 'forecast' && $this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocation($owner_to, 'forecast') >= self::getForecastAndSafeLimit($owner_to)) {
             $this->notifications->notifyLocationFull(clienttranslate('forecast'), $owner_to);
-            return;
+            return null;
         }
 
         // Players can only draw an Unseen card on the first draw of a turn
@@ -1482,8 +1481,7 @@ class Innovation extends Table
         if ($location_to == 'board') {
             // The card must continue the current splay
             $splay_direction_to = self::getCurrentSplayDirection($owner_to, $color);
-        }
-        else { // $location_to != 'board'
+        } else { // $location_to != 'board'
             $splay_direction_to = 'NULL';
         }
         

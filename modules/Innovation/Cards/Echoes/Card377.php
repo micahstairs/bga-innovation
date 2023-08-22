@@ -26,7 +26,9 @@ class Card377 extends Card
         if (self::hasIcon($card, $this->game::INDUSTRY)) {
           self::meld($card);
         } else {
-          self::foreshadow($card);
+          if (!self::foreshadow($card)) {
+            self::transferToHand($card);
+          }
           break;
         }
       }

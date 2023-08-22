@@ -328,7 +328,7 @@ abstract class Card
     return in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::coercePlayerId($playerId)));
   }
 
-  protected function return ($card)
+  protected function return($card): ?array
   {
     if (!$card) {
       return null;
@@ -336,7 +336,7 @@ abstract class Card
     return $this->game->returnCard($card);
   }
 
-  protected function placeOnTopOfDeck($card)
+  protected function placeOnTopOfDeck($card): ?array
   {
     if (!$card) {
       return null;
@@ -344,7 +344,7 @@ abstract class Card
     return $this->game->transferCardFromTo($card, 0, 'deck', /*bottom_to=*/false);
   }
 
-  protected function junk($card)
+  protected function junk($card): ?array
   {
     if (!$card) {
       return null;
@@ -352,7 +352,7 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
-  protected function foreshadow($card, int $playerId = null)
+  protected function foreshadow($card, int $playerId = null): ?array
   {
     if (!$card) {
       return null;
@@ -360,30 +360,22 @@ abstract class Card
     return $this->game->foreshadowCard($card, self::coercePlayerId($playerId));
   }
 
-  protected function putInHand($card, int $playerId = null)
-  {
-    if (!$card) {
-      return null;
-    }
-    return $this->game->transferCardFromTo($card, self::coercePlayerId($playerId), 'hand');
-  }
-
-  protected function drawAndMeld(int $age, int $playerId = null)
+  protected function drawAndMeld(int $age, int $playerId = null): ?array
   {
     return $this->game->executeDrawAndMeld(self::coercePlayerId($playerId), $age);
   }
 
-  protected function drawAndTuck(int $age, int $playerId = null)
+  protected function drawAndTuck(int $age, int $playerId = null): ?array
   {
     return $this->game->executeDrawAndTuck(self::coercePlayerId($playerId), $age);
   }
 
-  protected function drawAndScore(int $age, int $playerId = null)
+  protected function drawAndScore(int $age, int $playerId = null): ?array
   {
     return $this->game->executeDrawAndScore(self::coercePlayerId($playerId), $age);
   }
 
-  protected function drawAndSafeguard(int $age, int $playerId = null)
+  protected function drawAndSafeguard(int $age, int $playerId = null): ?array
   {
     $playerId = self::coercePlayerId($playerId);
     if (self::isFourthEdition() && self::countCards('safe') >= $this->game->getForecastAndSafeLimit($playerId)) {
@@ -395,7 +387,7 @@ abstract class Card
     return $card;
   }
 
-  protected function drawAndForeshadow(int $age, int $playerId = null)
+  protected function drawAndForeshadow(int $age, int $playerId = null): ?array
   {
     $playerId = self::coercePlayerId($playerId);
     if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
@@ -407,17 +399,17 @@ abstract class Card
     return $card;
   }
 
-  protected function drawAndReveal(int $age, int $playerId = null)
+  protected function drawAndReveal(int $age, int $playerId = null): ?array
   {
     return $this->game->executeDrawAndReveal(self::coercePlayerId($playerId), $age);
   }
 
-  protected function getTopCardOfColor(int $color, int $playerId = null)
+  protected function getTopCardOfColor(int $color, int $playerId = null): ?array
   {
     return $this->game->getTopCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function getTopCards(int $playerId = null)
+  protected function getTopCards(int $playerId = null): array
   {
     $cards = $this->game->getTopCardsOnBoard(self::coercePlayerId($playerId));
     if ($cards === null) {
@@ -426,12 +418,12 @@ abstract class Card
     return $cards;
   }
 
-  protected function getBottomCardOfColor(int $color, int $playerId = null)
+  protected function getBottomCardOfColor(int $color, int $playerId = null): ?array
   {
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
-  protected function getRevealedCard(int $playerId = null)
+  protected function getRevealedCard(int $playerId = null): ?array
   {
     $cards = self::getCards('revealed');
     if (count($cards) === 0) {
@@ -440,7 +432,7 @@ abstract class Card
     return $cards[0];
   }
 
-  protected function getCards(string $location, int $playerId = null)
+  protected function getCards(string $location, int $playerId = null): array
   {
     return $this->game->getCardsInLocation(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
@@ -452,17 +444,17 @@ abstract class Card
     return $this->game->junkBaseDeck($age);
   }
 
-  protected function revealHand(int $playerId = null)
+  protected function revealHand(int $playerId = null): void
   {
     $this->game->revealLocation(self::coercePlayerId($playerId), 'hand');
   }
 
-  protected function revealScorePile(int $playerId = null)
+  protected function revealScorePile(int $playerId = null): void
   {
     $this->game->revealLocation(self::coercePlayerId($playerId), 'score');
   }
 
-  protected function revealForecast(int $playerId = null)
+  protected function revealForecast(int $playerId = null): void
   {
     $this->game->revealLocation(self::coercePlayerId($playerId), 'forecast');
   }

@@ -13,7 +13,7 @@ class Card476 extends Card
 
   public function initialExecution()
   {
-    $card = self::putInHand(self::drawAndReveal(11));
+    $card = self::transferToHand(self::drawAndReveal(11));
     $this->notifications->notifyCardColor($card['color']);
     self::setAuxiliaryValue($card['color']); // Track color to return
     self::setMaxSteps(1);
