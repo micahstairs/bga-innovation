@@ -16,13 +16,14 @@ class Card391 extends Card
   //   - ECHO: Draw and tuck a [6].
   //   - Score the top two non-bottom cards of the color of the last card you tucked due to
   //     Dentures. If there are none to score, draw and tuck a [6], then repeat this effect.
+  //   - You may splay your blue cards right.
 
   public function initialExecution()
   {
     if (self::isEcho()) {
       $card = self::drawAndTuck(6);
       $this->game->setIndexedAuxiliaryValue(self::getPlayerId(), $card['color']); // Track last color tucked
-    } else {
+    } else if (self::isFirstNonDemand()) {
       if (!$this->game->echoEffectWasExecuted()) {
         return;
       }
@@ -41,6 +42,8 @@ class Card391 extends Card
           $continue = true;
         }
       } while ($continue);
+    } else {
+      self::setMaxSteps(1);
     }
   }
 
