@@ -820,7 +820,7 @@ $this->textual_card_infos = array(
     121 => array(
         'name'                => clienttranslate('Xianrendong Shards'),
         // NOTE: Carl clarified the intended wording of this card in https://boardgamegeek.com/thread/2913636/xianrendong-shards-when-less-2-cards-are-scored.
-        'non_demand_effect_1' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If you score two cards of the same color, draw three ${age_1}s.'),
+        'non_demand_effect_1' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If you score two cards of the same color, draw three ${age_1}.'),
     ),
 
     122 => array(
@@ -848,7 +848,7 @@ $this->textual_card_infos = array(
     126 => array(
         'name'                => clienttranslate('Rosetta Stone'),
         // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Choose a card set. Draw two ${age_2}s from that set. Meld one and transfer the other to an opponent\'s board.'),
+        'non_demand_effect_1' => clienttranslate('Choose a card set. Draw two ${age_2} from that set. Meld one and transfer the other to an opponent\'s board.'),
     ),
 
     127 => array(
@@ -873,7 +873,7 @@ $this->textual_card_infos = array(
     130 => array(
         'name'                => clienttranslate('Baghdad Battery'),
         // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are from different sets, draw and score five ${age_2}s.'),
+        'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are from different sets, draw and score five ${age_2}.'),
     ),
 
     131 => array(
@@ -980,7 +980,7 @@ $this->textual_card_infos = array(
 
     149 => array(
         'name'                => clienttranslate('Molasses Reef Caravel'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw three ${age_4}s. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.'),
+        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw three ${age_4}. Meld a blue card from your hand. Score a card from your hand. Return a card from your score pile.'),
     ),
 
     150 => array(
@@ -1264,7 +1264,7 @@ $this->textual_card_infos = array(
 
     200 => array(
         'name'                => clienttranslate('Syncom 3'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw and reveal five ${age_9}s. If you revealed all five colors, you win.'),
+        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw and reveal five ${age_9}. If you revealed all five colors, you win.'),
     ),
 
     201 => array(
@@ -1274,7 +1274,7 @@ $this->textual_card_infos = array(
 
     202 => array(
         'name'                => clienttranslate('Magnavox Odyssey'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld two ${age_10}s. If they are the same color, you win.'),
+        'non_demand_effect_1' => clienttranslate('Draw and meld two ${age_10}. If they are the same color, you win.'),
     ),
 
     203 => array(
@@ -1576,7 +1576,7 @@ $this->textual_card_infos = array(
 
     336 => array(
         'name'                                => clienttranslate('Comb'),
-        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color, then draw and reveal five ${age_1}s. Keep all cards that match the color chosen. Return the rest of the drawn cards.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color, then draw and reveal five ${age_1}. Keep all cards that match the color chosen. Return the rest of the drawn cards.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Choose a color, then draw and reveal five ${age_1}. Return the drawn cards that do not match the chosen color. If Comb was foreseen, return all cards of the chosen color from all boards.'),
     ),
 
@@ -1604,9 +1604,9 @@ $this->textual_card_infos = array(
 
     340 => array(
         'name'                                => clienttranslate('Noodles'),
-        'non_demand_effect_1_first_and_third' => clienttranslate('If you have more ${age_1}s in your hand than every other player, draw and score a ${age_2}.'),
-        'non_demand_effect_1_fourth'          => clienttranslate('If you have more ${age_1}s in your hand than every opponent, draw and score a ${age_2}.'),
-        'non_demand_effect_2_first_and_third' => clienttranslate('Draw and reveal a ${age_1}. If it is yellow, score all ${age_1}s from your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have more ${age_1} in your hand than every other player, draw and score a ${age_2}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have more ${age_1} in your hand than every opponent, draw and score a ${age_2}.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Draw and reveal a ${age_1}. If it is yellow, score all ${age_1} from your hand.'),
         'non_demand_effect_2_fourth'          => clienttranslate('Draw and reveal a ${age_1}. If it is yellow, score all ${age_1} from your hand.'),
     ),
 
@@ -1643,8 +1643,7 @@ $this->textual_card_infos = array(
 
     345 => array(
         'name'                                => clienttranslate('Lever'),
-        'echo_effect_1_first_and_third'       => clienttranslate('Draw two ${age_2}s.'),
-        'echo_effect_1_fourth'                => clienttranslate('Draw two ${age_2}.'),
+        'echo_effect_1'                       => clienttranslate('Draw two ${age_2}.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may return any number of cards from your hand. For every two cards of matching value returned, draw a card of value one higher.'),
         'non_demand_effect_1_fourth'          => clienttranslate('You may return any number of cards from your hand. For every two cards of matching value you return, draw a card of value one higher.'),
     ),
@@ -2190,7 +2189,7 @@ $this->textual_card_infos = array(
         'name'                                => clienttranslate('Laser'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Return all unclaimed standard achievements. Then, return half (rounded up) of the cards in your score pile. Draw and meld two ${age_10}.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Return half (rounded up) of the cards in your score pile. Return all available standard achievements.'),
-        'non_demand_effect_2_fourth'          => clienttranslate('Draw and foreshadow an ${age_11}. Draw and meld a ${age_10}. If Laser was foreseen, draw and meld an {$age_11}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and foreshadow an ${age_11}. Draw and meld a ${age_10}. If Laser was foreseen, draw and meld an ${age_11}.'),
     ),
 
     417 => array(
