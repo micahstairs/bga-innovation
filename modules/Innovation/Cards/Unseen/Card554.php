@@ -59,7 +59,7 @@ class Card554 extends Card
 
   private function countRevealedGreenCards(): int
   {
-    return self::countCardsKeyedByColor('revealed')[$this->game::GREEN];
+    return intval(self::countCardsKeyedByColor('revealed')[$this->game::GREEN]);
   }
 
 }

@@ -34,9 +34,9 @@ class Card391 extends Card
         if ($count > 2) {
           self::score(self::getTopCardOfColor($color));
           self::score(self::getTopCardOfColor($color));
-        } else if ($count === 2) {
+        } else if ($count == 2) {
           self::score(self::getTopCardOfColor($color));
-        } else if ($count === 1) {
+        } else {
           $card = self::drawAndTuck(6);
           $color = $card['color'];
           $continue = true;

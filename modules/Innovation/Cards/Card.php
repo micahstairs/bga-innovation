@@ -882,6 +882,7 @@ abstract class Card
 
   protected function countCardsKeyedByValue(string $location, int $playerId = null): array
   {
+    // TODO(LATER): Make this return an array of ints.
     return $this->game->countCardsInLocationKeyedByAge(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
@@ -904,6 +905,7 @@ abstract class Card
 
   protected function countCardsKeyedByColor(string $location, int $playerId = null): array
   {
+    // TODO(LATER): Make this return an array of ints.
     return $this->game->countCardsInLocationKeyedByColor(self::coercePlayerIdUsingLocation($playerId, $location), $location);
   }
 
