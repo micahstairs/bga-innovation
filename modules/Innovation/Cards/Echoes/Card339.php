@@ -30,12 +30,6 @@ class Card339 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::isEcho()) {
-      return [
-        'can_pass' => true,
-        'choices'  => [1],
-      ];
-    }
     if (self::isFirstInteraction()) {
       return [
         'can_pass' => true,
