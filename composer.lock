@@ -1109,12 +1109,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/micahstairs/bga-workbench.git",
-                "reference": "c0640f37bc9e88cc3e44991e6219a6e5ebf5ec5f"
+                "reference": "0882f9c6453ed2082abb0b2fbd1b6175b7b6bb18"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/c0640f37bc9e88cc3e44991e6219a6e5ebf5ec5f",
-                "reference": "c0640f37bc9e88cc3e44991e6219a6e5ebf5ec5f",
+                "url": "https://api.github.com/repos/micahstairs/bga-workbench/zipball/0882f9c6453ed2082abb0b2fbd1b6175b7b6bb18",
+                "reference": "0882f9c6453ed2082abb0b2fbd1b6175b7b6bb18",
                 "shasum": ""
             },
             "require": {
@@ -1177,7 +1177,7 @@
             "support": {
                 "source": "https://github.com/micahstairs/bga-workbench/tree/master"
             },
-            "time": "2023-08-05T23:54:55+00:00"
+            "time": "2023-08-06T23:48:18+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -2262,12 +2262,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9e40d7ad957845fcf679fbca2df5e400da6b68da"
+                "reference": "73031f284ace4d1cbc61aa14a22546e64e74d731"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9e40d7ad957845fcf679fbca2df5e400da6b68da",
-                "reference": "9e40d7ad957845fcf679fbca2df5e400da6b68da",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/73031f284ace4d1cbc61aa14a22546e64e74d731",
+                "reference": "73031f284ace4d1cbc61aa14a22546e64e74d731",
                 "shasum": ""
             },
             "require": {
@@ -2352,7 +2352,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-08-02T08:56:16+00:00"
+            "time": "2023-08-21T05:55:25+00:00"
         },
         {
             "name": "psr/container",
@@ -3238,12 +3238,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "7a733cd458240c6fbf20d9e01def547e6aeedf8d"
+                "reference": "a813c38729aef0034ff7b0f5f0ac54e94ea76804"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/7a733cd458240c6fbf20d9e01def547e6aeedf8d",
-                "reference": "7a733cd458240c6fbf20d9e01def547e6aeedf8d",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/a813c38729aef0034ff7b0f5f0ac54e94ea76804",
+                "reference": "a813c38729aef0034ff7b0f5f0ac54e94ea76804",
                 "shasum": ""
             },
             "require": {
@@ -3288,7 +3288,7 @@
                 "source": "https://github.com/squizlabs/PHP_CodeSniffer",
                 "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
             },
-            "time": "2023-08-01T16:27:33+00:00"
+            "time": "2023-08-06T23:03:57+00:00"
         },
         {
             "name": "symfony/config",
