@@ -9856,12 +9856,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 72, age 7: Sanitation
-            case "72N1A":
-                $message_for_player = clienttranslate('Choose a deck to junk');
-                $message_for_others = clienttranslate('${player_name} must choose a deck to junk');
-                break; 
-                
             // id 80, age 8: Mass media
             case "80N1B":
                 $message_for_player = clienttranslate('Choose a value');
@@ -10852,6 +10846,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $card_id <= 4
             || $card_id == 22
             || $card_id == 65
+            || $card_id == 72
             || (330 <= $card_id && $card_id <= 434)
             || $card_id == 440
             || (470 <= $card_id && $card_id <= 486)
@@ -11964,15 +11959,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "71N1":
                 $step_max = 1;
-                break;
-                
-            // id 72, age 7: Sanitation        
-            case "72D1":
-                $step_max = 3;
-                break;
-
-            case "72N1":
-                $step_max = 1; // 4th edition and beyond only
                 break;
                 
             // id 73, age 7: Lighting        
@@ -16006,50 +15992,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'score_keyword' => true
             );
             break;
-        
-        // id 72, age 7: Sanitation
-        case "72D1A":
-            // "... with the lowest card in my hand"
-            $options = array(
-                'player_id' => $launcher_id,
-                'n' => 1,
-                
-                'owner_from' => $launcher_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'hand',
-                
-                'age' => self::getMinAgeInHand($launcher_id)
-            );
-            break;
-        
-        case "72D1B":
-        case "72D1C":
-            // "Exchange the highest card in your hand..." (two times)
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-                
-                'age' => self::getMaxAgeInHand($player_id)
-            );
-            break;
-
-        case "72N1A":
-            // "Choose 7 or 8."
-            // NOTE: This only occurs in the 4th edition and beyond
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'choose_value' => true,
-                'age' => array(7, 8),
-             );
-            break;
             
         // id 73, age 7: Lighting        
         case "73N1A":
@@ -19991,24 +19933,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::executeDraw($player_id, 8);  // "Draw a 8"
                     }
                     break;
-                    
-                // id 72, age 7: Sanitation
-                case "72D1C":
-                    // Finish the exchange
-                    $this->gamestate->changeActivePlayer($launcher_id); // This exchange was initiated by $launcher_id
-                    $id = self::getAuxiliaryValue();
-                    if ($id != -1) { // The attacking player could indeed choose a card
-                        $card = self::getCardInfo($id);
-                        self::transferCardFromTo($card, $player_id, 'hand'); // $launcher_id -> $player_id
-                        self::setAuxiliaryValue(-1);
-                    }
-                    break;
-                    
-                case "72N1A":
-                    // "Junk all cards in that deck."
-                    // NOTE: This only occurs in the 4th edition and beyond
-                    self::junkBaseDeck(self::getAuxiliaryValue());
-                    break;
     
                 // id 73, age 7: Lighting
                 case "73N1A":
@@ -22080,18 +22004,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 break;
-                
-            // id 72, age 7: Sanitation
-            case "72D1A":
-                // Delay the transfer: this way the player can not choose the card he would just receive
-                self::setAuxiliaryValue($card['id']);
-                break;
-            
-            case "72N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses the value ${age}.'), array('player_name' => self::getColoredPlayerName($player_id), 'age' => self::getAgeSquare($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
                     
             // id 73, age 7: Lighting
             case "73N1A":
@@ -22495,7 +22407,24 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             default:
                 if ($special_type_of_choice == 0) {
                     if ($splay_direction == -1) {
-                        if ($location_to == 'revealed,hand') {
+
+                        $this->innovationGameState->set("age_last_selected", $card['age']);
+                        $this->innovationGameState->set("color_last_selected", $card['color']);
+                        $this->innovationGameState->set("owner_last_selected", $card['owner']);
+                        $executionState = (new ExecutionState($this))
+                            ->setEdition($this->innovationGameState->getEdition())
+                            ->setLauncherId($nested_card_state['launcher_id'])
+                            ->setPlayerId($player_id)
+                            ->setEffectType($current_effect_type)
+                            ->setEffectNumber($current_effect_number)
+                            ->setCurrentStep(self::getStep())
+                            ->setNextStep(self::getStep() + 1)
+                            ->setMaxSteps(self::getStepMax())
+                            ->setNumChosen($this->innovationGameState->get('n') + 1);
+
+                        if (self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
+                            // Do nothing since the card transfer was overridden
+                        } else if ($location_to == 'revealed,hand') {
                             $card = self::transferCardFromTo($card, $owner_to, 'revealed');
                             self::transferCardFromTo($card, $owner_to, 'hand');
                         } else if ($location_to == 'revealed,deck') {
@@ -22511,19 +22440,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                         }
                         if ($code !== null && self::isInSeparateFile($card_id)) {
-                            $this->innovationGameState->set("age_last_selected", $card['age']);
-                            $this->innovationGameState->set("color_last_selected", $card['color']);
-                            $this->innovationGameState->set("owner_last_selected", $card['owner']);
-                            $executionState = (new ExecutionState($this))
-                                ->setEdition($this->innovationGameState->getEdition())
-                                ->setLauncherId($nested_card_state['launcher_id'])
-                                ->setPlayerId($player_id)
-                                ->setEffectType($current_effect_type)
-                                ->setEffectNumber($current_effect_number)
-                                ->setCurrentStep(self::getStep())
-                                ->setNextStep(self::getStep() + 1)
-                                ->setMaxSteps(self::getStepMax())
-                                ->setNumChosen($this->innovationGameState->get('n') + 1);
                             self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
                             self::setStepMax($executionState->getMaxSteps());
                             self::setStep($executionState->getNextStep() - 1);

@@ -68,6 +68,13 @@ abstract class Card
     // the interaction was aborted before it started.
   }
 
+  public function executeCardTransfer(array $card): bool
+  {
+    // Subclasses can optionally override this function if the default card transfer needs to be overridden.
+    // The override should return true if the transfer was handled, false otherwise.
+    return false;
+  }
+
   public function handleCardChoice(array $card)
   {
     // Subclasses can optionally override this function if any extra handling is needed after each individual card is chosen.
