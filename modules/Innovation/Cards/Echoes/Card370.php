@@ -68,9 +68,9 @@ class Card370 extends Card
       }
     } else {
       return [
-        'location_from'     => 'board',
-        'owner_from'        => 'any player',
-        'forshadow_keyword' => true,
+        'location_from'      => 'board',
+        'owner_from'         => 'any player',
+        'foreshadow_keyword' => true,
       ];
     }
   }
