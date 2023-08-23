@@ -1556,6 +1556,7 @@ $this->textual_card_infos = array(
         'echo_effect_1_fourth'                => clienttranslate('Tuck a ${age_1} from your hand.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and foreshadow a ${age_3}.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Choose to either draw and foreshadow a ${age_2}, or tuck a ${age_2} from your forecast.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If you have no cards in your forecast, draw and foreshadow a ${age_3}.')
     ),
 
     334 => array(
@@ -2370,7 +2371,7 @@ $this->textual_card_infos = array(
     439 => array(
         'name'                                   => clienttranslate('Supremacy'),
         'condition_for_claiming_first_and_third' => clienttranslate('Claim this special achievement ${immediately} if you have three icons or more of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
-        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have three icons of the same icon type visible in each of four different colors. (Each color has to have the same icon as the other colors.)'),
+        'condition_for_claiming_fourth'          => clienttranslate('Claim this special achievement at the end of any action if you have three icons of the same icon type visible in each of four different colors. (Each color has to have the same icon type as the other colors.)'),
         'alternative_condition_for_claiming'     => clienttranslate('May also be claimed via ${age_3} Novel.')
     ),
 

@@ -14,15 +14,20 @@ class Card333 extends Card
   // - 4th edition:
   //   - ECHO: Tuck a [1] from your hand.
   //   - Choose to either draw and foreshadow a [2], or tuck a [2] from your forecast.
+  //   - If you have no cards in your forecast, draw and foreshadow a [3].
 
   public function initialExecution()
   {
     if (self::isEcho()) {
       self::setMaxSteps(1);
-    } else if (self::isFirstOrThirdEdition()) {
+    } else if (self::isFirstNonDemand()) {
+      if (self::isFirstOrThirdEdition()) {
+        self::drawAndForeshadow(3);
+      } else {
+        self::setMaxSteps(1);
+      }
+    } else if (self::countCards('forecast') === 0) {
       self::drawAndForeshadow(3);
-    } else {
-      self::setMaxSteps(1);
     }
   }
 
