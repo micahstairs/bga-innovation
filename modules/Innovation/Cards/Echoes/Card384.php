@@ -93,7 +93,7 @@ class Card384 extends Card
       self::setMaxSteps(2);
     } else if (self::isFirstNonDemand() && self::isFirstInteraction()) {
       $revealedCard = self::drawAndReveal($card['age']);
-      $topCard = self::getTopCardOfColor($revealedCard['colo']);
+      $topCard = self::getTopCardOfColor($revealedCard['color']);
       if (!$topCard || $revealedCard['faceup_age'] > $topCard['faceup_age']) {
         self::meld($revealedCard);
       } else {
