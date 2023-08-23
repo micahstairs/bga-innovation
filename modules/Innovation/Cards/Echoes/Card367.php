@@ -25,7 +25,7 @@ class Card367 extends Card
       self::setMaxSteps(1);
     } else if (self::isDemand()) {
       self::setMaxSteps(1);
-    } else if (self::getEffectNumber() === 1) {
+    } else if (self::isFirstNonDemand()) {
       if (self::isFirstOrThirdEdition()) {
         $numCards = $this->game->intDivision(self::getAuxiliaryValue(), 2);
         for ($i = 0; $i < $numCards; $i++) {

@@ -654,18 +654,10 @@ class Innovation extends Table
         self::extractAgeAchievements();
         
         // Deal 2 cards of age 1 to each player
-        if ($this->innovationGameState->unseenExpansionEnabled()) {
-            self::DbQuery("UPDATE player SET will_draw_unseen_card_next = TRUE");
-        }
-        for ($i = 1; $i <= 2; $i++) {
-            foreach ($players as $player_id => $player) {
-                $this->gamestate->changeActivePlayer($player_id);
-                if ($i === 2 && $this->innovationGameState->echoesExpansionEnabled()) {
-                    self::executeDraw($player_id, 1, "hand", /*bottom_to=*/ false, self::ECHOES);
-                } else {
-                    self::executeDraw($player_id, 1);
-                }
-            }
+        foreach ($players as $player_id => $player) {
+            $this->gamestate->changeActivePlayer($player_id);
+            self::executeDraw($player_id, 1);
+            self::executeDraw($player_id, 1);
         }
 
         // Add information to the database about which cards have a demand.
@@ -8749,6 +8741,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function throwInvalidChoiceException() {
+        if (self::getGameStateValue('debug_mode') == 1) {
+            debug_print_backtrace();
+        }
         throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
     }
     
