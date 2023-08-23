@@ -6062,7 +6062,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
        $nextJunkPosition = 1 + self::getUniqueValueFromDB(self::format("
             SELECT
-                COALESCE(MAX(position), 0)
+                COALESCE(MAX(position), -1)
             FROM
                 card
             WHERE
@@ -8742,7 +8742,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function throwInvalidChoiceException() {
         if (self::getGameStateValue('debug_mode') == 1) {
-            debug_print_backtrace();
+            debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         }
         throw new BgaUserException(self::_("Your choice was invalid (try refreshing the page)"));
     }
