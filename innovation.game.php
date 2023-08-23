@@ -8555,33 +8555,21 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         switch(self::decodeSpecialTypeOfChoice($special_type_of_choice)) {
             case 'choose_from_list':
                 if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('choice_array'))) {
-                    if (self::getGameStateValue('debug_mode') == 1) {
-                        error_log(print_r(['choice' => $choice, 'choice_type' => gettype($choice), 'valid_choices' => $this->innovationGameState->getAsArray('choice_array')], true));
-                    }
                     self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_value':
                 if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('age_array'))) {
-                    if (self::getGameStateValue('debug_mode') == 1) {
-                        error_log(print_r(['choice' => $choice, 'choice_type' => gettype($choice), 'valid_choices' => $this->innovationGameState->getAsArray('age_array')], true));
-                    }
                     self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_non_negative_integer':
                 if (!ctype_digit($choice) || $choice < 0 || $choice > 1000) {
-                    if (self::getGameStateValue('debug_mode') == 1) {
-                        error_log(print_r(['choice' => $choice, 'choice_type' => gettype($choice)]));
-                    }
                     self::throwInvalidChoiceException();
                 }
                 break;
             case 'choose_color':
                 if (!ctype_digit($choice) || !in_array($choice, $this->innovationGameState->getAsArray('color_array'))) {
-                    if (self::getGameStateValue('debug_mode') == 1) {
-                        error_log(print_r(['choice' => $choice, 'choice_type' => gettype($choice), 'valid_choices' => $this->innovationGameState->getAsArray('color_array')], true));
-                    }
                     self::throwInvalidChoiceException();
                 }
                 break;
@@ -8614,9 +8602,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $player_index = self::getUniqueValueFromDB(self::format("SELECT player_index FROM player WHERE player_id = {player_id}", array('player_id' => $choice)));
                 }
                 if ($player_index == null || !in_array($player_index, $this->innovationGameState->getAsArray('player_array'))) {
-                    if (self::getGameStateValue('debug_mode') == 1) {
-                        error_log(print_r(['player_index' => $player_index, 'valid_player_indexes' => $this->innovationGameState->getAsArray('player_array')], true));
-                    }
                     self::throwInvalidChoiceException();
                 }
                 break;
