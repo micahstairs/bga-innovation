@@ -75,7 +75,7 @@ class Card413 extends Card
   }
 
   private function getEvenBonuses(): array {
-    return array_filter(self::getBonuses(), 'isEven');
+    return array_filter(self::getBonuses(), [$this, 'isEven']);
   }
 
   private function isEven(int $value): bool {
@@ -83,7 +83,7 @@ class Card413 extends Card
   }
 
   private function getOddBonuses(): array {
-    return array_filter(self::getBonuses(), 'isOdd');
+    return array_filter(self::getBonuses(), [$this, 'isOdd']);
   }
 
   private function isOdd(int $value): bool {
