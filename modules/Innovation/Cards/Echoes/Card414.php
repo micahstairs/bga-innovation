@@ -53,7 +53,7 @@ class Card414 extends Card
   {
     if (self::isFirstInteraction()) {
       self::setAuxiliaryValue($choice); // Track value chosen
-    } else if (self::isFirstInteraction()) {
+    } else if (self::isSecondInteraction()) {
       self::setAuxiliaryValue2($choice); // Track opponent chosen
     }
   }
