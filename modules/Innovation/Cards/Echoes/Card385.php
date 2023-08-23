@@ -102,7 +102,7 @@ class Card385 extends Card
   {
     $count = 0;
     foreach (self::getCards('achievements', 0) as $achievement) {
-      if (!self::isValuedCard($achievement['type'])) {
+      if (self::isSpecialAchievement($achievement)) {
         $count++;
       }
     }
