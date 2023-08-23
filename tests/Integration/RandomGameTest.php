@@ -17,7 +17,8 @@ class RandomGameTest extends BaseIntegrationTest
     self::executeGame();
   }
 
-  private function executeGame() {
+  private function executeGame()
+  {
     while (self::getCurrentStateName() !== 'gameEnd') {
       $actions = [
         [$this, 'draw'],
@@ -44,8 +45,8 @@ class RandomGameTest extends BaseIntegrationTest
   {
     error_log("* DRAW");
     $this->tableInstance
-        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
-        ->draw();
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->draw();
     $this->tableInstance->advanceGame();
   }
 
@@ -55,9 +56,9 @@ class RandomGameTest extends BaseIntegrationTest
     $cardName = $this->tableInstance->getTable()->getCardName($cardId);
     error_log("* MELD $cardName");
     $this->tableInstance
-        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
-        ->stubArg('card_id', $cardId)
-        ->meld();
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->stubArg('card_id', $cardId)
+      ->meld();
     $this->tableInstance->advanceGame();
 
     if (self::getCurrentStateName() === 'promoteCardPlayerTurn') {
@@ -87,9 +88,9 @@ class RandomGameTest extends BaseIntegrationTest
     $cardName = $this->tableInstance->getTable()->getCardName($cardId);
     error_log("* DOGMA $cardName");
     $this->tableInstance
-        ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
-        ->stubArg('card_id', $cardId)
-        ->dogma();
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->stubArg('card_id', $cardId)
+      ->dogma();
     $this->tableInstance->advanceGame();
 
     self::excecuteInteractions();
@@ -158,6 +159,20 @@ class RandomGameTest extends BaseIntegrationTest
         $playerIndex = self::getRandomFromArray(self::getGlobalVariableAsArray('player_array'));
         $choice = $this->tableInstance->getTable()->playerIndexToPlayerId($playerIndex);
         break;
+      case 'choose_special_achievement':
+        $cardIds = [];
+        foreach (self::getCards('achievements', 0) as $card) {
+          if ($card['age'] === null && $card['id'] < 1000) {
+            $cardIds[] = $card['id'];
+          }
+        }
+        foreach (self::getCards('junk', 0) as $card) {
+          if ($card['age'] === null && $card['id'] < 1000) {
+            $cardIds[] = $card['id'];
+          }
+        }
+        $choice = self::getRandomFromArray($cardIds);
+        break;
       default:
         error_log("WARNING: Unknown special type of choice: $decodedChoiceType");
         break;
@@ -169,12 +184,14 @@ class RandomGameTest extends BaseIntegrationTest
       ->chooseSpecialOption();
     $this->tableInstance->advanceGame();
   }
-  
-  private function getRandomFromArray(array $array): int {
+
+  private function getRandomFromArray(array $array): int
+  {
     return $array[array_rand($array)];
   }
 
-  private function getRandomElementsFromArray(array $array, int $numToChoose): array {
+  private function getRandomElementsFromArray(array $array, int $numToChoose): array
+  {
     $choices = [];
     for ($i = 0; $i < $numToChoose; $i++) {
       $choices[] = self::getRandomFromArray($array);

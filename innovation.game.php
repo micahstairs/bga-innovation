@@ -2629,7 +2629,10 @@ class Innovation extends Table
         }
 
         // Update text based on where the card is going to
-        if ($location_to === 'deck') {
+        if ($location_to === 'hand') {
+            $to_somewhere_for_player = clienttranslate(' to your hand');
+            $to_somewhere_for_others = clienttranslate(' to his hand');
+        } else if ($location_to === 'deck') {
             if ($bottom_to) {
                 $action = clienttranslate('return');
             } else {
@@ -10060,14 +10063,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else if ($special_type_of_choice == 13 /* choose_special_achievement */) {
                 $available_ids = [];
                 foreach (self::getCardsInLocation(0, 'achievements') as $card) {
-                    if ($card['age'] === null) {
+                    if ($card['age'] === null && $card['id'] < 1000) {
                         $available_ids[] = $card['id'];
                     }
                 }
                 $args['available_special_achievements'] = $available_ids;
                 $junked_ids = [];
                 foreach (self::getCardsInLocation(0, 'junk') as $card) {
-                    if ($card['age'] === null) {
+                    if ($card['age'] === null && $card['id'] < 1000) {
                         $junked_ids[] = $card['id'];
                     }
                 }
