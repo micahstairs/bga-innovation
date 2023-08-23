@@ -44,10 +44,12 @@ class Card498 extends Card
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() === 0) {
-      self::setMaxSteps(2);
-    } else {
-      self::score(self::getCard(self::getAuxiliaryValue()));
+    if (self::isFirstInteraction()) {
+      if (self::getNumChosen() === 0) {
+        self::setMaxSteps(2);
+      } else {
+        self::score(self::getCard(self::getAuxiliaryValue()));
+      }
     }
   }
 
