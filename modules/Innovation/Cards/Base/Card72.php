@@ -62,12 +62,9 @@ class Card72 extends Card
   public function afterInteraction()
   {
     if (self::isThirdInteraction()) {
-      $cardId = self::getAuxiliaryValue();
-      if ($cardId >= 0) {
-        $this->game->gamestate->changeActivePlayer(self::getLauncherId());
-        self::transferToHand(self::getCard($cardId));
-        self::setAuxiliaryValue(-1);
-      }
+      $this->game->gamestate->changeActivePlayer(self::getLauncherId());
+      self::transferToHand(self::getCard(self::getAuxiliaryValue()));
+      self::setAuxiliaryValue(-1);
     }
   }
 

@@ -2489,7 +2489,7 @@ $this->textual_card_infos = array(
     ),
 
     478 => array(
-        'name'                => clienttranslate('Deep Fake'),
+        'name'                => clienttranslate('Deepfake'),
         'non_demand_effect_1' => clienttranslate('If it is your turn, transfer a top card from any board to your board, then fully execute a top card on your board other than Deepfake. If the transferred card is still a top card, transfer it to its original board.'),
     ),
 
