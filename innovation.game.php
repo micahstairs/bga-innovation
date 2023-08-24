@@ -285,7 +285,7 @@ class Innovation extends Table
                 self::returnCard($card);
                 break;
             case 'topdeck':
-                self::transferCardFromTo($card, 0, 'deck', /*bottom_to=*/ false);
+                self::transferCardFromTo($card, 0, 'deck', ['bottom_to' => false]);
                 break;
             case 'dig':
                 if (self::getArtifactOnDisplay($player_id) != null) {
@@ -1375,15 +1375,15 @@ class Innovation extends Table
     }
     
     function tuckCard($card, $owner_to): ?array {
-        return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'board', ['bottom_to' => true]);
     }
 
     function scoreCard($card, $owner_to): ?array {
-        return self::transferCardFromTo($card, $owner_to, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'score', ['score_keyword' => true]);
     }
 
     function meldCard($card, $owner_to): ?array {
-    return self::transferCardFromTo($card, $owner_to, 'board', /*bottom_to=*/ false, /*score_keyword=*/ false, /*bottom_from=*/ false, /*meld_keyword=*/ true);
+    return self::transferCardFromTo($card, $owner_to, 'board', ['bottom_to' => false, 'meld_keyword' => true]);
     }
 
     function returnCard($card): ?array {
@@ -1407,13 +1407,18 @@ class Innovation extends Table
     }
 
     function putCardBackInSafe($card, $owner_to): ?array {
-        return self::transferCardFromTo($card, $owner_to, 'safe', /*bottom_to=*/ null, /*score_keyword=*/ false, /*bottom_from=*/ false, /*meld_keyword=*/ false, /*force=*/ true);
+        return self::transferCardFromTo($card, $owner_to, 'safe', ['force' => true]);
     }
 
     /**
      * Executes the transfer of the card, returning the new card info.
      **/
-    function transferCardFromTo($card, $owner_to, $location_to, $bottom_to = null, $score_keyword = false, $bottom_from = false, $meld_keyword = false, $force = false): ?array {
+    function transferCardFromTo($card, $owner_to, $location_to, $properties = []): ?array {
+        $bottom_from = array_key_exists('bottom_from', $properties) ? $properties['bottom_from'] : false;
+        $bottom_to = array_key_exists('bottom_to', $properties) ? $properties['bottom_to'] : null;
+        $score_keyword = array_key_exists('score_keyword', $properties) ? $properties['score_keyword'] : false;
+        $meld_keyword = array_key_exists('meld_keyword', $properties) ? $properties['meld_keyword'] : false;
+        $force = array_key_exists('force', $properties) ? $properties['force'] : false;
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
             error_log("  - Transferring ". self::getCardName($card['id']) . " from " . $card['owner'] . "'s " . $card['location'] . " to " . $owner_to . "'s " . $location_to);
@@ -6005,7 +6010,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         try {
-            $card = self::transferCardFromTo($card, $player_id, $location_to, $bottom_to, $location_to == 'score', $bottom_from);
+            $card = self::transferCardFromTo($card, $player_id, $location_to, ['bottom_to' => $bottom_to, 'score_keyword' => $location_to == 'score', 'bottom_from' => $bottom_from]);
         }
         catch (EndOfGame $e) {
             self::trace('EOG bubbled from self::executeDraw');
@@ -14125,7 +14130,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($bottom_card['id'] == $card['id'])
                 {
                     // "If the melded card is a bottom card on your board, score it."
-                    self::transferCardFromTo($card, $player_id, 'score', /*bottom_to=*/ false, /*score_keyword=*/ true);
+                    self::scoreCard($card, $player_id);
                 }
                 break;
                 
@@ -21882,8 +21887,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $different_values_selected_so_far[] = $card['age'];
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
-                // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                self::returnCard($card);
                 break;
             
             // id 21, age 2: Canal building         
@@ -22015,8 +22019,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $different_values_selected_so_far[] = $card['age'];
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
-                // Do the transfer as stated in B (tuck)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                self::tuckCard($card, $owner_to);
                 break;
             
             // id 80, age 8, Mass media
@@ -22033,8 +22036,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $different_values_selected_so_far[] = $card['age'];
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
-                // Do the transfer as stated in B (tuck)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                self::tuckCard($card, $owner_to);
                 break;
             
             // id 83, age 8: Empiricism     
@@ -22065,8 +22067,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($card['color'] == 4 /* purple*/) { // A purple card has been tucked
                     self::setAuxiliaryValue(1); // Flag that
                 }
-                // Do the transfer as stated in B (tuck)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                self::tuckCard($card, $owner_to);
                 break;
 
             // id 91, age 9: Ecology   
@@ -22170,8 +22171,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $different_values_selected_so_far[] = $card['age'];
                     self::setAuxiliaryValue2FromArray($different_values_selected_so_far);
                 }
-                // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                self::returnCard($card);
                 break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
@@ -22396,8 +22396,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($card['age'] > $max_value_selected_so_far) {
                     self::setAuxiliaryValue($card['age']);
                 }
-                // Do the transfer as stated in B (return)
-                self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                self::returnCard($card);
                 break;
             
             // id 525, Unseen age 5: Popular Science
@@ -22437,12 +22436,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::returnCard($card);
                         } else if ($location_to == 'revealed,score') {
                             $card = self::transferCardFromTo($card, $owner_to, 'revealed');
-                            self::transferCardFromTo($card, $owner_to, 'score', $bottom_to, $score_keyword);
+                            self::scoreCard($card, $owner_to);
                         } else if ($location_to == 'junk,safe') {
                             $card = self::junkCard($card);
                             self::safeguardCard($card, $owner_to);
                         } else {
-                            self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
+                            // TODO(LATER): Figure out if 'bottom_from' should be included here too.
+                            self::transferCardFromTo($card, $owner_to, $location_to, ['bottom_to' => $bottom_to, 'score_keyword' => $score_keyword, 'meld_keyword' => $meld_keyword]);
                         }
                         if ($code !== null && self::isInSeparateFile($card_id)) {
                             self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
