@@ -22444,7 +22444,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                         }
-                        if (self::isInSeparateFile($card_id)) {
+                        if ($code !== null && self::isInSeparateFile($card_id)) {
                             self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
                             self::setStepMax($executionState->getMaxSteps());
                             self::setStep($executionState->getNextStep() - 1);
