@@ -46,7 +46,7 @@ class Card428 extends Card
       return [
         'location_from' => 'board',
         'score_keyword' => true,
-        'color' => self::getAllColorsOtherThan($this->game::RED),
+        'color'         => self::getAllColorsOtherThan($this->game::RED),
       ];
     } else {
       if (self::isFirstInteraction()) {
@@ -54,16 +54,18 @@ class Card428 extends Card
         return ['choose_icon_type' => true];
       } else {
         return [
+          'n'             => 'all',
           'location_from' => 'board',
-          'owner_to' => self::getLauncherId(),
-          'location_to' => 'score',
-          'without_icon' => self::getAuxiliaryValue(),
+          'owner_to'      => self::getLauncherId(),
+          'location_to'   => 'score',
+          'without_icon'  => self::getAuxiliaryValue(),
         ];
       }
     }
   }
 
-  public function handleSpecialChoice(int $icon) {
+  public function handleSpecialChoice(int $icon)
+  {
     $this->notifications->notifyIconChoice($icon, self::getPlayerId());
     self::setAuxiliaryValue($icon); // Track exempted icon
   }
