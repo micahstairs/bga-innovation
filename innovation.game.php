@@ -21813,11 +21813,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         // There won't be any nested card state if a player is returning cards after the Search icon or Junk Achievement icon was triggered.
         if ($nested_card_state == null) {
-            $code = null;
+            $card_id = null;
+            $launcher_id = $player_id;
             $current_effect_type = -1;
             $current_effect_number = -1;
+            $code = null;
         } else {
             $card_id = $nested_card_state['card_id'];
+            $launcher_id = $nested_card_state['launcher_id'];
             $current_effect_type = $nested_card_state['current_effect_type'];
             $current_effect_number = $nested_card_state['current_effect_number'];
             // Echo effects are sometimes executed on cards other than the card being dogma'd
@@ -21834,7 +21837,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             if ($special_type_of_choice != 0 && $code !== null && self::isInSeparateFile($card_id)) {
                 $executionState = (new ExecutionState($this))
                     ->setEdition($this->innovationGameState->getEdition())
-                    ->setLauncherId($nested_card_state['launcher_id'])
+                    ->setLauncherId($launcher_id)
                     ->setPlayerId($player_id)
                     ->setEffectType($current_effect_type)
                     ->setEffectNumber($current_effect_number)
@@ -22413,7 +22416,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $this->innovationGameState->set("owner_last_selected", $card['owner']);
                         $executionState = (new ExecutionState($this))
                             ->setEdition($this->innovationGameState->getEdition())
-                            ->setLauncherId($nested_card_state['launcher_id'])
+                            ->setLauncherId($launcher_id)
                             ->setPlayerId($player_id)
                             ->setEffectType($current_effect_type)
                             ->setEffectNumber($current_effect_number)
@@ -22422,7 +22425,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             ->setMaxSteps(self::getStepMax())
                             ->setNumChosen($this->innovationGameState->get('n') + 1);
 
-                        if (self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
+                        if ($code !== null && self::isInSeparateFile($card_id) && self::getCardInstance($card_id, $executionState)->executeCardTransfer(self::getCardInfo($selected_card_id))) {
                             // Do nothing since the card transfer was overridden
                         } else if ($location_to == 'revealed,hand') {
                             $card = self::transferCardFromTo($card, $owner_to, 'revealed');
@@ -22439,7 +22442,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::transferCardFromTo($card, $owner_to, $location_to, $bottom_to, $score_keyword, /*bottom_from=*/ false, $meld_keyword);
                         }
-                        if ($code !== null && self::isInSeparateFile($card_id)) {
+                        if (self::isInSeparateFile($card_id)) {
                             self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
                             self::setStepMax($executionState->getMaxSteps());
                             self::setStep($executionState->getNextStep() - 1);
