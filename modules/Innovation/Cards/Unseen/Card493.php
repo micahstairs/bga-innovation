@@ -49,16 +49,4 @@ class Card493 extends Card
     }
   }
 
-  private function getIcons($card): array
-  {
-    $icons = [];
-    for ($i = 1; $i <= 6; $i++) {
-      $icon = $card['spot_' . $i];
-      if ($icon > 0) {
-        // TODO(4E): There is currently a bug here with Search icons.
-        $icons[] = $icon;
-      }
-    }
-    return $icons;
-  }
 }
