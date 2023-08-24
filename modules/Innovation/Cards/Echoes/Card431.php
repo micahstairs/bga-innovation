@@ -25,7 +25,7 @@ class Card431 extends Card
     if (self::isEcho()) {
       self::drawAndForeshadow(11);
     } else if (self::isFirstNonDemand()) {
-      $numCards = $this->game->intDivision(self::getIconCount($this->game::EFFICIENCY), 2);
+      $numCards = $this->game->intDivision(self::getStandardIconCount($this->game::EFFICIENCY), 2);
       for ($i = 0; $i < $numCards; $i++) {
         self::draw(10);
       }

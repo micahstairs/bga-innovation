@@ -19,7 +19,7 @@ class Card405 extends Card
 
   public function initialExecution()
   {
-    $numCardsToDraw = $this->game->intDivision(self::getIconCount($this->game::CONCEPT), 2);
+    $numCardsToDraw = $this->game->intDivision(self::getStandardIconCount($this->game::CONCEPT), 2);
     if ($numCardsToDraw > 0 || self::wasForeseen()) {
       $cardIds = [];
       for ($i = 0; $i < $numCardsToDraw; $i++) {

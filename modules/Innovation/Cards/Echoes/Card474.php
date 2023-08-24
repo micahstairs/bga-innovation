@@ -27,7 +27,7 @@ class Card474 extends Card
     $maxIconPlayerId = null;
     $multiplePlayersTied = true;
     foreach (self::getPlayerIds() as $playerId) {
-      $iconCount = self::getIconCount($icon, $playerId);
+      $iconCount = self::getStandardIconCount($icon, $playerId);
       if ($iconCount > $maxIconCount) {
         $maxIconCount = $iconCount;
         $maxIconPlayerId = $playerId;

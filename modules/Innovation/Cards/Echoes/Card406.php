@@ -24,7 +24,7 @@ class Card406 extends Card
     if (self::isEcho()) {
       self::drawAndTuck(8);
     } else if (self::isFirstNonDemand()) {
-      $numCards = $this->game->intDivision(self::getIconCount($this->game::HEALTH), 3);
+      $numCards = $this->game->intDivision(self::getStandardIconCount($this->game::HEALTH), 3);
       if ($numCards > 0) {
         self::setAuxiliaryValue($numCards); // Track number of cards to draw and foreshadow
         self::setMaxSteps(1);

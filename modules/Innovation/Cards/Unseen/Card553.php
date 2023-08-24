@@ -15,7 +15,7 @@ class Card553 extends Card
   {
     $iconCounts = [0, 0, 0, 0, 0, 0, 0, 0];
     for ($color = 0; $color < 5; $color++) {
-      foreach (self::getIconCounts() as $icon => $count) {
+      foreach (self::getStandardIconCounts() as $icon => $count) {
         $iconCounts[$icon] += $this->game->countVisibleIconsInPile(self::getPlayerId(), $icon, $color);
       }
     }

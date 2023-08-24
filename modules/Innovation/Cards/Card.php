@@ -926,6 +926,72 @@ abstract class Card
     return $this->game->getPlayerScore(self::coercePlayerId($playerId));
   }
 
+  protected function getStandardIconCount(int $icon, int $playerId = null): int
+  {
+    return $this->game->getPlayerSingleRessourceCount(self::coercePlayerId($playerId), $icon);
+  }
+
+  protected function getStandardIconCounts(int $playerId = null): array
+  {
+    return $this->game->getPlayerResourceCounts(self::coercePlayerId($playerId));
+  }
+
+  protected function getAllIconCounts(int $playerId = null): array
+  {
+    $icons = [];
+    $cardsByColor = self::getCardsKeyedByColor('board', $playerId);
+    foreach ($cardsByColor as $stack) {
+      if (count($stack) > 1) {
+        $spots = self::getVisibleSpotsOnBuriedCard(intval($stack[0]['splay_direction']));
+      }
+      foreach ($stack as $card) {
+        if ($card['position'] == count($stack) - 1) {
+          // All icons are visible on the top card in the stack
+          $icons = array_merge($icons, self::getIcons($card));
+        } else {
+          $icons = array_merge($icons, self::getIcons($card, $spots));
+        }
+      }
+    }
+    // convert array of icons to array of counts
+    return array_count_values($icons);
+  }
+
+
+  protected function hasIconInCommon(array $card1, array $card2): bool
+  {
+    return count(array_intersect(self::getIcons($card1), self::getIcons($card2))) > 0;
+  }
+
+  private function getVisibleSpotsOnBuriedCard(int $splayDirection): array {
+    switch ($splayDirection) {
+      case $this->game::LEFT:
+        return [4, 5];
+      case $this->game::RIGHT:
+        return [1, 2];
+      case $this->game::UP:
+        return [2, 3, 4];
+      case $this->game::ASLANT:
+        return [1, 2, 3, 4];
+      default:
+        return [];
+    }
+  }
+
+  protected function getIcons(array $card, array $spots = [1, 2, 3, 4, 5, 6]): array
+  {
+    $icons = [];
+    foreach ($spots as $spot) {
+      $icon = $card['spot_' . $spot];
+      // Echo effects don't actually count as an icon type
+      if ($icon && $icon != $this->game::ECHO_EFFECT_ICON) {
+        // Bonus icons are normalized to 100 since they are considered to be the same icon type
+        $icons[] = min($icon, 100);
+      }
+    }
+    return $icons;
+  }
+
   protected function getBonusIcon(array $card): int
   {
     $bonusIcons = $this->game->getBonusIcons($card);
@@ -939,34 +1005,6 @@ abstract class Card
   protected function hasBonusIcon(array $card): int
   {
     return self::getBonusIcon($card) > 0;
-  }
-
-  protected function hasIconInCommon(array $card1, array $card2): bool
-  {
-    return count(array_intersect(self::getIconTypes($card1), self::getIconTypes($card2))) > 0;
-  }
-
-  protected function getIconTypes(array $card): array
-  {
-    $icons = [];
-    for ($i = 1; $i <= 6; $i++) {
-      $icon = $card['spot_' . $i];
-      // Echo effects don't actually count as an icon type
-      if ($icon && !$this->game::ECHO_EFFECT_ICON) {
-        $icons[] = min($icon, 100);
-      }
-    }
-    return $icons;
-  }
-
-  protected function getIconCount(int $icon, int $playerId = null): int
-  {
-    return $this->game->getPlayerSingleRessourceCount(self::coercePlayerId($playerId), $icon);
-  }
-
-  protected function getIconCounts(int $playerId = null): array
-  {
-    return $this->game->getPlayerResourceCounts(self::coercePlayerId($playerId));
   }
 
   protected function wasForeseen(): bool
