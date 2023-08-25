@@ -49,7 +49,7 @@ class Card484 extends Card
       if (self::getAuxiliaryValue() === 0 && count($launcherCardsInHand) > 0) {
         $cardsInScorePile = self::getCards('score', self::getLauncherId());
         foreach ($cardsInHand as $card) {
-          $this->game->transferCardFromTo($card, self::getLauncherId(), 'score');
+          self::transferToScorePile($card, self::getLauncherId());
         }
         foreach ($cardsInScorePile as $card) {
           self::transferToHand($card);

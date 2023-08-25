@@ -16,13 +16,18 @@ class Card566 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() === 1) {
-      $card1 = self::reveal($this->game->getDeckTopCard(9, $this->game::BASE));
-      $card2 = self::reveal($this->game->getDeckTopCard(10, $this->game::BASE));
-      if ($card1 || $card2) {
+      $card1 = $this->game->getDeckTopCard(9, $this->game::BASE);
+      if ($card1) {
+        $this->game->transferCardFromTo($card1, self::getPlayerId(), 'revealed', ['draw_keyword' => false]);
+        self::setMaxSteps(1);
+      }
+      $card2 = $this->game->getDeckTopCard(10, $this->game::BASE);
+      if ($card2) {
+        $this->game->transferCardFromTo($card2, self::getPlayerId(), 'revealed', ['draw_keyword' => false]);
         self::setMaxSteps(1);
       }
     } else {
-      if ($this->game->countCardsInLocation(self::getPlayerId(), 'board') == 0) {
+      if (self::countCards('board') === 0) {
         self::win();
       } else {
         foreach (self::getCards('junk') as $card) {
@@ -37,14 +42,15 @@ class Card566 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'can_pass' => $this->game->countCardsInLocation(self::getPlayerId(), 'revealed') == 1,
+      'can_pass'      => self::countCards('revealed') === 1,
       'location_from' => 'revealed',
       'location_to'   => 'deck',
     ];
   }
 
-  public function afterInteraction() {
-    foreach (self::getCards( 'revealed') as $card) {
+  public function afterInteraction()
+  {
+    foreach (self::getCards('revealed') as $card) {
       self::placeOnTopOfDeck($card);
     }
   }

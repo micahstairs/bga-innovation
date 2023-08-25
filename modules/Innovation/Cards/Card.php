@@ -353,7 +353,7 @@ abstract class Card
     if (!$card) {
       return null;
     }
-    return $this->game->transferCardFromTo($card, 0, 'deck', /*bottom_to=*/false);
+    return $this->game->transferCardFromTo($card, 0, 'deck', ['bottom_to' => false]);
   }
 
   protected function junk($card): ?array

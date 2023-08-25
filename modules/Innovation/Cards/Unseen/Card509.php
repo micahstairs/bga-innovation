@@ -34,7 +34,7 @@ class Card509 extends Card
         self::safeguard($card);
         break;
       case $this->game::RED:
-        $this->game->transferCardFromTo($card, self::getPlayerId(), 'achievements');
+        self::achieve($card);
         break;
       case $this->game::GREEN:
         self::tuck($card);
@@ -51,7 +51,8 @@ class Card509 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() === 0) {
-      self::safeguard($this->game->getDeckTopCard(4, $this->game::BASE));
+      $card = $this->game->getDeckTopCard(4, $this->game::BASE);
+      $this->game->transferCardFromTo($card, self::getPlayerId(), 'safe', ['draw_keyword' => false]);
     }
   }
 }

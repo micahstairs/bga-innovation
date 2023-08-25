@@ -93,7 +93,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 54-67, 90-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 58-67, 90-92
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -133,6 +133,10 @@ class Innovation extends Table
             'color_last_selected' => 47,
             'score_keyword' => 48,
             'meld_keyword' => 50,
+            'achieve_keyword' => 54,
+            'draw_keyword' => 55, // TODO(4E): Remove this if it doesn't end up being used
+            'safeguard_keyword' => 56,
+            'return_keyword' => 57,
             'limit_shrunk_selection_size' => 68, // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
             'card_id_1' => 69,
             'card_id_2' => 70,
@@ -205,6 +209,20 @@ class Innovation extends Table
         }
         if (is_null(self::getUniqueValueFromDB("SHOW COLUMNS FROM `nested_card_execution` LIKE 'replace_may_with_must'"))) {
             self::applyDbUpgradeToAllDB("ALTER TABLE DBPREFIX_nested_card_execution ADD `replace_may_with_must` BOOLEAN DEFAULT FALSE;");
+        }
+
+        // TODO(4E): Update what we are using to compare from_version. 
+        if ($from_version <= 2308231318) {
+            self::initGameStateLabels(array(
+                'achieve_keyword' => 54,
+                'draw_keyword' => 55,
+                'safeguard_keyword' => 56,
+                'return_keyword' => 57,
+            ));
+            $this->innovationGameState->set('achieve_keyword', -1);
+            $this->innovationGameState->set('draw_keyword', -1);
+            $this->innovationGameState->set('safeguard_keyword', -1);
+            $this->innovationGameState->set('return_keyword', -1);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -1387,7 +1405,7 @@ class Innovation extends Table
     }
 
     function returnCard($card): ?array {
-        return self::transferCardFromTo($card, 0, 'deck');
+        return self::transferCardFromTo($card, 0, 'deck', ['return_keyword' => true]);
     }
 
     function digCard($card, $owner_to): ?array {
@@ -1395,7 +1413,7 @@ class Innovation extends Table
     }
 
     function foreshadowCard($card, $owner_to): ?array {
-        return self::transferCardFromTo($card, $owner_to, 'forecast');
+        return self::transferCardFromTo($card, $owner_to, 'forecast', ['foreshadow_keyword' => true]);
     }
 
     function junkCard($card): ?array {
@@ -1403,11 +1421,11 @@ class Innovation extends Table
     }
 
     function safeguardCard($card, $owner_to): ?array {
-        return self::transferCardFromTo($card, $owner_to, 'safe');
+        return self::transferCardFromTo($card, $owner_to, 'safe', ['safeguard_keyword' => true]);
     }
 
     function putCardBackInSafe($card, $owner_to): ?array {
-        return self::transferCardFromTo($card, $owner_to, 'safe', ['force' => true]);
+        return self::transferCardFromTo($card, $owner_to, 'safe', ['safeguard' => false, 'force' => true]);
     }
 
     /**
@@ -1415,9 +1433,13 @@ class Innovation extends Table
      **/
     function transferCardFromTo($card, $owner_to, $location_to, $properties = []): ?array {
         $bottom_from = array_key_exists('bottom_from', $properties) ? $properties['bottom_from'] : false;
-        $bottom_to = array_key_exists('bottom_to', $properties) ? $properties['bottom_to'] : null;
+        $bottom_to = array_key_exists('bottom_to', $properties) ? $properties['bottom_to'] : $location_to == 'deck' && !$card['is_relic'];
         $score_keyword = array_key_exists('score_keyword', $properties) ? $properties['score_keyword'] : false;
         $meld_keyword = array_key_exists('meld_keyword', $properties) ? $properties['meld_keyword'] : false;
+        $achieve_keyword = array_key_exists('achieve_keyword', $properties) ? $properties['achieve_keyword'] : $location_to == 'achievements' && $owner_to != 0;
+        $draw_keyword = array_key_exists('draw_keyword', $properties) ? $properties['draw_keyword'] : $card['location'] == 'deck';
+        $safeguard_keyword = array_key_exists('safeguard_keyword', $properties) ? $properties['safeguard_keyword'] : $location_to == 'safe';
+        $return_keyword = array_key_exists('return_keyword', $properties) ? $properties['return_keyword'] : $location_to == 'deck';
         $force = array_key_exists('force', $properties) ? $properties['force'] : false;
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
@@ -1457,11 +1479,6 @@ class Innovation extends Table
         // Relics are not returned to the deck.
         if ($card['is_relic'] && $location_to == 'deck') {
             $location_to = 'relics';
-        }
-
-        // By default, cards are returned to the bottom of the deck, but other cards are returned to the top of their locations
-        if ($bottom_to === null) {
-            $bottom_to = $location_to == 'deck';
         }
 
         $id = $card['id'];
@@ -1629,6 +1646,10 @@ class Innovation extends Table
             'bottom_to' => $bottom_to,
             'score_keyword' => $score_keyword,
             'meld_keyword' => $meld_keyword,
+            'achieve_keyword' => $achieve_keyword,
+            'draw_keyword' => $draw_keyword,
+            'safeguard_keyword' => $safeguard_keyword,
+            'return_keyword' => $return_keyword,
         );
         
         // Update the current state of the card
@@ -2289,10 +2310,10 @@ class Innovation extends Table
         $bottom_to = $transferInfo['bottom_to'];
         $score_keyword = $transferInfo['score_keyword'];
         $meld_keyword = $transferInfo['meld_keyword'];
-
-        // TODO(4E): Pass these keywords in.
-        $safeguard_keyword = false;
-        $achieve_keyword = false;
+        $achieve_keyword = $transferInfo['achieve_keyword'];
+        $draw_keyword = $transferInfo['draw_keyword'];
+        $safeguard_keyword = $transferInfo['safeguard_keyword'];
+        $return_keyword = $transferInfo['return_keyword'];
 
         // Used for the active player
         $visible_for_player = false;
@@ -2307,7 +2328,7 @@ class Innovation extends Table
         $to_somewhere_for_others = '';
 
         // Update text based on where the card is coming from
-        if ($location_from === 'deck') {
+        if ($location_from === 'deck' && $draw_keyword) {
             $action_for_player = clienttranslate('draw');
             $action_for_others = clienttranslate('draws');
         } else if ($location_from === 'safe') {
@@ -2362,7 +2383,7 @@ class Innovation extends Table
             $visible_for_player = true;
             $visible_for_others = true;
             if ($meld_keyword) {
-                if ($location_from === 'deck') {
+                if ($draw_keyword) {
                     $action_for_player = clienttranslate('draw and meld');
                     $action_for_others = clienttranslate('draw and melds');
                 } else if ($this->gamestate->state()['name'] == 'promoteCardPlayerTurn') {
@@ -2373,7 +2394,7 @@ class Innovation extends Table
                     $action_for_others = clienttranslate('melds'); 
                 }
             } else if ($bottom_to) {
-                if ($location_from === 'deck') {
+                if ($draw_keyword) {
                     $action_for_player = clienttranslate('draw and tuck');
                     $action_for_others = clienttranslate('draw and tucks');
                 } else {
@@ -2393,7 +2414,7 @@ class Innovation extends Table
             $to_somewhere_for_others = clienttranslate(' and puts it on display');
         } else if ($location_to === 'forecast') {
             $visible_for_player = true;
-            if ($location_from === 'deck') {
+            if ($draw_keyword) {
                 $action_for_player = clienttranslate('draw and foreshadow');
                 $action_for_others = clienttranslate('draws and foreshadows');
             } else {
@@ -2403,7 +2424,7 @@ class Innovation extends Table
         } else if ($location_to === 'revealed') {
             $visible_for_player = true;
             $visible_for_others = true;
-            if ($location_from === 'deck') {
+            if ($draw_keyword) {
                 $action_for_player = clienttranslate('draw and reveal');
                 $action_for_others = clienttranslate('draws and reveals');
             } else {
@@ -2414,7 +2435,7 @@ class Innovation extends Table
             if ($owner_to == 0) {
                 $to_somewhere_for_player = clienttranslate(' to the available achievements');
                 $to_somewhere_for_others = clienttranslate(' to the available achievements');
-            } else if ($location_from === 'deck') {
+            } else if ($draw_keyword) {
                 $visible_for_player = true;
                 $action_for_player = clienttranslate('draw and achieve');
                 $action_for_others = clienttranslate('draws and achieves');
@@ -2427,7 +2448,7 @@ class Innovation extends Table
             }
         } else if ($location_to === 'score') {
             $visible_for_player = true;
-            if ($location_from === 'deck') {
+            if ($draw_keyword) {
                 $action_for_player = clienttranslate('draw and score');
                 $action_for_others = clienttranslate('draws and scores');
             } else if ($score_keyword) {
@@ -2442,7 +2463,7 @@ class Innovation extends Table
             $to_somewhere_for_player = clienttranslate(' to your hand');
             $to_somewhere_for_others = clienttranslate(' to his hand');
         } else if ($location_to === 'safe') {
-            if ($location_from === 'deck') {
+            if ($draw_keyword) {
                 $visible_for_player = true;
                 $action_for_player = clienttranslate('draw and safeguard');
                 $action_for_others = clienttranslate('draws and safeguards');
@@ -2550,11 +2571,10 @@ class Innovation extends Table
         self::notifyAllPlayersBut($transferInfo['player_id'], "transferedCard", $message_for_others, $notif_args_for_others);
     }
     
-    function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
+    function getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $achieve_keyword, $you_must, $player_must, $player_name, $number, $cards, $targetable_players, $code) {
 
-        // TODO(4E): Pass these keywords in.
+        // TODO(4E): Pass this keyword in.
         $safeguard_keyword = false;
-        $achieve_keyword = false;
 
         // Text used for the active player
         $message_for_player = clienttranslate('${You_must} ${action} ${number} ${card_qualifier}${card}${from_somewhere}${to_somewhere}');
@@ -6470,6 +6490,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('meld_keyword', $rewritten_options)) {
             $rewritten_options['meld_keyword'] = false;
         }
+        if (!array_key_exists('achieve_keyword', $rewritten_options)) {
+            $rewritten_options['achieve_keyword'] = false;
+        }
+        if (!array_key_exists('safeguard_keyword', $rewritten_options)) {
+            $rewritten_options['safeguard_keyword'] = false;
+        }
+        if (!array_key_exists('draw_keyword', $rewritten_options)) {
+            $rewritten_options['draw_keyword'] = false;
+        }
+        if (!array_key_exists('return_keyword', $rewritten_options)) {
+            $rewritten_options['return_keyword'] = false;
+        }
         if (!array_key_exists('require_achievement_eligibility', $rewritten_options)) {
             $rewritten_options['require_achievement_eligibility'] = false;
         }
@@ -6514,6 +6546,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'can_pass':
             case 'score_keyword':
             case 'meld_keyword':
+            case 'achieve_keyword':
+            case 'draw_keyword':
+            case 'safeguard_keyword':
+            case 'return_keyword':
             case 'solid_constraint':
             case 'require_achievement_eligibility':
             case 'has_demand_effect':
@@ -10097,6 +10133,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $with_demand_effect = $this->innovationGameState->get("has_demand_effect");
             $score_keyword = $this->innovationGameState->get("score_keyword");
             $meld_keyword = $this->innovationGameState->get("meld_keyword");
+            $achieve_keyword = $this->innovationGameState->get("achieve_keyword");
         }
         
         // Number of cards
@@ -10188,7 +10225,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Creation of the message
         if ($opponent_name === null || $opponent_id == -2 || $opponent_id == -3 || $opponent_id == -4) {
             if ($splay_direction == -1) {
-                $messages = self::getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
+                $messages = self::getTransferInfoWithOnePlayerInvolved($owner_from, $location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $achieve_keyword, $you_must, $player_must, $player_name, $number, $cards, $opponent_name, $code);
                 $splay_direction = null;
                 $splay_direction_in_clear = null;
             } else {
@@ -14610,15 +14647,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $options['owner_from'] = 0;
                         $options['location_from'] = 'achievements';
                     }
-                    unset($options['achieve_keyword']);
                 }
                 if (array_key_exists('foreshadow_keyword', $options)) {
                     $options['location_to'] = 'forecast';
-                    unset($options['foreshadow_keyword']);
                 }
                 if (array_key_exists('return_keyword', $options)) {
                     $options['location_to'] = 'deck';
-                    unset($options['return_keyword']);
                 }
                 if (array_key_exists('topdeck_keyword', $options)) {
                     $options['location_to'] = 'deck';
@@ -21800,6 +21834,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $bottom_to = $this->innovationGameState->get('bottom_to');
             $score_keyword = $this->innovationGameState->get('score_keyword') == 1;
             $meld_keyword = $this->innovationGameState->get('meld_keyword') == 1;
+            $achieve_keyword = $this->innovationGameState->get('achieve_keyword') == 1;
+            $draw_keyword = $this->innovationGameState->get('draw_keyword') == 1;
+            $safeguard_keyword = $this->innovationGameState->get('safeguard_keyword') == 1;
+            $return_keyword = $this->innovationGameState->get('return_keyword') == 1;
             
             $splay_direction = $this->innovationGameState->get('splay_direction'); // -1 if that was not a choice for splay
         }
@@ -22442,7 +22480,17 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::safeguardCard($card, $owner_to);
                         } else {
                             // TODO(LATER): Figure out if 'bottom_from' should be included here too.
-                            self::transferCardFromTo($card, $owner_to, $location_to, ['bottom_to' => $bottom_to, 'score_keyword' => $score_keyword, 'meld_keyword' => $meld_keyword]);
+                            self::transferCardFromTo($card, $owner_to, $location_to,
+                                [
+                                    'bottom_to' => $bottom_to,
+                                    'score_keyword' => $score_keyword,
+                                    'meld_keyword' => $meld_keyword,
+                                    'achieve_keyword' => $achieve_keyword,
+                                    'draw_keyword' => $draw_keyword,
+                                    'safeguard_keyword' => $safeguard_keyword,
+                                    'return_keyword' => $return_keyword,
+                                ]
+                            );
                         }
                         if ($code !== null && self::isInSeparateFile($card_id)) {
                             self::getCardInstance($card_id, $executionState)->handleCardChoice(self::getCardInfo($selected_card_id));
