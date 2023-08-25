@@ -159,6 +159,12 @@ class RandomGameTest extends BaseIntegrationTest
         $playerIndex = self::getRandomFromArray(self::getGlobalVariableAsArray('player_array'));
         $choice = $this->tableInstance->getTable()->playerIndexToPlayerId($playerIndex);
         break;
+      case 'choose_type':
+        $choice = self::getRandomFromArray(self::getGlobalVariableAsArray('type_array'));
+        break;
+      case 'choose_icon_type':
+        $choice = self::getRandomFromArray(self::getGlobalVariableAsArray('icon_array'));
+        break;
       case 'choose_special_achievement':
         $cardIds = [];
         foreach (self::getCards('achievements', 0) as $card) {
