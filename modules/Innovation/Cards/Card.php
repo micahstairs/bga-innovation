@@ -901,9 +901,9 @@ abstract class Card
   protected function getUniqueColors(string $location, int $playerId = null): array
   {
     $colors = [];
-    $cardsByColor = self::getCardsKeyedByColor($location, $playerId);
+    $counts = self::countCardsKeyedByColor($location, $playerId);
     for ($color = 0; $color < 5; $color++) {
-      if ($cardsByColor[$color] > 0) {
+      if ($counts[$color] > 0) {
         $colors[] = $color;
       }
     }
