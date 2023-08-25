@@ -587,7 +587,7 @@ abstract class Card
 
   protected function isSplayed(int $color, int $playerId = null): int
   {
-    return self::getSplayDirection(self::coercePlayerId($playerId), $color) > 0;
+    return self::getSplayDirection($color, self::coercePlayerId($playerId)) > 0;
   }
 
   // COLOR HELPERS

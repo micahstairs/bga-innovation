@@ -4323,7 +4323,7 @@ class Innovation extends Table
         return $age_to_draw;
     }
     
-    function getCurrentSplayDirection($player_id, $color) {
+    function getCurrentSplayDirection($player_id, $color): int {
         $splay_direction = self::getUniqueValueFromDB(self::format("
             SELECT
                 splay_direction
@@ -4338,7 +4338,7 @@ class Innovation extends Table
             array('owner' => $player_id, 'color' => $color)
        ));
         
-        return $splay_direction !== null ? $splay_direction : 0 /* No card => unsplayed */;
+        return $splay_direction === null ? self::UNSPLAYED : intval($splay_direction);
     }
     
     function getIdsOfCardsInLocation($owner, $location) {

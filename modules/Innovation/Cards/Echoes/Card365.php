@@ -13,7 +13,7 @@ class Card365 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
     } else {
       $value = $this->game->getMinAgeOnBoardTopCards(self::getPlayerId());
