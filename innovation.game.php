@@ -509,6 +509,10 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('owner_last_selected', -1); // Owner of the last selected card
         $this->innovationGameState->setInitial('score_keyword', -1); // 1 if the selected card is being scored, else 0
         $this->innovationGameState->setInitial('meld_keyword', -1); // 1 if the selected card is being melded, else 0
+        $this->innovationGameState->setInitial('achieve_keyword', -1); // 1 if the selected card is being achieved, else 0
+        $this->innovationGameState->setInitial('safeguard_keyword', -1); // 1 if the selected card is being safeguarded, else 0
+        $this->innovationGameState->setInitial('draw_keyword', -1); // 1 if the selected card is being drawn, else 0
+        $this->innovationGameState->setInitial('return_keyword', -1); // 1 if the selected card is being returned, else 0
         $this->innovationGameState->setInitial('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         $this->innovationGameState->setInitial('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         $this->innovationGameState->setInitial('has_splay_direction', -1); // List of splay directions encoded in a single value
@@ -10860,6 +10864,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('owner_last_selected', -1);
             $this->innovationGameState->set('score_keyword', -1);
             $this->innovationGameState->set('meld_keyword', -1);
+            $this->innovationGameState->set('achieve_keyword', -1);
+            $this->innovationGameState->set('safeguard_keyword', -1);
+            $this->innovationGameState->set('draw_keyword', -1);
+            $this->innovationGameState->set('return_keyword', -1);
             $this->innovationGameState->set('require_achievement_eligibility', -1);
             $this->innovationGameState->set('has_demand_effect', -1);
             $this->innovationGameState->set('has_splay_direction', -1);
