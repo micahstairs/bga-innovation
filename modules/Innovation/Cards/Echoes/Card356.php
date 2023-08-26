@@ -39,8 +39,8 @@ class Card356 extends Card
   {
     if (self::isEcho()) {
       return [
-        'location_from' => 'hand',
-        'return_keyword'   => true,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
@@ -51,11 +51,11 @@ class Card356 extends Card
         ];
       } else {
         return [
-          'can_pass'      => true,
-          'n'             => 3,
-          'location_from' => 'hand',
-          'return_keyword'   => true,
-          'age'           => self::getAuxiliaryValue(),
+          'can_pass'       => true,
+          'n'              => 3,
+          'location_from'  => 'hand',
+          'return_keyword' => true,
+          'age'            => self::getAuxiliaryValue(),
         ];
       }
     } else {
