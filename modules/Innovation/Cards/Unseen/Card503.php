@@ -54,7 +54,7 @@ class Card503 extends Card
       } else {
         $stack = self::getCardsKeyedByColor('board')[self::getAuxiliaryValue()];
         if (count($stack) >= 2) {
-          self::transferToBoard($stack[count($stack - 2)], self::getLauncherId());
+          self::transferToBoard($stack[count($stack) - 2], self::getLauncherId());
         }
       }
     }
