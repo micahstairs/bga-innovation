@@ -4,7 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 
-class Card413 extends Card
+class Card415 extends Card
 {
 
   // Calculator
@@ -29,26 +29,28 @@ class Card413 extends Card
         self::setAuxiliaryArray([]); // Tracks total value of cards scored
       }
       return [
-        'n' => 2,
+        'n'             => 2,
         'location_from' => 'board',
-        'bottom_from' => true,
+        'bottom_from'   => true,
         'score_keyword' => true,
-        'color' => self::getAllColorsOtherThan($this->game::BLUE),
+        'color'         => self::getAllColorsOtherThan($this->game::BLUE),
       ];
     } else {
       return [
-        'can_pass' => true,
+        'can_pass'        => true,
         'splay_direction' => $this->game::UP,
-        'color' => [$this->game::BLUE],
+        'color'           => [$this->game::BLUE],
       ];
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::addToAuxiliaryArray($card['faceup_age']);
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isFirstNonDemand()) {
       $total = array_sum(self::getAuxiliaryArray());
       $threshold = self::isFirstOrThirdEdition() ? 11 : 12;
