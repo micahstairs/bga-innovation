@@ -7894,9 +7894,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         self::incStat(1, 'promoted_number', $player_id);
 
         if ($this->innovationGameState->usingFourthEditionRules()) {
-            self::setUpDogma($player_id, self::getCardInfo($card_id));
-            self::trace('promoteCardPlayerTurn->dogmaEffect (promoteCard)');
-            $this->gamestate->nextState('dogmaEffect');
+            $card = self::getCardInfo($card_id);
+            if ($card['dogma_icon']) {
+                self::setUpDogma($player_id, self::getCardInfo($card_id));
+                self::trace('promoteCardPlayerTurn->dogmaEffect (promoteCard)');
+                $this->gamestate->nextState('dogmaEffect');
+            } else {
+                self::trace('promoteCardPlayerTurn->interPlayerTurn (unable to dogma)');
+                $this->gamestate->nextState('interPlayerTurn');
+            }
         } else {
             self::trace('promoteCardPlayerTurn->promoteDogmaPlayerTurn (promoteCard)');
             $this->gamestate->nextState('promoteDogmaPlayerTurn');
