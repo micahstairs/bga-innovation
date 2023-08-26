@@ -6498,6 +6498,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (!array_key_exists('meld_keyword', $rewritten_options)) {
             $rewritten_options['meld_keyword'] = false;
         }
+        if (!array_key_exists('foreshadow_keyword', $rewritten_options)) {
+            $rewritten_options['foreshadow_keyword'] = false;
+        }
         if (!array_key_exists('achieve_keyword', $rewritten_options)) {
             $rewritten_options['achieve_keyword'] = false;
         }
@@ -6603,10 +6606,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             }
             if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction' && $key <> 'with_icons' && $key <> 'without_icons') {
-                // TODO(LATER): Remove this once we find the bug which is triggering this failure.
-                if (!is_numeric($value)) {
-                    throw new BgaVisibleSystemException("Non-numeric value passed to innovationGameState setter: $key = $value");
-                }
                 $this->innovationGameState->set($key, $value);
             }
         }
