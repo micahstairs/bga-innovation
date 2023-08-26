@@ -1436,6 +1436,10 @@ class Innovation extends Table
      * Executes the transfer of the card, returning the new card info.
      **/
     function transferCardFromTo($card, $owner_to, $location_to, $properties = []): ?array {
+        if (!$card) {
+            return null;
+        }
+
         $bottom_from = array_key_exists('bottom_from', $properties) ? $properties['bottom_from'] : false;
         $bottom_to = array_key_exists('bottom_to', $properties) ? $properties['bottom_to'] : $location_to == 'deck' && !$card['is_relic'];
         $score_keyword = array_key_exists('score_keyword', $properties) ? $properties['score_keyword'] : false;
