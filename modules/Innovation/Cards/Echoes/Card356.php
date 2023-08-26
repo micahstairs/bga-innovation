@@ -27,8 +27,8 @@ class Card356 extends Card
     } else if (self::isFirstNonDemand()) {
       $values = self::getValuesWithThreeOrMoreInHand();
       if (count($values) > 0) {
-          self::setMaxSteps(2);
-          $this->game->setAuxiliaryValueFromArray($values);
+        self::setMaxSteps(2);
+        $this->game->setAuxiliaryValueFromArray($values);
       }
     } else {
       self::setMaxSteps(1);
@@ -40,29 +40,29 @@ class Card356 extends Card
     if (self::isEcho()) {
       return [
         'location_from' => 'hand',
-          'location_to' => 'deck',
+        'return_keyword'   => true,
       ];
     } else if (self::isFirstNonDemand()) {
       if (self::isFirstInteraction()) {
         return [
-          'can_pass' => true,
+          'can_pass'     => true,
           'choose_value' => true,
-          'age' => $this->game->getAuxiliaryValueAsArray(),
+          'age'          => $this->game->getAuxiliaryValueAsArray(),
         ];
       } else {
         return [
-          'can_pass' => true,
-          'n' => 3,
+          'can_pass'      => true,
+          'n'             => 3,
           'location_from' => 'hand',
-          'location_to' => 'deck',
-          'age' => self::getAuxiliaryValue(),
+          'return_keyword'   => true,
+          'age'           => self::getAuxiliaryValue(),
         ];
       }
     } else {
       return [
-        'can_pass' => true,
-          'splay_direction' => $this->game::LEFT,
-          'color' => [$this->game::YELLOW, $this->game::BLUE],
+        'can_pass'        => true,
+        'splay_direction' => $this->game::LEFT,
+        'color'           => [$this->game::YELLOW, $this->game::BLUE],
       ];
     }
   }
@@ -72,21 +72,23 @@ class Card356 extends Card
     self::setAuxiliaryValue($value);
   }
 
-  public function afterInteraction() {
-    if (self::isNonDemand() && self::isFirstNonDemand()) {
+  public function afterInteraction()
+  {
+    if (self::isNonDemand() && self::isFirstNonDemand() && self::isSecondInteraction()) {
       self::draw(self::getLastSelectedAge() + 2);
     }
   }
 
-  private function getValuesWithThreeOrMoreInHand(): array {
+  private function getValuesWithThreeOrMoreInHand(): array
+  {
     $cardsByValue = self::getCardsKeyedByValue('hand');
-      $values = [];
-      for ($i = 1; $i <= 11; $i++) {
-          if (count($cardsByValue[$i]) >= 3) {
-              $values[] = $i;
-          }
+    $values = [];
+    for ($i = 1; $i <= 11; $i++) {
+      if (count($cardsByValue[$i]) >= 3) {
+        $values[] = $i;
       }
-      return $values;
+    }
+    return $values;
   }
 
 }
