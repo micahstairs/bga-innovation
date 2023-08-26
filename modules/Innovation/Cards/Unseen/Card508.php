@@ -14,7 +14,7 @@ class Card508 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       $handCards = self::countCardsKeyedByValue('hand');
       $scoreCards = self::countCardsKeyedByValue('score');
       $values = [];
@@ -25,7 +25,7 @@ class Card508 extends Card
       }
       if (count($values) > 0) {
         self::setMaxSteps(1);
-        $this->game->setAuxiliaryValueFromArray($values);
+        self::setAuxiliaryArray($values);
       }
     } else {
       if (self::countCards('hand') >= 2) {
@@ -36,10 +36,10 @@ class Card508 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
         'choose_value' => true,
-        'age'          => $this->game->getAuxiliaryValueAsArray(),
+        'age'          => self::getAuxiliaryArray(),
       ];
     } else {
       return [
@@ -59,14 +59,15 @@ class Card508 extends Card
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
+      $value = self::getAuxiliaryValue();
       $handCards = self::getCardsKeyedByValue('hand');
       $scoreCards = self::getCardsKeyedByValue('score');
       $playerIdOnRight = $this->game->getActivePlayerIdOnRightOfActingPlayer();
-      foreach ($handCards[self::getAuxiliaryValue()] as $card) {
+      foreach ($handCards[$value] as $card) {
         self::transferToScorePile($card, $playerIdOnRight);
       }
-      foreach ($scoreCards[self::getAuxiliaryValue()] as $card) {
+      foreach ($scoreCards[$value] as $card) {
         self::transferToScorePile($card, $playerIdOnRight);
       }
     }
