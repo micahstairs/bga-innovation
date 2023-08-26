@@ -34,20 +34,21 @@ class Card397 extends Card
   {
     if (self::isDemand()) {
       if (self::isFirstInteraction()) {
-      return [
-        'location_from' => 'board',
-        'owner_to'      => self::getLauncherId(),
-        'location_to'   => 'score',
-        'with_bonus'    => true,
-      ];
-    } else {
-      return [
-        'n'              => 4,
-        'location_from'  => 'achievements',
-        'owner_from' => 0,
-        'junk_keyword' => true,
-      ];
-    }
+        return [
+          'n'             => 'all',
+          'location_from' => 'board',
+          'owner_to'      => self::getLauncherId(),
+          'location_to'   => 'score',
+          'with_bonus'    => true,
+        ];
+      } else {
+        return [
+          'n'             => 4,
+          'location_from' => 'achievements',
+          'owner_from'    => 0,
+          'junk_keyword'  => true,
+        ];
+      }
     } else {
       return [
         'n'              => 'all',
