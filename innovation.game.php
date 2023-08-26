@@ -21868,6 +21868,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $draw_keyword = $this->innovationGameState->get('draw_keyword') == 1;
             $safeguard_keyword = $this->innovationGameState->get('safeguard_keyword') == 1;
             $return_keyword = $this->innovationGameState->get('return_keyword') == 1;
+            $foreshadow_keyword = $this->innovationGameState->get('foreshadow_keyword') == 1;
             
             $splay_direction = $this->innovationGameState->get('splay_direction'); // -1 if that was not a choice for splay
         }
