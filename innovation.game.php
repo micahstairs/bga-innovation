@@ -6599,6 +6599,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 break;
             }
             if ($key <> 'age' && $key <> 'color' && $key <> 'type' && $key <> 'icon' && $key <> 'players' && $key <> 'choices' && $key <> 'has_splay_direction' && $key <> 'with_icons' && $key <> 'without_icons') {
+                // TODO(LATER): Remove this once we find the bug which is triggering this failure.
+                if (!is_numeric($value)) {
+                    throw new BgaVisibleSystemException("Non-numeric value passed to innovationGameState setter: $key = $value");
+                }
                 $this->innovationGameState->set($key, $value);
             }
         }
