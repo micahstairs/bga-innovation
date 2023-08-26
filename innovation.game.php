@@ -93,7 +93,7 @@ class Innovation extends Table
         require 'material.inc.php'; // Required for testing purposes
         $this->innovationGameState = new GameState($this);
         $this->notifications = new Notifications($this);
-        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 58-67, 90-92
+        // NOTE: The following values are unused and safe to use: 20-22, 24-25, 59-67, 90-92
         self::initGameStateLabels(array(
             'number_of_achievements_needed_to_win' => 10,
             'turn0' => 11,
@@ -137,6 +137,7 @@ class Innovation extends Table
             'draw_keyword' => 55, // TODO(4E): Remove this if it doesn't end up being used
             'safeguard_keyword' => 56,
             'return_keyword' => 57,
+            'foreshadow_keyword' => 58,
             'limit_shrunk_selection_size' => 68, // Whether the safe/forecast limit shrunk the selection size (1 means it was shrunk)
             'card_id_1' => 69,
             'card_id_2' => 70,
@@ -218,11 +219,13 @@ class Innovation extends Table
                 'draw_keyword' => 55,
                 'safeguard_keyword' => 56,
                 'return_keyword' => 57,
+                'foreshadow_keyword' => 58,
             ));
             $this->innovationGameState->set('achieve_keyword', -1);
             $this->innovationGameState->set('draw_keyword', -1);
             $this->innovationGameState->set('safeguard_keyword', -1);
             $this->innovationGameState->set('return_keyword', -1);
+            $this->innovationGameState->set('foreshadow_keyword', -1);
         }
 
         // TODO(4E): Update what we are using to compare from_version. 
@@ -513,6 +516,7 @@ class Innovation extends Table
         $this->innovationGameState->setInitial('safeguard_keyword', -1); // 1 if the selected card is being safeguarded, else 0
         $this->innovationGameState->setInitial('draw_keyword', -1); // 1 if the selected card is being drawn, else 0
         $this->innovationGameState->setInitial('return_keyword', -1); // 1 if the selected card is being returned, else 0
+        $this->innovationGameState->setInitial('foreshadow_keyword', -1); // 1 if the selected card is being foreshadowed, else 0
         $this->innovationGameState->setInitial('require_achievement_eligibility', -1); // 1 if the numeric achievement card can only be selected if the player is eligible to claim it based on their score
         $this->innovationGameState->setInitial('has_demand_effect', -1); // 1 if the card to be chosen must have a demand effect on it
         $this->innovationGameState->setInitial('has_splay_direction', -1); // List of splay directions encoded in a single value
@@ -1448,6 +1452,7 @@ class Innovation extends Table
         $draw_keyword = array_key_exists('draw_keyword', $properties) ? $properties['draw_keyword'] : $card['location'] == 'deck';
         $safeguard_keyword = array_key_exists('safeguard_keyword', $properties) ? $properties['safeguard_keyword'] : $location_to == 'safe';
         $return_keyword = array_key_exists('return_keyword', $properties) ? $properties['return_keyword'] : $location_to == 'deck';
+        $foreshadow_keyword = array_key_exists('foreshadow_keyword', $properties) ? $properties['foreshadow_keyword'] : $location_to == 'forecast';
         $force = array_key_exists('force', $properties) ? $properties['force'] : false;
 
         if (self::getGameStateValue('debug_mode') == 1 && !array_key_exists('using_debug_buttons', $card)) {
@@ -1658,6 +1663,7 @@ class Innovation extends Table
             'draw_keyword' => $draw_keyword,
             'safeguard_keyword' => $safeguard_keyword,
             'return_keyword' => $return_keyword,
+            'foreshadow_keyword' => $foreshadow_keyword,
         );
         
         // Update the current state of the card
@@ -2322,6 +2328,7 @@ class Innovation extends Table
         $draw_keyword = $transferInfo['draw_keyword'];
         $safeguard_keyword = $transferInfo['safeguard_keyword'];
         $return_keyword = $transferInfo['return_keyword'];
+        $foreshadow_keyword = $transferInfo['foreshadow_keyword'];
 
         // Used for the active player
         $visible_for_player = false;
@@ -10882,6 +10889,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $this->innovationGameState->set('safeguard_keyword', -1);
             $this->innovationGameState->set('draw_keyword', -1);
             $this->innovationGameState->set('return_keyword', -1);
+            $this->innovationGameState->set('foreshadow_keyword', -1);
             $this->innovationGameState->set('require_achievement_eligibility', -1);
             $this->innovationGameState->set('has_demand_effect', -1);
             $this->innovationGameState->set('has_splay_direction', -1);
@@ -22511,6 +22519,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                     'draw_keyword' => $draw_keyword,
                                     'safeguard_keyword' => $safeguard_keyword,
                                     'return_keyword' => $return_keyword,
+                                    'foreshadow_keyword' => $foreshadow_keyword,
                                 ]
                             );
                         }
