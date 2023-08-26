@@ -6557,6 +6557,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'can_pass':
             case 'score_keyword':
             case 'meld_keyword':
+            case 'foreshadow_keyword':
             case 'achieve_keyword':
             case 'draw_keyword':
             case 'safeguard_keyword':
