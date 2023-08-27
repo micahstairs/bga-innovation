@@ -5994,10 +5994,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return self::executeDraw($player_id, $age_min, 'score');
     }
 
-    function executeDrawAndForeshadow($player_id, $age_min = null) {
-        return self::executeDraw($player_id, $age_min, 'forecast');
-    }
-
     function executeDrawAndReveal($player_id, $age_min = null, $type = null) {
         return self::executeDraw($player_id, $age_min, 'revealed', /*bottom_to=*/ false, $type);
     }
@@ -6008,10 +6004,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
     function executeDrawAndTuck($player_id, $age_min = null, $type = null) {
         return self::executeDraw($player_id, $age_min, 'board', /*bottom_to=*/ true, $type);
-    }
-
-    function executeDrawAndSafeguard($player_id, $age_min = null) {
-        return self::executeDraw($player_id, $age_min, 'safe');
     }
 
     /* Execute a draw. If $age_min is null, draw in the deck according to the board of the player, else, draw a card of the specified value or more, according to the rules */
@@ -10923,7 +10915,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 440
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
-            || (493 <= $card_id && $card_id <= 494)
+            || (492 <= $card_id && $card_id <= 494)
             || $card_id == 498
             || $card_id == 503
             || (505 <= $card_id && $card_id <= 509)
@@ -14198,25 +14190,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 {
                     // "If the melded card is a bottom card on your board, score it."
                     self::scoreCard($card, $player_id);
-                }
-                break;
-                
-            // id 492, Unseen age 1: Myth
-            case "492N1":
-                // "If you have two cards of the same color in your hand"
-                $card_id_array = array();
-                $card_count_by_color = self::countCardsInLocationKeyedByColor($player_id, 'hand');
-                foreach (self::getCardsInHand($player_id) as $card) {
-                    if ($card_count_by_color[$card['color']] >= 2) {
-                        $card_id_array[] = $card['id'];
-                    }
-                }
-                
-                if (count($card_id_array) >= 2) {
-                    $step_max = 2;
-                    self::setAuxiliaryArray($card_id_array);
-                } else if (self::countCardsInHand($player_id) >= 2) {
-                    self::revealHand($player_id); // reveal that no matching colors exist
                 }
                 break;
 
@@ -19035,41 +19008,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'age' => self::countCardsInLocation($player_id, 'achievements') + 1,
             );
             break;
-
-        // id 492, Unseen age 1: Myth
-        case "492N1A":
-            // "If you have two cards of the same color in your hand, tuck them."
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-                
-                'card_ids_are_in_auxiliary_array' => true,
-            );
-            break;
-
-        case "492N1B":
-            // Tuck the second
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'bottom_to' => true,
-                
-                'color' => array($this->innovationGameState->get('color_last_selected')),
-            );
-            break;
             
         // id 495, Unseen age 2: Astrology
         case "495N1A":
@@ -21348,21 +21286,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         if ($colors[0] == $card['color'] || $colors[1] == $card['color']) {
                             self::transferCardFromTo($card, $launcher_id, 'hand');
                         }
-                    }
-                    break;
-                    
-                // id 492, Unseen age 1: Myth
-                case "492N1B":
-                    // "If you do, splay left that color, and draw and safeguard a card of value equal to the value of your bottom card of that color."
-                    if ($n > 0) { 
-                        $color = $this->innovationGameState->get('color_last_selected');
-                        $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                        $age_to_draw = 0;
-                        if ($bottom_card !== null) {
-                            self::splayLeft($player_id, $player_id, $color);
-                            $age_to_draw = $bottom_card['age'];
-                        }
-                        self::executeDrawAndSafeguard($player_id, $age_to_draw);
                     }
                     break;
                     

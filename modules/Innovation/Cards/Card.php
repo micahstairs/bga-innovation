@@ -398,7 +398,7 @@ abstract class Card
       $card = self::draw($age, $playerId);
       $this->notifications->notifyLocationFull(clienttranslate('safe'), $playerId);
     } else {
-      $card = $this->game->executeDrawAndSafeguard($playerId, $age);
+      $card = $this->game->executeDraw($playerId, $age, 'safe');
     }
     return $card;
   }
@@ -410,7 +410,7 @@ abstract class Card
       $card = self::draw($age, $playerId);
       $this->notifications->notifyLocationFull(clienttranslate('forecast'), $playerId);
     } else {
-      $card = $this->game->executeDrawAndForeshadow($playerId, $age);
+      $card = $this->game->executeDraw($playerId, $age, 'forecast');
     }
     return $card;
   }
