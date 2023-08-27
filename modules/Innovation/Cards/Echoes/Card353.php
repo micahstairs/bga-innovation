@@ -45,20 +45,21 @@ class Card353 extends Card
 
   public function afterInteraction()
   {
+    $drawnCard = self::getCard(self::getAuxiliaryValue());
     if (self::getNumChosen() === 0) {
       if (self::isFirstOrThirdEdition()) {
         // Reveal hand to prove that there were no matching cards of the drawn card's color.
         self::revealHand();
-        self::foreshadow(self::getRevealedCard(), [$this, 'transferToHand']);
+        self::foreshadow($drawnCard, [$this, 'transferToHand']);
       }
     } else {
       // Only reveal (in 4th edition) if a card was actually tucked
       if (self::isFourthEdition()) {
         // TODO(LATER): It would be a bit more natural if this was revealed before the card was
         // actually tucked (but after the player decided to tuck a card).
-        $this->game->revealCardWithoutMoving(self::getPlayerId(), self::getCard(self::getAuxiliaryValue()));
+        $this->game->revealCardWithoutMoving(self::getPlayerId(), $drawnCard);
       }
-      self::meld(self::getRevealedCard());
+      self::meld($drawnCard);
       if (self::wasForeseen()) {
         self::setMaxSteps(2);
       }

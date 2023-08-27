@@ -19,7 +19,8 @@ class Card508 extends Card
       $scoreCards = self::countCardsKeyedByValue('score');
       $values = [];
       for ($age = 1; $age <= 11; $age++) {
-        if ($handCards[$age] + $scoreCards[$age] == 2 || $handCards[$age] + $scoreCards[$age] == 3) {
+        $sum = $handCards[$age] + $scoreCards[$age];
+        if ($sum == 2 || $sum == 3) {
           $values[] = $age;
         }
       }
