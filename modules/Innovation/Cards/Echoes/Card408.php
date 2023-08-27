@@ -26,7 +26,7 @@ class Card408 extends Card
       // TODO(4E): We need a better bulk junking mechanism here.
       foreach (self::getPlayerIds() as $playerId) {
         foreach (self::getCards('board', $playerId) as $card) {
-          self::junk('card');
+          self::junk($card);
         }
       }
     }
