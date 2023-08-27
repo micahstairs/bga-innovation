@@ -40,6 +40,7 @@ class Card351 extends Card
         ];
       } else {
         return [
+          'n'             => 'all',
           'location_from' => 'hand',
           'tuck_keyword'  => true,
           'age'           => self::getAuxiliaryValue(),
