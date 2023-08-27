@@ -49,7 +49,7 @@ class Card353 extends Card
       if (self::isFirstOrThirdEdition()) {
         // Reveal hand to prove that there were no matching cards of the drawn card's color.
         self::revealHand();
-        self::foreshadow(self::getRevealedCard());
+        self::foreshadow(self::getRevealedCard(), [$this, 'transferToHand']);
       }
     } else {
       // Only reveal (in 4th edition) if a card was actually tucked

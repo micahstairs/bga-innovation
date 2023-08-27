@@ -56,7 +56,8 @@ class Card358 extends Card
       if (self::isFirstOrThirdEdition()) {
         if ($auxiliaryValue > 0) {
           $card = self::draw($auxiliaryValue);
-          self::foreshadow($card, self::getLauncherId());
+          // TODO(4E): There shouldn't be a forecast keyword here.
+          self::foreshadow($card, [$this, 'transferToHand'], self::getLauncherId());
         }
       } else {
         if ($auxiliaryValue === 1 && self::wasForeseen()) {

@@ -15,7 +15,8 @@ class Card357 extends Card
   {
     $maxBonus = $this->game->getMaxBonusIconOnBoard(self::getPlayerId());
     $card = self::drawAndReveal($maxBonus);
-    self::foreshadow($card, self::getLauncherId());
+    // TODO(4E): There shouldn't be a forecast keyword here.
+    self::foreshadow($card, [$this, 'transferToHand'], self::getLauncherId());
     if (self::isRed($card)) {
       foreach (self::getCards('hand') as $card) {
         self::transferToScorePile($card, self::getLauncherId());

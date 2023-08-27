@@ -364,12 +364,16 @@ abstract class Card
     return $this->game->junkCard($card);
   }
 
-  protected function foreshadow($card, int $playerId = null): ?array
+  protected function foreshadow($card, $callbackIfFull, int $playerId = null): ?array
   {
     if (!$card) {
       return null;
     }
-    return $this->game->foreshadowCard($card, self::coercePlayerId($playerId));
+    if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
+      return $callbackIfFull();
+    } else {
+      return $this->game->foreshadowCard($card, self::coercePlayerId($playerId));
+    }
   }
 
   protected function drawAndMeld(int $age, int $playerId = null): ?array
