@@ -22039,7 +22039,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $different_values_selected_so_far[] = $card['age'];
                     self::setAuxiliaryValueFromArray($different_values_selected_so_far);
                 }
-                self::tuckCard($card, $owner_to);
+                self::returnCard($card);
                 break;
             
             // id 83, age 8: Empiricism     
