@@ -371,7 +371,7 @@ abstract class Card
     }
     $playerId = self::coercePlayerId($playerId);
     if (self::isFourthEdition() && self::countCards('forecast') >= $this->game->getForecastAndSafeLimit($playerId)) {
-      return $callbackIfFull();
+      return $callbackIfFull($card);
     } else {
       return $this->game->foreshadowCard($card, $playerId);
     }
