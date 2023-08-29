@@ -74,7 +74,7 @@ class Card356 extends Card
 
   public function afterInteraction()
   {
-    if (self::isNonDemand() && self::isFirstNonDemand() && self::isSecondInteraction()) {
+    if (self::isNonDemand() && self::isFirstNonDemand() && self::isSecondInteraction() && self::getNumChosen() === 3) {
       self::draw(self::getLastSelectedAge() + 2);
     }
   }
