@@ -2454,8 +2454,8 @@ class Innovation extends BgaGame {
         }
 
         let on_display = card_location == 'display';
-        let exists_i_demand_effect = card.i_demand_effect_1 !== undefined;
-        let exists_i_compel_effect = card.i_compel_effect_1 !== undefined;
+        let exists_i_demand_effect = card.i_demand_effect !== undefined;
+        let exists_i_compel_effect = card.i_compel_effect !== undefined;
         let exists_non_demand_effect = card.non_demand_effect_1 !== undefined;
         let can_endorse = dogma_effect_info[card.id].max_age_for_endorse_payment;
         let on_non_adjacent_board = dogma_effect_info[card.id].on_non_adjacent_board;
@@ -3089,8 +3089,8 @@ class Innovation extends BgaGame {
         let title = _(card_data.name).toUpperCase();
         let card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30, /*width_margin=*/ 0, /*height_margin=*/ 0, HTML_id + '_card_title');
 
-        let i_demand_effect = card_data.i_demand_effect_1 ? this.createDogmaEffectText(_(card_data.i_demand_effect_1), card.dogma_icon, size, card.color, 'dark', 'color_' + card.color) : "";
-        let i_compel_effect = card_data.i_compel_effect_1 ? this.createDogmaEffectText(_(card_data.i_compel_effect_1), card.dogma_icon, size, card.color, 'dark', 'color_' + card.color) : "";
+        let i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'color_' + card.color) : "";
+        let i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'color_' + card.color) : "";
         let non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'color_' + card.color) : "";
         let non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2), card.dogma_icon, size, card.color, 'light', 'color_' + card.color) : "";
         let non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3), card.dogma_icon, size, card.color, 'light', 'color_' + card.color) : "";
@@ -3112,7 +3112,7 @@ class Innovation extends BgaGame {
             return div;
         }
         if (icon == 10) {
-            let div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect_1), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + icon, size, size == 'M' ? 11 : 30);
+            let div = this.createAdjustedContent(this.parseForRichedText(_(card.echo_effect), size), 'echo_effect light color_' + card.color + ' square_card_icon ' + size + ' ' + icon_location + ' icon_' + icon, size, size == 'M' ? 11 : 30);
             // Add "display: table;" styling after the size is computed, otherwise it messes up the calculation.
             return div.replace("div class", 'div style="display: table;" class');
         }

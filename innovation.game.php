@@ -4130,15 +4130,15 @@ class Innovation extends Table
     }
 
     function getDemandEffect($id) {
-        return self::getCardPropertyForCurrentVersion('i_demand_effect_1', $id);
+        return self::getCardPropertyForCurrentVersion('i_demand_effect', $id);
     }
 
     function getCompelEffect($id) {
-        return self::getCardPropertyForCurrentVersion('i_compel_effect_1', $id);
+        return self::getCardPropertyForCurrentVersion('i_compel_effect', $id);
     }
 
     function getEchoEffect($id) {
-        return self::getCardPropertyForCurrentVersion('echo_effect_1', $id);
+        return self::getCardPropertyForCurrentVersion('echo_effect', $id);
     }
 
     function getCardPropertyForCurrentVersion($prefix, $id) {
@@ -4183,37 +4183,37 @@ class Innovation extends Table
         unset($textual_infos['name_fourth']);
 
         // Make sure the echo effect reflects the current edition
-        $textual_infos['echo_effect_1'] = self::getEchoEffect($id);
-        if ($textual_infos['echo_effect_1'] === null) {
-            unset($textual_infos['echo_effect_1']);
+        $textual_infos['echo_effect'] = self::getEchoEffect($id);
+        if ($textual_infos['echo_effect'] === null) {
+            unset($textual_infos['echo_effect']);
         }
-        unset($textual_infos['echo_effect_1_first']);
-        unset($textual_infos['echo_effect_1_first_and_third']);
-        unset($textual_infos['echo_effect_1_third']);
-        unset($textual_infos['echo_effect_1_third_and_fourth']);
-        unset($textual_infos['echo_effect_1_fourth']);
+        unset($textual_infos['echo_effect_first']);
+        unset($textual_infos['echo_effect_first_and_third']);
+        unset($textual_infos['echo_effect_third']);
+        unset($textual_infos['echo_effect_third_and_fourth']);
+        unset($textual_infos['echo_effect_fourth']);
 
         // Make sure the demand effect reflects the current edition
-        $textual_infos['i_demand_effect_1'] = self::getDemandEffect($id);
-        if ($textual_infos['i_demand_effect_1'] === null) {
-            unset($textual_infos['i_demand_effect_1']);
+        $textual_infos['i_demand_effect'] = self::getDemandEffect($id);
+        if ($textual_infos['i_demand_effect'] === null) {
+            unset($textual_infos['i_demand_effect']);
         }
-        unset($textual_infos['i_demand_effect_1_first']);
-        unset($textual_infos['i_demand_effect_1_first_and_third']);
-        unset($textual_infos['i_demand_effect_1_third']);
-        unset($textual_infos['i_demand_effect_1_third_and_fourth']);
-        unset($textual_infos['i_demand_effect_1_fourth']);
+        unset($textual_infos['i_demand_effect_first']);
+        unset($textual_infos['i_demand_effect_first_and_third']);
+        unset($textual_infos['i_demand_effect_third']);
+        unset($textual_infos['i_demand_effect_third_and_fourth']);
+        unset($textual_infos['i_demand_effect_fourth']);
 
         // Make sure the compel effect reflects the current edition
-        $textual_infos['i_compel_effect_1'] = self::getCompelEffect($id);
-        if ($textual_infos['i_compel_effect_1'] === null) {
-            unset($textual_infos['i_compel_effect_1']);
+        $textual_infos['i_compel_effect'] = self::getCompelEffect($id);
+        if ($textual_infos['i_compel_effect'] === null) {
+            unset($textual_infos['i_compel_effect']);
         }
-        unset($textual_infos['i_compel_effect_1_first']);
-        unset($textual_infos['i_compel_effect_1_first_and_third']);
-        unset($textual_infos['i_compel_effect_1_third']);
-        unset($textual_infos['i_compel_effect_1_third_and_fourth']);
-        unset($textual_infos['i_compel_effect_1_fourth']);
+        unset($textual_infos['i_compel_effect_first']);
+        unset($textual_infos['i_compel_effect_first_and_third']);
+        unset($textual_infos['i_compel_effect_third']);
+        unset($textual_infos['i_compel_effect_third_and_fourth']);
+        unset($textual_infos['i_compel_effect_fourth']);
 
         // Make sure the non-demand effects reflects the current edition
         for ($i = 1; $i <= 3; $i++) {

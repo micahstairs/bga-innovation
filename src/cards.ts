@@ -19,9 +19,9 @@ declare type Card = {
     name: string;
     condition_for_claiming: string;
     alternative_condition_for_claiming: string;
-    echo_effect_1: string;
-    i_demand_effect_1: string;
-    i_compel_effect_1: string;
+    echo_effect: string;
+    i_demand_effect: string;
+    i_compel_effect: string;
     non_demand_effect_1: string;
     non_demand_effect_2: string;
     non_demand_effect_3: string;
