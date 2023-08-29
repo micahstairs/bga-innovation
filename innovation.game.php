@@ -688,7 +688,7 @@ class Innovation extends Table
 
         // Add information to the database about which cards have a demand.
         foreach ($this->textual_card_infos as $id => $card_info) {
-            if (self::getDemandEffect($id) !== null) {
+            if (self::getDemandEffect($id) || self::getCompelEffect($id)) {
                 self::DbQuery(self::format("UPDATE card SET has_demand = TRUE WHERE id = {id}", array("id" => $id)));
             }
         }
@@ -4133,8 +4133,8 @@ class Innovation extends Table
         return self::getCardPropertyForCurrentVersion('i_demand_effect_1', $id);
     }
 
-    function isCompelEffect($id) {
-        return array_key_exists('i_demand_effect_1_is_compel', $this->textual_card_infos[$id]);
+    function getCompelEffect($id) {
+        return self::getCardPropertyForCurrentVersion('i_compel_effect_1', $id);
     }
 
     function getEchoEffect($id) {
@@ -4203,6 +4203,17 @@ class Innovation extends Table
         unset($textual_infos['i_demand_effect_1_third']);
         unset($textual_infos['i_demand_effect_1_third_and_fourth']);
         unset($textual_infos['i_demand_effect_1_fourth']);
+
+        // Make sure the compel effect reflects the current edition
+        $textual_infos['i_compel_effect_1'] = self::getCompelEffect($id);
+        if ($textual_infos['i_compel_effect_1'] === null) {
+            unset($textual_infos['i_compel_effect_1']);
+        }
+        unset($textual_infos['i_compel_effect_1_first']);
+        unset($textual_infos['i_compel_effect_1_first_and_third']);
+        unset($textual_infos['i_compel_effect_1_third']);
+        unset($textual_infos['i_compel_effect_1_third_and_fourth']);
+        unset($textual_infos['i_compel_effect_1_fourth']);
 
         // Make sure the non-demand effects reflects the current edition
         for ($i = 1; $i <= 3; $i++) {
@@ -7535,8 +7546,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $replace_may_with_must = true;
         }
         $next_nesting_index = $this->innovationGameState->get('current_nesting_index') + 1;
-        $has_i_demand = self::getDemandEffect($card['id']) !== null && !self::isCompelEffect($card['id']);
-        $has_i_compel = self::getDemandEffect($card['id']) !== null && self::isCompelEffect($card['id']);
+        $has_i_demand = self::getDemandEffect($card['id']) !== null;
+        $has_i_compel = self::getCompelEffect($card['id']) !== null;
         $has_echo_effect = self::getEchoEffect($card['id']) !== null;
         $effect_type = $execute_demand_effects ? ($has_echo_effect ? 3 : ($has_i_demand ? 0 : ($has_i_compel ? 2 : 1))) : 1;
         if ($effect_type == 3) {
@@ -8498,14 +8509,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         (0, {execution_index}, {card_id})
                 ", array('execution_index' => $i, 'card_id' => $visible_echo_effects[$i - 1])));
             }
-        } else if (self::getDemandEffect($card['id']) == null) {
-            $current_effect_type = 1; // non-demand
-            $current_effect_number = 1;
-        } else if (self::isCompelEffect($card['id'])) {
+        } else if (self::getCompelEffect($card['id'])) {
             $current_effect_type = 2; // I compel
             $current_effect_number = 1;
-        } else {
+        } else if (self::getDemandEffect($card['id'])) {
             $current_effect_type = 0; // I demand
+            $current_effect_number = 1;
+        } else {
+            $current_effect_type = 1; // non-demand
             $current_effect_number = 1;
         }
         
@@ -9044,7 +9055,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $players_executing_non_demand_effects = [];
         $players_executing_echo_effects = [];
 
-        if (self::isCompelEffect($card['id']) === true) {
+        if (self::getCompelEffect($card['id'])) {
             $players_executing_i_compel_effects =
                 self::getObjectListFromDB(self::format("
                     SELECT
@@ -9056,7 +9067,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         AND player_team <> (SELECT player_team FROM player WHERE player_id = {launcher_id})
                         AND player_eliminated = 0
                 ", array('col' => $resource_column, 'launcher_id' => $launcher_id, 'extra_icons' => $extra_icons)), true);
-        } else if (self::getDemandEffect($card['id']) !== null) { 
+        } else if (self::getDemandEffect($card['id'])) { 
             $players_executing_i_demand_effects =
                 self::getObjectListFromDB(self::format("
                         SELECT
@@ -9528,7 +9539,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // Many cards do not have a demand effect on them
-        if (self::getDemandEffect($card['id']) == null) {
+        if (self::getDemandEffect($card['id']) === null) {
             return true;
         }
 
@@ -9654,7 +9665,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
 
         // Many cards do not have a compel effect on them
-        if (!self::isCompelEffect($card['id'])) {
+        if (self::getCompelEffect($card['id']) === null) {
             return true;
         }
 
@@ -10712,12 +10723,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             } else {
                 // The last echo effect is complete, so move onto the next non-echo effect
                 $next_effect_number = 1;
-                if (self::getDemandEffect($card_id) == null) {
-                    $next_effect_type = 1; // non-demand
-                } else if (self::isCompelEffect($card_id)) {
+                if (self::getCompelEffect($card_id)) {
                     $next_effect_type = 2; // I compel
-                } else {
+                } else if (self::getDemandEffect($card_id)) {
                     $next_effect_type = 0; // I demand
+                } else {
+                    $next_effect_type = 1; // non-demand
                 }
             }
             
