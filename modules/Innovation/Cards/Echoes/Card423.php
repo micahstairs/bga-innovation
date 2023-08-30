@@ -106,7 +106,7 @@ class Card423 extends Card
       }
     } else {
       $cardIds = self::getActionScopedAuxiliaryArray(self::getPlayerId());
-      self::selfExecute($cardIds[$choice]);
+      self::selfExecute(self::getCard($cardIds[$choice]));
     }
   }
 

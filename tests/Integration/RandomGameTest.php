@@ -39,7 +39,7 @@ class RandomGameTest extends BaseIntegrationTest
       $actions[array_rand($actions)]();
     }
 
-    // TODO: Add better game end info (and stop hard-coding the player numbers)
+    // TODO: Add better game end info (including the max age dogma'd). Also stop hard-coding the player numbers.
     error_log("*** GAME OVER ***");
     error_log("Player #1 score: " . $this->tableInstance->getTable()->getPlayerScore(12345));
     error_log("Player #1 achievements: " . $this->tableInstance->getTable()->countCardsInLocation(12345, 'achievements'));
