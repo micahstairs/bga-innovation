@@ -12725,27 +12725,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 112, Artifacts age 1: Basur Hoyuk Tokens
-            case "112N1":
-                $card = self::executeDraw($player_id, 4, 'revealed'); // "Draw and reveal a 4"
-                $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                if ($top_card === null) {
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
-                } else if ($top_card !== null && self::comesAlphabeticallyBefore($top_card, $card)) { // "If you have a top card of the drawn card's color that comes before it in the alphabet"
-                    self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} comes before ${english_name_2}.'), array(
-                        'english_name_1' => self::getCardName($top_card['id']),
-                        'english_name_2' => self::getCardName($card['id']),
-                    ));
-                    $step_max = 1;
-                } else {
-                    self::notifyGeneralInfo(clienttranslate('In English alphabetical order, ${english_name_1} does not come before ${english_name_2}.'), array(
-                        'english_name_1' => self::getCardName($top_card['id']),
-                        'english_name_2' => self::getCardName($card['id']),
-                    ));
-                    self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
-                }
-                break;
-            
             // id 113, Artifacts age 1: Holmegaard Bows
             case "113C1":
                 $step_max = 1;
@@ -16678,19 +16657,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-        
-        // id 112, Artifacts age 1: Basur Hoyuk Tokens
-        case "112N1A":
-            // "Return the drawn card and all cards from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'revealed,score',
-                'owner_to' => 0,
-                'location_to' => 'deck',
             );
             break;
 
