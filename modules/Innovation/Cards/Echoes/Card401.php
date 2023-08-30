@@ -28,7 +28,11 @@ class Card401 extends Card
     if (self::isEcho()) {
       $topCard = self::getTopCardOfColor($this->game::GREEN);
       $bottomCard = self::getBottomCardOfColor($this->game::GREEN);
-      self::setAuxiliaryArray([$topCard['id'], $bottomCard['id']]);
+      if ($topCard) {
+        self::setAuxiliaryArray([$topCard['id'], $bottomCard['id']]);
+      } else {
+        self::setAuxiliaryArray([]);
+      }
       return [
         'location_from'                   => 'pile',
         'score_keyword'                   => true,
