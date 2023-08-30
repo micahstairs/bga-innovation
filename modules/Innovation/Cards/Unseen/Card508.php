@@ -65,6 +65,7 @@ class Card508 extends Card
       $handCards = self::getCardsKeyedByValue('hand');
       $scoreCards = self::getCardsKeyedByValue('score');
       $playerIdOnRight = $this->game->getActivePlayerIdOnRightOfActingPlayer();
+      // TODO(4E): The auxiliary value seems to be coming back as -1 sometimes in intergration tests, but it's unclear why.
       foreach ($handCards[$value] as $card) {
         self::transferToScorePile($card, $playerIdOnRight);
       }

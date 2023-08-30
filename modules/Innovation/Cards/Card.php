@@ -142,6 +142,11 @@ abstract class Card
     return $this->state->isDemand();
   }
 
+  protected function isCompel(): bool
+  {
+    return $this->state->isCompel();
+  }
+
   protected function isNonDemand(): bool
   {
     return $this->state->isNonDemand();

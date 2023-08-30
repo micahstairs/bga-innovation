@@ -89,6 +89,11 @@ class ExecutionState
     return $this->effectType === $this->game::DEMAND_EFFECT;
   }
 
+  function isCompel(): bool
+  {
+    return $this->effectType === $this->game::COMPEL_EFFECT;
+  }
+
   function isNonDemand(): bool
   {
     return $this->effectType === $this->game::NON_DEMAND_EFFECT;

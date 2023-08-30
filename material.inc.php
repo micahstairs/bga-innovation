@@ -754,9 +754,10 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 1 */
 
     110 => array(
-        'name'                => clienttranslate('Treaty of Kadesh'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to return all top cards from your board with a demand effect!'),
-        'non_demand_effect_1' => clienttranslate('Score a top, non-blue card from your board with a demand effect.'),
+        'name'                            => clienttranslate('Treaty of Kadesh'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to return all top cards from your board with a demand effect!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to return a top card with a demand effect of each color from your board!'),
+        'non_demand_effect_1'             => clienttranslate('Score a top, non-blue card from your board with a demand effect.'),
     ),
 
     111 => array(

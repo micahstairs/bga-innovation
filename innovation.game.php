@@ -10922,6 +10922,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 22
             || $card_id == 65
             || $card_id == 72
+            || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
             || $card_id == 440
             || (470 <= $card_id && $card_id <= 486)
@@ -10938,7 +10939,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function getCardInstance($card_id, $execution_state) {
         $card = $this->getCardInfo($card_id);
         $set = "Base";
-        if ($card['type'] == 3) {
+        if ($card['type'] == 1) {
+            $set = "Artifacts";
+        } else if ($card['type'] == 3) {
             $set = "Echoes";
         } else if ($card['type'] == 5) {
             $set = "Unseen";
@@ -12720,15 +12723,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
-                break;
-
-            // id 110, Artifacts age 1: Treaty of Kadesh
-            case "110C1":
-                $step_max = 1;
-                break;
-
-            case "110N1":
-                $step_max = 1;
                 break;
 
             // id 111, Artifacts age 1: Sibidu Needle
@@ -16699,39 +16693,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-            
-         // id 110, Artifacts age 1: Treaty of Kadesh
-         case "110C1A":
-            // "Return all top cards from your board with a demand effect"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'has_demand_effect' => true,
-            );
-            break;
-        
-        case "110N1A":
-            // "Score a top, non-blue card from your board with a demand effect"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'color' => array(1,2,3,4), // non-blue
-                'has_demand_effect' => true,
-
-                'score_keyword' => true
             );
             break;
         
