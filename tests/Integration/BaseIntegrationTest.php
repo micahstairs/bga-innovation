@@ -193,6 +193,22 @@ abstract class BaseIntegrationTest extends BaseTest
     return $cardsToPromote;
   }
 
+  protected function getClaimableStandardAchievementValues(int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    return $this->tableInstance->getTable()->getClaimableStandardAchievementValues($playerId);
+  }
+
+  protected function getClaimableSecretValues(int $playerId = null): array
+  {
+    if ($playerId === null) {
+      $playerId = self::getActivePlayerId();
+    }
+    return $this->tableInstance->getTable()->getClaimableSecretValues($playerId);
+  }
+
   protected function getActivePlayerId(): int
   {
     return $this->tableInstance->getTable()->getActivePlayerId();

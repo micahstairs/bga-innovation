@@ -29,7 +29,13 @@ class RandomGameTest extends BaseIntegrationTest
       if (count(self::getCardsToDogma()) > 0) {
         $actions[] = [$this, 'dogma'];
       }
-      // TODO: Add other actions here (e.g. achieve, endorse, etc.)
+      if (count(self::getClaimableStandardAchievementValues()) > 0) {
+        $actions[] = [$this, 'achieveStandardAchievement'];
+      }
+      if (count(self::getClaimableSecretValues()) > 0) {
+        $actions[] = [$this, 'achieveSecret'];
+      }
+      // TODO: Add other actions here (e.g. endorse)
       $actions[array_rand($actions)]();
     }
 
@@ -94,6 +100,28 @@ class RandomGameTest extends BaseIntegrationTest
     $this->tableInstance->advanceGame();
 
     self::excecuteInteractions();
+  }
+
+  private function achieveStandardAchievement()
+  {
+    $value = self::getRandomFromArray(self::getClaimableStandardAchievementValues());
+    error_log("* ACHIEVE $value from standard achievements");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->stubArgs(['owner' => 0, 'location' => 'achievements', 'age' => $value])
+      ->achieve();
+    $this->tableInstance->advanceGame();
+  }
+
+  private function achieveSecret()
+  {
+    $value = self::getRandomFromArray(self::getClaimableSecretValues());
+    error_log("* ACHIEVE $value from safe");
+    $this->tableInstance
+      ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
+      ->stubArgs(['owner' => self::getActivePlayerId(), 'location' => 'safe', 'age' => $value])
+      ->achieve();
+    $this->tableInstance->advanceGame();
   }
 
   private function excecuteInteractions()
