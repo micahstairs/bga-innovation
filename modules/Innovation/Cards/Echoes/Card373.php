@@ -71,6 +71,7 @@ class Card373 extends Card
         }
       }
       return [
+        'player_id'    => self::getLauncherId(),
         'choose_value' => true,
         'age'          => $values,
       ];
