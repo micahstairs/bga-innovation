@@ -435,6 +435,9 @@ class Innovation extends BgaGame {
                 } else if (this.num_sets_in_play == 4) {
                     dojo.addClass(`deck_count_${type}_${age}`, 'four_sets');
                     dojo.addClass(`deck_pile_${type}_${age}`, 'four_sets');
+                } else if (this.num_sets_in_play == 5) {
+                    dojo.addClass(`deck_count_${type}_${age}`, 'five_sets');
+                    dojo.addClass(`deck_pile_${type}_${age}`, 'five_sets');
                 }
             }
         }

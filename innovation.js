@@ -447,6 +447,10 @@ var Innovation = /** @class */ (function (_super) {
                     dojo.addClass("deck_count_".concat(type, "_").concat(age), 'four_sets');
                     dojo.addClass("deck_pile_".concat(type, "_").concat(age), 'four_sets');
                 }
+                else if (this.num_sets_in_play == 5) {
+                    dojo.addClass("deck_count_".concat(type, "_").concat(age), 'five_sets');
+                    dojo.addClass("deck_pile_".concat(type, "_").concat(age), 'five_sets');
+                }
             }
         }
         if (!gamedatas.artifacts_expansion_enabled) {
