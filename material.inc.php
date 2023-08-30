@@ -756,7 +756,7 @@ $this->textual_card_infos = array(
     110 => array(
         'name'                => clienttranslate('Treaty of Kadesh'),
         'i_compel_effect'     => clienttranslate('${I compel} you to return all top cards from your board with a demand effect!'),
-        'non_demand_effect_1' => clienttranslate('Score a top, non‑blue card from your board with a demand effect.'),
+        'non_demand_effect_1' => clienttranslate('Score a top, non-blue card from your board with a demand effect.'),
     ),
 
     111 => array(
@@ -778,7 +778,7 @@ $this->textual_card_infos = array(
     114 => array(
         'name'                => clienttranslate('Papyrus of Ani'),
         // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non‑demand dogma effects. Do not share them.'),
+        'non_demand_effect_1' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non-demand dogma effects. Do not share them.'),
     ),
 
     115 => array(
@@ -787,8 +787,8 @@ $this->textual_card_infos = array(
     ),
 
     116 => array(
-        'name'                => clienttranslate('Priest‑King'),
-        'non_demand_effect_1' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non‑demand dogma effects. Do not share them.'),
+        'name'                => clienttranslate('Priest-King'),
+        'non_demand_effect_1' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non-demand dogma effects. Do not share them.'),
         'non_demand_effect_2' => clienttranslate('Claim an achievement, if eligible.'),
     ),
 
@@ -838,7 +838,7 @@ $this->textual_card_infos = array(
 
     125 => array(
         'name'                => clienttranslate('Seikilos Epitaph'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non‑demand dogma effects. Do not share them.'),
+        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
     ),
 
     126 => array(
@@ -854,7 +854,7 @@ $this->textual_card_infos = array(
 
     128 => array(
         'name'                => clienttranslate('Babylonian Chronicles'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to transfer a top non‑red card with a ${icon_4} from your board to my board!'),
+        'i_compel_effect'     => clienttranslate('${I compel} you to transfer a top non-red card with a ${icon_4} from your board to my board!'),
         'non_demand_effect_1' => clienttranslate('Draw and score a ${age_3}.'),
     ),
 
@@ -889,7 +889,7 @@ $this->textual_card_infos = array(
 
     134 => array(
         'name'                => clienttranslate('Cyrus Cylinder'),
-        'non_demand_effect_1' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non‑demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
+        'non_demand_effect_1' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
     ),
 
     /* Artifacts - Age 3 */
@@ -901,7 +901,7 @@ $this->textual_card_infos = array(
 
     136 => array(
         'name'                => clienttranslate('Charter of Liberties'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player\'s board. Execute all of that color\'s top card\'s non‑demand effects, without sharing.'),
+        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player\'s board. Execute all of that color\'s top card\'s non-demand effects, without sharing.'),
     ),
 
     137 => array(
@@ -972,8 +972,8 @@ $this->textual_card_infos = array(
     ),
 
     150 => array(
-        'name'                => clienttranslate('Hunt‑Lenox Globe'),
-        'non_demand_effect_1' => clienttranslate('If you have fewer than four cards in your hand, return all non‑green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
+        'name'                => clienttranslate('Hunt-Lenox Globe'),
+        'non_demand_effect_1' => clienttranslate('If you have fewer than four cards in your hand, return all non-green top cards from your board. Draw a ${age_5} for each card returned. Meld a card from your hand.'),
     ),
 
     151 => array(
@@ -1008,7 +1008,7 @@ $this->textual_card_infos = array(
 
     156 => array(
         'name'                => clienttranslate('Principia'),
-        'non_demand_effect_1' => clienttranslate('Return all non‑blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
+        'non_demand_effect_1' => clienttranslate('Return all non-blue top cards from your board. For each card returned, draw and meld a card of value one higher than the value of the returned card, in ascending order.'),
     ),
 
     157 => array(
@@ -1022,7 +1022,7 @@ $this->textual_card_infos = array(
     ),
 
     159 => array(
-        'name'                => clienttranslate('Barque‑Longue La Belle'),
+        'name'                => clienttranslate('Barque-Longue La Belle'),
         'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_5}. If the drawn card is not green, repeat this effect.'),
     ),
 
@@ -1121,7 +1121,7 @@ $this->textual_card_infos = array(
     ),
 
     178 => array(
-        'name'                => clienttranslate('Jedlik\'s Electromagnetic Self‑Rotor'),
+        'name'                => clienttranslate('Jedlik\'s Electromagnetic Self-Rotor'),
         'non_demand_effect_1' => clienttranslate('Draw and score an ${age_8}. Draw and meld an ${age_8}. Claim an achievement of value 8 if it is available, ignoring eligibility.'),
     ),
 
@@ -1153,7 +1153,7 @@ $this->textual_card_infos = array(
 
     184 => array(
         'name'                => clienttranslate('The Communist Manifesto'),
-        'non_demand_effect_1' => clienttranslate('For each player in the game, draw and reveal a ${age_7}. Transfer one of the drawn cards to each player\'s board. Execute the non‑demand effects of your card. Do not share them.'),
+        'non_demand_effect_1' => clienttranslate('For each player in the game, draw and reveal a ${age_7}. Transfer one of the drawn cards to each player\'s board. Execute the non-demand effects of your card. Do not share them.'),
     ),
 
     /* Artifacts - Age 8 */
@@ -1183,7 +1183,7 @@ $this->textual_card_infos = array(
     ),
 
     190 => array(
-        'name'                => clienttranslate('Meiji‑Mura Stamp Vending Machine'),
+        'name'                => clienttranslate('Meiji-Mura Stamp Vending Machine'),
         'non_demand_effect_1' => clienttranslate('Return a card from your hand. Draw and score three cards of the returned card\'s value.'),
     ),
 
@@ -1194,7 +1194,7 @@ $this->textual_card_infos = array(
 
     192 => array(
         'name'            => clienttranslate('Time'),
-        'i_compel_effect' => clienttranslate('${I compel} you to transfer a non‑yellow top card with a ${icon_6} from your board to my board! If you do, repeat this effect!'),
+        'i_compel_effect' => clienttranslate('${I compel} you to transfer a non-yellow top card with a ${icon_6} from your board to my board! If you do, repeat this effect!'),
     ),
 
     193 => array(
@@ -1211,7 +1211,7 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 9 */
 
     195 => array(
-        'name'                => clienttranslate('Yeager\'s Bell X‑1A'),
+        'name'                => clienttranslate('Yeager\'s Bell X-1A'),
         'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_9}. Execute the effects of the melded card as if they were on this card, without sharing. If that card has a ${icon_6}, repeat this effect.'),
     ),
 
@@ -1254,7 +1254,7 @@ $this->textual_card_infos = array(
 
     203 => array(
         'name'                => clienttranslate('The Big Bang'),
-        'non_demand_effect_1' => clienttranslate('Execute the non‑demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a ${age_10} from the game, then repeat this effect.'),
+        'non_demand_effect_1' => clienttranslate('Execute the non-demand effects of your top blue card, without sharing. If this caused any change to occur, draw and remove a ${age_10} from the game, then repeat this effect.'),
     ),
 
     204 => array(
@@ -1307,8 +1307,8 @@ $this->textual_card_infos = array(
     ),
 
     213 => array(
-        'name'                => clienttranslate('DeLorean DMC‑12'),
-        'non_demand_effect_1' => clienttranslate('If DeLorean DMC‑12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game.'),
+        'name'                => clienttranslate('DeLorean DMC-12'),
+        'non_demand_effect_1' => clienttranslate('If DeLorean DMC-12 is a top card on any board, remove all top cards on all boards and all cards in all hands from the game.'),
     ),
 
     214 => array(
@@ -1328,7 +1328,7 @@ $this->textual_card_infos = array(
     ),
 
     217 => array(
-        'name'                => clienttranslate('Newton‑Wickins Telescope'),
+        'name'                => clienttranslate('Newton-Wickins Telescope'),
         'non_demand_effect_1' => clienttranslate('You may return any number of cards from your score pile. If you do, draw and meld a card of value equal to the number of cards returned. If the melded card has a ${icon_6}, return it.'),
     ),
 
@@ -1358,7 +1358,7 @@ $this->textual_card_infos = array(
     230 => array('name' => clienttranslate('Damascus')),
     231 => array('name' => clienttranslate('Linzi')),
     232 => array('name' => clienttranslate('Hattusa')),
-    233 => array('name' => clienttranslate('Mohenjo‑Daro')),
+    233 => array('name' => clienttranslate('Mohenjo-Daro')),
     234 => array('name' => clienttranslate('Ephesus')),
 
     /* Cities - Age 2 */

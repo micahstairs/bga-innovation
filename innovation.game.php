@@ -9357,7 +9357,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 33: // Education            
             case 146: // Delft Pocket Telescope
-            case 217: // Newton‑Wickins Telescope
+            case 217: // Newton-Wickins Telescope
             case 401: // Elevator
             case 430: // Flash Drive
                 // These non-demand effects have no effect if the player has an empty score pile.

@@ -28,8 +28,8 @@ class StringsTest extends BaseTest
             ['Code of Laws', 'Pottery', true], # Real example
             ['Sailing', 'São Paulo', true], # accents ignored
             ['São Paulo', 'Satellites', true], # accents ignored
-            ['HuntJ', 'Hunt‑Lenox Globe', true], # non-breaking hyphen where next letter comes after
-            ['Hunt‑Lenox Globe', 'HuntM', true], # non-breaking hyphen where next letter comes before
+            ['HuntJ', 'Hunt-Lenox Globe', true], # hyphen where next letter comes after
+            ['Hunt-Lenox Globe', 'HuntM', true], # hyphen where next letter comes before
             ['Abc', 'Ab\'d', true], # apostrophe where next letter comes after
             ['Ab\'c', 'Abd', true], # apostrophe where next letter comes before
             ['A. I.', 'Archery', true], # period and space
