@@ -116,7 +116,10 @@ class RandomGameTest extends BaseIntegrationTest
       if (empty($choices)) {
         error_log("ERROR: Player is forced to do something something else, but it's not implemented yet");
       }
-      $choices[array_rand($choices)]();
+
+      $choice = $choices[array_rand($choices)];
+      error_log("  * Chosen interaction: $choice[1]");
+      $choice();
     }
 
     $state = self::getCurrentStateName();
@@ -183,6 +186,8 @@ class RandomGameTest extends BaseIntegrationTest
         error_log("WARNING: Unknown special type of choice: $decodedChoiceType");
         break;
     }
+
+    error_log("  * Choice made for $decodedChoiceType: $choice");
 
     $this->tableInstance
       ->createActionInstanceForCurrentPlayer(self::getActivePlayerId())
