@@ -771,9 +771,10 @@ $this->textual_card_infos = array(
     ),
 
     113 => array(
-        'name'                => clienttranslate('Holmegaard Bows'),
-        'i_compel_effect'     => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand!'),
-        'non_demand_effect_1' => clienttranslate('Draw a ${age_2}.'),
+        'name'                            => clienttranslate('Holmegaard Bows'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to transfer the highest top card with a ${icon_4} on your board to my hand! I COMPEL you to transfer the highest top card with a [AUTHORITY] on your board to my hand!  If you don\'t, junk all cards in the deck of value equal to the value of the lowest top card on your board!'),
+        'non_demand_effect_1'             => clienttranslate('Draw a ${age_2}.'),
     ),
 
     114 => array(

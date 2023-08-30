@@ -12724,16 +12724,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 113, Artifacts age 1: Holmegaard Bows
-            case "113C1":
-                $step_max = 1;
-                break;
-            
-            case "113N1":
-                // "Draw a 2"
-                self::executeDraw($player_id, 2);
-                break;
 
             // id 114, Artifacts age 1: Papyrus of Ani
             case "114N1":
@@ -16657,23 +16647,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 113, Artifacts age 1: Holmegaard Bows
-        case "113C1A":
-            // "Transfer the highest top card with a tower on your board to my hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'hand',
-                
-                'with_icon' => 4, // tower
-                'age' => self::getMaxAgeOnBoardTopCardsWithIcon($player_id, 4 /* tower */),
             );
             break;
         
