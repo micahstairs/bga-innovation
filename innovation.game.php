@@ -12724,21 +12724,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 111, Artifacts age 1: Sibidu Needle
-            case "111N1":
-                while (true) {
-                    $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1"
-                    $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                    if ($top_card !== null && $card['faceup_age'] == $top_card['faceup_age']) { // "If you have a top card of matching color and value"
-                        self::scoreCard($card, $player_id); // "Score the drawn card"
-                        continue; // "Repeat this effect"
-                    }
-                    self::notifyGeneralInfo(clienttranslate('There was not a top card of matching color and value.'));
-                    break;        
-                }
-                self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
-                break;
             
             // id 112, Artifacts age 1: Basur Hoyuk Tokens
             case "112N1":
