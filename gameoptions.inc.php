@@ -101,8 +101,7 @@ $game_options = array(
                 array('type' => 'maxplayers', 'value' => 4, 'gamestartonly' => true, 'message' => totranslate('5 player games can only be played when using the 4th edition rules')),
             ),
             3 => array(
-                /* TODO(FIGURES): Add more conditions when other expansions are added. */
-                array('type' => 'otheroption', 'id' => 102, 'value' => 1, 'message' => totranslate('4th edition rules are not yet supported with expansions')),
+                array('type' => 'otheroptionisnot', 'id' => 102, 'value' => 3, 'message' => totranslate('Relics are not part of the 4th edition rules')),
             ),
         )
     ),
@@ -112,14 +111,14 @@ $game_options = array(
         'values' => array(
             1 => array('name' => totranslate('Disable')),
             2 => array(
-                'name' => totranslate('Enable without Relics'),
+                'name' => totranslate('Enable'),
                 'no_beginner' => true,
                 'tmdisplay' => totranslate('Artifacts Expansion'),
             ),
             3 => array(
                 'name' => totranslate('Enable with Relics'),
                 'no_beginner' => true,
-                'tmdisplay' => totranslate('Artifacts Expansion with Relics')
+                'tmdisplay' => totranslate('Artifacts Expansion with Relics (3rd edition only)')
             ),
         )
     ),
