@@ -1001,8 +1001,9 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 5 */
 
     155 => array(
-        'name'                => clienttranslate('Boerhavve Silver Microscope'),
-        'non_demand_effect_1' => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
+        'name_first_and_third' => clienttranslate('Boerhavve Silver Microscope'),
+        'name_fourth'          => clienttranslate('Boerhaave Microscope'),
+        'non_demand_effect_1'  => clienttranslate('Return the lowest card in your hand and the lowest top card on your board. Draw and score a card of value equal to the sum of the values of the cards returned.'),
     ),
 
     156 => array(
@@ -1434,7 +1435,7 @@ $this->textual_card_infos = array(
 
     /* Cities - Age 8 */
     295 => array('name' => clienttranslate('Chongqing')),
-    296 => array('name' => clienttranslate('Kiev')),
+    296 => array('name_first_and_third' => clienttranslate('Kiev'), 'name_fourth' => clienttranslate('Kyiv')),
     297 => array('name' => clienttranslate('Kuala Lumpur')),
     298 => array('name' => clienttranslate('Los Angeles')),
     299 => array('name' => clienttranslate('Hamburg')),
