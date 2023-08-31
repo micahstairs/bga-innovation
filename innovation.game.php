@@ -12737,20 +12737,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 }
                 break;
-            
-            // id 117, Artifacts age 1: Electrum Stater of Efesos
-            case "117N1":
-                while (true) {
-                    $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
-                    $top_card = self::getTopCardOnBoard($player_id, $card['color']);
-                    if ($top_card == null) { // "If you do not have a top card of the drawn card's color"
-                        self::meldCard($card, $player_id); // "Meld it"
-                        continue; // "Repeat this effect"
-                    }
-                    break;
-                }
-                self::transferCardFromTo($card, $player_id, 'hand'); // Keep it
-                break;
                 
             // id 118, Artifacts age 1: Jiskairumoko Necklace
             case "118C1":
