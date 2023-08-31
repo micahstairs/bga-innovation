@@ -819,9 +819,10 @@ $this->textual_card_infos = array(
     ),
 
     121 => array(
-        'name'                => clienttranslate('Xianrendong Shards'),
+        'name'                                => clienttranslate('Xianrendong Shards'),
         // NOTE: Carl clarified the intended wording of this card in https://boardgamegeek.com/thread/2913636/xianrendong-shards-when-less-2-cards-are-scored.
-        'non_demand_effect_1' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If you score two cards of the same color, draw three ${age_1}.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If you score two cards of the same color, draw three ${age_1}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Reveal three cards from your hand. Score two, then tuck the other. If the scored cards are the same color, draw three ${age_1}.'),
     ),
 
     122 => array(

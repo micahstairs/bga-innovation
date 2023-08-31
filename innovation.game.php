@@ -12633,14 +12633,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 }
                 break;
-            
-            // id 121, Artifacts age 1: Xianrendong Shards
-            case "121N1":
-                $this->innovationGameState->set('card_id_1', -1);
-                $this->innovationGameState->set('card_id_2', -1);
-                $this->innovationGameState->set('card_id_3', -1);
-                $step_max = 2;
-                break;
 
             // id 122, Artifacts age 1: Mask of Warka
             case "122N1":
@@ -16480,40 +16472,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        // id 121, Artifacts age 1: Xianrendong Shards
-        case "121N1A":
-            // "Reveal three cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 3,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed'
-            );
-            break;
-        
-        case "121N1B":
-            // "Score two"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-
-                // Propagate values required to detect whether the scored cards are the same color
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-                'card_id_3' => $card_id_3,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'revealed',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'score_keyword' => true
-            );
-            break;
-        
         // id 122, Artifacts age 1: Mask of Warka
         case "122N1A":
             // "Choose a color"
@@ -19763,53 +19721,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do"
                     if ($n > 0) {
                         self::incrementStepMax(1);
-                    }
-                    break;
-                
-                // id 121, Artifacts age 1: Xianrendong Shards
-                case "121N1A":
-                    // Store IDs of revealed cards so that we are later able to see if the scored cards had the same color.
-                    $revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    for ($i = 1; $i <= count($revealed_cards); $i++) {
-                        $this->innovationGameState->set('card_id_'.$i, $revealed_cards[$i-1]['id']);
-                    }
-                    break;
-
-                case "121N1B":
-                    $revealed_card_ids = array($this->innovationGameState->get('card_id_1'), $this->innovationGameState->get('card_id_2'), $this->innovationGameState->get('card_id_3'));
-
-                    // "Tuck the other"
-                    $remaining_revealed_cards = self::getCardsInLocation($player_id, 'revealed');
-                    if (count($remaining_revealed_cards) == 1) {
-                        $remaining_card = $remaining_revealed_cards[0];
-                        self::tuckCard($remaining_card, $player_id);
-                        for ($i = 0; $i < 3; $i++) {
-                            if ($revealed_card_ids[$i] == $remaining_card['id']) {
-                                $revealed_card_ids[$i] = -1;
-                            }
-                        }
-                    }
-
-                    // Now revealed_card_ids contains only -1's and the IDs of the scored cards.
-                    $first_color = null;
-                    foreach ($revealed_card_ids as $card_id) {
-                        if ($card_id < 0) {
-                            continue;
-                        }
-                        $current_card = self::getCardInfo($card_id);
-                        if ($first_color == null) {
-                            $first_color = $current_card['color'];
-                        // "If the scored cards were the same color, draw three 1s"
-                        } else if ($first_color == $current_card['color']) {
-                            self::notifyGeneralInfo(clienttranslate('The scored cards were the same color.'), array());
-                            self::executeDraw($player_id, 1);
-                            self::executeDraw($player_id, 1);
-                            self::executeDraw($player_id, 1);
-                            break;
-                        } else {
-                            self::notifyGeneralInfo(clienttranslate('The scored cards were not the same color.'), array());
-                            break;
-                        }
                     }
                     break;
 
