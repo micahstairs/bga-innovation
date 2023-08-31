@@ -12633,43 +12633,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 }
                 break;
-                
-             // id 119, Artifacts age 1: Dancing Girl
-             case "119C1":
-                $card = self::getCardInfo(119); // Dancing Girl
-                if ($card['owner'] != $player_id) {
-                    self::transferCardFromTo($card, $player_id, 'board');
-                }
-                if (self::getAuxiliaryValue() == -1) {
-                    $visited_boards = array();
-                } else {
-                    $visited_boards = self::getAuxiliaryValueAsArray();
-                }
-                $visited_boards[] = self::playerIdToPlayerIndex($player_id);
-                self::setAuxiliaryValueFromArray(array_unique($visited_boards));
-                break;
-            
-            // id 119, Artifacts age 1: Dancing Girl
-            case "119N1":
-                // Count the number of other boards that were visited (excluding the launcher's board)
-                if (self::getAuxiliaryValue() == -1) { // The Dancing Girl didn't move at all
-                    $num_other_boards_visited = 0;
-                } else {
-                    $num_other_boards_visited = count(self::getAuxiliaryValueAsArray());
-                }
-                $initial_location = self::getCurrentNestedCardState()['card_location'];
-                if ($player_id == $launcher_id) {
-                    if ($num_other_boards_visited == self::countNonEliminatedPlayers() - 1 && $initial_location == 'board') {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on your board, so you win.'), array());
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('Dancing Girl has been on every board during this action, and it started on ${player_name}\'s board, so they win.'), array('player_name' => self::getColoredPlayerName($player_id)));
-                        $this->innovationGameState->set('winner_by_dogma', $player_id); // "You win"
-                        self::trace('EOG bubbled from self::stPlayerInvolvedTurn Dancing Girl');
-                        throw new EndOfGame();
-                    } else {
-                        self::notifyAll('log', clienttranslate('Dancing Girl has not been on every board during this action.'), array());
-                    }
-                }
-                break;
             
             // id 120, Artifacts age 1: Lurgan Canoe
             case "120N1":
@@ -20390,7 +20353,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
                 // id 174, Artifacts age 6: Marcha Real
                 case "174N1A":
-                    // TODO(LATER): Clean up the dead code branch.
                     $card_id_1 = self::getAuxiliaryValue();
                     $card_1 = $card_id_1 < 0 ? null : self::getCardInfo($card_id_1);
                     $card_id_2 = self::getAuxiliaryValue2();

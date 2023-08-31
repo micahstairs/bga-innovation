@@ -73,7 +73,7 @@ class Card22 extends Card
   {
     if (self::getNumChosen() === 0) {
       self::junkBaseDeck(2);
-      self::junk($this->game->getIfTopCardOnBoard(self::getCardIdFromClassName()));
+      self::junk($this->game->getIfTopCardOnBoard(self::getThisCardId()));
     }
   }
 

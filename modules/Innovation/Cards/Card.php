@@ -689,7 +689,7 @@ abstract class Card
 
   protected function setActionScopedAuxiliaryArray($array, $playerId = 0): void
   {
-    $this->game->setActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId, $array);
+    $this->game->setActionScopedAuxiliaryArray(self::getThisCardId(), $playerId, $array);
   }
 
   protected function addToActionScopedAuxiliaryArray(int $value, $playerId = 0): array
@@ -708,7 +708,7 @@ abstract class Card
 
   protected function getActionScopedAuxiliaryArray($playerId = 0): array
   {
-    return $this->game->getActionScopedAuxiliaryArray(self::getCardIdFromClassName(), $playerId);
+    return $this->game->getActionScopedAuxiliaryArray(self::getThisCardId(), $playerId);
   }
 
   // PROMPT MESSAGE HELPERS
@@ -1020,7 +1020,7 @@ abstract class Card
   protected function wasForeseen(): bool
   {
     // NOTE: The phrase "was foreseen" didn't appear on cards until the fourth edition.
-    return self::isFourthEdition() && $this->game->innovationGameState->get('foreseen_card_id') == self::getCardIdFromClassName();
+    return self::isFourthEdition() && $this->game->innovationGameState->get('foreseen_card_id') == self::getThisCardId();
   }
 
   protected function getAllTypesOtherThan(int $type)
@@ -1033,12 +1033,12 @@ abstract class Card
     $this->game->notifyGeneralInfo($log, $args);
   }
 
-  protected function notifyPlayer($log, array $args, int $playerId = null)
+  protected function notifyPlayer($log, array $args = [], int $playerId = null)
   {
     $this->game->notifyPlayer(self::coercePlayerId($playerId), 'log', $log, $args);
   }
 
-  protected function notifyOthers($log, array $args, int $playerId = null)
+  protected function notifyOthers($log, array $args = [], int $playerId = null)
   {
     $this->game->notifyAllPlayersBut(self::coercePlayerId($playerId), 'log', $log, $args);
   }
@@ -1060,7 +1060,7 @@ abstract class Card
 
   // GENERAL UTILITY HELPERS
 
-  protected function getCardIdFromClassName(): string
+  protected function getThisCardId(): string
   {
     $className = get_class($this);
     return intval(substr($className, strrpos($className, "\\") + 5));

@@ -43,7 +43,7 @@ class Card478 extends Card
       return [
         'location_from' => 'board',
         'location_to'   => 'none',
-        'not_id'        => self::getCardIdFromClassName(),
+        'not_id'        => self::getThisCardId(),
       ];
     }
   }
