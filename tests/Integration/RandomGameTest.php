@@ -137,7 +137,9 @@ class RandomGameTest extends BaseIntegrationTest
         $choices[] = [$this, 'pass'];
       }
 
-      if (self::getGlobalVariable('special_type_of_choice') > 0) {
+      $specialChoice = self::getGlobalVariable('special_type_of_choice');
+      // NOTE: I've decided it's not worth to add integration test coverage for the 3rd edition of Publications, which is the only user of 'choose_rearrange'.
+      if ($specialChoice > 0 && $this->tableInstance->getTable()->decodeSpecialTypeOfChoice($specialChoice) !== 'choose_rearrange') {
         $choices[] = [$this, 'selectSpecialChoice'];
       }
 
