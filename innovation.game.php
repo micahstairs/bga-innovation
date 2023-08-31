@@ -12738,15 +12738,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 116, Artifacts age 1: Priest-King
-            case "116N1":
-                $step_max = 1;
-                break;
-            
-            case "116N2":
-                $step_max = 1;
-                break;
-            
             // id 117, Artifacts age 1: Electrum Stater of Efesos
             case "117N1":
                 while (true) {
@@ -16662,37 +16653,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 116, Artifacts age 1: Priest-King
-        case "116N1A":
-            // "Score a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,score',
-
-                'score_keyword' => true
-            );
-            break;
-
-        case "116N2A":
-            // "Claim an achievement, if eligible"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => true
-            );
-            break;
-        
         // id 118, Artifacts age 1: Jiskairumoko Necklace
         case "118C1A":
             // "Return a card from your score pile"
@@ -20045,19 +20005,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do"
                     if ($n > 0) {
                         self::incrementStepMax(1);
-                    }
-                    break;
-                
-                // id 116, Artifacts age 1: Priest-King
-                case "116N1A":
-                    // "If you do"
-                    if ($n > 0) {
-                        $color_scored = $this->innovationGameState->get('color_last_selected');
-                        $top_card = self::getTopCardOnBoard($player_id, $color_scored);
-                        if ($top_card !== null) { // "If you have a top card matching its color"
-                            self::selfExecute($top_card); // "Execute each of the top card's non-demand dogma effects. Do not share them."
-                            break;
-                        }
                     }
                     break;
 

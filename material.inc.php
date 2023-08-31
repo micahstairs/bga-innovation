@@ -789,9 +789,10 @@ $this->textual_card_infos = array(
     ),
 
     116 => array(
-        'name'                => clienttranslate('Priest-King'),
-        'non_demand_effect_1' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non-demand dogma effects. Do not share them.'),
-        'non_demand_effect_2' => clienttranslate('Claim an achievement, if eligible.'),
+        'name'                                => clienttranslate('Priest-King'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand. If you have a top card matching its color, execute each of the top card\'s non-demand dogma effects. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand. If you have a top card matching its color, fully execute it if it is your turn, otherwise self-execute it.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Claim an achievement, if eligible.'),
     ),
 
     117 => array(
