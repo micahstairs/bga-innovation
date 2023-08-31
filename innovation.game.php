@@ -12737,20 +12737,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $step_max = 1;
                 }
                 break;
-
-            // id 115, Artifacts age 1: Pavlovian Tusk
-            case "115N1":
-                // "Draw three cards of value equal to your top green card"
-                $top_green_card = self::getTopCardOnBoard($player_id, self::GREEN);
-                $top_green_card_age = 0;
-                if ($top_green_card !== null) {
-                    $top_green_card_age = $top_green_card["age"];
-                }
-                $this->innovationGameState->set('card_id_1', self::executeDraw($player_id, $top_green_card_age)['id']);
-                $this->innovationGameState->set('card_id_2', self::executeDraw($player_id, $top_green_card_age)['id']);
-                $this->innovationGameState->set('card_id_3', self::executeDraw($player_id, $top_green_card_age)['id']);
-                $step_max = 2;
-                break;
             
             // id 116, Artifacts age 1: Priest-King
             case "116N1":
@@ -16673,44 +16659,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'choose_type' => true,
                 'type' => self::getActiveCardTypes()
-            );
-            break;
-        
-        
-        // id 115, Artifacts age 1: Pavlovian Tusk
-        case "115N1A":
-            // "Return one of the drawn cards"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-                'card_id_3' => $card_id_3
-            );
-            break;
-        
-        case "115N1B":
-            // "Score one of the drawn cards"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-                'card_id_3' => $card_id_3,
-
-                'score_keyword' => true
             );
             break;
 
