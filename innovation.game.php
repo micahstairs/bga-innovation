@@ -12634,11 +12634,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 120, Artifacts age 1: Lurgan Canoe
-            case "120N1":
-                $step_max = 1;
-                break;
-            
             // id 121, Artifacts age 1: Xianrendong Shards
             case "121N1":
                 $this->innovationGameState->set('card_id_1', -1);
@@ -16485,22 +16480,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        // id 120, Artifacts age 1: Lurgan Canoe
-        case "120N1A":
-            // "Meld a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-        
         // id 121, Artifacts age 1: Xianrendong Shards
         case "121N1A":
             // "Reveal three cards from your hand"
@@ -19784,23 +19763,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     // "If you do"
                     if ($n > 0) {
                         self::incrementStepMax(1);
-                    }
-                    break;
-
-                // id 120, Artifacts age 1: Lurgan Canoe
-                case "120N1A":
-                    if ($n > 0) {
-                        $board = self::getCardsInLocationKeyedByColor($player_id, 'board');
-                        $pile = $board[$this->innovationGameState->get('color_last_selected')];
-                        $scored = false;
-                        for ($i = 0; $i < count($pile) - 1; $i++) { // "Score all other cards of the same color from your board"
-                            $card = self::getCardInfo($pile[$i]['id']);
-                            self::scoreCard($card, $player_id);
-                            $scored = true;
-                        }
-                        if ($scored) { // "If you scored at least one card, repeat this effect"
-                            $step--; self::incrementStep(-1);
-                        }
                     }
                     break;
                 

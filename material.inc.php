@@ -813,8 +813,9 @@ $this->textual_card_infos = array(
     ),
 
     120 => array(
-        'name'                => clienttranslate('Lurgan Canoe'),
-        'non_demand_effect_1' => clienttranslate('Meld a card from your hand. Score all other cards of the same color from your board. If you scored at least one card, repeat this effect.'),
+        'name'                                => clienttranslate('Lurgan Canoe'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from your hand. Score all other cards of the same color from your board. If you scored at least one card, repeat this effect.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Score all other cards of the same color from your board. If you score a card, repeat this effect.'),
     ),
 
     121 => array(
