@@ -12738,11 +12738,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
                 
-            // id 118, Artifacts age 1: Jiskairumoko Necklace
-            case "118C1":
-                $step_max = 1;
-                break;
-            
              // id 119, Artifacts age 1: Dancing Girl
              case "119C1":
                 $card = self::getCardInfo(119); // Dancing Girl
@@ -16638,35 +16633,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'type' => self::getActiveCardTypes()
             );
             break;
-
-        // id 118, Artifacts age 1: Jiskairumoko Necklace
-        case "118C1A":
-            // "Return a card from your score pile"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'score',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-        
-        case "118C1B":
-            // "Transfer an achievement of the same value from your achievements to mine"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'achievements',
-                'owner_to' => $launcher_id,
-                'location_to' => 'achievements',
-                
-                'age' => $this->innovationGameState->get('age_last_selected')
-            );
-            break;
         
         // id 120, Artifacts age 1: Lurgan Canoe
         case "120N1A":
@@ -19988,14 +19954,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                 // id 114, Artifacts age 1: Papyrus of Ani
                 case "114N1A":
-                    // "If you do"
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                // id 118, Artifacts age 1: Jiskairumoko Necklace
-                case "118C1A":
                     // "If you do"
                     if ($n > 0) {
                         self::incrementStepMax(1);

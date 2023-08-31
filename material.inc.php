@@ -801,8 +801,9 @@ $this->textual_card_infos = array(
     ),
 
     118 => array(
-        'name'            => clienttranslate('Jiskairumoko Necklace'),
-        'i_compel_effect' => clienttranslate('${I compel} you to return a card from your score pile! If you do, transfer an achievement of the same value from your achievements to mine!'),
+        'name'                            => clienttranslate('Jiskairumoko Necklace'),
+        'i_compel_effect_first_and_third' => clienttranslate('${I compel} you to return a card from your score pile! If you do, transfer an achievement of the same value from your achievements to mine!'),
+        'i_compel_effect_fourth'          => clienttranslate('${I compel} you to return a card from your score pile! If you do, transfer an achievement of the same value from your achievements to mine, and junk all cards in the deck of that value!'),
     ),
 
     119 => array(
