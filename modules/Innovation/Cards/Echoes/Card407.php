@@ -27,10 +27,10 @@ class Card407 extends Card
       $scorePileCounts = self::countCardsKeyedByValue('score');
       $handCounts = self::countCardsKeyedByValue('hand');
       for ($i = 11; $i >= 1; $i--) {
-          if ($scorePileCounts[$i] > 0 && $handCounts[$i] == 0) {
-              self::setAuxiliaryValue($i); // Track value to return
-              return;
-          }
+        if ($scorePileCounts[$i] > 0 && $handCounts[$i] == 0) {
+          self::setAuxiliaryValue($i); // Track value to return
+          return;
+        }
       }
       // No card needs to be returned, so skip to second interaction
       self::setNextStep(2);
@@ -44,50 +44,51 @@ class Card407 extends Card
     if (self::isEcho()) {
       return [
         'location_from' => 'hand',
-        'meld_keyword' => true,
-        'with_icon' => $this->game::HEALTH,
+        'meld_keyword'  => true,
+        'with_icon'     => $this->game::HEALTH,
       ];
     } else if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
         return [
-          'location_from' => 'score',
+          'location_from'  => 'score',
           'return_keyword' => true,
-          'age' => self::getAuxiliaryValue(),
+          'age'            => self::getAuxiliaryValue(),
         ];
       } else {
         return [
-          'location_from' => 'board',
+          'location_from'  => 'board',
           'return_keyword' => true,
-          'with_icon' => $this->game::EFFICIENCY,
+          'with_icon'      => $this->game::EFFICIENCY,
         ];
       }
     } else {
       if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(0); // Keep track of whether the first interaction happened
         return [
-          'location_from' => 'score',
+          'location_from'  => 'score',
           'return_keyword' => true,
-          'with_icon' => $this->game::EFFICIENCY,
+          'with_icon'      => $this->game::EFFICIENCY,
         ];
       } else if (self::isSecondInteraction()) {
         return [
-          'location_from' => 'board',
+          'location_from'  => 'board',
           'return_keyword' => true,
-          'with_icon' => $this->game::EFFICIENCY,
+          'with_icon'      => $this->game::EFFICIENCY,
         ];
       } else {
-        // TODO(4E): Can this also junk special achievements?
+        // TODO(4E): Also allow player to junk special achievements.
         return [
-          'n' => self::countCards('achievements'),
+          'n'             => self::countCards('achievements'),
           'location_from' => 'achievements',
-          'owner_from' => 0,
-          'location_to' => 'junk',
+          'owner_from'    => 0,
+          'location_to'   => 'junk',
         ];
       }
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     if (self::isFourthEdition() && self::isDemand()) {
       if (self::isFirstInteraction()) {
         self::setAuxiliaryValue(1);
