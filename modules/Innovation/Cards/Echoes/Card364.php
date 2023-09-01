@@ -64,7 +64,7 @@ class Card364 extends Card
       $choiceMap[$splayDirection] = [
         clienttranslate('Splay ${color} ${splay_direction}'),
         'i18n'            => ['color', 'splay_direction'],
-        'color'           => $this->game->getColorInClear($this->game::PURPLE),
+        'color'           => $this->game->renderColor($this->game::PURPLE),
         'splay_direction' => $this->game->getSplayDirectionInClear($splayDirection),
       ];
     }
@@ -73,7 +73,7 @@ class Card364 extends Card
       $choiceMap[5 + $color] = [
         clienttranslate('Splay ${color} ${splay_direction}'),
         'i18n'            => ['color', 'splay_direction'],
-        'color'           => $this->game->getColorInClear($color),
+        'color'           => $this->game->renderColor($color),
         'splay_direction' => $this->game->getSplayDirectionInClear($purpleSplayDirection),
       ];
     }

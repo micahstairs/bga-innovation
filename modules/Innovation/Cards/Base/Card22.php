@@ -28,7 +28,7 @@ class Card22 extends Card
         );
         self::notifyOthers(
           clienttranslate('${player_name} has visible ${n} ${icon} on his board.'),
-          ['player_name' => $this->game->getColoredPlayerName(self::getPlayerId()), 'n' => $iconCount, 'icon' => $renderedIcon]
+          ['player_name' => $this->game->renderPlayerName(self::getPlayerId()), 'n' => $iconCount, 'icon' => $renderedIcon]
         );
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
@@ -39,14 +39,14 @@ class Card22 extends Card
         }
         self::notifyPlayer(
           clienttranslate('${You} have ${n} color(s) with one or more visible ${icon}.'),
-          ['i18n' => ['n'], 'You' => 'You', 'n' => $this->game->getTranslatedNumber($numToDraw), 'icon' => $renderedIcon]
+          ['i18n' => ['n'], 'You' => 'You', 'n' => $this->game->renderNumber($numToDraw), 'icon' => $renderedIcon]
         );
         self::notifyOthers(
           clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'),
           [
             'i18n'        => ['n'],
-            'player_name' => $this->game->getColoredPlayerName(self::getPlayerId()),
-            'n'           => $this->game->getTranslatedNumber($numToDraw),
+            'player_name' => $this->game->renderPlayerName(self::getPlayerId()),
+            'n'           => $this->game->renderNumber($numToDraw),
             'icon'        => $renderedIcon,
           ]
         );

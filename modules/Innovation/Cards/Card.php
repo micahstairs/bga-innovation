@@ -1028,6 +1028,8 @@ abstract class Card
     return array_diff(range(0, 5), [$type]);
   }
 
+  // NOTIFICATION HELPERS
+
   protected function notifyAll($log, array $args = [])
   {
     $this->game->notifyGeneralInfo($log, $args);
@@ -1056,6 +1058,16 @@ abstract class Card
   public function renderValueWithType(int $value, int $type): string
   {
     return $this->notifications->renderValueWithType($value, $type);
+  }
+
+  public function renderColor(int $color): string
+  {
+    return $this->game->renderColor($color);
+  }
+
+  public function renderPlayerName(int $playerId = null): string
+  {
+    return $this->game->renderPlayerName(self::coercePlayerId($playerId));
   }
 
   // GENERAL UTILITY HELPERS

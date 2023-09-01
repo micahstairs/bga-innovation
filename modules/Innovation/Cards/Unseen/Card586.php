@@ -50,7 +50,7 @@ class Card586 extends Card
     );
     self::notifyOthers(clienttranslate('${player_name} calls ${side}.'),
       [
-        'player_name' => $this->notifications->getColoredPlayerName(self::getPlayerId()),
+        'player_name' => $this->notifications->renderPlayerName(self::getPlayerId()),
         'side' => $this->getPrintableCoinSide($choice),
       ]
     );

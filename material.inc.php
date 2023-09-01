@@ -826,8 +826,9 @@ $this->textual_card_infos = array(
     ),
 
     122 => array(
-        'name'                => clienttranslate('Mask of Warka'),
-        'non_demand_effect_1' => clienttranslate('Choose a color. Each player reveals all cards of that color from their hand. If you are the only player to reveal cards, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
+        'name'                               => clienttranslate('Mask of Warka'),
+        'non_demand_effect_1_first_or_third' => clienttranslate('Choose a color. Each player reveals all cards of that color from their hand. If you are the only player to reveal cards, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'         => clienttranslate('Choose a color. Each player reveals their hand. If you are the only player to reveal cards of that color, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
     ),
 
     123 => array(

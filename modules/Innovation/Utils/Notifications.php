@@ -27,7 +27,7 @@ class Notifications
 
   public function notifyCardColor(int $color)
   {
-    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => $this->game->getColorInClear($color)));
+    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => $this->game->renderColor($color)));
   }
 
   // CHOICE NOTIFICATIONS
@@ -36,20 +36,20 @@ class Notifications
   {
     $iconSquare = $this->getIconSquare($icon);
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${icon}.'), ['You' => 'You', 'icon' => $iconSquare]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${icon}.'), ['player_name' => self::getColoredPlayerName($playerId), 'icon' => $iconSquare]);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${icon}.'), ['player_name' => self::renderPlayerName($playerId), 'icon' => $iconSquare]);
   }
 
   public function notifyValueChoice(int $value, int $playerId)
   {
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose the value ${age}.'), ['You' => 'You', 'age' => self::renderValue($value)]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::getColoredPlayerName($playerId), 'age' => self::renderValue($value)]);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses the value ${age}.'), ['player_name' => self::renderPlayerName($playerId), 'age' => self::renderValue($value)]);
   }
 
   public function notifyColorChoice(int $color, int $playerId)
   {
-    $colorText = $this->game->getColorInClear($color);
+    $colorText = $this->game->renderColor($color);
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${color}.'), ['i18n' => ['color'], 'You' => 'You', 'color' => $colorText]);
-    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${color}.'), ['i18n' => ['color'], 'player_name' => self::getColoredPlayerName($playerId), 'color' => $colorText]);
+    self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${color}.'), ['i18n' => ['color'], 'player_name' => self::renderPlayerName($playerId), 'color' => $colorText]);
   }
 
   public function notifyPlayerChoice(int $chosenPlayerId, int $playerId) {
@@ -59,7 +59,7 @@ class Notifications
       clienttranslate('${You} choose the player ${player_choice}.'),
       array(
         'You'           => 'You',
-        'player_choice' => self::getColoredPlayerName($chosenPlayerId)
+        'player_choice' => self::renderPlayerName($chosenPlayerId)
       )
     );
     self::notifyAllPlayersBut(
@@ -67,8 +67,8 @@ class Notifications
       'log',
       clienttranslate('${player_name} chooses the player ${player_choice}.'),
       array(
-        'player_name'   => self::getColoredPlayerName($playerId),
-        'player_choice' => self::getColoredPlayerName($chosenPlayerId)
+        'player_name'   => self::renderPlayerName($playerId),
+        'player_choice' => self::renderPlayerName($chosenPlayerId)
       )
     );
   }
@@ -96,7 +96,7 @@ class Notifications
     return "<span style='font-weight: bold; color:#" . $color . ";'>" . $text . "</span>";
   }
 
-  public function getColoredPlayerName($playerId): string
+  public function renderPlayerName($playerId): string
   {
     return self::getColoredText($this->game->getPlayerNameFromId($playerId), $playerId);
   }
@@ -109,7 +109,7 @@ class Notifications
     );
     self::notifyAllPlayersBut($playerId, 'log',
       clienttranslate('${player_name}\'s ${location} was already full so the card was not transferred to his ${location}.'),
-      ['i18n' => ['location'], 'player_name' => self::getColoredPlayerName($playerId), 'location' => $location],
+      ['i18n' => ['location'], 'player_name' => self::renderPlayerName($playerId), 'location' => $location],
     );
   }
 
@@ -117,7 +117,7 @@ class Notifications
   {
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} lose.'),  ['You' => 'You']);
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} loses.'), array(
-      'player_name' => self::getColoredPlayerName($playerId)
+      'player_name' => self::renderPlayerName($playerId)
     ));
   }
 
