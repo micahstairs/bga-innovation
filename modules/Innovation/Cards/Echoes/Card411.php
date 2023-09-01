@@ -18,7 +18,7 @@ class Card411 extends Card
 
   public function initialExecution()
   {
-    if (self::isEcho() || self::isFirstNonDemand()) {
+    if (self::isEcho() || self::isDemand()) {
       self::setMaxSteps(1);
     } else {
       self::junkBaseDeck(9);
