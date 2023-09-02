@@ -1065,6 +1065,11 @@ abstract class Card
     return $this->game->renderColor($color);
   }
 
+  public function renderNumber(int $number): string
+  {
+    return $this->game->renderNumber($number);
+  }
+
   public function renderPlayerName(int $playerId = null): string
   {
     return $this->game->renderPlayerName(self::coercePlayerId($playerId));
