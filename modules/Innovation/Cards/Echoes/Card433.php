@@ -49,13 +49,15 @@ class Card433 extends Card
 
   public function afterInteraction()
   {
-    if (self::getNumChosen() === 0 || self::getAuxiliaryValue() === 1) {
-      if (self::allColorsHaveSameNumberOfVisibleCards()) {
-        self::win();
+    if (self::isFirstNonDemand()) {
+      if (self::getNumChosen() === 0 || self::getAuxiliaryValue() === 1) {
+        if (self::allColorsHaveSameNumberOfVisibleCards()) {
+          self::win();
+        }
+      } else if (self::getNumChosen() === 1) {
+        self::setNextStep(1);
+        self::setAuxiliaryValue(1);
       }
-    } else if (self::getNumChosen() === 1) {
-      self::setNextStep(1);
-      self::setAuxiliaryValue(1);
     }
   }
 

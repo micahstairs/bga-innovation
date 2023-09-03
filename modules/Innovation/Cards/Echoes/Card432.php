@@ -9,12 +9,14 @@ class Card432 extends Card
 
   // MP3
   // - 3rd edition 
-  //   - Return any number of cards from your hand. For each card returned, claim two standard achievements for which you are eligible.
+  //   - Return any number of cards from your hand. For each card returned, claim two standard
+  //     achievements for which you are eligible.
   //   - Draw and score a card of value equal to a bonus on your board.
   // - 4th edition
   //   - ECHO: Draw and score a [10].
   //   - Draw and score a card of value equal to a bonus on your board, if there is one.
-  //   - Return any number of cards from your hand. For each card returned, claim two standard achievements for which you are eligible.
+  //   - Return any number of cards from your hand. For each card returned, claim two standard
+  //     achievements for which you are eligible.
 
   public function initialExecution()
   {
@@ -64,6 +66,7 @@ class Card432 extends Card
     if ((self::isFirstOrThirdEdition() && self::isFirstNonDemand()) || (self::isFourthEdition() && self::isSecondNonDemand())) {
       if (self::getNumChosen() > 0) {
         self::setAuxiliaryValue(self::getNumChosen() * 2); // Track number of achievements to achieve
+        self::setMaxSteps(2);
       }
     }
   }
