@@ -44,11 +44,11 @@ class Card474 extends Card
     foreach (self::getOtherPlayerIds($maxIconPlayerId) as $playerId) {
       self::revealHand($playerId);
       foreach (self::getCards('hand', $playerId) as $card) {
-        self::transferToHandIfFeaturedIconMatches($card, $icon, $playerId);
+        self::transferToHandIfFeaturedIconMatches($card, $icon, $maxIconPlayerId);
       }
       self::revealScorePile($playerId);
       foreach (self::getCards('score', $playerId) as $card) {
-        self::transferToHandIfFeaturedIconMatches($card, $icon, $playerId);
+        self::transferToHandIfFeaturedIconMatches($card, $icon, $maxIconPlayerId);
       }
     }
 
@@ -57,10 +57,11 @@ class Card474 extends Card
       self::transferToHandIfFeaturedIconMatches($card, $icon, $maxIconPlayerId);
     }
 
-    
+
   }
 
-  private function transferToHandIfFeaturedIconMatches(array $card, int $icon, int $playerId) {
+  private function transferToHandIfFeaturedIconMatches(array $card, int $icon, int $playerId)
+  {
     if ($card['dogma_icon'] == $icon) {
       self::transferToHand($card, $playerId);
     }
