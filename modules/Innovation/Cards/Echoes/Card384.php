@@ -21,7 +21,9 @@ class Card384 extends Card
 
   public function initialExecution()
   {
-    self::setMaxSteps(1);
+    if (self::countCards('hand') > 0) {
+      self::setMaxSteps(1);
+    }
   }
 
   public function getInteractionOptions(): array
@@ -96,11 +98,15 @@ class Card384 extends Card
       $topCard = self::getTopCardOfColor($revealedCard['color']);
       if (!$topCard || $revealedCard['faceup_age'] > $topCard['faceup_age']) {
         self::meld($revealedCard);
+        if (self::isFirstOrThirdEdition() && self::countCards('hand') > 0) {
+          self::setNextStep(1);
+        }
       } else {
         self::return($revealedCard);
+        if (self::countCards('hand') > 0) {
+          self::setNextStep(1);
+        }
       }
-      self::setNextStep(2);
-      self::setMaxSteps(2);
     }
   }
 
