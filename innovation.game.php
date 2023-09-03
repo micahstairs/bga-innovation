@@ -4094,6 +4094,14 @@ class Innovation extends Table
         }
         return null;
     }
+
+    function unsetVersionedCardProperties($textual_infos, $prefix) {
+        unset($textual_infos[$prefix . '_first']);
+        unset($textual_infos[$prefix . '_first_and_third']);
+        unset($textual_infos[$prefix . '_third']);
+        unset($textual_infos[$prefix . '_third_and_fourth']);
+        unset($textual_infos[$prefix . '_fourth']);
+    }
     
     function attachTextualInfo($card) {
         if ($card === null) {
@@ -4109,41 +4117,28 @@ class Innovation extends Table
 
         // Make sure the name reflects the current edition
         $textual_infos['name'] = self::getCardName($id);
-        unset($textual_infos['name_first_and_third']);
-        unset($textual_infos['name_fourth']);
+        self::unsetVersionedCardProperties($textual_infos, 'name');
 
         // Make sure the echo effect reflects the current edition
         $textual_infos['echo_effect'] = self::getEchoEffect($id);
         if ($textual_infos['echo_effect'] === null) {
             unset($textual_infos['echo_effect']);
         }
-        unset($textual_infos['echo_effect_first']);
-        unset($textual_infos['echo_effect_first_and_third']);
-        unset($textual_infos['echo_effect_third']);
-        unset($textual_infos['echo_effect_third_and_fourth']);
-        unset($textual_infos['echo_effect_fourth']);
+        self::unsetVersionedCardProperties($textual_infos, 'echo_effect');
 
         // Make sure the demand effect reflects the current edition
         $textual_infos['i_demand_effect'] = self::getDemandEffect($id);
         if ($textual_infos['i_demand_effect'] === null) {
             unset($textual_infos['i_demand_effect']);
         }
-        unset($textual_infos['i_demand_effect_first']);
-        unset($textual_infos['i_demand_effect_first_and_third']);
-        unset($textual_infos['i_demand_effect_third']);
-        unset($textual_infos['i_demand_effect_third_and_fourth']);
-        unset($textual_infos['i_demand_effect_fourth']);
+        self::unsetVersionedCardProperties($textual_infos, 'i_demand_effect');
 
         // Make sure the compel effect reflects the current edition
         $textual_infos['i_compel_effect'] = self::getCompelEffect($id);
         if ($textual_infos['i_compel_effect'] === null) {
             unset($textual_infos['i_compel_effect']);
         }
-        unset($textual_infos['i_compel_effect_first']);
-        unset($textual_infos['i_compel_effect_first_and_third']);
-        unset($textual_infos['i_compel_effect_third']);
-        unset($textual_infos['i_compel_effect_third_and_fourth']);
-        unset($textual_infos['i_compel_effect_fourth']);
+        self::unsetVersionedCardProperties($textual_infos, 'i_compel_effect');
 
         // Make sure the non-demand effects reflects the current edition
         for ($i = 1; $i <= 3; $i++) {
@@ -4152,11 +4147,7 @@ class Innovation extends Table
             if ($textual_infos[$non_demand] === null) {
                 unset($textual_infos[$non_demand]);
             }
-            unset($textual_infos[$non_demand . '_first']);
-            unset($textual_infos[$non_demand . '_first_and_third']);
-            unset($textual_infos[$non_demand . '_third']);
-            unset($textual_infos[$non_demand . '_third_and_fourth']);
-            unset($textual_infos[$non_demand . '_fourth']);
+            self::unsetVersionedCardProperties($textual_infos, $non_demand);
         }
 
         // Make sure the condition for claiming the special achievement reflects the current edition
@@ -4164,8 +4155,7 @@ class Innovation extends Table
         if ($textual_infos['condition_for_claiming'] === null) {
             unset($textual_infos['condition_for_claiming']);
         }
-        unset($textual_infos['condition_for_claiming_first_and_third']);
-        unset($textual_infos['condition_for_claiming_fourth']);
+        unset($textual_infos['condition_for_claiming']);
 
         unset($textual_infos['separate_4E_implementation']);
         return array_merge($card, $textual_infos);
@@ -4397,7 +4387,7 @@ class Innovation extends Table
             $owner_condition = self::format("owner = {owner} AND", array('owner' => $owner));
         }
 
-        if ($key == 'age') {
+        if ($key == 'age' || $key == 'faceup_age') {
             $num_min = 1;
             $num_max = 11;
         } else if ($key == 'color') {
@@ -8469,17 +8459,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('choose');
         
+        $is_special_choice = $this->innovationGameState->get('special_type_of_choice') > 0;
         if ($card_id == -1) {
             // The player chooses to pass or stop
-            if ($this->innovationGameState->get('can_pass') == 0 && $this->innovationGameState->get('n_min') > 0) {
+            if ($this->innovationGameState->get('can_pass') == 0 && ($this->innovationGameState->get('n_min') > 0 || $is_special_choice)) {
                 self::throwInvalidChoiceException();
             }
-            if ($this->innovationGameState->get('special_type_of_choice') == 0) {
-                $this->innovationGameState->set('id_last_selected', -1);
-            } else {
+            if ($is_special_choice) {
                 $this->innovationGameState->set('choice', -2);
+            } else {
+                $this->innovationGameState->set('id_last_selected', -1);
             }
-        } else if ($this->innovationGameState->get('special_type_of_choice') != 0) {
+        } else if ($is_special_choice) {
             self::throwInvalidChoiceException();
         } else {
             // Check if the card is within the selection range

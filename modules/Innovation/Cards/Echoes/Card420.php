@@ -27,17 +27,20 @@ class Card420 extends Card
         self::drawAndForeshadow(11);
       }
     } else {
-      self::setMaxSteps(1);
+      $topNonGreenCards = self::filterByColor(self::getTopCards(), self::getAllColorsOtherThan($this->game::GREEN));
+      if (count($topNonGreenCards) > 0) {
+        self::setAuxiliaryValue(self::getMinValue($topNonGreenCards)); // Track value of card to choose
+        self::setMaxSteps(1);
+      }
     }
   }
 
   public function getInteractionOptions(): array
   {
     return [
-      'location_from' => 'board',
-      'location_to'   => 'none',
-      'age'           => self::getMinValueInLocation('board'),
-      'color'         => self::getAllColorsOtherThan($this->game::GREEN),
+      'choose_from' => 'board',
+      'age'         => self::getAuxiliaryValue(),
+      'color'       => self::getAllColorsOtherThan($this->game::GREEN),
     ];
   }
 

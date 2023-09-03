@@ -79,16 +79,21 @@ class Card571 extends Card
 
   public function handleSpecialChoice(int $choice): void
   {
+    $args = [];
     if ($choice === 1) {
-      self::notifyPlayer(clienttranslate('${You} wish to draw two ${age}.'), ['age' => self::renderValue(10)]);
-      self::notifyOthers(clienttranslate('${player_name} wishes to draw two ${age}.'), ['age' => self::renderValue(10)]);
+      $args = ['age' => self::renderValue(10)];
+      $playerMessage = clienttranslate('${You} wish to draw two ${age}.');
+      $othersMessage = clienttranslate('${player_name} wishes to draw two ${age}.');
     } else if ($choice === 2) {
-      self::notifyPlayer(clienttranslate('${You} wish to draw and score two ${age}.'), ['age' => self::renderValue(8)]);
-      self::notifyOthers(clienttranslate('${player_name} wishes to draw and score two ${age}.'), ['age' => self::renderValue(8)]);
+      $args = ['age' => self::renderValue(8)];
+      $playerMessage = clienttranslate('${You} wish to draw and score two ${age}.');
+      $othersMessage = clienttranslate('${player_name} wishes to draw and score two ${age}.');
     } else {
-      self::notifyPlayer(clienttranslate('${You} wish to safeguard two available achievements.'), []);
-      self::notifyOthers(clienttranslate('${player_name} wishes to safeguard two available achievements.'), []);
+      $playerMessage = clienttranslate('${You} wish to safeguard two available achievements.');
+      $othersMessage = clienttranslate('${player_name} wishes to safeguard two available achievements.');
     }
+    self::notifyPlayer($playerMessage, array_merge($args, ['You' => 'You']));
+    self::notifyOthers($othersMessage, array_merge($args, ['player_name' => self::renderPlayerName()]));
     self::setAuxiliaryValue($choice); // Tracks the wish that the player chose
   }
 

@@ -445,6 +445,22 @@ abstract class Card
     return $this->game->getBottomCardOnBoard(self::coercePlayerId($playerId), $color);
   }
 
+  protected function filterByColor(array $cards, array $colors) {
+    return array_filter($cards, function ($card) use ($colors) {
+      return in_array($card['color'], $colors);
+    });
+  }
+
+  protected function getMinValue(array $cards) {
+    return min(array_map(function ($card) {
+      if ($card['location'] === 'board' || $card['location'] === 'display') {
+        return $card['faceup_age'];
+      } else {
+        return $card['age'];
+      }
+    }, $cards));
+  }
+
   protected function getRevealedCard(int $playerId = null): ?array
   {
     $cards = self::getCards('revealed');
@@ -1063,6 +1079,11 @@ abstract class Card
   public function renderColor(int $color): string
   {
     return $this->game->renderColor($color);
+  }
+
+  public function renderNumber(int $number): string
+  {
+    return $this->game->renderNumber($number);
   }
 
   public function renderPlayerName(int $playerId = null): string

@@ -1,7 +1,5 @@
 <?php
 
-use BGAWorkbench\Utils;
-use BGAWorkbench\Test\StubProductionEnvironment;
 use Helpers\TestHelpers;
 use PHPUnit\Framework\TestCase;
 

@@ -826,9 +826,9 @@ $this->textual_card_infos = array(
     ),
 
     122 => array(
-        'name'                               => clienttranslate('Mask of Warka'),
-        'non_demand_effect_1_first_or_third' => clienttranslate('Choose a color. Each player reveals all cards of that color from their hand. If you are the only player to reveal cards, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
-        'non_demand_effect_1_fourth'         => clienttranslate('Choose a color. Each player reveals their hand. If you are the only player to reveal cards of that color, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
+        'name'                                => clienttranslate('Mask of Warka'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color. Each player reveals all cards of that color from their hand. If you are the only player to reveal cards, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color. Each player reveals their hand. If you are the only player to reveal cards of that color, return them and claim all achievements of value matching those cards, ignoring eligibility.'),
     ),
 
     123 => array(
@@ -1938,11 +1938,11 @@ $this->textual_card_infos = array(
     ),
 
     386 => array(
-        'name'                               => clienttranslate('Stethoscope'),
-        'echo_effect'                        => clienttranslate('Meld a blue or yellow card from your hand.'),
-        'non_demand_effect_1_first_or_third' => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}.'),
-        'non_demand_effect_1_fourth'         => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}, and if Stethoscope was foreseen, draw a ${age_9}.'),
-        'non_demand_effect_2'                => clienttranslate('You may splay your yellow cards right.'),
+        'name'                                => clienttranslate('Stethoscope'),
+        'echo_effect'                         => clienttranslate('Meld a blue or yellow card from your hand.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw a ${age_7}. If you melded a blue card due to Stethoscope\'s echo effect, draw an ${age_8}, and if Stethoscope was foreseen, draw a ${age_9}.'),
+        'non_demand_effect_2'                 => clienttranslate('You may splay your yellow cards right.'),
     ),
 
     387 => array(
@@ -2005,18 +2005,18 @@ $this->textual_card_infos = array(
     /* Echoes - age 7 */
 
     395 => array(
-        'name'                               => clienttranslate('Photography'),
-        'echo_effect'                        => clienttranslate('Meld a card from your forecast.'),
-        'i_demand_effect_first_or_third'     => clienttranslate('${I demand} you take the highest top card from your board into your hand!'),
-        'i_demand_effect_fourth'             => clienttranslate('${I demand} you transfer your highest top card to your hand!'),
-        'non_demand_effect_1_first_or_third' => clienttranslate('If you have at least three echo effects visible in one color, claim the History achievement.'),
-        'non_demand_effect_1_fourth'         => clienttranslate('If you have three echo effects visible in one color, claim the History achievement. If you do, and Photography was foreseen, you win.'),
+        'name'                                => clienttranslate('Photography'),
+        'echo_effect'                         => clienttranslate('Meld a card from your forecast.'),
+        'i_demand_effect_first_and_third'     => clienttranslate('${I demand} you take the highest top card from your board into your hand!'),
+        'i_demand_effect_fourth'              => clienttranslate('${I demand} you transfer your highest top card to your hand!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have at least three echo effects visible in one color, claim the History achievement.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have three echo effects visible in one color, claim the History achievement. If you do, and Photography was foreseen, you win.'),
     ),
 
     396 => array(
-        'name'                               => clienttranslate('Typewriter'),
-        'non_demand_effect_1_first_and_thid' => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card returned, draw a card of the next higher value.'),
-        'non_demand_effect_1_fourth'         => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card you return, draw a card of value one higher than the highest card in your hand.'),
+        'name'                                => clienttranslate('Typewriter'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card returned, draw a card of the next higher value.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand. Draw a ${age_6}. For each color of card you return, draw a card of value one higher than the highest card in your hand.'),
     ),
 
     397 => array(
@@ -2055,25 +2055,25 @@ $this->textual_card_infos = array(
     ),
 
     401 => array(
-        'name'                               => clienttranslate('Elevator'),
-        'echo_effect'                        => clienttranslate('Score your top or bottom green card.'),
-        'non_demand_effect_1_first_or_third' => clienttranslate('Choose a value present in your score pile. Choose to transfer all cards of the chosen value from either all other players\' hands or all their score piles to your score pile.'),
-        'non_demand_effect_1_fourth'         => clienttranslate('Choose a value present in your score pile. Choose to score all cards of the chosen value from either all opponents\' hands or all their score piles. Draw and foreshadow a card of the chosen value.'),
+        'name'                                => clienttranslate('Elevator'),
+        'echo_effect'                         => clienttranslate('Score your top or bottom green card.'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a value present in your score pile. Choose to transfer all cards of the chosen value from either all other players\' hands or all their score piles to your score pile.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a value present in your score pile. Choose to score all cards of the chosen value from either all opponents\' hands or all their score piles. Draw and foreshadow a card of the chosen value.'),
     ),
 
     402 => array(
-        'name'                               => clienttranslate('Fertilizer'),
-        'non_demand_effect_1'                => clienttranslate('You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value equal to the returned card.'),
-        'non_demand_effect_2_first_or_third' => clienttranslate('Draw and foreshadow a card of any value.'),
-        'non_demand_effect_2_fourth'         => clienttranslate('Draw and foreshadow a card of value equal to the number of cards in your hand.'),
+        'name'                                => clienttranslate('Fertilizer'),
+        'non_demand_effect_1'                 => clienttranslate('You may return a card from your hand. If you do, transfer all cards from all score piles to your hand of value equal to the returned card.'),
+        'non_demand_effect_2_first_and_third' => clienttranslate('Draw and foreshadow a card of any value.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Draw and foreshadow a card of value equal to the number of cards in your hand.'),
     ),
 
     403 => array(
-        'name'                               => clienttranslate('Ice Cream'),
-        'echo_effect'                        => clienttranslate('Score a non-purple top card from your board without a bonus.'),
-        'i_demand_effect'                    => clienttranslate('${I demand} you draw and meld a ${age_1}!'),
-        'non_demand_effect_1_first_or_third' => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
-        'non_demand_effect_1_fourth'         => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. You may junk all cards in the chosen deck. If you do, achieve the highest junked card if eligible.'),
+        'name'                                => clienttranslate('Ice Cream'),
+        'echo_effect'                         => clienttranslate('Score a non-purple top card from your board without a bonus.'),
+        'i_demand_effect'                     => clienttranslate('${I demand} you draw and meld a ${age_1}!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. If there is at least one card in that deck, you may transfer its bottom card to the available achievements.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose the ${age_6}, ${age_7}, ${age_8}, or ${age_9} deck. You may junk all cards in the chosen deck. If you do, achieve the highest junked card if eligible.'),
     ),
 
     404 => array(

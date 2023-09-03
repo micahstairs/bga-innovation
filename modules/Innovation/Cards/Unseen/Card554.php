@@ -50,7 +50,7 @@ class Card554 extends Card
         }
         if ($numRevealedGreenCards >= 3) {
           self::notifyPlayer(clienttranslate('${You} revealed three green cards.'), ['You' => 'You']);
-          self::notifyOthers(clienttranslate('${player_name} revealed three green cards.'), ['player_name' => $this->game->renderPlayerName(self::getPlayerId())]);
+          self::notifyOthers(clienttranslate('${player_name} revealed three green cards.'), ['player_name' => self::renderPlayerName()]);
           self::win();
         }
       }

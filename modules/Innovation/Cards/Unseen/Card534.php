@@ -51,7 +51,7 @@ class Card534 extends Card
         );
       self::notifyOthers(
           clienttranslate('${player_name} has chosen to splay a non-purple color left and self-execute the top card.'),
-          ['player_name' => $this->game->renderPlayerName(self::getPlayerId())]
+          ['player_name' => self::renderPlayerName()]
         );
     } else {
       self::notifyPlayer(
@@ -60,7 +60,7 @@ class Card534 extends Card
         );
       self::notifyOthers(
           clienttranslate('${player_name} has chosen to meld a card from his hand and splay its color right.'),
-          ['player_name' => $this->game->renderPlayerName(self::getPlayerId())]
+          ['player_name' => self::renderPlayerName()]
         );
     }
     self::setAuxiliaryValue($choice);
