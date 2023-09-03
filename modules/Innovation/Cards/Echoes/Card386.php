@@ -44,26 +44,29 @@ class Card386 extends Card
     if (self::isEcho()) {
       return [
         'location_from' => 'hand',
-          'meld_keyword' => true,
-          'color' => [$this->game::BLUE, $this->game::YELLOW],
+        'meld_keyword'  => true,
+        'color'         => [$this->game::BLUE, $this->game::YELLOW],
       ];
     } else {
       return [
-        'can_pass' => true,
-          'splay_direction' => $this->game::RIGHT,
-          'color' => [$this->game::YELLOW],
+        'can_pass'        => true,
+        'splay_direction' => $this->game::RIGHT,
+        'color'           => [$this->game::YELLOW],
       ];
     }
   }
 
   public function handleCardChoice(array $card)
   {
+    self::notifyAll("color: ". $card['color']);
     if (self::isEcho() && self::isBlue($card)) {
+      self::notifyAll("setting var to 1");
       $this->game->setIndexedAuxiliaryValue(self::getPlayerId(), 1); // Track whether a blue card was melded
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isEcho() && self::getNumChosen() === 0) {
       // Prove that the player did not have any blue or yellow cards in hand.
       self::revealHand();

@@ -7316,7 +7316,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         return $array;
     }
 
-    function setIndexedAuxiliaryValue($index_id, $value) {
+    function setIndexedAuxiliaryValue(int $index_id, int $value) {
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
 
         // Check to see if a value already exists
@@ -7354,7 +7354,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         }
     }
 
-    function getIndexedAuxiliaryValue($index_id) {
+    function getIndexedAuxiliaryValue($index_id): int {
         $nesting_index = $this->innovationGameState->get('current_nesting_index');
         $result = self::getUniqueValueFromDB(self::format("
             SELECT
@@ -7370,7 +7370,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
        if ($result == null) {
         $result = -1;
        }
-       return $result;
+       return intval($result);
     }
 
     // TODO(LATER): Use this more widely.
@@ -7488,6 +7488,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $nested_card_state = self::getCurrentNestedCardState();
         // Every card that says "execute the effects" also says "as if they were on this card". However, if the card says
         // "execute all of the non-demand dogma effects" then the echo effects will be skipped.
+        // TODO(4E): Revise this logic.
         return $nested_card_state['nesting_index']  == 0 || $nested_card_state['executing_as_if_on_card_id'] != $nested_card_state['card_id'];
     }
 
