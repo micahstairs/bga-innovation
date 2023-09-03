@@ -44,22 +44,23 @@ class Card470 extends Card
 
   public function handleSpecialChoice(int $choice)
   {
-    $cardId = self::getAuxiliaryValue();
-    $card = self::getCard($cardId);
+    $card = self::getCard(self::getAuxiliaryValue());
     if ($choice === 2) {
       self::score($card);
-      self::repeatIfForeseen();
+      self::repeatIfForeseen($card['color']);
     } else if (in_array($card['age'], $this->game->getClaimableValuesIgnoringAvailability(self::getPlayerId()))) {
       self::achieve($card);
-      self::repeatIfForeseen();
+      self::repeatIfForeseen($card['color']);
     }
   }
 
-  private function repeatIfForeseen()
+  private function repeatIfForeseen(int $color)
   {
-    if (self::wasForeseen()) {
-      self::setNextStep(1);
-      self::setMaxSteps(1);
+    $topCard = self::getTopCardOfColor($color);
+    if ($topCard && self::wasForeseen()) {
+      self::setAuxiliaryValue($topCard['id']);
+      self::setNextStep(2);
+      self::setMaxSteps(2);
     }
   }
 
