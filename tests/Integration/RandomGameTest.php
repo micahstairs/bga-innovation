@@ -133,7 +133,11 @@ class RandomGameTest extends BaseIntegrationTest
         $choices[] = [$this, 'selectRandomCard'];
       }
 
-      if (!(self::getGlobalVariable('can_pass') == 0 && self::getGlobalVariable('n_min') > 0)) {
+      $can_pass = self::getGlobalVariable('can_pass') == 1;
+      if (self::getGlobalVariable('special_type_of_choice') == 0 && self::getGlobalVariable('n_min') <= 0) {
+        $can_pass = false;
+      }
+      if ($can_pass) {
         $choices[] = [$this, 'pass'];
       }
 

@@ -8459,17 +8459,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Check that this is the player's turn and that it is a "possible action" at this game state
         self::checkAction('choose');
         
+        $is_special_choice = $this->innovationGameState->get('special_type_of_choice') > 0;
         if ($card_id == -1) {
             // The player chooses to pass or stop
-            if ($this->innovationGameState->get('can_pass') == 0 && $this->innovationGameState->get('n_min') > 0) {
+            if ($this->innovationGameState->get('can_pass') == 0 && ($this->innovationGameState->get('n_min') > 0 || $is_special_choice)) {
                 self::throwInvalidChoiceException();
             }
-            if ($this->innovationGameState->get('special_type_of_choice') == 0) {
-                $this->innovationGameState->set('id_last_selected', -1);
-            } else {
+            if ($is_special_choice) {
                 $this->innovationGameState->set('choice', -2);
+            } else {
+                $this->innovationGameState->set('id_last_selected', -1);
             }
-        } else if ($this->innovationGameState->get('special_type_of_choice') != 0) {
+        } else if ($is_special_choice) {
             self::throwInvalidChoiceException();
         } else {
             // Check if the card is within the selection range
