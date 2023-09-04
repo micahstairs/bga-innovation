@@ -24,7 +24,7 @@ class Card366 extends Card
       if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(5);
       } else {
-        self::foreshadow(self::drawFromSet(5, $this->game::ECHOES), [$this, 'transferToHand']);
+        self::foreshadow(self::drawType(5, $this->game::ECHOES), [$this, 'transferToHand']);
       }
     } else {
       self::setMaxSteps(1);

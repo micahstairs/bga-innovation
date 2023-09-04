@@ -9857,17 +9857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 126, Artifacts age 2: Rosetta Stone
-            case "126N1A":
-                $message_for_player = clienttranslate('${You} must choose a type');
-                $message_for_others = clienttranslate('${player_name} must choose a type');
-                break;
-
-            case "126N1C":
-                $message_for_player = clienttranslate('${You} must choose an opponent');
-                $message_for_others = clienttranslate('${player_name} must choose an opponent');
-                break;
-
             // id 147, Artifacts age 4: East India Company Charter
             case "147N1A":
                 $message_for_player = clienttranslate('Choose a value');
@@ -12595,11 +12584,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 126, Artifacts age 2: Rosetta Stone
-            case "126N1":
-                $step_max = 3;
-                break;
-
             // id 127, Artifacts age 2: Chronicle of Zuo
             case "127N1":
                 $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
@@ -16372,46 +16356,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-        
-        // id 126, Artifacts age 1: Rosetta Stone
-        case "126N1A":
-            // "Choose a type"
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_type' => true,
-                'type' => self::getActiveCardTypes()
-            );
-            break;
-
-        case "126N1B":
-            // "Meld one (of the drawn cards)"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "126N1C":
-            // Choose an opponent to transfer the other card to
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_player' => true,
-                'players' => self::getActiveOpponents($player_id)
             );
             break;
         
@@ -21287,21 +21231,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-            
-            // id 126, Artifacts age 2: Rosetta Stone
-            case "126N1A":
-                // "Draw two 2s of that type"
-                $this->innovationGameState->set('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
-                $this->innovationGameState->set('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
-                break;
-
-            case "126N1C":
-                // "Transfer the other to an opponent's board"
-                $card_1 = self::getCardInfo($this->innovationGameState->get('card_id_1'));
-                $card_2 = self::getCardInfo($this->innovationGameState->get('card_id_2'));
-                $remaining_card = $card_1['location'] == 'hand' ? $card_1 : $card_2;
-                self::transferCardFromTo($remaining_card, $choice, 'board');
                 break;
 
             // id 130, Artifacts age 1: Baghdad Battery

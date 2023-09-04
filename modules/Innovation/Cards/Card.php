@@ -246,7 +246,7 @@ abstract class Card
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age);
   }
 
-  protected function drawFromSet(int $age, int $type, int $playerId = null)
+  protected function drawType(int $age, int $type, int $playerId = null)
   {
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
   }

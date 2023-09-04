@@ -853,8 +853,7 @@ $this->textual_card_infos = array(
 
     126 => array(
         'name'                => clienttranslate('Rosetta Stone'),
-        // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Choose a card set. Draw two ${age_2} from that set. Meld one and transfer the other to an opponent\'s board.'),
+        'non_demand_effect_1' => clienttranslate('Choose a card type. Draw two ${age_2} of that type. Meld one and transfer the other to an opponent\'s board.'),
     ),
 
     127 => array(

@@ -20,8 +20,8 @@ class Card332 extends Card
     if (self::isEcho()) {
       self::draw(2);
     } else {
-      $card1 = self::drawFromSet(1, $this->game::ECHOES);
-      $card2 = self::drawFromSet(1, $this->game::ECHOES);
+      $card1 = self::drawType(1, $this->game::ECHOES);
+      $card2 = self::drawType(1, $this->game::ECHOES);
       self::setAuxiliaryArray([$card1['id'], $card2['id']]);
       self::setMaxSteps(2);
     }
