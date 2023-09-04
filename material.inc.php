@@ -857,8 +857,10 @@ $this->textual_card_infos = array(
     ),
 
     127 => array(
-        'name'                => clienttranslate('Chronicle of Zuo'),
-        'non_demand_effect_1' => clienttranslate('If you have the least ${icon_4}, draw a ${age_2}. If you have the least ${icon_1}, draw a ${age_3}. If you have the least ${icon_3}, draw a ${age_4}.'),
+        'name'                                => clienttranslate('Chronicle of Zuo'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have the least ${icon_4}, draw a ${age_2}. If you have the least ${icon_1}, draw a ${age_3}. If you have the least ${icon_3}, draw a ${age_4}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have the least ${icon_4} or the least ${icon_1}, draw a ${age_3}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If you have the least ${icon_3}, draw a ${age_4}.'),
     ),
 
     128 => array(

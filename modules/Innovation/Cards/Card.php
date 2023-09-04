@@ -979,6 +979,15 @@ abstract class Card
     return $this->game->getPlayerResourceCounts(self::coercePlayerId($playerId));
   }
 
+  protected function getStandardIconCountsOfAllPlayers(): array
+  {
+    $countsByPlayer = [];
+    foreach (self::getPlayerIds() as $playerId) {
+      $countsByPlayer[$playerId] = self::getStandardIconCounts($playerId);
+    }
+    return $countsByPlayer;
+  }
+
   protected function getAllIconCounts(int $playerId = null): array
   {
     $icons = [];

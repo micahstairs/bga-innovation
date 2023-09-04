@@ -12583,25 +12583,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 127, Artifacts age 2: Chronicle of Zuo
-            case "127N1":
-                $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
-                $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
-                $min_bulbs = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_3) FROM player WHERE player_id != {player_id} AND player_eliminated = 0",  array('player_id' => $player_id)));
-                
-                $this_player_icon_counts = self::getPlayerResourceCounts($player_id);
-                
-                if ($this_player_icon_counts[4] <= $min_towers) {
-                    $card = self::executeDraw($player_id, 2); // "If you have the least towers, draw a 2"
-                }
-                if ($this_player_icon_counts[1] <= $min_crowns) {
-                    $card = self::executeDraw($player_id, 3); // "If you have the least crowns, draw a 3"
-                }
-                if ($this_player_icon_counts[3] <= $min_bulbs) {
-                    $card = self::executeDraw($player_id, 4); // "If you have the least bulbs, draw a 4"
-                }
-                break;
                 
             // id 128, Artifacts age 2: Babylonian Chronicles
             case "128C1":
