@@ -10789,6 +10789,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
             || $card_id == 440
+            || $card_id == 445
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (492 <= $card_id && $card_id <= 494)
@@ -13638,80 +13639,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two top cards of matching value on his board.'), 
                         array('player_name' => self::renderPlayerName($player_id)));
                 }
-                break;
-                
-            // id 445, age 11: Space Traffic
-            case "445N1":
-            
-                do {
-                    // "Draw and tuck an 11."
-                    $card = self::executeDraw($player_id, 11);
-                    $color = $card['color'];
-                    $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                    self::tuckCard($card, $player_id);
-                    
-                    if ($bottom_card !== null) {
-                        if ($bottom_card['age'] == 11) {
-                            // "If you tucked directly under an 11, you lose."
-                        
-                            self::removeAllCardsFromPlayer($player_id);
-                            if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                                // If there is only one player remaining in the game, that player wins
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
-                                    'player_name' => self::renderPlayerName($player_id)
-                                ));
-                                $player_ids = self::getAllActivePlayerIds();
-                                if (count($player_ids) == 2) {
-                                    foreach ($player_ids as $id) {
-                                        if ($id != $player_id) {
-                                            $remaining_player_id = $id;
-                                        }
-                                    }
-                                    $this->innovationGameState->set('winner_by_dogma', $remaining_player_id);
-                                    self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
-                                    throw new EndOfGame();
-                                } else {
-                                    // Only eliminate the player if the game isn't ending
-                                    self::eliminatePlayer($player_id);
-                                }
-                                break; // Stop the effect if the player loses
-                            } else { // Team play
-                                // Entire team loses if one player loses 
-                                $teammate_id = self::getPlayerTeammate($player_id);
-                                $losing_team = array($player_id, $teammate_id);
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                                self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                                self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
-                                foreach ($player_ids as $id) {
-                                    if ($id != $player_id) {
-                                        $remaining_player_id = $id;
-                                    }
-                                }
-                                $this->innovationGameState->set('winner_by_dogma', $remaining_player_id);
-                                self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
-                                throw new EndOfGame();
-                            }
-                        }
-                        
-                        // "Score all but your top three cards of the color of the tucked card,"
-                        $card_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                        for ($i = 0; $i < $card_counts[$color] - 3; $i++) {
-                            $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                            self::transferCardFromTo($bottom_card, $player_id, 'score'); // score the cards
-                        }
-                        self::splayAslant($player_id, $player_id, $color); // "and splay that color aslant."
-                    }
-                    
-                    // "If you do not have the highest score, repeat this dogma effect."
-                    $highest_score = false;
-                    $player_score = self::getPlayerScore($player_id);
-                    foreach (self::getAllActivePlayerIds() as $player) {
-                        if ($player_score > self::getPlayerScore($player))  {
-                            $highest_score = true;
-                        }
-                    }
-                } while (!$highest_score);
                 break;
 
             // id 446, age 11: Near-Field Comm
