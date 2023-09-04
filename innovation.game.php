@@ -12583,16 +12583,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-                
-            // id 128, Artifacts age 2: Babylonian Chronicles
-            case "128C1":
-                $step_max = 1;
-                break;
-            
-            case "128N1":
-                // "Draw and score a 3"
-                self::executeDraw($player_id, 3, 'score');
-                break;
 
             // id 129, Artifacts age 2: Holy Lance
             case "129C1":
@@ -16340,23 +16330,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        // id 128, Artifacts age 2: Babylonian Chronicles
-        case "128C1A":
-            // "Transfer a top non-red card with a tower from your board to my board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'with_icon' => 4, // tower
-                'color' => array(0, 2, 3, 4) // non-red
-            );
-            break;
-
         // id 129, Artifacts age 2: Holy Lance
         case "129C1A":
             // "Transfer a top Artifact from your board to my board!"
