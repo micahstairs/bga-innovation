@@ -9857,12 +9857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 114, Artifacts age 1: Papyrus of Ani
-            case "114N1B":
-                $message_for_player = clienttranslate('${You} must choose a type');
-                $message_for_others = clienttranslate('${player_name} must choose a type');
-                break;
-
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1A":
                 $message_for_player = clienttranslate('${You} must choose a color');
@@ -12604,19 +12598,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has ${n} ${clocks}.'), array('player_name' => self::renderPlayerName($player_id), 'n' => $number_of_clocks, 'clocks' => $clock));
                 for($i=0; $i<self::intDivision($number_of_clocks,2); $i++) { // "For every two clocks on your board"
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
-                }
-                break;
-
-            // id 114, Artifacts age 1: Papyrus of Ani
-            case "114N1":
-                $number_of_purple_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[4];
-                if ($number_of_purple_cards == 0) {
-                    self::revealHand($player_id);
-                    $color_in_clear = self::renderColor(4);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
-                } else {
-                    $step_max = 1;
                 }
                 break;
 
@@ -16425,32 +16406,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-        
-        // id 114, Artifacts age 1: Papyrus of Ani
-        case "114N1A":
-            // "Return a purple card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-
-                'color' => array(4),
-            );
-            break;
-
-        case "114N1B":
-            // Choose any type
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_type' => true,
-                'type' => self::getActiveCardTypes()
-            );
-            break;
             
         // id 123, Artifacts age 1: Ark of the Covenant
         case "123N1A":
@@ -19671,14 +19626,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                    
-                // id 114, Artifacts age 1: Papyrus of Ani
-                case "114N1A":
-                    // "If you do"
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
                 
                 // id 123, Artifacts age 1: Ark of the Covenant
                 case "123N1A":
@@ -21463,21 +21410,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 114, Artifacts age 1: Papyrus of Ani
-            case "114N1B":
-                // "Reveal a card of of any type of value two higher"
-                $age_to_draw_in = $this->innovationGameState->get('age_last_selected') + 2;
-                $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed', /*bottom_to=*/ false, /*type=*/ $choice);
-                if ($card['color'] == 4) { // "If the drawn card is purple"
-                    self::meldCard($card, $player_id); // "Meld it"
-                    self::selfExecute($card); // "Execute each of its non-demand effects. Do not share them."
-                    break;
-                } else {
-                    // Non-purple card is placed in the hand
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                }
                 break;
             
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor

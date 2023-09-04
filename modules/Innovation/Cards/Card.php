@@ -47,6 +47,8 @@ abstract class Card
         return static::getPromptForValueChoice();
       case 4: // choose_color
         return static::getPromptForColorChoice();
+      case 8; // choose_type
+        return static::getPromptForTypeChoice();
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
       case 12: // choose_icon_type
@@ -785,6 +787,21 @@ abstract class Card
       return [
         "message_for_player" => clienttranslate('Choose a player'),
         "message_for_others" => clienttranslate('${player_name} must choose a player'),
+      ];
+    }
+  }
+
+  protected function getPromptForTypeChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a type'),
+        "message_for_others" => clienttranslate('${player_name} may choose a type'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose a type'),
+        "message_for_others" => clienttranslate('${player_name} must choose a type'),
       ];
     }
   }

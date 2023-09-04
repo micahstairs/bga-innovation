@@ -778,9 +778,9 @@ $this->textual_card_infos = array(
     ),
 
     114 => array(
-        'name'                => clienttranslate('Papyrus of Ani'),
-        // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non-demand dogma effects. Do not share them.'),
+        'name'                                => clienttranslate('Papyrus of Ani'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non-demand dogma effects. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and self-execute it.'),
     ),
 
     115 => array(
