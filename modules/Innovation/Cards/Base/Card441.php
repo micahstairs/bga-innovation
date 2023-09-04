@@ -4,7 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
 
-class Card440 extends Card
+class Card441 extends Card
 {
 
   // Solar Sailing:
