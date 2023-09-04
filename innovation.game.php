@@ -12583,23 +12583,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-            // id 129, Artifacts age 2: Holy Lance
-            case "129C1":
-                $step_max = 1;
-                break;
-
-            case "129N1":
-                // "If Holy Grail is a top card on your board, you win"
-                $top_card = self::getTopCardOnBoard($player_id, 3); // top yellow card
-                if ($top_card !== null && $top_card['id'] == 131) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Holy Grail as a top card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::renderPlayerName($player_id)));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn HolyLance');
-                    throw new EndOfGame();
-                }
-                break;
                 
             // id 130, Artifacts age 1: Baghdad Battery
             case "130N1":
@@ -16327,22 +16310,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-        
-        // id 129, Artifacts age 2: Holy Lance
-        case "129C1A":
-            // "Transfer a top Artifact from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                 
-                'type' => array(1) // Artifact
             );
             break;
 
