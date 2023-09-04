@@ -610,7 +610,7 @@ abstract class Card
 
   protected function getSplayDirection(int $color, int $playerId = null): int
   {
-    return $this->game->getCurrentSplayDirection(self::coercePlayerId($playerId), $color);
+    return intval($this->game->getCurrentSplayDirection(self::coercePlayerId($playerId), $color));
   }
 
   protected function isSplayed(int $color, int $playerId = null): int
@@ -858,6 +858,8 @@ abstract class Card
   protected function lose(int $playerId = null): void
   {
     $playerId = self::coercePlayerId($playerId);
+
+    // TODO(4E): Junk all of the player's cards.
 
     // The entire team loses if one player loses 
     if ($this->game->isTeamGame()) {

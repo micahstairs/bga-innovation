@@ -20,7 +20,6 @@ class Card445 extends Card
       $stack = self::getCardsKeyedByColor('board')[$color];
       
       if (count($stack) >= 2 && $stack[1]['faceup_age'] == 11) {
-        // TODO(4E): What is supposed to happen to the player's cards. Do they get junked?
         self::lose();
         return;
       }
