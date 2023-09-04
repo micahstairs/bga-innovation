@@ -838,8 +838,9 @@ $this->textual_card_infos = array(
     ),
 
     124 => array(
-        'name'                => clienttranslate('Tale of the Shipwrecked Sailor'),
-        'non_demand_effect_1' => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left.'),
+        'name'                                => clienttranslate('Tale of the Shipwrecked Sailor'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left, and junk an available achievement of value equal to the value of the melded card.'),
     ),
 
     /* Artifacts - Age 2 */

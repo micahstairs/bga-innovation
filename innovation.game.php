@@ -9857,12 +9857,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
                 break;
 
-            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-            case "124N1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-            
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1A":
                 $message_for_player = clienttranslate('${You} must choose a type');
@@ -12601,11 +12595,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-            case "124N1":
-                $step_max = 2;
-                break;
-            
              // id 125, Artifacts age 2: Seikilos Epitaph
              case "125N1":
                 // "Draw and meld a 3"
@@ -16401,33 +16390,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-            
-        // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-        case "124N1A":
-            // "Choose a color"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_color' => true
-            );
-            break;
-        
-        case "124N1B":
-            // "Meld a card of the chosen color from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'color' => array(self::getAuxiliaryValue()),
-
-                'meld_keyword' => true,
-            );
-            break;
         
         // id 126, Artifacts age 1: Rosetta Stone
         case "126N1A":
@@ -19607,22 +19569,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                
-                // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-                case "124N1A":
-                    // "Draw a 1"
-                    self::executeDraw($player_id, 1);
-                    break;
 
-                case "124N1B":
-                    // "If you (melded a card)"
-                    if ($n > 0) {
-                        // "Splay that color left"
-                        self::splayLeft($player_id, $player_id, $this->innovationGameState->get('color_last_selected')); 
-                    } else {
-                        self::revealHand($player_id);
-                    }
-                    break;
 
                 // id 131, Artifacts age 2: Holy Grail
                 case "131N1A":
@@ -21356,13 +21303,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-            
-            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-            case "124N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
-                self::setAuxiliaryValue($choice);
                 break;
             
             // id 126, Artifacts age 2: Rosetta Stone
