@@ -12594,22 +12594,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-
-             // id 125, Artifacts age 2: Seikilos Epitaph
-             case "125N1":
-                // "Draw and meld a 3"
-                $melded_card = self::executeDrawAndMeld($player_id, 3);
-               
-                // "Meld your bottom card of the drawn card's color"
-                $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
-                if ($number_of_cards > 1) {
-                    $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
-                    $melded_card = self::meldCard($bottom_card, $player_id);
-                }
-
-                // "Execute its non-demand dogma effects. Do not share them."
-                self::selfExecute($melded_card);
-                break;
             
             // id 126, Artifacts age 2: Rosetta Stone
             case "126N1":

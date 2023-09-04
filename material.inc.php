@@ -846,8 +846,9 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 2 */
 
     125 => array(
-        'name'                => clienttranslate('Seikilos Epitaph'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
+        'name'                                => clienttranslate('Seikilos Epitaph'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color, then self-execute it.'),
     ),
 
     126 => array(
