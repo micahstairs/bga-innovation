@@ -34,7 +34,7 @@ class Card518 extends Card
       }
     } else {
       $topCard = self::getTopCardOfColor($this->game::RED);
-      if ($topCard !== null && $topCard['id'] == self::getThisCardId()) {
+      if ($topCard && $topCard['id'] == self::getThisCardId()) {
         self::setMaxSteps(1);
       }
     }

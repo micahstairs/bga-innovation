@@ -832,8 +832,9 @@ $this->textual_card_infos = array(
     ),
 
     123 => array(
-        'name'                => clienttranslate('Ark of the Covenant'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
+        'name'                                => clienttranslate('Ark of the Covenant'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Score all cards of the same color on the boards of all players with no top Artifacts.'),
     ),
 
     124 => array(

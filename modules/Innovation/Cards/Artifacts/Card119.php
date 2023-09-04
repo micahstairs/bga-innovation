@@ -18,7 +18,7 @@ class Card119 extends Card
   public function initialExecution()
   {
     if (self::isCompel()) {
-      self::transferToBoard(self::getCard(self::getThisCardId()));
+      self::transferToBoard(self::getThisCard());
       self::addToActionScopedAuxiliaryArray(self::getPlayerId());
     } else if (self::isFirstOrThirdEdition() && self::wasEveryBoardAndStartedOnTheirBoard()) {
       self::win();

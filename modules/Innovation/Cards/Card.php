@@ -1116,6 +1116,11 @@ abstract class Card
     return intval(substr($className, strrpos($className, "\\") + 5));
   }
 
+  protected function getThisCard(): array
+  {
+    return self::getCard(self::getThisCardId());
+  }
+
   // PRIVATE HELPERS
 
   private function coercePlayerId(?int $playerId): int

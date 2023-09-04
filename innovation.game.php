@@ -12601,11 +12601,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 123, Artifacts age 1: Ark of the Covenant
-            case "123N1":
-                $step_max = 1;
-                break;
-                
             // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
             case "124N1":
                 $step_max = 2;
@@ -16407,20 +16402,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
             
-        // id 123, Artifacts age 1: Ark of the Covenant
-        case "123N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-            );
-            break;
-            
         // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
         case "124N1A":
             // "Choose a color"
@@ -19624,41 +19605,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-                
-                // id 123, Artifacts age 1: Ark of the Covenant
-                case "123N1A":
-                    $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
-                    
-                    if ($n > 0) { // Unsaid rule: the player must have returned a card or else this part of the effect can't continue
-                        $returned_color = $this->innovationGameState->get('color_last_selected');
-                            
-                        foreach ($player_ids as $id) {
-                            $top_cards = self::getTopCardsOnBoard($id);
-                            
-                            $artifact_found = false;
-                            foreach ($top_cards as &$card) {
-                                if ($card['type'] == 1) { // Artifact
-                                    $artifact_found = true;
-                                    break;
-                                }
-                            }
-                            
-                            if (!$artifact_found) {
-                                while (($top_card = self::getTopCardOnBoard($id, $returned_color)) !== null) {   
-                                    // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
-                                    self::transferCardFromTo($top_card, $player_id, 'score');
-                                }
-                            }
-                            
-                        }
-                    }
-
-                    // "If Ark of the Covenant is a top card on any board, transfer it to your hand"
-                    $ark_of_the_covenant = self::getIfTopCardOnBoard(123);
-                    if ($ark_of_the_covenant !== null) {
-                        self::transferCardFromTo($ark_of_the_covenant, $player_id, 'hand');
                     }
                     break;
                 
