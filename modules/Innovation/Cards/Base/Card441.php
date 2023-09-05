@@ -30,7 +30,7 @@ class Card441 extends Card
     }
   }
 
-  public function getInteractionOptions()
+  public function getInteractionOptions(): array
   {
     return [
       'location_from'                   => 'pile',
