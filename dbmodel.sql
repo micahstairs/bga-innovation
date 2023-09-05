@@ -15,13 +15,13 @@
 /* New columns for table player */
 ALTER TABLE `player` ADD `player_team` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Team number (same for players in a same team)';
 ALTER TABLE `player` ADD `player_innovation_score` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Innovation score (player_score is used for achievements in normal play)';
-ALTER TABLE `player` ADD `player_icon_count_1` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of crowns on player board';
-ALTER TABLE `player` ADD `player_icon_count_2` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of leaves on player board';
-ALTER TABLE `player` ADD `player_icon_count_3` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of bulbs on player board';
-ALTER TABLE `player` ADD `player_icon_count_4` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of towers on player board';
-ALTER TABLE `player` ADD `player_icon_count_5` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of factories on player board';
-ALTER TABLE `player` ADD `player_icon_count_6` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of clocks on player board';
-ALTER TABLE `player` ADD `player_icon_count_7` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Total of avatars on player board';
+ALTER TABLE `player` ADD `player_icon_count_1` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible prosperity icons on player board';
+ALTER TABLE `player` ADD `player_icon_count_2` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible health icons on player board';
+ALTER TABLE `player` ADD `player_icon_count_3` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible concept icons on player board';
+ALTER TABLE `player` ADD `player_icon_count_4` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible authority icons on player board';
+ALTER TABLE `player` ADD `player_icon_count_5` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible industry icons on player board';
+ALTER TABLE `player` ADD `player_icon_count_6` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible efficiency icons on player board';
+ALTER TABLE `player` ADD `player_icon_count_7` SMALLINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of visible avatar icons on player board';
 ALTER TABLE `player` ADD `featured_icon_count` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Number of visible icons matching the featured icon at the start of the dogma effect';
 ALTER TABLE `player` ADD `turn_order_ending_with_launcher` SMALLINT UNSIGNED DEFAULT NULL COMMENT 'Turn order ending with the player who launched the current dogma effect (these values will not necessarily be consecutive)';
 ALTER TABLE `player` ADD `number_of_tucked_cards` TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Number of cards the player has tucked during the turn of the current player';
@@ -42,13 +42,13 @@ CREATE TABLE IF NOT EXISTS `card` (
   `age` TINYINT UNSIGNED DEFAULT NULL COMMENT '1 to 10, NULL for a special achievement',
   `faceup_age` TINYINT UNSIGNED DEFAULT NULL COMMENT 'The same as age, except Battleship Yamato is an 11 instead of 8 (dynamically populated)',
   `color` TINYINT UNSIGNED DEFAULT NULL COMMENT '0 (blue), 1 (red), 2 (green), 3 (yellow), 4 (purple) or NULL for a special achievement',
-  `spot_1` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
-  `spot_2` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
-  `spot_3` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
-  `spot_4` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
-  `spot_5` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
-  `spot_6` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
-  `dogma_icon` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Feature icon for dogma, 1 (crown), 2 (leaf), 3 (bulb), 4 (tower), 5 (factory), 6 (clock), 7 (avatar) or NULL for no icon (e.g. special achievement)',
+  `spot_1` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
+  `spot_2` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
+  `spot_3` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
+  `spot_4` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
+  `spot_5` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
+  `spot_6` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Icon on bottom-left, 0 (hexagon), 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar), 8 (flag), 9 (fountain), 10 (echo), 11 (left), 12 (right), 13 (up), 14 (plus), 15 (junk), 16 (uplift), 17 (unsplay), 101-112 (1-12 bonus) or NULL for no icon (e.g. special achievement)',
+  `dogma_icon` TINYINT UNSIGNED DEFAULT NULL COMMENT 'Feature icon for dogma, 1 (prosperity), 2 (health), 3 (concept), 4 (authority), 5 (industry), 6 (efficiency), 7 (avatar) or NULL for no icon (e.g. special achievement)',
   `has_demand` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card has at least one demand effect (will be populated using data in material.inc.php file)',
   `is_relic` BOOLEAN NOT NULL DEFAULT FALSE COMMENT 'Whether or not the card is a relic',
   `owner` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Id of the player who owns the card or 0 if no owner',

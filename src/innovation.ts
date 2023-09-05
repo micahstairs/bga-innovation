@@ -1807,7 +1807,7 @@ class Innovation extends BgaGame {
                         break;
 
                     case 108:
-                        // World: twelve or more visible clocks on your board
+                        // World: twelve or more visible [EFFICIENCY] on your board
                         numerator = self.counter["resource_count"][self.player_id][6].getValue();
                         denominator = 12;
                         break;

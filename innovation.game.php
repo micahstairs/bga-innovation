@@ -3853,22 +3853,22 @@ class Innovation extends Table
         $title='';
         switch ($icon) {
         case 1:
-            $title=clienttranslate('crown');
+            $title=clienttranslate('prosperity');
             break;
         case 2:
-            $title=clienttranslate('leaf');
+            $title=clienttranslate('health');
             break;
         case 3:
-            $title=clienttranslate('light bulb');
+            $title=clienttranslate('concept');
             break;
         case 4:
-            $title=clienttranslate('tower');
+            $title=clienttranslate('authority');
             break;
         case 5:
-            $title=clienttranslate('factory');
+            $title=clienttranslate('industry');
             break;
         case 6:
-            $title=clienttranslate('clock');
+            $title=clienttranslate('efficiency');
             break;
         case 7:
             $title=clienttranslate('avatar');
