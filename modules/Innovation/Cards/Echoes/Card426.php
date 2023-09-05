@@ -13,13 +13,18 @@ class Card426 extends Card
   //     hand. If the values of all of the cards in your hand match the values of all the cards in
   //     your score pile exactly, you win.
   // - 4th edition
+  //   - ECHO: Draw an [11].
   //   - You may draw and score a card of any value. Transfer your bottom red card to your hand. If
   //     the values of all the cards in your hand match the values of all the cards in your score
   //     pile exactly, you win.
 
   public function initialExecution()
   {
-    self::setMaxSteps(2);
+    if (self::isEcho()) {
+      self::draw(11);
+    } else {
+      self::setMaxSteps(2);
+    }
   }
 
   public function getInteractionOptions(): array

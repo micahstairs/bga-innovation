@@ -2251,6 +2251,7 @@ $this->textual_card_infos = array(
 
     426 => array(
         'name'                                => clienttranslate('Human Genome'),
+        'echo_effect_fourth'                  => clienttranslate('Draw an ${age_11}.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may draw and score a card of any value. Take a bottom card from your board into your hand. If the values of all of the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
         'non_demand_effect_1_fourth'          => clienttranslate('You may draw and score a card of any value. Transfer your bottom red card to your hand. If the values of all the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
     ),
@@ -2317,6 +2318,7 @@ $this->textual_card_infos = array(
 
     434 => array(
         'name'                                => clienttranslate('Sudoku'),
+        'echo_effect_fourth'                  => clienttranslate('You may tuck any number of cards from your hand.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card\'s non-demand dogma effects. Do not share them.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a card of any value. If you have nine different bonus values on your board, you win. Otherwise, self-execute the melded card.'),
     ),
