@@ -4155,7 +4155,7 @@ class Innovation extends Table
         if ($textual_infos['condition_for_claiming'] === null) {
             unset($textual_infos['condition_for_claiming']);
         }
-        unset($textual_infos['condition_for_claiming']);
+        self::unsetVersionedCardProperties($textual_infos, 'condition_for_claiming');
 
         unset($textual_infos['separate_4E_implementation']);
         return array_merge($card, $textual_infos);
