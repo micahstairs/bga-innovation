@@ -3,7 +3,6 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
-use Innovation\Utils\Arrays;
 
 class Card380 extends Card
 {
@@ -78,8 +77,9 @@ class Card380 extends Card
       // TODO(LATER): This shouldn't really be a draw.
       $this->game->executeDraw(0, /*age=*/self::getAuxiliaryValue2(), 'achievements', /*bottom_to=*/false, 0, /*bottom_from=*/true);
     } else {
-      self::junkBaseDeck(self::getAuxiliaryValue2());
-      self::setMaxSteps(3);
+      if (self::junkBaseDeck(self::getAuxiliaryValue2())) {
+        self::setMaxSteps(3);
+      }
     }
   }
 

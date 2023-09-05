@@ -10788,8 +10788,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 72
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
-            || $card_id == 440
-            || $card_id == 441
+            || (440 <= $card_id && $card_id == 441)
             || $card_id == 445
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
