@@ -12591,11 +12591,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $step_max = 1;
                 break;
             
-            // id 131, Artifacts age 2: Holy Grail
-            case "131N1":
-                $step_max = 1;
-                break;
-
             // id 132, Artifacts age 2: Terracotta Army
             case "132C1":
                 $step_max = 1;
@@ -16222,36 +16217,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
 
-        // id 131, Artifacts age 2: Holy Grail
-        case "131N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-            
-        case "131N1B":
-            // "Claim an achievement of matching value, ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'age' => $this->innovationGameState->get('age_last_selected'),
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
-            );
-            break;
-
         // id 132, Artifacts age 2: Terracotta Army
         case "132C1A":
             // "I compel you to return a top card on your board with no tower"
@@ -19309,15 +19274,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-
-
-                // id 131, Artifacts age 2: Holy Grail
-                case "131N1A":
-                    // if you do
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
                     }
                     break;
 
