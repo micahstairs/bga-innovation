@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card123 extends Card
 {
@@ -54,7 +55,7 @@ class Card123 extends Card
 
   public function afterInteraction()
   {
-    if ($card = $this->game->getIfTopCardOnBoard(self::getThisCardId())) {
+    if ($card = $this->game->getIfTopCardOnBoard(CardIds::ARK_OF_THE_COVENANT)) {
       self::transferToHand($card);
     }
   }

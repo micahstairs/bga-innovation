@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card518 extends Card
 {
@@ -34,7 +35,7 @@ class Card518 extends Card
       }
     } else {
       $topCard = self::getTopCardOfColor($this->game::RED);
-      if ($topCard && $topCard['id'] == self::getThisCardId()) {
+      if ($topCard && $topCard['id'] == CardIds::SPANISH_INQUISITION) {
         self::setMaxSteps(1);
       }
     }

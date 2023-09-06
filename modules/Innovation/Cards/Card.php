@@ -1121,13 +1121,13 @@ abstract class Card
 
   // GENERAL UTILITY HELPERS
 
-  protected function getThisCardId(): string
+  private function getThisCardId(): string
   {
     $className = get_class($this);
     return intval(substr($className, strrpos($className, "\\") + 5));
   }
 
-  protected function getThisCard(): array
+  private function getThisCard(): array
   {
     return self::getCard(self::getThisCardId());
   }

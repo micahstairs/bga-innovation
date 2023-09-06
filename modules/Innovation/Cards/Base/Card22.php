@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card22 extends Card
 {
@@ -73,7 +74,7 @@ class Card22 extends Card
   {
     if (self::getNumChosen() === 0) {
       self::junkBaseDeck(2);
-      self::junk($this->game->getIfTopCardOnBoard(self::getThisCardId()));
+      self::junk($this->game->getIfTopCardOnBoard(CardIds::FERMENTING));
     }
   }
 

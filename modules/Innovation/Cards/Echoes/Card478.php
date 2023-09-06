@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card478 extends Card
 {
@@ -43,7 +44,7 @@ class Card478 extends Card
       return [
         'location_from' => 'board',
         'location_to'   => 'none',
-        'not_id'        => self::getThisCardId(),
+        'not_id'        => CardIds::DEEPFAKE,
       ];
     }
   }

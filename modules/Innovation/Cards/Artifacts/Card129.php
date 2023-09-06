@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card129 extends Card
 {
@@ -17,7 +18,7 @@ class Card129 extends Card
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
       $topYellowCard = self::getTopCardOfColor($this->game::YELLOW);
-      if ($topYellowCard && $topYellowCard['id'] == 131) { // Holy Grail
+      if ($topYellowCard && $topYellowCard['id'] == CardIds::HOLY_GRAIL) {
         self::win();
       }
     }
