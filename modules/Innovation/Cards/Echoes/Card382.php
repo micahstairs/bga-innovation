@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card382 extends Card
 {
@@ -36,7 +37,7 @@ class Card382 extends Card
       return [
         'location_from' => 'board',
         'score_keyword' => true,
-        'without_icon'  => $this->game::INDUSTRY,
+        'without_icon'  => Icons::INDUSTRY,
       ];
     } else {
       return [

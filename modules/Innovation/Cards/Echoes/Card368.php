@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card368 extends Card
 {
@@ -33,7 +34,7 @@ class Card368 extends Card
           'owner_to'      => self::getLauncherId(),
           'location_to'   => 'board',
           'color'         => Colors::NON_RED,
-          'with_icons'    => [$this->game::AUTHORITY, $this->game::CONCEPT],
+          'with_icons'    => [Icons::AUTHORITY, Icons::CONCEPT],
         ];
       } else {
         return [
@@ -42,7 +43,7 @@ class Card368 extends Card
           'owner_to'      => self::getLauncherId(),
           'location_to'   => 'board',
           'color'         => Colors::NON_RED,
-          'with_icons'    => [$this->game::AUTHORITY, $this->game::AVATAR],
+          'with_icons'    => [Icons::AUTHORITY, Icons::AVATAR],
         ];
       }
     } else {

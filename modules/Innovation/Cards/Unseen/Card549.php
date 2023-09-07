@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card549 extends Card
 {
@@ -62,7 +63,7 @@ class Card549 extends Card
     } else if (self::isSecondInteraction()) {
       $cardIds = self::getRevealedCardIdsWithoutEfficiencyOrAvatar();
       if (count($cardIds) > 0) {
-        $this->game->setAuxiliaryArray($cardIds);
+        self::setAuxiliaryArray($cardIds);
       } else {
         self::setNextStep(4);
       }
@@ -72,12 +73,8 @@ class Card549 extends Card
   private function getRevealedCardIdsWithoutEfficiencyOrAvatar()
   {
     $cardIds = [];
-    $revealed_cards = self::getCards( 'revealed');
-    foreach ($revealed_cards as $card) {
-      if (
-        !self::hasIcon($card, $this->game::EFFICIENCY) &&
-        !self::hasIcon($card, $this->game::AVATAR)
-      ) {
+    foreach (self::getCards('revealed') as $card) {
+      if (!self::hasIcon($card, Icons::EFFICIENCY) && !self::hasIcon($card, Icons::AVATAR)) {
         $cardIds[] = $card['id'];
       }
     }

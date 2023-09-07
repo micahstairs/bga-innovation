@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card431 extends Card
 {
@@ -27,7 +28,7 @@ class Card431 extends Card
     if (self::isEcho()) {
       self::drawAndForeshadow(11);
     } else if (self::isFirstNonDemand()) {
-      $numCards = $this->game->intDivision(self::getStandardIconCount($this->game::EFFICIENCY), 2);
+      $numCards = $this->game->intDivision(self::getStandardIconCount(Icons::EFFICIENCY), 2);
       for ($i = 0; $i < $numCards; $i++) {
         self::draw(10);
       }
@@ -51,7 +52,7 @@ class Card431 extends Card
         'n_max'         => 'all',
         'location_from' => 'hand',
         'tuck_keyword'  => true,
-        'with_icon'     => $this->game::EFFICIENCY,
+        'with_icon'     => Icons::EFFICIENCY,
       ];
     }
   }

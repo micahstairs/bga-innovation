@@ -5,6 +5,7 @@ namespace Innovation\Cards\Unseen;
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card574 extends Card
 {
@@ -18,7 +19,7 @@ class Card574 extends Card
     if (self::getEffectNumber() === 1) {
       $numCardsDrawn = 0;
       for ($color = 0; $color < 5; $color++) {
-        if ($this->game->countVisibleIconsInPile(self::getPlayerId(), $this->game::INDUSTRY, $color) > 0) {
+        if ($this->game->countVisibleIconsInPile(self::getPlayerId(), Icons::INDUSTRY, $color) > 0) {
           self::draw(9);
           $numCardsDrawn++;
         }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card571 extends Card
 {
@@ -43,8 +44,9 @@ class Card571 extends Card
       self::setAuxiliaryValue2($isRedOrPurple ? 1 : 0);
 
       // Check if the wish should be granted
-      if (self::hasIcon($card, $this->game::CONCEPT)) {
-        $this->notifications->notifyGeneralInfo(clienttranslate('It has a ${icon} so the wish is granted.'), ['icon' => $this->notifications->getIconSquare($this->game::CONCEPT)]);
+      $args = ['icon' => self::renderIcon(Icons::CONCEPT)];
+      if (self::hasIcon($card, Icons::CONCEPT)) {
+        self::notifyAll(clienttranslate('It has a ${icon} so the wish is granted.'), $args);
         $choice = self::getAuxiliaryValue();
         if ($choice === 1) {
           self::draw(10);
@@ -57,7 +59,7 @@ class Card571 extends Card
           self::setMaxSteps(2);
         }
       } else {
-        $this->notifications->notifyGeneralInfo(clienttranslate('It does not have a ${icon} so the wish is not granted.'), ['icon' => $this->notifications->getIconSquare($this->game::CONCEPT)]);
+        self::notifyAll(clienttranslate('It does not have a ${icon} so the wish is not granted.'), $args);
       }
     } else {
       if (self::getAuxiliaryValue2() == 1) {

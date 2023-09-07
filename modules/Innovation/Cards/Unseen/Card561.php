@@ -3,7 +3,9 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card561 extends Card
 {
@@ -26,8 +28,8 @@ class Card561 extends Card
         'owner_from'    => self::getPlayerId(),
         'location_to'   => 'board',
         'owner_to'      => self::getLauncherId(),
-        'without_icon'  => $this->game::EFFICIENCY,
-        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), [0, 1, 2, 3, 4], $this->game::EFFICIENCY),
+        'without_icon'  => Icons::EFFICIENCY,
+        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::ALL, Icons::EFFICIENCY),
       ];
     } else {
       return [

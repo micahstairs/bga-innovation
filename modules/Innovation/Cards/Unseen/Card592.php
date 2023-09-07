@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card592 extends Card
 {
@@ -27,7 +28,7 @@ class Card592 extends Card
   {
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
-        $this->game->setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
+        self::setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
         return [
           'n'                               => 'all',
           'location_from'                   => 'board',
@@ -76,7 +77,7 @@ class Card592 extends Card
   {
     $cardIds = [];
     foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, $this->game::PROSPERITY) || self::hasIcon($card, $this->game::INDUSTRY)) {
+      if (self::hasIcon($card, Icons::PROSPERITY) || self::hasIcon($card, Icons::INDUSTRY)) {
         $cardIds[] = $card['id'];
       }
     }

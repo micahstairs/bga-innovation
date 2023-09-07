@@ -5,6 +5,7 @@ namespace Innovation\Cards\Echoes;
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card363 extends Card
 {
@@ -65,7 +66,7 @@ class Card363 extends Card
   {
     // TODO(4E): Re-work which icons should be included. This might also affect 3rd edition.
     for ($icon = 1; $icon <= 7; $icon++) {
-      if ($icon === $this->game::PROSPERITY) {
+      if ($icon === Icons::PROSPERITY) {
         continue;
       }
       $numCards = 0;

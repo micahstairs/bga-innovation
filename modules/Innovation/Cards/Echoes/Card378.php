@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card378 extends Card
 {
@@ -35,7 +36,7 @@ class Card378 extends Card
       'owner_to'      => self::getLauncherId(),
       'location_to'   => 'board',
       'color'         => Colors::NON_RED,
-      'with_icons'    => [$this->game::HEALTH, $this->game::INDUSTRY],
+      'with_icons'    => [Icons::HEALTH, Icons::INDUSTRY],
     ];
   }
 

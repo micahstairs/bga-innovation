@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card520 extends Card
 {
@@ -17,7 +18,7 @@ class Card520 extends Card
     $numCardsWithProsperityIcons = 0;
     for ($i = 3; $i >= 1; $i--) {
       $card = self::drawAndMeld($i);
-      if (self::hasIcon($card, $this->game::PROSPERITY)) {
+      if (self::hasIcon($card, Icons::PROSPERITY)) {
         $numCardsWithProsperityIcons++;
       }
     }

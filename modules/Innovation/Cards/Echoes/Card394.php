@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card394 extends Card
 {
@@ -36,7 +37,7 @@ class Card394 extends Card
         'color'           => [self::getAuxiliaryValue()],
       ];
     } else {
-      $count = self::getStandardIconCount($this->game::CONCEPT);
+      $count = self::getStandardIconCount(Icons::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
       return [
         'owner_from'    => 0,

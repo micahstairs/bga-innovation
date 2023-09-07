@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card505 extends Card
 {
@@ -25,20 +26,22 @@ class Card505 extends Card
     $lastValue = empty($array) ? 0 : $array[0];
     return [
       'choose_value' => true,
-      'age' => array_unique([3, $lastValue + 1]),
+      'age'          => array_unique([3, $lastValue + 1]),
     ];
   }
 
-  public function handleSpecialChoice(int $value) {
+  public function handleSpecialChoice(int $value)
+  {
     self::setAuxiliaryValue($value);
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     $card = self::drawAndMeld(self::getAuxiliaryValue());
     self::setActionScopedAuxiliaryArray([$card['age']]);
     $pile = self::getCardsKeyedByColor('board')[$card['color']];
     $numCards = count($pile);
-    if ($numCards >= 2 && self::hasIcon($pile[$numCards - 2], $this->game::CONCEPT)) {
+    if ($numCards >= 2 && self::hasIcon($pile[$numCards - 2], Icons::CONCEPT)) {
       self::setNextStep(1);
     }
   }

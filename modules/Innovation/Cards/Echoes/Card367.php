@@ -52,7 +52,7 @@ class Card367 extends Card
         'n'             => 'all',
         'location_from' => 'board',
         'location_to'   => 'deck',
-        'with_icon'     => $this->game::AUTHORITY,
+        'with_icon'     => Icons::AUTHORITY,
       ];
     }
   }

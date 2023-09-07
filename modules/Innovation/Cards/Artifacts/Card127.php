@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card127 extends Card
 {
@@ -19,21 +20,21 @@ class Card127 extends Card
   {
     $iconCountsByPlayer = self::getStandardIconCountsOfAllPlayers();
     if (self::isFirstOrThirdEdition()) {
-      if (self::hasLeastIcons($iconCountsByPlayer, $this->game::AUTHORITY)) {
+      if (self::hasLeastIcons($iconCountsByPlayer, Icons::AUTHORITY)) {
         self::draw(2);
       }
-      if (self::hasLeastIcons($iconCountsByPlayer, $this->game::PROSPERITY)) {
+      if (self::hasLeastIcons($iconCountsByPlayer, Icons::PROSPERITY)) {
         self::draw(3);
       }
-      if (self::hasLeastIcons($iconCountsByPlayer, $this->game::CONCEPT)) {
+      if (self::hasLeastIcons($iconCountsByPlayer, Icons::CONCEPT)) {
         self::draw(4);
       }
     } else if (self::isFourthEdition() && self::isFirstNonDemand()) {
-      if (self::hasLeastIcons($iconCountsByPlayer, $this->game::AUTHORITY) || self::hasLeastIcons($iconCountsByPlayer, $this->game::PROSPERITY)) {
+      if (self::hasLeastIcons($iconCountsByPlayer, Icons::AUTHORITY) || self::hasLeastIcons($iconCountsByPlayer, Icons::PROSPERITY)) {
         self::draw(3);
       }
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
-      if (self::hasLeastIcons($iconCountsByPlayer, $this->game::CONCEPT)) {
+      if (self::hasLeastIcons($iconCountsByPlayer, Icons::CONCEPT)) {
         self::draw(4);
       }
     }

@@ -4,6 +4,7 @@ namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
@@ -1032,7 +1033,7 @@ abstract class Card
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
-      if ($icon && $icon != $this->game::ECHO_EFFECT_ICON) {
+      if ($icon && $icon != Icons::ECHO_EFFECT) {
         // Bonus icons are normalized to 100 since they are considered to be the same icon type
         $icons[] = min($icon, 100);
       }

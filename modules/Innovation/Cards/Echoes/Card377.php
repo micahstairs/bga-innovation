@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card377 extends Card
 {
@@ -24,7 +25,7 @@ class Card377 extends Card
     } else if (self::isFirstNonDemand()) {
       while (true) {
         $card = self::drawAndReveal(6);
-        if (self::hasIcon($card, $this->game::INDUSTRY)) {
+        if (self::hasIcon($card, Icons::INDUSTRY)) {
           self::meld($card);
         } else {
           self::foreshadow($card, [$this, 'transferToHand']);

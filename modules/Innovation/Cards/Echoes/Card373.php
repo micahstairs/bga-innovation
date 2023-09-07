@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card373 extends Card
 {
@@ -28,11 +29,11 @@ class Card373 extends Card
       $count = 0;
       for ($i = 0; $i < 3; $i++) {
         $card = self::drawAndReveal(10);
-        $count += $this->game->countIconsOnCard($card, $this->game::EFFICIENCY);
+        $count += $this->game->countIconsOnCard($card, Icons::EFFICIENCY);
       }
       self::notifyAll(
         clienttranslate('There were a total of ${n} ${icon}.'),
-        ['n' => $count, 'icon' => self::renderIcon($this->game::EFFICIENCY)]
+        ['n' => $count, 'icon' => self::renderIcon(Icons::EFFICIENCY)]
       );
       self::setAuxiliaryValue($count); // Track which value will be transferred
       self::setMaxSteps(1);

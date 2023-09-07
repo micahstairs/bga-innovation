@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card348 extends Card
 {
@@ -31,14 +32,14 @@ class Card348 extends Card
     if (self::isEcho()) {
       return [
         'can_pass' => true,
-        'choices' => [1, 2],
+        'choices'  => [1, 2],
       ];
     } else {
       return [
-          'location_from' => 'board',
-          'owner_to' => self::getLauncherId(),
-          'location_to' => 'board',
-          'without_icons' => [$this->game::AUTHORITY, $this->game::INDUSTRY],
+        'location_from' => 'board',
+        'owner_to'      => self::getLauncherId(),
+        'location_to'   => 'board',
+        'without_icons' => [Icons::AUTHORITY, Icons::INDUSTRY],
       ];
     }
   }
@@ -51,7 +52,8 @@ class Card348 extends Card
     ]);
   }
 
-  public function handleSpecialChoice(int $choice) {
+  public function handleSpecialChoice(int $choice)
+  {
     if ($choice === 1) {
       self::drawAndForeshadow(2);
     } else {
@@ -59,7 +61,8 @@ class Card348 extends Card
     }
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::drawAndMeld(2);
   }
 

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Icons;
 use Innovation\Utils\Arrays;
 
 class Card405 extends Card
@@ -19,7 +21,7 @@ class Card405 extends Card
 
   public function initialExecution()
   {
-    $numCardsToDraw = $this->game->intDivision(self::getStandardIconCount($this->game::CONCEPT), 2);
+    $numCardsToDraw = $this->game->intDivision(self::getStandardIconCount(Icons::CONCEPT), 2);
     if ($numCardsToDraw > 0 || self::wasForeseen()) {
       $cardIds = [];
       for ($i = 0; $i < $numCardsToDraw; $i++) {
@@ -55,7 +57,7 @@ class Card405 extends Card
 
   public function handleCardChoice(array $card) {
     if (self::isFirstInteraction()) {
-      if ($card['id'] == 103) { // 'A. I.'
+      if ($card['id'] == CardIds::AI) {
         self::win();
       } else {
         $remainingIds = Arrays::removeElement(self::getAuxiliaryArray(), $card['id']);

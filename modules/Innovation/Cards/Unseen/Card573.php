@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card573 extends Card
 {
@@ -28,7 +29,7 @@ class Card573 extends Card
 
   public function handleCardChoice(array $card)
   {
-    if (!self::hasIcon($card, $this->game::PROSPERITY)) {
+    if (!self::hasIcon($card, Icons::PROSPERITY)) {
       self::setNextStep(1);
     }
   }

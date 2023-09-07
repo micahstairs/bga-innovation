@@ -5,6 +5,7 @@ namespace Innovation\Cards\Base;
 use Innovation\Cards\Card;
 use Innovation\Enums\CardIds;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card22 extends Card
 {
@@ -20,10 +21,10 @@ class Card22 extends Card
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $renderedIcon = self::renderIcon($this->game::HEALTH);
+      $renderedIcon = self::renderIcon(Icons::HEALTH);
       $numToDraw = 0;
       if (self::isFirstOrThirdEdition()) {
-        $iconCount = self::getStandardIconCount($this->game::HEALTH);
+        $iconCount = self::getStandardIconCount(Icons::HEALTH);
         self::notifyPlayer(
           clienttranslate('${You} have ${n} visible ${icon} on your board.'),
           ['You' => 'You', 'n' => $iconCount, 'icon' => $renderedIcon]
@@ -35,7 +36,7 @@ class Card22 extends Card
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
         for ($color = 0; $color < 5; $color++) {
-          if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, $this->game::HEALTH)) {
+          if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, Icons::HEALTH)) {
             $numToDraw++;
           }
         }
