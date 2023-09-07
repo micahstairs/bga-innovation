@@ -25,9 +25,9 @@ class Card542 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'player_id'     => self::getLauncherId(),
-        'location_from' => 'revealed',
-        'location_to'   => 'deck',
+        'player_id'      => self::getLauncherId(),
+        'location_from'  => 'revealed',
+        'return_keyword' => true,
       ];
     } else {
       return [

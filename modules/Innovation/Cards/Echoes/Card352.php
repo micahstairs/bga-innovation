@@ -34,9 +34,9 @@ class Card352 extends Card
         ];
       } else {
         return [
-          'can_pass'      => true,
-          'location_from' => 'hand',
-          'location_to'   => 'deck',
+          'can_pass'       => true,
+          'location_from'  => 'hand',
+          'return_keyword' => true,
         ];
       }
     } else if (self::isFirstNonDemand()) {
@@ -71,7 +71,8 @@ class Card352 extends Card
     }
   }
 
-  public function handleSpecialChoice(int $value) {
+  public function handleSpecialChoice(int $value)
+  {
     self::draw($value);
   }
 

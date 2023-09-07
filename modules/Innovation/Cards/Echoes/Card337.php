@@ -34,19 +34,19 @@ class Card337 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'can_pass' => true,
-        'n_min' => 1,
-        'n_max' => self::isFirstOrThirdEdition() ? 3 : 2,
-        'location_from' => 'hand',
-        'location_to' => 'deck',
+        'can_pass'       => true,
+        'n_min'          => 1,
+        'n_max'          => self::isFirstOrThirdEdition() ? 3 : 2,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else if (self::isSecondInteraction()) {
       return ['choices' => [1, 2]];
     } else {
       return [
-        'location_from' => 'board',
-        'location_to' => 'deck',
-        'age' => $this->game->getMaxAgeOnBoardTopCards(self::getPlayerId()),
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'age'            => $this->game->getMaxAgeOnBoardTopCards(self::getPlayerId()),
       ];
     }
   }

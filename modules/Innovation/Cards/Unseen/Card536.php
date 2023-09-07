@@ -34,7 +34,7 @@ class Card536 extends Card
       return [
         'n'                               => 2,
         'location_from'                   => 'revealed',
-        'location_to'                     => 'deck',
+        'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {

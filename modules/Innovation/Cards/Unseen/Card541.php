@@ -29,8 +29,8 @@ class Card541 extends Card
       return self::getFirstInteractionOptions();
     } else if (self::getEffectNumber() === 2) {
       return [
-        'location_from' => 'score',
-        'location_to'   => 'deck',
+        'location_from'  => 'score',
+        'return_keyword' => true,
       ];
     } else {
       return [
@@ -48,9 +48,10 @@ class Card541 extends Card
         'choices'  => [0, 1],
       ];
     } else {
+      $keyword = self::getAuxiliaryValue() == 1 ? 'score_keyword' : 'safeguard_keyword';
       return [
         'location_from' => 'hand',
-        'location_to'   => self::getAuxiliaryValue() == 1 ? 'score' : 'safe',
+        $keyword        => true,
       ];
     }
   }

@@ -33,9 +33,9 @@ class Card517 extends Card
         ];
       } else {
         return [
-          'location_from' => 'hand',
-          'location_to'   => 'deck',
-          'color'         => [self::getAuxiliaryValue()],
+          'location_from'  => 'hand',
+          'return_keyword' => true,
+          'color'          => [self::getAuxiliaryValue()],
         ];
       }
     } else {

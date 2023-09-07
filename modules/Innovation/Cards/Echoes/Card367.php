@@ -50,10 +50,10 @@ class Card367 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'board',
-        'location_to'   => 'deck',
-        'with_icon'     => Icons::AUTHORITY,
+        'n'              => 'all',
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'with_icon'      => Icons::AUTHORITY,
       ];
     }
   }

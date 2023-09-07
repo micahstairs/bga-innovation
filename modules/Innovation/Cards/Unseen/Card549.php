@@ -44,9 +44,9 @@ class Card549 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'revealed',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'revealed',
+        'return_keyword' => true,
       ];
     }
   }

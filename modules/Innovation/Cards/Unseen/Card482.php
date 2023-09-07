@@ -40,14 +40,14 @@ class Card482 extends Card
       return [
         'owner_from'                      => 0,
         'location_from'                   => 'achievements',
-        'location_to'                     => 'safe',
+        'safeguard_keyword'               => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     }
   }

@@ -30,19 +30,12 @@ class Card332 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
-      return [
-        'location_from'                   => 'hand',
-        'location_to'                     => 'forecast',
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
-    } else {
-      return [
-        'location_from'                   => 'hand',
-        'location_to'                     => 'deck',
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
-    }
+    $keyword = self::isFirstInteraction() ? 'foreshadow_keyword' : 'return_keyword';
+    return [
+      'location_from'                   => 'hand',
+      $keyword                          => true,
+      'card_ids_are_in_auxiliary_array' => true,
+    ];
   }
 
   public function handleCardChoice(array $card) {

@@ -27,7 +27,7 @@ class Card556 extends Card
       'n_min'                           => 1,
       'n_max'                           => 2,
       'location_from'                   => 'hand',
-      'location_to'                     => 'deck',
+      'return_keyword'                  => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
   }

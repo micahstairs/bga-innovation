@@ -43,9 +43,9 @@ class Card566 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'can_pass'      => self::countCards('revealed') === 1,
-      'location_from' => 'revealed',
-      'location_to'   => 'deck',
+      'can_pass'       => self::countCards('revealed') === 1,
+      'location_from'  => 'revealed',
+      'return_keyword' => true,
     ];
   }
 

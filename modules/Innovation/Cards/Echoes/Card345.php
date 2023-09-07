@@ -28,11 +28,11 @@ class Card345 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
+        'can_pass'       => true,
+        'n_min'          => 1,
+        'n_max'          => 'all',
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else {
       $valuesToDraw = self::getAuxiliaryArray();

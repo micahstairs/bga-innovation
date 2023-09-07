@@ -30,10 +30,10 @@ class Card567 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'n'             => 'all',
-        'location_from' => 'board',
-        'location_to'   => 'deck',
-        'color'         => $this->game->getAuxiliaryArray(),
+        'n'              => 'all',
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'color'          => $this->game->getAuxiliaryArray(),
       ];
     } else {
       return [

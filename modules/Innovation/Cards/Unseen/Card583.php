@@ -34,9 +34,9 @@ class Card583 extends Card
       $returnBottomCard = self::getAuxiliaryValue() === 2;
       self::setAuxiliaryValue(0); // Track which value was returned
       return [
-        'location_from' => 'board',
-        'bottom_from'   => $returnBottomCard,
-        'location_to'   => 'deck',
+        'location_from'  => 'board',
+        'bottom_from'    => $returnBottomCard,
+        'return_keyword' => true,
       ];
     } else if (self::isThirdInteraction()) {
       $value = self::getAuxiliaryValue();

@@ -27,17 +27,17 @@ class Card336 extends Card
       return ['choose_color' => true];
     } else if (self::isSecondInteraction()) {
       return [
-        'n'             => 'all',
-        'location_from' => 'revealed',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'revealed',
+        'return_keyword' => true,
       ];
     } else {
       return [
-        'n'             => 'all',
-        'owner_from'    => 'any player',
-        'location_from' => 'pile',
-        'location_to'   => 'deck',
-        'color'         => [self::getAuxiliaryValue()],
+        'n'              => 'all',
+        'owner_from'     => 'any player',
+        'location_from'  => 'pile',
+        'return_keyword' => true,
+        'color'          => [self::getAuxiliaryValue()],
       ];
     }
   }
@@ -56,7 +56,7 @@ class Card336 extends Card
     }
     if (self::wasForeseen()) {
       self::setAuxiliaryValue($color);
-      self::setMaxSteps(3);   
+      self::setMaxSteps(3);
     }
   }
 

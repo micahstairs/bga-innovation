@@ -49,9 +49,9 @@ class Card363 extends Card
   {
     if (self::isEcho()) {
       return [
-        'n'             => 'all',
-        'location_from' => 'forecast',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'forecast',
+        'return_keyword' => true,
       ];
     } else {
       return [

@@ -20,9 +20,9 @@ class Card585 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'location_from' => 'board',
-      'bottom_from'   => true,
-      'location_to'   => 'deck',
+      'location_from'  => 'board',
+      'bottom_from'    => true,
+      'return_keyword' => true,
     ];
   }
 

@@ -63,10 +63,10 @@ class Card371 extends Card
       ];
     } else if (self::getAuxiliaryValue() === 0) {
       return [
-        'can_pass'      => true,
-        'n'             => 'all',
-        'location_from' => 'forecast',
-        'location_to'   => 'deck',
+        'can_pass'       => true,
+        'n'              => 'all',
+        'location_from'  => 'forecast',
+        'return_keyword' => true,
       ];
     } else if (self::isFirstInteraction()) {
       return [
@@ -80,9 +80,9 @@ class Card371 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'forecast',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'forecast',
+        'return_keyword' => true,
       ];
     }
   }

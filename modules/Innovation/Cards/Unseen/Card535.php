@@ -22,15 +22,15 @@ class Card535 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'board',
-        'location_to'   => 'deck',
+        'location_from'  => 'board',
+        'return_keyword' => true,
       ];
     } else {
       return [
-        'can_pass'      => true,
-        'location_from' => 'board',
-        'location_to'   => 'deck',
-        'color'         => [self::getLastSelectedColor()],
+        'can_pass'       => true,
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'color'          => [self::getLastSelectedColor()],
       ];
     }
   }

@@ -34,10 +34,10 @@ class Card498 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
-        'not_id'        => $drawnCardId,
+        'n'              => 'all',
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'not_id'         => $drawnCardId,
       ];
     }
   }

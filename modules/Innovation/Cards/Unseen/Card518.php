@@ -48,15 +48,15 @@ class Card518 extends Card
       return [
         'n'                               => 'all',
         'location_from'                   => 'hand,score',
-        'location_to'                     => 'deck',
+        'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'pile',
-        'location_to'   => 'deck',
-        'color'         => [Colors::RED],
+        'n'              => 'all',
+        'location_from'  => 'pile',
+        'return_keyword' => true,
+        'color'          => [Colors::RED],
       ];
     }
   }
