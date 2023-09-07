@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
 class Card509 extends Card
@@ -52,7 +53,7 @@ class Card509 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() === 0) {
-      $card = $this->game->getDeckTopCard(4, $this->game::BASE);
+      $card = $this->game->getDeckTopCard(4, CardTypes::BASE);
       $this->game->transferCardFromTo($card, self::getPlayerId(), 'safe', ['draw_keyword' => false]);
     }
   }

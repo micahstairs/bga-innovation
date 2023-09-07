@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card352 extends Card
 {
@@ -64,7 +65,7 @@ class Card352 extends Card
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand() && self::wasForeseen()) {
-      while ($topCard = $this->game->getDeckTopCard($card['age'], $this->game::BASE)) {
+      while ($topCard = $this->game->getDeckTopCard($card['age'], CardTypes::BASE)) {
         self::tuck($topCard);
       }
     }

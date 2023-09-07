@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 
 class Card129 extends Card
@@ -32,7 +33,7 @@ class Card129 extends Card
       'location_from' => 'board',
       'owner_to'      => self::getLauncherId(),
       'location_to'   => 'board',
-      'type'          => [$this->game::ARTIFACTS],
+      'type'          => [CardTypes::ARTIFACTS],
     ];
   }
 

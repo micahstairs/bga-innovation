@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card380 extends Card
 {
@@ -56,12 +57,12 @@ class Card380 extends Card
       return self::buildPromptFromList([
         1 => [
           clienttranslate('Transfer bottom card from ${age} deck to the available achievements'),
-          'age' => self::renderValueWithType(self::getAuxiliaryValue2(), $this->game::BASE),
+          'age' => self::renderValueWithType(self::getAuxiliaryValue2(), CardTypes::BASE),
         ],
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(self::getAuxiliaryValue2(), $this->game::BASE)],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(self::getAuxiliaryValue2(), CardTypes::BASE)],
       ]);
     }
   }
@@ -69,7 +70,7 @@ class Card380 extends Card
   public function handleSpecialChoice($choice)
   {
     if (self::isFirstInteraction()) {
-      if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', $this->game::BASE) > 0) {
+      if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE) > 0) {
         self::setAuxiliaryValue2($choice); // Track which deck was chosen
         self::setMaxSteps(2);
       }

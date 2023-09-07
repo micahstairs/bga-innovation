@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card566 extends Card
 {
@@ -16,12 +17,12 @@ class Card566 extends Card
   public function initialExecution()
   {
     if (self::getEffectNumber() === 1) {
-      $card1 = $this->game->getDeckTopCard(9, $this->game::BASE);
+      $card1 = $this->game->getDeckTopCard(9, CardTypes::BASE);
       if ($card1) {
         $this->game->transferCardFromTo($card1, self::getPlayerId(), 'revealed', ['draw_keyword' => false]);
         self::setMaxSteps(1);
       }
-      $card2 = $this->game->getDeckTopCard(10, $this->game::BASE);
+      $card2 = $this->game->getDeckTopCard(10, CardTypes::BASE);
       if ($card2) {
         $this->game->transferCardFromTo($card2, self::getPlayerId(), 'revealed', ['draw_keyword' => false]);
         self::setMaxSteps(1);

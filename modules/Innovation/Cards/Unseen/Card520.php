@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 use Innovation\Enums\Colors;
 use Innovation\Enums\Icons;
 
@@ -25,7 +26,7 @@ class Card520 extends Card
     if ($numCardsWithProsperityIcons === 3) {
       $cardsInDeck = self::getCardsKeyedByValue('deck');
       foreach ($cardsInDeck[5] as $card) {
-        if ($card['type'] == $this->game::BASE) {
+        if ($card['type'] == CardTypes::BASE) {
           self::score($card);
         }
       }

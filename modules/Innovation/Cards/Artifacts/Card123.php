@@ -4,6 +4,7 @@ namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\CardTypes;
 
 class Card123 extends Card
 {
@@ -36,7 +37,7 @@ class Card123 extends Card
     foreach (self::getPlayerIds() as $playerId) {
       $hasTopArtifact = false;
       foreach (self::getTopCards($playerId) as $card) {
-        if ($card['type'] == $this->game::ARTIFACTS) {
+        if ($card['type'] == CardTypes::ARTIFACTS) {
           $hasTopArtifact = true;
           break;
         }

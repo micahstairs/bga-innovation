@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card366 extends Card
 {
@@ -24,7 +25,7 @@ class Card366 extends Card
       if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(5);
       } else {
-        self::foreshadow(self::drawType(5, $this->game::ECHOES), [$this, 'transferToHand']);
+        self::foreshadow(self::drawType(5, CardTypes::ECHOES), [$this, 'transferToHand']);
       }
     } else {
       self::setMaxSteps(1);

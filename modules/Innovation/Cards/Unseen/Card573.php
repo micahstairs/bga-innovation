@@ -22,7 +22,7 @@ class Card573 extends Card
     return [
       'owner_from'    => self::getLauncherId(),
       'location_from' => 'score',
-      'owner_to'    => self::getPlayerId(),
+      'owner_to'      => self::getPlayerId(),
       'location_to'   => 'board',
     ];
   }

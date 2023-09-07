@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card556 extends Card
 {
@@ -41,7 +42,7 @@ class Card556 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() === 2) {
-      $card = self::reveal($this->game->getDeckTopCard(10, $this->game::BASE));
+      $card = self::reveal($this->game->getDeckTopCard(10, CardTypes::BASE));
       if ($card) {
         if ($card['color'] == self::getAuxiliaryValue() || $card['color'] == self::getLastSelectedColor()) {
           self::transferToHand($card);

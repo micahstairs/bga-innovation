@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card347 extends Card
 {
@@ -35,7 +36,7 @@ class Card347 extends Card
       if (self::isFirstOrThirdEdition()) {
         $options['with_bonus'] = true;
       } else {
-        $options['type'] = self::getAllTypesOtherThan($this->game::BASE);
+        $options['type'] = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
       }
       return $options;
     } else if (self::isFirstInteraction()) {

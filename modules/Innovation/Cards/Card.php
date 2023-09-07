@@ -3,6 +3,8 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
 use Innovation\Enums\Directions;
 use Innovation\Enums\Icons;
 use Innovation\Utils\Arrays;
@@ -538,27 +540,27 @@ abstract class Card
 
   protected function isBlue($card): bool
   {
-    return $card['color'] == $this->game::BLUE;
+    return $card['color'] == Colors::BLUE;
   }
 
   protected function isRed($card): bool
   {
-    return $card['color'] == $this->game::RED;
+    return $card['color'] == Colors::RED;
   }
 
   protected function isGreen($card): bool
   {
-    return $card['color'] == $this->game::GREEN;
+    return $card['color'] == Colors::GREEN;
   }
 
   protected function isYellow($card): bool
   {
-    return $card['color'] == $this->game::YELLOW;
+    return $card['color'] == Colors::YELLOW;
   }
 
   protected function isPurple($card): bool
   {
-    return $card['color'] == $this->game::PURPLE;
+    return $card['color'] == Colors::PURPLE;
   }
 
   protected function getCard(int $cardId)
@@ -902,7 +904,7 @@ abstract class Card
 
   protected function getBaseDeckCount(int $age): int
   {
-    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', $this->game::BASE)[$age];
+    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE)[$age];
   }
 
   protected function countCards(string $location, int $playerId = null): int
@@ -1060,11 +1062,6 @@ abstract class Card
   {
     // NOTE: The phrase "was foreseen" didn't appear on cards until the fourth edition.
     return self::isFourthEdition() && $this->game->innovationGameState->get('foreseen_card_id') == self::getThisCardId();
-  }
-
-  protected function getAllTypesOtherThan(int $type)
-  {
-    return array_diff(range(0, 5), [$type]);
   }
 
   // NOTIFICATION HELPERS
