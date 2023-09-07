@@ -876,9 +876,9 @@ $this->textual_card_infos = array(
     ),
 
     130 => array(
-        'name'                => clienttranslate('Baghdad Battery'),
-        // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are from different sets, draw and score five ${age_2}.'),
+        'name'                                => clienttranslate('Baghdad Battery'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from hand. If you covered up a card of different type than the melded card, draw a card of matching type and value to the covered card, then score a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Score a card from your hand. If you do both, and the cards have different values, junk all cards in the decks of both values.'),
     ),
 
     131 => array(

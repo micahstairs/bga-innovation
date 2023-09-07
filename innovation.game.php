@@ -12486,12 +12486,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-                
-            // id 130, Artifacts age 1: Baghdad Battery
-            case "130N1":
-                self::setAuxiliaryValue(-1);
-                $step_max = 1;
-                break;
             
             // id 132, Artifacts age 2: Terracotta Army
             case "132C1":
@@ -16103,22 +16097,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 130, Artifacts age 1: Baghdad Battery
-        case "130N1A":
-            // "Meld two cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
             );
             break;
 
@@ -20906,35 +20884,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::scoreCard($card, $player_id);
                     }
                 }                
-                break;
-
-            // id 130, Artifacts age 1: Baghdad Battery
-            case "130N1A":
-                if (self::getAuxiliaryValue() == -1) {
-                    // Log the card that is melded first
-                    $card_id = $this->innovationGameState->get('id_last_selected');
-                    self::setAuxiliaryValue($card_id);
-                    self::meldCard(self::getCardInfo($card_id), $player_id);
-                } else {
-                    // If you melded two of the same color and they are of different types
-                    $first_card = self::getCardInfo(self::getAuxiliaryValue());
-                    $second_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                    self::meldCard($second_card, $player_id);
-                    if ($first_card['type'] == $second_card['type']) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose cards from the same card set.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else {
-                        if ($first_card['color'] == $second_card['color']) {
-                            // "Draw and score five 2s"
-                            for ($i = 1; $i <= 5; $i++) {
-                                self::executeDraw($player_id, 2, 'score');
-                            }
-                        } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose different colors.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose different colors.'), array('player_name' => self::renderPlayerName($player_id)));
-                        }
-                    }
-                }
                 break;
 
             // id 147, Artifacts age 4: East India Company Charter
