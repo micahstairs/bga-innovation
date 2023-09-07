@@ -10,13 +10,13 @@ class Colors
   const YELLOW = 3;
   const PURPLE = 4;
 
-  const ALL = [0, 1, 2, 3, 4];
+  const ALL = [self::BLUE, self::RED, self::GREEN, self::YELLOW, self::PURPLE];
 
-  const NON_BLUE = [RED, GREEN, YELLOW, PURPLE];
-  const NON_RED = [BLUE, GREEN, YELLOW, PURPLE];
-  const NON_GREEN = [BLUE, RED, YELLOW, PURPLE];
-  const NON_YELLOW = [BLUE, RED, GREEN, PURPLE];
-  const NON_PURPLE = [BLUE, RED, GREEN, YELLOW];
+  const NON_BLUE = [self::RED, self::GREEN, self::YELLOW, self::PURPLE];
+  const NON_RED = [self::BLUE, self::GREEN, self::YELLOW, self::PURPLE];
+  const NON_GREEN = [self::BLUE, self::RED, self::YELLOW, self::PURPLE];
+  const NON_YELLOW = [self::BLUE, self::RED, self::GREEN, self::PURPLE];
+  const NON_PURPLE = [self::BLUE, self::RED, self::GREEN, self::YELLOW];
 
   public static function getAllColorsOtherThan(int $color)
   {

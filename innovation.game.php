@@ -6189,7 +6189,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array_unique($rewritten_options['color']);
         } else {
-            $rewritten_options['color'] = [0, 1, 2, 3, 4];
+            $rewritten_options['color'] = Colors::ALL;
         }
         if (!array_key_exists('type', $rewritten_options)) {
             $rewritten_options['type'] = self::getActiveCardTypes();
@@ -6200,7 +6200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (array_key_exists('age', $rewritten_options)) {
             $rewritten_options['age'] = array_unique($rewritten_options['age']);
         } else {
-            $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+            $rewritten_options['age'] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         }
         if (!array_key_exists('players', $rewritten_options)) {
             $rewritten_options['players'] = self::getAllActivePlayers();
@@ -6208,7 +6208,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (array_key_exists('choices', $rewritten_options)) {
             $rewritten_options['choices'] = array_unique($rewritten_options['choices']);
         } else {
-            $rewritten_options['choices'] = array();
+            $rewritten_options['choices'] = [];
         }
 
         if (self::getActivePlayerId() != $player_id) {
