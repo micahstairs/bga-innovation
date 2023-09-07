@@ -42,15 +42,15 @@ class Card583 extends Card
       $value = self::getAuxiliaryValue();
       self::setAuxiliaryValue(0); // Track how many cards were transferred in the 2nd sentence of the effect
       return [
-        'location_from' => 'safe',
-        'location_to'   => 'achievements',
-        'age'           => $value,
+        'location_from'   => 'safe',
+        'achieve_keyword' => true,
+        'age'             => $value,
       ];
     } else {
       return [
-        'location_from' => 'achievements',
-        'owner_from'    => 0,
-        'location_to'   => 'safe',
+        'location_from'     => 'achievements',
+        'owner_from'        => 0,
+        'safeguard_keyword' => true,
       ];
     }
   }

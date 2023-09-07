@@ -26,11 +26,11 @@ class Card498 extends Card
     $drawnCardId = self::getAuxiliaryValue();
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'safe',
-        'not_id'        => $drawnCardId,
-        'color'         => [self::getCard($drawnCardId)['color']],
+        'can_pass'          => true,
+        'location_from'     => 'hand',
+        'safeguard_keyword' => true,
+        'not_id'            => $drawnCardId,
+        'color'             => [self::getCard($drawnCardId)['color']],
       ];
     } else {
       return [

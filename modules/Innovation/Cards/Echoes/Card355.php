@@ -21,39 +21,39 @@ class Card355 extends Card
 
   public function initialExecution()
   {
-   if (self::isEcho()) {
+    if (self::isEcho()) {
       if (self::isFirstOrThirdEdition()) {
         self::drawAndForeshadow(4);
       } else {
         self::foreshadow(self::drawType(4, CardTypes::ECHOES), [$this, 'transferToHand']);
       }
-   } else if (self::isFirstNonDemand()) {
+    } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);
-   } else if (self::wasForeseen()) {
+    } else if (self::wasForeseen()) {
       self::setMaxSteps(2);
-   }
+    }
   }
 
   public function getInteractionOptions(): array
   {
     if (self::isFirstNonDemand()) {
       return [
-        'can_pass' => true,
-          'location_from' => 'forecast',
-          'location_to' => 'revealed,deck',
-          'with_bonus' => true,
+        'can_pass'      => true,
+        'location_from' => 'forecast',
+        'location_to'   => 'revealed,deck',
+        'with_bonus'    => true,
       ];
     } else if (self::isFirstInteraction()) {
       return [
         'choose_player' => true,
-        'players' => $this->game->getOtherActivePlayers(self::getPlayerId()),
+        'players'       => $this->game->getOtherActivePlayers(self::getPlayerId()),
       ];
     } else {
       return [
-        'n' => 'all',
-        'owner_from' => self::getAuxiliaryValue(),
-        'location_from' => 'forecast',
-        'location_to' => 'forecast',
+        'n'                  => 'all',
+        'owner_from'         => self::getAuxiliaryValue(),
+        'location_from'      => 'forecast',
+        'foreshadow_keyword' => true,
       ];
     }
   }
@@ -61,7 +61,7 @@ class Card355 extends Card
   public function handleCardChoice(array $card)
   {
     if (self::isFirstNonDemand()) {
-      self::drawAndScore(self::getBonusIcon($card) + 1); 
+      self::drawAndScore(self::getBonusIcon($card) + 1);
     }
   }
 

@@ -11,7 +11,7 @@ class Card571 extends Card
   // Magic 8-Ball:
   //   - Choose whether you wish to draw two [10], draw and score two [8], or safeguard two
   //     available achievements. Draw and tuck an [8]. If it has a CONCEPT, do as you wish. If it
-  //     is red or purple, repeat this effect.'),
+  //     is red or purple, repeat this effect.
 
   public function initialExecution()
   {
@@ -25,10 +25,10 @@ class Card571 extends Card
       return ['choices' => [1, 2, 3]];
     } else {
       return [
-        'n'             => 2,
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
-        'location_to'   => 'safe',
+        'n'                 => 2,
+        'owner_from'        => 0,
+        'location_from'     => 'achievements',
+        'safeguard_keyword' => true,
       ];
     }
   }

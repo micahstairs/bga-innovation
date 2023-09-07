@@ -23,9 +23,9 @@ class Card549 extends Card
 
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'safe',
+        'can_pass'          => true,
+        'location_from'     => 'hand',
+        'safeguard_keyword' => true,
       ];
     } else if (self::isSecondInteraction()) {
       return [

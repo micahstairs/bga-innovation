@@ -18,12 +18,9 @@ class Card590 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'owner_from'    => 0,
-      'location_from' => 'achievements',
-      'owner_to'      => self::getPlayerId(),
-      'location_to'   => 'achievements',
-      'age_min'       => 1,
-      'age_max'       => 11,
+      'achieve_keyword' => true,
+      'age_min'         => 1,
+      'age_max'         => 11,
     ];
   }
 

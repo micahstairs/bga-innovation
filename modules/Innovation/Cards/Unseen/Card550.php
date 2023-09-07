@@ -29,10 +29,10 @@ class Card550 extends Card
       ];
     } else {
       return [
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
-        'location_to'   => 'safe',
-        'age'           => self::getLowestAvailableAchievementValue(),
+        'owner_from'        => 0,
+        'location_from'     => 'achievements',
+        'safeguard_keyword' => true,
+        'age'               => self::getLowestAvailableAchievementValue(),
       ];
     }
   }

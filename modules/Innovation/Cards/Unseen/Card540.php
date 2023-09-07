@@ -28,10 +28,10 @@ class Card540 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'owner_from'    => 0,
-      'location_from' => 'achievements',
-      'location_to'   => 'safe',
-      'age'           => $this->game->countCardsInLocation(self::getPlayerId(), 'score'),
+      'owner_from'        => 0,
+      'location_from'     => 'achievements',
+      'safeguard_keyword' => true,
+      'age'               => $this->game->countCardsInLocation(self::getPlayerId(), 'score'),
     ];
 
   }
