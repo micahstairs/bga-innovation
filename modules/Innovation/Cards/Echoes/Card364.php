@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card364 extends Card
 {
@@ -65,8 +66,8 @@ class Card364 extends Card
       $choiceMap[$splayDirection] = [
         clienttranslate('Splay ${color} ${splay_direction}'),
         'i18n'            => ['color', 'splay_direction'],
-        'color'           => self::renderColor(Colors::PURPLE),
-        'splay_direction' => $this->game->getSplayDirectionInClear($splayDirection),
+        'color'           => Colors::render(Colors::PURPLE),
+        'splay_direction' => Directions::render($splayDirection),
       ];
     }
     $purpleSplayDirection = self::getSplayDirection(Colors::PURPLE);
@@ -74,8 +75,8 @@ class Card364 extends Card
       $choiceMap[5 + $color] = [
         clienttranslate('Splay ${color} ${splay_direction}'),
         'i18n'            => ['color', 'splay_direction'],
-        'color'           => self::renderColor($color),
-        'splay_direction' => $this->game->getSplayDirectionInClear($purpleSplayDirection),
+        'color'           => Colors::render($color),
+        'splay_direction' => Directions::render($purpleSplayDirection),
       ];
     }
     return self::buildPromptFromList($choiceMap);

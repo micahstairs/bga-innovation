@@ -109,7 +109,7 @@ abstract class BaseCardIntegrationTest extends BaseIntegrationTest
     if ($playerId === null) {
       $playerId = self::getActivePlayerId();
     }
-    $card = $this->tableInstance->getTable()->getDeckTopCard($age, \Innovation::BASE);
+    $card = $this->tableInstance->getTable()->getDeckTopCard($age, \Innovation\Enums\CardTypes::BASE);
     $this->tableInstance
         ->createActionInstanceForCurrentPlayer($playerId)
         ->stubArgs(["card_id" => $card["id"], "transfer_action" => "draw"])

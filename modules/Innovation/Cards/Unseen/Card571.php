@@ -44,7 +44,7 @@ class Card571 extends Card
       self::setAuxiliaryValue2($isRedOrPurple ? 1 : 0);
 
       // Check if the wish should be granted
-      $args = ['icon' => self::renderIcon(Icons::CONCEPT)];
+      $args = ['icon' => Icons::render(Icons::CONCEPT)];
       if (self::hasIcon($card, Icons::CONCEPT)) {
         self::notifyAll(clienttranslate('It has a ${icon} so the wish is granted.'), $args);
         $choice = self::getAuxiliaryValue();

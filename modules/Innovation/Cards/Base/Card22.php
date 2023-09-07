@@ -21,7 +21,7 @@ class Card22 extends Card
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $renderedIcon = self::renderIcon(Icons::HEALTH);
+      $renderedIcon = Icons::render(Icons::HEALTH);
       $numToDraw = 0;
       if (self::isFirstOrThirdEdition()) {
         $iconCount = self::getStandardIconCount(Icons::HEALTH);

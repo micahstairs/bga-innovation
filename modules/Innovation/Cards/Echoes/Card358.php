@@ -44,9 +44,9 @@ class Card358 extends Card
     }
 
     if (self::isFirstOrThirdEdition()) {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + $this->game->countIconsOnCard($card, Icons::AUTHORITY));
+      self::incrementAuxiliaryValue($this->game->countIconsOnCard($card, Icons::AUTHORITY));
     } else {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue(1);
     }
   }
 

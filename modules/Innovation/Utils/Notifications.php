@@ -1,6 +1,8 @@
 <?php
 
 namespace Innovation\Utils;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 /* Class used to handle notifications */
 class Notifications
@@ -17,24 +19,24 @@ class Notifications
 
   public function notifyPresenceOfIcon(int $icon)
   {
-    self::notifyGeneralInfo(clienttranslate('It has a ${icon}.'), ['icon' => self::getIconSquare($icon)]);
+    self::notifyGeneralInfo(clienttranslate('It has a ${icon}.'), ['icon' => Icons::render($icon)]);
   }
 
   public function notifyAbsenceOfIcon(int $icon)
   {
-    self::notifyGeneralInfo(clienttranslate('It does not have a ${icon}.'), ['icon' => self::getIconSquare($icon)]);
+    self::notifyGeneralInfo(clienttranslate('It does not have a ${icon}.'), ['icon' => Icons::render($icon)]);
   }
 
   public function notifyCardColor(int $color)
   {
-    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => $this->game->renderColor($color)));
+    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($color)));
   }
 
   // CHOICE NOTIFICATIONS
 
   public function notifyIconChoice(int $icon, int $playerId)
   {
-    $iconSquare = $this->getIconSquare($icon);
+    $iconSquare = Icons::render($icon);
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${icon}.'), ['You' => 'You', 'icon' => $iconSquare]);
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${icon}.'), ['player_name' => self::renderPlayerName($playerId), 'icon' => $iconSquare]);
   }
@@ -47,7 +49,7 @@ class Notifications
 
   public function notifyColorChoice(int $color, int $playerId)
   {
-    $colorText = $this->game->renderColor($color);
+    $colorText = Colors::render($color);
     self::notifyPlayer($playerId, 'log', clienttranslate('${You} choose ${color}.'), ['i18n' => ['color'], 'You' => 'You', 'color' => $colorText]);
     self::notifyAllPlayersBut($playerId, 'log', clienttranslate('${player_name} chooses ${color}.'), ['i18n' => ['color'], 'player_name' => self::renderPlayerName($playerId), 'color' => $colorText]);
   }
@@ -74,11 +76,6 @@ class Notifications
   }
 
   // MISCELLANEOUS NOTIFICATIONS
-
-  public function getIconSquare(int $icon): string
-  {
-    return $this->game->getIconSquare($icon);
-  }
 
   public function renderValue(int $value): string
   {

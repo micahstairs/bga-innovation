@@ -1081,11 +1081,6 @@ abstract class Card
     $this->game->notifyAllPlayersBut(self::coercePlayerId($playerId), 'log', $log, $args);
   }
 
-  protected function renderIcon(int $icon)
-  {
-    return $this->game->getIconSquare($icon);
-  }
-
   public function renderValue(int $value): string
   {
     return $this->notifications->renderValue($value);
@@ -1094,11 +1089,6 @@ abstract class Card
   public function renderValueWithType(int $value, int $type): string
   {
     return $this->notifications->renderValueWithType($value, $type);
-  }
-
-  public function renderColor(int $color): string
-  {
-    return $this->game->renderColor($color);
   }
 
   public function renderNumber(int $number): string

@@ -15,4 +15,25 @@ class CardTypes
   {
     return array_diff(range(0, 5), [$type]);
   }
+
+  public static function render($type): string
+  {
+    switch ($type) {
+      case self::BASE:
+        return clienttranslate('Base');
+      case self::ARTIFACTS:
+        return clienttranslate('Artifacts');
+      case self::CITIES:
+        return clienttranslate('Cities');
+      case self::ECHOES:
+        return clienttranslate('Echoes');
+      case self::FIGURES:
+        return clienttranslate('Figures');
+      case self::UNSEEN:
+        return clienttranslate('Unseen');
+      default:
+        return '';
+    }
+    
+  }
 }

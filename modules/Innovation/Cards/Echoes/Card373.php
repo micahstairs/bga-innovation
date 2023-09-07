@@ -33,7 +33,7 @@ class Card373 extends Card
       }
       self::notifyAll(
         clienttranslate('There were a total of ${n} ${icon}.'),
-        ['n' => $count, 'icon' => self::renderIcon(Icons::EFFICIENCY)]
+        ['n' => $count, 'icon' => Icons::render(Icons::EFFICIENCY)]
       );
       self::setAuxiliaryValue($count); // Track which value will be transferred
       self::setMaxSteps(1);
