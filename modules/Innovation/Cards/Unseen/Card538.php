@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card538 extends Card
 {
@@ -18,7 +19,7 @@ class Card538 extends Card
 
   public function getInteractionOptions(): array
   {
-    $colors = $this->game->getSplayableColorsOnBoard(self::getPlayerId(), $this->game::UNSPLAYED);
+    $colors = $this->game->getSplayableColorsOnBoard(self::getPlayerId(), Directions::UNSPLAYED);
     if (empty($colors)) {
       return [];
     }

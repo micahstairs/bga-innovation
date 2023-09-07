@@ -10,7 +10,12 @@ class CardIds
   const DANCING_GIRL = 119;
   const ARK_OF_THE_COVENANT = 123;
   const HOLY_GRAIL = 131;
+  const BELL = 342;
+  const FLUTE = 343;
   const SCISSORS = 350;
+  const PIANO = 383;
+  const SAXOPHONE = 404;
+  const WEALTH = 435;
   const DEEPFAKE = 478;
   const SPANISH_INQUISITION = 518;
   const CONFIDENCE = 595;

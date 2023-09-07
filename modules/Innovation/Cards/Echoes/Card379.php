@@ -3,6 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 use Innovation\Utils\Arrays;
 
 class Card379 extends Card
@@ -26,7 +29,7 @@ class Card379 extends Card
       self::setMaxSteps(1);
     } else {
       if (count(self::getBonuses()) >= 6) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 435);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::WEALTH);
       }
     }
   }
@@ -36,13 +39,13 @@ class Card379 extends Card
     if (self::isFirstNonDemand()) {
       return [
         'choose_value' => true,
-        'age' => Arrays::getRepeatedValues(self::getBonuses()),
+        'age'          => Arrays::getRepeatedValues(self::getBonuses()),
       ];
     } else {
       return [
-        'can_pass' => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color' => [Colors::PURPLE],
+        'can_pass'        => true,
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [Colors::PURPLE],
       ];
     }
   }

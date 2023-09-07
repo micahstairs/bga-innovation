@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card471 extends Card
 {
@@ -23,18 +24,18 @@ class Card471 extends Card
           $newDirection = null;
         case 2:
         case 3:
-          $newDirection = $this->game::ASLANT;
+          $newDirection = Directions::ASLANT;
           break;
         case 4:
         case 5:
-          $newDirection = $this->game::UP;
+          $newDirection = Directions::UP;
           break;
         case 6:
         case 7:
-          $newDirection = $this->game::RIGHT;
+          $newDirection = Directions::RIGHT;
           break;
         default:
-          $newDirection = $this->game::LEFT;
+          $newDirection = Directions::LEFT;
           break;
       }
       if ($newDirection !== null && self::getSplayDirection($color) !== $newDirection) {

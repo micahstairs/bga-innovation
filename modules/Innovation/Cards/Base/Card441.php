@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card441 extends Card
 {
@@ -17,7 +18,7 @@ class Card441 extends Card
     $card = self::drawAndMeld(11);
     $color = $card['color'];
     $stack = self::getCardsKeyedByColor('board')[$color];
-    if (self::getSplayDirection($color) !== $this->game::ASLANT) {
+    if (self::getSplayDirection($color) !== Directions::ASLANT) {
       $cardIds = [];
       for ($i = 0; $i < count($stack) - 2; $i++) {
         $cardIds[] = $stack[$i]['id'];

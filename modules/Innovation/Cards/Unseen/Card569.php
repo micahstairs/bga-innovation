@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card569 extends Card
 {
@@ -23,7 +24,7 @@ class Card569 extends Card
     if (self::isFirstNonDemand()) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
+        'splay_direction' => Directions::UP,
         'color'           => [Colors::GREEN],
       ];
     } else if (self::isSecondNonDemand()) {
@@ -31,9 +32,9 @@ class Card569 extends Card
         return ['choices' => [1, 2]];
       } else {
         return [
-          'owner_from'    => 0,
-          'location_from' => 'achievements',
-          'location_to'   => 'safe',
+          'owner_from'        => 0,
+          'location_from'     => 'achievements',
+          'safeguard_keyword' => true,
         ];
       }
     } else {

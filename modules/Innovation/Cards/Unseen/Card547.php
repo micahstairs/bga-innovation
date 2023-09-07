@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card547 extends Card
 {
@@ -14,7 +15,7 @@ class Card547 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::setMaxSteps(3);
     } else {
       foreach (self::getCards('achievements') as $card) {
@@ -34,13 +35,13 @@ class Card547 extends Card
         return [
           'location_from' => 'board',
           'location_to'   => 'junk,safe',
-          'color' => $this->game->getColorsOfRepeatedValueOfTopCardsOnBoard(self::getPlayerId()),
+          'color'         => $this->game->getColorsOfRepeatedValueOfTopCardsOnBoard(self::getPlayerId()),
         ];
       } else {
         $this->game->setAuxiliaryArray(self::getCardIdsWithDuplicateValuesInLocation('safe'));
         return [
-          'location_from' => 'safe',
-          'score_keyword' => true,
+          'location_from'                   => 'safe',
+          'score_keyword'                   => true,
           'card_ids_are_in_auxiliary_array' => true,
         ];
       }
@@ -50,7 +51,7 @@ class Card547 extends Card
           'location_from' => 'board',
           'location_to'   => 'junk,safe',
           'age'           => self::getLastSelectedAge(),
-          'color'         => self::getAllColorsOtherThan(self::getLastSelectedColor()),
+          'color'         => Colors::getAllColorsOtherThan(self::getLastSelectedColor()),
         ];
       } else {
         return [

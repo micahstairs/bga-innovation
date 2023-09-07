@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card555 extends Card
 {
@@ -22,13 +23,11 @@ class Card555 extends Card
       return ['choices' => [1, 2]];
     } else {
       if (self::getAuxiliaryValue() === 1) {
-         return [
-          'splay_direction' => $this->game::UNSPLAYED,
-         ];
+        return ['splay_direction' => Directions::UNSPLAYED];
       } else {
         return [
-          'splay_direction' => $this->game::UP,
-          'has_splay_direction' => [$this->game::UNSPLAYED],
+          'splay_direction'     => Directions::UP,
+          'has_splay_direction' => [Directions::UNSPLAYED],
         ];
       }
     }

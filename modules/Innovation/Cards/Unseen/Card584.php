@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card584 extends Card
 {
@@ -15,15 +16,15 @@ class Card584 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       if (self::countCardsKeyedByValue('score')[3] > 0) {
         self::lose();
       }
-    } else if (self::getEffectNumber() === 2) {
+    } else if (self::isSecondNonDemand()) {
       if (self::countCardsKeyedByValue('hand')[7] > 0) {
         self::win();
       }
-    } else {
+    } else if (self::isThirdNonDemand()) {
       self::setMaxSteps(3);
     }
   }
@@ -44,7 +45,7 @@ class Card584 extends Card
       ];
     } else {
       return [
-        'splay_direction' => $this->game::UP,
+        'splay_direction' => Directions::UP,
         'color'           => [Colors::BLUE],
       ];
     }

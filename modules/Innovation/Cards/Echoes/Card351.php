@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card351 extends Card
 {
@@ -49,7 +50,7 @@ class Card351 extends Card
     } else if (self::isFirstNonDemand()) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::LEFT,
+        'splay_direction' => Directions::LEFT,
       ];
     } else if (self::isFirstInteraction()) {
       return [

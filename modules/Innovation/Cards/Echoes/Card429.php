@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card429 extends Card
 {
@@ -43,22 +44,22 @@ class Card429 extends Card
   {
     if (self::isDemand()) {
       return [
-        'n' => 'all',
-        'location_from' => 'forecast',
+        'n'              => 'all',
+        'location_from'  => 'forecast',
         'return_keyword' => true,
       ];
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
       return [
-        'n' => 3,
-        'location_from' => 'hand',
-        'foreshadow_keyword' => true,
+        'n'                               => 3,
+        'location_from'                   => 'hand',
+        'foreshadow_keyword'              => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
-        'can_pass' => true,
-        'splay_direction' => $this->game::UP,
-        'color' => [Colors::YELLOW],
+        'can_pass'        => true,
+        'splay_direction' => Directions::UP,
+        'color'           => [Colors::YELLOW],
       ];
     }
   }

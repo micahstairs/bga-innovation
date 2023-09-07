@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card373 extends Card
 {
@@ -53,7 +54,7 @@ class Card373 extends Card
       }
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::RIGHT,
+        'splay_direction' => Directions::RIGHT,
         'color'           => $colors,
       ];
     } else if (self::isFirstOrThirdEdition()) {

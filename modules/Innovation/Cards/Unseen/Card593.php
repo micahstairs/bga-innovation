@@ -4,9 +4,9 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card593 extends Card
-
 {
 
   // Holography:
@@ -27,8 +27,8 @@ class Card593 extends Card
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      Colors::RED => clienttranslate('Score all but top four red cards'),
-      Colors::BLUE => clienttranslate('Score all but top four blue cards'),
+      Colors::RED   => clienttranslate('Score all but top four red cards'),
+      Colors::BLUE  => clienttranslate('Score all but top four blue cards'),
       Colors::GREEN => clienttranslate('Score all but top four green cards'),
     ]);
   }
@@ -42,13 +42,13 @@ class Card593 extends Card
       $scoredCard = true;
     }
 
-    $splayedAslant = $this->game->getCurrentSplayDirection(self::getPlayerId(), $color) != $this->game::ASLANT;
+    $splayedAslant = $this->game->getCurrentSplayDirection(self::getPlayerId(), $color) != Directions::ASLANT;
     self::splayAslant($color);
 
     if ($scoredCard && $splayedAslant) {
       $lowestCardsInScorePile = $this->game->getIdsOfLowestCardsInLocation(self::getPlayerId(), 'score');
       $minScoreValue = self::getMinValueInLocation('score');
-      foreach (self::getCards( 'achievements') as $card) {
+      foreach (self::getCards('achievements') as $card) {
         if (self::isValuedCard($card) && $card['age'] < $minScoreValue) {
           self::transferToScorePile($card);
         }

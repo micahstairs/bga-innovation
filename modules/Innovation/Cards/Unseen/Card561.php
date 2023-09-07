@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card561 extends Card
 {
@@ -30,7 +31,7 @@ class Card561 extends Card
       ];
     } else {
       return [
-        'splay_direction' => $this->game::UNSPLAYED,
+        'splay_direction' => Directions::UNSPLAYED,
         'color'           => self::getColorsWithMostVisibleCards(),
       ];
     }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Enums\Directions;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
@@ -618,13 +619,6 @@ abstract class Card
     return self::getSplayDirection($color, self::coercePlayerId($playerId)) > 0;
   }
 
-  // COLOR HELPERS
-
-  protected function getAllColorsOtherThan(int $color)
-  {
-    return array_diff(range(0, 4), [$color]);
-  }
-
   // SELECTION HELPERS
 
   protected function getLastSelectedCard()
@@ -1019,13 +1013,13 @@ abstract class Card
 
   private function getVisibleSpotsOnBuriedCard(int $splayDirection): array {
     switch ($splayDirection) {
-      case $this->game::LEFT:
+      case Directions::LEFT:
         return [4, 5];
-      case $this->game::RIGHT:
+      case Directions::RIGHT:
         return [1, 2];
-      case $this->game::UP:
+      case Directions::UP:
         return [2, 3, 4];
-      case $this->game::ASLANT:
+      case Directions::ASLANT:
         return [1, 2, 3, 4];
       default:
         return [];

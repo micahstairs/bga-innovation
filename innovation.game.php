@@ -14161,6 +14161,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $options['location_from'] = 'achievements';
                     }
                 }
+                if (array_key_exists('safeguard_keyword', $options)) {
+                    $options['location_to'] = 'safe';
+                }
                 if (array_key_exists('foreshadow_keyword', $options)) {
                     $options['location_to'] = 'forecast';
                 }

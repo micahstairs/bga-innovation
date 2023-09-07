@@ -15,4 +15,8 @@ class Colors
   const NON_GREEN = [BLUE, RED, YELLOW, PURPLE];
   const NON_YELLOW = [BLUE, RED, GREEN, PURPLE];
   const NON_PURPLE = [BLUE, RED, GREEN, YELLOW];
+
+  public static function getAllColorsOtherThan(int $color) {
+    return array_diff(range(0, 4), [$color]);
+  }
 }

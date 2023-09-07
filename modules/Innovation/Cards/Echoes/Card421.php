@@ -4,6 +4,7 @@ namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card421 extends Card
 {
@@ -43,7 +44,7 @@ class Card421 extends Card
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
+        'splay_direction' => Directions::UP,
         'color'           => [Colors::PURPLE],
       ];
     }

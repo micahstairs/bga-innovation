@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card343 extends Card
 {
@@ -38,20 +39,20 @@ class Card343 extends Card
   {
     if (self::isEcho()) {
       return [
-        'can_pass' => true,
-        'splay_direction' => $this->game::LEFT,
+        'can_pass'        => true,
+        'splay_direction' => Directions::LEFT,
       ];
     } else if (self::isFirstOrThirdEdition()) {
       return [
-        'location_from' => 'hand',
-        'location_to' => 'deck',
-        'with_bonus' => true,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'with_bonus'     => true,
       ];
     } else {
       return [
-        'location_from' => 'hand',
-        'location_to' => 'deck',
-        'type' => self::getAllTypesOtherThan($this->game::BASE),
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'type'           => self::getAllTypesOtherThan($this->game::BASE),
       ];
     }
   }

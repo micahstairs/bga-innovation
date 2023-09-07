@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card564 extends Card
 {
@@ -22,7 +23,7 @@ class Card564 extends Card
       }
     } else {
       foreach (self::getTopCards() as $card) {
-        if ($card['splay_direction'] == $this->game::UP) {
+        if ($card['splay_direction'] == Directions::UP) {
           self::draw(8);
         }
       }

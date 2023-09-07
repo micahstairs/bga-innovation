@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card370 extends Card
 {
@@ -64,7 +65,7 @@ class Card370 extends Card
           'return_keyword' => true,
         ];
       } else {
-        return ['splay_direction' => $this->game::RIGHT];
+        return ['splay_direction' => Directions::RIGHT];
       }
     } else {
       return [

@@ -4,6 +4,7 @@ namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card581 extends Card
 {
@@ -22,7 +23,7 @@ class Card581 extends Card
     if (self::getEffectNumber() === 1) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
+        'splay_direction' => Directions::UP,
         'color'           => [Colors::GREEN],
       ];
     } else {
