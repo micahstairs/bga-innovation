@@ -887,10 +887,11 @@ $this->textual_card_infos = array(
     ),
 
     132 => array(
-        'name'                => clienttranslate('Terracotta Army'),
-        // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
-        'i_compel_effect'     => clienttranslate('${I compel} you to return a top card on your board with no ${icon_4}!'),
-        'non_demand_effect_1' => clienttranslate('Score a card from your hand with no ${icon_4}.'),
+        'name'                                => clienttranslate('Terracotta Army'),
+        // NOTE: We added the words "from your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660.
+        'i_compel_effect'                     => clienttranslate('${I compel} you to return a top card with no ${icon_4} from your board!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand with no ${icon_4}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand with no ${icon_4}. If you do, junk all cards in the deck of value equal to the scored card. Otherwise, tuck Terracotta Army.'),
     ),
 
     133 => array(

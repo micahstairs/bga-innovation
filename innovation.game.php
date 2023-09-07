@@ -12487,15 +12487,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
             
-            // id 132, Artifacts age 2: Terracotta Army
-            case "132C1":
-                $step_max = 1;
-                break;
-            
-            case "132N1":
-                $step_max = 1;
-                break;
-
             // id 133, Artifacts age 2: Dead Sea Scrolls
             case "133N1":
                 // "Draw an Artifact of value equal to the value of your highest top card"
@@ -16099,39 +16090,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-
-        // id 132, Artifacts age 2: Terracotta Army
-        case "132C1A":
-            // "I compel you to return a top card on your board with no tower"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'without_icon' => 4 // tower
-            );
-            break;
-
-        case "132N1A":
-            // "Score a card from your hand with no towers"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'without_icon' => 4, // tower
-
-                'score_keyword' => true
-            );
-            break;
         
         // id 134, Artifacts age 2: Cyrus Cylinder
         case "134N1A":
@@ -19157,15 +19115,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-
-                // id 132, Artifacts age 2: Terracotta Army
-                case "132N1A":
-                    // if you don't
-                    if ($n == 0) {
-                        // Reveal hand to prove to others that they didn't have any cards without a tower
-                        self::revealHand($player_id);
                     }
                     break;
                 
