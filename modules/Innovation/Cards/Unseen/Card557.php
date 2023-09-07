@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card557 extends Card
 {
@@ -16,14 +17,14 @@ class Card557 extends Card
     if (self::isDemand()) {
       self::setMaxSteps(1);
     } else {
-      self::safeguard(self::getBottomCardOfColor($this->game::PURPLE));
+      self::safeguard(self::getBottomCardOfColor(Colors::PURPLE));
     }
   }
 
   public function getInteractionOptions(): array
   {
     return [
-      'n' => 'all',
+      'n'             => 'all',
       'location_from' => 'safe',
       'tuck_keyword'  => true,
     ];

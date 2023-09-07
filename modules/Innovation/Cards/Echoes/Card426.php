@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card426 extends Card
 {
@@ -31,17 +32,17 @@ class Card426 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'can_pass' => true,
+        'can_pass'     => true,
         'choose_value' => true,
       ];
     } else {
       $options = [
         'location_from' => 'board',
-        'location_to' => 'hand',
-        'bottom_from' => true,
+        'location_to'   => 'hand',
+        'bottom_from'   => true,
       ];
       if (self::isFourthEdition()) {
-        $options['color'] = [$this->game::RED];
+        $options['color'] = [Colors::RED];
       }
       return $options;
     }
@@ -52,7 +53,8 @@ class Card426 extends Card
     self::drawAndScore($value);
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isSecondInteraction()) {
       $handCounts = self::countCardsKeyedByValue('hand');
       $scoreCounts = self::countCardsKeyedByValue('score');

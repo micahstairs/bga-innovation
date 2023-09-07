@@ -45,7 +45,7 @@ class Card563 extends Card
       foreach ($this->game->getIdsOfHighestCardsInLocation(self::getPlayerId(), 'hand') as $cardId) {
         self::score(self::getCard($cardId));
       }
-      self::score(self::getTopCardOfColor($this->game::PURPLE));
+      self::score(self::getTopCardOfColor(Colors::PURPLE));
     }
   }
 

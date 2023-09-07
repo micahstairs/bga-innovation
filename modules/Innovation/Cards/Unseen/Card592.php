@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card592 extends Card
 {
@@ -45,7 +46,7 @@ class Card592 extends Card
     } else {
       return [
         'can_pass' => true,
-        'choices'  => [$this->game::YELLOW, $this->game::PURPLE],
+        'choices'  => [Colors::YELLOW, Colors::PURPLE],
       ];
     }
   }
@@ -53,8 +54,8 @@ class Card592 extends Card
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      $this->game::YELLOW => clienttranslate('Score all but top three yellow cards'),
-      $this->game::PURPLE => clienttranslate('Score all but top three purple cards'),
+      Colors::YELLOW => clienttranslate('Score all but top three yellow cards'),
+      Colors::PURPLE => clienttranslate('Score all but top three purple cards'),
     ]);
   }
 

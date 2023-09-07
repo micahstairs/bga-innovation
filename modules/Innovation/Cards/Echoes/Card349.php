@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card349 extends Card
 {
@@ -23,7 +24,7 @@ class Card349 extends Card
     } else {
       $minValue = null;
       foreach (self::getTopCards() as $card) {
-        if ($card['color'] != $this->game::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
+        if ($card['color'] != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
           $minValue = $card['faceup_age'];
         }
       }

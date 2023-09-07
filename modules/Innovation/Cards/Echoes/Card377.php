@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card377 extends Card
 {
@@ -31,7 +32,7 @@ class Card377 extends Card
         }
       }
     } else if (self::wasForeseen()) {
-      foreach (self::getAllColorsOtherThan($this->game::RED) as $color) {
+      foreach (Colors::NON_RED as $color) {
         self::score(self::getTopCardOfColor($color));
       }
     }

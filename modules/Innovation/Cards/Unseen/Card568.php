@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card568 extends Card
 {
@@ -16,12 +17,12 @@ class Card568 extends Card
   {
     if (self::isDemand()) {
       self::drawAndMeld(8);
-      $topPurpleCard = self::getTopCardOfColor($this->game::PURPLE);
+      $topPurpleCard = self::getTopCardOfColor(Colors::PURPLE);
       if ($topPurpleCard !== null && $topPurpleCard['id'] == 84) {
         self::lose();
       }
     } else if (self::getEffectNumber() === 1) {
-      self::score(self::getTopCardOfColor($this->game::PURPLE));
+      self::score(self::getTopCardOfColor(Colors::PURPLE));
     } else {
       self::setMaxSteps(1);
     }
@@ -32,7 +33,7 @@ class Card568 extends Card
     return [
       'can_pass'        => true,
       'splay_direction' => $this->game::UP,
-      'color'           => [$this->game::RED, $this->game::BLUE],
+      'color'           => [Colors::RED, Colors::BLUE],
     ];
   }
 }

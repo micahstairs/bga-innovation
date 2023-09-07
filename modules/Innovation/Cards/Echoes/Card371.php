@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card371 extends Card
 {
@@ -74,9 +75,8 @@ class Card371 extends Card
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'location_from' => 'forecast',
-        'location_to'   => 'none',
-        'color'         => [$this->game::BLUE],
+        'choose_from' => 'forecast',
+        'color'       => [Colors::BLUE],
       ];
     } else {
       return [

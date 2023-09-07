@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card110 extends Card
 {
@@ -33,7 +34,7 @@ class Card110 extends Card
       return [
         'location_from'     => 'board',
         'score_keyword'     => true,
-        'color'             => self::getAllColorsOtherThan($this->game::BLUE),
+        'color'             => Colors::NON_BLUE,
         'has_demand_effect' => true,
       ];
     }

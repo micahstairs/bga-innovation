@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card389 extends Card
 {
@@ -53,7 +54,7 @@ class Card389 extends Card
   public function afterInteraction()
   {
     if (self::getNumChosen() > 0) {
-      self::transferToBoard(self::getTopCardOfColor($this->game::GREEN), self::getLastSelectedOwner());
+      self::transferToBoard(self::getTopCardOfColor(Colors::GREEN), self::getLastSelectedOwner());
     } else {
       self::drawAndMeld(7);
     }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card403 extends Card
 {
@@ -35,7 +36,7 @@ class Card403 extends Card
         'location_from' => 'board',
         'score_keyword' => true,
         'without_bonus' => true,
-        'color'         => self::getAllColorsOtherThan($this->game::PURPLE),
+        'color'         => Colors::NON_PURPLE,
       ];
     }
     if (self::isFirstOrThirdEdition()) {

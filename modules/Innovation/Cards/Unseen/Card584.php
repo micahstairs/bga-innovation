@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card584 extends Card
 {
@@ -31,20 +32,20 @@ class Card584 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'n' => 2,
+        'n'             => 2,
         'location_from' => 'hand',
-        'meld_keyword'   => true,
+        'meld_keyword'  => true,
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'n' => 4,
+        'n'             => 4,
         'location_from' => 'hand',
-        'score_keyword'   => 'score',
+        'score_keyword' => true,
       ];
     } else {
       return [
         'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::BLUE],
+        'color'           => [Colors::BLUE],
       ];
     }
   }

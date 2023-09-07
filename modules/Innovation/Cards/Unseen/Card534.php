@@ -24,7 +24,7 @@ class Card534 extends Card
       return [
         'splay_direction'     => $this->game::LEFT,
         'has_splay_direction' => [$this->game::UNSPLAYED],
-        'color'               => self::getAllColorsOtherThan($this->game::PURPLE),
+        'color'               => Colors::NON_PURPLE,
       ];
     } else {
       return [

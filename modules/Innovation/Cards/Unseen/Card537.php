@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card537 extends Card
 {
@@ -18,10 +19,7 @@ class Card537 extends Card
       self::setMaxSteps(1);
     } else {
       $card = self::drawAndTuck(6);
-      if (
-        $this->game->getCurrentSplayDirection(self::getPlayerId(), $this->game::RED) ==
-        $this->game->getCurrentSplayDirection(self::getPlayerId(), $card['color'])
-      ) {
+      if (self::getSplayDirection($card['color']) == self::getSplayDirection(Colors::RED)) {
         self::splayUp($card['color']);
       } else {
         self::unsplay($card['color']);
@@ -46,11 +44,11 @@ class Card537 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      self::splayLeft($this->game::RED);
+      self::splayLeft(Colors::RED);
     } else if ($choice === 2) {
-      self::splayRight($this->game::RED);
+      self::splayRight(Colors::RED);
     } else {
-      self::splayUp($this->game::RED);
+      self::splayUp(Colors::RED);
     }
   }
 }

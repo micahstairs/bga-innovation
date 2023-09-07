@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card509 extends Card
 {
@@ -29,20 +30,20 @@ class Card509 extends Card
   public function handleCardChoice(array $card)
   {
     switch ($card['color']) {
-      case $this->game::BLUE:
+      case Colors::BLUE:
         self::draw(5);
         self::safeguard($card);
         break;
-      case $this->game::RED:
+      case Colors::RED:
         self::achieve($card);
         break;
-      case $this->game::GREEN:
+      case Colors::GREEN:
         self::tuck($card);
         break;
-      case $this->game::YELLOW:
+      case Colors::YELLOW:
         self::score($card);
         break;
-      case $this->game::PURPLE:
+      case Colors::PURPLE:
         self::meld($card);
         break;
     }

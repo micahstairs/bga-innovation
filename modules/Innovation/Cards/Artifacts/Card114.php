@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card114 extends Card
 {
@@ -27,7 +28,7 @@ class Card114 extends Card
       return [
         'location_from' => 'hand',
         'location_to'   => 'revealed,deck',
-        'color'         => [$this->game::PURPLE],
+        'color'         => [Colors::PURPLE],
       ];
     } else {
       return ['choose_type' => true];

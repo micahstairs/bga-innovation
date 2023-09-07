@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card363 extends Card
 {
@@ -54,7 +55,7 @@ class Card363 extends Card
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::LEFT,
-        'color'           => [$this->game::PURPLE],
+        'color'           => [Colors::PURPLE],
       ];
     }
   }
@@ -68,7 +69,7 @@ class Card363 extends Card
       }
       $numCards = 0;
       $hasCommonIcon = true;
-      foreach (self::getAllColorsOtherThan($this->game::PURPLE) as $color) {
+      foreach (Colors::NON_PURPLE as $color) {
         $topCard = self::getTopCardOfColor($color);
         if ($topCard !== null) {
           if (!self::hasIcon($topCard, $icon)) {

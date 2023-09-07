@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card128 extends Card
 {
@@ -28,7 +29,7 @@ class Card128 extends Card
       'owner_to'      => self::getLauncherId(),
       'location_to'   => 'board',
       'with_icon'     => $this->game::AUTHORITY,
-      'color'         => self::getAllColorsOtherThan($this->game::RED),
+      'color'         => Colors::NON_RED,
     ];
   }
 

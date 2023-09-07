@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card399 extends Card
 {
@@ -28,7 +29,7 @@ class Card399 extends Card
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
       if (self::isFourthEdition()) {
-        $topBlueCard = self::getTopCardOfColor($this->game::BLUE);
+        $topBlueCard = self::getTopCardOfColor(Colors::BLUE);
         $value = $topBlueCard ? $topBlueCard['faceup_age'] : 0;
         self::setAuxiliaryValue($value); // Track first value to draw and reveal
         self::setAuxiliaryValue2($value); // Track second value to draw and reveal

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card522 extends Card
 {
@@ -30,7 +31,7 @@ class Card522 extends Card
         'owner_from'    => 0,
         'location_from' => 'achievements',
         'location_to'   => 'safe',
-        'age'           => self::getTopCardOfColor($this->game::RED)['faceup_age'],
+        'age'           => self::getTopCardOfColor(Colors::RED)['faceup_age'],
       ];
     }
   }
@@ -42,7 +43,7 @@ class Card522 extends Card
         self::draw(self::getLastSelectedAge() + 1);
       } else {
         self::draw(1);
-        if (self::getTopCardOfColor($this->game::RED)) {
+        if (self::getTopCardOfColor(Colors::RED)) {
           self::setMaxSteps(2);
         }
       }

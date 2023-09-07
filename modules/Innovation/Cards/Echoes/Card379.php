@@ -42,7 +42,7 @@ class Card379 extends Card
       return [
         'can_pass' => true,
         'splay_direction' => $this->game::RIGHT,
-        'color' => [$this->game::PURPLE],
+        'color' => [Colors::PURPLE],
       ];
     }
   }

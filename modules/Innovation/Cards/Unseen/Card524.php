@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card524 extends Card
 {
@@ -31,7 +32,7 @@ class Card524 extends Card
   {
     return [
       'choose_color' => true,
-      'color'        => self::getAllColorsOtherThan($this->game::PURPLE),
+      'color'        => Colors::NON_PURPLE,
     ];
   }
 

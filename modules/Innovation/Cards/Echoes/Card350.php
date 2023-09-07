@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card350 extends Card
 {
@@ -23,7 +24,7 @@ class Card350 extends Card
       if (self::isFirstOrThirdEdition()) {
         self::setMaxSteps(1);
       } else {
-        self::score(self::getBottomCardOfColor($this->game::YELLOW));
+        self::score(self::getBottomCardOfColor(Colors::YELLOW));
       }
     } else if (self::isFirstNonDemand()) {
       self::setMaxSteps(1);

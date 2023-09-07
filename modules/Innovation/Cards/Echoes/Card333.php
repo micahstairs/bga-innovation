@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card333 extends Card
 {
@@ -37,7 +38,7 @@ class Card333 extends Card
       return [
         'location_from' => 'hand',
         'tuck_keyword'  => true,
-        'color'         => [$this->game::RED],
+        'color'         => [Colors::RED],
       ];
     } else {
       if (self::isEcho()) {

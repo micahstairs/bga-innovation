@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card401 extends Card
 {
@@ -26,8 +27,8 @@ class Card401 extends Card
   public function getInteractionOptions(): array
   {
     if (self::isEcho()) {
-      $topCard = self::getTopCardOfColor($this->game::GREEN);
-      $bottomCard = self::getBottomCardOfColor($this->game::GREEN);
+      $topCard = self::getTopCardOfColor(Colors::GREEN);
+      $bottomCard = self::getBottomCardOfColor(Colors::GREEN);
       if ($topCard) {
         self::setAuxiliaryArray([$topCard['id'], $bottomCard['id']]);
       } else {
@@ -36,7 +37,7 @@ class Card401 extends Card
       return [
         'location_from'                   => 'pile',
         'score_keyword'                   => true,
-        'color'                           => [$this->game::GREEN],
+        'color'                           => [Colors::GREEN],
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else if (self::isFirstInteraction()) {

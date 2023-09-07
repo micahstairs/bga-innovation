@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card406 extends Card
 {
@@ -28,7 +29,7 @@ class Card406 extends Card
       if ($numCards > 0) {
         self::setAuxiliaryValue($numCards); // Track number of cards to draw and foreshadow
         self::setMaxSteps(1);
-      } 
+      }
     } else {
       self::setMaxSteps(1);
     }
@@ -40,20 +41,21 @@ class Card406 extends Card
       return ['choose_value' => true];
     } else if (self::isFourthEdition() && self::isSecondNonDemand()) {
       return [
-        'n' => 'all',
-        'location_from' => 'hand',
+        'n'              => 'all',
+        'location_from'  => 'hand',
         'return_keyword' => true,
       ];
     } else {
       return [
-        'can_pass' => true,
+        'can_pass'        => true,
         'splay_direction' => $this->game::UP,
-        'color' => [$this->game::YELLOW],
+        'color'           => [Colors::YELLOW],
       ];
     }
   }
 
-  public function handleSpecialChoice(int $value) {
+  public function handleSpecialChoice(int $value)
+  {
     if (self::isFirstOrThirdEdition()) {
       self::drawAndForeshadow($value);
       $numCardsLeft = self::getAuxiliaryValue() - 1;

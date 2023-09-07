@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card397 extends Card
 {
@@ -54,7 +55,7 @@ class Card397 extends Card
         'n'              => 'all',
         'location_from'  => 'board',
         'return_keyword' => true,
-        'color'          => self::getAllColorsOtherThan($this->game::RED),
+        'color'          => Colors::NON_RED,
       ];
     }
   }

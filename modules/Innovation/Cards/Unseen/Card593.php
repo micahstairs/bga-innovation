@@ -3,8 +3,10 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card593 extends Card
+
 {
 
   // Holography:
@@ -19,15 +21,15 @@ class Card593 extends Card
 
   public function getInteractionOptions(): array
   {
-    return ['choices' => [$this->game::RED, $this->game::BLUE, $this->game::GREEN]];
+    return ['choices' => [Colors::RED, Colors::BLUE, Colors::GREEN]];
   }
 
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      $this->game::RED => clienttranslate('Score all but top four red cards'),
-      $this->game::BLUE => clienttranslate('Score all but top four blue cards'),
-      $this->game::GREEN => clienttranslate('Score all but top four green cards'),
+      Colors::RED => clienttranslate('Score all but top four red cards'),
+      Colors::BLUE => clienttranslate('Score all but top four blue cards'),
+      Colors::GREEN => clienttranslate('Score all but top four green cards'),
     ]);
   }
 

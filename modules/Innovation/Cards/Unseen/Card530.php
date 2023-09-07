@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card530 extends Card
 {
@@ -17,8 +19,8 @@ class Card530 extends Card
     if (self::isDemand()) {
       self::setMaxSteps(1);
     } else {
-      if (self::getSplayDirection($this->game::RED) == $this->game::RIGHT || self::getSplayDirection($this->game::PURPLE) == $this->game::RIGHT) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 599);
+      if (self::getSplayDirection(Colors::RED) == $this->game::RIGHT || self::getSplayDirection(Colors::PURPLE) == $this->game::RIGHT) {
+        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::MYSTERY);
       } else {
         self::setMaxSteps(1);
       }
@@ -37,7 +39,7 @@ class Card530 extends Card
     } else {
       return [
         'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::RED, $this->game::PURPLE],
+        'color'           => [Colors::RED, Colors::PURPLE],
       ];
     }
   }

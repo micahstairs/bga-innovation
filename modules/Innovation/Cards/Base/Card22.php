@@ -4,6 +4,7 @@ namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
 use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card22 extends Card
 {
@@ -29,7 +30,7 @@ class Card22 extends Card
         );
         self::notifyOthers(
           clienttranslate('${player_name} has visible ${n} ${icon} on his board.'),
-          ['player_name' => self::renderPlayerName(self::getPlayerId()), 'n' => $iconCount, 'icon' => $renderedIcon]
+          ['player_name' => self::renderPlayerName(), 'n' => $iconCount, 'icon' => $renderedIcon]
         );
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
@@ -46,7 +47,7 @@ class Card22 extends Card
           clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'),
           [
             'i18n'        => ['n'],
-            'player_name' => self::renderPlayerName(self::getPlayerId()),
+            'player_name' => self::renderPlayerName(),
             'n'           => self::renderNumber($numToDraw),
             'icon'        => $renderedIcon,
           ]
@@ -66,7 +67,7 @@ class Card22 extends Card
       'can_pass'      => true,
       'location_from' => 'hand',
       'tuck_keyword'  => true,
-      'color'         => [$this->game::GREEN],
+      'color'         => [Colors::GREEN],
     ];
   }
 

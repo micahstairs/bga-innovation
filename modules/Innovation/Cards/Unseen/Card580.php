@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card580 extends Card
 {
@@ -18,16 +19,16 @@ class Card580 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
-        'location_from' => 'safe',
-        'location_to'   => 'achievements',
+        'location_from'   => 'safe',
+        'achieve_keyword' => true,
       ];
     } else {
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::PURPLE],
+        'color'           => [Colors::PURPLE],
       ];
     }
   }

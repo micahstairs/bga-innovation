@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card520 extends Card
 {
@@ -29,8 +30,8 @@ class Card520 extends Card
       }
     }
     if ($numCardsWithProsperityIcons >= 2) {
-      self::splayRight($this->game::GREEN);
-      self::splayRight($this->game::BLUE);
+      self::splayRight(Colors::GREEN);
+      self::splayRight(Colors::BLUE);
     }
   }
 }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card574 extends Card
 {
@@ -35,7 +36,7 @@ class Card574 extends Card
     return [
       'can_pass'        => true,
       'splay_direction' => $this->game::UP,
-      'color'           => array($this->game::YELLOW, $this->game::PURPLE),
+      'color'           => [Colors::YELLOW, Colors::PURPLE],
     ];
   }
 }

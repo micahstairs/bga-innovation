@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card554 extends Card
 {
@@ -28,7 +29,7 @@ class Card554 extends Card
     if (self::isFirstInteraction()) {
       return [
         'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::GREEN, $this->game::PURPLE],
+        'color'           => [Colors::GREEN, Colors::PURPLE],
       ];
     } else {
       return [
@@ -59,7 +60,7 @@ class Card554 extends Card
 
   private function countRevealedGreenCards(): int
   {
-    return intval(self::countCardsKeyedByColor('revealed')[$this->game::GREEN]);
+    return intval(self::countCardsKeyedByColor('revealed')[Colors::GREEN]);
   }
 
 }

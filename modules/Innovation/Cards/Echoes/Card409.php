@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card409 extends Card
 {
@@ -26,7 +27,7 @@ class Card409 extends Card
         $tuckedGreenCard = false;
         for ($i = 0; $i < $numCardsToTuck; $i++) {
           $card = self::drawAndTuck(8);
-          if ($card['color'] == $this->game::GREEN) {
+          if (self::isGreen($card)) {
             $tuckedGreenCard = true;
           }
         }
@@ -44,7 +45,7 @@ class Card409 extends Card
     return [
       'can_pass'        => true,
       'splay_direction' => $this->game::UP,
-      'color'           => [$this->game::RED],
+      'color'           => [Colors::RED],
     ];
   }
 

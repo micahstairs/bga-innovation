@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card364 extends Card
 {
@@ -39,10 +40,10 @@ class Card364 extends Card
       ];
     } else {
       $choices = [];
-      $purpleSplayDirection = self::getSplayDirection($this->game::PURPLE);
-      foreach (self::getAllColorsOtherThan($this->game::PURPLE) as $color) {
+      $purpleSplayDirection = self::getSplayDirection(Colors::PURPLE);
+      foreach (Colors::NON_PURPLE as $color) {
         // The first 4 choices are for splaying purple in the direction of the other colors
-        if (self::mayBeSplayedInDirection($this->game::PURPLE, self::getSplayDirection($color))) {
+        if (self::mayBeSplayedInDirection(Colors::PURPLE, self::getSplayDirection($color))) {
           $choices[] = self::getSplayDirection($color);
         }
         // The last 4 choices are for splaying the other colors in the direction of purple
@@ -64,12 +65,12 @@ class Card364 extends Card
       $choiceMap[$splayDirection] = [
         clienttranslate('Splay ${color} ${splay_direction}'),
         'i18n'            => ['color', 'splay_direction'],
-        'color'           => self::renderColor($this->game::PURPLE),
+        'color'           => self::renderColor(Colors::PURPLE),
         'splay_direction' => $this->game->getSplayDirectionInClear($splayDirection),
       ];
     }
-    $purpleSplayDirection = self::getSplayDirection($this->game::PURPLE);
-    foreach (self::getAllColorsOtherThan($this->game::PURPLE) as $color) {
+    $purpleSplayDirection = self::getSplayDirection(Colors::PURPLE);
+    foreach (Colors::NON_PURPLE as $color) {
       $choiceMap[5 + $color] = [
         clienttranslate('Splay ${color} ${splay_direction}'),
         'i18n'            => ['color', 'splay_direction'],
@@ -83,9 +84,9 @@ class Card364 extends Card
   public function handleSpecialChoice(int $choice)
   {
     if ($choice <= 4) {
-      self::splay($this->game::PURPLE, $choice);
+      self::splay(Colors::PURPLE, $choice);
     } else {
-      self::splay($choice - 5, self::getSplayDirection($this->game::PURPLE));
+      self::splay($choice - 5, self::getSplayDirection(Colors::PURPLE));
     }
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card392 extends Card
 {
@@ -58,7 +59,7 @@ class Card392 extends Card
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::RED],
+        'color'           => [Colors::RED],
       ];
     }
   }

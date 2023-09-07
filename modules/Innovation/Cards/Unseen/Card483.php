@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card483 extends Card
 {
@@ -25,13 +27,13 @@ class Card483 extends Card
     } else {
       $isGreenCardOnAnyBoard = false;
       foreach ($this->game->getAllActivePlayerIds() as $player) {
-          if (self::getTopCardOfColor($this->game::GREEN, $player)) {
+          if (self::getTopCardOfColor(Colors::GREEN, $player)) {
             $isGreenCardOnAnyBoard = true;
             break;
           }
       }
       if (!$isGreenCardOnAnyBoard) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 595);
+        $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::CONFIDENCE);
       }
     }
   }

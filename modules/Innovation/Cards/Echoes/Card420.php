@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card420 extends Card
 {
@@ -27,7 +28,7 @@ class Card420 extends Card
         self::drawAndForeshadow(11);
       }
     } else {
-      $topNonGreenCards = self::filterByColor(self::getTopCards(), self::getAllColorsOtherThan($this->game::GREEN));
+      $topNonGreenCards = self::filterByColor(self::getTopCards(), Colors::NON_GREEN);
       if (count($topNonGreenCards) > 0) {
         self::setAuxiliaryValue(self::getMinValue($topNonGreenCards)); // Track value of card to choose
         self::setMaxSteps(1);
@@ -40,7 +41,7 @@ class Card420 extends Card
     return [
       'choose_from' => 'board',
       'age'         => self::getAuxiliaryValue(),
-      'color'       => self::getAllColorsOtherThan($this->game::GREEN),
+      'color'       => Colors::NON_GREEN,
     ];
   }
 

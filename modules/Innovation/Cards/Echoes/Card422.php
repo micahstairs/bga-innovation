@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card422 extends Card
 {
@@ -45,7 +46,7 @@ class Card422 extends Card
         'tuck_keyword'  => true,
       ];
       if (self::isFirstOrThirdEdition()) {
-        $options['color'] = self::getAllColorsOtherThan($this->game::YELLOW);
+        $options['color'] = Colors::NON_YELLOW;
       }
       return $options;
     } else {

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card419 extends Card
 {
@@ -35,13 +36,13 @@ class Card419 extends Card
         'can_pass'      => true,
         'location_from' => 'board',
         'location_to'   => 'hand',
-        'color'         => self::getAllColorsOtherThan($this->game::GREEN),
+        'color'         => Colors::NON_GREEN,
       ];
     } else {
       return [
         'can_pass'        => true,
         'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::GREEN],
+        'color'           => [Colors::GREEN],
       ];
     }
   }
