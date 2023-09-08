@@ -895,8 +895,9 @@ $this->textual_card_infos = array(
     ),
 
     133 => array(
-        'name'                => clienttranslate('Dead Sea Scrolls'),
-        'non_demand_effect_1' => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
+        'name'                       => clienttranslate('Dead Sea Scrolls'),
+        'non_demand_effect_1'        => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
+        'non_demand_effect_2_fourth' => clienttranslate('Choose a player. Junk an available achievement of value equal to the highest top card on that player\'s board.')
     ),
 
     134 => array(

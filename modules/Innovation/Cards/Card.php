@@ -458,7 +458,23 @@ abstract class Card
   }
 
   protected function getMinValue(array $cards) {
+    if (empty($cards)) {
+      return 0;
+    }
     return min(array_map(function ($card) {
+      if ($card['location'] === 'board' || $card['location'] === 'display') {
+        return $card['faceup_age'];
+      } else {
+        return $card['age'];
+      }
+    }, $cards));
+  }
+
+  protected function getMaxValue(array $cards) {
+    if (empty($cards)) {
+      return 0;
+    }
+    return max(array_map(function ($card) {
       if ($card['location'] === 'board' || $card['location'] === 'display') {
         return $card['faceup_age'];
       } else {

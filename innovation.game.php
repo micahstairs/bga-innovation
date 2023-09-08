@@ -12486,12 +12486,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10"
                 }
                 break;
-            
-            // id 133, Artifacts age 2: Dead Sea Scrolls
-            case "133N1":
-                // "Draw an Artifact of value equal to the value of your highest top card"
-                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', /*bottom_to=*/ false, CardTypes::ARTIFACTS);
-                break;
 
             // id 134, Artifacts age 2: Cyrus Cylinder
             case "134N1":
