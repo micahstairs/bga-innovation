@@ -916,8 +916,10 @@ $this->textual_card_infos = array(
     ),
 
     136 => array(
-        'name'                => clienttranslate('Charter of Liberties'),
-        'non_demand_effect_1' => clienttranslate('Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player\'s board. Execute all of that color\'s top card\'s non-demand effects, without sharing.'),
+        'name_first_and_third'                => clienttranslate('Charter of Liberties'),
+        'name_fourth'                         => clienttranslate('Yata No Kagami'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Tuck a card from your hand. If you do, splay left its color, then choose a splayed color on any player\'s board. Execute all of that color\'s top card\'s non-demand effects, without sharing.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Reveal a card from your hand. If you do, splay left its color on your board, then choose a top card other than Yata No Kagami of that color on any board and self-execute it.'),
     ),
 
     137 => array(

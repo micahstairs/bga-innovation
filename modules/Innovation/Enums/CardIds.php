@@ -12,6 +12,7 @@ class CardIds
   const ARK_OF_THE_COVENANT = 123;
   const HOLY_GRAIL = 131;
   const TERRACOTTA_ARMY = 132;
+  const YATA_NO_KAGAMI = 136;
   const BELL = 342;
   const FLUTE = 343;
   const SCISSORS = 350;

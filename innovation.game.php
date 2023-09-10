@@ -12493,11 +12493,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 136, Artifacts age 3: Charter of Liberties
-            case "136N1":
-                $step_max = 1;
-                break;
-
             // id 137, Artifacts age 2: Excalibur
             case "137C1":
                 // Determine colors where top card has a higher value than the launcher's top card of the same color
@@ -14051,6 +14046,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if (array_key_exists('junk_keyword', $options)) {
                     $options['location_to'] = 'junk';
                     unset($options['junk_keyword']);
+                }
+                if (array_key_exists('reveal_keyword', $options)) {
+                    $options['location_to'] = 'revealed';
+                    unset($options['reveal_keyword']);
                 }
                 if (!array_key_exists('n', $options) && !array_key_exists('n_min', $options) && !array_key_exists('n_max', $options)) {
                     $options['n'] = 1;
@@ -16074,36 +16073,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
                 'splay_direction' => 3, /* up */
                 'color' => array(2) /* green */
-            );
-            break;
-
-        // id 136, Artifacts age 3: Charter of Liberties
-        case "136N1A":
-            // "Tuck a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'bottom_to' => true
-            );
-            break;
-
-        case "136N1B":
-            // "Choose a splayed color on any player's board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-                
-                'has_splay_direction' => array(1, 2, 3, 4) // Left, right, up, or aslant
             );
             break;
 
@@ -19057,22 +19026,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         } else {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
-                    }
-                    break;
-
-                // id 136, Artifacts age 3: Charter of Liberties
-                case "136N1A":
-                    if ($n > 0) {
-                        // "If you do, splay left its color"
-                        self::splayLeft($player_id, $player_id, $this->innovationGameState->get('color_last_selected'));
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                case "136N1B":
-                    if ($n > 0) {
-                        // "Execute all of that color's top card's non-demand effects, without sharing"
-                        self::selfExecute(self::getCardInfo($this->innovationGameState->get('id_last_selected')));
                     }
                     break;
                     
