@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card592 extends Card
 {
@@ -26,7 +28,7 @@ class Card592 extends Card
   {
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
-        $this->game->setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
+        self::setAuxiliaryArray(self::getTopCardIdsWithProsperityOrIndustryIcons());
         return [
           'n'                               => 'all',
           'location_from'                   => 'board',
@@ -45,7 +47,7 @@ class Card592 extends Card
     } else {
       return [
         'can_pass' => true,
-        'choices'  => [$this->game::YELLOW, $this->game::PURPLE],
+        'choices'  => [Colors::YELLOW, Colors::PURPLE],
       ];
     }
   }
@@ -53,8 +55,8 @@ class Card592 extends Card
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      $this->game::YELLOW => clienttranslate('Score all but top three yellow cards'),
-      $this->game::PURPLE => clienttranslate('Score all but top three purple cards'),
+      Colors::YELLOW => clienttranslate('Score all but top three yellow cards'),
+      Colors::PURPLE => clienttranslate('Score all but top three purple cards'),
     ]);
   }
 
@@ -75,7 +77,7 @@ class Card592 extends Card
   {
     $cardIds = [];
     foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, $this->game::PROSPERITY) || self::hasIcon($card, $this->game::INDUSTRY)) {
+      if (self::hasIcon($card, Icons::PROSPERITY) || self::hasIcon($card, Icons::INDUSTRY)) {
         $cardIds[] = $card['id'];
       }
     }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card539 extends Card
 {
@@ -16,10 +17,10 @@ class Card539 extends Card
   {
     $card = self::drawAndReveal(6);
     $topCard = self::getTopCardOfColor($card['color']);
-    if (self::hasIcon($topCard, $this->game::INDUSTRY)) {
+    if (self::hasIcon($topCard, Icons::INDUSTRY)) {
       self::tuck($card);
       $secondCard = self::drawAndReveal(7);
-      if (self::hasIcon($secondCard, $this->game::HEALTH)) {
+      if (self::hasIcon($secondCard, Icons::HEALTH)) {
         self::meld($secondCard);
         self::draw(8);
       } else {

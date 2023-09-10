@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card359 extends Card
 {
@@ -113,7 +114,7 @@ class Card359 extends Card
 
   private function respondToMeld($card)
   {
-    $topGreenCard = self::getTopCardOfColor($this->game::GREEN);
+    $topGreenCard = self::getTopCardOfColor(Colors::GREEN);
     if (!$topGreenCard) {
       return;
     }

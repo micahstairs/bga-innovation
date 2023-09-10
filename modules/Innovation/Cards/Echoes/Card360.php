@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card360 extends Card
 {
@@ -40,14 +42,14 @@ class Card360 extends Card
       return [
         'n'                               => 2,
         'location_from'                   => 'score',
-        'location_to'                     => 'deck',
+        'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::LEFT,
-        'color'           => [$this->game::RED, $this->game::GREEN],
+        'splay_direction' => Directions::LEFT,
+        'color'           => [Colors::RED, Colors::GREEN],
       ];
     }
   }

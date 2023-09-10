@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
 
 class Card349 extends Card
 {
@@ -23,7 +25,7 @@ class Card349 extends Card
     } else {
       $minValue = null;
       foreach (self::getTopCards() as $card) {
-        if ($card['color'] != $this->game::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
+        if ($card['color'] != Colors::GREEN && ($minValue === null || $minValue > $card['faceup_age'])) {
           $minValue = $card['faceup_age'];
         }
       }
@@ -44,7 +46,7 @@ class Card349 extends Card
       if (self::isFirstOrThirdEdition()) {
         $options['with_bonus'] = true;
       } else {
-        $options['type'] = self::getAllTypesOtherThan($this->game::BASE);
+        $options['type'] = CardTypes::getAllTypesOtherThan(CardTypes::BASE);
       }
       return $options;
     } else {
@@ -55,8 +57,8 @@ class Card349 extends Card
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      2 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(2, $this->game::BASE)],
-      3 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(3, $this->game::BASE)],
+      2 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(2, CardTypes::BASE)],
+      3 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(3, CardTypes::BASE)],
     ]);
   }
 

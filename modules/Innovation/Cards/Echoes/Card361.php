@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card361 extends Card
 {
@@ -24,10 +25,10 @@ class Card361 extends Card
       $hasAuthority = false;
       $hasIndustry = false;
       foreach (self::getTopCards() as $card) {
-        if (self::hasIcon($card, $this->game::AUTHORITY)) {
+        if (self::hasIcon($card, Icons::AUTHORITY)) {
           $hasAuthority = true;
         }
-        if (self::hasIcon($card, $this->game::INDUSTRY)) {
+        if (self::hasIcon($card, Icons::INDUSTRY)) {
           $hasIndustry = true;
         }
       }

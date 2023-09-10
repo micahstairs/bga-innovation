@@ -778,9 +778,9 @@ $this->textual_card_infos = array(
     ),
 
     114 => array(
-        'name'                => clienttranslate('Papyrus of Ani'),
-        // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non-demand dogma effects. Do not share them.'),
+        'name'                                => clienttranslate('Papyrus of Ani'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and execute each of its non-demand dogma effects. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a purple card from your hand. If you do, draw and reveal a card of any type of value two higher. If the drawn card is purple, meld it and self-execute it.'),
     ),
 
     115 => array(
@@ -832,31 +832,35 @@ $this->textual_card_infos = array(
     ),
 
     123 => array(
-        'name'                => clienttranslate('Ark of the Covenant'),
-        'non_demand_effect_1' => clienttranslate('Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
+        'name'                                => clienttranslate('Ark of the Covenant'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return a card from your hand. Transfer all cards of the same color from the boards of all players with no top Artifacts to your score pile. If Ark of the Covenant is a top card on any board, transfer it to your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return a card from your hand. Score all cards of the same color on the boards of all players with no top Artifacts.'),
     ),
 
     124 => array(
-        'name'                => clienttranslate('Tale of the Shipwrecked Sailor'),
-        'non_demand_effect_1' => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left.'),
+        'name'                                => clienttranslate('Tale of the Shipwrecked Sailor'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Choose a color. Draw a ${age_1}. Meld a card of the chosen color from your hand. If you do, splay that color left, and junk an available achievement of value equal to the value of the melded card.'),
     ),
 
     /* Artifacts - Age 2 */
 
     125 => array(
-        'name'                => clienttranslate('Seikilos Epitaph'),
-        'non_demand_effect_1' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
+        'name'                                => clienttranslate('Seikilos Epitaph'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color. Execute its non-demand dogma effects. Do not share them.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a ${age_3}. Meld your bottom card of the drawn card\'s color, then self-execute it.'),
     ),
 
     126 => array(
         'name'                => clienttranslate('Rosetta Stone'),
-        // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Choose a card set. Draw two ${age_2} from that set. Meld one and transfer the other to an opponent\'s board.'),
+        'non_demand_effect_1' => clienttranslate('Choose a card type. Draw two ${age_2} of that type. Meld one and transfer the other to an opponent\'s board.'),
     ),
 
     127 => array(
-        'name'                => clienttranslate('Chronicle of Zuo'),
-        'non_demand_effect_1' => clienttranslate('If you have the least ${icon_4}, draw a ${age_2}. If you have the least ${icon_1}, draw a ${age_3}. If you have the least ${icon_3}, draw a ${age_4}.'),
+        'name'                                => clienttranslate('Chronicle of Zuo'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('If you have the least ${icon_4}, draw a ${age_2}. If you have the least ${icon_1}, draw a ${age_3}. If you have the least ${icon_3}, draw a ${age_4}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('If you have the least ${icon_4} or the least ${icon_1}, draw a ${age_3}.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('If you have the least ${icon_3}, draw a ${age_4}.'),
     ),
 
     128 => array(
@@ -872,9 +876,9 @@ $this->textual_card_infos = array(
     ),
 
     130 => array(
-        'name'                => clienttranslate('Baghdad Battery'),
-        // NOTE: Chris gave us permission to use the word 'set' instead of 'type'. See https://boardgamegeek.com/thread/1632784/article/40687757#40687757.
-        'non_demand_effect_1' => clienttranslate('Meld two cards from your hand. If you melded two of the same color and they are from different sets, draw and score five ${age_2}.'),
+        'name'                                => clienttranslate('Baghdad Battery'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Meld a card from hand. If you covered up a card of different type than the melded card, draw a card of matching type and value to the covered card, then score a card from your hand.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Meld a card from your hand. Score a card from your hand. If you do both, and the cards have different values, junk all cards in the decks of both values.'),
     ),
 
     131 => array(
@@ -883,20 +887,24 @@ $this->textual_card_infos = array(
     ),
 
     132 => array(
-        'name'                => clienttranslate('Terracotta Army'),
-        // NOTE: We added the words "on your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660).
-        'i_compel_effect'     => clienttranslate('${I compel} you to return a top card on your board with no ${icon_4}!'),
-        'non_demand_effect_1' => clienttranslate('Score a card from your hand with no ${icon_4}.'),
+        'name'                                => clienttranslate('Terracotta Army'),
+        // NOTE: We added the words "from your board" after Carl made a clarification in https://boardgamegeek.com/thread/2901660.
+        'i_compel_effect'                     => clienttranslate('${I compel} you to return a top card with no ${icon_4} from your board!'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Score a card from your hand with no ${icon_4}.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Score a card from your hand with no ${icon_4}. If you do, junk all cards in the deck of value equal to the scored card. Otherwise, tuck Terracotta Army.'),
     ),
 
     133 => array(
-        'name'                => clienttranslate('Dead Sea Scrolls'),
-        'non_demand_effect_1' => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
+        'name'                       => clienttranslate('Dead Sea Scrolls'),
+        'non_demand_effect_1'        => clienttranslate('Draw an Artifact of value equal to the value of your highest top card.'),
+        'non_demand_effect_2_fourth' => clienttranslate('Choose a player. Junk an available achievement of value equal to the highest top card on that player\'s board.')
     ),
 
     134 => array(
-        'name'                => clienttranslate('Cyrus Cylinder'),
-        'non_demand_effect_1' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
+        'name'                                => clienttranslate('Cyrus Cylinder'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Choose any other top purple card on any player\'s board. Execute its non-demand dogma effects. Do not share them. Splay left a color on any player\'s board.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Splay left a color on any player\'s board.'),
+        'non_demand_effect_2_fourth'          => clienttranslate('Choose any other top purple card on any player\'s board. Self-execute it. '),
     ),
 
     /* Artifacts - Age 3 */
@@ -2247,6 +2255,7 @@ $this->textual_card_infos = array(
 
     426 => array(
         'name'                                => clienttranslate('Human Genome'),
+        'echo_effect_fourth'                  => clienttranslate('Draw an ${age_11}.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('You may draw and score a card of any value. Take a bottom card from your board into your hand. If the values of all of the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
         'non_demand_effect_1_fourth'          => clienttranslate('You may draw and score a card of any value. Transfer your bottom red card to your hand. If the values of all the cards in your hand match the values of all the cards in your score pile exactly, you win.'),
     ),
@@ -2313,6 +2322,7 @@ $this->textual_card_infos = array(
 
     434 => array(
         'name'                                => clienttranslate('Sudoku'),
+        'echo_effect_fourth'                  => clienttranslate('You may tuck any number of cards from your hand.'),
         'non_demand_effect_1_first_and_third' => clienttranslate('Draw and meld a card of any value. If you have at least nine different bonus values visible on your board, you win. Execute each of the melded card\'s non-demand dogma effects. Do not share them.'),
         'non_demand_effect_1_fourth'          => clienttranslate('Draw and meld a card of any value. If you have nine different bonus values on your board, you win. Otherwise, self-execute the melded card.'),
     ),

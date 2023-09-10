@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card486 extends Card
 {
@@ -15,7 +16,7 @@ class Card486 extends Card
   {
     // Only bother making the player choose another player if they have a top card with any [AUTHORITY] icons
     foreach (self::getTopCards() as $card) {
-      if (self::hasIcon($card, $this->game::AUTHORITY)) {
+      if (self::hasIcon($card, Icons::AUTHORITY)) {
         self::setMaxSteps(2);
         break;
       }
@@ -34,7 +35,7 @@ class Card486 extends Card
         'location_from' => 'board',
         'owner_to'      => self::getAuxiliaryValue(),
         'location_to'   => 'board',
-        'with_icon'     => $this->game::AUTHORITY,
+        'with_icon'     => Icons::AUTHORITY,
       ];
     } else {
       return [
@@ -42,8 +43,8 @@ class Card486 extends Card
         'location_from' => 'board',
         'owner_to'      => self::getPlayerId(),
         'meld_keyword'  => true,
-        'age'           => $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), $this->game::AUTHORITY),
-        'without_icon'  => $this->game::AUTHORITY,
+        'age'           => $this->game->getMinAgeOnBoardTopCardsWithoutIcon(self::getAuxiliaryValue(), Icons::AUTHORITY),
+        'without_icon'  => Icons::AUTHORITY,
       ];
     }
   }

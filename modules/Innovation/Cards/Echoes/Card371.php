@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card371 extends Card
 {
@@ -62,10 +63,10 @@ class Card371 extends Card
       ];
     } else if (self::getAuxiliaryValue() === 0) {
       return [
-        'can_pass'      => true,
-        'n'             => 'all',
-        'location_from' => 'forecast',
-        'location_to'   => 'deck',
+        'can_pass'       => true,
+        'n'              => 'all',
+        'location_from'  => 'forecast',
+        'return_keyword' => true,
       ];
     } else if (self::isFirstInteraction()) {
       return [
@@ -74,15 +75,14 @@ class Card371 extends Card
       ];
     } else if (self::isSecondInteraction()) {
       return [
-        'location_from' => 'forecast',
-        'location_to'   => 'none',
-        'color'         => [$this->game::BLUE],
+        'choose_from' => 'forecast',
+        'color'       => [Colors::BLUE],
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'forecast',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'forecast',
+        'return_keyword' => true,
       ];
     }
   }

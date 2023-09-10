@@ -34,23 +34,23 @@ class Card583 extends Card
       $returnBottomCard = self::getAuxiliaryValue() === 2;
       self::setAuxiliaryValue(0); // Track which value was returned
       return [
-        'location_from' => 'board',
-        'bottom_from'   => $returnBottomCard,
-        'location_to'   => 'deck',
+        'location_from'  => 'board',
+        'bottom_from'    => $returnBottomCard,
+        'return_keyword' => true,
       ];
     } else if (self::isThirdInteraction()) {
       $value = self::getAuxiliaryValue();
       self::setAuxiliaryValue(0); // Track how many cards were transferred in the 2nd sentence of the effect
       return [
-        'location_from' => 'safe',
-        'location_to'   => 'achievements',
-        'age'           => $value,
+        'location_from'   => 'safe',
+        'achieve_keyword' => true,
+        'age'             => $value,
       ];
     } else {
       return [
-        'location_from' => 'achievements',
-        'owner_from'    => 0,
-        'location_to'   => 'safe',
+        'location_from'     => 'achievements',
+        'owner_from'        => 0,
+        'safeguard_keyword' => true,
       ];
     }
   }

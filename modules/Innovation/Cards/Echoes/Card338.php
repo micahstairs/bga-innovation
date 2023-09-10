@@ -20,22 +20,22 @@ class Card338 extends Card
   {
     if (self::isEcho()) {
       return [
-          'can_pass' => true,
-          'location_from' => 'hand',
-          'meld_keyword' => true,
+        'can_pass'      => true,
+        'location_from' => 'hand',
+        'meld_keyword'  => true,
       ];
     } else if (self::isFirstInteraction()) {
       return [
-          'can_pass' => true,
-          'n_min' => 1,
-          'location_from' => 'hand',
-          'location_to' => 'deck',
+        'can_pass'       => true,
+        'n_min'          => 1,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else {
       return [
-          'n' => self::getAuxiliaryValue() * 2,
-          'location_from' => 'hand',
-          'score_keyword' => true,
+        'n'             => self::getAuxiliaryValue() * 2,
+        'location_from' => 'hand',
+        'score_keyword' => true,
       ];
     }
   }

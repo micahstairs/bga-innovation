@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card385 extends Card
 {
@@ -53,8 +55,8 @@ class Card385 extends Card
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::GREEN],
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [Colors::GREEN],
       ];
     }
   }
@@ -69,13 +71,13 @@ class Card385 extends Card
     } else if (self::isFirstInteraction()) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::GREEN],
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [Colors::GREEN],
       ];
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
+        'splay_direction' => Directions::UP,
       ];
     }
   }

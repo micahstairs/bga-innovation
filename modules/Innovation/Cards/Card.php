@@ -3,6 +3,10 @@
 namespace Innovation\Cards;
 
 use Innovation\Cards\ExecutionState;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 use Innovation\Utils\Arrays;
 use Innovation\Utils\Notifications;
 
@@ -47,6 +51,8 @@ abstract class Card
         return static::getPromptForValueChoice();
       case 4: // choose_color
         return static::getPromptForColorChoice();
+      case 8; // choose_type
+        return static::getPromptForTypeChoice();
       case 10: // choose_player
         return static::getPromptForPlayerChoice();
       case 12: // choose_icon_type
@@ -244,7 +250,7 @@ abstract class Card
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age);
   }
 
-  protected function drawFromSet(int $age, int $type, int $playerId = null)
+  protected function drawType(int $age, int $type, int $playerId = null)
   {
     return $this->game->executeDraw(self::coercePlayerId($playerId), $age, 'hand', /*bottom_to=*/false, /*type=*/$type);
   }
@@ -452,7 +458,23 @@ abstract class Card
   }
 
   protected function getMinValue(array $cards) {
+    if (empty($cards)) {
+      return 0;
+    }
     return min(array_map(function ($card) {
+      if ($card['location'] === 'board' || $card['location'] === 'display') {
+        return $card['faceup_age'];
+      } else {
+        return $card['age'];
+      }
+    }, $cards));
+  }
+
+  protected function getMaxValue(array $cards) {
+    if (empty($cards)) {
+      return 0;
+    }
+    return max(array_map(function ($card) {
       if ($card['location'] === 'board' || $card['location'] === 'display') {
         return $card['faceup_age'];
       } else {
@@ -534,27 +556,27 @@ abstract class Card
 
   protected function isBlue($card): bool
   {
-    return $card['color'] == $this->game::BLUE;
+    return $card['color'] == Colors::BLUE;
   }
 
   protected function isRed($card): bool
   {
-    return $card['color'] == $this->game::RED;
+    return $card['color'] == Colors::RED;
   }
 
   protected function isGreen($card): bool
   {
-    return $card['color'] == $this->game::GREEN;
+    return $card['color'] == Colors::GREEN;
   }
 
   protected function isYellow($card): bool
   {
-    return $card['color'] == $this->game::YELLOW;
+    return $card['color'] == Colors::YELLOW;
   }
 
   protected function isPurple($card): bool
   {
-    return $card['color'] == $this->game::PURPLE;
+    return $card['color'] == Colors::PURPLE;
   }
 
   protected function getCard(int $cardId)
@@ -608,19 +630,12 @@ abstract class Card
 
   protected function getSplayDirection(int $color, int $playerId = null): int
   {
-    return $this->game->getCurrentSplayDirection(self::coercePlayerId($playerId), $color);
+    return intval($this->game->getCurrentSplayDirection(self::coercePlayerId($playerId), $color));
   }
 
   protected function isSplayed(int $color, int $playerId = null): int
   {
     return self::getSplayDirection($color, self::coercePlayerId($playerId)) > 0;
-  }
-
-  // COLOR HELPERS
-
-  protected function getAllColorsOtherThan(int $color)
-  {
-    return array_diff(range(0, 4), [$color]);
   }
 
   // SELECTION HELPERS
@@ -789,6 +804,21 @@ abstract class Card
     }
   }
 
+  protected function getPromptForTypeChoice(): array
+  {
+    if (self::canPass()) {
+      return [
+        "message_for_player" => clienttranslate('Choose a type'),
+        "message_for_others" => clienttranslate('${player_name} may choose a type'),
+      ];
+    } else {
+      return [
+        "message_for_player" => clienttranslate('Choose a type'),
+        "message_for_others" => clienttranslate('${player_name} must choose a type'),
+      ];
+    }
+  }
+
   protected function buildPromptFromList(array $choiceMap): array
   {
     $options = self::getOptionsForChoiceFromList($choiceMap);
@@ -842,6 +872,8 @@ abstract class Card
   {
     $playerId = self::coercePlayerId($playerId);
 
+    // TODO(4E): Junk all of the player's cards.
+
     // The entire team loses if one player loses 
     if ($this->game->isTeamGame()) {
       $teammateId = $this->game->getPlayerTeammate($playerId);
@@ -888,7 +920,7 @@ abstract class Card
 
   protected function getBaseDeckCount(int $age): int
   {
-    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', $this->game::BASE)[$age];
+    return $this->game->countCardsInLocationKeyedByAge( /*owner=*/0, 'deck', CardTypes::BASE)[$age];
   }
 
   protected function countCards(string $location, int $playerId = null): int
@@ -962,6 +994,15 @@ abstract class Card
     return $this->game->getPlayerResourceCounts(self::coercePlayerId($playerId));
   }
 
+  protected function getStandardIconCountsOfAllPlayers(): array
+  {
+    $countsByPlayer = [];
+    foreach (self::getPlayerIds() as $playerId) {
+      $countsByPlayer[$playerId] = self::getStandardIconCounts($playerId);
+    }
+    return $countsByPlayer;
+  }
+
   protected function getAllIconCounts(int $playerId = null): array
   {
     $icons = [];
@@ -991,13 +1032,13 @@ abstract class Card
 
   private function getVisibleSpotsOnBuriedCard(int $splayDirection): array {
     switch ($splayDirection) {
-      case $this->game::LEFT:
+      case Directions::LEFT:
         return [4, 5];
-      case $this->game::RIGHT:
+      case Directions::RIGHT:
         return [1, 2];
-      case $this->game::UP:
+      case Directions::UP:
         return [2, 3, 4];
-      case $this->game::ASLANT:
+      case Directions::ASLANT:
         return [1, 2, 3, 4];
       default:
         return [];
@@ -1010,7 +1051,7 @@ abstract class Card
     foreach ($spots as $spot) {
       $icon = $card['spot_' . $spot];
       // Echo effects don't actually count as an icon type
-      if ($icon && $icon != $this->game::ECHO_EFFECT_ICON) {
+      if ($icon && $icon != Icons::ECHO_EFFECT) {
         // Bonus icons are normalized to 100 since they are considered to be the same icon type
         $icons[] = min($icon, 100);
       }
@@ -1039,11 +1080,6 @@ abstract class Card
     return self::isFourthEdition() && $this->game->innovationGameState->get('foreseen_card_id') == self::getThisCardId();
   }
 
-  protected function getAllTypesOtherThan(int $type)
-  {
-    return array_diff(range(0, 5), [$type]);
-  }
-
   // NOTIFICATION HELPERS
 
   protected function notifyAll($log, array $args = [])
@@ -1061,11 +1097,6 @@ abstract class Card
     $this->game->notifyAllPlayersBut(self::coercePlayerId($playerId), 'log', $log, $args);
   }
 
-  protected function renderIcon(int $icon)
-  {
-    return $this->game->getIconSquare($icon);
-  }
-
   public function renderValue(int $value): string
   {
     return $this->notifications->renderValue($value);
@@ -1074,11 +1105,6 @@ abstract class Card
   public function renderValueWithType(int $value, int $type): string
   {
     return $this->notifications->renderValueWithType($value, $type);
-  }
-
-  public function renderColor(int $color): string
-  {
-    return $this->game->renderColor($color);
   }
 
   public function renderNumber(int $number): string
@@ -1093,10 +1119,15 @@ abstract class Card
 
   // GENERAL UTILITY HELPERS
 
-  protected function getThisCardId(): string
+  private function getThisCardId(): string
   {
     $className = get_class($this);
     return intval(substr($className, strrpos($className, "\\") + 5));
+  }
+
+  private function getThisCard(): array
+  {
+    return self::getCard(self::getThisCardId());
   }
 
   // PRIVATE HELPERS

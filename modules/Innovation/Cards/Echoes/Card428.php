@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card428 extends Card
 {
@@ -28,7 +30,7 @@ class Card428 extends Card
       $playerIds = self::isFirstOrThirdEdition() ? self::getOtherPlayerIds() : self::getOpponentIds();
       foreach ($playerIds as $playerId) {
         $otherIconCounts = self::getStandardIconCounts($playerId);
-        foreach ([$this->game::INDUSTRY, $this->game::PROSPERITY, $this->game::AUTHORITY] as $icon) {
+        foreach ([Icons::INDUSTRY, Icons::PROSPERITY, Icons::AUTHORITY] as $icon) {
           if ($otherIconCounts[$icon] <= $playerIconCounts[$icon]) {
             $hasFewerIcons = false;
           }
@@ -46,7 +48,7 @@ class Card428 extends Card
       return [
         'location_from' => 'board',
         'score_keyword' => true,
-        'color'         => self::getAllColorsOtherThan($this->game::RED),
+        'color'         => Colors::NON_RED,
       ];
     } else {
       if (self::isFirstInteraction()) {

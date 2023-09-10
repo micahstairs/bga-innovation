@@ -40,10 +40,10 @@ class Card342 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'owner_from'    => 'any player',
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'owner_from'     => 'any player',
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     }
   }

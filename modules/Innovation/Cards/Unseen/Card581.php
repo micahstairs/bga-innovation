@@ -3,6 +3,9 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card581 extends Card
 {
@@ -18,26 +21,26 @@ class Card581 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::GREEN],
+        'splay_direction' => Directions::UP,
+        'color'           => [Colors::GREEN],
       ];
     } else {
       return [
         'owner_from'    => 'any other player',
         'location_from' => 'board',
         'meld_keyword'  => true,
-        'color'         => self::getAllColorsOtherThan($this->game::YELLOW),
-        'with_icon'     => $this->game::EFFICIENCY,
+        'color'         => Colors::NON_YELLOW,
+        'with_icon'     => Icons::EFFICIENCY,
       ];
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 2) {
+    if (self::isSecondNonDemand()) {
       if (self::getNumChosen() === 1) {
         self::selfExecute(self::getLastSelectedCard());
       } else {

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card332 extends Card
 {
@@ -20,8 +21,8 @@ class Card332 extends Card
     if (self::isEcho()) {
       self::draw(2);
     } else {
-      $card1 = self::drawFromSet(1, $this->game::ECHOES);
-      $card2 = self::drawFromSet(1, $this->game::ECHOES);
+      $card1 = self::drawType(1, CardTypes::ECHOES);
+      $card2 = self::drawType(1, CardTypes::ECHOES);
       self::setAuxiliaryArray([$card1['id'], $card2['id']]);
       self::setMaxSteps(2);
     }
@@ -29,19 +30,12 @@ class Card332 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::isFirstInteraction()) {
-      return [
-        'location_from'                   => 'hand',
-        'location_to'                     => 'forecast',
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
-    } else {
-      return [
-        'location_from'                   => 'hand',
-        'location_to'                     => 'deck',
-        'card_ids_are_in_auxiliary_array' => true,
-      ];
-    }
+    $keyword = self::isFirstInteraction() ? 'foreshadow_keyword' : 'return_keyword';
+    return [
+      'location_from'                   => 'hand',
+      $keyword                          => true,
+      'card_ids_are_in_auxiliary_array' => true,
+    ];
   }
 
   public function handleCardChoice(array $card) {

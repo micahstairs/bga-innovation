@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card115 extends Card
 {
@@ -13,7 +14,7 @@ class Card115 extends Card
 
   public function initialExecution()
   {
-    $card = self::getTopCardOfColor($this->game::GREEN);
+    $card = self::getTopCardOfColor(Colors::GREEN);
     $value = 0;
     if ($card) {
       $value = $card["faceup_age"];
@@ -31,8 +32,8 @@ class Card115 extends Card
   {
     $keyword = self::isFirstInteraction() ? 'return_keyword' : 'score_keyword';
     return [
-      'location_from' => 'hand',
-      $keyword => true,
+      'location_from'                   => 'hand',
+      $keyword                          => true,
       'card_ids_are_in_auxiliary_array' => true,
     ];
   }

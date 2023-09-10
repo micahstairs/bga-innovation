@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card394 extends Card
 {
@@ -30,29 +32,31 @@ class Card394 extends Card
   {
     if (self::isFirstNonDemand()) {
       return [
-        'can_pass' => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color' => [self::getAuxiliaryValue()],
+        'can_pass'        => true,
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [self::getAuxiliaryValue()],
       ];
     } else {
-      $count = self::getStandardIconCount($this->game::CONCEPT);
+      $count = self::getStandardIconCount(Icons::CONCEPT);
       self::setAuxiliaryValue($count); // Store the number of [CONCEPT] icons on the board
       return [
-        'owner_from' => 0,
+        'owner_from'    => 0,
         'location_from' => 'achievements',
-        'junk_keyword' => true,
-        'age' => $count,
+        'junk_keyword'  => true,
+        'age'           => $count,
       ];
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     if (self::isSecondNonDemand() && self::wasForeseen()) {
       self::junkAchievementsOfLowerValue(self::getAuxiliaryValue());
     }
   }
 
-  public function junkAchievementsOfLowerValue($value) {
+  public function junkAchievementsOfLowerValue($value)
+  {
     foreach (self::getCards('achievements', 0) as $card) {
       if (self::isValuedCard($card) && $card['age'] < $value) {
         self::junk($card);

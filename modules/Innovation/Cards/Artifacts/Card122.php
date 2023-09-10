@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card122 extends Card
 {
@@ -52,7 +53,7 @@ class Card122 extends Card
       }
     }
 
-    $args = ['i18n' => ['color'], 'color' => self::renderColor($color)];
+    $args = ['i18n' => ['color'], 'color' => Colors::render($color)];
     if ($playerRevealed && !$otherPlayerRevealed) {
       self::notifyPlayer(clienttranslate('No other player revealed a ${color} card.'), $args);
       self::notifyOthers(

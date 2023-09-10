@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card534 extends Card
 {
@@ -22,9 +24,9 @@ class Card534 extends Card
       return ['choices' => [1, 2]];
     } else if (self::getAuxiliaryValue() === 1) {
       return [
-        'splay_direction'     => $this->game::LEFT,
-        'has_splay_direction' => [$this->game::UNSPLAYED],
-        'color'               => self::getAllColorsOtherThan($this->game::PURPLE),
+        'splay_direction'     => Directions::LEFT,
+        'has_splay_direction' => [Directions::UNSPLAYED],
+        'color'               => Colors::NON_PURPLE,
       ];
     } else {
       return [

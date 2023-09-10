@@ -24,15 +24,15 @@ class Card528 extends Card
       $returnedCard = self::return(self::getTopCardOfColor($card['color']));
       self::setAuxiliaryValue($returnedCard ? 1 : 0); // Track how many cards were returned
       return [
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
-        'not_id'        => $card['id'],
-        'color'         => [$card['color']],
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'not_id'         => $card['id'],
+        'color'          => [$card['color']],
       ];
     } else {
       return [
-        'location_from' => 'score',
-        'location_to'   => 'deck',
+        'location_from'  => 'score',
+        'return_keyword' => true,
       ];
     }
   }
@@ -45,7 +45,7 @@ class Card528 extends Card
   public function afterInteraction()
   {
     if (self::isFirstInteraction() && self::getNumChosen() === 0) {
-        self::revealHand();
+      self::revealHand();
     } else if (self::isSecondInteraction()) {
       if (self::getNumChosen() === 0) {
         self::revealScorePile();

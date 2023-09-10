@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card545 extends Card
 {
@@ -26,7 +27,7 @@ class Card545 extends Card
     return [
       'location_from' => 'board',
       'tuck_keyword'  => true,
-      'with_icon'     => $this->game::CONCEPT,
+      'with_icon'     => Icons::CONCEPT,
     ];
   }
 

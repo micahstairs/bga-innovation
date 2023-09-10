@@ -14,23 +14,27 @@ class Card541 extends Card
 
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       self::setMaxSteps(2);
-    } else if (self::getEffectNumber() === 2 || self::countCards('score') >= 1) {
+    } else if (self::isSecondNonDemand()) {
       self::setMaxSteps(1);
-    } else if (self::getEffectNumber() === 3) {
-      self::drawAndScore(1);
+    } else if (self::isThirdNonDemand() === 3) {
+      if (self::countCards('score') >= 1) {
+        self::setMaxSteps(1);
+      } else {
+        self::drawAndScore(0);
+      }
     }
   }
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return self::getFirstInteractionOptions();
-    } else if (self::getEffectNumber() === 2) {
+    } else if (self::isSecondNonDemand()) {
       return [
-        'location_from' => 'score',
-        'location_to'   => 'deck',
+        'location_from'  => 'score',
+        'return_keyword' => true,
       ];
     } else {
       return [
@@ -48,16 +52,17 @@ class Card541 extends Card
         'choices'  => [0, 1],
       ];
     } else {
+      $keyword = self::getAuxiliaryValue() == 1 ? 'score_keyword' : 'safeguard_keyword';
       return [
         'location_from' => 'hand',
-        'location_to'   => self::getAuxiliaryValue() == 1 ? 'score' : 'safe',
+        $keyword        => true,
       ];
     }
   }
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 3) {
+    if (self::isThirdNonDemand() === 3) {
       self::drawAndScore(self::getAuxiliaryValue());
     }
   }

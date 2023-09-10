@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card376 extends Card
 {
@@ -21,15 +22,15 @@ class Card376 extends Card
   public function initialExecution()
   {
     if (self::isEcho()) {
-      self::meld(self::getBottomCardOfColor($this->game::GREEN));
+      self::meld(self::getBottomCardOfColor(Colors::GREEN));
     } else {
       do {
-        $topCard = self::getTopCardOfColor($this->game::YELLOW);
+        $topCard = self::getTopCardOfColor(Colors::YELLOW);
         $value = $topCard ? $topCard['faceup_age'] + 1 : 0;
         $meldedCard = self::drawAndMeld($value);
-        $repeat = $meldedCard['color'] == $this->game::YELLOW;
+        $repeat = self::isYellow($meldedCard);
         if (!$repeat && self::wasForeseen()) {
-          $repeat = $meldedCard['color'] == $this->game::RED || $meldedCard['color'] == $this->game::PURPLE;
+          $repeat = self::isRed($meldedCard) || self::isPurple($meldedCard);
         }
       } while ($repeat);
     }

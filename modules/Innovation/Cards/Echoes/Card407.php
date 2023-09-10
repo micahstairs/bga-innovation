@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card407 extends Card
 {
@@ -45,7 +46,7 @@ class Card407 extends Card
       return [
         'location_from' => 'hand',
         'meld_keyword'  => true,
-        'with_icon'     => $this->game::HEALTH,
+        'with_icon'     => Icons::HEALTH,
       ];
     } else if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
@@ -58,7 +59,7 @@ class Card407 extends Card
         return [
           'location_from'  => 'board',
           'return_keyword' => true,
-          'with_icon'      => $this->game::EFFICIENCY,
+          'with_icon'      => Icons::EFFICIENCY,
         ];
       }
     } else {
@@ -67,21 +68,20 @@ class Card407 extends Card
         return [
           'location_from'  => 'score',
           'return_keyword' => true,
-          'with_icon'      => $this->game::EFFICIENCY,
+          'with_icon'      => Icons::EFFICIENCY,
         ];
       } else if (self::isSecondInteraction()) {
         return [
           'location_from'  => 'board',
           'return_keyword' => true,
-          'with_icon'      => $this->game::EFFICIENCY,
+          'with_icon'      => Icons::EFFICIENCY,
         ];
       } else {
         // TODO(4E): Also allow player to junk special achievements.
         return [
           'n'             => self::countCards('achievements'),
           'location_from' => 'achievements',
-          'owner_from'    => 0,
-          'location_to'   => 'junk',
+          'junk_keyword'  => true,
         ];
       }
     }

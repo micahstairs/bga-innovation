@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card398 extends Card
 {
@@ -39,8 +41,8 @@ class Card398 extends Card
     } else if (self::isSecondNonDemand()) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::RED],
+        'splay_direction' => Directions::UP,
+        'color'           => [Colors::RED],
       ];
     } else {
       return [

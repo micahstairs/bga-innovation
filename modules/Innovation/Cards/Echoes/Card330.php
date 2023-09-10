@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card330 extends Card
 {
@@ -20,7 +21,7 @@ class Card330 extends Card
       if (self::isFirstOrThirdEdition()) {
         $card = self::drawAndReveal(1);
       } else {
-        $card = $this->game->executeDraw(self::getPlayerId(), 1, 'revealed', /*bottom_to=*/ false, $this->game::ECHOES);
+        $card = $this->game->executeDraw(self::getPlayerId(), 1, 'revealed', /*bottom_to=*/ false, CardTypes::ECHOES);
       }
       self::transferToHand($card);
       $bonus = self::getBonusIcon($card);

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card562 extends Card
 {
@@ -15,13 +16,11 @@ class Card562 extends Card
   {
     while (true) {
       $card = self::drawAndTuck(8);
-      if (self::hasIcon($card, $this->game::INDUSTRY)) {
+      if (self::hasIcon($card, Icons::INDUSTRY)) {
         self::score($card);
         break;
-      } else {
-        if (self::drawAndMeld(8)['age'] != 8) {
-          break;
-        }
+      } else if (self::drawAndMeld(8)['age'] != 8) {
+        break;
       }
     }
   }

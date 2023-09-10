@@ -9,7 +9,8 @@ class Card588 extends Card
 
   // Dark Web:
   //   - Unsplay any color on any board.
-  //   - Choose to either safeguard any number of available standard achievements, or achieve any number of secrets from your safe regardless of eligibility.
+  //   - Choose to either safeguard any number of available standard achievements, or achieve any
+  //     number of secrets from your safe regardless of eligibility.
 
   public function initialExecution()
   {
@@ -33,12 +34,12 @@ class Card588 extends Card
         return ['choices' => [1, 2]];
       } else if (self::getAuxiliaryValue() === 1) {
         return [
-          'can_pass'      => true,
-          'owner_from'    => 0,
-          'location_from' => 'achievements',
-          'location_to'   => 'safe',
-          'n_min'         => 1,
-          'n_max'         => 'all',
+          'can_pass'          => true,
+          'owner_from'        => 0,
+          'location_from'     => 'achievements',
+          'safeguard_keyword' => true,
+          'n_min'             => 1,
+          'n_max'             => 'all',
         ];
       } else {
         return [

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card477 extends Card
 {
@@ -14,7 +15,7 @@ class Card477 extends Card
   public function initialExecution()
   {
     $values = [];
-    foreach (self::getAllColorsOtherThan($this->game::YELLOW) as $color) {
+    foreach (Colors::NON_YELLOW as $color) {
       $topCard = self::getTopCardOfColor($color);
       if ($topCard) {
         $values[] = $topCard['faceup_age'];

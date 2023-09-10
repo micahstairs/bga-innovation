@@ -23,8 +23,8 @@ class Card586 extends Card
       return ['choices' => [1, 2]];
     } else {
       return [
-        'location_from' => 'safe',
-        'location_to'   => 'deck',
+        'location_from'  => 'safe',
+        'return_keyword' => true,
       ];
     }
   }
@@ -45,13 +45,15 @@ class Card586 extends Card
 
   public function handleSpecialChoice($choice)
   {
-    self::notifyPlayer(clienttranslate('${You} call ${side}.'), 
+    self::notifyPlayer(
+      clienttranslate('${You} call ${side}.'),
       ['You' => 'You', 'side' => $this->getPrintableCoinSide($choice)]
     );
-    self::notifyOthers(clienttranslate('${player_name} calls ${side}.'),
+    self::notifyOthers(
+      clienttranslate('${player_name} calls ${side}.'),
       [
         'player_name' => $this->notifications->renderPlayerName(self::getPlayerId()),
-        'side' => $this->getPrintableCoinSide($choice),
+        'side'        => $this->getPrintableCoinSide($choice),
       ]
     );
     $coinFlip = bga_rand(1, 2);
@@ -74,7 +76,8 @@ class Card586 extends Card
     return $side == 1 ? clienttranslate('heads') : clienttranslate('tails');
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::setNextStep(1);
     self::setMaxSteps(1);
   }

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card591 extends Card
 {
@@ -26,17 +28,17 @@ class Card591 extends Card
   {
     if (self::isDemand()) {
       return [
-          'location_from' => 'hand',
-          'score_keyword' => true,
-          'color' => [self::getAuxiliaryValue()],
+        'location_from' => 'hand',
+        'score_keyword' => true,
+        'color'         => [self::getAuxiliaryValue()],
       ];
     } else {
       return [
-        'n' => 4,
+        'n'             => 4,
         'location_from' => 'board',
         'score_keyword' => true,
-        'color' => self::getAllColorsOtherThan($this->game::YELLOW),
-        'with_icon' => $this->game::EFFICIENCY,
+        'color'         => Colors::NON_YELLOW,
+        'with_icon'     => Icons::EFFICIENCY,
       ];
     }
   }

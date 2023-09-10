@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card558 extends Card
 {
@@ -32,8 +33,8 @@ class Card558 extends Card
       }
     } else {
       return [
-        'splay_direction'     => $this->game::UP,
-        'has_splay_direction' => [$this->game::LEFT],
+        'splay_direction'     => Directions::UP,
+        'has_splay_direction' => [Directions::LEFT],
       ];
     }
   }

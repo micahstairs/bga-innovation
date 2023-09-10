@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card415 extends Card
 {
@@ -33,13 +35,13 @@ class Card415 extends Card
         'location_from' => 'board',
         'bottom_from'   => true,
         'score_keyword' => true,
-        'color'         => self::getAllColorsOtherThan($this->game::BLUE),
+        'color'         => Colors::NON_BLUE,
       ];
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::BLUE],
+        'splay_direction' => Directions::UP,
+        'color'           => [Colors::BLUE],
       ];
     }
   }

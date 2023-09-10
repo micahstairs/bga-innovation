@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card331 extends Card
 {
@@ -22,7 +23,7 @@ class Card331 extends Card
       while ($repeat) {
         $repeat = false;
         $card = self::drawAndTuck(1);
-        if (self::isFourthEdition() && self::hasIcon($card, $this->game::AUTHORITY)) {
+        if (self::isFourthEdition() && self::hasIcon($card, Icons::AUTHORITY)) {
           $repeat = true;
         }
       }
@@ -49,15 +50,16 @@ class Card331 extends Card
       }
     }
     return [
-      'owner_from' => self::getPlayerId(),
+      'owner_from'    => self::getPlayerId(),
       'location_from' => 'board',
-      'owner_to' => self::getLauncherId(),
-      'location_to' => 'board',
-      'color' => $colors,
+      'owner_to'      => self::getLauncherId(),
+      'location_to'   => 'board',
+      'color'         => $colors,
     ];
   }
 
-  public function handleCardChoice(array $card) {
+  public function handleCardChoice(array $card)
+  {
     self::drawAndMeld($card['faceup_age']);
   }
 

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card113 extends Card
 {
@@ -32,8 +33,8 @@ class Card113 extends Card
       'location_from' => 'board',
       'owner_to'      => self::getLauncherId(),
       'location_to'   => 'hand',
-      'with_icon'     => $this->game::AUTHORITY,
-      'age'           => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), $this->game::AUTHORITY),
+      'with_icon'     => Icons::AUTHORITY,
+      'age'           => $this->game->getMaxAgeOnBoardTopCardsWithIcon(self::getPlayerId(), Icons::AUTHORITY),
     ];
   }
 

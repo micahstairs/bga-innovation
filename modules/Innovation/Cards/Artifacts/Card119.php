@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Artifacts;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
 
 class Card119 extends Card
 {
@@ -18,7 +19,7 @@ class Card119 extends Card
   public function initialExecution()
   {
     if (self::isCompel()) {
-      self::transferToBoard(self::getCard(self::getThisCardId()));
+      self::transferToBoard(self::getCard(CardIds::DANCING_GIRL));
       self::addToActionScopedAuxiliaryArray(self::getPlayerId());
     } else if (self::isFirstOrThirdEdition() && self::wasEveryBoardAndStartedOnTheirBoard()) {
       self::win();

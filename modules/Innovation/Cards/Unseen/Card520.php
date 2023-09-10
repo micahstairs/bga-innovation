@@ -3,6 +3,9 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card520 extends Card
 {
@@ -16,21 +19,21 @@ class Card520 extends Card
     $numCardsWithProsperityIcons = 0;
     for ($i = 3; $i >= 1; $i--) {
       $card = self::drawAndMeld($i);
-      if (self::hasIcon($card, $this->game::PROSPERITY)) {
+      if (self::hasIcon($card, Icons::PROSPERITY)) {
         $numCardsWithProsperityIcons++;
       }
     }
     if ($numCardsWithProsperityIcons === 3) {
       $cardsInDeck = self::getCardsKeyedByValue('deck');
       foreach ($cardsInDeck[5] as $card) {
-        if ($card['type'] == $this->game::BASE) {
+        if ($card['type'] == CardTypes::BASE) {
           self::score($card);
         }
       }
     }
     if ($numCardsWithProsperityIcons >= 2) {
-      self::splayRight($this->game::GREEN);
-      self::splayRight($this->game::BLUE);
+      self::splayRight(Colors::GREEN);
+      self::splayRight(Colors::BLUE);
     }
   }
 }

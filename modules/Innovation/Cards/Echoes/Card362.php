@@ -28,11 +28,11 @@ class Card362 extends Card
   {
     if (self::getEffectNumber() === 1 && self::isFirstInteraction()) {
       return [
-        'can_pass'      => true,
-        'n_min'         => 1,
-        'n_max'         => 'all',
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
+        'can_pass'       => true,
+        'n_min'          => 1,
+        'n_max'          => 'all',
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else if (self::isFirstOrThirdEdition() || self::getEffectNumber() === 2) {
       return [

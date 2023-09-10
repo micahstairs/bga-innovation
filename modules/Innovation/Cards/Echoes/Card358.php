@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card358 extends Card
 {
@@ -29,9 +30,9 @@ class Card358 extends Card
   {
     return [
       'location_from' => 'board',
-      'owner_to' => self::getLauncherId(),
-      'location_to' => 'score',
-      'with_icon' => $this->game::AUTHORITY,
+      'owner_to'      => self::getLauncherId(),
+      'location_to'   => 'score',
+      'with_icon'     => Icons::AUTHORITY,
     ];
   }
 
@@ -43,13 +44,14 @@ class Card358 extends Card
     }
 
     if (self::isFirstOrThirdEdition()) {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + $this->game->countIconsOnCard($card, $this->game::AUTHORITY));
+      self::incrementAuxiliaryValue($this->game->countIconsOnCard($card, Icons::AUTHORITY));
     } else {
-      self::setAuxiliaryValue(self::getAuxiliaryValue() + 1);
+      self::incrementAuxiliaryValue(1);
     }
   }
 
-  public function afterInteraction() {
+  public function afterInteraction()
+  {
     $auxiliaryValue = self::getAuxiliaryValue();
 
     if ($auxiliaryValue === 0 || self::isSecondInteraction()) {

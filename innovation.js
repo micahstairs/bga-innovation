@@ -1692,7 +1692,7 @@ var Innovation = /** @class */ (function (_super) {
                         }
                         break;
                     case 108:
-                        // World: twelve or more visible clocks on your board
+                        // World: twelve or more visible [EFFICIENCY] on your board
                         numerator = self.counter["resource_count"][self.player_id][6].getValue();
                         denominator = 12;
                         break;
@@ -2857,11 +2857,11 @@ var Innovation = /** @class */ (function (_super) {
         var card_age = this.createAdjustedContent(card.faceup_age, 'card_age type_' + card_data.type + ' color_' + card_data.color, size, size == 'M' ? (card.age >= 10 ? 7 : 9) : 30);
         var title = _(card_data.name).toUpperCase();
         var card_title = this.createAdjustedContent(title, 'card_title type_' + card_data.type, size, size == 'M' ? 11 : 30, /*width_margin=*/ 0, /*height_margin=*/ 0, HTML_id + '_card_title');
-        var i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'color_' + card.color) : "";
-        var i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'color_' + card.color) : "";
-        var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'color_' + card.color) : "";
-        var non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2), card.dogma_icon, size, card.color, 'light', 'color_' + card.color) : "";
-        var non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3), card.dogma_icon, size, card.color, 'light', 'color_' + card.color) : "";
+        var i_demand_effect = card_data.i_demand_effect ? this.createDogmaEffectText(_(card_data.i_demand_effect), card.dogma_icon, size, card.color, 'dark', 'i_demand_effect color_' + card.color) : "";
+        var i_compel_effect = card_data.i_compel_effect ? this.createDogmaEffectText(_(card_data.i_compel_effect), card.dogma_icon, size, card.color, 'dark', 'i_compel_effect color_' + card.color) : "";
+        var non_demand_effect_1 = card_data.non_demand_effect_1 ? this.createDogmaEffectText(_(card_data.non_demand_effect_1), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_1 color_' + card.color) : "";
+        var non_demand_effect_2 = card_data.non_demand_effect_2 ? this.createDogmaEffectText(_(card_data.non_demand_effect_2), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_2 color_' + card.color) : "";
+        var non_demand_effect_3 = card_data.non_demand_effect_3 ? this.createDogmaEffectText(_(card_data.non_demand_effect_3), card.dogma_icon, size, card.color, 'light', 'non_demand_effect_3 color_' + card.color) : "";
         var dogma_effects = this.createAdjustedContent(i_demand_effect + i_compel_effect + non_demand_effect_1 + non_demand_effect_2 + non_demand_effect_3, "card_effects", size, size == 'M' ? 8 : 17);
         return icon1 + icon2 + icon3 + icon4 + icon5 + icon6 + card_age + card_title + dogma_effects;
     };

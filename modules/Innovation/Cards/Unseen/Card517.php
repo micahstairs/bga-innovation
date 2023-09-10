@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card517 extends Card
 {
@@ -31,16 +33,16 @@ class Card517 extends Card
         ];
       } else {
         return [
-          'location_from' => 'hand',
-          'location_to'   => 'deck',
-          'color'         => [self::getAuxiliaryValue()],
+          'location_from'  => 'hand',
+          'return_keyword' => true,
+          'color'          => [self::getAuxiliaryValue()],
         ];
       }
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::RED],
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [Colors::RED],
       ];
     }
   }

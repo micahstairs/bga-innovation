@@ -22,8 +22,8 @@ class Card544 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
+        'location_from'  => 'hand',
+        'return_keyword' => true,
       ];
     } else if (self::isSecondInteraction()) {
       return [

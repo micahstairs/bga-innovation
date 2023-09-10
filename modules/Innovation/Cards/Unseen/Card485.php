@@ -21,17 +21,17 @@ class Card485 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'deck',
-        'age'           => self::getAuxiliaryValue(),
+        'can_pass'       => true,
+        'location_from'  => 'hand',
+        'return_keyword' => true,
+        'age'            => self::getAuxiliaryValue(),
       ];
     } else {
       return [
-        'location_from' => 'achievements',
-        'owner_from'    => 0,
-        'location_to'   => 'safe',
-        'age'           => self::getAuxiliaryValue(),
+        'location_from'     => 'achievements',
+        'owner_from'        => 0,
+        'safeguard_keyword' => true,
+        'age'               => self::getAuxiliaryValue(),
       ];
     }
   }

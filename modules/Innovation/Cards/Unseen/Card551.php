@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card551 extends Card
 {
@@ -24,7 +26,7 @@ class Card551 extends Card
         'location_from' => 'safe',
         'owner_to'      => self::getLauncherId(),
         'location_to'   => 'safe',
-        'age'           => self::getLowestSecretValue(),
+        'age'           => self::getMinValueInLocation('safe'),
       ];
     } else if (self::getEffectNumber() === 1) {
       return [
@@ -35,15 +37,10 @@ class Card551 extends Card
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color'           => [$this->game::RED, $this->game::YELLOW],
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [Colors::RED, Colors::YELLOW],
       ];
     }
-  }
-
-  private function getLowestSecretValue(): int
-  {
-    return $this->game->getMinOrMaxAgeInLocation(self::getPlayerId(), 'safe', 'MIN');
   }
 
 }

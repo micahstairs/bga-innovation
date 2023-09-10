@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card339 extends Card
 {
@@ -56,7 +57,7 @@ class Card339 extends Card
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(1, $this->game::BASE)],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(1, CardTypes::BASE)],
       ]);
     }
   }

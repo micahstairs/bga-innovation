@@ -13,6 +13,7 @@ class Card434 extends Card
   //     visible on your board, you win. Execute each of the melded card's non-demand dogma
   //     effects. Do not share them.
   // - 4th edition
+  //   - ECHO: You may tuck any number of cards from your hand.
   //   - Draw and meld a card of any value. If you have nine different bonus values on your
   //     board, you win. Otherwise, self-execute the melded card.
 
@@ -23,7 +24,17 @@ class Card434 extends Card
 
   public function getInteractionOptions(): array
   {
-    return ['choose_value' => true];
+    if (self::isEcho()) {
+      return [
+        'can_pass' => true,
+        'n_min' => 1,
+        'n_max' => 'all',
+        'location_from' => 'hand',
+        'tuck_keyword' => true,
+      ];
+    } else {
+      return ['choose_value' => true];
+    }
   }
 
   public function handleSpecialChoice($value) {

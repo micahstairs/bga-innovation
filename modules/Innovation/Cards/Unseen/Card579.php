@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card579 extends Card
 {
@@ -19,35 +21,31 @@ class Card579 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
-      $this->game->setAuxiliaryArray([]);
+    if (self::isFirstNonDemand()) {
+      self::setAuxiliaryArray([]);
       return [
-        'n' => 'all',
-        'location_from' => 'score',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'score',
+        'return_keyword' => true,
       ];
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::RED],
+        'splay_direction' => Directions::UP,
+        'color'           => [Colors::RED],
       ];
     }
   }
 
   public function handleCardChoice(array $card)
   {
-    $values = $this->game->getAuxiliaryArray();
-    $returnedValue = $card['age'];
-    if (!in_array($returnedValue, $values)) {
-      return $this->game->setAuxiliaryArray(array_merge($values, [$returnedValue]));
-    }
+    self::addToAuxiliaryArray($card['age']);
   }
 
   public function afterInteraction()
   {
-    if (self::getEffectNumber() === 1) {
-      $values = $this->game->getAuxiliaryArray();
+    if (self::isFirstNonDemand()) {
+      $values = array_unique(self::getAuxiliaryArray());
       for ($i = 0; $i < count($values); $i++) {
         self::drawAndScore(10);
       }

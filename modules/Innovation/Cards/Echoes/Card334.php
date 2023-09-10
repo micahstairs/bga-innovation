@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card334 extends Card
 {
@@ -44,7 +45,7 @@ class Card334 extends Card
         'location_from' => 'hand',
         'owner_to'      => self::getLauncherId(),
         'location_to'   => 'hand',
-        'with_icon'     => $this->game::AUTHORITY,
+        'with_icon'     => Icons::AUTHORITY,
       ];
     } else {
       self::setAuxiliaryArray(self::getCardIdsInHandWithAuthorityOrConceptIcon());
@@ -53,7 +54,7 @@ class Card334 extends Card
         'location_from'                   => 'hand',
         'owner_to'                        => self::getLauncherId(),
         'location_to'                     => 'hand',
-        'with_icon'                       => $this->game::AUTHORITY,
+        'with_icon'                       => Icons::AUTHORITY,
         'card_ids_are_in_auxiliary_array' => true,
         'enable_autoselection'            => false,
       ];
@@ -76,7 +77,7 @@ class Card334 extends Card
   {
     $cardIds = [];
     foreach (self::getCards('hand') as $card) {
-      if (self::hasIcon($card, $this->game::AUTHORITY) || self::hasIcon($card, $this->game::CONCEPT)) {
+      if (self::hasIcon($card, Icons::AUTHORITY) || self::hasIcon($card, Icons::CONCEPT)) {
         $cardIds[] = $card['id'];
       }
     }

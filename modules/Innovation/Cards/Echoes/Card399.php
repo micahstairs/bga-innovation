@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
 
 class Card399 extends Card
 {
@@ -28,7 +30,7 @@ class Card399 extends Card
       self::setMaxSteps(1);
     } else if (self::isFirstNonDemand()) {
       if (self::isFourthEdition()) {
-        $topBlueCard = self::getTopCardOfColor($this->game::BLUE);
+        $topBlueCard = self::getTopCardOfColor(Colors::BLUE);
         $value = $topBlueCard ? $topBlueCard['faceup_age'] : 0;
         self::setAuxiliaryValue($value); // Track first value to draw and reveal
         self::setAuxiliaryValue2($value); // Track second value to draw and reveal
@@ -96,8 +98,8 @@ class Card399 extends Card
   protected function getPromptForListChoice(): array
   {
     return self::buildPromptFromList([
-      7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, $this->game::BASE)],
-      8 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(8, $this->game::BASE)],
+      7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, CardTypes::BASE)],
+      8 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(8, CardTypes::BASE)],
     ]);
   }
 

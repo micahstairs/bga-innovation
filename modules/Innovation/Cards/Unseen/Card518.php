@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card518 extends Card
 {
@@ -33,8 +35,8 @@ class Card518 extends Card
         $this->game->setAuxiliaryArray($cardIds);
       }
     } else {
-      $topCard = self::getTopCardOfColor($this->game::RED);
-      if ($topCard !== null && $topCard['id'] == self::getThisCardId()) {
+      $topCard = self::getTopCardOfColor(Colors::RED);
+      if ($topCard && $topCard['id'] == CardIds::SPANISH_INQUISITION) {
         self::setMaxSteps(1);
       }
     }
@@ -46,15 +48,15 @@ class Card518 extends Card
       return [
         'n'                               => 'all',
         'location_from'                   => 'hand,score',
-        'location_to'                     => 'deck',
+        'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'pile',
-        'location_to'   => 'deck',
-        'color'         => [$this->game::RED],
+        'n'              => 'all',
+        'location_from'  => 'pile',
+        'return_keyword' => true,
+        'color'          => [Colors::RED],
       ];
     }
   }

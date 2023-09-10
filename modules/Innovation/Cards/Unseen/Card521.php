@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card521 extends Card
 {
@@ -13,19 +15,10 @@ class Card521 extends Card
   //   - Splay your yellow cards right, and unsplay your purple cards, or vice versa.
   public function initialExecution()
   {
-    if (self::getEffectNumber() === 1) {
-      $max_age_score = $this->game->getMaxAgeInScore(self::getPlayerId());
-      $max_age_hand = $this->game->getMaxAgeInHand(self::getPlayerId());
-      if ($max_age_score == 0 && $max_age_hand == 0) {
-        $this->game->claimSpecialAchievement(self::getPlayerId(), 598);
-      } else {
-        if ($max_age_score > $max_age_hand) {
-          self::setAuxiliaryValue($max_age_score);
-        } else {
-          self::setAuxiliaryValue($max_age_hand);
-        }
-        self::setMaxSteps(1);
-      }
+    if (self::isFirstNonDemand()) {
+      $value = max(self::getMaxValueInLocation('score'), self::getMaxValueInLocation('hand'));
+      self::setAuxiliaryValue($value);
+      self::setMaxSteps(1);
     } else {
       self::setMaxSteps(1);
     }
@@ -33,7 +26,7 @@ class Card521 extends Card
 
   public function getInteractionOptions(): array
   {
-    if (self::getEffectNumber() === 1) {
+    if (self::isFirstNonDemand()) {
       return [
         'n'             => 'all',
         'location_from' => 'hand,score',
@@ -43,6 +36,12 @@ class Card521 extends Card
       ];
     } else {
       return ['choices' => [0, 1]];
+    }
+  }
+
+  public function afterInteraction() {
+    if (self::isFirstNonDemand() && self::getNumChosen() === 0) {
+      $this->game->claimSpecialAchievement(self::getPlayerId(), CardIds::FOLKLORE);
     }
   }
 
@@ -57,11 +56,11 @@ class Card521 extends Card
   public function handleSpecialChoice(int $choice): void
   {
     if ($choice === 1) {
-      self::splayRight($this->game::YELLOW);
-      self::unsplay($this->game::PURPLE);
+      self::splayRight(Colors::YELLOW);
+      self::unsplay(Colors::PURPLE);
     } else {
-      self::splayRight($this->game::PURPLE);
-      self::unsplay($this->game::YELLOW);
+      self::splayRight(Colors::PURPLE);
+      self::unsplay(Colors::YELLOW);
     }
   }
 

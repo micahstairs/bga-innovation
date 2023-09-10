@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
 
 class Card352 extends Card
 {
@@ -33,9 +34,9 @@ class Card352 extends Card
         ];
       } else {
         return [
-          'can_pass'      => true,
-          'location_from' => 'hand',
-          'location_to'   => 'deck',
+          'can_pass'       => true,
+          'location_from'  => 'hand',
+          'return_keyword' => true,
         ];
       }
     } else if (self::isFirstNonDemand()) {
@@ -64,13 +65,14 @@ class Card352 extends Card
         self::setMaxSteps(1);
       }
     } else if (self::isSecondNonDemand() && self::wasForeseen()) {
-      while ($topCard = $this->game->getDeckTopCard($card['age'], $this->game::BASE)) {
+      while ($topCard = $this->game->getDeckTopCard($card['age'], CardTypes::BASE)) {
         self::tuck($topCard);
       }
     }
   }
 
-  public function handleSpecialChoice(int $value) {
+  public function handleSpecialChoice(int $value)
+  {
     self::draw($value);
   }
 

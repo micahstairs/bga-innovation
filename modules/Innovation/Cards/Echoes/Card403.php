@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
 
 class Card403 extends Card
 {
@@ -35,7 +37,7 @@ class Card403 extends Card
         'location_from' => 'board',
         'score_keyword' => true,
         'without_bonus' => true,
-        'color'         => self::getAllColorsOtherThan($this->game::PURPLE),
+        'color'         => Colors::NON_PURPLE,
       ];
     }
     if (self::isFirstOrThirdEdition()) {
@@ -76,10 +78,10 @@ class Card403 extends Card
       ]);
     } else {
       return self::buildPromptFromList([
-        6 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(6, $this->game::BASE)],
-        7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, $this->game::BASE)],
-        8 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(8, $this->game::BASE)],
-        9 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(9, $this->game::BASE)],
+        6 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(6, CardTypes::BASE)],
+        7 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(7, CardTypes::BASE)],
+        8 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(8, CardTypes::BASE)],
+        9 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(9, CardTypes::BASE)],
       ]);
     }
   }
@@ -88,7 +90,7 @@ class Card403 extends Card
   {
     if (self::isFirstOrThirdEdition()) {
       if (self::isFirstInteraction()) {
-        if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', $this->game::BASE)[$choice] > 0) {
+        if ($this->game->countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[$choice] > 0) {
           self::setAuxiliaryValue2($choice); // Track chosen deck
           self::setMaxSteps(2);
         }

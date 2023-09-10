@@ -3,6 +3,9 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Icons;
 
 class Card22 extends Card
 {
@@ -18,22 +21,22 @@ class Card22 extends Card
   public function initialExecution()
   {
     if (self::isFirstNonDemand()) {
-      $renderedIcon = self::renderIcon($this->game::HEALTH);
+      $renderedIcon = Icons::render(Icons::HEALTH);
       $numToDraw = 0;
       if (self::isFirstOrThirdEdition()) {
-        $iconCount = self::getStandardIconCount($this->game::HEALTH);
+        $iconCount = self::getStandardIconCount(Icons::HEALTH);
         self::notifyPlayer(
           clienttranslate('${You} have ${n} visible ${icon} on your board.'),
           ['You' => 'You', 'n' => $iconCount, 'icon' => $renderedIcon]
         );
         self::notifyOthers(
           clienttranslate('${player_name} has visible ${n} ${icon} on his board.'),
-          ['player_name' => self::renderPlayerName(self::getPlayerId()), 'n' => $iconCount, 'icon' => $renderedIcon]
+          ['player_name' => self::renderPlayerName(), 'n' => $iconCount, 'icon' => $renderedIcon]
         );
         $numToDraw = $this->game->intDivision($iconCount, 2);
       } else {
         for ($color = 0; $color < 5; $color++) {
-          if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, $this->game::HEALTH)) {
+          if ($this->game->boardPileHasRessource(self::getPlayerId(), $color, Icons::HEALTH)) {
             $numToDraw++;
           }
         }
@@ -45,7 +48,7 @@ class Card22 extends Card
           clienttranslate('${player_name} has ${n} color(s) with one or more visible ${icon}.'),
           [
             'i18n'        => ['n'],
-            'player_name' => self::renderPlayerName(self::getPlayerId()),
+            'player_name' => self::renderPlayerName(),
             'n'           => self::renderNumber($numToDraw),
             'icon'        => $renderedIcon,
           ]
@@ -65,7 +68,7 @@ class Card22 extends Card
       'can_pass'      => true,
       'location_from' => 'hand',
       'tuck_keyword'  => true,
-      'color'         => [$this->game::GREEN],
+      'color'         => [Colors::GREEN],
     ];
   }
 
@@ -73,7 +76,7 @@ class Card22 extends Card
   {
     if (self::getNumChosen() === 0) {
       self::junkBaseDeck(2);
-      self::junk($this->game->getIfTopCardOnBoard(self::getThisCardId()));
+      self::junk($this->game->getIfTopCardOnBoard(CardIds::FERMENTING));
     }
   }
 

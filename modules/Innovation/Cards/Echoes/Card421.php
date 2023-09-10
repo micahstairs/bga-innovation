@@ -3,6 +3,9 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 
 class Card421 extends Card
 {
@@ -32,19 +35,18 @@ class Card421 extends Card
     if (self::isEcho()) {
       return ['choose_value' => true];
     } else if (self::isDemand()) {
-      $nonYellow = self::getAllColorsOtherThan($this->game::YELLOW);
       return [
         'location_from' => 'board',
         'owner_to'      => self::getLauncherId(),
         'location_to'   => 'board',
-        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), $nonYellow, $this->game::PROSPERITY),
-        'color'         => $nonYellow,
+        'age'           => $this->game->getMaxAgeOnBoardOfColorsWithoutIcon(self::getPlayerId(), Colors::NON_YELLOW, Icons::PROSPERITY),
+        'color'         => Colors::NON_YELLOW,
       ];
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::UP,
-        'color'           => [$this->game::PURPLE],
+        'splay_direction' => Directions::UP,
+        'color'           => [Colors::PURPLE],
       ];
     }
   }

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\Colors;
 
 class Card424 extends Card
 {
@@ -24,7 +26,7 @@ class Card424 extends Card
         'location_from' => 'board',
         'owner_to'      => self::getLauncherId(),
         'location_to'   => 'hand',
-        'color'         => [$this->game::GREEN],
+        'color'         => [Colors::GREEN],
       ];
     } else {
       return [
@@ -37,13 +39,13 @@ class Card424 extends Card
 
   public function afterInteraction()
   {
-    $topGreenCard = self::getTopCardOfColor($this->game::GREEN);
+    $topGreenCard = self::getTopCardOfColor(Colors::GREEN);
     if (!$topGreenCard) {
       return;
     }
-    if (self::isDemand() && $topGreenCard['id'] == 350) { // Scissors
+    if (self::isDemand() && $topGreenCard['id'] == CardIds::SCISSORS) {
       self::win(self::getLauncherId());
-    } else if (self::isFirstNonDemand() && $topGreenCard['id'] == 30) { // Paper
+    } else if (self::isFirstNonDemand() && $topGreenCard['id'] == CardIds::PAPER) {
       self::win();
     }
   }

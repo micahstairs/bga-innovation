@@ -23,9 +23,9 @@ class Card481 extends Card
   public function getInteractionOptions(): array
   {
     return [
-      'n'             => 2,
-      'location_from' => 'hand',
-      'location_to'   => 'deck',
+      'n'              => 2,
+      'location_from'  => 'hand',
+      'return_keyword' => true,
     ];
   }
 

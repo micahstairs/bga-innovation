@@ -20,13 +20,24 @@ require_once(APP_GAMEMODULE_PATH.'module/table/table.game.php');
 require_once('modules/Innovation/Cards/Card.php');
 require_once('modules/Innovation/Cards/ExecutionState.php');
 require_once('modules/Innovation/GameState.php');
+require_once('modules/Innovation/Enums/CardIds.php');
+require_once('modules/Innovation/Enums/CardTypes.php');
+require_once('modules/Innovation/Enums/Colors.php');
+require_once('modules/Innovation/Enums/Directions.php');
+require_once('modules/Innovation/Enums/Icons.php');
 require_once('modules/Innovation/Utils/Arrays.php');
 require_once('modules/Innovation/Utils/Notifications.php');
 require_once('modules/Innovation/Utils/Strings.php');
 
+
 use Innovation\GameState;
 use Innovation\Cards\ExecutionState;
 use Innovation\Utils\Arrays;
+use Innovation\Enums\CardIds;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
+use Innovation\Enums\Icons;
 use Innovation\Utils\Notifications;
 use Innovation\Utils\Strings;
 
@@ -41,39 +52,6 @@ class Innovation extends Table
 
     /** @var Notifications Used to help create notifications */
     public Notifications $notifications;
-
-    // Splay directions
-    const UNSPLAYED = 0;
-    const LEFT = 1;
-    const RIGHT = 2;
-    const UP = 3;
-    const ASLANT = 4;
-
-    // Icons
-    const HEX_IMAGE = 0;
-    const PROSPERITY = 1;
-    const HEALTH = 2;
-    const CONCEPT = 3;
-    const AUTHORITY = 4;
-    const INDUSTRY = 5;
-    const EFFICIENCY = 6;
-    const AVATAR = 7;
-    const ECHO_EFFECT_ICON = 10;
-
-    // Colors
-    const BLUE = 0;
-    const RED = 1;
-    const GREEN = 2;
-    const YELLOW = 3;
-    const PURPLE = 4;
-
-    // Sets
-    const BASE = 0;
-    const ARTIFACTS = 1;
-    const CITIES = 2;
-    const ECHOES = 3;
-    const FIGURES = 4;
-    const UNSEEN = 5;
 
     // Effect types
     const DEMAND_EFFECT = 0;
@@ -755,7 +733,7 @@ class Innovation extends Table
             for($color = 0; $color < 5 ; $color++) {
                 $direction = self::getCurrentSplayDirection($player_id, $color);
                 $result['board_splay_directions'][$player_id][] = $direction;
-                $result['board_splay_directions_in_clear'][$player_id][] = self::getSplayDirectionInClear($direction);
+                $result['board_splay_directions_in_clear'][$player_id][] = Directions::render($direction);
             }
         }
 
@@ -951,7 +929,7 @@ class Innovation extends Table
         $total_weight = 0;
         
         // TODO(4E): Update game progression calculations.
-        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
+        $number_of_cards_in_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
         for($age=1; $age<=10; $age++) {
             $n = $number_of_cards_in_decks[$age];
             switch($age) {
@@ -1174,7 +1152,8 @@ class Innovation extends Table
     
     
     /** Formatting **/
-    function format($msg, $vars)
+    // TODO(LATER): Remove this once we are using the function in Strings.php instead.
+    static function format($msg, $vars)
     {
         /** Format the string using named or unamed parameters **/
         $vars = (array)$vars;
@@ -1667,23 +1646,23 @@ class Innovation extends Table
     /** Splay mechanism **/
 
     function unsplay($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, self::UNSPLAYED, /*force_unsplay=*/ true);
+        self::splay($player_id, $target_player_id, $color, Directions::UNSPLAYED, /*force_unsplay=*/ true);
     }
 
     function splayLeft($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, self::LEFT);
+        self::splay($player_id, $target_player_id, $color, Directions::LEFT);
     }
 
     function splayRight($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, self::RIGHT);
+        self::splay($player_id, $target_player_id, $color, Directions::RIGHT);
     }
 
     function splayUp($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, self::UP);
+        self::splay($player_id, $target_player_id, $color, Directions::UP);
     }
 
     function splayAslant($player_id, $target_player_id, $color) {
-        self::splay($player_id, $target_player_id, $color, self::ASLANT);
+        self::splay($player_id, $target_player_id, $color, Directions::ASLANT);
     }
 
     function splay($player_id, $target_player_id, $color, $splay_direction, $force_unsplay=false) {
@@ -1734,8 +1713,8 @@ class Innovation extends Table
         }
         
         // Changing a splay results in a Cities card being drawn (as long as there isn't already one in hand)
-        if ($this->innovationGameState->citiesExpansionEnabled() && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', self::CITIES) == 0) {
-            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, self::CITIES);
+        if ($this->innovationGameState->citiesExpansionEnabled() && $splay_direction > 0 && self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES) == 0) {
+            self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, CardTypes::CITIES);
         }
         
         self::recordThatChangeOccurred();
@@ -3599,7 +3578,7 @@ class Innovation extends Table
         $new_score = self::updatePlayerScore($target_player_id);
 
         if ($splay_direction == 0 && !$force_unsplay) {
-            $color_in_clear = self::renderColor($color);
+            $color_in_clear = Colors::render($color);
 
             if ($player_id != $target_player_id) {
                 throw new BgaVisibleSystemException(self::format(self::_("Unhandled case in {function}: '{code}'"), array('function' => "notifyForSplay()", 'code' => 'player_id != target_player_id in unsplay event')));
@@ -3627,7 +3606,7 @@ class Innovation extends Table
             return;
         }
         
-        $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
+        $splay_direction_in_clear = Directions::render($splay_direction);
         $colored_cards = self::renderColorCards($color);
         
         // Update player ressources
@@ -3848,35 +3827,6 @@ class Innovation extends Table
     }
     
     /** Notification system for dogma **/
-    function getIconSquare($icon) {
-        // TODO(LATER): Move this to Notifications.php
-        $title='';
-        switch ($icon) {
-        case 1:
-            $title=clienttranslate('crown');
-            break;
-        case 2:
-            $title=clienttranslate('leaf');
-            break;
-        case 3:
-            $title=clienttranslate('light bulb');
-            break;
-        case 4:
-            $title=clienttranslate('tower');
-            break;
-        case 5:
-            $title=clienttranslate('factory');
-            break;
-        case 6:
-            $title=clienttranslate('clock');
-            break;
-        case 7:
-            $title=clienttranslate('avatar');
-            break;
-        }
-        
-        return self::format("<span title='{title}' class='square N icon_{icon}'></span>", array('icon' => $icon, 'title' => $title));
-    }
     
     function getAgeSquare($age) {
         return self::format("<span title='{age}' class='square N age age_{age}'>{age}</span>", array('age' => $age));
@@ -4155,7 +4105,7 @@ class Innovation extends Table
         if ($textual_infos['condition_for_claiming'] === null) {
             unset($textual_infos['condition_for_claiming']);
         }
-        unset($textual_infos['condition_for_claiming']);
+        self::unsetVersionedCardProperties($textual_infos, 'condition_for_claiming');
 
         unset($textual_infos['separate_4E_implementation']);
         return array_merge($card, $textual_infos);
@@ -4256,7 +4206,7 @@ class Innovation extends Table
             $age_min = 1;
         }
     
-        $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
+        $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
         $age_to_draw = $age_min;
         $max_age = self::getMaxAge();
         while ($age_to_draw <= $max_age && $deck_count[$age_to_draw] == 0) {
@@ -4280,7 +4230,7 @@ class Innovation extends Table
             array('owner' => $player_id, 'color' => $color)
        ));
         
-        return $splay_direction === null ? self::UNSPLAYED : intval($splay_direction);
+        return $splay_direction === null ? Directions::UNSPLAYED : intval($splay_direction);
     }
     
     function getIdsOfCardsInLocation($owner, $location) {
@@ -5809,49 +5759,18 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         ));
     }
     
-    /** Representation in log and in main title text **/
-    function renderColor($color) {
-        switch ($color) {
-        case self::BLUE:
-            return clienttranslate('blue');
-        case self::RED:
-            return clienttranslate('red');
-        case self::GREEN:
-            return clienttranslate('green');
-        case self::YELLOW:
-            return clienttranslate('yellow');
-        case self::PURPLE:
-            return clienttranslate('purple');
-        }
-    }
-    
     function renderColorCards($color) {
         switch ($color) {
-        case self::BLUE:
+        case Colors::BLUE:
             return clienttranslate('blue cards');
-        case self::RED:
+        case Colors::RED:
             return clienttranslate('red cards');
-        case self::GREEN:
+        case Colors::GREEN:
             return clienttranslate('green cards');
-        case self::YELLOW:
+        case Colors::YELLOW:
             return clienttranslate('yellow cards');
-        case self::PURPLE:
+        case Colors::PURPLE:
             return clienttranslate('purple cards');
-        }
-    }
-    
-    function getSplayDirectionInClear($splay_direction) {
-        switch ($splay_direction) {
-        case self::UNSPLAYED:
-            return clienttranslate('none');
-        case self::LEFT:
-            return clienttranslate('left');
-        case self::RIGHT:
-            return clienttranslate('right');
-        case self::UP:
-            return clienttranslate('up');
-        case self::ASLANT:
-            return clienttranslate('aslant');
         }
     }
     
@@ -5881,23 +5800,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             return clienttranslate('ten');
         default:
             return $number;
-        }
-    }
-    
-    function getPrintableStringForCardType($type) {
-        switch ($type) {
-            case self::BASE:
-                return clienttranslate('Base');
-            case self::ARTIFACTS:
-                return clienttranslate('Artifacts');
-            case self::CITIES:
-                return clienttranslate('Cities');
-            case self::ECHOES:
-                return clienttranslate('Echoes');
-            case self::FIGURES:
-                return clienttranslate('Figures');
-            case self::UNSEEN:
-                return clienttranslate('Unseen');
         }
     }
     
@@ -5974,34 +5876,34 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function getCardTypeToDraw($age_to_draw, $player_id) {
-        $card_type = self::BASE;
+        $card_type = CardTypes::BASE;
 
         if ($this->innovationGameState->echoesExpansionEnabled()) {
             if ($this->innovationGameState->usingFourthEditionRules()) {
                 // Draw an Echoes card if yellow top card is higher than the blue top card
-                $topBlue = self::getTopCardOnBoard($player_id, self::BLUE);
-                $topYellow = self::getTopCardOnBoard($player_id, self::YELLOW);
+                $topBlue = self::getTopCardOnBoard($player_id, Colors::BLUE);
+                $topYellow = self::getTopCardOnBoard($player_id, Colors::YELLOW);
                 if ($topYellow && (!$topBlue || $topYellow['faceup_age'] > $topBlue['faceup_age'])) {
-                    $card_type = self::ECHOES;
+                    $card_type = CardTypes::ECHOES;
                 }
             } else {
                 // Draw an Echoes card if none is currently in hand and at least one other card is in hand (drawn and revealed counts as being in hand)
                 if ((self::countCardsInLocation($player_id, 'hand') + self::countCardsInLocation($player_id, 'revealed')) > 0 &&
-                        self::countCardsInLocation($player_id, 'hand', self::ECHOES) == 0 && 
-                        self::countCardsInLocation($player_id, 'revealed', self::ECHOES) == 0) {
-                    $card_type = self::ECHOES;
+                        self::countCardsInLocation($player_id, 'hand', CardTypes::ECHOES) == 0 && 
+                        self::countCardsInLocation($player_id, 'revealed', CardTypes::ECHOES) == 0) {
+                    $card_type = CardTypes::ECHOES;
                 }
             }
         }
 
-        if ($card_type === self::BASE && self::getPlayerWillDrawUnseenCardNext($player_id)) {
-            $card_type = self::UNSEEN;
+        if ($card_type === CardTypes::BASE && self::getPlayerWillDrawUnseenCardNext($player_id)) {
+            $card_type = CardTypes::UNSEEN;
         }
 
         // If an expansion’s supply pile has no cards in it, and you try to draw from it (after skipping empty ages),
         // draw a base card of that value instead.
         if (self::getDeckTopCard($age_to_draw, $card_type) === null) {
-            $card_type = self::BASE;
+            $card_type = CardTypes::BASE;
         }
         return $card_type;
     }
@@ -6011,9 +5913,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
 
     function junkBaseDeck($age): bool {
-        $cardCount = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', self::BASE)[$age];
+        $cardCount = self::countCardsInLocationKeyedByAge(/*owner=*/ 0, 'deck', CardTypes::BASE)[$age];
         if ($cardCount == 0) {
-            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, self::BASE)));
+            self::notifyGeneralInfo(clienttranslate('No cards were left in the ${age} deck to junk.'),  array('age' => self::getAgeSquareWithType($age, CardTypes::BASE)));
             return false;
         }
 
@@ -6050,7 +5952,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             clienttranslate('The ${age} deck, which contained ${n} card(s), is junked.'),
             [
                 'i18n' => ['n'],
-                'age' => self::getAgeSquareWithType($age, self::BASE),
+                'age' => self::getAgeSquareWithType($age, CardTypes::BASE),
                 'n' => self::renderNumber($cardCount),
                 'age_to_junk' => $age,
                 'next_junk_position' => $nextJunkPosition,
@@ -6212,7 +6114,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             $number_of_cards_per_pile = self::countCardsInLocationKeyedByColor($player_id, 'board');
             for ($color = 0; $color < 5; $color++) {
                 if ($number_of_cards_per_pile[$color] == 1) {
-                    self::splay($player_id, $player_id, $color, self::UNSPLAYED);
+                    self::splay($player_id, $player_id, $color, Directions::UNSPLAYED);
                 }
             }
         }
@@ -6287,7 +6189,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (array_key_exists('color', $rewritten_options)) {
             $rewritten_options['color'] = array_unique($rewritten_options['color']);
         } else {
-            $rewritten_options['color'] = [0, 1, 2, 3, 4];
+            $rewritten_options['color'] = Colors::ALL;
         }
         if (!array_key_exists('type', $rewritten_options)) {
             $rewritten_options['type'] = self::getActiveCardTypes();
@@ -6298,7 +6200,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (array_key_exists('age', $rewritten_options)) {
             $rewritten_options['age'] = array_unique($rewritten_options['age']);
         } else {
-            $rewritten_options['age'] = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+            $rewritten_options['age'] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
         }
         if (!array_key_exists('players', $rewritten_options)) {
             $rewritten_options['players'] = self::getAllActivePlayers();
@@ -6306,7 +6208,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         if (array_key_exists('choices', $rewritten_options)) {
             $rewritten_options['choices'] = array_unique($rewritten_options['choices']);
         } else {
-            $rewritten_options['choices'] = array();
+            $rewritten_options['choices'] = [];
         }
 
         if (self::getActivePlayerId() != $player_id) {
@@ -7112,10 +7014,16 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     function getJSCardEffectQuery($card, $effect_type, $effect_number) {
-        if ($effect_type == 3) {
-            return self::getJSCardId($card) . " .echo_effect";
+        switch ($effect_type) {
+            case self::ECHO_EFFECT:
+                return self::getJSCardId($card) . " .echo_effect";
+            case self::COMPEL_EFFECT:
+                return self::getJSCardId($card) . " .i_compel_effect";
+            case self::DEMAND_EFFECT:
+                return self::getJSCardId($card) . " .i_demand_effect";
+            default:
+                return self::getJSCardId($card) . " .non_demand_effect_" . $effect_number;        
         }
-        return self::getJSCardId($card) . " ." . ($effect_type == 1 ? "non_demand" : "i_demand") . "_effect_" . $effect_number;
     }
 
     function setLauncherId($launcher_id) {
@@ -7389,7 +7297,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     }
     
     /** Nested dogma excution management system: FIFO stack **/
-    function selfExecute($card, $replace_may_with_must = false) {
+    function selfExecute($card, $replace_may_with_must = false): bool {
         $player_id = self::getCurrentPlayerUnderDogmaEffect();
 
         // TODO(4E): There may be a bug here if a card calls this which does not actually use the word "self-execute".
@@ -7436,7 +7344,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_1_args = self::getNotificationArgsForCardList([$current_card]);
         $card_2_args = self::getNotificationArgsForCardList([$card]);
         $initially_executed_card = self::getCardInfo($current_nested_state['executing_as_if_on_card_id']);
-        $icon = self::getIconSquare($initially_executed_card['dogma_icon']);
+        $icon = Icons::render($initially_executed_card['dogma_icon']);
         self::notifyPlayer($player_id, 'logWithCardTooltips', clienttranslate('${You} fully execute the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
             ['You' => 'You', 'card_1' => $card_1_args, 'card_2' => $card_2_args, 'card_ids' => [$current_card['id'], $card['id']], 'icon' => $icon]);
         self::notifyAllPlayersBut($player_id, 'logWithCardTooltips', clienttranslate('${player_name} fully executes the effects of ${card_2} as if it were on ${card_1}, using ${icon} as the featured icon.'),
@@ -8043,23 +7951,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // it is a Search icon.
                 if ($top_middle_icon >= 1 && $top_middle_icon <= 6 && (!$this->innovationGameState->usingFourthEditionRules() || $card['age'] <= 5)) {
                     // Determine how many cards can be drawn.
-                    $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
+                    $deck_count = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
                     $age_of_melded_card = $card['age'];
                     $num_cards_to_reveal = min($age_of_melded_card, $deck_count[$card['age']]);
 
                     if ($num_cards_to_reveal > 0) {
                         $card_ids_to_return = array();
                         for ($i = 0; $i < $num_cards_to_reveal; $i++) {
-                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, self::BASE);
+                            $card = self::executeDraw($player_id, $card['age'], 'revealed', /*bottom_to=*/ false, CardTypes::BASE);
                             self::transferCardFromTo($card, $player_id, 'hand');
                             if (!self::hasRessource($card, $top_middle_icon)) {
                                 $card_ids_to_return[] = $card['id'];
                             }
                         }
                         if ($num_cards_to_reveal < $age_of_melded_card) {
-                            self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, self::BASE)));
+                            self::notifyGeneralInfo(clienttranslate('The ${age} supply pile ran out of cards, so no more cards will be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, CardTypes::BASE)));
                         }
-                        self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be kept and the others will be returned.'), array('icon' => self::getIconSquare($top_middle_icon)));
+                        self::notifyGeneralInfo(clienttranslate('The revealed cards with a ${icon} will be kept and the others will be returned.'), array('icon' => Icons::render($top_middle_icon)));
                         if (count($card_ids_to_return) > 0) {
                             self::setAuxiliaryArray($card_ids_to_return);
                             $options = array(
@@ -8077,7 +7985,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             return;
                         }
                     } else {
-                        self::notifyGeneralInfo(clienttranslate('The ${age} supply pile was empty, so no cards could be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, self::BASE)));
+                        self::notifyGeneralInfo(clienttranslate('The ${age} supply pile was empty, so no cards could be drawn.'), array('age' => self::getAgeSquareWithType($age_of_melded_card, CardTypes::BASE)));
                     }
                 }
             } catch (EndOfGame $e) {
@@ -8099,8 +8007,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
         if ($this->innovationGameState->citiesExpansionEnabled()) {
             // "When you take a Meld action to meld a card that adds a new color to your board, draw a City" (unless you already have a Cities card in hand)
-            if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', self::CITIES) == 0) {
-                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, self::CITIES);
+            if ($melded_card['position'] == 0 && self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES) == 0) {
+                self::executeDraw($player_id, self::getAgeToDrawIn($player_id), 'hand', /*bottom_to=*/ false, CardTypes::CITIES);
             }
         }
 
@@ -8169,7 +8077,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // You first draw up through any empty ages (base cards) before looking at the relevant artifact pile.
             $age_draw = self::getAgeToDrawIn($player_id, $previous_top_card['faceup_age']);
-            $top_artifact_card = self::getDeckTopCard($age_draw, self::ARTIFACTS);
+            $top_artifact_card = self::getDeckTopCard($age_draw, CardTypes::ARTIFACTS);
             
             if ($top_artifact_card == null) {
                 self::notifyPlayer($player_id, "log", clienttranslate('There are no Artifact cards in the ${age} deck, so the dig event is ignored.'), array('age' => self::getAgeSquare($age_draw)));
@@ -8648,7 +8556,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'new_max_age_on_board' => $new_max_age_on_board,
                     'rearrangement' => $choice,
                     'You' => 'You',
-                    'color' => self::renderColor($color)
+                    'color' => Colors::render($color)
                 ));
                 self::notifyAllPlayersBut($player_id, 'rearrangedPile', clienttranslate('${player_name} rearranges his ${color} stack.'), array(
                     'i18n' => array('color'),
@@ -8656,7 +8564,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'new_max_age_on_board' => $new_max_age_on_board,
                     'rearrangement' => $choice,
                     'player_name' => self::renderPlayerName($player_id),
-                    'color' => self::renderColor($color))
+                    'color' => Colors::render($color))
                 );
 
                 $end_of_game = false;
@@ -8858,7 +8766,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             'type_to_draw' => self::getCardTypeToDraw($age_to_draw, $player_id),
             'claimable_standard_achievement_values' => self::getClaimableStandardAchievementValues($player_id),
             'claimable_secret_values' => self::getClaimableSecretValues($player_id),
-            'city_draw_falls_back_to_other_type' => $age_to_draw > 11 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', self::CITIES)[$age_to_draw] == 0,
+            'city_draw_falls_back_to_other_type' => $age_to_draw > 11 ? false : self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::CITIES)[$age_to_draw] == 0,
             '_private' => array(
                 'active' => array( // "Active" player only
                     "non_adjacent_player_ids" => $non_adjacent_player_ids,
@@ -8882,7 +8790,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         // Identify which cards will trigger a City draw when melded
         $cities_expansion_enabled = $this->innovationGameState->citiesExpansionEnabled();
         $pile_size_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
-        $num_cities_in_hand = self::countCardsInLocation($player_id, 'hand', self::CITIES);
+        $num_cities_in_hand = self::countCardsInLocation($player_id, 'hand', CardTypes::CITIES);
         foreach ($cards_which_can_be_melded as $card) {
             $no_cities_in_hand_after_meld = $num_cities_in_hand == 0 || ($num_cities_in_hand == 1 && $card['type'] == 2);
             $info_by_card_id[$card['id']] = [
@@ -9105,7 +9013,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function sharingHasNoEffect($card, $launcher_id, $executing_player_id, $card_ids_with_visible_echo_effects) {
 
         // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == self::ECHOES || $card['type'] == self::ARTIFACTS)) {
+        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == CardTypes::ECHOES || $card['type'] == CardTypes::ARTIFACTS)) {
             return false;
         }
 
@@ -9326,7 +9234,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 21: // Canal Building
                 // The non-demand effect in the 4th edition will have an effect if the there is at least one age 3 card in the base deck.
-                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE)[3] > 0) {
+                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[3] > 0) {
                     return false;
                 }
                 // The non-demand effect will have no effect if the player has an empty score pile and an empty hand.
@@ -9334,49 +9242,49 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 24: // Philosophy
                 // The non-demand effects have no effect if the player has no cards in hand and no piles that can be splayed left
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && count(self::getSplayableColorsOnBoard($executing_player_id, self::LEFT)) == 0;
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && count(self::getSplayableColorsOnBoard($executing_player_id, Directions::LEFT)) == 0;
 
             case 27: // Engineering
                 // The non-demand effect has no effect if the player cannot splay their red pile left
-                return !in_array(self::RED,  self::getSplayableColorsOnBoard($executing_player_id, self::LEFT));
+                return !in_array(Colors::RED,  self::getSplayableColorsOnBoard($executing_player_id, Directions::LEFT));
 
             case 31: // Machinery
                 // The non-demand effect has no effect if the player has no cards in hand and cannot splay their red pile left
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(self::RED,  self::getSplayableColorsOnBoard($executing_player_id, self::LEFT));
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::RED,  self::getSplayableColorsOnBoard($executing_player_id, Directions::LEFT));
 
             case 32: // Medicine
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     // The non-demand has no effect if both the age 3 and age 4 base decks are empty.
-                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
+                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
                     return $base_decks[3] == 0 && $base_decks[4] == 0;
                 }
                 return true;
 
             case 36: // Printing Press
                 // The non-demand effect has no effect if the player has no cards in their score pile and cannot splay their blue pile right
-                return self::countCardsInLocation($executing_player_id, 'score') == 0 && !in_array(self::BLUE,  self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT));
+                return self::countCardsInLocation($executing_player_id, 'score') == 0 && !in_array(Colors::BLUE,  self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
 
             case 43: // Enterprise
                 // The non-demand effect has no effect if the player cannot splay their green pile right
-                return !in_array(self::GREEN,  self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT));
+                return !in_array(Colors::GREEN,  self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
 
             case 44: // Reformation
                 // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or purple piles right
-                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT);
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(self::YELLOW,  $right_splayable_colors) && !in_array(self::PURPLE,  $right_splayable_colors);
+                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT);
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::YELLOW,  $right_splayable_colors) && !in_array(Colors::PURPLE,  $right_splayable_colors);
 
             case 49: // Banking
                 // The non-demand effect has no effect if the player cannot splay their green pile right
-                return !in_array(self::GREEN,  self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT));
+                return !in_array(Colors::GREEN,  self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
 
             case 51: // Statistics
                 // The non-demand effect has no effect if the player cannot splay their yellow pile right
-                return !in_array(self::YELLOW,  self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT));
+                return !in_array(Colors::YELLOW,  self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT));
 
             case 56: // Encyclopedia
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     // The non-demand will have an effect if there are cards in any of the age 5, 6, or 7 base decks.
-                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
+                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
                     if ($base_decks[5] > 0 || $base_decks[6] > 0 || $base_decks[7] > 0) {
                         return false;
                     }
@@ -9384,9 +9292,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 return self::countCardsInLocation($executing_player_id, 'score') == 0;
 
             case 60: // Metric System
-                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT);
+                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT);
                 // The second non-demand effect has no effect if the player's green pile is not or cannot be splayed right
-                if (self::getCurrentSplayDirection($executing_player_id, self::GREEN) != self::RIGHT && !in_array(self::GREEN, $right_splayable_colors)) {
+                if (self::getCurrentSplayDirection($executing_player_id, Colors::GREEN) != Directions::RIGHT && !in_array(Colors::GREEN, $right_splayable_colors)) {
                     return true;
                 }
                 // The non-demand effects have no effect if the player has no piles that can be splayed right
@@ -9394,22 +9302,22 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case 64: // Emancipation
                 // The non-demand effect has no effect if the player cannot splay their red or purple piles right
-                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, self::RIGHT);
-                return !in_array(self::RED,  $right_splayable_colors) && !in_array(self::PURPLE,  $right_splayable_colors);
+                $right_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::RIGHT);
+                return !in_array(Colors::RED,  $right_splayable_colors) && !in_array(Colors::PURPLE,  $right_splayable_colors);
             
             case 72: // Sanitation
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     // The non-demand has no effect if both the age 7 and age 8 base decks are empty.
-                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE);
+                    $base_decks = self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE);
                     return $base_decks[7] == 0 && $base_decks[8] == 0;
                 }
                 return true;
 
             case 77: // Flight
-                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, self::UP);
-                $top_red_card = self::getTopCardOnBoard($executing_player_id, self::RED);
+                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::UP);
+                $top_red_card = self::getTopCardOnBoard($executing_player_id, Colors::RED);
                 // The second non-demand effect has no effect if the player's red pile is not and cannot be splayed up
-                if ($top_red_card == null || ($top_red_card['splay_direction'] != 3 && !in_array(self::RED, $up_splayable_colors))) {
+                if ($top_red_card == null || ($top_red_card['splay_direction'] != 3 && !in_array(Colors::RED, $up_splayable_colors))) {
                     return true;
                 }
                 // The non-demand effects have no effect if the player has no piles that can be splayed up
@@ -9418,7 +9326,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 91: // Ecology
                 if ($this->innovationGameState->usingFourthEditionRules()) {
                     // The non-demand will have an effect if there are cards in the age 10 base deck.
-                    if (self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE)[10] > 0) {
+                    if (self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[10] > 0) {
                         return false;
                     }
                 }
@@ -9426,8 +9334,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             case 94: // Specialization
                 // The non-demand effect has no effect if the player has no cards in their hand and cannot splay their yellow or blue piles up
-                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, self::UP);
-                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(self::BLUE,  $up_splayable_colors) && !in_array(self::YELLOW,  $up_splayable_colors);
+                $up_splayable_colors = self::getSplayableColorsOnBoard($executing_player_id, Directions::UP);
+                return self::countCardsInLocation($executing_player_id, 'hand') == 0 && !in_array(Colors::BLUE,  $up_splayable_colors) && !in_array(Colors::YELLOW,  $up_splayable_colors);
 
             case 175: // Periodic Table
                 // The non-demand effect has no effect if the player has top cards with unique values.
@@ -9443,7 +9351,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function demandHasNoEffect($card, $launcher_id, $executing_player_id) {
 
         // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == self::ECHOES || $card['type'] == self::ARTIFACTS)) {
+        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == CardTypes::ECHOES || $card['type'] == CardTypes::ARTIFACTS)) {
             return false;
         }
 
@@ -9569,7 +9477,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
     function compelHasNoEffect($card, $launcher_id, $executing_player_id) {
 
         // TODO(4E): Add proper no-op detection for 4th edition cards.
-        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == self::ECHOES || $card['type'] == self::ARTIFACTS)) {
+        if ($this->innovationGameState->usingFourthEditionRules() && ($card['type'] == CardTypes::ECHOES || $card['type'] == CardTypes::ARTIFACTS)) {
             return false;
         }
 
@@ -9684,7 +9592,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'choose_three_colors':
                 $options = array();
                 foreach ($this->innovationGameState->getAsArray('color_array') as $color) {
-                    $options[] = array('value' => $color, 'text' => self::renderColor($color));
+                    $options[] = array('value' => $color, 'text' => Colors::render($color));
                 }                
                 break;
             case 'choose_player':
@@ -9714,13 +9622,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case 'choose_type':
                 $options = array();
                 foreach ($this->innovationGameState->getAsArray('type_array') as $type) {
-                    $options[] = array('value' => $type, 'text' => self::getPrintableStringForCardType($type));
+                    $options[] = array('value' => $type, 'text' => CardTypes::render($type));
                 }
                 break;
             case 'choose_icon_type':
                 $options = array();
                 foreach ($this->innovationGameState->getAsArray('icon_array') as $icon) {
-                    $options[] = array('value' => $icon, 'text' => self::getIconSquare($icon));
+                    $options[] = array('value' => $icon, 'text' => Icons::render($icon));
                 }
                 break;
             default:
@@ -9757,7 +9665,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 21, age 2: Canal building
             case "21N1A":
-                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE)[3] > 0) {
+                if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[3] > 0) {
                     $message_args_for_player['age_3'] = self::getAgeSquare(3);
                     $message_args_for_others['age_3'] = self::getAgeSquare(3);
                     $message_for_player = clienttranslate('Do ${you} want to exchange all the highest cards in your hand with all the highest cards in your score pile or junk the ${age_3} pile?');
@@ -9788,7 +9696,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $age_6 = self::getAgeSquare($age_to_draw);
                 $max_age = self::getMaxAge();
                 $age_10 = self::getAgeSquare($max_age);
-                $icon_5 = self::getIconSquare(5);
+                $icon_5 = Icons::render(5);
                 $message_args_for_player['age_6'] = $age_6;
                 $message_args_for_player['age_10'] = $age_10;
                 $message_args_for_player['icon_5'] =$icon_5;
@@ -9855,29 +9763,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $message_for_player = clienttranslate('Do ${you} want to score all the cards from your hand?');
                 $message_for_others = clienttranslate('${player_name} may score all the cards from his hand');
                 $options = array(array('value' => 1, 'text' => clienttranslate("Yes")), array('value' => 0, 'text' => clienttranslate("No")));
-                break;
-
-            // id 114, Artifacts age 1: Papyrus of Ani
-            case "114N1B":
-                $message_for_player = clienttranslate('${You} must choose a type');
-                $message_for_others = clienttranslate('${player_name} must choose a type');
-                break;
-
-            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-            case "124N1A":
-                $message_for_player = clienttranslate('${You} must choose a color');
-                $message_for_others = clienttranslate('${player_name} must choose a color');
-                break;
-            
-            // id 126, Artifacts age 2: Rosetta Stone
-            case "126N1A":
-                $message_for_player = clienttranslate('${You} must choose a type');
-                $message_for_others = clienttranslate('${player_name} must choose a type');
-                break;
-
-            case "126N1C":
-                $message_for_player = clienttranslate('${You} must choose an opponent');
-                $message_for_others = clienttranslate('${player_name} must choose an opponent');
                 break;
 
             // id 147, Artifacts age 4: East India Company Charter
@@ -10152,7 +10037,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     'splayable_colors' => $splayable_colors,
                     'splayable_colors_in_clear' => $splayable_colors_in_clear,
                 ];
-                $splay_direction_in_clear = self::getSplayDirectionInClear($splay_direction);
+                $splay_direction_in_clear = Directions::render($splay_direction);
             }
         } else {
             $messages = self::getTransferInfoWithTwoPlayersInvolved($location_from, $location_to, $player_id_is_owner_from, $player_id_is_owner_to, $opponent_id_is_owner_from, $opponent_id_is_owner_to, $bottom_from, $bottom_to, $score_keyword, $meld_keyword, $you_must, $player_must, $your, $player_name, $opponent_name, $number, $cards);
@@ -10328,27 +10213,27 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $color_args = array();
         
         for ($i = 0; $i < count($colors); $i++) {
-            $colors_in_clear[$i] = self::renderColor($colors[$i]);
+            $colors_in_clear[$i] = Colors::render($colors[$i]);
         }
         switch (count($colors)) {
             case 1: 
                 $color_log = '${color}';
-                $color_args['color'] = self::renderColor($colors[0]);
+                $color_args['color'] = Colors::render($colors[0]);
                 $color_args['i18n'] = ['color'];
                 break;
 
             case 2:
                 $color_log = clienttranslate('${color_1} or ${color_2}');
-                $color_args['color_1'] = self::renderColor($colors[0]);
-                $color_args['color_2'] = self::renderColor($colors[1]);
+                $color_args['color_1'] = Colors::render($colors[0]);
+                $color_args['color_2'] = Colors::render($colors[1]);
                 $color_args['i18n'] = ['color_1', 'color_2'];
                 break;
 
             case 3:
                 $color_log = clienttranslate('${color_1}, ${color_2} or ${color_3}');
-                $color_args['color_1'] = self::renderColor($colors[0]);
-                $color_args['color_2'] = self::renderColor($colors[1]);
-                $color_args['color_3'] = self::renderColor($colors[2]);
+                $color_args['color_1'] = Colors::render($colors[0]);
+                $color_args['color_2'] = Colors::render($colors[1]);
+                $color_args['color_3'] = Colors::render($colors[2]);
                 $color_args['i18n'] = ['color_1', 'color_2', 'color_3'];
                 break;
 
@@ -10356,7 +10241,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $color_log = clienttranslate('non-${color}');
                 for ($color = 0; $color < 5; $color++) {
                     if (!in_array($color, $colors)) {
-                        $color_args['color'] = self::renderColor($color);
+                        $color_args['color'] = Colors::render($color);
                         break;
                     }
                 }
@@ -10811,7 +10696,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             || $card_id == 72
             || (110 <= $card_id && $card_id <= 214)
             || (330 <= $card_id && $card_id <= 434)
-            || $card_id == 440
+            || (440 <= $card_id && $card_id == 441)
+            || $card_id == 445
             || (470 <= $card_id && $card_id <= 486)
             || $card_id == 488
             || (492 <= $card_id && $card_id <= 494)
@@ -10906,12 +10792,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // TODO(LATER): Consider adding something to the log which says that an effect is resuming.
         }
         
-        $crown = self::getIconSquare(1);
-        $leaf = self::getIconSquare(2);
-        $lightbulb = self::getIconSquare(3);
-        $tower = self::getIconSquare(4);
-        $factory = self::getIconSquare(5);
-        $clock = self::getIconSquare(6);
+        $crown = Icons::render(1);
+        $leaf = Icons::render(2);
+        $lightbulb = Icons::render(3);
+        $tower = Icons::render(4);
+        $factory = Icons::render(5);
+        $clock = Icons::render(6);
         
         $using_execution_status_object = false;
 
@@ -11064,14 +10950,14 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 $card = self::executeDraw($player_id, 1, 'revealed'); // "Draw and reveal a 1
                 $color = $card['color'];
                 if (self::hasThisColorOnBoard($player_id, $color)) { // "If it is the same color of any card on your board"
-                    self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => self::renderColor($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($color)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => Colors::render($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} has this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($color)));
                     self::meldCard($card, $player_id); // "Meld it"
                     self::executeDraw($player_id, 1); // "Draw a 1"
                 }
                 else {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} do not have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => self::renderColor($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} does not have this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($color)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('This card is ${color}; ${you} do not have this color on your board.'), array('i18n' => array('color'), 'you' => 'you', 'color' => Colors::render($color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('This card is ${color}; ${player_name} does not have this color on his board.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($color)));
                     self::transferCardFromTo($card, $player_id, 'hand'); // (Put the card in your hand)
                 }
                 break;
@@ -11297,7 +11183,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw a 4 for every color you have splayed left"
                 $number_of_colors_splayed_left = 0;
                 for ($color = 0; $color < 5 ; $color++) {
-                    if (self::getCurrentSplayDirection($player_id, $color) == self::LEFT) {
+                    if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
                         $number_of_colors_splayed_left++;
                     }
                 }
@@ -11618,7 +11504,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::setIndexedAuxiliaryValue($player_id, 0);
                 self::executeDrawAndTuck($player_id, 4); // "Draw and tuck two 4s"
                 self::executeDrawAndTuck($player_id, 4); //
-                $card = self::getBottomCardOnBoard($player_id, self::YELLOW);
+                $card = self::getBottomCardOnBoard($player_id, Colors::YELLOW);
                 if ($card !== null) {
                     self::scoreCard($card, $player_id);
                     // "If it is Steam Engine, junk all cards in the 6 deck."
@@ -11632,8 +11518,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "53N1":
                 while (true) {
                     $card = self::executeDraw($player_id, 6, 'revealed'); // "Draw and reveal a 6"
-                    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::renderColor($card['color'])));
-                    if ($card['color'] != self::BLUE && $card['color'] != self::GREEN) {
+                    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
+                    if ($card['color'] != Colors::BLUE && $card['color'] != Colors::GREEN) {
                         break; // "Otherwise"
                     };
                     // "If the card is green or blue"
@@ -11763,7 +11649,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             // id 60, age 6: Metric system
             case "60N1":
-                if (self::getCurrentSplayDirection($player_id, self::GREEN) == self::RIGHT) { // "If your green cards are splayed right"
+                if (self::getCurrentSplayDirection($player_id, Colors::GREEN) == Directions::RIGHT) { // "If your green cards are splayed right"
                     $step_max = 1;
                 }
                 break;
@@ -11851,7 +11737,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 
             case "67N1":
                 if (!$this->innovationGameState->usingFirstEditionRules()) {
-                    $bottom_red_card = self::getBottomCardOnBoard($player_id, self::RED);
+                    $bottom_red_card = self::getBottomCardOnBoard($player_id, Colors::RED);
                     if ($bottom_red_card !== null) {
                         self::returnCard($bottom_red_card); // "Return your bottom red card"
                     }
@@ -11960,7 +11846,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 77, age 8: Flight
             case "77N1":
-                if (self::getCurrentSplayDirection($player_id, self::RED) == 3 /* up */) { // "If your red cards are splayed up"
+                if (self::getCurrentSplayDirection($player_id, Colors::RED) == 3 /* up */) { // "If your red cards are splayed up"
                     $step_max = 1;
                 }
                 break;
@@ -12098,8 +11984,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 88, age 9: Fission
             case "88D1":
                 $card = self::executeDraw($player_id, 10, 'revealed'); // "Draw a 10"
-                if ($card['color'] == self::RED) { // "If it is red"
-                    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::renderColor($card['color'])));
+                if ($card['color'] == Colors::RED) { // "If it is red"
+                    self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
                     // TODO(4E): These need to be junked instead.
                     self::removeAllHandsBoardsAndScores(); // "Remove all hands, boards and score piles from the game"
                     // TODO(4E): Create new bulk notification for 4th edition.
@@ -12309,12 +12195,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
             // id 98, age 10: Robotics
             case "98N1":
-                $top_green_card = self::getTopCardOnBoard($player_id, self::GREEN);
+                $top_green_card = self::getTopCardOnBoard($player_id, Colors::GREEN);
                 if ($top_green_card !== null) {
                     self::scoreCard($top_green_card, $player_id); // "Score your top green card"
                 }
                 $card = self::executeDrawAndMeld($player_id, 10); // "Draw and meld a 10
-                if ($this->innovationGameState->getEdition() <= 3 || self::hasRessource($card, self::INDUSTRY) || self::hasRessource($card, self::EFFICIENCY)) {
+                if ($this->innovationGameState->getEdition() <= 3 || self::hasRessource($card, Icons::INDUSTRY) || self::hasRessource($card, Icons::EFFICIENCY)) {
                     self::selfExecute($card); // "Execute each its non-demand dogma effects"
                 }
                 break;
@@ -12607,131 +12493,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 114, Artifacts age 1: Papyrus of Ani
-            case "114N1":
-                $number_of_purple_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[4];
-                if ($number_of_purple_cards == 0) {
-                    self::revealHand($player_id);
-                    $color_in_clear = self::renderColor(4);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
-                } else {
-                    $step_max = 1;
-                }
-                break;
-
-            // id 123, Artifacts age 1: Ark of the Covenant
-            case "123N1":
-                $step_max = 1;
-                break;
-                
-            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-            case "124N1":
-                $step_max = 2;
-                break;
-            
-             // id 125, Artifacts age 2: Seikilos Epitaph
-             case "125N1":
-                // "Draw and meld a 3"
-                $melded_card = self::executeDrawAndMeld($player_id, 3);
-               
-                // "Meld your bottom card of the drawn card's color"
-                $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$melded_card['color']];
-                if ($number_of_cards > 1) {
-                    $bottom_card = self::getBottomCardOnBoard($player_id, $melded_card['color']);
-                    $melded_card = self::meldCard($bottom_card, $player_id);
-                }
-
-                // "Execute its non-demand dogma effects. Do not share them."
-                self::selfExecute($melded_card);
-                break;
-            
-            // id 126, Artifacts age 2: Rosetta Stone
-            case "126N1":
-                $step_max = 3;
-                break;
-
-            // id 127, Artifacts age 2: Chronicle of Zuo
-            case "127N1":
-                $min_towers = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_4) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
-                $min_crowns = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_1) FROM player WHERE player_id != {player_id} AND player_eliminated = 0", array('player_id' => $player_id)));
-                $min_bulbs = self::getUniqueValueFromDB(self::format("SELECT MIN(player_icon_count_3) FROM player WHERE player_id != {player_id} AND player_eliminated = 0",  array('player_id' => $player_id)));
-                
-                $this_player_icon_counts = self::getPlayerResourceCounts($player_id);
-                
-                if ($this_player_icon_counts[4] <= $min_towers) {
-                    $card = self::executeDraw($player_id, 2); // "If you have the least towers, draw a 2"
-                }
-                if ($this_player_icon_counts[1] <= $min_crowns) {
-                    $card = self::executeDraw($player_id, 3); // "If you have the least crowns, draw a 3"
-                }
-                if ($this_player_icon_counts[3] <= $min_bulbs) {
-                    $card = self::executeDraw($player_id, 4); // "If you have the least bulbs, draw a 4"
-                }
-                break;
-                
-            // id 128, Artifacts age 2: Babylonian Chronicles
-            case "128C1":
-                $step_max = 1;
-                break;
-            
-            case "128N1":
-                // "Draw and score a 3"
-                self::executeDraw($player_id, 3, 'score');
-                break;
-
-            // id 129, Artifacts age 2: Holy Lance
-            case "129C1":
-                $step_max = 1;
-                break;
-
-            case "129N1":
-                // "If Holy Grail is a top card on your board, you win"
-                $top_card = self::getTopCardOnBoard($player_id, 3); // top yellow card
-                if ($top_card !== null && $top_card['id'] == 131) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have Holy Grail as a top card.'), array('You' => 'You'));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has Holy Grail as a top card.'), array('player_name' => self::renderPlayerName($player_id)));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn HolyLance');
-                    throw new EndOfGame();
-                }
-                break;
-                
-            // id 130, Artifacts age 1: Baghdad Battery
-            case "130N1":
-                self::setAuxiliaryValue(-1);
-                $step_max = 1;
-                break;
-            
-            // id 131, Artifacts age 2: Holy Grail
-            case "131N1":
-                $step_max = 1;
-                break;
-
-            // id 132, Artifacts age 2: Terracotta Army
-            case "132C1":
-                $step_max = 1;
-                break;
-            
-            case "132N1":
-                $step_max = 1;
-                break;
-
-            // id 133, Artifacts age 2: Dead Sea Scrolls
-            case "133N1":
-                // "Draw an Artifact of value equal to the value of your highest top card"
-                self::executeDraw($player_id, self::getMaxAgeOnBoardTopCards($player_id), 'hand', /*bottom_to=*/ false, self::ARTIFACTS);
-                break;
-
-            // id 134, Artifacts age 2: Cyrus Cylinder
-            case "134N1":
-                $step_max = 1;
-                break;
-
-            case "134N1+":
-                $step_max = 1;
-                break;
-
             // id 135, Artifacts age 3: Dunhuang Star Chart
             case "135N1":
                 $step_max = 1;
@@ -12807,7 +12568,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 143, Artifacts age 3: Necronomicon
             case "143N1":
                 $card = self::executeDraw($player_id, 3, 'revealed'); // "Draw and reveal a 3"
-                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::renderColor($card['color'])));
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
                 if ($card['color'] == 0)  { // Blue
                     self::executeDraw($player_id, 9); // "Draw a 9"
                     self::transferCardFromTo($card, $player_id, 'hand'); // Keep revealed card
@@ -13018,7 +12779,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 if ($card['color'] == 1) { // "If it is red"
                     $step_max = 1;
                 }
-                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => self::renderColor($card['color'])));
+                self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
                 self::transferCardFromTo($card, $player_id, 'hand');
                 break;
  
@@ -13125,13 +12886,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${your} board.'), array(
                     'i18n' => array('color'),
                     'number' => $visible_card_count,
-                    'color' => self::renderColor($card['color']),
+                    'color' => Colors::render($card['color']),
                     'your' => 'your')
                 );
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('There are ${number} ${color} card(s) visible on ${player_name}\'s board.'), array(
                     'i18n' => array('color'),
                     'number' => $visible_card_count,
-                    'color' => self::renderColor($card['color']),
+                    'color' => Colors::render($card['color']),
                     'player_name' => self::renderPlayerName($player_id))
                 );
                 self::executeDraw($player_id, $visible_card_count, 'score');
@@ -13178,10 +12939,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::executeDraw($player_id, 7);
                 self::executeDraw($player_id, 7);
 
-                $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[0];
+                $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[Colors::BLUE];
                 if ($number_of_blue_cards == 0) {
                     self::revealHand($player_id);
-                    $color_in_clear = self::renderColor(0);
+                    $color_in_clear = Colors::render(Colors::BLUE);
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
 
@@ -13337,12 +13098,12 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         self::notifyPlayer($single_player_id, 'log', clienttranslate('${You} have the highest top ${color} card.'), array(
                             'i18n' => array('color'),
                             'You' => 'You',
-                            'color' => self::renderColor($color)
+                            'color' => Colors::render($color)
                         )); 
                         self::notifyAllPlayersBut($single_player_id, 'log', clienttranslate('${player_name} has the highest top ${color} card.'), array(
                             'i18n' => array('color'),
                             'player_name' => self::renderPlayerName($single_player_id),
-                            'color' => self::renderColor($color)
+                            'color' => Colors::render($color)
                         ));
                         self::transferCardFromTo($card, $single_player_id, 'achievements');
                     } else {
@@ -13416,7 +13177,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             case "199N1":
                 // If there are only one or two splayable stacks then we can splay up automatically
-                $splayable_colors = self::getSplayableColorsOnBoard($player_id, self::UP);
+                $splayable_colors = self::getSplayableColorsOnBoard($player_id, Directions::UP);
                 if (count($splayable_colors) <= 2) {
                     foreach ($splayable_colors as $color) {
                         self::splayUp($player_id, $player_id, $color);
@@ -13491,7 +13252,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 205, Artifacts age 10: Rover Curiosity
             case "205N1":
                 // "Draw and meld an Artifact 10"
-                $card = self::executeDrawAndMeld($player_id, 10, self::ARTIFACTS);
+                $card = self::executeDrawAndMeld($player_id, 10, CardTypes::ARTIFACTS);
                 // "Execute the effects of the melded card as if they were on this card. Do not share them"
                 self::fullyExecute($card);
                 break;
@@ -13658,40 +13419,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "219D1":
                 $step_max = 1;
                 break;
-                
-            // id 441, age 11: Solar Sailing
-            case "441N1":
-                // "Draw and meld an 11."
-                $card = self::executeDraw($player_id, 11, 'board');
-                $color = $card['color'];
-                    
-                if ($card['splay_direction'] != 4) { // aslant
-                    // "If its color is not splayed aslant on your board, return all but your top two cards of that color"
-                    $board_cards = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                    $num_color_cards = $board_cards[$color];
-                    if ($num_color_cards > 2) { // verify that more than two cards are there so transfer can occur
-                        $num_cards_transferred = 0;
-                        do {
-                            $card = self::getBottomCardOnBoard($player_id, $color);
-                            if ($card != null) {
-                                self::returnCard($card);
-                            }
-                            $num_cards_transferred++;
-                        } while ($num_cards_transferred < $num_color_cards - 2);
-                    }
-                    self::splayAslant($player_id, $player_id, $card['color']); // "and splay that color aslant"
-                }
-                
-                // Need to recount the cards to verify that the number of cards is right. 
-                if (self::countCardsInLocationKeyedByColor($player_id, 'board')[$color] >= 4) {
-                    // "If there are four or more cards of that color on your board, you win."
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have 4 or more ${color} cards on your board.'), array('You' => 'You', 'color' => self::renderColor($color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has 4 or more ${color} cards on their board.'), array('player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($color)));
-                    $this->innovationGameState->set('winner_by_dogma', $player_id);
-                    self::trace('EOG bubbled from self::stPlayerInvolvedTurn Solar Sailing');
-                    throw new EndOfGame();
-                }
-                break;
 
             // id 442, age 11: Astrogeology
             case "442N1":
@@ -13751,80 +13478,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} does not have two top cards of matching value on his board.'), 
                         array('player_name' => self::renderPlayerName($player_id)));
                 }
-                break;
-                
-            // id 445, age 11: Space Traffic
-            case "445N1":
-            
-                do {
-                    // "Draw and tuck an 11."
-                    $card = self::executeDraw($player_id, 11);
-                    $color = $card['color'];
-                    $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                    self::tuckCard($card, $player_id);
-                    
-                    if ($bottom_card !== null) {
-                        if ($bottom_card['age'] == 11) {
-                            // "If you tucked directly under an 11, you lose."
-                        
-                            self::removeAllCardsFromPlayer($player_id);
-                            if (self::decodeGameType($this->innovationGameState->get('game_type')) == 'individual') {
-                                // If there is only one player remaining in the game, that player wins
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} lose.'),  array('You' => 'You'));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} loses.'), array(
-                                    'player_name' => self::renderPlayerName($player_id)
-                                ));
-                                $player_ids = self::getAllActivePlayerIds();
-                                if (count($player_ids) == 2) {
-                                    foreach ($player_ids as $id) {
-                                        if ($id != $player_id) {
-                                            $remaining_player_id = $id;
-                                        }
-                                    }
-                                    $this->innovationGameState->set('winner_by_dogma', $remaining_player_id);
-                                    self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
-                                    throw new EndOfGame();
-                                } else {
-                                    // Only eliminate the player if the game isn't ending
-                                    self::eliminatePlayer($player_id);
-                                }
-                                break; // Stop the effect if the player loses
-                            } else { // Team play
-                                // Entire team loses if one player loses 
-                                $teammate_id = self::getPlayerTeammate($player_id);
-                                $losing_team = array($player_id, $teammate_id);
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                                self::notifyPlayer($teammate_id, 'log', clienttranslate('${Your} team loses.'), array('Your' => 'Your'));
-                                self::notifyAllPlayersBut($losing_team, 'log', clienttranslate('The other team loses.'), array());
-                                foreach ($player_ids as $id) {
-                                    if ($id != $player_id) {
-                                        $remaining_player_id = $id;
-                                    }
-                                }
-                                $this->innovationGameState->set('winner_by_dogma', $remaining_player_id);
-                                self::trace('EOG bubbled from self::stInterInteractionStep Space Traffic');
-                                throw new EndOfGame();
-                            }
-                        }
-                        
-                        // "Score all but your top three cards of the color of the tucked card,"
-                        $card_counts = self::countCardsInLocationKeyedByColor($player_id, 'board');
-                        for ($i = 0; $i < $card_counts[$color] - 3; $i++) {
-                            $bottom_card = self::getBottomCardOnBoard($player_id, $color);
-                            self::transferCardFromTo($bottom_card, $player_id, 'score'); // score the cards
-                        }
-                        self::splayAslant($player_id, $player_id, $color); // "and splay that color aslant."
-                    }
-                    
-                    // "If you do not have the highest score, repeat this dogma effect."
-                    $highest_score = false;
-                    $player_score = self::getPlayerScore($player_id);
-                    foreach (self::getAllActivePlayerIds() as $player) {
-                        if ($player_score > self::getPlayerScore($player))  {
-                            $highest_score = true;
-                        }
-                    }
-                } while (!$highest_score);
                 break;
 
             // id 446, age 11: Near-Field Comm
@@ -13946,7 +13599,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // "Draw and meld a card of value equal to the number of visible purple cards on your board."
                 $purple_pile_size = self::countVisibleCards($player_id, 4);
                 $card = self::executeDrawAndMeld($player_id, $purple_pile_size);
-                if (!self::hasRessource($card, self::PROSPERITY)) {
+                if (!self::hasRessource($card, Icons::PROSPERITY)) {
                     // "If the melded card has no crowns, tuck it."
                     self::tuckCard($card, $player_id);
                 }
@@ -13956,9 +13609,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "496N1":
                 // "Draw and reveal a 3. If it has a leaf, score it.  Otherwise, if it has a crown, return it and draw two 3. Otherwise, tuck it."
                 $revealed_card = self::executeDrawAndReveal($player_id, 3);
-                if (self::hasRessource($revealed_card, self::HEALTH)) {
+                if (self::hasRessource($revealed_card, Icons::HEALTH)) {
                     self::scoreCard($revealed_card, $player_id);
-                } else if (self::hasRessource($revealed_card, self::PROSPERITY)) {
+                } else if (self::hasRessource($revealed_card, Icons::PROSPERITY)) {
                     self::returnCard($revealed_card);
                     self::executeDraw($player_id, 3);
                     self::executeDraw($player_id, 3);
@@ -13970,7 +13623,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "496N2":
                 // "If you have no towers, claim the Zen achievement."
                 $icon_counts = self::getPlayerResourceCounts($player_id);
-                if ($icon_counts[self::AUTHORITY] == 0) {
+                if ($icon_counts[Icons::AUTHORITY] == 0) {
                     self::claimSpecialAchievement($player_id, 596); // Zen
                 }
                 break;
@@ -14339,9 +13992,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         $card_id_2 = $this->innovationGameState->get('card_id_2');
         $card_id_3 = $this->innovationGameState->get('card_id_3');
         
-        $leaf = self::getIconSquare(2);
-        $lightbulb = self::getIconSquare(3);
-        $clock = self::getIconSquare(6);
+        $leaf = Icons::render(2);
+        $lightbulb = Icons::render(3);
+        $clock = Icons::render(6);
 
         if (self::isInSeparateFile($card_id)) {
             $options = self::getCardInstance($card_id, $executionState)->getInteractionOptions();
@@ -14385,6 +14038,9 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         $options['owner_from'] = 0;
                         $options['location_from'] = 'achievements';
                     }
+                }
+                if (array_key_exists('safeguard_keyword', $options)) {
+                    $options['location_to'] = 'safe';
                 }
                 if (array_key_exists('foreshadow_keyword', $options)) {
                     $options['location_to'] = 'forecast';
@@ -14578,7 +14234,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => array($this->innovationGameState->get('color_last_selected'))
             );
             break;
@@ -14676,7 +14332,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             
         // id 21, age 2: Canal building         
         case "21N1A":
-            if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', self::BASE)[3] > 0) {
+            if ($this->innovationGameState->usingFourthEditionRules() && self::countCardsInLocationKeyedByAge(0, 'deck', CardTypes::BASE)[3] > 0) {
                 // "You may choose to either exchange all the highest cards in your hand with all the highest cards in your score pile, or junk all cards in the 3 deck."
                 $options = array(
                     'player_id' => $player_id,
@@ -14723,7 +14379,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::LEFT
+                'splay_direction' => Directions::LEFT
             );
             break;
         
@@ -14810,7 +14466,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => array(1) /* red */
             );
             break;
@@ -14880,7 +14536,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => array(0, 2) /* blue or green */
             );
             break;
@@ -14928,7 +14584,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => array(1) /* red */
             );
             break;
@@ -15049,7 +14705,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(0) /* blue */
             );
             break;
@@ -15074,7 +14730,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "39N1A":
             $splayed_left_colors = array();
             for ($color = 0; $color < 5; $color++) {
-                if (self::getCurrentSplayDirection($player_id, $color) == self::LEFT) {
+                if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
                     $splayed_left_colors[] = $color;
                 }
             }
@@ -15084,7 +14740,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => $splayed_left_colors
             );
             break;
@@ -15194,7 +14850,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(2) /* green */
             );
             break;
@@ -15226,7 +14882,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(3,4) /* yellow, purple */
             );
             break;
@@ -15239,7 +14895,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(0) /* blue */
             );
             break;
@@ -15278,7 +14934,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(1) /* red */
             );
             break;
@@ -15357,7 +15013,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(2) /* green */
             );
             break;
@@ -15424,7 +15080,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(3) /* yellow */
             );
             break;
@@ -15455,7 +15111,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(0) /* blue */
             );
             break;
@@ -15503,7 +15159,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(1,4) /* red or purple */
             );
             break;
@@ -15545,7 +15201,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT
+                'splay_direction' => Directions::RIGHT
             );
             break;
         
@@ -15578,7 +15234,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(3) /* yellow */
             );
             break;
@@ -15634,7 +15290,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
                 
-                'splay_direction' => self::RIGHT,
+                'splay_direction' => Directions::RIGHT,
                 'color' => array(1,4) /* red or purple */
             );
             break;
@@ -15806,7 +15462,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
         case "74N3A_4E":
             $splayed_right_colors = array();
             for ($color = 0; $color < 5; $color++) {
-                if (self::getCurrentSplayDirection($player_id, $color) == self::RIGHT) {
+                if (self::getCurrentSplayDirection($player_id, $color) == Directions::RIGHT) {
                     $splayed_right_colors[] = $color;
                 }
             }
@@ -16426,256 +16082,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             );
             break;
         
-        // id 114, Artifacts age 1: Papyrus of Ani
-        case "114N1A":
-            // "Return a purple card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-
-                'color' => array(4),
-            );
-            break;
-
-        case "114N1B":
-            // Choose any type
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_type' => true,
-                'type' => self::getActiveCardTypes()
-            );
-            break;
-            
-        // id 123, Artifacts age 1: Ark of the Covenant
-        case "123N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'revealed,deck',
-            );
-            break;
-            
-        // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-        case "124N1A":
-            // "Choose a color"
-            $options = array(
-                'player_id' => $player_id,
-                
-                'choose_color' => true
-            );
-            break;
-        
-        case "124N1B":
-            // "Meld a card of the chosen color from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-                
-                'color' => array(self::getAuxiliaryValue()),
-
-                'meld_keyword' => true,
-            );
-            break;
-        
-        // id 126, Artifacts age 1: Rosetta Stone
-        case "126N1A":
-            // "Choose a type"
-            $options = array(
-                'player_id' => $player_id,
-
-                'choose_type' => true,
-                'type' => self::getActiveCardTypes()
-            );
-            break;
-
-        case "126N1B":
-            // "Meld one (of the drawn cards)"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'card_id_1' => $card_id_1,
-                'card_id_2' => $card_id_2,
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        case "126N1C":
-            // Choose an opponent to transfer the other card to
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'choose_player' => true,
-                'players' => self::getActiveOpponents($player_id)
-            );
-            break;
-        
-        // id 128, Artifacts age 2: Babylonian Chronicles
-        case "128C1A":
-            // "Transfer a top non-red card with a tower from your board to my board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                
-                'with_icon' => 4, // tower
-                'color' => array(0, 2, 3, 4) // non-red
-            );
-            break;
-
-        // id 129, Artifacts age 2: Holy Lance
-        case "129C1A":
-            // "Transfer a top Artifact from your board to my board!"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => $launcher_id,
-                'location_to' => 'board',
-                 
-                'type' => array(1) // Artifact
-            );
-            break;
-
-        // id 130, Artifacts age 1: Baghdad Battery
-        case "130N1A":
-            // "Meld two cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 2,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'board',
-
-                'meld_keyword' => true,
-            );
-            break;
-
-        // id 131, Artifacts age 2: Holy Grail
-        case "131N1A":
-            // "Return a card from your hand"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
-            
-        case "131N1B":
-            // "Claim an achievement of matching value, ignoring eligibility"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'age' => $this->innovationGameState->get('age_last_selected'),
-                'owner_from' => 0,
-                'location_from' => 'achievements',
-                'owner_to' => $player_id,
-                'location_to' => 'achievements',
-
-                'require_achievement_eligibility' => false
-            );
-            break;
-
-        // id 132, Artifacts age 2: Terracotta Army
-        case "132C1A":
-            // "I compel you to return a top card on your board with no tower"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'board',
-                'owner_to' => 0,
-                'location_to' => 'deck',
-                
-                'without_icon' => 4 // tower
-            );
-            break;
-
-        case "132N1A":
-            // "Score a card from your hand with no towers"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => $player_id,
-                'location_to' => 'score',
-                
-                'without_icon' => 4, // tower
-
-                'score_keyword' => true
-            );
-            break;
-        
-        // id 134, Artifacts age 2: Cyrus Cylinder
-        case "134N1A":
-            // "Choose any other top purple card on any player's board"
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-
-                'color' => array(4), // Purple
-
-                // Exclude the card currently being executed (it's possible for the effects of Cyrus Cylinder to be executed as if it were on another card)
-                'not_id' => self::getCurrentNestedCardState()['executing_as_if_on_card_id'],
-            );
-            break;
-
-        case "134N1B":
-        case "134N1+A":
-            // Prompt player to pick a stack which to splay left.
-            $options = array(
-                'player_id' => $player_id,
-                'n' => 1,
-                
-                'owner_from' => 'any player',
-                'location_from' => 'board',
-                'location_to' => 'none',
-            );
-            break;
-            
         // id 135, Artifacts age 3: Dunhuang Star Chart
         case "135N1A":
             // "Return all cards from your hand"
@@ -18500,7 +17906,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => self::getAuxiliaryValueAsArray(),
             );
             break;
@@ -18697,7 +18103,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => self::getAuxiliaryValueAsArray(),
             );
             break;
@@ -18773,7 +18179,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' =>array(0,3), // blue or yellow
             );
             break;
@@ -18815,7 +18221,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'n' => 1,
                 'can_pass' => true,
 
-                'splay_direction' => self::LEFT,
+                'splay_direction' => Directions::LEFT,
                 'color' => array(4),
             );
             break;
@@ -18838,7 +18244,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                'n' => 1,
                'can_pass' => true,
 
-               'splay_direction' => self::RIGHT,
+               'splay_direction' => Directions::RIGHT,
                'color' => array(0),
            );
            break;
@@ -19161,7 +18567,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) { // "If you do, draw a 4 for every color you have splayed left"
                         $number_of_colors_splayed_left = 0;
                         for ($color = 0; $color < 5 ; $color++) {
-                            if (self::getCurrentSplayDirection($player_id, $color) == self::LEFT) {
+                            if (self::getCurrentSplayDirection($player_id, $color) == Directions::LEFT) {
                                 $number_of_colors_splayed_left++;
                             }
                         }
@@ -19225,7 +18631,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 // id 36, age 4: Printing press        
                 case "36N1A":
                     if ($n > 0) { // "If you do"
-                        $top_purple_card = self::getTopCardOnBoard($player_id, self::PURPLE);
+                        $top_purple_card = self::getTopCardOnBoard($player_id, Colors::PURPLE);
                         if ($top_purple_card !== null) {
                             self::executeDraw($player_id, $top_purple_card['age'] + 2); // "Draw a card of value two higher than the top purple card on your board"
                         }
@@ -19313,8 +18719,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::splayRight($player_id, $player_id, $color); // "Splay that color of your cards right"
                             $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$color];
                             if ($number_of_cards == 1) {
-                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored' => self::renderColor($color)));
-                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored' => self::renderColor($color)));
+                                self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($color)));
+                                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($color)));
                             } else {
                                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($color)));
                                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($color)));
@@ -19359,7 +18765,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                                 }
                             }
                             if (!$transfer) { // The player had no card of this color in his hand
-                                $color_in_clear = self::renderColor($color);
+                                $color_in_clear = Colors::render($color);
                                 self::notifyPlayer($other_player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
                                 self::notifyAllPlayersBut($other_player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($other_player_id), 'colored' => $color_in_clear));
                             }
@@ -19671,103 +19077,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                         }
                     }
                     break;
-                    
-                // id 114, Artifacts age 1: Papyrus of Ani
-                case "114N1A":
-                    // "If you do"
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-                
-                // id 123, Artifacts age 1: Ark of the Covenant
-                case "123N1A":
-                    $player_ids = self::getActivePlayerIdsInTurnOrderStartingWithCurrentPlayer();
-                    
-                    if ($n > 0) { // Unsaid rule: the player must have returned a card or else this part of the effect can't continue
-                        $returned_color = $this->innovationGameState->get('color_last_selected');
-                            
-                        foreach ($player_ids as $id) {
-                            $top_cards = self::getTopCardsOnBoard($id);
-                            
-                            $artifact_found = false;
-                            foreach ($top_cards as &$card) {
-                                if ($card['type'] == 1) { // Artifact
-                                    $artifact_found = true;
-                                    break;
-                                }
-                            }
-                            
-                            if (!$artifact_found) {
-                                while (($top_card = self::getTopCardOnBoard($id, $returned_color)) !== null) {   
-                                    // "Transfer all cards of the same color from the boards of all players with no top artifacts to your score pile."
-                                    self::transferCardFromTo($top_card, $player_id, 'score');
-                                }
-                            }
-                            
-                        }
-                    }
-
-                    // "If Ark of the Covenant is a top card on any board, transfer it to your hand"
-                    $ark_of_the_covenant = self::getIfTopCardOnBoard(123);
-                    if ($ark_of_the_covenant !== null) {
-                        self::transferCardFromTo($ark_of_the_covenant, $player_id, 'hand');
-                    }
-                    break;
-                
-                // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-                case "124N1A":
-                    // "Draw a 1"
-                    self::executeDraw($player_id, 1);
-                    break;
-
-                case "124N1B":
-                    // "If you (melded a card)"
-                    if ($n > 0) {
-                        // "Splay that color left"
-                        self::splayLeft($player_id, $player_id, $this->innovationGameState->get('color_last_selected')); 
-                    } else {
-                        self::revealHand($player_id);
-                    }
-                    break;
-
-                // id 131, Artifacts age 2: Holy Grail
-                case "131N1A":
-                    // if you do
-                    if ($n > 0) {
-                        self::incrementStepMax(1);
-                    }
-                    break;
-
-                // id 132, Artifacts age 2: Terracotta Army
-                case "132N1A":
-                    // if you don't
-                    if ($n == 0) {
-                        // Reveal hand to prove to others that they didn't have any cards without a tower
-                        self::revealHand($player_id);
-                    }
-                    break;
-                
-                // id 134, Artifacts age 2: Cyrus Cylinder
-                case "134N1A":
-                    // "Execute its non-demand dogma effects"
-                    $card_id = $this->innovationGameState->get('id_last_selected');
-                    if ($n > 0 && self::getNonDemandEffect($card_id, 1) != null) {
-                        self::selfExecute(self::getCardInfo($card_id));
-                    } else {
-                        self::incrementStepMax(1); // Still need to do the splay
-                    }
-                    break;
-
-                case "134N1B":
-                case "134N1+A":
-                    // "Splay left a color on any player's board"
-                    if ($n > 0) {
-                        $color = $this->innovationGameState->get('color_last_selected');
-                        $target_player_id = $this->innovationGameState->get('owner_last_selected');
-                        self::splayLeft($player_id, $target_player_id, $color);
-                    }
-                    break;
                 
                 // id 135, Artifacts age 3: Dunhuang Star Chart
                 case "135N1A":
@@ -19834,7 +19143,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     if ($n > 0) {
                         self::notifyGeneralInfo(clienttranslate('This card is ${color}.'), array(
                             'i18n' => array('color'),
-                            'color' => self::renderColor($this->innovationGameState->get('color_last_selected'))
+                            'color' => Colors::render($this->innovationGameState->get('color_last_selected'))
                         ));
                         self::setAuxiliaryValue(1);
                         self::incrementStepMax(2);
@@ -19930,10 +19239,10 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     self::executeDraw($player_id, 4);
                     self::executeDraw($player_id, 4);
 
-                    $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[0];
+                    $number_of_blue_cards = self::countCardsInLocationKeyedByColor($player_id, 'hand')[Colors::BLUE];
                     if ($number_of_blue_cards == 0) {
                         self::revealHand($player_id);
-                        $color_in_clear = self::renderColor(0);
+                        $color_in_clear = Colors::render(Colors::BLUE);
                         self::notifyPlayer($player_id, 'log', clienttranslate('${You} have no ${colored} cards in your hand.'), array('i18n' => array('colored'), 'You' => 'You', 'colored' => $color_in_clear));
                         self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has no ${colored} cards in his hand.'), array('i18n' => array('colored'), 'player_name' => self::renderPlayerName($player_id), 'colored' => $color_in_clear));
                         $step = $step + 1;
@@ -19997,8 +19306,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     $cards = self::getCardsInLocationKeyedByColor($player_id, 'hand');
                     $colored_cards = $cards[$chosen_color];
                     $num_cards = count($colored_cards);
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'You' => 'You', 'n' => $num_cards, 'color' => self::renderColor($chosen_color)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'n' => $num_cards, 'color' => self::renderColor($chosen_color)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'You' => 'You', 'n' => $num_cards, 'color' => Colors::render($chosen_color)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} revealed ${n} ${color} cards.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'n' => $num_cards, 'color' => Colors::render($chosen_color)));
                     
                     // "If you have exactly that many cards of that color, score them, and splay right your cards of that color"
                     if ($num_cards == self::getAuxiliaryValue()) {
@@ -20198,8 +19507,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 case "175N1B":
                     $color_1 = self::getAuxiliaryValue();
                     $color_2 = $this->innovationGameState->get('color_last_selected');
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose your top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::renderColor($color_1), 'color_2' => self::renderColor($color_2)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses his top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => self::renderColor($color_1), 'color_2' => self::renderColor($color_2)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose your top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => Colors::render($color_1), 'color_2' => Colors::render($color_2)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses his top ${color_1} and ${color_2} cards.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => Colors::render($color_1), 'color_2' => Colors::render($color_2)));
 
                     // "Draw a card of value one higher and meld it"
                     $age_selected = self::getFaceupAgeLastSelected();
@@ -20231,8 +19540,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     
                     // "If the number of cards of that color visible on your board is exactly equal to the card's value, you win"
                     if ($card['faceup_age'] == self::countVisibleCards($player_id, $card['color'])) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card whose value is equal to the number of visible cards in your ${color} stack.'), array('You' => 'You', 'color'=> self::renderColor($card['color'])));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card whose value is equal to the number of visible cards in his ${color} stack.'), array('player_name' => self::renderPlayerName($player_id), 'color'=> self::renderColor($card['color'])));
+                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} melded a card whose value is equal to the number of visible cards in your ${color} stack.'), array('You' => 'You', 'color'=> Colors::render($card['color'])));
+                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} melded a card whose value is equal to the number of visible cards in his ${color} stack.'), array('player_name' => self::renderPlayerName($player_id), 'color'=> Colors::render($card['color'])));
                         $this->innovationGameState->set('winner_by_dogma', $player_id);
                         self::trace('EOG bubbled from self::stInterInteractionStep International Prototype Metre Bar');
                         throw new EndOfGame();
@@ -21287,13 +20596,13 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             // id 50, age 5: Measurement
             case "50N1B":
                 // $choice is a color
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
                 self::splayRight($player_id, $player_id, $choice); // "Splay that color of your cards right"
                 $number_of_cards = self::countCardsInLocationKeyedByColor($player_id, 'board')[$choice];
                 if ($number_of_cards == 1) {
-                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored' => self::renderColor($choice)));
-                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored' => self::renderColor($choice)));
+                    self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($choice)));
+                    self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored} card.'), array('i18n' => array('n', 'colored'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored' => Colors::render($choice)));
                 } else {
                     self::notifyPlayer($player_id, 'log', clienttranslate('${You} have ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'You' => 'You', 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($choice)));
                     self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} has  ${n} ${colored_cards}.'), array('i18n' => array('n', 'colored_cards'), 'player_name' => self::renderPlayerName($player_id), 'n' => self::renderNumber($number_of_cards), 'colored_cards' => self::renderColorCards($choice)));
@@ -21396,8 +20705,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "83N1A":
                 // $choice was two colors
                 $colors = Arrays::getValueAsArray($choice);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::renderColor($colors[0]), 'color_2' => self::renderColor($colors[1])));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => self::renderColor($colors[0]), 'color_2' => self::renderColor($colors[1])));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
                 
                 $card = self::executeDraw($player_id, 9, 'revealed'); // "Draw and reveal a 9"
                 if ($card['color'] <> $colors[0] && $card['color'] <> $colors[1]) {
@@ -21408,7 +20717,7 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                     }
                 }
                 else { // "If it is either of the colors you chose"
-                    self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::renderColor($card['color'])));
+                    self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
                     self::meldCard($card, $player_id); // "Meld it"
                     self::setAuxiliaryValue($card['color']); // Flag the sucessful colors
                     self::incrementStepMax(1);
@@ -21465,72 +20774,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }                
                 break;
 
-            // id 114, Artifacts age 1: Papyrus of Ani
-            case "114N1B":
-                // "Reveal a card of of any type of value two higher"
-                $age_to_draw_in = $this->innovationGameState->get('age_last_selected') + 2;
-                $card = self::executeDraw($player_id, $age_to_draw_in, 'revealed', /*bottom_to=*/ false, /*type=*/ $choice);
-                if ($card['color'] == 4) { // "If the drawn card is purple"
-                    self::meldCard($card, $player_id); // "Meld it"
-                    self::selfExecute($card); // "Execute each of its non-demand effects. Do not share them."
-                    break;
-                } else {
-                    // Non-purple card is placed in the hand
-                    self::transferCardFromTo($card, $player_id, 'hand');
-                }
-                break;
-            
-            // id 124, Artifacts age 1: Tale of the Shipwrecked Sailor
-            case "124N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
-                self::setAuxiliaryValue($choice);
-                break;
-            
-            // id 126, Artifacts age 2: Rosetta Stone
-            case "126N1A":
-                // "Draw two 2s of that type"
-                $this->innovationGameState->set('card_id_1', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
-                $this->innovationGameState->set('card_id_2', self::executeDraw($player_id, 2, 'hand', /*bottom_to=*/ false, /*type=*/ $choice)['id']);
-                break;
-
-            case "126N1C":
-                // "Transfer the other to an opponent's board"
-                $card_1 = self::getCardInfo($this->innovationGameState->get('card_id_1'));
-                $card_2 = self::getCardInfo($this->innovationGameState->get('card_id_2'));
-                $remaining_card = $card_1['location'] == 'hand' ? $card_1 : $card_2;
-                self::transferCardFromTo($remaining_card, $choice, 'board');
-                break;
-
-            // id 130, Artifacts age 1: Baghdad Battery
-            case "130N1A":
-                if (self::getAuxiliaryValue() == -1) {
-                    // Log the card that is melded first
-                    $card_id = $this->innovationGameState->get('id_last_selected');
-                    self::setAuxiliaryValue($card_id);
-                    self::meldCard(self::getCardInfo($card_id), $player_id);
-                } else {
-                    // If you melded two of the same color and they are of different types
-                    $first_card = self::getCardInfo(self::getAuxiliaryValue());
-                    $second_card = self::getCardInfo($this->innovationGameState->get('id_last_selected'));
-                    self::meldCard($second_card, $player_id);
-                    if ($first_card['type'] == $second_card['type']) {
-                        self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose cards from the same card set.'), array('You' => 'You'));
-                        self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose cards from the same card set.'), array('player_name' => self::renderPlayerName($player_id)));
-                    } else {
-                        if ($first_card['color'] == $second_card['color']) {
-                            // "Draw and score five 2s"
-                            for ($i = 1; $i <= 5; $i++) {
-                                self::executeDraw($player_id, 2, 'score');
-                            }
-                        } else {
-                            self::notifyPlayer($player_id, 'log', clienttranslate('${You} chose different colors.'), array('You' => 'You'));
-                            self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chose different colors.'), array('player_name' => self::renderPlayerName($player_id)));
-                        }
-                    }
-                }
-                break;
-
             // id 147, Artifacts age 4: East India Company Charter
             case "147N1A":
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose the value ${age}.'), array('You' => 'You', 'age' => self::getAgeSquare($choice)));
@@ -21540,8 +20783,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 152, Artifacts age 5: Mona Lisa
             case "152N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
                 self::setAuxiliaryValue2($choice);
                 break;
 
@@ -21553,15 +20796,15 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 157, Artifacts age 5: Bill of Rights
             case "157C1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
             // id 158, Artifacts age 5: Ship of the Line Sussex
             case "158N1B":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
             
@@ -21578,23 +20821,23 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1}, ${color_2}, and ${color_3}.'), array(
                     'i18n' => array('color_1', 'color_2', 'color_3'),
                     'You' => 'You',
-                    'color_1' => self::renderColor($colors[0]),
-                    'color_2' => self::renderColor($colors[1]),
-                    'color_3' => self::renderColor($colors[2]))
+                    'color_1' => Colors::render($colors[0]),
+                    'color_2' => Colors::render($colors[1]),
+                    'color_3' => Colors::render($colors[2]))
                 );
                 self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1}, ${color_2}, and ${color_3}.'), array(
                     'i18n' => array('color_1', 'color_2', 'color_3'),
                     'player_name' => self::renderPlayerName($player_id),
-                    'color_1' => self::renderColor($colors[0]),
-                    'color_2' => self::renderColor($colors[1]),
-                    'color_3' => self::renderColor($colors[2]))
+                    'color_1' => Colors::render($colors[0]),
+                    'color_2' => Colors::render($colors[1]),
+                    'color_3' => Colors::render($colors[2]))
                 );
                 
                 // "Draw and reveal a 8"
                 $card = self::executeDraw($player_id, 8, 'revealed');
                 // "If the drawn card is one of the chosen colors, score it and splay up that color"
                 if ($card['color'] == $colors[0] || $card['color'] == $colors[1] || $card['color'] == $colors[2]) {
-                    self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => self::renderColor($card['color'])));
+                    self::notifyGeneralInfo(clienttranslate('It matches a chosen color: ${color}.'), array('i18n' => array('color'), 'color' => Colors::render($card['color'])));
                     self::scoreCard($card, $player_id);
                     self::splayUp($player_id, $player_id, $card['color']);
 
@@ -21609,8 +20852,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
 
             // id 173, Artifacts age 6: Moonlight Sonata
             case "173N1A":
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => self::renderColor($choice)));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => self::renderColor($choice)));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color}.'), array('i18n' => array('color'), 'You' => 'You', 'color' => Colors::render($choice)));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color}.'), array('i18n' => array('color'), 'player_name' => self::renderPlayerName($player_id), 'color' => Colors::render($choice)));
                 self::setAuxiliaryValue($choice);
                 break;
 
@@ -21684,8 +20927,8 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
             case "489D1A":
                 // $choice was two colors
                 $colors = Arrays::getValueAsArray($choice);
-                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => self::renderColor($colors[0]), 'color_2' => self::renderColor($colors[1])));
-                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => self::renderColor($colors[0]), 'color_2' => self::renderColor($colors[1])));
+                self::notifyPlayer($player_id, 'log', clienttranslate('${You} choose ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'You' => 'You', 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
+                self::notifyAllPlayersBut($player_id, 'log', clienttranslate('${player_name} chooses ${color_1} and ${color_2}.'), array('i18n' => array('color_1', 'color_2'), 'player_name' => self::renderPlayerName($player_id), 'color_1' => Colors::render($colors[0]), 'color_2' => Colors::render($colors[1])));
                 self::setAuxiliaryValueFromArray($colors);
                 break;
 

@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
+use Innovation\Enums\Directions;
 
 class Card531 extends Card
 {
@@ -29,23 +31,23 @@ class Card531 extends Card
     if (self::getEffectNumber() === 1) {
       if (self::isFirstInteraction()) {
         return [
-          'n' => 'all',
+          'n'             => 'all',
           'location_from' => 'revealed',
-          'meld_keyword'   => true,
-          'color'         => [$this->game::GREEN, $this->game::YELLOW],
+          'meld_keyword'  => true,
+          'color'         => [Colors::GREEN, Colors::YELLOW],
         ];
       } else {
         return [
-          'n' => 'all',
-          'location_from' => 'revealed',
-          'location_to' => 'deck',
+          'n'              => 'all',
+          'location_from'  => 'revealed',
+          'return_keyword' => true,
         ];
       }
     } else {
       return [
-        'can_pass' => true,
-        'splay_direction' => $this->game::RIGHT,
-        'color' => [$this->game::GREEN, $this->game::YELLOW],
+        'can_pass'        => true,
+        'splay_direction' => Directions::RIGHT,
+        'color'           => [Colors::GREEN, Colors::YELLOW],
       ];
     }
   }

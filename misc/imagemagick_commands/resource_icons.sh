@@ -17,7 +17,7 @@ generate_border 'white' '#fffffe' # For some reason if I change this to #ffffff 
 
 # (2) Generate each combination of icon + colored border box
 function borderize() {
-    local icon_type=${1}  # e.g. crown
+    local icon_type=${1}  # e.g. prosperity
     local border_color=${2}  # e.g. blue
     local icon_img="../square_icons/${icon_type}.png"
     local border_img="temp/${border_color}_square_icon_border.png"
@@ -25,7 +25,7 @@ function borderize() {
     magick convert -composite -gravity center $border_img $icon_img $result_img
 }
 
-for icon in {crown,leaf,lightbulb,castle,factory,clock}; do
+for icon in {prosperity,health,concept,authority,industry,efficiency}; do
     for color in {blue,red,green,yellow,purple,white}; do
         borderize ${icon} ${color}
     done
@@ -33,12 +33,12 @@ done
 
 # (3) Generate spritesheet from all individual bordered icons constructed in step 2
 magick montage \
-    "temp/"{crown,leaf,lightbulb,castle,factory,clock}"_blue.png" \
-    "temp/"{crown,leaf,lightbulb,castle,factory,clock}"_red.png" \
-    "temp/"{crown,leaf,lightbulb,castle,factory,clock}"_green.png" \
-    "temp/"{crown,leaf,lightbulb,castle,factory,clock}"_yellow.png" \
-    "temp/"{crown,leaf,lightbulb,castle,factory,clock}"_purple.png" \
-    "temp/"{crown,leaf,lightbulb,castle,factory,clock}"_white.png" \
+    "temp/"{prosperity,health,concept,authority,industry,efficiency}"_blue.png" \
+    "temp/"{prosperity,health,concept,authority,industry,efficiency}"_red.png" \
+    "temp/"{prosperity,health,concept,authority,industry,efficiency}"_green.png" \
+    "temp/"{prosperity,health,concept,authority,industry,efficiency}"_yellow.png" \
+    "temp/"{prosperity,health,concept,authority,industry,efficiency}"_purple.png" \
+    "temp/"{prosperity,health,concept,authority,industry,efficiency}"_white.png" \
 -tile 6x6 -geometry +2+2 -background 'white' "../../img/resource_icons.jpg"
 
 rm -r temp

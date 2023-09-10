@@ -3,6 +3,8 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\CardTypes;
+use Innovation\Enums\Directions;
 
 class Card351 extends Card
 {
@@ -49,7 +51,7 @@ class Card351 extends Card
     } else if (self::isFirstNonDemand()) {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::LEFT,
+        'splay_direction' => Directions::LEFT,
       ];
     } else if (self::isFirstInteraction()) {
       return [
@@ -69,11 +71,11 @@ class Card351 extends Card
   {
     if (self::isFirstOrThirdEdition()) {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Transfer bottom ${age} to the available achievements'), 'age' => self::renderValueWithType(1, $this->game::BASE)],
+        1 => [clienttranslate('Transfer bottom ${age} to the available achievements'), 'age' => self::renderValueWithType(1, CardTypes::BASE)],
       ]);
     } else {
       return self::buildPromptFromList([
-        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(2, $this->game::BASE)],
+        1 => [clienttranslate('Junk ${age} deck'), 'age' => self::renderValueWithType(2, CardTypes::BASE)],
       ]);
     }
   }

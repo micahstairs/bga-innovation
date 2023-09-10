@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Base;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card4 extends Card
 {
@@ -14,11 +15,11 @@ class Card4 extends Card
   {
     while (true) {
       $card = self::drawAndReveal(1);
-      if (self::hasIcon($card, $this->game::AUTHORITY)) {
-        $this->notifications->notifyPresenceOfIcon($this->game::AUTHORITY);
+      if (self::hasIcon($card, Icons::AUTHORITY)) {
+        $this->notifications->notifyPresenceOfIcon(Icons::AUTHORITY);
         self::score($card);
       } else {
-        $this->notifications->notifyAbsenceOfIcon($this->game::AUTHORITY);
+        $this->notifications->notifyAbsenceOfIcon(Icons::AUTHORITY);
         self::transferToHand($card);
         return;
       }

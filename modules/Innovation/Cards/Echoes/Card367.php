@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card367 extends Card
 {
@@ -49,10 +50,10 @@ class Card367 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'board',
-        'location_to'   => 'deck',
-        'with_icon'     => $this->game::AUTHORITY,
+        'n'              => 'all',
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'with_icon'      => Icons::AUTHORITY,
       ];
     }
   }

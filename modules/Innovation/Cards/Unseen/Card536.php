@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Directions;
 
 class Card536 extends Card
 {
@@ -33,13 +34,13 @@ class Card536 extends Card
       return [
         'n'                               => 2,
         'location_from'                   => 'revealed',
-        'location_to'                     => 'deck',
+        'return_keyword'                  => true,
         'card_ids_are_in_auxiliary_array' => true,
       ];
     } else {
       return [
         'can_pass'        => true,
-        'splay_direction' => $this->game::RIGHT,
+        'splay_direction' => Directions::RIGHT,
         'color'           => array(self::getAuxiliaryValue()),
       ];
     }

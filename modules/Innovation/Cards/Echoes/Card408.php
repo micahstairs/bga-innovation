@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card408 extends Card
 {
@@ -18,7 +19,7 @@ class Card408 extends Card
   {
     if (self::isDemand()) {
       foreach (self::getCards('hand') as $card) {
-        if (!self::hasIcon($card, $this->game::EFFICIENCY)) {
+        if (!self::hasIcon($card, Icons::EFFICIENCY)) {
           self::transferToHand($card, self::getLauncherId());
         }
       }

@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Echoes;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Colors;
 
 class Card335 extends Card
 {
@@ -19,7 +20,7 @@ class Card335 extends Card
   {
     if (self::isEcho()) {
       self::setMaxSteps(1);
-    } else if (self::isFourthEdition()) {
+    } else if (self::isFirstNonDemand() && self::isFourthEdition()) {
       self::junkBaseDeck(1);
     }
   }
@@ -29,10 +30,10 @@ class Card335 extends Card
     $options = [
       'location_from' => 'board',
       'score_keyword' => true,
-      'bottom_from' => true,
+      'bottom_from'   => true,
     ];
     if (self::isFourthEdition()) {
-      $options['color'] = [$this->game::BLUE];
+      $options['color'] = [Colors::BLUE];
     }
     return $options;
   }

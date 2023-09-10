@@ -3,6 +3,7 @@
 namespace Innovation\Cards\Unseen;
 
 use Innovation\Cards\Card;
+use Innovation\Enums\Icons;
 
 class Card549 extends Card
 {
@@ -22,9 +23,9 @@ class Card549 extends Card
 
     if (self::isFirstInteraction()) {
       return [
-        'can_pass'      => true,
-        'location_from' => 'hand',
-        'location_to'   => 'safe',
+        'can_pass'          => true,
+        'location_from'     => 'hand',
+        'safeguard_keyword' => true,
       ];
     } else if (self::isSecondInteraction()) {
       return [
@@ -43,9 +44,9 @@ class Card549 extends Card
       ];
     } else {
       return [
-        'n'             => 'all',
-        'location_from' => 'revealed',
-        'location_to'   => 'deck',
+        'n'              => 'all',
+        'location_from'  => 'revealed',
+        'return_keyword' => true,
       ];
     }
   }
@@ -62,7 +63,7 @@ class Card549 extends Card
     } else if (self::isSecondInteraction()) {
       $cardIds = self::getRevealedCardIdsWithoutEfficiencyOrAvatar();
       if (count($cardIds) > 0) {
-        $this->game->setAuxiliaryArray($cardIds);
+        self::setAuxiliaryArray($cardIds);
       } else {
         self::setNextStep(4);
       }
@@ -72,12 +73,8 @@ class Card549 extends Card
   private function getRevealedCardIdsWithoutEfficiencyOrAvatar()
   {
     $cardIds = [];
-    $revealed_cards = self::getCards( 'revealed');
-    foreach ($revealed_cards as $card) {
-      if (
-        !self::hasIcon($card, $this->game::EFFICIENCY) &&
-        !self::hasIcon($card, $this->game::AVATAR)
-      ) {
+    foreach (self::getCards('revealed') as $card) {
+      if (!self::hasIcon($card, Icons::EFFICIENCY) && !self::hasIcon($card, Icons::AVATAR)) {
         $cardIds[] = $card['id'];
       }
     }

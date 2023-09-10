@@ -21,7 +21,7 @@ class Card567 extends Card
       }
     }
     if (count($colors) > 0) {
-      $this->game->setAuxiliaryArray($colors);
+      self::setAuxiliaryArray($colors);
       self::setMaxSteps(2);
     }
   }
@@ -30,17 +30,17 @@ class Card567 extends Card
   {
     if (self::isFirstInteraction()) {
       return [
-        'n'             => 'all',
-        'location_from' => 'board',
-        'location_to'   => 'deck',
-        'color'         => $this->game->getAuxiliaryArray(),
+        'n'              => 'all',
+        'location_from'  => 'board',
+        'return_keyword' => true,
+        'color'          => self::getAuxiliaryArray(),
       ];
     } else {
       return [
-        'n'             => count($this->game->getAuxiliaryArray()),
-        'owner_from'    => 0,
-        'location_from' => 'achievements',
-        'location_to'   => 'safe',
+        'n'                 => count(self::getAuxiliaryArray()),
+        'owner_from'        => 0,
+        'location_from'     => 'achievements',
+        'safeguard_keyword' => true,
       ];
     }
   }

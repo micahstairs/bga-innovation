@@ -4,6 +4,23 @@ namespace Innovation\Utils;
 
 class Strings
 {
+
+    public static function format($msg, $vars)
+    {
+        $vars = (array) $vars;
+        $msg = preg_replace_callback('#\{\}#', function ($r) {
+            static $i = 0;
+            return '{' . ($i++) . '}';
+        }, $msg);
+
+        return str_replace(
+            array_map(function ($k) {
+                return '{' . $k . '}'; }, array_keys($vars)),
+            array_values($vars),
+            $msg
+        );
+    }
+
     /**
      * Does the first string come alphanumerically before the second?
      *
@@ -11,7 +28,7 @@ class Strings
      * @param string $string2
      * @return bool
      */
-    public static function doesStringComeBefore(string $string1, string $string2) : bool
+    public static function doesStringComeBefore(string $string1, string $string2): bool
     {
         $string1 = strtolower(self::stripPunctuation(self::stripAccents($string1)));
         $string2 = strtolower(self::stripPunctuation(self::stripAccents($string2)));
@@ -29,7 +46,7 @@ class Strings
     public static function stripAccents(string $str): string
     {
         $str = htmlentities($str, ENT_COMPAT, 'UTF-8');
-        $str = preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|ring|slash);/','$1',$str);
+        $str = preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|ring|slash);/', '$1', $str);
         return html_entity_decode($str);
     }
 

@@ -29,23 +29,23 @@ class Card440 extends Card
         ];
       } else {
         return [
-          'location_from' => 'board',
-          'location_to'   => 'deck',
-          'with_icon'     => self::getAuxiliaryValue(),
+          'location_from'  => 'board',
+          'return_keyword' => true,
+          'with_icon'      => self::getAuxiliaryValue(),
         ];
       }
     }
     if (self::isFirstInteraction()) {
       return [
-        'location_from' => 'board',
-        'location_to'   => 'deck',
+        'location_from'  => 'board',
+        'return_keyword' => true,
       ];
     } else {
       return [
-        'location_from' => 'score',
-        'location_to'   => 'deck',
-        'age_min'       => self::getAuxiliaryValue(),
-        'n'             => 'all',
+        'location_from'  => 'score',
+        'return_keyword' => true,
+        'age_min'        => self::getAuxiliaryValue(),
+        'n'              => 'all',
       ];
     }
   }
