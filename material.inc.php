@@ -910,8 +910,9 @@ $this->textual_card_infos = array(
     /* Artifacts - Age 3 */
 
     135 => array(
-        'name'                => clienttranslate('Dunhuang Star Chart'),
-        'non_demand_effect_1' => clienttranslate('Return all cards from your hand. Draw a card of value equal to the number of cards returned.'),
+        'name'                                => clienttranslate('Dunhuang Star Chart'),
+        'non_demand_effect_1_first_and_third' => clienttranslate('Return all cards from your hand. Draw a card of value equal to the number of cards returned.'),
+        'non_demand_effect_1_fourth'          => clienttranslate('Return all cards from your hand. Draw a card of value equal to the number of cards you return.'),
     ),
 
     136 => array(

@@ -12493,11 +12493,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 }
                 break;
 
-            // id 135, Artifacts age 3: Dunhuang Star Chart
-            case "135N1":
-                $step_max = 1;
-                break;
-
             // id 136, Artifacts age 3: Charter of Liberties
             case "136N1":
                 $step_max = 1;
@@ -16081,19 +16076,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                 'color' => array(2) /* green */
             );
             break;
-        
-        // id 135, Artifacts age 3: Dunhuang Star Chart
-        case "135N1A":
-            // "Return all cards from your hand"
-            $options = array(
-                'player_id' => $player_id,
-
-                'owner_from' => $player_id,
-                'location_from' => 'hand',
-                'owner_to' => 0,
-                'location_to' => 'deck'
-            );
-            break;
 
         // id 136, Artifacts age 3: Charter of Liberties
         case "136N1A":
@@ -19076,12 +19058,6 @@ function getOwnersOfTopCardWithColorAndAge($color, $age) {
                             self::notifyGeneralInfo(clienttranslate('The returned card is not of value ${age}.'), array('age' => self::getAgeSquare(10)));
                         }
                     }
-                    break;
-                
-                // id 135, Artifacts age 3: Dunhuang Star Chart
-                case "135N1A":
-                    // "Draw a card of value equal to the number of cards returned"
-                    self::executeDraw($player_id, $n);
                     break;
 
                 // id 136, Artifacts age 3: Charter of Liberties
